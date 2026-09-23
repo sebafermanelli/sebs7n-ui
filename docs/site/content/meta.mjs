@@ -866,6 +866,36 @@ export const COMPONENTS = {
     },
     related: ["collapsible", "tabs", "card"],
   },
+  "scroll-area": {
+    title: "ScrollArea",
+    group: "contenido",
+    description: "Una caja con scroll y una barra propia, discreta: aparece al pasar el mouse o al scrollear.",
+    keyboard: [
+      ["Tab", "Llega al viewport cuando hay desborde."],
+      ["↑ ↓ ← →", "Scrollean, como en cualquier caja con overflow."],
+      ["Re Pág · Av Pág · Inicio · Fin", "Saltan de a una pantalla o a los extremos."],
+    ],
+    a11y: [
+      "Adentro hay un `div` con `overflow` nativo: la rueda, el trackpad y el arrastre táctil funcionan como siempre. Lo único que cambia es que se oculta la barra del sistema.",
+      "Base UI le pone `tabIndex={0}` al viewport cuando hay desborde, así que se llega con Tab y se scrollea con las flechas. Por eso el foco es visible.",
+      "En táctil la barra propia no se muestra: ahí la nativa ya es un overlay que aparece y se va.",
+      "`overscroll-contain` evita que el scroll se escape a la página al llegar al final.",
+    ],
+    usage: [
+      "**No para la página entera.** El scroll del documento es del navegador; esto es para una caja: una lista dentro de un panel, un log, una tabla ancha.",
+      "La caja necesita un alto (o un ancho) propio: sin límite no hay desborde y no hay nada que scrollear.",
+      "El padding va en `contentClassName`, no en el viewport: si no, el contenido se corta contra la barra.",
+      "`orientation=\"both\"` solo cuando de verdad desborda en los dos ejes; si no, sobra una barra.",
+    ],
+    props: {
+      ScrollArea: {
+        orientation: "`vertical` (default) · `horizontal` · `both`, que agrega la esquina.",
+        contentClassName: "Clases del contenido, dentro del viewport. Ahí va el padding.",
+        viewportClassName: "Clases del viewport: el elemento que scrollea y recibe el foco.",
+      },
+    },
+    related: ["table", "card", "sidebar"],
+  },
   "page-header": {
     title: "PageHeader",
     group: "contenido",
