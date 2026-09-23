@@ -46,7 +46,9 @@ export default function Home() {
         <section className="flex flex-col items-start gap-6">
           <Badge color="brand">v{site.version}</Badge>
           <h1 className="text-heading-48 text-gray-1000 md:text-heading-64">
-            El design system de <span className="text-gray-900">una sola dependencia</span>.
+            {/* Un solo color para todo el título. Dos grises cercanos no leen
+                como jerarquía: leen como media frase apagada. */}
+            El design system de una sola dependencia.
           </h1>
           <p className="max-w-2xl text-copy-18 text-gray-900">
             Geist —el lenguaje visual de Vercel— sobre las primitivas de shadcn/ui <code>base-nova</code> (Base UI).{" "}
