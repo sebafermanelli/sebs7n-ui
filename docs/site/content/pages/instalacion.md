@@ -149,11 +149,7 @@ import { buttonVariants } from "sebs7n-ui/variants/button" // sin "use client"
 import { cn } from "sebs7n-ui/lib/utils"
 ```
 
-| Subpath | Archivo |
-|---|---|
-| `sebs7n-ui/<componente>` | `src/components/<componente>.tsx` (kebab-case: `alert-dialog`, `app-shell`, `user-menu`, …) |
-| `sebs7n-ui/variants/<nombre>` | `button`, `badge`, `card`, `link`, `menu`, `sidebar`, `input`, `toggle` |
-| `sebs7n-ui/lib/<nombre>` | `utils` |
+{{subpaths}}
 
 Por qué: el barrel hace `export *` de ~30 módulos `"use client"`. Next no puede podar referencias cliente a través de ese barrel (tampoco con `optimizePackageImports`), así que una página con `Button` + `Card` + `ThemeSwitcher` se lleva también Sonner, Sidebar, Select, AlertDialog y el resto. Medido en Next 16.3 (Turbopack) con esa página: **297,5 KB → 234,8 KB** de JS cliente gzip (−21 %).
 

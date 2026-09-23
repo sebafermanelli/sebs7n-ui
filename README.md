@@ -156,11 +156,19 @@ import { buttonVariants } from "sebs7n-ui/variants/button" // sin "use client"
 import { cn } from "sebs7n-ui/lib/utils"
 ```
 
-| Subpath | Archivo |
+<!-- subpaths: generado por scripts/gen-subpaths.mjs -->
+
+| Subpath | Qué trae |
 |---|---|
-| `sebs7n-ui/<componente>` | `src/components/<componente>.tsx` (kebab-case: `alert-dialog`, `app-shell`, `user-menu`, …) |
-| `sebs7n-ui/variants/<nombre>` | `src/variants/<nombre>.ts` (`button`, `badge`, `card`, `link`, `menu`, `sidebar`, `input`, `tag`, `toggle`) |
-| `sebs7n-ui/lib/<nombre>` | `src/lib/<nombre>.ts` (`utils`, `render`, `pagination`) |
+| `sebs7n-ui` | El barrel: los 58 componentes, las variantes y `cn`. Ver la nota de abajo antes de usarlo. |
+| `sebs7n-ui/<componente>` | 58, en kebab-case: `accordion` · `alert` · `alert-dialog` · `app-shell` · `app-shell-content` · `autocomplete` · `avatar` · `badge` · `breadcrumb` · `button` · `card` · `checkbox` · `checkbox-group` · `collapsible` · `combobox` · `context-menu` · `dialog` · `drawer` · `dropdown-menu` · `empty-state` · `field` · `fieldset` · `form` · `hover-card` · `input` · `kbd` · `label` · `menubar` · `meter` · `navigation-menu` · `number-field` · `otp-field` · `page-header` · `pagination` · `popover` · `progress` · `radio-group` · `scroll-area` · `select` · `separator` · `sheet` · `sidebar` · `skeleton` · `slider` · `sonner` · `spinner` · `stat` · `switch` · `table` · `tabs` · `tag` · `textarea` · `theme-switcher` · `toggle` · `toggle-group` · `toolbar` · `tooltip` · `user-menu` |
+| `sebs7n-ui/variants/<nombre>` | Clases sin `"use client"`: `badge` · `button` · `card` · `input` · `link` · `menu` · `sidebar` · `tag` · `toggle` |
+| `sebs7n-ui/lib/<nombre>` | Funciones puras: `pagination` · `render` · `schema` · `utils` |
+| `sebs7n-ui/tokens/<archivo>.json` | Los tokens en crudo: `brands` · `geist` |
+| `sebs7n-ui/theme.css` | Los tokens y el `@source` del `dist`. Es el único import obligatorio. |
+| `sebs7n-ui/styles.css` | La hoja precompilada. Alternativa a `theme.css`, no complemento. |
+
+<!-- /subpaths -->
 
 Por qué: el barrel hace `export *` de ~30 módulos `"use client"`. Next no puede
 podar referencias cliente a través de ese barrel (tampoco con

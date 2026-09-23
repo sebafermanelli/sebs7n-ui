@@ -19,6 +19,11 @@ import { componentSlugs, extractProps } from "./lib/props.mjs"
 import { buildRegistry } from "./lib/registry.mjs"
 import { readBackgrounds, readColors, readRadii, readShadows, readTypography } from "./lib/tokens.mjs"
 
+// La tabla de subpaths la genera el paquete desde su propio `exports`: el sitio
+// no la copia, la pide. Antes estaba escrita a mano acá y en el README, y las dos
+// versiones decían cosas distintas.
+const { subpathsTable } = await import(new URL("../../../scripts/subpaths.mjs", import.meta.url))
+
 const here = join(dirname(fileURLToPath(import.meta.url)), "..")
 const root = join(here, "..", "..")
 const SITE = "https://ui.sebastianfermanelli.com"
@@ -136,6 +141,7 @@ const shadowsTable = table(
 )
 
 const substitutions = {
+  subpaths: subpathsTable(root),
   colores: colorTables,
   fondos: backgroundsTable,
   tipografia: typographyTable,

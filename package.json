@@ -68,6 +68,7 @@
   },
   "scripts": {
     "tokens": "node scripts/gen-colors.mjs",
+    "subpaths": "node scripts/gen-subpaths.mjs",
     "build": "npm run build:js && npm run build:css",
     "build:js": "tsc -p tsconfig.build.json",
     "build:css": "tailwindcss -i src/styles/build.css -o dist/styles.css --minify",
