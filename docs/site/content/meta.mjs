@@ -760,6 +760,43 @@ export const COMPONENTS = {
     },
     related: ["navigation-menu", "user-menu", "select", "popover"],
   },
+  "context-menu": {
+    title: "ContextMenu",
+    group: "superposiciones",
+    detallado: true,
+    description: "El menú del botón derecho: las mismas acciones del `DropdownMenu`, ancladas al puntero.",
+    keyboard: [
+      ["Tab", "Llega al área disparadora, que es una sola parada de tabulación."],
+      ["Menú contextual · Shift+F10", "Abre con el foco en el área, anclado a ella y no al puntero."],
+      ["Click derecho", "Abre en el punto exacto del puntero."],
+      ["Mantener apretado (touch)", "Abre a los 500 ms; moverse más de 10 px cancela."],
+      ["↑ ↓", "Recorre los ítems."],
+      ["→ ←", "Entra y sale de un submenú."],
+      ["Escribir", "Salta al ítem que empieza con esas letras."],
+      ["Enter · Espacio", "Ejecuta y cierra."],
+      ["Escape", "Cierra y devuelve el foco al área."],
+    ],
+    a11y: [
+      "El trigger es un `<div>`: sin `tabIndex` no le llega el foco y la tecla de menú contextual no tiene sobre qué disparar. `ContextMenuTrigger` lo hace enfocable y sintetiza el evento `contextmenu`, así que la apertura por teclado funciona aunque Base UI no la traiga.",
+      "Lleva `aria-haspopup=\"menu\"` y `aria-keyshortcuts=\"Shift+F10\"`: sobre un área sin botón visible, el atajo es lo único que se puede anunciar.",
+      "El panel es el mismo `role=\"menu\"` del `DropdownMenu`: atrapa el foco, se recorre con flechas y al cerrar lo devuelve al área.",
+      "`focusable={false}` saca la parada de tabulación **y** la apertura por teclado: solo si el área ya tiene adentro un control enfocable que abre el mismo menú.",
+    ],
+    usage: [
+      "**Nunca puede ser el único camino a una acción.** El click derecho no se ve, no se descubre y en touch depende de un long-press que la mitad de la gente no conoce. Todo lo que esté acá tiene que estar también en un botón visible, en un `DropdownMenu` o en un atajo anunciado.",
+      "**Es un atajo, no una puerta de entrada.** Se pone sobre lo que ya tiene sus acciones a la vista: una fila, una tarjeta, un lienzo.",
+      "Comparte la pastilla con `DropdownMenu` a propósito: son el mismo menú abierto de dos maneras, no dos componentes.",
+      "`ContextMenuShortcut` pesa más acá que en un `DropdownMenu`: es el cartel que enseña el camino alternativo.",
+      "Sobre un `<input>` o un `<textarea>` no: te comés el menú de corregir, copiar y pegar del navegador.",
+    ],
+    props: {
+      ContextMenuTrigger: {
+        focusable: "`false` saca la parada de tabulación y con ella la apertura por teclado.",
+      },
+      ContextMenuItem: { variant: "`destructive` pinta el ítem en rojo y va último, después de un separador." },
+    },
+    related: ["dropdown-menu", "menubar", "toolbar", "popover"],
+  },
   sonner: {
     title: "Toaster (Sonner)",
     group: "superposiciones",
