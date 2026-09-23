@@ -174,6 +174,17 @@ describe("Combobox", () => {
   })
 
   it("búsqueda async: fila de carga con spinner, después resultados o vacío", async () => {
+    // El "servidor" es una promesa que resuelve el test, no un `setTimeout(…, 20)`.
+    // Con el timer esto era una carrera: si la máquina estaba cargada, los 20 ms se
+    // cumplían antes de que `findByText("Buscando…")` llegara a mirar el DOM, la fila
+    // de carga ya no existía y el test fallaba sin que hubiera nada roto. Así el
+    // estado de carga dura exactamente hasta que el test dice.
+    let responder: (() => void) | undefined
+    const respuestaDelServidor = () =>
+      new Promise<void>((resolve) => {
+        responder = resolve
+      })
+
     function AsyncCombobox() {
       const [items, setItems] = React.useState<string[]>([])
       const [loading, setLoading] = React.useState(false)
@@ -183,10 +194,10 @@ describe("Combobox", () => {
           filter={null}
           onInputValueChange={(query) => {
             setLoading(true)
-            setTimeout(() => {
+            respuestaDelServidor().then(() => {
               setItems(COUNTRIES.filter((c) => c.toLowerCase().startsWith(query.toLowerCase())))
               setLoading(false)
-            }, 20)
+            })
           }}
         >
           <ComboboxInput aria-label="Pasajero" />
@@ -210,9 +221,13 @@ describe("Combobox", () => {
     const row = await screen.findByText("Buscando…")
     expect(row.closest("[data-slot=combobox-loading]")!.querySelector("svg")).toHaveClass("animate-spin")
     expect(screen.queryByText("Sin resultados")).toBeNull()
-    await waitFor(() => expect(screen.getAllByRole("option").map((o) => o.textContent)).toEqual(["Bolivia", "Brasil"]))
+
+    await act(async () => responder?.())
+    expect(screen.getAllByRole("option").map((o) => o.textContent)).toEqual(["Bolivia", "Brasil"])
     expect(screen.queryByText("Buscando…")).toBeNull()
+
     await userEvent.keyboard("x")
+    await act(async () => responder?.())
     expect(await screen.findByText("Sin resultados")).toBeInTheDocument()
   })
 
