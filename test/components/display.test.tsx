@@ -13,8 +13,8 @@ describe("Toggle (chip)", () => {
   it("apagado punteado, prendido sólido con fondo, sin color de marca", async () => {
     render(<Toggle>Activos</Toggle>)
     const chip = screen.getByRole("button", { name: "Activos" })
-    expect(chip).toHaveClass("rounded-full", "border-dashed", "border-gray-400", "text-gray-900", "hover:border-gray-500")
-    expect(chip).toHaveClass("data-pressed:border-solid", "data-pressed:border-gray-600", "data-pressed:bg-gray-100")
+    expect(chip).toHaveClass("rounded-full", "border-dashed", "border-gray-700", "text-gray-900", "hover:border-gray-800")
+    expect(chip).toHaveClass("data-pressed:border-solid", "data-pressed:border-gray-900", "data-pressed:bg-gray-100")
     expect(chip.className).not.toMatch(/brand/)
     await userEvent.click(chip)
     expect(chip).toHaveAttribute("aria-pressed", "true")

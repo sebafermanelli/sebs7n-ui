@@ -74,6 +74,32 @@ describe("Atajo de menú sobre el popup (WCAG 1.4.3)", () => {
   }
 })
 
+// Checkbox, Radio, Switch y Toggle sin marcar no tienen relleno ni texto que
+// los dibuje: si el contorno no se ve, el control no existe. Por eso caen bajo
+// WCAG 1.4.11 (3:1 contra el fondo adyacente) y no bajo la licencia de la
+// decoración. `gray-500` daba 1,66:1 en claro y `gray-400`, 1,20:1.
+describe("Contorno de control sin marcar (WCAG 1.4.11)", () => {
+  for (const theme of ["light", "dark"] as const) {
+    const fg = paleta[theme]["--sf-gray-700"]!
+    const superficies = {
+      "superficie del campo": paleta[theme]["--sf-background-100"]!,
+      página: paleta[theme]["--sf-background"]!,
+      banda: paleta[theme]["--sf-background-200"]!,
+    }
+    for (const [donde, bg] of Object.entries(superficies)) {
+      it(`${theme} · ${donde}: ${fg} sobre ${bg} llega a 3:1`, () => {
+        expect(ratio(fg, bg)).toBeGreaterThanOrEqual(3)
+      })
+    }
+    // El pulgar del Switch apagado es blanco puro: de qué lado está es lo que
+    // dice si está prendido. Si la pista es demasiado clara, el pulgar
+    // desaparece dentro de ella y el estado deja de leerse.
+    it(`${theme} · pulgar del Switch apagado: #ffffff sobre ${fg} llega a 3:1`, () => {
+      expect(ratio("#ffffff", fg)).toBeGreaterThanOrEqual(3)
+    })
+  }
+})
+
 // El placeholder es texto, no decoración: en un formulario largo es lo único
 // que dice qué espera el campo hasta que alguien escribe. En `gray-700` —el
 // tono de Geist— daba 3,23:1 en claro. Un solo tono para los dos temas: el
