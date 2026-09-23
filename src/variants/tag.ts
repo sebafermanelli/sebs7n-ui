@@ -21,6 +21,11 @@ export type TagVariantProps = {
  * propósito: una sola forma de etiqueta en todo el sistema. Lo que distingue a
  * un Tag no es cómo se ve sino qué es —un dato que puso el usuario y puede
  * sacar—, y eso se anuncia con el botón de quitar, no con otro radio.
+ *
+ * `ComboboxChip` sale de acá desde 0.5.0. Antes tenía su propia copia y habían
+ * quedado distintas: el botón de quitar medía 20px en el chip y 16 en el tag, el
+ * hover era `gray-alpha-200` contra `gray-alpha-300`, y el aire a la derecha del
+ * texto era la mitad. Son dos etiquetas que el usuario ve una al lado de la otra.
  */
 export const tagVariants = ({ color = "gray", size = "md", removable = false, className }: TagVariantProps = {}) =>
   cn(

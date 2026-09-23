@@ -7,9 +7,9 @@ import type * as React from "react"
 import { renderShellTrigger } from "../internal/shell-trigger.js"
 import { useLabels } from "../lib/labels.js"
 import { cn, type WithClassName } from "../lib/utils.js"
-import { badgeVariants } from "../variants/badge.js"
 import { inputShellButtonClassName, inputShellClassName, inputShellInputClassName } from "../variants/input.js"
 import { menuItemClassName, menuLabelClassName, menuPopupClassName, menuSeparatorClassName } from "../variants/menu.js"
+import { tagRemoveClassName, tagVariants } from "../variants/tag.js"
 
 type InputSize = "sm" | "md" | "lg"
 
@@ -221,7 +221,18 @@ type ComboboxChipProps = WithClassName<ComboboxPrimitive.Chip.Props> & {
   textValue?: string
 }
 
-// Badge subtle gris con botón de quitar.
+/**
+ * El `Tag` del sistema, conectado al estado del combobox.
+ *
+ * Usa `tagVariants` y `tagRemoveClassName` y no una copia: hasta 0.4.0 eran dos dibujos que
+ * decían ser el mismo y habían quedado distintos —el botón de quitar medía 20px acá y 16 en
+ * `Tag`, el hover era `gray-alpha-200` contra `gray-alpha-300`, y el aire a la derecha del
+ * texto era la mitad—. Dos etiquetas que el usuario ve una al lado de la otra en el mismo
+ * formulario no pueden diferir en 4px.
+ *
+ * Lo propio es el foco: el chip es enfocable y el combobox lo resalta con `data-highlighted`,
+ * cosa que un `Tag` suelto no hace.
+ */
 function ComboboxChip({ className, children, removeLabel, textValue, ...props }: ComboboxChipProps) {
   // `useLabels()` va suelto y no adentro de un `??`: el `??` corta, y un hook que a veces se llama
   // y a veces no rompe el orden de los hooks.
@@ -231,18 +242,14 @@ function ComboboxChip({ className, children, removeLabel, textValue, ...props }:
   return (
     <ComboboxPrimitive.Chip
       data-slot="combobox-chip"
-      // `overflow-visible` le gana al `overflow-hidden` del badge: con él recortado, el anillo de
-      // foco del botón de quitar y su área de toque quedaban cortados justo donde importan.
-      className={cn(badgeVariants({ variant: "subtle", color: "gray", size: "md" }), "max-w-full gap-0.5 overflow-visible pr-0.5 outline-none focus-visible:focus-ring data-highlighted:focus-ring", className)}
+      className={cn(tagVariants({ removable: true }), "outline-none focus-visible:focus-ring data-highlighted:focus-ring", className)}
       {...props}
     >
       <span className="truncate">{children}</span>
       <ComboboxPrimitive.ChipRemove
         data-slot="combobox-chip-remove"
         aria-label={name ? `${prefijo} ${name}` : prefijo}
-        // El dibujo queda en 20px y el `::after` de `-inset-1` lleva el área de toque a 28×28,
-        // arriba de los 24 de WCAG 2.5.8, sin agrandar el círculo. Misma técnica que Tag y Checkbox.
-        className="relative inline-flex size-5 cursor-pointer items-center justify-center rounded-full text-gray-900 outline-none transition-control after:absolute after:-inset-1 hover:bg-gray-alpha-200 hover:text-gray-1000 focus-visible:focus-ring [&_svg]:size-3"
+        className={tagRemoveClassName.md}
       >
         <XIcon />
       </ComboboxPrimitive.ChipRemove>

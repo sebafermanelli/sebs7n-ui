@@ -30,6 +30,7 @@ import {
   ComboboxValue,
 } from "../../src/components/combobox"
 import { menuItemClassName, menuPopupClassName } from "../../src/variants/menu"
+import { tagRemoveClassName } from "../../src/variants/tag"
 
 const COUNTRIES = ["Argentina", "Armenia", "Bolivia", "Brasil", "Chile", "Uruguay"]
 
@@ -264,11 +265,11 @@ describe("Combobox", () => {
     await userEvent.keyboard("uru{ArrowDown}{Enter}")
     expect(onValueChange).toHaveBeenLastCalledWith(["Chile", "Uruguay"], expect.anything())
     expect(await screen.findByText("Uruguay", { selector: "[data-slot=combobox-chip] *" })).toBeInTheDocument()
-    // El área de toque llega a 28px por el `::after` (WCAG 2.5.8 pide 24), y el
-    // chip tiene que dejar de recortar o ese área —y el anillo de foco— quedan
-    // cortados contra el borde del badge.
+    // El chip es el `Tag` del sistema: mismo cuerpo, mismo botón de quitar de 16px con el
+    // `::after` de `-inset-1` que lleva el área de toque a 24 (WCAG 2.5.8). Y tiene que dejar
+    // de recortar, o ese área —y el anillo de foco— quedan cortados contra el borde.
     const quitar = screen.getByRole("button", { name: "Quitar Chile" })
-    expect(quitar).toHaveClass("relative", "size-5", "after:absolute", "after:-inset-1")
+    expect(quitar).toHaveClass(...tagRemoveClassName.md.split(" "))
     expect(chip).toHaveClass("overflow-visible")
     await userEvent.click(quitar)
     expect(onValueChange).toHaveBeenLastCalledWith(["Uruguay"], expect.anything())
