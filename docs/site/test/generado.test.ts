@@ -11,6 +11,9 @@ const read = (path: string) => readFileSync(join(here, path), "utf8")
 const site = JSON.parse(read(".generated/site.json"))
 const registry = JSON.parse(read("registry.json"))
 
+type Prop = { name: string; description: string; inherited: boolean }
+type Componente = { slug: string; title: string; exports: { name: string; props: Prop[] }[] }
+
 const rutas: { href: string; title: string }[] = [
   ...site.pages.map((page: { slug: string; title: string }) => ({ href: `/docs/${page.slug}`, title: page.title })),
   ...site.components.map((component: { slug: string; title: string }) => ({
@@ -30,6 +33,37 @@ describe("related", () => {
       for (const otro of component.related) if (!slugs.has(otro)) rotos.push(`${component.slug} → ${otro}`)
     }
     expect(rotos).toEqual([])
+  })
+})
+
+// Una prop sin descripción no rompe nada: sale la fila con la celda vacía y el sitio
+// compila igual. Era el defecto más repetido de la doc —254 de 440 filas en 0.4.0—, así
+// que acá queda clavado en cero para las props **propias**, que son las que el paquete
+// inventó y nadie más va a explicar.
+//
+// Las heredadas de Base UI se cuentan aparte y solo avisan: aparecen porque `meta.props`
+// las nombra, así que hoy es imposible que entre una sin texto, pero si algún día el
+// generador vuelca más, que no sea un test rojo el que frene el deploy.
+describe("props documentadas", () => {
+  const props = (site.components as Componente[]).flatMap((component) =>
+    component.exports.flatMap((exported) =>
+      exported.props.map((prop) => ({ ...prop, donde: `${component.slug}.${exported.name}.${prop.name}` }))
+    )
+  )
+
+  it("mira una tabla de props no vacía", () => {
+    expect(props.length).toBeGreaterThan(400)
+  })
+
+  it("ninguna prop propia queda sin descripción", () => {
+    const sin = props.filter((prop) => !prop.inherited && !prop.description).map((prop) => prop.donde)
+    expect(sin).toEqual([])
+  })
+
+  it("las heredadas sin descripción solo se cuentan", () => {
+    const sin = props.filter((prop) => prop.inherited && !prop.description).map((prop) => prop.donde)
+    if (sin.length) console.warn(`[props] ${sin.length} props heredadas sin descripción: ${sin.join(", ")}`)
+    expect(sin.length).toBeLessThanOrEqual(props.length)
   })
 })
 

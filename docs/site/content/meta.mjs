@@ -24,7 +24,13 @@ export const GROUPS = [
   { id: "contenido", title: "Contenido y datos" },
 ]
 
-/** Props de Base UI que aparecen en varios componentes: una sola descripción, en español. */
+/**
+ * Props de Base UI que aparecen en varios componentes: una sola descripción, en español.
+ *
+ * Es un **fallback**: la descripción de `meta.props` y el JSDoc del propio `src/` le ganan,
+ * en ese orden. Una entrada acá no hace que la prop aparezca en la tabla — para volcar una
+ * prop heredada hay que nombrarla en `props` del componente, que es lo que hace `heredadas()`.
+ */
 export const PROP_DESCRIPTIONS = {
   className: "Se fusiona con las clases del componente vía `cn()` (tailwind-merge): lo que pongas gana.",
   render: "Reemplaza el elemento que renderiza el componente. Es el `render` de Base UI, no `asChild`.",
@@ -33,10 +39,64 @@ export const PROP_DESCRIPTIONS = {
   align: "Cómo se alinea el panel sobre el eje transversal.",
   alignOffset: "Corrimiento en píxeles sobre el eje de alineación.",
   anchor: "Elemento contra el que se posiciona el panel. Por defecto, el trigger.",
+  collisionPadding: "Margen en píxeles que se deja contra el borde de la ventana antes de dar vuelta el panel.",
+  container: "Dónde se monta el portal. Por defecto, el `<body>`.",
   "aria-label": "Nombre accesible del elemento.",
   "aria-keyshortcuts": "Atajo que se anuncia al lector de pantalla.",
   inset: "Alinea el texto con los ítems que tienen ícono, sin poner ícono.",
   labels: "Textos de la interfaz, para traducir o ajustar el tono.",
+
+  // ── Apertura y cierre ──────────────────────────────────────────────────────
+  open: "Si está abierto. Pasarla lo vuelve controlado: sin `onOpenChange` ya no se cierra solo.",
+  defaultOpen: "Si arranca abierto. Es la versión no controlada de `open`.",
+  onOpenChange: "Se llama con el estado nuevo cada vez que se abre o se cierra.",
+  modal: "Con `true`, mientras está abierto el resto de la página no recibe clicks ni foco. Con `\"trap-focus\"` atrapa el foco pero deja pasar los clicks de afuera.",
+  actionsRef: "Ref con las acciones imperativas de Base UI (`unmount()`), para desmontarlo sin esperar la animación de salida.",
+  keepMounted: "Deja el contenido en el DOM mientras está cerrado, en vez de desmontarlo. Cuesta peso; sirve para que un crawler lo vea.",
+  initialFocus: "Qué recibe el foco al abrir. Por defecto, el primer elemento tabulable de adentro.",
+  finalFocus: "Qué recibe el foco al cerrar. Por defecto, lo que lo abrió.",
+  openOnHover: "Si abre al pasar el puntero, sin click.",
+  delay: "Milisegundos que hay que quedarse encima antes de que abra.",
+  closeDelay: "Milisegundos que espera antes de cerrar cuando el puntero se va.",
+  trackCursorAxis: "Sobre qué eje sigue al puntero mientras se mueve por el trigger.",
+
+  // ── Valor ──────────────────────────────────────────────────────────────────
+  value: "El valor actual. Pasarlo lo vuelve controlado; para dejarlo libre, `defaultValue`.",
+  defaultValue: "El valor inicial. Es la versión no controlada de `value`.",
+  onValueChange: "Se llama con el valor nuevo cada vez que cambia.",
+  multiple: "Deja elegir más de uno: el valor pasa a ser un array.",
+  filter: "Cómo se comparan los ítems con lo tipeado. Por defecto, sin distinguir mayúsculas ni acentos.",
+  items: "Las opciones de la lista. Es lo que le permite al componente mostrar la etiqueta en vez del valor crudo.",
+  checked: "Si está marcado. Pasarlo lo vuelve controlado; para dejarlo libre, `defaultChecked`.",
+  defaultChecked: "Si arranca marcado. Es la versión no controlada de `checked`.",
+  onCheckedChange: "Se llama con el estado nuevo cada vez que se marca o se desmarca.",
+
+  // ── Formulario ─────────────────────────────────────────────────────────────
+  name: "El nombre con el que el valor viaja en el submit y en el objeto `errors` de `Form`.",
+  required: "Marca el campo como obligatorio para la validación nativa.",
+  readOnly: "Se lee y se enfoca, pero no se cambia. No es lo mismo que `disabled`, que además lo saca del foco.",
+  disabled: "Apaga la interacción. Base UI lo marca con `data-disabled`, así que sigue en el recorrido de tabulación.",
+  nativeButton: "Si el elemento que se renderiza es un `<button>` de verdad. Ponelo en `false` si lo reemplazás por un `<a>` o un `<div>`.",
+
+  // ── Navegación por teclado ─────────────────────────────────────────────────
+  orientation: "`horizontal` (default) o `vertical`. Define qué flechas mueven el foco.",
+  loopFocus: "Si al pasar del último elemento el foco vuelve al primero.",
+}
+
+/**
+ * Vuelca props heredadas de Base UI a la tabla, con el texto compartido de `PROP_DESCRIPTIONS`.
+ *
+ * El generador solo muestra una prop heredada si `meta.props` la nombra; el diccionario solo
+ * pone el texto. Sin esto, un `<Dialog>` salía con **cero** props documentadas —ni `open`, ni
+ * `onOpenChange`, ni `modal`—, que son justo las que alguien viene a buscar a esa página.
+ */
+function heredadas(...names) {
+  return Object.fromEntries(
+    names.map((name) => {
+      if (!PROP_DESCRIPTIONS[name]) throw new Error(`PROP_DESCRIPTIONS no describe "${name}"`)
+      return [name, PROP_DESCRIPTIONS[name]]
+    })
+  )
 }
 
 export const COMPONENTS = {
@@ -94,6 +154,8 @@ export const COMPONENTS = {
     ],
     props: {
       Badge: {
+        variant: "`subtle` (fondo tenue, los nueve tonos) · `solid` (fondo lleno, solo `gray` y `brand`).",
+        size: "`sm` 20px · `md` 24px de alto. El texto es `label-12` en los dos.",
         color: "Nueve tonos. Con `variant=\"solid\"` el tipo solo deja `gray` y `brand`.",
         dot: "Agrega un punto del color del badge a la izquierda del texto.",
       },
@@ -124,6 +186,7 @@ export const COMPONENTS = {
     ],
     props: {
       Tag: {
+        size: "Las dos alturas del `Badge`: `sm` 20px · `md` 24px.",
         onRemove: "Qué hacer al quitar. Sin esto no aparece el botón — y sin botón, probablemente sea un `Badge`.",
         removeLabel: "Prefijo del nombre del botón: «Quitar Chile».",
         textValue: "El texto del tag para el nombre del botón, cuando `children` no es texto.",
@@ -142,6 +205,9 @@ export const COMPONENTS = {
       "El fallback es siempre gris: un color por persona sería una señal que nadie puede interpretar.",
     ],
     usage: ["Las iniciales, dos letras como máximo.", "Dentro de un `UserMenu` ya viene armado: no lo rehagas."],
+    props: {
+      Avatar: { size: "`sm` 24px · `md` 32px · `lg` 40px." },
+    },
     related: ["user-menu", "sidebar"],
   },
   kbd: {
@@ -221,6 +287,12 @@ export const COMPONENTS = {
       "Dentro de un `Card`, en una grilla de 2 a 4 columnas.",
       "`trend=\"up\"` no siempre es bueno: en «tickets abiertos», subir es malo. Elegí el color por el significado, no por la flecha.",
     ],
+    props: {
+      Stat: {
+        label: "Qué se mide («Ingresos del mes»). Va arriba del número, en `label-13`.",
+        value: "El número grande. Sale en `heading-24` con cifras tabulares, así una fila de KPIs queda alineada.",
+      },
+    },
     related: ["card", "page-header"],
   },
 
@@ -359,6 +431,11 @@ export const COMPONENTS = {
       "`required` agrega la marca visual; el campo además necesita su propio `required` o `aria-required`.",
     ],
     usage: ["Arriba del campo, no al costado: en un celular al costado no entra.", "El texto de ayuda va debajo del campo, no dentro del label."],
+    props: {
+      Label: {
+        required: "Agrega el asterisco rojo, que es `aria-hidden`: la señal para el lector la da el `required` del campo, no esta prop.",
+      },
+    },
     related: ["input", "textarea", "checkbox"],
   },
   "otp-field": {
@@ -428,8 +505,13 @@ export const COMPONENTS = {
       Select: {
         items:
           "El mapa `value → label` de las opciones. **Ponelo siempre**: sin él `SelectValue` muestra el `value` crudo. Acepta `{ ri: \"Responsable inscripto\" }` o `[{ value, label }]`.",
+        ...heredadas("value", "defaultValue", "onValueChange", "multiple", "open", "defaultOpen", "onOpenChange", "modal", "name", "required", "disabled"),
       },
       SelectTrigger: { size: "Mismas tres alturas que `Input`, para que un formulario mixto quede alineado." },
+      SelectContent: {
+        alignItemWithTrigger:
+          "Con `true` el popup se abre **encima** del trigger, con la opción elegida sobre él (el comportamiento nativo de macOS). Acá está en `false`: la lista baja, que es lo que hace el resto de los menús del sistema.",
+      },
     },
     related: ["combobox", "dropdown-menu", "radio-group"],
   },
@@ -459,9 +541,38 @@ export const COMPONENTS = {
       "**El filtrado es en memoria y en cada tecla, sin debounce.** Con una lista local es lo correcto: esperar se nota. Para búsqueda contra el servidor el debounce lo pone la app, en su `onInputValueChange`; el componente no lo hace por vos.",
     ],
     props: {
+      Combobox: {
+        ...heredadas(
+          "items",
+          "value",
+          "defaultValue",
+          "onValueChange",
+          "multiple",
+          "filter",
+          "open",
+          "defaultOpen",
+          "onOpenChange",
+          "modal",
+          "name",
+          "required",
+          "readOnly",
+          "disabled"
+        ),
+        items: "Los objetos de la lista. Con `{ value, label }` anda solo; para otra forma, `itemToStringLabel`.",
+        filter: "Cómo se comparan los ítems con lo tipeado. Con `null` no filtra nada: es lo que va cuando busca el servidor.",
+        disabled: "En el root apaga todo el combobox. En el input solo apaga la superficie, y la lista sigue viva.",
+      },
       ComboboxInput: {
+        size: "Mismas tres alturas que `Input`: `sm` 32px · `md` 40px · `lg` 48px.",
         showClear: "La cruz de limpiar. Aparece sola cuando hay valor.",
         showTrigger: "El chevron que abre la lista.",
+        disabled: "Apaga el input y la superficie que lo rodea. Para bloquear todo el combobox, ponelo en el root.",
+      },
+      ComboboxChips: {
+        size: "Mismas tres alturas que `Input`, aunque con varios chips la superficie crece hacia abajo.",
+        showClear: "La cruz que borra todos los chips de una.",
+        showTrigger: "El chevron que abre la lista.",
+        disabled: "Apaga la superficie, el input y los botones de quitar de cada chip.",
       },
     },
     related: ["autocomplete", "select", "input"],
@@ -485,6 +596,19 @@ export const COMPONENTS = {
       "`value`/`onValueChange` son strings, no objetos.",
       "**El filtrado es en memoria y en cada tecla, sin debounce**, igual que en `Combobox`. Si las sugerencias vienen del servidor, el debounce lo pone la app.",
     ],
+    props: {
+      Autocomplete: {
+        ...heredadas("items", "value", "defaultValue", "onValueChange", "open", "defaultOpen", "onOpenChange", "modal", "name", "required", "readOnly", "disabled"),
+        value: "El texto del input, siempre un string: acá el valor es lo que se escribió, no un ítem de la lista.",
+        filter: "Cómo se comparan las sugerencias con lo tipeado. Con `null` no filtra: es lo que va cuando busca el servidor.",
+      },
+      AutocompleteInput: {
+        size: "Mismas tres alturas que `Input`: `sm` 32px · `md` 40px · `lg` 48px.",
+        groupClassName: "Clases de la superficie con borde que envuelve al input y a sus botones. Acá va el ancho.",
+        showClear: "La cruz de limpiar. Aparece sola cuando hay texto.",
+        disabled: "Apaga el input y la superficie que lo rodea. Para bloquear todo, ponelo en el root.",
+      },
+    },
     related: ["combobox", "input"],
   },
   checkbox: {
@@ -558,6 +682,9 @@ export const COMPONENTS = {
       "De 2 a 5 opciones. Más, `Select`.",
       "Siempre con una opción elegida por defecto, salvo que «ninguna» sea una respuesta válida y explícita.",
     ],
+    props: {
+      RadioGroup: heredadas("value", "defaultValue", "onValueChange", "name", "required", "readOnly", "disabled"),
+    },
     related: ["checkbox", "select", "toggle-group"],
   },
   switch: {
@@ -573,6 +700,13 @@ export const COMPONENTS = {
       "**Efecto inmediato.** Si el cambio se aplica al apretar «Guardar», es un `Checkbox`.",
       "`variant=\"accent\"` cuenta como el único acento de la pantalla: no lo combines con un `Button variant=\"accent\"`.",
     ],
+    props: {
+      Switch: {
+        size: "`sm` 16×28px · `md` 20×36px. El área táctil es de 32px en los dos, por el `after:-inset-2`.",
+        variant: "`default` pinta la pista encendida de `gray-1000`; `accent`, del color de marca.",
+        ...heredadas("checked", "defaultChecked", "onCheckedChange", "name", "required", "readOnly", "disabled"),
+      },
+    },
     related: ["checkbox", "toggle"],
   },
   toggle: {
@@ -597,6 +731,9 @@ export const COMPONENTS = {
       "En modo único es un `RadioGroup` visualmente distinto; si la lista es larga, usá `RadioGroup` de verdad.",
     ],
     usage: ["Hasta 4 o 5 ítems: es una barra, no un menú.", "Íconos solos únicamente si son universales (alineación, vista); si no, texto."],
+    props: {
+      ToggleGroup: heredadas("value", "defaultValue", "onValueChange", "multiple", "orientation", "loopFocus", "disabled"),
+    },
     related: ["toggle", "radio-group", "tabs"],
   },
 
@@ -630,6 +767,11 @@ export const COMPONENTS = {
       Slider: {
         size: "`sm` 32px · `md` 40px de área arrastrable. La pista es 4px y 6px.",
         marks: "Valores donde va un punto de referencia. Siguen a `min` y `max`, no al 0–100 fijo.",
+        value: "Un número, o un array de dos para un rango. Pasarlo lo vuelve controlado.",
+        defaultValue: "El valor inicial. La forma que le des acá decide si el slider es simple (`40`) o de rango (`[20, 60]`).",
+        min: "El extremo de la izquierda. Por defecto, 0.",
+        max: "El extremo de la derecha. Por defecto, 100.",
+        ...heredadas("onValueChange", "orientation", "name", "disabled"),
       },
     },
     related: ["input", "switch", "progress"],
@@ -699,9 +841,11 @@ export const COMPONENTS = {
       "El footer va con la acción principal a la derecha y «Cancelar» a su izquierda.",
     ],
     props: {
+      Dialog: heredadas("open", "defaultOpen", "onOpenChange", "modal", "actionsRef"),
       DialogContent: {
         labels: "El texto del botón X. Con un `LabelsProvider` se traduce para toda la app; esta prop es la excepción de una pantalla puntual.",
         showCloseButton: "El botón X de la esquina. Si lo sacás, tiene que haber otra salida visible.",
+        ...heredadas("initialFocus", "finalFocus"),
       },
     },
     related: ["alert-dialog", "sheet", "popover"],
@@ -726,6 +870,14 @@ export const COMPONENTS = {
       "El título es la pregunta («¿Eliminar la factura 0012?»), no «¿Estás seguro?».",
       "El botón dice qué va a pasar («Eliminar»), no «Aceptar».",
     ],
+    props: {
+      AlertDialog: heredadas("open", "defaultOpen", "onOpenChange", "actionsRef"),
+      AlertDialogAction: {
+        variant: "`default` (negro) o `destructive` (rojo). Es el `variant` del `Button`, recortado a los dos que tienen sentido acá.",
+        loading: "El spinner del `Button` mientras corre la acción. Es el motivo por el que esta acción no cierra sola.",
+      },
+      AlertDialogContent: heredadas("initialFocus", "finalFocus"),
+    },
     related: ["dialog", "button"],
   },
   sheet: {
@@ -743,8 +895,11 @@ export const COMPONENTS = {
       "En desktop, más de 640px de ancho es una página, no un panel.",
     ],
     props: {
+      Sheet: heredadas("open", "defaultOpen", "onOpenChange", "modal", "actionsRef"),
       SheetContent: {
         labels: "El texto del botón X. Con un `LabelsProvider` se traduce para toda la app; esta prop es la excepción de una pantalla puntual.",
+        showCloseButton: "El botón X de la esquina. Si lo sacás, tiene que haber otra salida visible.",
+        ...heredadas("initialFocus", "finalFocus"),
       },
     },
     related: ["dialog", "app-shell", "sidebar", "drawer"],
@@ -777,7 +932,9 @@ export const COMPONENTS = {
       "`DrawerSwipeArea` abre con un swipe desde el borde, pero nunca va sola: sin un `DrawerTrigger` al lado, el drawer no existe para quien usa teclado.",
     ],
     props: {
+      Drawer: heredadas("open", "defaultOpen", "onOpenChange", "modal", "actionsRef"),
       DrawerContent: {
+        ...heredadas("initialFocus", "finalFocus"),
         labels: "El texto del botón X. Con un `LabelsProvider` se traduce para toda la app; esta prop es la excepción de una pantalla puntual.",
         showCloseButton: "El botón X de la esquina. Apagarlo deja al drawer sin control visible de cierre: si lo hacés, poné otro.",
         showHandle: "La barra de arrastre. Es decoración: apagala solo si el drawer no se puede arrastrar.",
@@ -798,6 +955,10 @@ export const COMPONENTS = {
       "Si el contenido es una lista de acciones, es un `DropdownMenu`. Si es solo texto de ayuda, un `Tooltip`.",
       "En mobile un popover ancho se sale de la pantalla: usá `Sheet`.",
     ],
+    props: {
+      Popover: heredadas("open", "defaultOpen", "onOpenChange", "modal", "actionsRef"),
+      PopoverContent: heredadas("initialFocus", "finalFocus"),
+    },
     related: ["dropdown-menu", "tooltip", "dialog"],
   },
   tooltip: {
@@ -815,6 +976,15 @@ export const COMPONENTS = {
       "Nunca contenido interactivo adentro: no se puede llegar con el teclado.",
       "No lo pongas en algo que ya dice lo que hace.",
     ],
+    props: {
+      Tooltip: {
+        ...heredadas("open", "defaultOpen", "onOpenChange", "actionsRef", "trackCursorAxis", "disabled"),
+        disabled: "Apaga el tooltip sin sacarlo del árbol: el trigger sigue funcionando, solo que no muestra nada.",
+      },
+      TooltipProvider: {
+        delay: "Cuánto espera antes de abrir, en ms. Va una sola vez en el layout raíz y vale para todos los tooltips de abajo.",
+      },
+    },
     related: ["popover", "button", "kbd"],
   },
   "hover-card": {
@@ -838,6 +1008,7 @@ export const COMPONENTS = {
       "No la cargues: una ficha, no una pantalla.",
     ],
     props: {
+      HoverCard: heredadas("open", "defaultOpen", "onOpenChange", "actionsRef"),
       HoverCardTrigger: {
         delay: "Cuánto espera antes de abrir, en ms.",
         closeDelay: "Cuánto espera antes de cerrar, en ms.",
@@ -871,6 +1042,7 @@ export const COMPONENTS = {
       "Más de ~10 ítems: paleta de comandos o `Combobox`, no un menú.",
     ],
     props: {
+      DropdownMenu: heredadas("open", "defaultOpen", "onOpenChange", "modal", "loopFocus", "orientation", "actionsRef", "disabled"),
       DropdownMenuItem: { variant: "`destructive` pinta el ítem en rojo y va último, después de un separador." },
     },
     related: ["navigation-menu", "user-menu", "select", "popover"],
@@ -905,8 +1077,11 @@ export const COMPONENTS = {
       "Sobre un `<input>` o un `<textarea>` no: te comés el menú de corregir, copiar y pegar del navegador.",
     ],
     props: {
+      ContextMenu: heredadas("open", "defaultOpen", "onOpenChange", "loopFocus", "orientation", "actionsRef", "disabled"),
       ContextMenuTrigger: {
         focusable: "`false` saca la parada de tabulación y con ella la apertura por teclado.",
+        onKeyDown: "Corre **antes** que el manejador propio del trigger. Si hacés `preventDefault()`, la apertura por Shift+F10 no llega a dispararse.",
+        tabIndex: "Pisa el `0` que pone `focusable`. Casi nunca hace falta: es la salida para meter el área en un orden de tabulación armado a mano.",
       },
       ContextMenuItem: { variant: "`destructive` pinta el ítem en rojo y va último, después de un separador." },
     },
@@ -1025,6 +1200,19 @@ export const COMPONENTS = {
       "`NavigationMenuViewport` va **una sola vez**, hermano de la lista: el panel es uno para todos los ítems.",
       "Adentro de un `<nav>` que ya existe, `render={<div />}` para no anidar dos landmarks.",
     ],
+    props: {
+      NavigationMenu: {
+        ...heredadas("value", "defaultValue", "onValueChange", "orientation", "delay", "closeDelay", "actionsRef"),
+        value: "El `value` del ítem abierto, o `null` si están todos cerrados. Pasarlo lo vuelve controlado.",
+      },
+      NavigationMenuPositioner: {
+        ...heredadas("collisionPadding", "container"),
+        container: "Dónde se monta el portal del panel. Es el `container` del portal, no el del contenido.",
+      },
+      NavigationMenuViewport: {
+        container: "Dónde se monta el portal del panel compartido. Por defecto, el `<body>`.",
+      },
+    },
     related: ["dropdown-menu", "sidebar", "tabs"],
   },
   menubar: {
@@ -1062,6 +1250,7 @@ export const COMPONENTS = {
         modal: "Con `true` (el default), mientras hay un menú abierto el resto de la página no recibe clicks.",
         loopFocus: "Si al pasar del último título se vuelve al primero.",
       },
+      MenubarMenu: heredadas("open", "defaultOpen", "onOpenChange", "loopFocus", "actionsRef", "disabled"),
       MenubarItem: { variant: "`destructive` pinta el ítem en rojo y va último, después de un separador." },
     },
     related: ["dropdown-menu", "navigation-menu", "toolbar", "context-menu"],
@@ -1097,6 +1286,7 @@ export const COMPONENTS = {
       Toolbar: {
         orientation: "`vertical` cambia las flechas a ↑ ↓ y da vuelta los separadores.",
         loopFocus: "Si al pasar del último control se vuelve al primero.",
+        onKeyDown: "Corre **antes** que el manejador propio de la barra. Si hacés `preventDefault()`, Home y End no mueven el foco.",
       },
       ToolbarButton: {
         render: "El componente que pone los estilos. Por defecto, `<Button size=\"icon-sm\" variant=\"ghost\" />`.",
@@ -1128,6 +1318,17 @@ export const COMPONENTS = {
       "3 a 6 tabs. Más, un `Select` o una navegación lateral.",
       "No anides tabs dentro de tabs.",
     ],
+    props: {
+      Tabs: {
+        ...heredadas("value", "defaultValue", "onValueChange", "orientation"),
+        value: "El `value` de la tab activa. Pasarlo lo vuelve controlado: es lo que hace falta para atar las tabs a la URL.",
+      },
+      TabsList: { loopFocus: "Si al pasar de la última tab las flechas vuelven a la primera." },
+      TabsContent: {
+        ...heredadas("value", "keepMounted"),
+        value: "Con qué `TabsTrigger` se corresponde este panel.",
+      },
+    },
     related: ["toggle-group", "navigation-menu"],
   },
   sidebar: {
@@ -1156,6 +1357,10 @@ export const COMPONENTS = {
     props: {
       Sidebar: { collapsed: "Solo íconos, 64px. El ancho cambia sin animación: animarlo hace saltar todo el contenido." },
       SidebarSearch: { shortcut: "Solo muestra el `Kbd` y lo anuncia. Escuchar la tecla es trabajo de la app." },
+      SidebarItem: { icon: "El ícono de la izquierda, que es lo único que queda visible con el sidebar colapsado." },
+      SidebarGroupLabel: {
+        id: "Pisa el `id` que genera el grupo. El `SidebarGroup` lo usa para su `aria-labelledby`, así que solo cambialo si ya tenés un id propio.",
+      },
     },
     related: ["app-shell", "user-menu", "navigation-menu"],
   },
@@ -1216,6 +1421,11 @@ export const COMPONENTS = {
       "Toma el estado del sidebar solo: no le pases `collapsed` a mano si está dentro de un `Sidebar`.",
       "`showTheme={false}` si la app ya tiene el selector de tema en otro lado.",
     ],
+    props: {
+      UserMenu: {
+        user: "Quién está adentro: `{ name, email?, image? }`. `name` arma las iniciales del fallback y el nombre accesible del trigger.",
+      },
+    },
     related: ["dropdown-menu", "sidebar", "theme-switcher", "avatar"],
   },
   "theme-switcher": {
@@ -1233,6 +1443,11 @@ export const COMPONENTS = {
       "`ThemeMenuRadio` dentro de un `DropdownMenu`. `UserMenu` ya lo trae.",
       "Necesita `next-themes` con `attribute=\"class\"` y `suppressHydrationWarning` en `<html>`.",
     ],
+    props: {
+      ThemeSwitcher: {
+        onKeyDown: "Corre **después** de que el control frene la propagación de las teclas que usa el menú: así el switcher adentro de un `DropdownMenu` no lo cierra con cada flecha.",
+      },
+    },
     related: ["user-menu", "dropdown-menu", "toggle-group"],
   },
 
@@ -1289,6 +1504,7 @@ export const COMPONENTS = {
     ],
     props: {
       Card: {
+        size: "El padding interno, vía `--card-spacing`: `sm` 16px · `md` 24px.",
         variant: "`default` superficie con borde · `subtle` banda sin borde.",
         interactive: "Estilos de hover, active y foco. No hace la tarjeta clickeable: eso lo hace el elemento.",
         selected: "Borde y anillo de marca.",
@@ -1311,6 +1527,11 @@ export const COMPONENTS = {
       "Un error de un campo va al lado del campo, no en un Alert arriba del formulario.",
       "Si hay una acción, que sea una sola y esté adentro.",
     ],
+    props: {
+      Alert: {
+        variant: "`neutral` · `brand` · `success` · `warning` · `error`. Solo cambia la franja de la izquierda y el color del ícono: el fondo es el mismo en las cinco.",
+      },
+    },
     related: ["sonner", "empty-state", "badge"],
   },
   "empty-state": {
@@ -1328,6 +1549,13 @@ export const COMPONENTS = {
       "El título dice qué falta, no «Sin resultados».",
       "Una sola acción.",
     ],
+    props: {
+      EmptyState: {
+        icon: "El ícono de arriba, dentro de su cuadrito. Es decoración (`aria-hidden`): el título tiene que alcanzar solo.",
+        title: "Qué falta, en una línea. Sale como el heading que diga `titleAs`.",
+        description: "La línea que explica por qué no hay nada y qué se puede hacer.",
+      },
+    },
     related: ["alert", "card", "table"],
   },
   progress: {
@@ -1352,6 +1580,7 @@ export const COMPONENTS = {
         value: "El valor actual. `null` la deja indeterminada.",
         size: "`sm` 4px · `md` 6px de alto de la pista.",
         showValue: "Muestra el porcentaje a la derecha. Indeterminada no muestra número.",
+        label: "El nombre visible de la barra. Es la forma preferida de nombrarla; sin él, el tipo exige `aria-label` o `aria-labelledby`.",
       },
     },
     related: ["meter", "skeleton", "slider"],
@@ -1379,6 +1608,7 @@ export const COMPONENTS = {
     props: {
       Meter: {
         value: "El valor actual, siempre un número: un `Meter` no tiene estado indeterminado.",
+        label: "El nombre visible de la medida. Es la forma preferida de nombrarla; sin él, el tipo exige `aria-label` o `aria-labelledby`.",
         size: "`sm` 4px · `md` 6px de alto de la pista, los mismos que `Progress`.",
         showValue: "Muestra el valor formateado a la derecha.",
         format: "Opciones de `Intl.NumberFormat`. Cambian lo que se ve y lo que se lee, nunca el valor.",
@@ -1406,6 +1636,10 @@ export const COMPONENTS = {
       "`className` cae en el contenido, no en el elemento que anima el alto: ahí va el padding.",
       "Lo que está plegado no se lee ni se indexa: `keepMounted` si esos links importan para el crawler.",
     ],
+    props: {
+      Collapsible: heredadas("open", "defaultOpen", "onOpenChange", "disabled"),
+      CollapsibleContent: heredadas("keepMounted"),
+    },
     related: ["accordion", "card", "button"],
   },
   accordion: {
@@ -1432,6 +1666,8 @@ export const COMPONENTS = {
     props: {
       Accordion: {
         multiple: "Deja varias secciones abiertas a la vez.",
+        ...heredadas("value", "defaultValue", "onValueChange", "orientation", "loopFocus", "keepMounted", "disabled"),
+        value: "Los `value` de las secciones abiertas, siempre un array. Pasarlo lo vuelve controlado.",
       },
       AccordionTrigger: {
         chevron: "Saca el chevron para poner otro indicador.",

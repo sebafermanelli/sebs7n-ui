@@ -69,7 +69,11 @@ const components = slugs.map((slug) => {
       ...exported,
       props: exported.props.map((prop) => ({
         ...prop,
-        description: meta.props?.[exported.name]?.[prop.name] ?? prop.description ?? PROP_DESCRIPTIONS[prop.name] ?? "",
+        // `||` y no `??`: `prop.description` es siempre un string, `""` cuando no hay
+        // JSDoc. Con `??` la cadena cortaba en el primer eslabón y `PROP_DESCRIPTIONS`
+        // no se usaba nunca — 195 filas `className` salían vacías teniendo la
+        // descripción escrita a dos archivos de distancia.
+        description: meta.props?.[exported.name]?.[prop.name] || prop.description || PROP_DESCRIPTIONS[prop.name] || "",
       })),
     })),
     examples: examplesBySlug.get(slug) ?? [],
@@ -358,7 +362,18 @@ for (const item of registry.items) {
   writeFileSync(join(publicDir, `r/${item.name}.json`), JSON.stringify(item, null, 2))
 }
 
+// La celda "Descripción" vacía es el defecto que no rompe nada y se ve en cada página.
+// Acá sale el número en cada corrida; el test de `generado.test.ts` es el que lo frena
+// en cero para las props propias.
+const todasLasProps = components.flatMap((component) => component.exports.flatMap((exported) => exported.props))
+const sinDescripcion = todasLasProps.filter((prop) => !prop.description)
+const propiasSinDescripcion = sinDescripcion.filter((prop) => !prop.inherited)
+
 console.log(
   `[generate] ${components.length} componentes · ${pages.length} páginas de sistema · ` +
     `${markdowns.length} .md · ${registry.items.length} ítems de registry`
+)
+console.log(
+  `[generate] ${todasLasProps.length} props · ${sinDescripcion.length} sin descripción ` +
+    `(${propiasSinDescripcion.length} propias, ${sinDescripcion.length - propiasSinDescripcion.length} heredadas de Base UI)`
 )

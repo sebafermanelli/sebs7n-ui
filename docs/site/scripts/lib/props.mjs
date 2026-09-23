@@ -104,11 +104,21 @@ function literalUnionText(type, checker) {
   const parts = []
   for (const constituent of planos) {
     if (constituent.flags & (ts.TypeFlags.Undefined | ts.TypeFlags.Null)) continue
-    if (constituent.flags & (ts.TypeFlags.Boolean | ts.TypeFlags.BooleanLiteral)) return "boolean"
+    // `true | false` es un `boolean` y nada más, pero solo si eso es toda la unión.
+    // Antes se devolvía "boolean" apenas aparecía uno de los dos, así que
+    // `boolean | RefObject<HTMLElement> | (() => …)` —el `initialFocus` de Base UI—
+    // salía en la tabla como un simple `boolean`: un tipo que miente.
+    if (constituent.flags & (ts.TypeFlags.Boolean | ts.TypeFlags.BooleanLiteral)) {
+      if (!parts.includes("boolean")) parts.push("boolean")
+      continue
+    }
     if (!constituent.isStringLiteral() && !constituent.isNumberLiteral()) return null
     parts.push(checker.typeToString(constituent))
   }
-  return parts.length > 1 ? parts.join(" | ") : null
+  if (parts.length > 1) return parts.join(" | ")
+  // Un `boolean` solo: hay que devolverlo igual. Si se cae al texto escrito, una prop
+  // genérica (`multiple?: Multiple extends boolean`) sale en la tabla como `Multiple`.
+  return parts[0] === "boolean" ? "boolean" : null
 }
 
 function firstParam(declaration) {
@@ -223,7 +233,12 @@ export function extractProps({ root, files, documented }) {
             type: cleanTypeText(raw),
             required: !(prop.flags & ts.SymbolFlags.Optional),
             default: defaults.get(propName) ?? null,
-            description: propDeclaration ? jsdocOf(prop, checker) : "",
+            // El JSDoc solo se toma si la prop está declarada en `src/`: el del `.d.ts`
+            // de Base UI está en inglés y el sitio es en español. Antes se colaba y
+            // dejaba catorce filas como «CSS class applied to the element…» en medio
+            // de una tabla en castellano. Lo que no está declarado acá lo describe
+            // `meta.mjs` o `PROP_DESCRIPTIONS`.
+            description: declaredHere && propDeclaration ? jsdocOf(prop, checker) : "",
             inherited: !declaredHere && !isDestructured,
           })
         }
