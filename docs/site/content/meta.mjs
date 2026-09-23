@@ -780,6 +780,27 @@ export const COMPONENTS = {
     },
     related: ["skeleton", "slider", "button"],
   },
+  collapsible: {
+    title: "Collapsible",
+    group: "contenido",
+    description: "Mostrar y ocultar un bloque con un botón. La pieza simple detrás del Accordion.",
+    keyboard: [
+      ["Enter · Espacio", "Abre y cierra."],
+      ["Tab", "Entra y sale del trigger."],
+    ],
+    a11y: [
+      "El trigger lleva `aria-expanded` y `aria-controls`, puestos por Base UI.",
+      "El contenido cerrado no está en el DOM salvo `keepMounted`; con `hiddenUntilFound` queda y lo encuentra el buscador del navegador.",
+      "El alto pasa por `motion-reduce`, además del reset global del paquete.",
+    ],
+    usage: [
+      "**Si hay varias secciones que son un grupo, es un `Accordion`**: trae el `<h3>` por sección.",
+      "El trigger no trae estilo a propósito: va `render={<Button variant=\"ghost\" />}`.",
+      "`className` cae en el contenido, no en el elemento que anima el alto: ahí va el padding.",
+      "Lo que está plegado no se lee ni se indexa: `keepMounted` si esos links importan para el crawler.",
+    ],
+    related: ["accordion", "card", "button"],
+  },
   "page-header": {
     title: "PageHeader",
     group: "contenido",
