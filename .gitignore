@@ -4,10 +4,6 @@ dist/
 .superpowers/
 .tmp-types-*/
 
-# Documentos de trabajo internos (spec y plan de v1, con contexto privado).
-# Viven solo en la máquina: no se versionan ni se publican.
-docs/interno/
-
 # Generados por `next dev` en el playground.
 playground/AGENTS.md
 playground/CLAUDE.md
