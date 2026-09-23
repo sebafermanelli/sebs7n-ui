@@ -1,4 +1,7 @@
-// Ítems y panel de menú: los comparten DropdownMenu y Select.
+// Ítems, panel, encabezado de grupo y separador de menú.
+//
+// Los comparten seis componentes, no dos: DropdownMenu, ContextMenu, Menubar, Select, Combobox y
+// Autocomplete. Todo lo que se abre como una lista de opciones se ve igual porque sale de acá.
 
 /**
  * `inset` corre el contenido a la izquierda para que alinee con los ítems que tienen ícono
@@ -12,3 +15,19 @@ export const menuItemClassName =
 
 export const menuPopupClassName =
   "max-h-(--available-height) min-w-40 origin-(--transform-origin) overflow-y-auto rounded-xl bg-background-100 p-1 text-gray-1000 shadow-menu outline-none transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0"
+
+/**
+ * El encabezado de un grupo de ítems: DropdownMenu, ContextMenu, Menubar, Select y Combobox.
+ *
+ * Los tres menús le suman `data-inset:pl-8` para alinear con los ítems que tienen check o ícono;
+ * Select y Combobox no lo necesitan porque no tienen `inset`.
+ */
+export const menuLabelClassName = "px-2 py-1.5 text-label-12 text-gray-900"
+
+/**
+ * La línea entre grupos de ítems: los tres menús, Select, Combobox y Autocomplete.
+ *
+ * Los `-mx-1` la estiran hasta el borde del popup, que lleva `p-1`: una línea con aire a los
+ * costados se lee como parte de un ítem y no como el corte entre dos grupos.
+ */
+export const menuSeparatorClassName = "-mx-1 my-1 h-px bg-gray-400"

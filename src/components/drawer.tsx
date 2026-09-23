@@ -7,6 +7,7 @@ import { XIcon } from "lucide-react"
 import { useAvisoDeNombre } from "../internal/dialog-name-warning.js"
 import { useLabels } from "../lib/labels.js"
 import { cn, type WithClassName } from "../lib/utils.js"
+import { backdropClassName, overlayCloseClassName } from "../variants/overlay.js"
 import { Button } from "./button.js"
 
 /**
@@ -169,7 +170,9 @@ function DrawerContent({ className, children, showCloseButton = true, showHandle
           gana por especificidad, así que la apertura sigue siendo un fundido. */}
       <DrawerPrimitive.Backdrop
         data-slot="drawer-overlay"
-        className="fixed inset-0 z-50 bg-backdrop opacity-[calc(1_-_var(--drawer-swipe-progress))] transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0 motion-reduce:transition-none"
+        // El velo del sistema más la opacidad atada al gesto: mientras se arrastra, el velo
+        // se aclara igual que se va la hoja.
+        className={cn(backdropClassName, "opacity-[calc(1_-_var(--drawer-swipe-progress))] motion-reduce:transition-none")}
       />
       {/* El viewport es obligatorio: es quien escucha el gesto y bloquea el
           scroll táctil de atrás. Sin él Base UI avisa por consola y el drawer
@@ -218,7 +221,7 @@ function DrawerContent({ className, children, showCloseButton = true, showHandle
               data-base-ui-swipe-ignore=""
               data-slot="drawer-close"
               // Mismo motivo que en Dialog: el nombre en `aria-label`, que es lo que el tipo exige.
-              render={<Button variant="ghost" size="icon-sm" aria-label={labels?.close ?? l.close} className="absolute top-4 right-4" />}
+              render={<Button variant="ghost" size="icon-sm" aria-label={labels?.close ?? l.close} className={overlayCloseClassName} />}
             >
               <XIcon />
             </DrawerPrimitive.Close>

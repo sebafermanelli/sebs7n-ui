@@ -7,6 +7,7 @@ import { XIcon } from "lucide-react"
 import { useAvisoDeNombre } from "../internal/dialog-name-warning.js"
 import { useLabels } from "../lib/labels.js"
 import { cn, type WithClassName } from "../lib/utils.js"
+import { backdropClassName, overlayCloseClassName } from "../variants/overlay.js"
 import { Button } from "./button.js"
 
 function Sheet(props: SheetPrimitive.Root.Props) {
@@ -40,7 +41,7 @@ function SheetContent({ className, children, side = "right", showCloseButton = t
     <SheetPrimitive.Portal>
       <SheetPrimitive.Backdrop
         data-slot="sheet-overlay"
-        className="fixed inset-0 z-50 bg-backdrop transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0"
+        className={backdropClassName}
       />
       <SheetPrimitive.Popup
         data-slot="sheet-content"
@@ -63,7 +64,7 @@ function SheetContent({ className, children, side = "right", showCloseButton = t
           <SheetPrimitive.Close
             data-slot="sheet-close"
             // Mismo motivo que en Dialog: el nombre en `aria-label`, que es lo que el tipo exige.
-            render={<Button variant="ghost" size="icon-sm" aria-label={labels?.close ?? l.close} className="absolute top-4 right-4" />}
+            render={<Button variant="ghost" size="icon-sm" aria-label={labels?.close ?? l.close} className={overlayCloseClassName} />}
           >
             <XIcon />
           </SheetPrimitive.Close>

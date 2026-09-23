@@ -3,6 +3,7 @@
 import { OTPField as OTPFieldPrimitive } from "@base-ui/react/otp-field"
 
 import { cn } from "../lib/utils.js"
+import { inputControlClassName, inputDisabledClassName, inputInvalidClassName } from "../variants/input.js"
 
 /**
  * El código de verificación: una casilla por dígito, un solo valor.
@@ -70,14 +71,16 @@ function OTPField({ className, inputClassName, length = 6, size = "md", ...props
           data-size={size}
           key={index}
           className={cn(
-            "shrink-0 rounded-md border border-gray-400 bg-background-100 text-center text-copy-14 text-gray-1000 tabular-nums outline-none transition-control",
+            inputControlClassName,
+            inputDisabledClassName,
+            inputInvalidClassName,
+            // La casilla es cuadrada, así que no usa `inputSizeClassName`: el `size-*` fija
+            // los dos ejes y el alto del sistema solo fijaría uno.
+            "shrink-0 text-center tabular-nums focus:focus-border",
             "data-[size=sm]:size-8 data-[size=md]:size-10 data-[size=lg]:size-12 data-[size=lg]:text-copy-16",
-            "hover:border-gray-500 focus:focus-border",
             // La casilla llena se marca con el borde, no con el fondo: seis
             // rectángulos grises tapan dónde quedó el cursor.
             "data-filled:border-gray-600",
-            "data-disabled:cursor-not-allowed data-disabled:border-gray-400 data-disabled:bg-gray-100 data-disabled:text-gray-700",
-            "aria-invalid:border-red-800 aria-invalid:focus:focus-border-error data-invalid:border-red-800 data-invalid:focus:focus-border-error",
             inputClassName
           )}
         />

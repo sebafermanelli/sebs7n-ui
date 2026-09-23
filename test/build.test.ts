@@ -58,11 +58,22 @@ describe("build", () => {
 
   it("exporta el tipado", () => {
     expect(read("dist/index.d.ts")).toContain("export * from \"./components/button.js\"")
-    // Las clases de menú e Input son públicas a propósito: quien arma una lista a
-    // medida las necesita para que se vea como las del sistema.
-    expect(read("dist/index.d.ts")).toContain(
-      'export { menuItemClassName, menuPopupClassName, type MenuInsetProps } from "./variants/menu.js"'
-    )
+    // Las clases de menú, de overlay y de Input son públicas a propósito: quien arma una lista
+    // o un panel a medida las necesita para que se vea como los del sistema. Se miran los
+    // nombres y no la línea entera, que ya se rompió dos veces por agregar un export al lado.
+    for (const nombre of [
+      "menuItemClassName",
+      "menuLabelClassName",
+      "menuPopupClassName",
+      "menuSeparatorClassName",
+      "MenuInsetProps",
+      "backdropClassName",
+      "modalPopupClassName",
+      "floatingPopupClassName",
+      "inputShellClassName",
+    ]) {
+      expect(read("dist/index.d.ts"), nombre).toContain(nombre)
+    }
     expect(read("dist/index.d.ts")).toContain('export * from "./components/combobox.js"')
     expect(read("dist/index.d.ts")).toContain('export * from "./components/autocomplete.js"')
   })

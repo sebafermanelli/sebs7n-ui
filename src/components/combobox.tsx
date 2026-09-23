@@ -4,20 +4,14 @@ import { Combobox as ComboboxPrimitive } from "@base-ui/react/combobox"
 import { CheckIcon, ChevronDownIcon, Loader2Icon, XIcon } from "lucide-react"
 import type * as React from "react"
 
+import { renderShellTrigger } from "../internal/shell-trigger.js"
 import { useLabels } from "../lib/labels.js"
 import { cn, type WithClassName } from "../lib/utils.js"
 import { badgeVariants } from "../variants/badge.js"
 import { inputShellButtonClassName, inputShellClassName, inputShellInputClassName } from "../variants/input.js"
-import { menuItemClassName, menuPopupClassName } from "../variants/menu.js"
+import { menuItemClassName, menuLabelClassName, menuPopupClassName, menuSeparatorClassName } from "../variants/menu.js"
 
 type InputSize = "sm" | "md" | "lg"
-
-// Base UI asume que el input está dentro del popup hasta que el input se registra (en un effect): el
-// HTML del server trae el chevron como role="combobox" con tabindex 0 y el mismo id que el input.
-// En estos wrappers el input siempre está afuera, así que se fijan los atributos de ese caso en el render.
-const renderShellTrigger = (props: React.ComponentProps<"button">) => (
-  <button {...props} id={undefined} role={undefined} tabIndex={-1} aria-haspopup="listbox" />
-)
 
 // Root de Base UI: items, value/onValueChange, multiple, filter, itemToStringLabel, etc.
 const Combobox = ComboboxPrimitive.Root
@@ -127,13 +121,13 @@ function ComboboxGroup({ className, ...props }: ComboboxGroupProps) {
 type ComboboxLabelProps = WithClassName<ComboboxPrimitive.GroupLabel.Props>
 
 function ComboboxLabel({ className, ...props }: ComboboxLabelProps) {
-  return <ComboboxPrimitive.GroupLabel data-slot="combobox-label" className={cn("px-2 py-1.5 text-label-12 text-gray-900", className)} {...props} />
+  return <ComboboxPrimitive.GroupLabel data-slot="combobox-label" className={cn(menuLabelClassName, className)} {...props} />
 }
 
 type ComboboxSeparatorProps = WithClassName<ComboboxPrimitive.Separator.Props>
 
 function ComboboxSeparator({ className, ...props }: ComboboxSeparatorProps) {
-  return <ComboboxPrimitive.Separator data-slot="combobox-separator" className={cn("-mx-1 my-1 h-px bg-gray-400", className)} {...props} />
+  return <ComboboxPrimitive.Separator data-slot="combobox-separator" className={cn(menuSeparatorClassName, className)} {...props} />
 }
 
 type ComboboxEmptyProps = WithClassName<ComboboxPrimitive.Empty.Props> & {

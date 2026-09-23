@@ -77,7 +77,9 @@ function Button<S extends ButtonSize = ButtonSize>({
       {...props}
     >
       {/* El mismo Spinner del sistema, sin nombre accesible: quien anuncia la espera es el
-          aria-busy del botón, no el ícono. 20px solo en los tamaños grandes, como antes. */}
+          aria-busy del botón, no el ícono. El spinner sube a 20px solo en `lg` e `icon-lg`:
+          en un botón de 32 o 40px de alto, 20px de spinner lo llenan y se lee como un
+          bloque girando en vez de como una espera. */}
       {loading && (
         <Spinner
           data-slot="button-spinner"

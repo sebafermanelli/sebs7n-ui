@@ -7,6 +7,7 @@ import { XIcon } from "lucide-react"
 import { useAvisoDeNombre } from "../internal/dialog-name-warning.js"
 import { useLabels } from "../lib/labels.js"
 import { cn, type WithClassName } from "../lib/utils.js"
+import { backdropClassName, modalFooterClassName, modalPopupClassName, overlayCloseClassName } from "../variants/overlay.js"
 import { Button } from "./button.js"
 
 function Dialog(props: DialogPrimitive.Root.Props) {
@@ -27,10 +28,7 @@ function DialogOverlay({ className, ...props }: DialogOverlayProps) {
   return (
     <DialogPrimitive.Backdrop
       data-slot="dialog-overlay"
-      className={cn(
-        "fixed inset-0 z-50 bg-backdrop transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0",
-        className
-      )}
+      className={cn(backdropClassName, className)}
       {...props}
     />
   )
@@ -55,11 +53,7 @@ function DialogContent({ className, children, showCloseButton = true, labels, ..
       <DialogPrimitive.Popup
         data-slot="dialog-content"
         ref={ref}
-        className={cn(
-          "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-background-100 p-6 text-copy-14 text-gray-1000 shadow-modal outline-none sm:max-w-lg",
-          "transition-[opacity,translate] duration-150 data-ending-style:opacity-0 data-starting-style:translate-y-[calc(-50%+8px)] data-starting-style:opacity-0",
-          className
-        )}
+        className={cn(modalPopupClassName, "sm:max-w-lg", className)}
         {...props}
       >
         {children}
@@ -69,7 +63,7 @@ function DialogContent({ className, children, showCloseButton = true, labels, ..
             // El nombre va en `aria-label` y no en un `<span class="sr-only">`: el botón es solo el
             // ícono, y `ButtonProps` exige el nombre en el tipo justamente para que no se pueda
             // olvidar. Un texto escondido nombra igual de bien, pero no hay tipo que lo vea.
-            render={<Button variant="ghost" size="icon-sm" aria-label={labels?.close ?? l.close} className="absolute top-4 right-4" />}
+            render={<Button variant="ghost" size="icon-sm" aria-label={labels?.close ?? l.close} className={overlayCloseClassName} />}
           >
             <XIcon />
           </DialogPrimitive.Close>
@@ -87,7 +81,7 @@ function DialogFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="dialog-footer"
-      className={cn("-mx-6 mt-2 flex flex-col-reverse gap-2 border-t border-gray-400 px-6 pt-4 sm:flex-row sm:justify-end", className)}
+      className={cn(modalFooterClassName, className)}
       {...props}
     />
   )

@@ -22,8 +22,9 @@ import { cn, type WithClassName } from "../lib/utils.js"
  * </Field>
  * ```
  *
- * El control va suelto adentro: `Input`, `Textarea` y `Select` ya se enganchan
- * solos con el campo. Cualquier otro elemento nativo se envuelve en
+ * El control va suelto adentro: `Input`, `Textarea`, `Select`, `NumberField`, `OTPField`,
+ * `Slider` y `CheckboxGroup` ya se enganchan solos con el campo —todos renderizan a través
+ * de un primitivo de `Field` de Base UI—. Cualquier otro elemento nativo se envuelve en
  * `FieldControl`.
  *
  * `name` es lo que ata el campo con `Form`: es la clave que se usa tanto en los
@@ -106,7 +107,8 @@ function FieldDescription({ className, ...props }: FieldDescriptionProps) {
  * Con `validationMode="onChange"` eso no pasa: el error aparece mientras se
  * escribe, con el foco ya adentro del campo, y nada lo anuncia. Para ese caso
  * está `alert`, que le pone `role="alert"` al mensaje para que se lea apenas
- * aparece.
+ * aparece. Vale para cualquiera de los controles que se enganchan solos, no solo
+ * para `Input`: `NumberField`, `OTPField`, `Slider` y `CheckboxGroup` también.
  *
  * **`alert` es opt-in a propósito.** `role="alert"` es una región viva
  * *assertive*: interrumpe lo que el lector esté diciendo. En el camino de

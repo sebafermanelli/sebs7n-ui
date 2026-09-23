@@ -3,6 +3,7 @@
 import { Toolbar as ToolbarPrimitive } from "@base-ui/react/toolbar"
 
 import { cn, type WithClassName } from "../lib/utils.js"
+import { inputControlClassName, inputDisabledClassName } from "../variants/input.js"
 import { Button } from "./button.js"
 
 /**
@@ -192,11 +193,11 @@ function ToolbarInput({ className, ...props }: ToolbarInputProps) {
     <ToolbarPrimitive.Input
       data-slot="toolbar-input"
       className={cn(
+        inputControlClassName,
+        inputDisabledClassName,
         // Mismo cuerpo que `Input size="sm"`, sin el `w-full`: en una barra el
         // ancho lo pone quien lo usa (`className="w-20"`), no el componente.
-        "h-8 min-w-0 rounded-md border border-gray-400 bg-background-100 px-2 text-copy-14 text-gray-1000 outline-none transition-control",
-        "placeholder:text-gray-900 hover:border-gray-500 focus:focus-border",
-        "data-disabled:cursor-not-allowed data-disabled:border-gray-400 data-disabled:bg-gray-100 data-disabled:text-gray-700",
+        "h-8 min-w-0 px-2 placeholder:text-gray-900 focus:focus-border",
         className
       )}
       {...props}

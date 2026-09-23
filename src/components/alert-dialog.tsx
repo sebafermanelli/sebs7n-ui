@@ -4,6 +4,7 @@ import type * as React from "react"
 import { AlertDialog as AlertDialogPrimitive } from "@base-ui/react/alert-dialog"
 
 import { cn, type WithClassName } from "../lib/utils.js"
+import { backdropClassName, modalFooterClassName, modalPopupClassName } from "../variants/overlay.js"
 import type { ButtonTextSize } from "../variants/button.js"
 import { Button, type ButtonBaseProps } from "./button.js"
 
@@ -29,10 +30,7 @@ function AlertDialogOverlay({ className, ...props }: AlertDialogOverlayProps) {
   return (
     <AlertDialogPrimitive.Backdrop
       data-slot="alert-dialog-overlay"
-      className={cn(
-        "fixed inset-0 z-50 bg-backdrop transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0",
-        className
-      )}
+      className={cn(backdropClassName, className)}
       {...props}
     />
   )
@@ -46,11 +44,7 @@ function AlertDialogContent({ className, ...props }: AlertDialogContentProps) {
       <AlertDialogOverlay />
       <AlertDialogPrimitive.Popup
         data-slot="alert-dialog-content"
-        className={cn(
-          "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-background-100 p-6 text-copy-14 text-gray-1000 shadow-modal outline-none sm:max-w-md",
-          "transition-[opacity,translate] duration-150 data-ending-style:opacity-0 data-starting-style:translate-y-[calc(-50%+8px)] data-starting-style:opacity-0",
-          className
-        )}
+        className={cn(modalPopupClassName, "sm:max-w-md", className)}
         {...props}
       />
     </AlertDialogPrimitive.Portal>
@@ -65,7 +59,7 @@ function AlertDialogFooter({ className, ...props }: React.ComponentProps<"div">)
   return (
     <div
       data-slot="alert-dialog-footer"
-      className={cn("-mx-6 mt-2 flex flex-col-reverse gap-2 border-t border-gray-400 px-6 pt-4 sm:flex-row sm:justify-end", className)}
+      className={cn(modalFooterClassName, className)}
       {...props}
     />
   )

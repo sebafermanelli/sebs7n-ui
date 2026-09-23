@@ -6,7 +6,7 @@ import { Menubar as MenubarPrimitive } from "@base-ui/react/menubar"
 import { CheckIcon, ChevronRightIcon } from "lucide-react"
 
 import { cn, type WithClassName } from "../lib/utils.js"
-import { menuItemClassName, menuPopupClassName, type MenuInsetProps } from "../variants/menu.js"
+import { menuItemClassName, menuLabelClassName, menuPopupClassName, menuSeparatorClassName, type MenuInsetProps } from "../variants/menu.js"
 
 /**
  * La barra de menús de una aplicación: Archivo, Editar, Ver.
@@ -86,7 +86,7 @@ function MenubarLabel({ className, inset, ...props }: MenubarLabelProps) {
     <MenuPrimitive.GroupLabel
       data-slot="menubar-label"
       data-inset={inset ? "" : undefined}
-      className={cn("px-2 py-1.5 text-label-12 text-gray-900 data-inset:pl-8", className)}
+      className={cn(menuLabelClassName, "data-inset:pl-8", className)}
       {...props}
     />
   )
@@ -151,7 +151,7 @@ function MenubarRadioItem({ className, children, ...props }: MenubarRadioItemPro
 type MenubarSeparatorProps = WithClassName<MenuPrimitive.Separator.Props>
 
 function MenubarSeparator({ className, ...props }: MenubarSeparatorProps) {
-  return <MenuPrimitive.Separator data-slot="menubar-separator" className={cn("-mx-1 my-1 h-px bg-gray-400", className)} {...props} />
+  return <MenuPrimitive.Separator data-slot="menubar-separator" className={cn(menuSeparatorClassName, className)} {...props} />
 }
 
 /**

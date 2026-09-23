@@ -4,10 +4,11 @@ import { Autocomplete as AutocompletePrimitive } from "@base-ui/react/autocomple
 import { ChevronDownIcon, XIcon } from "lucide-react"
 import type * as React from "react"
 
+import { renderShellTrigger } from "../internal/shell-trigger.js"
 import { useLabels } from "../lib/labels.js"
 import { cn, type WithClassName } from "../lib/utils.js"
 import { inputShellButtonClassName, inputShellClassName, inputShellInputClassName } from "../variants/input.js"
-import { menuItemClassName } from "../variants/menu.js"
+import { menuItemClassName, menuSeparatorClassName } from "../variants/menu.js"
 import {
   ComboboxCollection,
   ComboboxContent,
@@ -17,11 +18,6 @@ import {
   ComboboxList,
   ComboboxStatus,
 } from "./combobox.js"
-
-// Ver renderShellTrigger en combobox.tsx: el input siempre está afuera del popup.
-const renderShellTrigger = (props: React.ComponentProps<"button">) => (
-  <button {...props} id={undefined} role={undefined} tabIndex={-1} aria-haspopup="listbox" />
-)
 
 // Texto libre con sugerencias: el valor es el texto del input (value/onValueChange son strings).
 // Popup, lista, grupos, vacío y estado son las mismas piezas que Combobox.
@@ -91,7 +87,7 @@ function AutocompleteItem({ className, ...props }: AutocompleteItemProps) {
 type AutocompleteSeparatorProps = WithClassName<AutocompletePrimitive.Separator.Props>
 
 function AutocompleteSeparator({ className, ...props }: AutocompleteSeparatorProps) {
-  return <AutocompletePrimitive.Separator data-slot="autocomplete-separator" className={cn("-mx-1 my-1 h-px bg-gray-400", className)} {...props} />
+  return <AutocompletePrimitive.Separator data-slot="autocomplete-separator" className={cn(menuSeparatorClassName, className)} {...props} />
 }
 
 export {

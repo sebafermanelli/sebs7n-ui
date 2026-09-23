@@ -1,10 +1,49 @@
-// Superficie de Input para controles compuestos (Combobox, Autocomplete): el borde, el foco y los
-// estados van en el contenedor, y el <input> de adentro es transparente. Mismo cuerpo que Input.
+// El cuerpo de los controles de formulario, y la superficie que lo imita cuando el control es
+// compuesto (Combobox, Autocomplete).
+//
+// El mismo borde, el mismo hover, el mismo foco, el mismo deshabilitado y el mismo inválido
+// estaban escritos en ocho lugares —Input, Textarea, OTPField, SelectTrigger, ToolbarInput y la
+// superficie de acá—. Subir el contraste del borde de foco, que es exactamente lo que pidió la
+// auditoría de accesibilidad, había que hacerlo ocho veces y acertarle a las ocho.
+
+/**
+ * La superficie de un control: borde, fondo, texto, transición y hover.
+ *
+ * No trae alto ni padding: los pone cada control, porque no coinciden —un `<textarea>` crece con
+ * el contenido, una casilla de OTP es cuadrada y un input de barra de herramientas mide 32px—.
+ */
+export const inputControlClassName =
+  "rounded-md border border-gray-400 bg-background-100 text-copy-14 text-gray-1000 outline-none transition-control hover:border-gray-500"
+
+/** Los tres altos del sistema, por `data-size`. El `lg` sube también la tipografía. */
+export const inputSizeClassName = "data-[size=sm]:h-8 data-[size=md]:h-10 data-[size=lg]:h-12 data-[size=lg]:text-copy-16"
+
+/**
+ * Deshabilitado por `data-disabled`, que es el que pone Base UI —y también un `Fieldset`
+ * deshabilitado sobre sus hijos—. El `disabled:` nativo lo agrega aparte el que lo necesite.
+ */
+export const inputDisabledClassName =
+  "data-disabled:cursor-not-allowed data-disabled:border-gray-400 data-disabled:bg-gray-100 data-disabled:text-gray-700"
+
+/**
+ * Inválido: borde rojo y, al enfocar, el halo rojo.
+ *
+ * Por `aria-invalid` y por `data-invalid`: el primero lo pone quien lo escribe a mano, el
+ * segundo lo pone el `Field` cuando la validación falla. Los dos pasan.
+ */
+export const inputInvalidClassName =
+  "aria-invalid:border-red-800 aria-invalid:focus:focus-border-error data-invalid:border-red-800 data-invalid:focus:focus-border-error"
+
+/**
+ * Superficie de Input para controles compuestos (Combobox, Autocomplete): el borde, el foco y los
+ * estados van en el contenedor, y el `<input>` de adentro es transparente.
+ *
+ * El foco y el inválido no pueden salir de las constantes de arriba: acá el `<input>` que recibe
+ * el foco es un hijo, así que van por `has-[…]` sobre el contenedor. El resto sí es el mismo.
+ */
 export const inputShellClassName =
-  "flex w-full min-w-0 items-center rounded-md border border-gray-400 bg-background-100 text-copy-14 text-gray-1000 transition-control " +
-  "data-[size=sm]:h-8 data-[size=md]:h-10 data-[size=lg]:h-12 data-[size=lg]:text-copy-16 " +
-  "hover:border-gray-500 has-[input:focus]:focus-border " +
-  "data-disabled:cursor-not-allowed data-disabled:border-gray-400 data-disabled:bg-gray-100 data-disabled:text-gray-700 " +
+  `flex w-full min-w-0 items-center ${inputControlClassName} ${inputSizeClassName} ${inputDisabledClassName} ` +
+  "has-[input:focus]:focus-border " +
   "has-[input[aria-invalid=true]]:border-red-800 has-[input[aria-invalid=true]:focus]:focus-border-error " +
   "data-invalid:border-red-800 data-invalid:has-[input:focus]:focus-border-error"
 

@@ -5,7 +5,7 @@ import { Menu as MenuPrimitive } from "@base-ui/react/menu"
 import { CheckIcon, ChevronRightIcon } from "lucide-react"
 
 import { cn, type WithClassName } from "../lib/utils.js"
-import { menuItemClassName, menuPopupClassName, type MenuInsetProps } from "../variants/menu.js"
+import { menuItemClassName, menuLabelClassName, menuPopupClassName, menuSeparatorClassName, type MenuInsetProps } from "../variants/menu.js"
 
 function DropdownMenu(props: MenuPrimitive.Root.Props) {
   return <MenuPrimitive.Root data-slot="dropdown-menu" {...props} />
@@ -39,7 +39,7 @@ function DropdownMenuLabel({ className, inset, ...props }: DropdownMenuLabelProp
     <MenuPrimitive.GroupLabel
       data-slot="dropdown-menu-label"
       data-inset={inset ? "" : undefined}
-      className={cn("px-2 py-1.5 text-label-12 text-gray-900 data-inset:pl-8", className)}
+      className={cn(menuLabelClassName, "data-inset:pl-8", className)}
       {...props}
     />
   )
@@ -97,7 +97,7 @@ function DropdownMenuRadioItem({ className, children, ...props }: DropdownMenuRa
 type DropdownMenuSeparatorProps = WithClassName<MenuPrimitive.Separator.Props>
 
 function DropdownMenuSeparator({ className, ...props }: DropdownMenuSeparatorProps) {
-  return <MenuPrimitive.Separator data-slot="dropdown-menu-separator" className={cn("-mx-1 my-1 h-px bg-gray-400", className)} {...props} />
+  return <MenuPrimitive.Separator data-slot="dropdown-menu-separator" className={cn(menuSeparatorClassName, className)} {...props} />
 }
 
 function DropdownMenuShortcut({ className, ...props }: React.ComponentProps<"span">) {
