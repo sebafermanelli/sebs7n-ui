@@ -5,6 +5,16 @@
 //
 // `detallado: true` = página escrita a mano (ejemplos + reglas de uso).
 // El resto: demo básica + props generadas.
+//
+// `related` es **direccional**, no un grafo simétrico: es «estando acá, a dónde te
+// puede convenir ir», y eso no vale igual para los dos lados. `Spinner` manda a
+// `Button` porque el caso real es poner un spinner adentro de un botón; `Button` no
+// manda a `Spinner` porque quien llega a la página del botón no está buscando eso.
+// Lo mismo con `Form → Button`, `Pagination → Button` o `Kbd → DropdownMenu`: hacer
+// recíprocos los 63 pares que hoy no lo son convertiría la sección «Relacionados» de
+// los componentes más genéricos en un índice del sitio, que ya existe y está arriba.
+// Lo que sí se verifica es que todo slug de `related` exista: eso está en
+// `test/generado.test.ts`.
 
 export const GROUPS = [
   { id: "fundamentos", title: "Fundamentos" },

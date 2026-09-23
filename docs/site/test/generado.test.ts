@@ -19,6 +19,20 @@ const rutas: { href: string; title: string }[] = [
   })),
 ]
 
+// `related` es direccional a propósito (el porqué está en `content/meta.mjs`), así que
+// no se verifica reciprocidad. Lo que sí: que cada enlace apunte a un componente que
+// existe, porque un slug mal escrito no rompe nada —sale un link a 404 y listo—.
+describe("related", () => {
+  it("todo slug de related existe como componente", () => {
+    const slugs = new Set(site.components.map((component: { slug: string }) => component.slug))
+    const rotos: string[] = []
+    for (const component of site.components as { slug: string; related: string[] }[]) {
+      for (const otro of component.related) if (!slugs.has(otro)) rotos.push(`${component.slug} → ${otro}`)
+    }
+    expect(rotos).toEqual([])
+  })
+})
+
 describe("markdown por página", () => {
   it("hay un .md por cada página del sitio", () => {
     const faltan = rutas.filter((ruta) => !existsSync(join(here, "public", `${ruta.href}.md`)))
