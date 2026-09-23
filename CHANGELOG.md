@@ -9,6 +9,69 @@ major.
 
 ## [Unreleased]
 
+Fase 1 de la auditoría de 0.4.0: los bugs con evidencia.
+
+### Fixed
+
+- **`shadcn add` generaba código que no compila.** `npx shadcn@latest add
+  <url>/r/button.json` dejaba un `components/ui/button.tsx` que se importaba a sí
+  mismo (`TS2303 Circular definition of import alias 'buttonVariants'`). El CLI
+  resuelve los imports por basename cuando la ruta exacta no está, y
+  `variants/button.ts` se copiaba como `button.ts` al lado de `button.tsx`. Las
+  variantes ahora se copian como `<x>-variants.ts` y los helpers como
+  `<x>-helpers.ts`, con un guard en el generador para que no vuelva a pasar.
+- **El registry no traía los tokens.** Ítem `theme` de tipo `registry:theme`, del
+  que depende todo componente: la paleta, las cuatro variables de marca, los
+  radios, las sombras y las utilidades de foco y tipografía. Antes el componente
+  copiado compilaba y se veía sin estilo.
+- **`TabsContent` no mostraba el foco** al llegar por Tab: tenía `outline-none`
+  sin reemplazo (WCAG 2.4.7).
+- **`Button variant="destructive"` abajo de AA** (WCAG 1.4.3). Claro en reposo
+  daba 4,36:1; oscuro en hover 2,99:1 y en active **1,81:1**. Los tres estados
+  pasan a blanco puro sobre rojos que oscurecen en los dos temas: 4,75 / 6,65 /
+  10,70 en claro y 4,79 / 6,65 / 10,70 en oscuro.
+- **Atajos de menú de `DropdownMenu`, `ContextMenu` y `Menubar`** de `gray-700` a
+  `gray-900`: en claro pasan de 3,23:1 sobre el popup y 2,71:1 sobre el ítem
+  resaltado a 8,45:1 y 7,09:1. Son contenido, no decoración.
+- **`exports` que no resolvían.** `sebs7n-ui/tokens/*.json` caía en el comodín
+  `./*` y apuntaba a un archivo inexistente; ahora tiene su patrón propio. Y
+  `src/lib/shell-context.ts` —interno— era alcanzable por
+  `sebs7n-ui/lib/shell-context`: se muda a `src/internal/`, que ningún patrón de
+  `exports` alcanza.
+- **Links rotos del sitio:** `llms.txt` mandaba a `/registry` y `/registry.md`,
+  que no existen (lo que se sirve es `/r/registry.json`), y tres demos linkeaban
+  rutas inventadas. Hay un test que recorre las dos superficies.
+
+### Changed
+
+- **El `@source` del `dist` lo pone el paquete.** `theme.css` trae
+  `@source "../../dist"`, así que la app ya no escribe ninguna ruta a
+  `node_modules`. Olvidarla —o errarle— dejaba la app entera sin estilo sin un
+  solo warning. Se documenta `@source not` como opt-in para achicar el CSS.
+  **Si tu `globals.css` ya tiene el `@source` a mano, sacalo**: duplicado no
+  rompe, pero no hace falta.
+- **Las props heredadas que la doc describe salen en la tabla** del sitio,
+  marcadas «heredada de Base UI»: 19 descripciones escritas a mano no se
+  mostraban en ninguna parte. El generador ahora falla si `meta.mjs` nombra una
+  prop que no existe.
+- **La tabla de subpaths se genera** desde `package.json#exports` (`npm run
+  subpaths`). Estaba a mano en dos archivos que se contradecían y a los dos les
+  faltaban entry points.
+
+### Docs
+
+- `Select` necesita `items` para que el trigger muestre la etiqueta y no el
+  `value` crudo: documentado y aplicado en las tres demos.
+- La doc de teclado de `Tabs` decía que las flechas activan al pasar; la
+  activación es manual (Enter o Espacio), que es el patrón de APG para paneles
+  caros.
+- Son **cuatro** variables de marca, no tres: faltaba `--brand-contrast`.
+- El ejemplo del layout raíz del README importa por subpath, con el bloque de
+  ESLint `no-restricted-imports` para las apps.
+- `geist` es peer **opcional**, no "no declarado"; y el paso de verificación de
+  la instalación usaba `bg-blue-500`, que sí compila (Geist tiene escala `blue`).
+- Se sacan las referencias a versiones que nunca existieron (1.2, 1.3.0, 1.4).
+
 ## [0.4.0] - 2026-09-23
 
 Con esta versión el paquete cubre **todas las primitivas de Base UI**: 58
