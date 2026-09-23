@@ -73,6 +73,8 @@ function ThemeSwitcher({ className, labels: labelsProp, onKeyDown, ...props }: T
       <RadioGroupPrimitive
         aria-label={labels.group}
         value={mounted ? theme : ""}
+        // El `value` de Base UI es `unknown` porque un RadioGroup acepta cualquier valor; acá
+        // los tres son los strings de `options`, así que el cast dice lo que el tipo no sabe.
         onValueChange={(value) => setTheme(value as string)}
         className={groupClassName}
       >
@@ -111,6 +113,8 @@ function ThemeMenuRadio({ className, labels: labelsProp, ...props }: ThemeMenuRa
       data-slot="theme-menu-radio"
       aria-label={labels.group}
       value={mounted ? theme : ""}
+      // Mismo caso que en ThemeSwitcher: `value` es `unknown` y los tres valores posibles
+      // son los strings de `options`.
       onValueChange={(value) => setTheme(value as string)}
       className={cn(groupClassName, className)}
       {...props}

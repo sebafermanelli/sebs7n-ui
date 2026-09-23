@@ -100,6 +100,9 @@ export async function validate<Schema extends StandardSchemaV1>(
 ): Promise<ValidationResult<InferOutput<Schema>>> {
   const resultado = await schema["~standard"].validate(values)
   if (resultado.issues) return { ok: false, errors: agrupar(resultado.issues) }
+  // Standard Schema declara el resultado como una unión de "falló" | "salió bien", pero la
+  // discrimina por `issues` opcional, no por un campo literal: TypeScript no estrecha `value`
+  // con el `if` de arriba. El cast es el estrechamiento que el tipo del estándar no permite.
   return { ok: true, value: resultado.value as InferOutput<Schema> }
 }
 

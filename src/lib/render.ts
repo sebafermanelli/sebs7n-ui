@@ -26,6 +26,11 @@ export function renderElement(
   props: Record<string, unknown> & { className?: string }
 ): ReactElement {
   if (!render || !isValidElement(render)) return createElement(fallback, props)
+  // `RenderElement` solo promete `className`, que es lo único que este módulo necesita mirar.
+  // Los dos casts abren eso a "cualquier prop": el primero para poder leer las que trae el
+  // llamador (su `href`, su `onClick`) y el segundo para que `cloneElement` acepte las que le
+  // pasamos. Tipar el elemento entero pediría un genérico en cada componente que lo usa, y lo
+  // que se gana es nada: las props del llamador se copian tal cual, no se leen por nombre.
   const own = render.props as Record<string, unknown> & { className?: string }
   return cloneElement(render as ReactElement<Record<string, unknown>>, {
     ...props,

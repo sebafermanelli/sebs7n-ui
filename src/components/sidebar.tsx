@@ -82,11 +82,14 @@ function SidebarFooter({ className, ...props }: React.ComponentProps<"div">) {
 const SidebarGroupContext = React.createContext<string | null>(null)
 
 function findGroupLabel(children: React.ReactNode): React.ReactElement<{ id?: string }> | undefined {
+  // El genérico de `isValidElement` hace de type guard: describe las dos props que este
+  // recorrido mira —el `id` del label y los `children` del fragment— y evita los dos casts
+  // que había acá, que decían lo mismo pero después del `if`.
   for (const child of React.Children.toArray(children)) {
-    if (!React.isValidElement(child)) continue
-    if (child.type === SidebarGroupLabel) return child as React.ReactElement<{ id?: string }>
+    if (!React.isValidElement<{ id?: string; children?: React.ReactNode }>(child)) continue
+    if (child.type === SidebarGroupLabel) return child
     if (child.type === React.Fragment) {
-      const nested = findGroupLabel((child.props as { children?: React.ReactNode }).children)
+      const nested = findGroupLabel(child.props.children)
       if (nested) return nested
     }
   }
@@ -223,9 +226,11 @@ function SidebarItem({ className, icon, active = false, tooltip, render, childre
           </>
         ),
       },
-      props,
-      { "data-active": active ? "" : undefined } as React.ComponentProps<"a">
+      props
     ),
+    // `state` es lo que Base UI convierte en `data-*`: de acá salen `data-slot="sidebar-item"`
+    // y, cuando `active` es true, `data-active`. Antes el `data-active` se agregaba además a
+    // mano en un tercer argumento de `mergeProps`, con un cast: era el mismo atributo dos veces.
     state: { slot: "sidebar-item", active },
   })
 

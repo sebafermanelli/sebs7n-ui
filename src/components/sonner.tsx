@@ -6,11 +6,14 @@ import { Toaster as Sonner, type ToasterProps } from "sonner"
 
 // Íconos en el paso 900 de cada color para llegar a 3:1 sobre background-100.
 function Toaster(props: ToasterProps) {
-  const { resolvedTheme = "light" } = useTheme()
+  const { resolvedTheme } = useTheme()
 
   return (
     <Sonner
-      theme={resolvedTheme as ToasterProps["theme"]}
+      // `resolvedTheme` de next-themes es `string | undefined` y el `theme` de Sonner es una
+      // unión cerrada. Se compara en vez de castear: así el default —claro— queda escrito y
+      // no depende de que el string que llegue sea uno de los dos que Sonner entiende.
+      theme={resolvedTheme === "dark" ? "dark" : "light"}
       position="bottom-right"
       duration={4000}
       className="toaster group"

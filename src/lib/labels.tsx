@@ -35,6 +35,12 @@ import * as React from "react"
  * lista de los que se pueden renderizar en un Server Component, y eso vale más
  * que la comodidad: sus textos se pasan por prop (`ellipsisLabel`,
  * `removeLabel`, `breadcrumbLabel`, `labels`, `aria-label`), que es como venían.
+ *
+ * **Pendiente para la próxima major:** esos tres sueltos —`ellipsisLabel` de
+ * `Breadcrumb` y `Pagination`, `breadcrumbLabel`, `removeLabel` de `Tag`— tendrían
+ * que pasar a un objeto `labels`, como los demás. Hoy conviven dos formas de decir
+ * lo mismo. No se cambia acá porque renombrar una prop rompe a quien la use y no
+ * hay nada que gane con eso ahora: queda anotado y se hace de una sola vez.
  */
 export type Labels = {
   appShell: {
