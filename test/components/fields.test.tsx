@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react"
 import { describe, expect, it } from "vitest"
 
+import { Field, FieldLabel } from "../../src/components/field"
 import { Input } from "../../src/components/input"
 import { Label } from "../../src/components/label"
 import { Textarea } from "../../src/components/textarea"
@@ -64,6 +65,29 @@ describe("Textarea", () => {
   it("lleva la clase peer para que Label se atenúe cuando está deshabilitada", () => {
     render(<Textarea placeholder="Notas" />)
     expect(screen.getByPlaceholderText("Notas")).toHaveClass("peer")
+  })
+
+  // La regresión que motivó este test: era el único control del paquete
+  // construido sobre un elemento nativo en vez de Base UI, así que adentro de un
+  // `Field` se quedaba sin `name` y sin etiqueta. El formulario se veía bien y
+  // el mensaje que escribía el usuario no se enviaba.
+  it("adentro de un Field recibe el name y queda nombrado por la etiqueta", () => {
+    render(
+      <Field name="mensaje">
+        <FieldLabel>Mensaje</FieldLabel>
+        <Textarea />
+      </Field>
+    )
+    const textarea = screen.getByLabelText("Mensaje")
+    expect(textarea.tagName).toBe("TEXTAREA")
+    expect(textarea).toHaveAttribute("name", "mensaje")
+  })
+
+  it("fuera de un Field sigue siendo un textarea común", () => {
+    render(<Textarea name="notas" placeholder="Notas" />)
+    const textarea = screen.getByPlaceholderText("Notas")
+    expect(textarea.tagName).toBe("TEXTAREA")
+    expect(textarea).toHaveAttribute("name", "notas")
   })
 })
 

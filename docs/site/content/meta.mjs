@@ -318,7 +318,10 @@ export const COMPONENTS = {
     group: "formularios",
     description: "Texto largo, con el mismo cuerpo y los mismos estados que Input.",
     keyboard: [["Tab", "Entra y sale. Dentro, Tab escribe una tabulación solo si la app lo implementa."]],
-    a11y: ["Mismo contrato que `Input`: `Label` asociado y `aria-invalid` para el error."],
+    a11y: [
+      "Mismo contrato que `Input`: adentro de un `Field` la etiqueta, la ayuda y el error se atan solos; suelta, `Label` asociado y `aria-invalid` a mano.",
+      "Renderiza a través de `Field.Control`, no un `<textarea>` suelto: es lo que hace que reciba el `name` del campo y quede nombrada por su etiqueta.",
+    ],
     usage: [
       "`rows` define el alto inicial. Para que crezca solo hace falta JS de la app: el paquete no lo trae.",
       "Si el texto tiene formato (markdown, código), decilo en la ayuda debajo del campo.",

@@ -4,6 +4,21 @@ Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Versionado
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-09-23
+
+### Fixed
+
+- **`Textarea` adentro de un `Field` se quedaba sin `name` y sin etiqueta.** Era
+  el único control del paquete construido sobre un `<textarea>` nativo en lugar
+  de una primitiva de Base UI, así que no se enganchaba al campo: el formulario
+  se veía perfecto, el lector de pantalla no anunciaba la etiqueta, y lo que el
+  usuario escribía **no se enviaba**. Ahora renderiza a través de
+  `Field.Control`, como el resto. Fuera de un `Field` se comporta igual que
+  antes. Apareció migrando el formulario de contacto de un sitio real, y hay un
+  test que lo fija.
+- La documentación de `Field` afirmaba que `Input`, `Textarea` y `Select` se
+  enganchaban solos. De los tres, `Textarea` no lo hacía. Ahora es cierto.
+
 ## [0.3.0] - 2026-09-23
 
 Formularios. Hasta acá el sistema traía los controles sueltos —`Input`,
