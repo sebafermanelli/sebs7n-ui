@@ -6,7 +6,7 @@ import { contrastRatio, luminanceOfHex, luminanceOfOklch, type Oklch } from "../
 
 type Theme = { base: number[]; contrast: string }
 
-// tokens/brands.json son las marcas de ejemplo del sistema (playground y demos).
+// tokens/brands.json son las marcas de ejemplo del sistema (demos del sitio).
 // Una app real define sus tres variables en su propio CSS y no toca este archivo,
 // pero el umbral que se verifica acá es el mismo que tiene que cumplir.
 describe("brand-700 + brand-contrast", () => {

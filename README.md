@@ -322,7 +322,7 @@ dos primeras. La regla es una sola: **el texto sobre `brand-700` tiene que llega
 a 4,5:1**. Si el acento es claro, `--brand-contrast: #000`.
 
 `tokens/brands.json` trae cuatro marcas de ejemplo (`teal`, `terracotta`,
-`emerald`, `blue`) que usan el playground y los tests de contraste. **Son solo
+`emerald`, `blue`) que usan las demos del sitio y los tests de contraste. **Son solo
 demos del sistema**: una app real no las usa ni edita ese archivo.
 
 ### Claro y oscuro
@@ -590,24 +590,13 @@ npm run tokens    # regenera src/styles/colors.css desde tokens/geist.json
 npm run build     # dist/ (tsc)
 ```
 
-Playground — todas las primitivas en todos sus estados, las cuatro marcas de
-ejemplo, claro y oscuro:
-
-```bash
-cd playground && npm install && npm run dev   # http://localhost:4000
-```
-
-`npm run dev` empaqueta el paquete con `npm pack` y lo instala como tarball. Es a
-propósito, y no es lo que hace una app: una app instala desde npm
-(`pnpm add sebs7n-ui`). Acá se empaca el código local para probar los cambios sin
-publicar, y con exactamente los archivos que salen en el tarball publicado.
-
 ## Sitio de documentación
 
 Vive en `docs/site/` y es una app de Next 16 + Tailwind v4 que **usa el propio
-design system**: es su mejor demo. Consume el paquete con `npm pack`, igual que el
-playground y por la misma razón: documenta el código de este repo, no la última
-versión publicada en npm. Una app normal instala desde npm.
+design system**: es su mejor demo, y el lugar donde se prueba cada componente en
+todos sus estados. Consume el paquete con `npm pack` y no desde npm, a propósito:
+documenta el código de este repo, no la última versión publicada. Una app normal
+sí instala desde npm.
 
 ```bash
 cd docs/site

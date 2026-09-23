@@ -15,7 +15,7 @@ De ahí el paquete deriva la escala `brand-100…1000` y `brand-contrast`, con `
 
 **La regla es una sola: el texto sobre `brand-700` tiene que llegar a 4,5:1.** Si el acento es claro, `--brand-contrast: #000` (y su par oscuro, si el acento oscuro también lo es). Hay un test en el paquete que recalcula el ratio desde OKLCH y falla si una marca no da.
 
-`tokens/brands.json` trae cuatro marcas de ejemplo (`teal`, `terracotta`, `emerald`, `blue`) que usan el playground y los tests de contraste. **Son solo demos del sistema**: una app real no las usa ni edita ese archivo.
+`tokens/brands.json` trae cuatro marcas de ejemplo (`teal`, `terracotta`, `emerald`, `blue`) que usan las demos del sitio y los tests de contraste. **Son solo demos del sistema**: una app real no las usa ni edita ese archivo.
 
 ### Testear tu propia marca
 
