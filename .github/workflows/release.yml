@@ -1,0 +1,58 @@
+name: Release
+
+# El tag es el disparador y la fuente de verdad: `git tag v0.5.0 && git push --tags` publica.
+# No hay `workflow_dispatch` a propósito, para que no exista una versión en npm sin tag en git.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  publicar:
+    name: Publicar en npm
+    runs-on: ubuntu-latest
+    permissions:
+      # El token OIDC que npm canjea por el permiso de publicar. Trusted publishing: no hay
+      # ningún secret en este repo ni token de larga vida en ninguna `.npmrc`.
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          cache: npm
+
+      # Trusted publishing necesita npm >= 11.5.1. Node 24 ya trae una 11.x, pero la versión
+      # exacta del runner cambia sin aviso y el error que da una npm vieja ("provenance
+      # requires an auth token") manda a buscar en la dirección equivocada.
+      - name: Actualizar npm
+        run: npm install -g npm@latest
+
+      # Sin esto se puede publicar 0.4.0 bajo el tag v0.5.0 y nadie se entera hasta que una app
+      # instala una versión que no es la que dice el changelog. npm no deja republicar: el error
+      # tiene que saltar antes del publish, no después.
+      - name: La versión del package.json tiene que ser la del tag
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          pkg="$(node -p "require('./package.json').version")"
+          if [ "$tag" != "$pkg" ]; then
+            echo "::error::el tag ${GITHUB_REF_NAME} dice $tag y package.json dice $pkg"
+            exit 1
+          fi
+          echo "tag y package.json coinciden en $pkg"
+
+      # Igual que en CI: `npm ci` corre `prepare`, así que acá también queda compilado `dist/`.
+      - run: npm ci
+
+      - run: npm test
+
+      # `--provenance` firma el paquete con el OIDC de arriba: npm muestra de qué commit y de
+      # qué workflow salió el tarball. `--access public` está también en `publishConfig`, va
+      # explícito para que leyendo este archivo se sepa qué se publica.
+      - name: npm publish
+        run: npm publish --provenance --access public
