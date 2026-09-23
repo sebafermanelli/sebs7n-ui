@@ -60,6 +60,29 @@ describe("Field", () => {
     expect(screen.queryByText(/./, { selector: "[data-slot=field-error]" })).toBeNull()
   })
 
+  // Con `validationMode="onChange"` el error aparece con el foco ya adentro del
+  // campo, y el `aria-describedby` solo se lee al ENTRAR: sin región viva, nada
+  // lo anuncia. `alert` es opt-in porque `role="alert"` interrumpe.
+  it("`alert` pone role=alert en el mensaje, y sin él no hay región viva", async () => {
+    const campo = (alert: boolean) => (
+      <Field
+        name="email"
+        validate={(valor) => (String(valor).includes("@") ? null : "Revisá el email")}
+        validationMode="onChange"
+      >
+        <FieldLabel>Email</FieldLabel>
+        <Input />
+        <FieldError alert={alert} />
+      </Field>
+    )
+    const { rerender } = render(campo(false))
+    await userEvent.type(screen.getByLabelText("Email"), "x")
+    expect(await screen.findByText("Revisá el email")).not.toHaveAttribute("role")
+
+    rerender(campo(true))
+    expect(await screen.findByRole("alert")).toHaveTextContent("Revisá el email")
+  })
+
   it("valida con la función del campo y muestra el mensaje al salir del input", async () => {
     render(
       <Field name="email" validate={(valor) => (String(valor).includes("@") ? null : "Revisá el email")} validationMode="onBlur">

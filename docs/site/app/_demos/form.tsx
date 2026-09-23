@@ -19,6 +19,9 @@ export function Valores() {
       <Field name="nombre">
         <FieldLabel required>Nombre</FieldLabel>
         <Input required />
+        {/* El mensaje se escribe siempre: el del navegador sale en el idioma
+            del navegador, no en el de la página. */}
+        <FieldError match="valueMissing">Falta el nombre</FieldError>
       </Field>
       <Field name="empresa">
         <FieldLabel>Empresa</FieldLabel>

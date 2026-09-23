@@ -92,16 +92,43 @@ function FieldDescription({ className, ...props }: FieldDescriptionProps) {
  * navegador, el de `validate` o el que mandó el servidor por `Form`—, y no
  * ocupa lugar mientras el campo esté bien.
  *
- * Con `match` se escribe un mensaje propio para un motivo puntual
- * (`match="valueMissing"`, `match="typeMismatch"`), que es mejor que el del
- * navegador porque puede hablar del dato y no del input.
+ * **Escribí siempre el mensaje**, con `match` o con `validate`. El del
+ * navegador sale en el idioma del navegador y no en el de la página: una
+ * persona con Chrome en inglés leyendo un formulario en español recibe "Please
+ * fill out this field" abajo de «Razón social». `match="valueMissing"`,
+ * `match="typeMismatch"` y compañía sirven además para hablar del dato —«Falta
+ * la razón social»— en vez del input.
+ *
+ * El mensaje se lee solo al enfocar el campo, porque el campo lo referencia con
+ * `aria-describedby`. Con validación al enviar alcanza: `Form` mueve el foco al
+ * primer campo inválido y ahí se anuncia el nombre del campo y su error, en ese
+ * orden, que es lo que hace falta.
+ *
+ * Con `validationMode="onChange"` eso no pasa: el error aparece mientras se
+ * escribe, con el foco ya adentro del campo, y nada lo anuncia. Para ese caso
+ * está `alert`, que le pone `role="alert"` al mensaje para que se lea apenas
+ * aparece.
+ *
+ * **`alert` es opt-in a propósito.** `role="alert"` es una región viva
+ * *assertive*: interrumpe lo que el lector esté diciendo. En el camino de
+ * enviar eso duplica —el mensaje se anuncia por la región viva y otra vez
+ * cuando el foco llega al campo— y encima corta el anuncio del nombre del
+ * campo, que es la mitad que da contexto. Prendelo solo donde el error puede
+ * aparecer sin que el foco se mueva. No está verificado con un lector real: el
+ * razonamiento sale del modelo de regiones vivas, no de una sesión de
+ * VoiceOver.
  */
-type FieldErrorProps = Omit<FieldPrimitive.Error.Props, "className"> & { className?: string }
+type FieldErrorProps = Omit<FieldPrimitive.Error.Props, "className"> & {
+  className?: string
+  /** `role="alert"` para que el error se anuncie al aparecer. Solo con `validationMode="onChange"`. */
+  alert?: boolean
+}
 
-function FieldError({ className, ...props }: FieldErrorProps) {
+function FieldError({ className, alert = false, ...props }: FieldErrorProps) {
   return (
     <FieldPrimitive.Error
       data-slot="field-error"
+      role={alert ? "alert" : undefined}
       className={cn(
         "text-copy-13 text-red-900",
         // Con más de un mensaje, Base UI los mete en un `<ul>` sin estilo, que

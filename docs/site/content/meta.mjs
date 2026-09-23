@@ -225,6 +225,8 @@ export const COMPONENTS = {
       "**Esto es lo que resuelve el componente.** La etiqueta nombra al control, la ayuda y el error lo describen, y el error pone `aria-invalid`: todo por anidar las partes, sin `useId`, sin `htmlFor` y sin armar un `aria-describedby` condicional que es justo lo que se olvida.",
       "El asterisco de `required` es `aria-hidden`: nadie escucha \"Razón social asterisco\". Que el campo sea obligatorio lo anuncia el `required` del control.",
       "`FieldError` no ocupa lugar mientras el campo está bien, y cuando aparece ya está referenciado: no hace falta mover el foco para que se lea.",
+      "**Escribí siempre el mensaje, con `match` o con `validate`.** El del navegador sale en el idioma del navegador y no en el de la página: con Chrome en inglés, abajo de «Razón social» aparece «Please fill out this field». `match=\"valueMissing\"` y compañía además hablan del dato —«Falta la razón social»— en vez del input.",
+      "El mensaje se lee al enfocar el campo, porque el campo lo referencia con `aria-describedby`. Con `validationMode=\"onChange\"` eso no alcanza: el error aparece con el foco ya adentro y nada lo anuncia. Para ese caso está `alert`, que le pone `role=\"alert\"`. Es opt-in porque `role=\"alert\"` interrumpe: en el camino de enviar duplicaría el anuncio y cortaría el del nombre del campo, que es la mitad que da contexto.",
       "`Input`, `Textarea` y `Select` se enganchan solos. Para cualquier otro control va `FieldControl` con `render`.",
       "**Un control propio se engancha solo si reenvía lo que recibe.** `FieldControl` le pasa `id`, `name`, `aria-describedby`, `aria-invalid` y una `ref`; un componente que declara `id` y `name` como props propias y no hace spread del resto se queda sin nada, y la etiqueta del campo apunta al vacío. Pasa seguido con un date picker o un autocomplete hechos con un `<input type=\"hidden\">` más un botón: el arreglo va adentro de ese componente, no en cada uso.",
     ],
@@ -279,6 +281,7 @@ export const COMPONENTS = {
       "Es un `<form>` de verdad: lo entiende el navegador y sigue funcionando sin JavaScript.",
       "Al fallar la validación, el foco va al primer campo con error en vez de quedarse en el botón.",
       "Cada error aparece en su campo, no en un cartel arriba de todo: quien navega con lector de pantalla lo encuentra donde tiene que arreglarlo.",
+      "**Escribí siempre el mensaje del error, con `match` o con `validate`.** El del navegador sale en el idioma del navegador, no en el de la página: un formulario en español puede terminar diciendo «Please fill out this field». Es el error más fácil de no ver, porque en la máquina de quien lo programó el navegador está en español.",
     ],
     usage: [
       "**`errors` es para lo que el navegador no puede saber**: que un email ya está usado, que el cupón venció, que el CUIT no existe en AFIP. Se limpia solo cuando el campo cambia.",
