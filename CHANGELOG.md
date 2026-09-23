@@ -163,6 +163,20 @@ Fase 2 de la auditoría de 0.4.0: accesibilidad.
 
 Fase 3 de la auditoría de 0.4.0: rendimiento.
 
+### Changed
+
+- **El sitio de docs carga las demos por página, no las 59 de golpe.**
+  `/docs/components/<slug>` es una sola ruta para los 58 componentes, así que todo
+  componente de cliente alcanzable desde ella entraba en el manifiesto de las 58
+  páginas: el registry de demos metía un chunk de 454 KB raw / 137 KB gz en cada
+  una para mostrar dos o tres. Ahora el registry es un mapa de `next/dynamic`
+  detrás de un `"use client"` (`app/_components/demo-slot.tsx`), y el chunk de
+  cada demo se pide solo donde se usa. Medido sumando los `<script>` del HTML
+  prerenderizado y comprimiendo con gzip: **421,3 → 298,9 KB gz** por página de
+  componente (−29 %). Las páginas sin demos pagan 6,6 KB gz más porque Turbopack
+  reparte el código compartido en más chunks (home 284,0 → 290,6). El
+  prerenderizado y el «Ver el código» quedan igual.
+
 ### Removed
 
 - **`sebs7n-ui/styles.css`, la hoja precompilada** (70 KB, el 15 % del tarball).

@@ -243,24 +243,29 @@ writeFileSync(join(generated, "search.json"), JSON.stringify(search, null, 2))
 
 // Registro de demos: id → componente. Lo escribe el generador para que no haya
 // una lista a mano que se desactualice al agregar una demo.
+//
+// Cada entrada es un `next/dynamic`, no un import estático. Antes esto era un
+// barrel con 59 `import * as`, y como las 59 demos son componentes de cliente,
+// `/docs/components/<slug>` —que es una sola ruta dinámica— se llevaba las 59 al
+// bundle para mostrar dos o tres: 454 KB raw / 137 KB gz de chunk en cada página.
+// Con `import()` el bundler corta un chunk por demo y la página pide solo los
+// suyos. `ssr` queda en su default (`true`): el HTML prerenderizado tiene que
+// seguir trayendo la demo dibujada, no un hueco.
 const registryLines = [
   "// Generado por scripts/generate.mjs. No editar.",
-  ...demoFiles.map((file) => `import * as ${varName(basename(file, ".tsx"))} from "./${basename(file, ".tsx")}"`),
+  'import dynamic from "next/dynamic"',
   "",
-  "export const DEMOS: Record<string, () => React.JSX.Element> = {",
+  "export const DEMOS: Record<string, React.ComponentType> = {",
   ...[...examplesBySlug.entries()].flatMap(([slug, examples]) =>
-    examples.map((example) => `  ${JSON.stringify(example.id)}: ${varName(slug)}.${example.component},`)
+    examples.map(
+      (example) =>
+        `  ${JSON.stringify(example.id)}: dynamic(() => import("./${slug}").then((mod) => ({ default: mod.${example.component} }))),`
+    )
   ),
   "}",
   "",
 ]
 writeFileSync(join(demosDir, "registry.ts"), registryLines.join("\n"))
-
-/** `toggle-group` → `demoToggleGroup`. El prefijo evita chocar con palabras reservadas (`switch`). */
-function varName(slug) {
-  const camel = slug.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase())
-  return `demo${camel[0].toUpperCase()}${camel.slice(1)}`
-}
 
 // Markdown plano, uno por página.
 const publicDir = join(here, "public")
