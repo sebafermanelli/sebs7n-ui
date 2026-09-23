@@ -147,7 +147,7 @@ import { cn } from "sebs7n-ui/lib/utils"
 |---|---|
 | `sebs7n-ui/<componente>` | `src/components/<componente>.tsx` (kebab-case: `alert-dialog`, `app-shell`, `user-menu`, …) |
 | `sebs7n-ui/variants/<nombre>` | `src/variants/<nombre>.ts` (`button`, `badge`, `card`, `link`, `menu`, `sidebar`, `input`, `toggle`) |
-| `sebs7n-ui/lib/<nombre>` | `src/lib/<nombre>.ts` (`utils`) |
+| `sebs7n-ui/lib/<nombre>` | `src/lib/<nombre>.ts` (`utils`, `render`) |
 
 Por qué: el barrel hace `export *` de ~30 módulos `"use client"`. Next no puede
 podar referencias cliente a través de ese barrel (tampoco con
@@ -250,6 +250,12 @@ opción "Sistema".
 - **Links con forma de botón o card:** `buttonVariants()` / `cardVariants()`
   sobre `<a>` o `<Link>`. No uses `render` para links: Base UI les pone
   `role="button"`.
+- **Breadcrumb: `<nav>` + `<ol>`, y el último no es link.** Los separadores los
+  pone `BreadcrumbList` (decorativos, `aria-hidden`), los links son
+  `linkVariants({ variant: "subtle" })` y el nivel actual es un `BreadcrumbPage`
+  con `aria-current="page"`. Dentro de `PageHeader` va `BreadcrumbList` **suelto**:
+  el `<nav>` ya lo pone la prop `breadcrumb`. De cuatro niveles para arriba,
+  `maxItems={4}` colapsa el medio en un «…» con nombre accesible.
 - **Links de texto:** `linkVariants({ variant })` — `inline` dentro de una frase
   (subrayado siempre, línea tenue que se refuerza en hover), `subtle` suelto y
   secundario (sin subrayado en reposo; en hover sube a `gray-1000` y aparece la

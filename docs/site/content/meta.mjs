@@ -533,6 +533,40 @@ export const COMPONENTS = {
   },
 
   // ──────────────────────────────── Navegación ────────────────────────────────
+  breadcrumb: {
+    title: "Breadcrumb",
+    group: "navegacion",
+    description: "Dónde estoy en la jerarquía del sitio: `<nav>` + `<ol>`, con el medio colapsable en «…».",
+    keyboard: [
+      ["Tab", "Recorre los links. El último nivel no es link, así que no entra al orden de tabulación."],
+      ["Enter", "Navega."],
+    ],
+    a11y: [
+      "Es un `<nav aria-label=\"Migas de pan\">` con un `<ol>` adentro: el orden de los niveles es información, no estilo.",
+      "El separador es un `<li role=\"presentation\" aria-hidden=\"true\">`: el lector lee «Inicio, Clientes, 0012», no «Inicio barra Clientes».",
+      "El último nivel lleva `aria-current=\"page\"` y **no** es un link: no se navega a donde ya estás.",
+      "El «…» del colapso tiene nombre accesible (`ellipsisLabel`); el carácter en sí es `aria-hidden`.",
+      "Sin `\"use client\"`: los `<a>` salen en el HTML del server, que es lo que ve un crawler.",
+    ],
+    usage: [
+      "**Dentro de `PageHeader` va `BreadcrumbList` suelto**, sin `Breadcrumb`: el `<nav>` ya lo pone la prop `breadcrumb`, y dos landmarks anidados confunden.",
+      "**Los separadores los pone `BreadcrumbList`**, no el llamador. Para cambiarlos, `separator={<SlashIcon />}`.",
+      "**No inventes otro estilo de link**: usa `linkVariants({ variant: \"subtle\" })`, el mismo de cualquier link suelto del sistema.",
+      "Con Next, `render={<Link href=\"/clientes\" />}`: sigue siendo un `<a>`, se abre en una pestaña nueva y el crawler lo ve.",
+      "De cuatro niveles para arriba, `maxItems={4}`. En mobile un breadcrumb de seis niveles ocupa tres líneas.",
+      "No es un reemplazo del botón «Volver» del navegador ni de la navegación principal: es contexto.",
+    ],
+    props: {
+      BreadcrumbList: {
+        maxItems: "A partir de cuántos ítems se colapsa el medio. Sin valor, no colapsa nunca.",
+        separator: "Reemplaza el chevron. Es decoración: va `aria-hidden`.",
+      },
+      BreadcrumbLink: {
+        render: "El elemento que se renderiza en lugar del `<a>`: `render={<Link href=\"/x\" />}`. Clona el elemento del llamador —no es el `render` de Base UI— así que sigue siendo un `<a>`.",
+      },
+    },
+    related: ["page-header", "navigation-menu"],
+  },
   "navigation-menu": {
     title: "NavigationMenu",
     group: "navegacion",

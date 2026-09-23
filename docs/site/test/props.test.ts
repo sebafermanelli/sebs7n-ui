@@ -2,7 +2,8 @@
 // TypeScript o del código del paquete hace que deje de encontrar una prop, la
 // tabla queda vacía y el sitio igual compila. Estos casos son los patrones que
 // usa sebs7n-ui, uno por cada forma de declarar props.
-import { join } from "node:path"
+import { readdirSync } from "node:fs"
+import { basename, join } from "node:path"
 import { fileURLToPath } from "node:url"
 import { describe, expect, it } from "vitest"
 
@@ -54,8 +55,14 @@ describe("cleanTypeText", () => {
 })
 
 describe("extractProps", () => {
-  it("encuentra los 37 componentes del barrel", () => {
-    expect(slugs).toHaveLength(37)
+  // Sin número a mano: el barrel tiene que exportar exactamente los archivos que
+  // hay en src/components. Un componente nuevo sin su `export *` falla acá.
+  it("el barrel exporta todos los componentes, y nada más", () => {
+    const archivos = readdirSync(join(root, "src/components"))
+      .filter((archivo) => archivo.endsWith(".tsx"))
+      .map((archivo) => basename(archivo, ".tsx"))
+      .sort()
+    expect(slugs).toEqual(archivos)
   })
 
   it("rescata las variantes de cva, que declaran en node_modules pero son props del componente", () => {
