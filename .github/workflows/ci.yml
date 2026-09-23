@@ -1,0 +1,99 @@
+name: CI
+
+# Un paquete público sin CI depende de que alguien se acuerde de correr los tests antes de
+# publicar. Hasta 0.4.0 eso pasó ocho veces el mismo día y a mano.
+# `push` acotado a `main` y no a `**`: con un PR abierto, GitHub dispara los dos eventos y cada
+# commit correría el CI dos veces. La rama de trabajo la cubre el `pull_request`.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Solo lectura: este workflow no escribe nada en el repo.
+permissions:
+  contents: read
+
+# Un push arriba de otro en la misma rama cancela la corrida anterior: lo que importa es el
+# último commit, no la cola.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  paquete:
+    name: Paquete · Node ${{ matrix.node }}
+    runs-on: ubuntu-latest
+    strategy:
+      # Sin fail-fast: si rompe en 22 quiero ver igual si rompe en 24, porque casi siempre es
+      # una API de Node y no un bug nuestro.
+      fail-fast: false
+      matrix:
+        # 22 es la LTS que corren las apps; 24 es la Current, para enterarnos temprano.
+        # El piso declarado en `engines` es 20, pero nadie de la casa corre 20.
+        node: [22, 24]
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      # `npm ci` dispara `prepare`, que es `npm run build` (tsc + tailwind). O sea que cuando
+      # este paso termina, `dist/` ya está compilado y es el mismo que se publicaría.
+      - run: npm ci
+
+      - run: npm run typecheck
+
+      # `npm test` corre también `test/build.test.ts`, que reconstruye `dist/` y verifica el
+      # contenido del tarball con `import.meta.resolve` y un `tsc` consumidor de verdad.
+      - run: npm test
+
+  tamano:
+    name: Tamaño del bundle
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      # Mide `dist/`, así que necesita el build de `prepare` que ya corrió `npm ci`.
+      # Los umbrales y de dónde salen están en `.size-limit.js`.
+      - run: npm run size
+
+  sitio:
+    name: Sitio de documentación
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            docs/site/package-lock.json
+
+      # Las devDependencies de la raíz son obligatorias acá: `docs/site/scripts/sync-ui.mjs`
+      # hace `npm pack` del paquete, y `npm pack` dispara el `prepare` (tsc), que sin React ni
+      # sus tipos tira ~300 errores de "Could not find a declaration file for module 'react'".
+      # El `pretest` de hoy solo corre `generate.mjs`, pero `prebuild` sí llama a sync-ui y no
+      # quiero que el día que se agregue el build acá el fallo sea un misterio.
+      - name: Dependencias de la raíz
+        run: npm ci
+
+      - name: Dependencias del sitio
+        working-directory: docs/site
+        run: npm ci
+
+      # `pretest` corre `generate.mjs`, que falla si un componente de `src/` no tiene entrada en
+      # `content/meta.mjs` (o al revés). Es el chequeo que mantiene la doc pegada al código.
+      - name: Tests del sitio
+        working-directory: docs/site
+        run: npm test
