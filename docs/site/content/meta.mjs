@@ -684,7 +684,12 @@ export const COMPONENTS = {
       "En mobile, un formulario largo no va en Dialog: va en una página o en un `Sheet`.",
       "El footer va con la acción principal a la derecha y «Cancelar» a su izquierda.",
     ],
-    props: { DialogContent: { showCloseButton: "El botón X de la esquina. Si lo sacás, tiene que haber otra salida visible." } },
+    props: {
+      DialogContent: {
+        labels: "El texto del botón X. Con un `LabelsProvider` se traduce para toda la app; esta prop es la excepción de una pantalla puntual.",
+        showCloseButton: "El botón X de la esquina. Si lo sacás, tiene que haber otra salida visible.",
+      },
+    },
     related: ["alert-dialog", "sheet", "popover"],
   },
   "alert-dialog": {
@@ -723,6 +728,11 @@ export const COMPONENTS = {
       "`side=\"left\"` es el del menú mobile —lo usa `AppShell`—; para contenido, `right`.",
       "En desktop, más de 640px de ancho es una página, no un panel.",
     ],
+    props: {
+      SheetContent: {
+        labels: "El texto del botón X. Con un `LabelsProvider` se traduce para toda la app; esta prop es la excepción de una pantalla puntual.",
+      },
+    },
     related: ["dialog", "app-shell", "sidebar", "drawer"],
   },
   drawer: {
@@ -754,6 +764,7 @@ export const COMPONENTS = {
     ],
     props: {
       DrawerContent: {
+        labels: "El texto del botón X. Con un `LabelsProvider` se traduce para toda la app; esta prop es la excepción de una pantalla puntual.",
         showCloseButton: "El botón X de la esquina. Apagarlo deja al drawer sin control visible de cierre: si lo hacés, poné otro.",
         showHandle: "La barra de arrastre. Es decoración: apagala solo si el drawer no se puede arrastrar.",
       },

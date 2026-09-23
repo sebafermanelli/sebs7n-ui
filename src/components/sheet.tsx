@@ -5,6 +5,7 @@ import { Dialog as SheetPrimitive } from "@base-ui/react/dialog"
 import { XIcon } from "lucide-react"
 
 import { useAvisoDeNombre } from "../internal/dialog-name-warning.js"
+import { useLabels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
 import { Button } from "./button.js"
 
@@ -24,11 +25,18 @@ type SheetContentProps = Omit<SheetPrimitive.Popup.Props, "className"> & {
   className?: string
   side?: "top" | "right" | "bottom" | "left"
   showCloseButton?: boolean
+  /**
+   * El texto del botón X. Con un `LabelsProvider` arriba se traduce de una vez para toda la app;
+   * esta prop es la excepción de una pantalla puntual. Hasta 0.4.0 este texto no se podía cambiar
+   * de ninguna forma: era el único «Cerrar» del paquete sin salida.
+   */
+  labels?: { close?: string }
 }
 
 // Solo se redondean las esquinas que no tocan el borde de la pantalla.
-function SheetContent({ className, children, side = "right", showCloseButton = true, ...props }: SheetContentProps) {
+function SheetContent({ className, children, side = "right", showCloseButton = true, labels, ...props }: SheetContentProps) {
   const ref = useAvisoDeNombre<HTMLDivElement>("SheetContent", "SheetTitle", props.ref)
+  const l = useLabels().sheet
   return (
     <SheetPrimitive.Portal>
       <SheetPrimitive.Backdrop
@@ -56,7 +64,7 @@ function SheetContent({ className, children, side = "right", showCloseButton = t
           <SheetPrimitive.Close
             data-slot="sheet-close"
             // Mismo motivo que en Dialog: el nombre en `aria-label`, que es lo que el tipo exige.
-            render={<Button variant="ghost" size="icon-sm" aria-label="Cerrar" className="absolute top-4 right-4" />}
+            render={<Button variant="ghost" size="icon-sm" aria-label={labels?.close ?? l.close} className="absolute top-4 right-4" />}
           >
             <XIcon />
           </SheetPrimitive.Close>

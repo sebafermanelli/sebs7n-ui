@@ -107,6 +107,14 @@ El mensaje del navegador sale en el idioma **del navegador**, no en el de la pá
 
 Al enviar, `Form` mueve el foco al primer campo inválido y ahí se anuncia el nombre del campo y su error. Con `validationMode="onChange"` eso no pasa —el error aparece con el foco ya adentro—: para ese caso `FieldError` tiene `alert`, que le pone `role="alert"`. Es opt-in porque `role="alert"` interrumpe, y en el camino de enviar duplicaría el anuncio.
 
+### Idioma
+
+Los textos que los componentes escriben solos están en español y se traducen todos de una vez con un `LabelsProvider`, que se importa de `sebs7n-ui/labels`. Está explicado en [Instalación](/docs/instalacion#idioma).
+
+Hasta 0.4.0 tres de esos textos —el «Cerrar» de `Dialog`, `Sheet` y `Drawer`— no se podían cambiar de ninguna forma. Ahora tienen `labels={{ close }}` además del provider.
+
+`lang` en el `<html>` sigue siendo de la app, y no es opcional: cambia la pronunciación del lector de pantalla.
+
 ### Dirección del texto: **LTR only**
 
 El paquete asume texto de izquierda a derecha. En un idioma RTL (árabe, hebreo, persa) **no se rompe, pero queda espejado al revés**: los componentes siguen funcionando con teclado y lector de pantalla, y lo que falla es dónde cae cada cosa.

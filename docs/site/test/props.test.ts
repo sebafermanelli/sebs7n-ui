@@ -93,7 +93,7 @@ describe("extractProps", () => {
   it("descarta las props heredadas del primitivo y deja la línea de herencia", () => {
     const content = find("dialog", "DialogContent")
     expect(content.bases).toEqual(["Dialog.Popup"])
-    expect(content.props.map((entry) => entry.name).sort()).toEqual(["className", "showCloseButton"])
+    expect(content.props.map((entry) => entry.name).sort()).toEqual(["className", "labels", "showCloseButton"])
   })
 
   it("resuelve un componente que es un alias del primitivo", () => {

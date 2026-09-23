@@ -5,6 +5,7 @@ import { Drawer as DrawerPrimitive } from "@base-ui/react/drawer"
 import { XIcon } from "lucide-react"
 
 import { useAvisoDeNombre } from "../internal/dialog-name-warning.js"
+import { useLabels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
 import { Button } from "./button.js"
 
@@ -145,6 +146,12 @@ type DrawerContentProps = Omit<DrawerPrimitive.Popup.Props, "className"> & {
   showCloseButton?: boolean
   /** La barra de arrastre. Apagala solo si el drawer no se puede arrastrar. */
   showHandle?: boolean
+  /**
+   * El texto del botón X. Con un `LabelsProvider` arriba se traduce de una vez para toda la app;
+   * esta prop es la excepción de una pantalla puntual. Hasta 0.4.0 este texto no se podía cambiar
+   * de ninguna forma: era el único «Cerrar» del paquete sin salida.
+   */
+  labels?: { close?: string }
 }
 
 /**
@@ -153,8 +160,9 @@ type DrawerContentProps = Omit<DrawerPrimitive.Popup.Props, "className"> & {
  * como `data-swipe-direction` en el popup—, así que no hay una prop `side` que
  * pueda contradecirlo.
  */
-function DrawerContent({ className, children, showCloseButton = true, showHandle = true, ...props }: DrawerContentProps) {
+function DrawerContent({ className, children, showCloseButton = true, showHandle = true, labels, ...props }: DrawerContentProps) {
   const ref = useAvisoDeNombre<HTMLDivElement>("DrawerContent", "DrawerTitle", props.ref)
+  const l = useLabels().drawer
   return (
     <DrawerPrimitive.Portal>
       {/* El fondo se aclara mientras se arrastra: `--drawer-swipe-progress` va
@@ -211,7 +219,7 @@ function DrawerContent({ className, children, showCloseButton = true, showHandle
               data-base-ui-swipe-ignore=""
               data-slot="drawer-close"
               // Mismo motivo que en Dialog: el nombre en `aria-label`, que es lo que el tipo exige.
-              render={<Button variant="ghost" size="icon-sm" aria-label="Cerrar" className="absolute top-4 right-4" />}
+              render={<Button variant="ghost" size="icon-sm" aria-label={labels?.close ?? l.close} className="absolute top-4 right-4" />}
             >
               <XIcon />
             </DrawerPrimitive.Close>

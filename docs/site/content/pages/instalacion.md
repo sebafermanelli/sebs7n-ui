@@ -155,6 +155,38 @@ Por qué: el barrel hace `export *` de ~30 módulos `"use client"`. Next no pued
 
 No mezcles barrel y subpaths en la misma página: el barrel vuelve a traer todo.
 
+## Idioma
+
+El sistema habla **español**: los textos que los componentes escriben solos —«Cerrar», «Sin resultados», «Ir al contenido», «Buscando…»— están en español y son el default. Si tu app está en otro idioma, envolvé el árbol una vez:
+
+```tsx
+import { LabelsProvider, defaultLabels, type Labels } from "sebs7n-ui/labels"
+
+const en: Labels = {
+  ...defaultLabels,
+  dialog: { close: "Close" },
+  sheet: { close: "Close" },
+  drawer: { close: "Close" },
+  // …
+}
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>
+        <LabelsProvider value={en}>{children}</LabelsProvider>
+      </body>
+    </html>
+  )
+}
+```
+
+Anotar la traducción con `: Labels` es lo que hace que TypeScript marque lo que falta, en vez de que aparezca en español en producción. Los providers anidados se suman. La prop `labels` de cada componente le gana al provider: es la excepción de una pantalla, no la traducción.
+
+`Breadcrumb`, `Pagination`, `Tag` y `PageHeader` no leen del provider —leerlo los volvería componentes de cliente y los cuatro se pueden renderizar en un Server Component—: sus textos van por prop.
+
+El `lang` del `<html>` es tuyo y no es opcional: cambia la pronunciación del lector de pantalla.
+
 ## Verificar que quedó bien
 
 1. `bg-slate-500` **no** tiene que compilar: la paleta de Tailwind está reseteada y solo existen los tokens del paquete. Ojo con el ejemplo: `bg-blue-500` **sí** compila, porque Geist tiene su propia escala `blue` en pasos 100–1000. Lo que no existe son las escalas de Tailwind que el paquete no repone (`slate`, `zinc`, `sky`…) ni los pasos que Geist no tiene (`bg-blue-50`).

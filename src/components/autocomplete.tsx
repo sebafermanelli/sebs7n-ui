@@ -4,6 +4,7 @@ import { Autocomplete as AutocompletePrimitive } from "@base-ui/react/autocomple
 import { ChevronDownIcon, XIcon } from "lucide-react"
 import type * as React from "react"
 
+import { useLabels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
 import { inputShellButtonClassName, inputShellClassName, inputShellInputClassName } from "../variants/input.js"
 import { menuItemClassName } from "../variants/menu.js"
@@ -54,6 +55,9 @@ function AutocompleteInput({
   disabled,
   ...props
 }: AutocompleteInputProps) {
+  // El provider gana sobre el español; la prop `labels` gana sobre el provider, porque es la
+  // excepción de una pantalla y no una traducción.
+  const l = useLabels().autocomplete
   return (
     <AutocompletePrimitive.InputGroup
       data-slot="autocomplete-input-group"
@@ -64,12 +68,12 @@ function AutocompleteInput({
     >
       <AutocompletePrimitive.Input data-slot="autocomplete-input" disabled={disabled} className={cn(inputShellInputClassName, className)} {...props} />
       {showClear && (
-        <AutocompletePrimitive.Clear data-slot="autocomplete-clear" aria-label={labels?.clear ?? "Limpiar"} disabled={disabled} className={inputShellButtonClassName}>
+        <AutocompletePrimitive.Clear data-slot="autocomplete-clear" aria-label={labels?.clear ?? l.clear} disabled={disabled} className={inputShellButtonClassName}>
           <XIcon />
         </AutocompletePrimitive.Clear>
       )}
       {showTrigger && (
-        <AutocompletePrimitive.Trigger data-slot="autocomplete-trigger" render={renderShellTrigger} aria-label={labels?.trigger ?? "Ver sugerencias"} disabled={disabled} className={inputShellButtonClassName}>
+        <AutocompletePrimitive.Trigger data-slot="autocomplete-trigger" render={renderShellTrigger} aria-label={labels?.trigger ?? l.trigger} disabled={disabled} className={inputShellButtonClassName}>
           <ChevronDownIcon />
         </AutocompletePrimitive.Trigger>
       )}

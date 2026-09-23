@@ -5,6 +5,7 @@ import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import { SearchIcon } from "lucide-react"
 
+import { useLabels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
 import { AppShellContext, SidebarContext, SidebarInSheetContext, useSidebarContext } from "../internal/shell-context.js"
 import { sidebarItemVariants } from "../variants/sidebar.js"
@@ -50,11 +51,12 @@ function SidebarHeader({ className, ...props }: React.ComponentProps<"div">) {
 type SidebarContentProps = React.ComponentProps<"nav">
 
 // La zona que scrollea. Es un <nav>: nombralo con aria-label si hay más de uno en la página.
-function SidebarContent({ className, "aria-label": ariaLabel = "Navegación principal", ...props }: SidebarContentProps) {
+function SidebarContent({ className, "aria-label": ariaLabel, ...props }: SidebarContentProps) {
+  const l = useLabels().sidebar
   return (
     <nav
       data-slot="sidebar-content"
-      aria-label={ariaLabel}
+      aria-label={ariaLabel ?? l.nav}
       className={cn(
         "flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto overscroll-contain p-2 group-data-collapsed/sidebar:items-center",
         className
@@ -252,12 +254,16 @@ const KEYSHORTCUTS: Record<string, string | undefined> = { "⌘K": "Meta+K", "Ct
 // Botón con aspecto de Input que abre la paleta de comandos (la pone la app).
 function SidebarSearch({
   className,
-  placeholder = "Buscar…",
+  placeholder,
   shortcut,
   "aria-keyshortcuts": keyshortcuts = KEYSHORTCUTS[String(shortcut)],
   ...props
 }: SidebarSearchProps) {
   const collapsed = useSidebarContext()?.collapsed ?? false
+  // `useLabels()` va suelto y no adentro de un `??`: el `??` corta, y un hook que a veces se llama
+  // y a veces no rompe el orden de los hooks.
+  const l = useLabels().sidebar
+  const texto = placeholder ?? l.search
   const button = (
     <button
       type="button"
@@ -271,7 +277,7 @@ function SidebarSearch({
       {...props}
     >
       <SearchIcon aria-hidden="true" />
-      <span className="min-w-0 flex-1 truncate group-data-collapsed/sidebar:sr-only">{placeholder}</span>
+      <span className="min-w-0 flex-1 truncate group-data-collapsed/sidebar:sr-only">{texto}</span>
       {shortcut != null && (
         <Kbd aria-hidden="true" className="group-data-collapsed/sidebar:hidden">
           {shortcut}

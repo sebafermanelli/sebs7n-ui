@@ -40,6 +40,7 @@ export function subpaths(root) {
   agregar("./*", "`sebs7n-ui/<componente>`", `${componentes.length}, en kebab-case: ${lista(componentes)}`)
   agregar("./variants/*", "`sebs7n-ui/variants/<nombre>`", `Clases sin \`"use client"\`: ${lista(variantes)}`)
   agregar("./lib/*", "`sebs7n-ui/lib/<nombre>`", `Funciones puras: ${lista(libs)}`)
+  agregar("./labels", "`sebs7n-ui/labels`", "`LabelsProvider`, `useLabels` y `defaultLabels`: los textos internos, para traducirlos.")
   agregar("./tokens/*.json", "`sebs7n-ui/tokens/<archivo>.json`", `Los tokens en crudo: ${lista(tokens)}`)
   agregar("./theme.css", "`sebs7n-ui/theme.css`", "Los tokens y el `@source` del `dist`. Es el único import obligatorio.")
   agregar("./styles.css", "`sebs7n-ui/styles.css`", "La hoja precompilada. Alternativa a `theme.css`, no complemento.")

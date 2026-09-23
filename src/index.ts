@@ -1,8 +1,9 @@
 export { cn, TYPE_SCALE } from "./lib/utils.js"
 export { paginationRange, type PaginationRangeOptions, type PaginationSlot } from "./lib/pagination.js"
+export { defaultLabels, LabelsProvider, useLabels, type Labels, type PartialLabels } from "./lib/labels.js"
 
 export { badgeVariants, BADGE_COLORS, type BadgeColor } from "./variants/badge.js"
-export { buttonVariants, type ButtonShape, type ButtonVariantProps } from "./variants/button.js"
+export { buttonVariants, type ButtonIconSize, type ButtonShape, type ButtonSize, type ButtonTextSize, type ButtonVariantProps } from "./variants/button.js"
 export { cardVariants } from "./variants/card.js"
 export { linkVariants } from "./variants/link.js"
 export { inputShellButtonClassName, inputShellClassName, inputShellInputClassName } from "./variants/input.js"

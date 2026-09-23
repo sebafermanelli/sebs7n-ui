@@ -51,6 +51,10 @@
     },
     "./styles.css": "./dist/styles.css",
     "./theme.css": "./src/styles/theme.css",
+    "./labels": {
+      "types": "./dist/lib/labels.d.ts",
+      "import": "./dist/lib/labels.js"
+    },
     "./variants/*": {
       "types": "./dist/variants/*.d.ts",
       "import": "./dist/variants/*.js"

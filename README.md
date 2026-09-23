@@ -164,6 +164,7 @@ import { cn } from "sebs7n-ui/lib/utils"
 | `sebs7n-ui/<componente>` | 58, en kebab-case: `accordion` · `alert` · `alert-dialog` · `app-shell` · `app-shell-content` · `autocomplete` · `avatar` · `badge` · `breadcrumb` · `button` · `card` · `checkbox` · `checkbox-group` · `collapsible` · `combobox` · `context-menu` · `dialog` · `drawer` · `dropdown-menu` · `empty-state` · `field` · `fieldset` · `form` · `hover-card` · `input` · `kbd` · `label` · `menubar` · `meter` · `navigation-menu` · `number-field` · `otp-field` · `page-header` · `pagination` · `popover` · `progress` · `radio-group` · `scroll-area` · `select` · `separator` · `sheet` · `sidebar` · `skeleton` · `slider` · `sonner` · `spinner` · `stat` · `switch` · `table` · `tabs` · `tag` · `textarea` · `theme-switcher` · `toggle` · `toggle-group` · `toolbar` · `tooltip` · `user-menu` |
 | `sebs7n-ui/variants/<nombre>` | Clases sin `"use client"`: `badge` · `button` · `card` · `input` · `link` · `menu` · `sidebar` · `tag` · `toggle` |
 | `sebs7n-ui/lib/<nombre>` | Funciones puras: `pagination` · `render` · `schema` · `utils` |
+| `sebs7n-ui/labels` | `LabelsProvider`, `useLabels` y `defaultLabels`: los textos internos, para traducirlos. |
 | `sebs7n-ui/tokens/<archivo>.json` | Los tokens en crudo: `brands` · `geist` |
 | `sebs7n-ui/theme.css` | Los tokens y el `@source` del `dist`. Es el único import obligatorio. |
 | `sebs7n-ui/styles.css` | La hoja precompilada. Alternativa a `theme.css`, no complemento. |
@@ -369,10 +370,69 @@ Es parte del contrato del paquete, no un extra:
 - **Estado anunciado.** `SidebarItem active` pone `aria-current="page"`;
   `SidebarItemBadge` acepta `label` para que el contador se lea con contexto
   ("Clientes, 3 pendientes"); `SidebarSearch shortcut` emite `aria-keyshortcuts`.
-- **Movimiento.** Todas las animaciones pasan por `motion-reduce`, además del
-  reset global del paquete.
-- **`aria-invalid`** en el input es lo único que hace falta para el estado de
-  error: el estilo sale de ahí, no de una clase aparte.
+- **Movimiento.** Todas pasan por el reset global de `base.css`; las que tienen
+  un recorrido (la franja de `Progress`, el deslizamiento del `Drawer`) suman su
+  propia regla `motion-reduce`.
+- **Nombres accesibles que exige el tipo.** `Button size="icon-*"` pide
+  `aria-label` o `aria-labelledby`; `Progress` y `Meter`, `label` o
+  `aria-label`; `AvatarImage`, `alt` (aunque sea `""`); `ToolbarGroup`,
+  `aria-label`. `DialogContent`, `SheetContent` y `DrawerContent` no se pueden
+  tipar —el título es un hijo— y avisan por consola en desarrollo.
+- **Objetivos táctiles.** Todo lo que se toca llega a 24×24 de área (WCAG
+  2.5.8), con `::after` donde el dibujo es más chico.
+- **`aria-invalid`** en el input sincroniza el estilo con la semántica —el borde
+  rojo sale de ahí, no de una clase aparte—, pero no alcanza solo: el mensaje
+  tiene que decir qué arreglar, y escribirlo con `match` o `validate`.
+- **LTR only.** El paquete asume texto de izquierda a derecha. En RTL no se
+  rompe: queda espejado. Está detallado en la página de Accesibilidad del sitio.
+
+Todo esto, con los números medidos y las excepciones, en la página
+**Accesibilidad** del sitio de documentación.
+
+---
+
+## Idioma
+
+El sistema habla **español**: los textos que los componentes escriben solos
+—«Cerrar», «Sin resultados», «Ir al contenido», «Buscando…»— están en español y
+son el default.
+
+Se traducen todos de una vez con un `LabelsProvider` arriba del árbol:
+
+```tsx
+import { LabelsProvider, defaultLabels, type Labels } from "sebs7n-ui/labels"
+
+const en: Labels = {
+  ...defaultLabels,
+  dialog: { close: "Close" },
+  sheet: { close: "Close" },
+  drawer: { close: "Close" },
+  combobox: { clear: "Clear", trigger: "Open list", loading: "Searching…", empty: "No results", remove: "Remove" },
+  // …
+}
+
+export default function RootLayout({ children }) {
+  return <LabelsProvider value={en}>{children}</LabelsProvider>
+}
+```
+
+`defaultLabels` está tipado como `Labels` completo, así que anotar la traducción
+con `: Labels` hace que TypeScript marque lo que falte en vez de que aparezca en
+español en producción. Los providers anidados se suman, para una sección en otro
+idioma sin repetir todo.
+
+La prop `labels` de cada componente sigue existiendo y **le gana al provider**:
+es para la excepción de una pantalla («Quitar del carrito» en vez de «Quitar»),
+no para traducir.
+
+`Breadcrumb`, `Pagination`, `Tag` y `PageHeader` no leen del provider: leerlo
+pide un contexto de React y eso los convertiría en componentes de cliente, y los
+cuatro se pueden renderizar hoy en un Server Component. Sus textos se pasan por
+prop, como venían (`ellipsisLabel`, `removeLabel`, `breadcrumbLabel`, `labels`,
+`aria-label`).
+
+El `lang` del `<html>` es de la app, y no es opcional: cambia la pronunciación
+del lector de pantalla.
 
 ---
 

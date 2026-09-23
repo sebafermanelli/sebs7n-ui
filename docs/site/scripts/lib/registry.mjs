@@ -27,7 +27,7 @@
 // ningún basename se repite, y `assertBasenamesUnique` corta el build si
 // alguna vez vuelve a pasar.
 import { readdirSync, readFileSync } from "node:fs"
-import { basename, join } from "node:path"
+import { basename, extname, join } from "node:path"
 
 const NPM = new Set(["@base-ui/react", "class-variance-authority", "clsx", "lucide-react", "next-themes", "react", "sonner", "tailwind-merge"])
 
@@ -73,11 +73,18 @@ function registryDependencies(source, site) {
 const ITEM_SCHEMA = "https://ui.shadcn.com/schema/registry-item.json"
 
 /** Los módulos `.ts` de `src/<dir>`, en orden alfabético. */
+/**
+ * Los módulos de una carpeta de `src`, con su extensión.
+ *
+ * `.tsx` además de `.ts` porque `lib/labels.tsx` trae el `LabelsProvider`, que
+ * es JSX. Mientras solo miraba `.ts`, el primer componente que lo importó
+ * generó una `registryDependency` a un ítem que no existía.
+ */
 function modules(root, dir) {
   return readdirSync(join(root, "src", dir))
-    .filter((file) => file.endsWith(".ts"))
-    .map((file) => basename(file, ".ts"))
-    .sort()
+    .filter((file) => file.endsWith(".ts") || file.endsWith(".tsx"))
+    .map((file) => [basename(file, extname(file)), extname(file)])
+    .sort(([a], [b]) => a.localeCompare(b))
 }
 
 // ── El ítem de tema ──────────────────────────────────────────────────────────
@@ -259,11 +266,11 @@ export function buildRegistry({ root, site, components, author }) {
   // existía. `internal/` no se exporta del paquete, pero el registry copia
   // archivos: el componente que lo importa lo necesita igual.
   const helpers = [
-    ...modules(root, "lib").filter((name) => name !== "utils").map((name) => ["lib", name]),
-    ...modules(root, "internal").map((name) => ["internal", name]),
+    ...modules(root, "lib").filter(([name]) => name !== "utils").map(([name, ext]) => ["lib", name, ext]),
+    ...modules(root, "internal").map(([name, ext]) => ["internal", name, ext]),
   ].sort(([, a], [, b]) => a.localeCompare(b))
-  for (const [dir, name] of helpers) {
-    const source = read(`src/${dir}/${name}.ts`)
+  for (const [dir, name, ext] of helpers) {
+    const source = read(`src/${dir}/${name}${ext}`)
     items.push({
       $schema: ITEM_SCHEMA,
       name: `lib-${name}`,
@@ -275,17 +282,17 @@ export function buildRegistry({ root, site, components, author }) {
       registryDependencies: registryDependencies(source, site),
       files: [
         {
-          path: `registry/sebs7n-ui/lib/sebs7n-ui/${libFile(name)}.ts`,
+          path: `registry/sebs7n-ui/lib/sebs7n-ui/${libFile(name)}${ext}`,
           type: "registry:lib",
-          target: `@lib/sebs7n-ui/${libFile(name)}.ts`,
+          target: `@lib/sebs7n-ui/${libFile(name)}${ext}`,
           content: rewriteImports(source),
         },
       ],
     })
   }
 
-  for (const name of modules(root, "variants")) {
-    const source = read(`src/variants/${name}.ts`)
+  for (const [name, ext] of modules(root, "variants")) {
+    const source = read(`src/variants/${name}${ext}`)
     items.push({
       $schema: ITEM_SCHEMA,
       name: `variants-${name}`,
@@ -297,9 +304,9 @@ export function buildRegistry({ root, site, components, author }) {
       registryDependencies: registryDependencies(source, site),
       files: [
         {
-          path: `registry/sebs7n-ui/lib/sebs7n-ui/${variantsFile(name)}.ts`,
+          path: `registry/sebs7n-ui/lib/sebs7n-ui/${variantsFile(name)}${ext}`,
           type: "registry:lib",
-          target: `@lib/sebs7n-ui/${variantsFile(name)}.ts`,
+          target: `@lib/sebs7n-ui/${variantsFile(name)}${ext}`,
           content: rewriteImports(source),
         },
       ],
