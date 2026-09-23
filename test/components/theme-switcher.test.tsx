@@ -84,6 +84,24 @@ describe("ThemeSwitcher", () => {
     expect(screen.getAllByRole("menuitemradio")).toHaveLength(2)
   })
 
+  // El camino sin "system" no solo esconde una opción: cambia cuál queda marcada, porque
+  // el valor por defecto deja de ser "system" y pasa a ser el tema resuelto. Era la rama
+  // sin cubrir del componente.
+  it("sin enableSystem marca el tema actual y sigue cambiándolo", async () => {
+    render(
+      <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} storageKey={`n-${Math.random()}`}>
+        <ThemeSwitcher />
+      </ThemeProvider>
+    )
+    const claro = screen.getByRole("radio", { name: "Tema claro" })
+    await waitFor(() => expect(claro).toHaveAttribute("aria-checked", "true"))
+
+    await userEvent.click(screen.getByRole("radio", { name: "Tema oscuro" }))
+
+    await waitFor(() => expect(document.documentElement).toHaveClass("dark"))
+    expect(claro).toHaveAttribute("aria-checked", "false")
+  })
+
   it("los labels se pueden sobreescribir", () => {
     render(withTheme(<ThemeSwitcher labels={{ group: "Theme", light: "Light", dark: "Dark", system: "System" }} />))
     expect(screen.getByRole("radiogroup", { name: "Theme" })).toBeInTheDocument()
