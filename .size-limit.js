@@ -18,7 +18,8 @@
 // Medido el 2026-09-23 sobre el `dist/` de 0.4.0 (size-limit 14.0.0, `npx size-limit`):
 //   button  11,76 KB gz  →  umbral 12,5 KB
 //   barrel  32,91 KB gz  →  umbral 35 KB
-// El margen es chico a propósito: si un cambio lo cruza, quiero mirarlo, no enterarme en 1.0.
+// El margen es chico a propósito: si un cambio lo cruza, quiero mirarlo en el PR y no
+// enterarme cuando ya esté publicado.
 export default [
   {
     name: "sebs7n-ui/button (subpath)",

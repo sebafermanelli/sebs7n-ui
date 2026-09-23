@@ -44,11 +44,14 @@ describe("la marca llega a AA", () => {
 
 | Token | Dónde |
 |---|---|
-| `brand-700` | `Button variant="accent"`, `Switch variant="accent"`, anillo de foco, borde de `Card selected`. |
+| `brand-700` | `Button variant="accent"`, `Switch variant="accent"`, anillo de foco, borde de `Card selected`, franja de `Alert variant="brand"`, `Badge solid color="brand"`. |
 | `brand-800` | Hover del acento. |
-| `brand-900` | `Button variant="link"`, texto de `Badge color="brand"`, `linkVariants`. |
-| `brand-100…400` | Fondos y bordes suaves: `Badge variant="subtle" color="brand"`. |
+| `brand-900` | `Button variant="link"`, texto de `Badge subtle color="brand"`, ícono de `Alert variant="brand"`. |
+| `brand-1000` | Hover del `Button variant="link"`. |
+| `brand-100` · `brand-400` | Fondo y borde suaves: `Badge variant="subtle" color="brand"`, fila seleccionada de `Table`. |
 | `brand-contrast` | El texto **encima** del acento. |
+
+`brand-200`, `brand-300`, `brand-500` y `brand-600` no los usa ningún componente: existen para la app, que también tiene la escala completa. Y `linkVariants` **no usa la marca**: los links de texto son grises (`gray-900` → `gray-1000`), para que un párrafo con tres links no se convierta en tres manchas de color.
 
 **Un solo acento por pantalla.** Si el CTA principal es `accent`, el switch de al lado no.
 

@@ -18,6 +18,8 @@ Los valores de oscuro son los de vercel.com medidos con `getComputedStyle` (cont
 
 Diez pasos por familia, de `100` (el más claro en tema claro) a `1000`. La convención de Geist: **100–400 son fondos, 500–700 son bordes y elementos, 800–1000 son texto**. El contraste de `gray-900` sobre cualquier fondo de la misma familia llega a AA.
 
+**`gray-800` es la excepción y no se usa como texto**: sobre la superficie clara da 4,12:1, abajo del 4,5 de WCAG 1.4.3. El paso de texto tenue de este sistema es `gray-900` (8,45:1 en claro, 7,57:1 en oscuro). Está en [Accesibilidad](/docs/accesibilidad).
+
 {{colores}}
 
 `brand` no está en la tabla porque no tiene valores fijos: se deriva de las cuatro variables de la app. Ver [Theming](/docs/theming).
@@ -68,7 +70,7 @@ Cuándo usar cada familia:
 
 {{radios}}
 
-`rounded-md` (6px) es el radio del sistema: botones, inputs, ítems de menú. `rounded-xl` (12px) es el de las tarjetas. `rounded-full` solo en `Badge`, en avatares y en `Button shape="pill"`.
+`rounded-md` (6px) es el radio del sistema: botones, inputs, ítems de menú. `rounded-xl` (12px) es el de las tarjetas. `rounded-full` es la forma de lo que es redondo por definición —avatares, puntos, pulgares, pistas de `Slider`, `Progress` y `Meter`— y de lo que es una píldora: `Badge`, `Tag`, `Toggle`, `ThemeSwitcher` y `Button shape="pill"`. Fuera de esos dos casos, no.
 
 ## Sombras
 

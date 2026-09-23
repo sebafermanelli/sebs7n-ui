@@ -91,8 +91,11 @@ Hasta 0.4.0 el paquete publicaba además `sebs7n-ui/styles.css`, una hoja precom
 ```tsx
 import { GeistMono } from "geist/font/mono"
 import { GeistSans } from "geist/font/sans"
-import { Toaster, TooltipProvider } from "sebs7n-ui"
 import { ThemeProvider } from "next-themes"
+// Por subpath, no por el barrel: el layout raíz envuelve TODAS las páginas, así
+// que un `from "sebs7n-ui"` acá le suma los 58 componentes a cada una.
+import { Toaster } from "sebs7n-ui/sonner"
+import { TooltipProvider } from "sebs7n-ui/tooltip"
 import "./globals.css"
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -175,7 +178,7 @@ import { cn } from "sebs7n-ui/lib/utils"
 
 {{subpaths}}
 
-Por qué: el barrel hace `export *` de ~30 módulos `"use client"`. Next no puede podar referencias cliente a través de ese barrel (tampoco con `optimizePackageImports`), así que una página con `Button` + `Card` + `ThemeSwitcher` se lleva también Sonner, Sidebar, Select, AlertDialog y el resto. Medido en Next 16.3 (Turbopack) con esa página: **297,5 KB → 234,8 KB** de JS cliente gzip (−21 %).
+Por qué: el barrel hace `export *` de los 58 componentes, y **42** llevan `"use client"`. Next no puede podar referencias cliente a través de ese barrel (tampoco con `optimizePackageImports`), así que una página con `Button` + `Card` + `ThemeSwitcher` se lleva también Sonner, Sidebar, Select, AlertDialog y el resto. Medido en Next 16.3 (Turbopack) con esa página: **297,5 KB → 234,8 KB** de JS cliente gzip (−21 %).
 
 No mezcles barrel y subpaths en la misma página: el barrel vuelve a traer todo.
 
@@ -184,10 +187,12 @@ No mezcles barrel y subpaths en la misma página: el barrel vuelve a traer todo.
 El sistema habla **español**: los textos que los componentes escriben solos —«Cerrar», «Sin resultados», «Ir al contenido», «Buscando…»— están en español y son el default. Si tu app está en otro idioma, envolvé el árbol una vez:
 
 ```tsx
-import { LabelsProvider, defaultLabels, type Labels } from "sebs7n-ui/labels"
+import { LabelsProvider, type Labels } from "sebs7n-ui/labels"
 
+// Sin `...defaultLabels` y anotado `: Labels`, TypeScript exige la traducción
+// completa y te lista grupo por grupo lo que falta.
 const en: Labels = {
-  ...defaultLabels,
+  appShell: { openMenu: "Open menu", navigation: "Main navigation", skipToContent: "Skip to content" },
   dialog: { close: "Close" },
   sheet: { close: "Close" },
   drawer: { close: "Close" },
@@ -205,7 +210,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 }
 ```
 
-Anotar la traducción con `: Labels` es lo que hace que TypeScript marque lo que falta, en vez de que aparezca en español en producción. Los providers anidados se suman. La prop `labels` de cada componente le gana al provider: es la excepción de una pantalla, no la traducción.
+`LabelsProvider` acepta un `PartialLabels`, así que también se puede traducir un solo grupo —o una sola clave— y el resto se queda en español. Las dos formas son válidas y conviene elegir a conciencia:
+
+| Cómo se escribe | Qué pasa con lo que falta |
+|---|---|
+| `const en: Labels = { … }`, **sin** `...defaultLabels` | TypeScript no compila hasta que esté todo traducido. |
+| `const en: PartialLabels = { … }`, o con `...defaultLabels` | Compila, y lo que falta sale en español en producción. |
+
+Ojo con el atajo: `const en: Labels = { ...defaultLabels, … }` **no** marca nada, porque el spread ya satisface todas las claves. La anotación sirve cuando la traducción se escribe entera.
+
+Los providers anidados se suman. La prop `labels` de cada componente le gana al provider: es la excepción de una pantalla, no la traducción.
 
 `Breadcrumb`, `Pagination`, `Tag` y `PageHeader` no leen del provider —leerlo los volvería componentes de cliente y los cuatro se pueden renderizar en un Server Component—: sus textos van por prop.
 

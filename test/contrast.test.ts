@@ -30,7 +30,7 @@ import { contrastRatio, flattenAlpha, luminanceOfHex, luminanceOfOklch, type Okl
 const root = join(import.meta.dirname, "..")
 const read = (file: string) => readFileSync(join(root, "src/styles", file), "utf8")
 
-/** `#fff` → `#ffffff`: la fórmula de color.ts lee de a dos caracteres. */
+/** `#fff` → `#ffffff`: `luminanceOfHex` de `src/lib/contrast.ts` lee de a dos caracteres. */
 const expandir = (hex: string) => (hex.length === 4 ? `#${[...hex.slice(1)].map((c) => c + c).join("")}` : hex)
 
 /**

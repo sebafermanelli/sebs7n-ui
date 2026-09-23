@@ -14,7 +14,7 @@ Qué cubre esa tabla:
 |---|---|
 | `gray-900` y `gray-1000` como texto, sobre los tres fondos | 4,5:1 (1.4.3) |
 | Placeholder de los campos | 4,5:1 |
-| Atajos de menú, sobre el popup y sobre el ítem resaltado | 4,5:1 |
+| Atajos de menú, sobre el popup, sobre el ítem resaltado y sobre el apretado | 4,5:1 |
 | `Button variant="destructive"`, en reposo, hover y active | 4,5:1 |
 | `Badge subtle` en las ocho paletas fijas, y `Badge solid` gris | 4,5:1 |
 | Contorno de Checkbox, Radio, Switch y Toggle sin marcar | 3:1 (1.4.11) |
@@ -129,9 +129,9 @@ Qué asume dirección física hoy:
 - **Sangrías y rellenos** de los ítems con ícono o con indicador: `pl-*` / `pr-*` en menús, `Select`, `Combobox`, `Table` y `Sidebar`.
 - **`Sonner`** posiciona por esquina física.
 
-Los únicos dos lugares que ya usan el eje lógico son los submenús de `Menubar` y `ContextMenu`, con `side="inline-end"`.
+El único lugar que escribe el eje lógico es `MenubarSubContent`, con `side="inline-end"`. El submenú del `ContextMenu` también se abre por el eje lógico, pero porque **no fija `side`**: el default de Base UI ya es `inline-end`.
 
-El camino si algún día hace falta: migrar a utilidades lógicas (`end-4` en vez de `right-4`, `border-e` en vez de `border-r`, `ms-auto` en vez de `ml-auto`, `ps-*`/`pe-*` en vez de `pl-*`/`pr-*`), re-exportar el `DirectionProvider` de Base UI y agregar `dir="rtl"` a los tests. Son 89 clases físicas en 26 archivos; no es difícil, es largo, y hacerlo a medias es peor que no hacerlo porque deja la pantalla mezclada.
+El camino si algún día hace falta: migrar a utilidades lógicas (`end-4` en vez de `right-4`, `border-e` en vez de `border-r`, `ms-auto` en vez de `ml-auto`, `ps-*`/`pe-*` en vez de `pl-*`/`pr-*`), re-exportar el `DirectionProvider` de Base UI y agregar `dir="rtl"` a los tests. Son unas 90 clases físicas repartidas en más de veinte archivos; no es difícil, es largo, y hacerlo a medias es peor que no hacerlo porque deja la pantalla mezclada.
 
 ## Lo que le queda a la app
 
