@@ -107,13 +107,17 @@ describe("Stat", () => {
 })
 
 describe("AppShellContent", () => {
-  it("contenedor estándar: centrado, ancho completo, padding y gap de página", () => {
+  // De este componente lo que es contrato es el ancho máximo por `size` —eso lo fija el
+  // caso de abajo— y los ganchos con los que la app lo alcanza. El resto de las utilidades
+  // (`mx-auto`, `flex`, los paddings) es cómo está hecho hoy, no lo que promete: afirmarlas
+  // una por una convierte cualquier ajuste de aire en un test roto que no descubrió nada.
+  it("es un div con los ganchos que la app usa para alcanzarlo", () => {
     render(<AppShellContent data-testid="c">hola</AppShellContent>)
     const el = screen.getByTestId("c")
     expect(el.tagName).toBe("DIV")
     expect(el).toHaveAttribute("data-slot", "app-shell-content")
     expect(el).toHaveAttribute("data-size", "default")
-    expect(el).toHaveClass("mx-auto", "w-full", "max-w-7xl", "px-4", "py-6", "md:px-6", "md:py-8", "flex", "flex-col", "gap-6")
+    expect(el).toHaveTextContent("hola")
   })
 
   it.each([

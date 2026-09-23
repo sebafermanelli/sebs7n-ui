@@ -1,5 +1,6 @@
-import { render, screen, waitFor } from "@testing-library/react"
+import { act, render, screen, waitFor } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
+import { toast } from "sonner"
 import { describe, expect, it, vi } from "vitest"
 
 import { Button } from "../../src/components/button"
@@ -200,6 +201,39 @@ describe("Sheet foco", () => {
 describe("Toaster", () => {
   it("se monta sin ThemeProvider", () => {
     const { container } = render(<Toaster />)
-    expect(container).toBeTruthy()
+    expect(container.querySelector("section")).not.toBeNull()
+  })
+
+  // El test de antes era `expect(container).toBeTruthy()`, que pasa aunque el Toaster no
+  // renderice nada. Lo que importa es que un `toast()` llegue a la pantalla y que se anuncie
+  // sin interrumpir: Sonner no usa `role="status"` sino la región `aria-live="polite"` que
+  // monta el Toaster, que es el mismo contrato escrito de la otra forma. Lo que no puede
+  // pasar es que sea `assertive`: un toast corta lo que el lector esté diciendo y casi
+  // nunca es tan urgente.
+  it("toast() aparece dentro de una región viva que no interrumpe", async () => {
+    render(<Toaster />)
+
+    act(() => {
+      toast("Factura enviada")
+    })
+
+    const aviso = await screen.findByText("Factura enviada")
+    const region = aviso.closest("[aria-live]")!
+    expect(region).toHaveAttribute("aria-live", "polite")
+    expect(aviso.closest("[data-sonner-toast]")).not.toBeNull()
+  })
+
+  it("toast.success trae el ícono verde del sistema, oculto al lector", async () => {
+    render(<Toaster />)
+
+    act(() => {
+      toast.success("Listo")
+    })
+
+    const aviso = await screen.findByText("Listo")
+    const fila = aviso.closest("[data-sonner-toast]")!
+    const icono = fila.querySelector("svg")!
+    expect(icono).toHaveClass("text-green-900")
+    expect(icono).toHaveAttribute("aria-hidden", "true")
   })
 })
