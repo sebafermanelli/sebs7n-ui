@@ -106,6 +106,30 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 }
 ```
 
+`geist/font/mono` precarga `GeistMono-Variable.woff2` en **cada ruta**: **71,4 KB**
+que compiten por el ancho de banda de la primera pantalla. Vale la pena si la app
+muestra código o tablas de números; si el mono aparece en dos o tres etiquetas
+—un id, una fecha, un `404`—, declaralo con `next/font/local` y `preload: false`,
+así se descarga recién cuando aparece el primer elemento que lo usa:
+
+```tsx
+const geistMono = localFont({
+  src: "../node_modules/geist/dist/fonts/geist-mono/GeistMono-Variable.woff2",
+  variable: "--font-geist-mono",
+  weight: "100 900",
+  display: "swap",
+  preload: false,
+  // `geist/font/mono` lo trae en `false`, así el fallback queda sin `size-adjust`
+  // y el swap salta. Next solo ofrece Arial y Times New Roman como base: ninguna
+  // es monoespaciada, pero Arial acerca más que nada.
+  adjustFontFallback: "Arial",
+  fallback: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
+})
+```
+
+`GeistSans` no necesita nada: `geist/font/sans` no desactiva `adjustFontFallback`,
+así que Next ya le calcula el `size-adjust` del fallback.
+
 ### 3. Usar
 
 ```tsx
