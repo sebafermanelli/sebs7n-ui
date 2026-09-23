@@ -488,6 +488,34 @@ export const COMPONENTS = {
     ],
     related: ["popover", "button", "kbd"],
   },
+  "hover-card": {
+    title: "HoverCard",
+    group: "superposiciones",
+    description: "Una tarjeta con el adelanto de un link, al pasar el mouse. Nunca contenido crítico.",
+    keyboard: [
+      ["Tab", "Enfocar el link la abre."],
+      ["Escape", "Cierra y deja el foco en el link."],
+    ],
+    a11y: [
+      "**En táctil no existe.** No hay hover y un toque navega: todo lo que esté en la tarjeta tiene que estar también del otro lado del link.",
+      "El trigger es un `<a>`: se le pasa `href`, no `render={<Button />}`.",
+      "Abre también con el foco del teclado, no solo con el mouse.",
+      "El retardo de apertura (600 ms) existe para no dispararla al pasar de largo; el de cierre (300 ms) para poder llegar con el mouse.",
+    ],
+    usage: [
+      "**Un adelanto, nunca la información.** Si el contenido es el dato, va en la página.",
+      "Si hace falta interactuar con algo, es un `Popover`: abre con click y se cierra con Escape en cualquier dispositivo.",
+      "Si es una línea que aclara un control, es un `Tooltip`.",
+      "No la cargues: una ficha, no una pantalla.",
+    ],
+    props: {
+      HoverCardTrigger: {
+        delay: "Cuánto espera antes de abrir, en ms.",
+        closeDelay: "Cuánto espera antes de cerrar, en ms.",
+      },
+    },
+    related: ["popover", "tooltip", "avatar"],
+  },
   "dropdown-menu": {
     title: "DropdownMenu",
     group: "superposiciones",
