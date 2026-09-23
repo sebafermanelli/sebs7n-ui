@@ -59,6 +59,7 @@
       "types": "./dist/lib/*.d.ts",
       "import": "./dist/lib/*.js"
     },
+    "./tokens/*.json": "./tokens/*.json",
     "./*": {
       "types": "./dist/components/*.d.ts",
       "import": "./dist/components/*.js"

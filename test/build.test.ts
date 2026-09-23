@@ -88,6 +88,27 @@ describe("build", () => {
     expect(resolve("sebs7n-ui/lib/utils")).toMatch(/\/dist\/lib\/utils\.js$/)
     expect(resolve("sebs7n-ui/styles.css")).toMatch(/\/dist\/styles\.css$/)
     expect(resolve("sebs7n-ui/theme.css")).toMatch(/\/src\/styles\/theme\.css$/)
+    // Los JSON de tokens tienen su patrón propio. Con el comodín `./*` solo,
+    // `sebs7n-ui/tokens/geist.json` resolvía a `dist/components/tokens/geist.json.js`.
+    expect(resolve("sebs7n-ui/tokens/geist.json")).toMatch(/\/tokens\/geist\.json$/)
+    expect(existsSync(new URL(resolve("sebs7n-ui/tokens/brands.json")))).toBe(true)
+  })
+
+  // Un `exports` con comodines hace que "esto es interno" sea una promesa del
+  // comentario y no del paquete: mientras `shell-context.ts` estuvo en `src/lib/`,
+  // `import "sebs7n-ui/lib/shell-context"` resolvía y funcionaba. En
+  // `src/internal/` no hay patrón que lo alcance.
+  it("lo interno no es alcanzable por ningún subpath", () => {
+    for (const specifier of ["sebs7n-ui/lib/shell-context", "sebs7n-ui/internal/shell-context"]) {
+      let resuelto: string | null = null
+      try {
+        resuelto = resolve(specifier)
+      } catch {
+        resuelto = null
+      }
+      expect(resuelto === null || !existsSync(new URL(resuelto)), specifier).toBe(true)
+    }
+    expect(existsSync(join(root, "dist/internal/shell-context.js"))).toBe(true)
   })
 
   it("npm pack incluye los entry points por módulo", () => {
@@ -103,6 +124,8 @@ describe("build", () => {
       ...components.flatMap((name) => [`dist/components/${name}.js`, `dist/components/${name}.d.ts`]),
       ...variants.flatMap((name) => [`dist/variants/${name}.js`, `dist/variants/${name}.d.ts`]),
       ...libs.flatMap((name) => [`dist/lib/${name}.js`, `dist/lib/${name}.d.ts`]),
+      // Interno pero publicado: los componentes del shell lo importan en runtime.
+      "dist/internal/shell-context.js",
     ]
     for (const file of expected) expect(files.has(file), file).toBe(true)
   })

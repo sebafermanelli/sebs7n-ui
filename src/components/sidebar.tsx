@@ -6,7 +6,7 @@ import { useRender } from "@base-ui/react/use-render"
 import { SearchIcon } from "lucide-react"
 
 import { cn } from "../lib/utils.js"
-import { AppShellContext, SidebarContext, SidebarInSheetContext, useSidebarContext } from "../lib/shell-context.js"
+import { AppShellContext, SidebarContext, SidebarInSheetContext, useSidebarContext } from "../internal/shell-context.js"
 import { sidebarItemVariants } from "../variants/sidebar.js"
 import { Kbd } from "./kbd.js"
 import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip.js"

@@ -4,7 +4,7 @@ import * as React from "react"
 import { MenuIcon } from "lucide-react"
 
 import { cn } from "../lib/utils.js"
-import { AppShellContext, SidebarInSheetContext, type AppShellContextValue } from "../lib/shell-context.js"
+import { AppShellContext, SidebarInSheetContext, type AppShellContextValue } from "../internal/shell-context.js"
 import { Button } from "./button.js"
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "./sheet.js"
 

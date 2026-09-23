@@ -5,7 +5,7 @@ import { ChevronsUpDownIcon } from "lucide-react"
 
 import { cn } from "../lib/utils.js"
 import { Children, Fragment, useContext, useRef } from "react"
-import { AppShellContext, useSidebarContext } from "../lib/shell-context.js"
+import { AppShellContext, useSidebarContext } from "../internal/shell-context.js"
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar.js"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuSeparator, DropdownMenuTrigger } from "./dropdown-menu.js"
 import { ThemeMenuRadio, type ThemeSwitcherLabels } from "./theme-switcher.js"

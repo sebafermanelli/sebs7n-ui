@@ -11,6 +11,7 @@
 // shadcn resuelve con el components.json de la app:
 //   ../lib/utils.js      → @/lib/utils
 //   ../lib/x.js          → @/lib/sebs7n-ui/x-helpers
+//   ../internal/x.js     → @/lib/sebs7n-ui/x-helpers
 //   ../variants/x.js     → @/lib/sebs7n-ui/x-variants
 //   ./button.js          → @/components/ui/button
 //
@@ -37,7 +38,7 @@ const variantsFile = (name) => `${name}-variants`
 export function rewriteImports(source) {
   return source
     .replace(/from "\.\.\/lib\/utils\.js"/g, 'from "@/lib/utils"')
-    .replace(/from "\.\.\/lib\/([a-z0-9-]+)\.js"/g, (_, name) => `from "@/lib/sebs7n-ui/${libFile(name)}"`)
+    .replace(/from "\.\.\/(?:lib|internal)\/([a-z0-9-]+)\.js"/g, (_, name) => `from "@/lib/sebs7n-ui/${libFile(name)}"`)
     .replace(/from "\.\.\/variants\/([a-z0-9-]+)\.js"/g, (_, name) => `from "@/lib/sebs7n-ui/${variantsFile(name)}"`)
     .replace(/from "\.\/([a-z0-9-]+)\.js"/g, 'from "@/components/ui/$1"')
 }
@@ -61,7 +62,7 @@ export function npmDependencies(source) {
 function registryDependencies(source, site) {
   const deps = new Set([`${site}/r/theme.json`])
   if (/from "\.\.\/lib\/utils\.js"/.test(source)) deps.add(`${site}/r/utils.json`)
-  for (const [, name] of source.matchAll(/from "\.\.\/lib\/([a-z0-9-]+)\.js"/g)) {
+  for (const [, name] of source.matchAll(/from "\.\.\/(?:lib|internal)\/([a-z0-9-]+)\.js"/g)) {
     if (name !== "utils") deps.add(`${site}/r/lib-${name}.json`)
   }
   for (const [, name] of source.matchAll(/from "\.\.\/variants\/([a-z0-9-]+)\.js"/g)) deps.add(`${site}/r/variants-${name}.json`)
@@ -252,11 +253,17 @@ export function buildRegistry({ root, site, components, author }) {
     ],
   })
 
-  // `src/lib` y `src/variants` se leen del disco: un helper nuevo entra solo al
-  // registry. Con la lista a mano, el primer componente que importara un helper
-  // nuevo generaba una registryDependency a un ítem que no existía.
-  for (const name of modules(root, "lib").filter((name) => name !== "utils")) {
-    const source = read(`src/lib/${name}.ts`)
+  // `src/lib`, `src/internal` y `src/variants` se leen del disco: un helper nuevo
+  // entra solo al registry. Con la lista a mano, el primer componente que
+  // importara un helper nuevo generaba una registryDependency a un ítem que no
+  // existía. `internal/` no se exporta del paquete, pero el registry copia
+  // archivos: el componente que lo importa lo necesita igual.
+  const helpers = [
+    ...modules(root, "lib").filter((name) => name !== "utils").map((name) => ["lib", name]),
+    ...modules(root, "internal").map((name) => ["internal", name]),
+  ].sort(([, a], [, b]) => a.localeCompare(b))
+  for (const [dir, name] of helpers) {
+    const source = read(`src/${dir}/${name}.ts`)
     items.push({
       $schema: ITEM_SCHEMA,
       name: `lib-${name}`,
