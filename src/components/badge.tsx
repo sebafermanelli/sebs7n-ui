@@ -1,5 +1,7 @@
-import { cn, type WithClassName } from "../lib/utils.js"
+import type * as React from "react"
+
 import { renderElement, type RenderElement } from "../lib/render.js"
+import { cn, type WithClassName } from "../lib/utils.js"
 import { badgeDotColor, badgeVariants, type BadgeColor } from "../variants/badge.js"
 
 // solid solo existe en gray y brand: los 700 de Geist con texto blanco no llegan a 4.5:1.

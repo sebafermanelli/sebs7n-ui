@@ -1,5 +1,5 @@
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
 import type * as React from "react"
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
 
 import { paginationRange } from "../lib/pagination.js"
 import { renderElement, type RenderElement } from "../lib/render.js"

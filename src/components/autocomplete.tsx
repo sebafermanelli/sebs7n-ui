@@ -1,8 +1,8 @@
 "use client"
 
+import type * as React from "react"
 import { Autocomplete as AutocompletePrimitive } from "@base-ui/react/autocomplete"
 import { ChevronDownIcon, XIcon } from "lucide-react"
-import type * as React from "react"
 
 import { renderShellTrigger } from "../internal/shell-trigger.js"
 import { useLabels } from "../lib/labels.js"

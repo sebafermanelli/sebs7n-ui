@@ -1,5 +1,5 @@
-import { Loader2Icon } from "lucide-react"
 import type * as React from "react"
+import { Loader2Icon } from "lucide-react"
 
 import { cn, type WithClassName } from "../lib/utils.js"
 

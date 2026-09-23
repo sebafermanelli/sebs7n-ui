@@ -1,5 +1,5 @@
-import { ChevronRightIcon } from "lucide-react"
 import * as React from "react"
+import { ChevronRightIcon } from "lucide-react"
 
 import { renderElement, type RenderElement } from "../lib/render.js"
 import { cn, type WithClassName } from "../lib/utils.js"

@@ -1,3 +1,5 @@
+import type * as React from "react"
+
 import { cn, type WithClassName } from "../lib/utils.js"
 
 type SeparatorProps = WithClassName<React.ComponentProps<"div">> & {

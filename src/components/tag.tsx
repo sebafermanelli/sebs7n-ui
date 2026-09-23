@@ -1,5 +1,5 @@
-import { XIcon } from "lucide-react"
 import type * as React from "react"
+import { XIcon } from "lucide-react"
 
 import { cn } from "../lib/utils.js"
 import { tagRemoveClassName, tagVariants, type TagColor, type TagSize } from "../variants/tag.js"
