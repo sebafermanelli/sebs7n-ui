@@ -11,6 +11,9 @@ const read = (path: string) => readFileSync(join(here, path), "utf8")
 const site = JSON.parse(read(".generated/site.json"))
 const registry = JSON.parse(read("registry.json"))
 
+type Prop = { name: string; description: string; inherited: boolean }
+type Componente = { slug: string; title: string; exports: { name: string; props: Prop[] }[] }
+
 const rutas: { href: string; title: string }[] = [
   ...site.pages.map((page: { slug: string; title: string }) => ({ href: `/docs/${page.slug}`, title: page.title })),
   ...site.components.map((component: { slug: string; title: string }) => ({
@@ -18,6 +21,51 @@ const rutas: { href: string; title: string }[] = [
     title: component.title,
   })),
 ]
+
+// `related` es direccional a propósito (el porqué está en `content/meta.mjs`), así que
+// no se verifica reciprocidad. Lo que sí: que cada enlace apunte a un componente que
+// existe, porque un slug mal escrito no rompe nada —sale un link a 404 y listo—.
+describe("related", () => {
+  it("todo slug de related existe como componente", () => {
+    const slugs = new Set(site.components.map((component: { slug: string }) => component.slug))
+    const rotos: string[] = []
+    for (const component of site.components as { slug: string; related: string[] }[]) {
+      for (const otro of component.related) if (!slugs.has(otro)) rotos.push(`${component.slug} → ${otro}`)
+    }
+    expect(rotos).toEqual([])
+  })
+})
+
+// Una prop sin descripción no rompe nada: sale la fila con la celda vacía y el sitio
+// compila igual. Era el defecto más repetido de la doc —254 de 440 filas en 0.4.0—, así
+// que acá queda clavado en cero para las props **propias**, que son las que el paquete
+// inventó y nadie más va a explicar.
+//
+// Las heredadas de Base UI se cuentan aparte y solo avisan: aparecen porque `meta.props`
+// las nombra, así que hoy es imposible que entre una sin texto, pero si algún día el
+// generador vuelca más, que no sea un test rojo el que frene el deploy.
+describe("props documentadas", () => {
+  const props = (site.components as Componente[]).flatMap((component) =>
+    component.exports.flatMap((exported) =>
+      exported.props.map((prop) => ({ ...prop, donde: `${component.slug}.${exported.name}.${prop.name}` }))
+    )
+  )
+
+  it("mira una tabla de props no vacía", () => {
+    expect(props.length).toBeGreaterThan(400)
+  })
+
+  it("ninguna prop propia queda sin descripción", () => {
+    const sin = props.filter((prop) => !prop.inherited && !prop.description).map((prop) => prop.donde)
+    expect(sin).toEqual([])
+  })
+
+  it("las heredadas sin descripción solo se cuentan", () => {
+    const sin = props.filter((prop) => prop.inherited && !prop.description).map((prop) => prop.donde)
+    if (sin.length) console.warn(`[props] ${sin.length} props heredadas sin descripción: ${sin.join(", ")}`)
+    expect(sin.length).toBeLessThanOrEqual(props.length)
+  })
+})
 
 describe("markdown por página", () => {
   it("hay un .md por cada página del sitio", () => {
@@ -123,9 +171,50 @@ describe("registry", () => {
     expect(nombres).toContain("lib-shell-context")
   })
 
+  // El hallazgo que hacía que `shadcn add .../r/button.json` no compilara: el CLI
+  // resuelve un import por basename cuando no da con la ruta exacta, y entre dos
+  // archivos del mismo `add` con el mismo nombre gana el `.tsx`. `button.ts` de
+  // las variantes y `button.tsx` del componente chocaban, y el componente
+  // terminaba importándose a sí mismo (TS2303).
+  it("ningún archivo del registry repite basename con otro", () => {
+    const porBasename = new Map<string, string[]>()
+    for (const item of registry.items) {
+      for (const file of item.files ?? []) {
+        const nombre = (file.path as string).split("/").pop()!.replace(/\.(tsx?|jsx?)$/, "")
+        porBasename.set(nombre, [...(porBasename.get(nombre) ?? []), item.name])
+      }
+    }
+    const repetidos = [...porBasename.entries()].filter(([, items]) => items.length > 1)
+    expect(repetidos).toEqual([])
+  })
+
+  it("el tema viaja como ítem registry:theme y todo componente depende de él", () => {
+    const tema = registry.items.find((item: { name: string }) => item.name === "theme")
+    expect(tema.type).toBe("registry:theme")
+    // Los tokens que la auditoría encontró faltando en el proyecto destino.
+    // `@theme inline` por cssVars y con las claves sin `--`; `:root`/`.dark` por
+    // `css`. El porqué de cada uno está en registry.mjs.
+    expect(tema.cssVars.theme["color-brand-700"]).toBe("var(--sf-brand-700)")
+    expect(Object.keys(tema.cssVars.theme).some((clave) => clave.startsWith("--"))).toBe(false)
+    expect(tema.cssVars.light).toBeUndefined()
+    expect(tema.css[":root"]["--brand-base"]).toBeTruthy()
+    expect(tema.css[".dark"]["--sf-background"]).toBe("#000000")
+    expect(tema.css["@utility focus-ring"]["box-shadow"]).toContain("--color-brand-700")
+    expect(tema.css["@utility text-button-14"]["font-size"]).toBe("14px")
+    // Y nada de reset.css/base.css, que pisarían el chrome de la app destino:
+    // de reset.css entran los radios y nada más.
+    expect(tema.cssVars.theme["radius-md"]).toBe("6px")
+    expect(tema.cssVars.theme["color-white"]).toBeUndefined()
+    expect(tema.cssVars.theme["color-*"]).toBeUndefined()
+    for (const component of site.components) {
+      const item = registry.items.find((otro: { name: string }) => otro.name === component.slug)
+      expect(item.registryDependencies, component.slug).toContain(`${site.site}/r/theme.json`)
+    }
+  })
+
   it("el contenido no tiene imports relativos del paquete: todos pasan por un alias", () => {
     for (const item of registry.items) {
-      for (const file of item.files) {
+      for (const file of item.files ?? []) {
         expect(file.content, `${item.name}/${file.path}`).not.toMatch(/from "\.\.?\//)
         expect(file.content, `${item.name}/${file.path}`).not.toMatch(/\.js"/)
       }
@@ -152,7 +241,11 @@ describe("registry", () => {
     expect(button.files[0].type).toBe("registry:ui")
     expect(button.files[0].path).toMatch(/^registry\/sebs7n-ui\/ui\/button\.tsx$/)
     expect(button.dependencies).toContain("@base-ui/react")
-    expect(button.files[0].content).toContain('import { cn } from "@/lib/utils"')
+    // El import de `lib/utils` se reescribe al alias estándar de shadcn, traiga lo que traiga:
+    // `cn` siempre, y desde 0.5.0 también el tipo `WithClassName`. Lo que no puede faltar es la
+    // dependencia al ítem `utils`, que es el que copia ese archivo al proyecto destino.
+    expect(button.files[0].content).toMatch(/^import \{ cn(, [^}]*)? \} from "@\/lib\/utils"$/m)
+    expect(button.registryDependencies).toContain("https://ui.sebastianfermanelli.com/r/utils.json")
   })
 })
 

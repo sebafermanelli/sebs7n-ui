@@ -4,7 +4,3 @@ dist/
 .superpowers/
 .tmp-types-*/
 
-# Generados por `next dev` en el playground.
-playground/AGENTS.md
-playground/CLAUDE.md
-playground/.pack/

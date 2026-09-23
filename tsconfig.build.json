@@ -4,6 +4,11 @@
     "rootDir": "src",
     "outDir": "dist",
     "declaration": true,
+    // Sourcemaps del JS: cuando una app cae en un stack trace adentro de `dist/`, el bundler
+    // puede devolverle la línea del `.tsx` original en vez de la del compilado.
+    // `declarationMap` NO: apuntaría a `src/`, que no está en `files` y no se publica, así que
+    // el editor seguiría al "ir a la definición" hacia un archivo que en node_modules no existe.
+    "sourceMap": true,
     "noEmit": false,
     "types": []
   },

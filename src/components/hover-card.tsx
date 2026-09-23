@@ -3,7 +3,8 @@
 import type * as React from "react"
 import { PreviewCard as PreviewCardPrimitive } from "@base-ui/react/preview-card"
 
-import { cn } from "../lib/utils.js"
+import { cn, type WithClassName } from "../lib/utils.js"
+import { floatingPopupClassName } from "../variants/overlay.js"
 
 /**
  * La tarjeta que aparece al pasar el mouse por un link: la ficha de una
@@ -25,13 +26,13 @@ function HoverCard(props: PreviewCardPrimitive.Root.Props) {
   return <PreviewCardPrimitive.Root {...props} />
 }
 
-type HoverCardTriggerProps = Omit<PreviewCardPrimitive.Trigger.Props, "className"> & { className?: string }
+type HoverCardTriggerProps = WithClassName<PreviewCardPrimitive.Trigger.Props>
 
 function HoverCardTrigger({ className, closeDelay = 300, delay = 600, ...props }: HoverCardTriggerProps) {
   return (
     <PreviewCardPrimitive.Trigger
       data-slot="hover-card-trigger"
-      className={cn(className)}
+      className={className}
       closeDelay={closeDelay}
       delay={delay}
       {...props}
@@ -39,8 +40,8 @@ function HoverCardTrigger({ className, closeDelay = 300, delay = 600, ...props }
   )
 }
 
-type HoverCardContentProps = Omit<PreviewCardPrimitive.Popup.Props, "className"> &
-  Pick<PreviewCardPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset"> & { className?: string }
+type HoverCardContentProps = WithClassName<PreviewCardPrimitive.Popup.Props> &
+  Pick<PreviewCardPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset">
 
 function HoverCardContent({
   align = "center",
@@ -61,11 +62,9 @@ function HoverCardContent({
       >
         <PreviewCardPrimitive.Popup
           data-slot="hover-card-content"
-          className={cn(
-            "flex w-72 origin-(--transform-origin) flex-col gap-3 rounded-xl bg-background-100 p-4 text-copy-14 text-gray-1000 shadow-menu outline-none",
-            "transition-opacity duration-150 motion-reduce:transition-none data-ending-style:opacity-0 data-starting-style:opacity-0",
-            className
-          )}
+          // El `motion-reduce:transition-none` es propio: el HoverCard se abre solo al pasar el
+          // mouse, así que quien pidió menos movimiento lo ve aparecer sin haber hecho nada.
+          className={cn(floatingPopupClassName, "motion-reduce:transition-none", className)}
           {...props}
         />
       </PreviewCardPrimitive.Positioner>

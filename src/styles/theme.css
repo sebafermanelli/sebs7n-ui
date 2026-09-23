@@ -7,18 +7,6 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --animate-skeleton: skeleton 1.5s ease-in-out infinite;
-
-  @keyframes skeleton {
-    0%,
-    100% {
-      background-color: var(--color-gray-100);
-    }
-    50% {
-      background-color: var(--color-gray-200);
-    }
-  }
-
   /* Progress indeterminada: una franja del 40% que recorre la pista. */
   --animate-progress-indeterminate: progress-indeterminate 1.4s ease-in-out infinite;
 
@@ -48,7 +36,25 @@
   --color-brand-1000: var(--sf-brand-1000);
   --color-brand-contrast: var(--sf-brand-fg);
 
+  /* El fondo de página. No es un alias de nadie: es uno de los tres roles de fondo
+     del sistema, y `AppShell` lo usa. Los otros dos salen de colors.css. */
   --color-background: var(--sf-background);
+
+  /**
+   * De acá abajo, alias de compatibilidad con shadcn. **Ningún componente del
+   * paquete los usa**: los 58 van a `bg-background-100`, `text-gray-900`,
+   * `border-gray-400`.
+   *
+   * Están para el componente que alguien pega de shadcn.io —o que trae
+   * `shadcn add`— en una app que ya usa este paquete: sin estos nombres ese
+   * bloque sale sin color, y con ellos sale en la paleta de Geist. Los pares
+   * pasan AA (primary 17,9:1 claro / 16,9:1 oscuro, muted-foreground sobre muted
+   * 7,55 y 6,66, destructive 4,75 y 4,79), así que no hay que retocar nada.
+   *
+   * En código nuevo va el vocabulario de arriba, no este: dos nombres para el
+   * mismo color es lo que `reglas.md` dice que no queremos. Está documentado en
+   * la página de Tokens del sitio.
+   */
   --color-foreground: var(--sf-gray-1000);
   --color-card: var(--sf-background-100);
   --color-card-foreground: var(--sf-gray-1000);
@@ -122,10 +128,41 @@
     --sf-brand-1000: oklch(from var(--sf-brand-src) 0.269 calc(c * 0.433) h);
 
     --sf-button-primary-hover: #383838;
-    --sf-button-error-fg: #f5f5f5;
+    /**
+     * Los tres del botón destructivo son iguales en claro y en oscuro, y por eso
+     * no se repiten abajo en `.dark`.
+     *
+     * El fondo de reposo sí cambia por tema (`bg-red-800`: #e70022 en claro,
+     * #e2162a en oscuro), pero los dos son rojos oscuros y el mismo blanco puro
+     * les da 4,75:1 y 4,79:1. Antes en claro el texto era #f5f5f5 y quedaba en
+     * 4,36:1, abajo del 4,5 de WCAG 1.4.3.
+     *
+     * En hover y en active el botón se oscurece en los dos temas. En oscuro
+     * antes se ACLARABA (#ff5e63 y #ffaba3): sobre blanco eso daba 2,99:1 y
+     * 1,81:1, que es texto ilegible sobre un botón que borra cosas. Oscurecer en
+     * los dos temas además hace que el gesto se lea igual en los dos.
+     */
+    --sf-button-error-fg: #fff;
     --sf-button-error-hover: #ae292f;
     --sf-button-error-active: #7c1316;
     --sf-backdrop: #00000033;
+    /**
+     * El borde del campo enfocado (`focus-border`).
+     *
+     * En claro era `gray-alpha-600` (#0000003d): compuesto sobre la superficie
+     * blanca queda en #c2c2c2, 1,78:1. WCAG 2.4.11 y 1.4.11 piden 3:1 para el
+     * indicador de foco, y con 1,78 tabular por un formulario era adivinar
+     * dónde estaba parado. `gray-alpha-800` (#00000082) compone #7d7d7d y da
+     * 4,12:1.
+     *
+     * En oscuro se queda en `gray-alpha-600` (#ffffff82 → #878787, 5,51:1), que
+     * ya pasaba: subirlo a alpha-800 lo BAJARÍA a 4,81, porque la escala alpha
+     * en oscuro no es monótona.
+     *
+     * El halo de 4px (`--sf-focus-halo`) no se toca: es énfasis, no es el
+     * indicador. Quien tiene que llegar al 3:1 es el borde, y llega.
+     */
+    --sf-focus-border: var(--sf-gray-alpha-800);
     --sf-focus-halo: #00000029;
 
     --sf-shadow-border-base: 0 0 0 1px #00000014;
@@ -166,14 +203,50 @@
     --sf-brand-1000: oklch(from var(--sf-brand-src) 0.968 calc(c * 0.077) h);
 
     --sf-button-primary-hover: #cccccc;
-    --sf-button-error-fg: #fff;
-    --sf-button-error-hover: var(--sf-red-900);
-    --sf-button-error-active: #ffaba3;
     --sf-backdrop: #00000080;
+    --sf-focus-border: var(--sf-gray-alpha-600);
     --sf-focus-halo: #ffffff3d;
 
     --sf-shadow-border-base: 0 0 0 1px #ffffff25;
     --sf-shadow-background-border: 0 0 0 1px var(--sf-background);
+  }
+}
+
+/* El pulso del Skeleton.
+ *
+ * Anima la `opacity` de una capa de gray-200 encima, y no el `background-color` del
+ * elemento. El color se interpola en el hilo principal y obliga a repintar cada frame
+ * mientras dura la carga —que es justo cuando el hilo está ocupado—; la opacidad la
+ * resuelve el compositor y no repinta nada.
+ *
+ * Se ve exactamente igual: componer gray-200 con alfa t sobre gray-100 da la misma
+ * mezcla sRGB que interpolar de un color al otro. El `opacity: 0` declarado en la
+ * capa no es redundante: el reset de `prefers-reduced-motion` de base.css corta la
+ * animación, y sin él la capa quedaría fija en gray-200 en vez de en gray-100, que es
+ * donde quedaba antes. El radio se hereda para que siga la forma que le ponga la app.
+ */
+@keyframes skeleton {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@utility animate-skeleton {
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background-color: var(--color-gray-200);
+    opacity: 0;
+    animation: skeleton 1.5s ease-in-out infinite;
+    pointer-events: none;
   }
 }
 
@@ -189,10 +262,10 @@
   box-shadow: 0 0 0 2px var(--color-background-100), 0 0 0 4px var(--color-brand-700);
 }
 
-/* Foco de inputs de Geist (--ds-focus-border). */
+/* Foco de inputs de Geist (--ds-focus-border), con el borde por tema: ver --sf-focus-border. */
 @utility focus-border {
   outline: none;
-  border-color: var(--color-gray-alpha-600);
+  border-color: var(--sf-focus-border);
   box-shadow: 0 0 0 4px var(--sf-focus-halo);
 }
 
@@ -253,3 +326,27 @@
 @utility text-copy-13 { font-family: var(--font-sans); font-size: 13px; line-height: 18px; font-weight: 400; }
 @utility text-copy-14-mono { font-family: var(--font-mono); font-size: 14px; line-height: 20px; font-weight: 400; }
 @utility text-copy-13-mono { font-family: var(--font-mono); font-size: 13px; line-height: 18px; font-weight: 400; }
+
+/**
+ * Las utilidades de los componentes las genera el Tailwind de la app, pero el
+ * `@source` lo pone el paquete.
+ *
+ * Tailwind v4 resuelve `@source` **relativo al archivo que lo contiene**,
+ * también cuando ese archivo vive en node_modules: desde
+ * `node_modules/sebs7n-ui/src/styles/theme.css`, `../../dist` es el dist del
+ * paquete. Antes esta línea la escribía la app, con la ruta calculada a mano
+ * (`../node_modules/…` o `../../node_modules/…` según dónde estuviera su
+ * globals.css). Cuando se olvidaba o la ruta era incorrecta, Tailwind no avisa
+ * nada: el build dice "Compiled", el CSS baja de 75 KB a 13 y la app entera
+ * queda sin estilo. Era la fricción de instalación número uno.
+ *
+ * Para achicar el CSS final se puede EXCLUIR lo que la app no usa, que es
+ * seguro porque falla ruidosamente (no compila la clase, se ve el componente
+ * sin estilo):
+ *
+ *   @import "sebs7n-ui/theme.css";
+ *   @source not "../../node_modules/sebs7n-ui/dist/components/combobox.js";
+ *
+ * Los caros son combobox, autocomplete, los tres menús, drawer y user-menu.
+ */
+@source "../../dist";

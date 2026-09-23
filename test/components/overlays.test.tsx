@@ -1,5 +1,6 @@
-import { render, screen, waitFor } from "@testing-library/react"
+import { act, render, screen, waitFor } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
+import { toast } from "sonner"
 import { describe, expect, it, vi } from "vitest"
 
 import { Button } from "../../src/components/button"
@@ -46,6 +47,22 @@ describe("Popover", () => {
     const panel = (await screen.findByText("contenido")).closest("[data-slot=popover-content]")!
     expect(panel).toHaveClass("shadow-menu", "rounded-xl", "bg-background-100")
     expect(panel.className).not.toMatch(/\bborder\b/)
+  })
+
+  // Un popover de solo texto no tiene nada tabulable adentro, así que Base UI
+  // enfoca el popup mismo. Con `outline-none` y sin reemplazo eso era foco
+  // invisible (WCAG 2.4.7).
+  it("el panel enfocado tiene anillo, no outline-none pelado", async () => {
+    render(
+      <Popover>
+        <PopoverTrigger render={<Button variant="outline" />}>Filtros</PopoverTrigger>
+        <PopoverContent>contenido</PopoverContent>
+      </Popover>
+    )
+    await userEvent.click(screen.getByRole("button", { name: "Filtros" }))
+    const panel = (await screen.findByText("contenido")).closest<HTMLElement>("[data-slot=popover-content]")!
+    expect(panel).toHaveClass("focus-visible:focus-ring")
+    await waitFor(() => expect(panel).toHaveFocus())
   })
 })
 
@@ -100,7 +117,7 @@ describe("Select", () => {
       </Select>
     )
     const trigger = screen.getByRole("combobox", { name: "Moneda" })
-    expect(trigger).toHaveClass("border-gray-400", "hover:border-gray-500", "focus-visible:focus-border", "data-placeholder:text-gray-700", "data-[size=md]:h-10")
+    expect(trigger).toHaveClass("border-gray-400", "hover:border-gray-500", "focus-visible:focus-border", "data-placeholder:text-gray-900", "data-[size=md]:h-10")
     await userEvent.click(trigger)
     await userEvent.click(await screen.findByRole("option", { name: "USD" }))
     expect(onValueChange).toHaveBeenCalledWith("usd", expect.anything())
@@ -184,6 +201,39 @@ describe("Sheet foco", () => {
 describe("Toaster", () => {
   it("se monta sin ThemeProvider", () => {
     const { container } = render(<Toaster />)
-    expect(container).toBeTruthy()
+    expect(container.querySelector("section")).not.toBeNull()
+  })
+
+  // El test de antes era `expect(container).toBeTruthy()`, que pasa aunque el Toaster no
+  // renderice nada. Lo que importa es que un `toast()` llegue a la pantalla y que se anuncie
+  // sin interrumpir: Sonner no usa `role="status"` sino la región `aria-live="polite"` que
+  // monta el Toaster, que es el mismo contrato escrito de la otra forma. Lo que no puede
+  // pasar es que sea `assertive`: un toast corta lo que el lector esté diciendo y casi
+  // nunca es tan urgente.
+  it("toast() aparece dentro de una región viva que no interrumpe", async () => {
+    render(<Toaster />)
+
+    act(() => {
+      toast("Factura enviada")
+    })
+
+    const aviso = await screen.findByText("Factura enviada")
+    const region = aviso.closest("[aria-live]")!
+    expect(region).toHaveAttribute("aria-live", "polite")
+    expect(aviso.closest("[data-sonner-toast]")).not.toBeNull()
+  })
+
+  it("toast.success trae el ícono verde del sistema, oculto al lector", async () => {
+    render(<Toaster />)
+
+    act(() => {
+      toast.success("Listo")
+    })
+
+    const aviso = await screen.findByText("Listo")
+    const fila = aviso.closest("[data-sonner-toast]")!
+    const icono = fila.querySelector("svg")!
+    expect(icono).toHaveClass("text-green-900")
+    expect(icono).toHaveAttribute("aria-hidden", "true")
   })
 })

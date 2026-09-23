@@ -1,5 +1,5 @@
-import { XIcon } from "lucide-react"
 import type * as React from "react"
+import { XIcon } from "lucide-react"
 
 import { cn } from "../lib/utils.js"
 import { tagRemoveClassName, tagVariants, type TagColor, type TagSize } from "../variants/tag.js"
@@ -24,8 +24,9 @@ type TagProps = Omit<React.ComponentProps<"span">, "color"> & {
  * Tag es el dato en sí, y por eso trae el botón de quitar. Si no se puede
  * sacar, es un Badge.
  *
- * Dentro de un `Combobox` múltiple ya está `ComboboxChip`, que es el mismo
- * objeto conectado al estado del combobox: ahí no va este.
+ * Dentro de un `Combobox` múltiple ya está `ComboboxChip`, que es literalmente
+ * este objeto —sale de `tagVariants` y `tagRemoveClassName`— conectado al estado
+ * del combobox: ahí no va este.
  */
 function Tag({
   className,

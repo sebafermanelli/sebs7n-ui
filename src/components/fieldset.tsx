@@ -2,7 +2,7 @@
 
 import { Fieldset as FieldsetPrimitive } from "@base-ui/react/fieldset"
 
-import { cn } from "../lib/utils.js"
+import { cn, type WithClassName } from "../lib/utils.js"
 
 /**
  * Un grupo de campos con un título común: los datos de facturación, la
@@ -43,7 +43,7 @@ import { cn } from "../lib/utils.js"
  * no existe" sobre calle + localidad), va en el campo que se puede corregir, o
  * arriba del formulario en un `Alert`; un `<fieldset>` no es el lugar.
  */
-type FieldsetProps = Omit<FieldsetPrimitive.Root.Props, "className"> & { className?: string }
+type FieldsetProps = WithClassName<FieldsetPrimitive.Root.Props>
 
 function Fieldset({ className, ...props }: FieldsetProps) {
   return (
@@ -56,7 +56,7 @@ function Fieldset({ className, ...props }: FieldsetProps) {
  * en lugar de usar un `<legend>` nativo, porque el `<legend>` no se puede
  * ubicar libremente sin pelear con el navegador.
  */
-type FieldsetLegendProps = Omit<FieldsetPrimitive.Legend.Props, "className"> & { className?: string }
+type FieldsetLegendProps = WithClassName<FieldsetPrimitive.Legend.Props>
 
 function FieldsetLegend({ className, ...props }: FieldsetLegendProps) {
   return (

@@ -3,25 +3,17 @@
 import * as React from "react"
 import { MenuIcon } from "lucide-react"
 
+import { AppShellContext, SidebarInSheetContext, type AppShellContextValue } from "../internal/shell-context.js"
+import { useLabels, type Labels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
-import { AppShellContext, SidebarInSheetContext, type AppShellContextValue } from "../lib/shell-context.js"
 import { Button } from "./button.js"
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "./sheet.js"
 
-type AppShellLabels = {
-  /** Botón hamburguesa de la barra mobile. */
-  openMenu: string
-  /** Título (oculto) del Sheet con la navegación. */
-  navigation: string
-  /** Skip link al contenido. */
-  skipToContent: string
-}
-
-const DEFAULT_LABELS: AppShellLabels = {
-  openMenu: "Abrir menú",
-  navigation: "Navegación",
-  skipToContent: "Ir al contenido",
-}
+/**
+ * Los textos viven una sola vez, en `sebs7n-ui/labels`. Acá queda el alias para
+ * que el tipo público siga llamándose igual y nadie tenga que cambiar un import.
+ */
+type AppShellLabels = Labels["appShell"]
 
 type AppShellProps = Omit<React.ComponentProps<"div">, "children"> & {
   /** Un <Sidebar>. Se renderiza fijo en desktop y dentro de un Sheet en mobile. */
@@ -44,7 +36,9 @@ type AppShellProps = Omit<React.ComponentProps<"div">, "children"> & {
 const DESKTOP_QUERY = "(min-width: 64rem)"
 
 function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido", labels: labelsProp, children, ...props }: AppShellProps) {
-  const labels = { ...DEFAULT_LABELS, ...labelsProp }
+  // El provider gana sobre el español; la prop `labels` gana sobre el provider, porque es la
+  // excepción puntual de una pantalla y no una traducción.
+  const labels = { ...useLabels().appShell, ...labelsProp }
   const [mobileOpen, setMobileOpen] = React.useState(false)
   const mainRef = React.useRef<HTMLElement>(null)
   const focusMainOnClose = React.useRef(false)

@@ -5,8 +5,8 @@ import { Menu as MenuPrimitive } from "@base-ui/react/menu"
 import { Menubar as MenubarPrimitive } from "@base-ui/react/menubar"
 import { CheckIcon, ChevronRightIcon } from "lucide-react"
 
-import { cn } from "../lib/utils.js"
-import { menuItemClassName, menuPopupClassName } from "../variants/menu.js"
+import { cn, type WithClassName } from "../lib/utils.js"
+import { menuItemClassName, menuLabelClassName, menuPopupClassName, menuSeparatorClassName, type MenuInsetProps } from "../variants/menu.js"
 
 /**
  * La barra de menús de una aplicación: Archivo, Editar, Ver.
@@ -26,7 +26,7 @@ import { menuItemClassName, menuPopupClassName } from "../variants/menu.js"
  * Sin fondo ni borde propios: la barra vive dentro del header de la app y hereda
  * su superficie, igual que el `NavigationMenu` dentro de un nav.
  */
-type MenubarProps = Omit<MenubarPrimitive.Props, "className"> & { className?: string }
+type MenubarProps = WithClassName<MenubarPrimitive.Props>
 
 function Menubar({ className, ...props }: MenubarProps) {
   return <MenubarPrimitive data-slot="menubar" className={cn("flex items-center gap-0.5", className)} {...props} />
@@ -34,10 +34,10 @@ function Menubar({ className, ...props }: MenubarProps) {
 
 /** Un título de la barra con su menú. Va directo adentro de `Menubar`. */
 function MenubarMenu(props: MenuPrimitive.Root.Props) {
-  return <MenuPrimitive.Root data-slot="menubar-menu" {...props} />
+  return <MenuPrimitive.Root {...props} />
 }
 
-type MenubarTriggerProps = Omit<MenuPrimitive.Trigger.Props, "className"> & { className?: string }
+type MenubarTriggerProps = WithClassName<MenuPrimitive.Trigger.Props>
 
 /**
  * El título clickeable.
@@ -62,8 +62,8 @@ function MenubarTrigger({ className, ...props }: MenubarTriggerProps) {
   )
 }
 
-type MenubarContentProps = Omit<MenuPrimitive.Popup.Props, "className"> &
-  Pick<MenuPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset"> & { className?: string }
+type MenubarContentProps = WithClassName<MenuPrimitive.Popup.Props> &
+  Pick<MenuPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset">
 
 function MenubarContent({ className, align = "start", alignOffset = 0, side = "bottom", sideOffset = 6, ...props }: MenubarContentProps) {
   return (
@@ -79,23 +79,21 @@ function MenubarGroup(props: MenuPrimitive.Group.Props) {
   return <MenuPrimitive.Group data-slot="menubar-group" {...props} />
 }
 
-type InsetProps = { inset?: boolean }
-
-type MenubarLabelProps = Omit<MenuPrimitive.GroupLabel.Props, "className"> & InsetProps & { className?: string }
+type MenubarLabelProps = WithClassName<MenuPrimitive.GroupLabel.Props> & MenuInsetProps
 
 function MenubarLabel({ className, inset, ...props }: MenubarLabelProps) {
   return (
     <MenuPrimitive.GroupLabel
       data-slot="menubar-label"
       data-inset={inset ? "" : undefined}
-      className={cn("px-2 py-1.5 text-label-12 text-gray-900 data-inset:pl-8", className)}
+      className={cn(menuLabelClassName, "data-inset:pl-8", className)}
       {...props}
     />
   )
 }
 
-type MenubarItemProps = Omit<MenuPrimitive.Item.Props, "className"> &
-  InsetProps & { className?: string; variant?: "default" | "destructive" }
+type MenubarItemProps = WithClassName<MenuPrimitive.Item.Props> &
+  MenuInsetProps & { variant?: "default" | "destructive" }
 
 function MenubarItem({ className, inset, variant = "default", ...props }: MenubarItemProps) {
   return (
@@ -120,7 +118,7 @@ function MenubarItem({ className, inset, variant = "default", ...props }: Menuba
  * porque la derecha ya está ocupada por el atajo (`MenubarShortcut`): un tilde
  * y un `⌘B` peleando por el mismo borde se leen como una sola columna de ruido.
  */
-type MenubarCheckboxItemProps = Omit<MenuPrimitive.CheckboxItem.Props, "className"> & { className?: string }
+type MenubarCheckboxItemProps = WithClassName<MenuPrimitive.CheckboxItem.Props>
 
 function MenubarCheckboxItem({ className, children, ...props }: MenubarCheckboxItemProps) {
   return (
@@ -137,7 +135,7 @@ function MenubarRadioGroup(props: MenuPrimitive.RadioGroup.Props) {
   return <MenuPrimitive.RadioGroup data-slot="menubar-radio-group" {...props} />
 }
 
-type MenubarRadioItemProps = Omit<MenuPrimitive.RadioItem.Props, "className"> & { className?: string }
+type MenubarRadioItemProps = WithClassName<MenuPrimitive.RadioItem.Props>
 
 function MenubarRadioItem({ className, children, ...props }: MenubarRadioItemProps) {
   return (
@@ -150,10 +148,10 @@ function MenubarRadioItem({ className, children, ...props }: MenubarRadioItemPro
   )
 }
 
-type MenubarSeparatorProps = Omit<MenuPrimitive.Separator.Props, "className"> & { className?: string }
+type MenubarSeparatorProps = WithClassName<MenuPrimitive.Separator.Props>
 
 function MenubarSeparator({ className, ...props }: MenubarSeparatorProps) {
-  return <MenuPrimitive.Separator data-slot="menubar-separator" className={cn("-mx-1 my-1 h-px bg-gray-400", className)} {...props} />
+  return <MenuPrimitive.Separator data-slot="menubar-separator" className={cn(menuSeparatorClassName, className)} {...props} />
 }
 
 /**
@@ -162,15 +160,24 @@ function MenubarSeparator({ className, ...props }: MenubarSeparatorProps) {
  * En un menubar es la mitad del trabajo del componente: el menú se abre una vez
  * para descubrir el comando y después se usa el atajo para siempre.
  */
-function MenubarShortcut({ className, ...props }: React.ComponentProps<"span">) {
-  return <span data-slot="menubar-shortcut" className={cn("ml-auto pl-6 text-label-12-mono text-gray-700", className)} {...props} />
+// El atajo es contenido, no decoración: un lector tiene que decir que existe. Pero pegado al
+// label se lee «Guardar⌘S» de corrido, porque el nombre accesible concatena los textos sin
+// separador. La coma sr-only más el espacio lo vuelven «Guardar, ⌘S». Misma técnica que
+// `SidebarItemBadge`, por el mismo motivo.
+function MenubarShortcut({ className, children, ...props }: React.ComponentProps<"span">) {
+  return (
+    <span data-slot="menubar-shortcut" className={cn("ml-auto pl-6 text-label-12-mono text-gray-900", className)} {...props}>
+      <span className="sr-only">,</span>{" "}
+      {children}
+    </span>
+  )
 }
 
 function MenubarSub(props: MenuPrimitive.SubmenuRoot.Props) {
-  return <MenuPrimitive.SubmenuRoot data-slot="menubar-sub" {...props} />
+  return <MenuPrimitive.SubmenuRoot {...props} />
 }
 
-type MenubarSubTriggerProps = Omit<MenuPrimitive.SubmenuTrigger.Props, "className"> & InsetProps & { className?: string }
+type MenubarSubTriggerProps = WithClassName<MenuPrimitive.SubmenuTrigger.Props> & MenuInsetProps
 
 function MenubarSubTrigger({ className, inset, children, ...props }: MenubarSubTriggerProps) {
   return (
@@ -212,4 +219,13 @@ export {
   MenubarSubContent,
   MenubarSubTrigger,
   MenubarTrigger,
+  type MenubarCheckboxItemProps,
+  type MenubarContentProps,
+  type MenubarItemProps,
+  type MenubarLabelProps,
+  type MenubarProps,
+  type MenubarRadioItemProps,
+  type MenubarSeparatorProps,
+  type MenubarSubTriggerProps,
+  type MenubarTriggerProps,
 }

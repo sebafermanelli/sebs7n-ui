@@ -30,6 +30,7 @@ import {
   ComboboxValue,
 } from "../../src/components/combobox"
 import { menuItemClassName, menuPopupClassName } from "../../src/variants/menu"
+import { tagRemoveClassName } from "../../src/variants/tag"
 
 const COUNTRIES = ["Argentina", "Armenia", "Bolivia", "Brasil", "Chile", "Uruguay"]
 
@@ -73,7 +74,7 @@ describe("Combobox", () => {
       "has-[input[aria-invalid=true]]:border-red-800", "data-disabled:bg-gray-100"
     )
     expect(group(md)).toHaveClass("text-copy-14", "data-[size=lg]:text-copy-16")
-    expect(md).toHaveClass("placeholder:text-gray-700", "bg-transparent", "outline-none")
+    expect(md).toHaveClass("placeholder:text-gray-900", "bg-transparent", "outline-none")
     expect(group(sm)).toHaveAttribute("data-size", "sm")
     expect(sm).toHaveAttribute("aria-invalid", "true")
     expect(group(lg)).toHaveAttribute("data-size", "lg")
@@ -174,6 +175,17 @@ describe("Combobox", () => {
   })
 
   it("búsqueda async: fila de carga con spinner, después resultados o vacío", async () => {
+    // El "servidor" es una promesa que resuelve el test, no un `setTimeout(…, 20)`.
+    // Con el timer esto era una carrera: si la máquina estaba cargada, los 20 ms se
+    // cumplían antes de que `findByText("Buscando…")` llegara a mirar el DOM, la fila
+    // de carga ya no existía y el test fallaba sin que hubiera nada roto. Así el
+    // estado de carga dura exactamente hasta que el test dice.
+    let responder: (() => void) | undefined
+    const respuestaDelServidor = () =>
+      new Promise<void>((resolve) => {
+        responder = resolve
+      })
+
     function AsyncCombobox() {
       const [items, setItems] = React.useState<string[]>([])
       const [loading, setLoading] = React.useState(false)
@@ -183,10 +195,10 @@ describe("Combobox", () => {
           filter={null}
           onInputValueChange={(query) => {
             setLoading(true)
-            setTimeout(() => {
+            respuestaDelServidor().then(() => {
               setItems(COUNTRIES.filter((c) => c.toLowerCase().startsWith(query.toLowerCase())))
               setLoading(false)
-            }, 20)
+            })
           }}
         >
           <ComboboxInput aria-label="Pasajero" />
@@ -210,9 +222,13 @@ describe("Combobox", () => {
     const row = await screen.findByText("Buscando…")
     expect(row.closest("[data-slot=combobox-loading]")!.querySelector("svg")).toHaveClass("animate-spin")
     expect(screen.queryByText("Sin resultados")).toBeNull()
-    await waitFor(() => expect(screen.getAllByRole("option").map((o) => o.textContent)).toEqual(["Bolivia", "Brasil"]))
+
+    await act(async () => responder?.())
+    expect(screen.getAllByRole("option").map((o) => o.textContent)).toEqual(["Bolivia", "Brasil"])
     expect(screen.queryByText("Buscando…")).toBeNull()
+
     await userEvent.keyboard("x")
+    await act(async () => responder?.())
     expect(await screen.findByText("Sin resultados")).toBeInTheDocument()
   })
 
@@ -249,7 +265,13 @@ describe("Combobox", () => {
     await userEvent.keyboard("uru{ArrowDown}{Enter}")
     expect(onValueChange).toHaveBeenLastCalledWith(["Chile", "Uruguay"], expect.anything())
     expect(await screen.findByText("Uruguay", { selector: "[data-slot=combobox-chip] *" })).toBeInTheDocument()
-    await userEvent.click(screen.getByRole("button", { name: "Quitar Chile" }))
+    // El chip es el `Tag` del sistema: mismo cuerpo, mismo botón de quitar de 16px con el
+    // `::after` de `-inset-1` que lleva el área de toque a 24 (WCAG 2.5.8). Y tiene que dejar
+    // de recortar, o ese área —y el anillo de foco— quedan cortados contra el borde.
+    const quitar = screen.getByRole("button", { name: "Quitar Chile" })
+    expect(quitar).toHaveClass(...tagRemoveClassName.md.split(" "))
+    expect(chip).toHaveClass("overflow-visible")
+    await userEvent.click(quitar)
     expect(onValueChange).toHaveBeenLastCalledWith(["Uruguay"], expect.anything())
   })
 })

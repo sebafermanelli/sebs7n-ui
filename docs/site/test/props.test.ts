@@ -13,7 +13,7 @@ const root = fileURLToPath(new URL("../../..", import.meta.url))
 const slugs = componentSlugs(root)
 const extracted = extractProps({
   root,
-  files: ["button", "card", "table", "combobox", "dialog", "badge", "sidebar", "kbd"].map(
+  files: ["button", "card", "table", "combobox", "dialog", "badge", "sidebar", "kbd", "select"].map(
     (slug) => `src/components/${slug}.tsx`
   ),
 })
@@ -93,7 +93,22 @@ describe("extractProps", () => {
   it("descarta las props heredadas del primitivo y deja la línea de herencia", () => {
     const content = find("dialog", "DialogContent")
     expect(content.bases).toEqual(["Dialog.Popup"])
-    expect(content.props.map((entry) => entry.name).sort()).toEqual(["className", "showCloseButton"])
+    expect(content.props.map((entry) => entry.name).sort()).toEqual(["className", "labels", "showCloseButton"])
+  })
+
+  // `WithClassName<P>` reemplaza las 110 copias de `Omit<P, "className"> & { className?: string }`.
+  // El generador lee el **texto** del tipo para la línea «hereda de» y mira dónde está declarada
+  // cada prop para decidir si es propia: los dos dependen de que el alias no tape nada. Si el día
+  // de mañana un cambio hace que `WithClassName` se lea como un tipo opaco, las tablas del sitio
+  // se vacían y el build sigue verde, así que esto se fija acá.
+  it("expande WithClassName: la línea de herencia y el className propio sobreviven al alias", () => {
+    const overlay = find("dialog", "DialogOverlay")
+    expect(overlay.bases).toEqual(["Dialog.Backdrop"])
+    const className = prop("dialog", "DialogOverlay", "className")
+    expect(className.type).toBe("string")
+    expect(className.inherited).toBe(false)
+    // Y las props de Base UI que el alias deja pasar siguen sin ensuciar la tabla.
+    expect(overlay.props.map((entry) => entry.name)).toEqual(["className"])
   })
 
   it("resuelve un componente que es un alias del primitivo", () => {
@@ -109,6 +124,23 @@ describe("extractProps", () => {
   it("no deja componentes sin exportar ni tipos colados como componentes", () => {
     expect(extracted.get("kbd")?.map((entry) => entry.name)).toEqual(["Kbd"])
     expect(find("card", "CardTitle").bases).toEqual(["<div>"])
+  })
+
+  // Antes, escribir la descripción de `items` en meta.mjs no hacía nada: el
+  // generador solo iteraba props propias y `items` es del primitivo de Base UI.
+  // Son justo las props que hacen al componente.
+  it("vuelca las props heredadas que meta.mjs describe, marcadas y con el tipo del primitivo", () => {
+    const conDocumentadas = extractProps({
+      root,
+      files: ["src/components/select.tsx"],
+      documented: (slug, component) => (slug === "select" && component === "Select" ? ["items"] : []),
+    })
+    const select = conDocumentadas.get("select")!.find((entry) => entry.name === "Select")!
+    const items = select.props.find((entry) => entry.name === "items")!
+    expect(items.inherited).toBe(true)
+    expect(items.type).toContain("label")
+    // Sin `documented` no aparece: la tabla sigue siendo la de las props propias.
+    expect(find("select", "Select").props.some((entry) => entry.name === "items")).toBe(false)
   })
 
   it("nunca devuelve un tipo vacío", () => {

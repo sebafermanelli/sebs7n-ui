@@ -87,8 +87,8 @@ export default async function ComponentPage({ params }: Params) {
 
         <Section id="props" title="Props">
           <p className="text-copy-14 text-gray-900">
-            Generadas del TypeScript del paquete. Solo las props propias: las heredadas del primitivo de Base UI o del
-            elemento HTML están en la línea «hereda de».
+            Generadas del TypeScript del paquete. Las propias del componente, más las heredadas del primitivo que
+            tienen algo que explicar —marcadas «heredada de Base UI»—. El resto está en la línea «hereda de».
           </p>
           <PropsTable exports={component.exports} />
         </Section>

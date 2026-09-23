@@ -83,6 +83,14 @@ describe("Tag", () => {
     expect(screen.getByRole("button")).toHaveClass("size-4")
   })
 
+  // WCAG 2.5.8 pide 24×24 de área, no de dibujo. El círculo se queda en 16px
+  // —agrandarlo rompe la relación de espacios del tag— y el área la pone un
+  // `::after`, igual que en Checkbox y Radio.
+  it("el botón de quitar llega a 24px de área sin agrandar el dibujo", () => {
+    render(<Tag onRemove={() => {}}>React</Tag>)
+    expect(screen.getByRole("button")).toHaveClass("relative", "size-4", "after:absolute", "after:-inset-1")
+  })
+
   it("el className del llamador gana sobre la variante", () => {
     render(<Tag className="h-8 rounded-md">React</Tag>)
     const tag = screen.getByText("React").closest("[data-slot=tag]")!

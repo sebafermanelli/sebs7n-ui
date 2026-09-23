@@ -1,8 +1,10 @@
 "use client"
 
+import type * as React from "react"
 import { Field as FieldPrimitive } from "@base-ui/react/field"
 
 import { cn } from "../lib/utils.js"
+import { inputControlClassName, inputDisabledClassName, inputInvalidClassName } from "../variants/input.js"
 
 /**
  * Texto largo, con el mismo cuerpo y los mismos estados que `Input`.
@@ -23,13 +25,14 @@ function Textarea({ className, ...props }: TextareaProps) {
       data-slot="textarea"
       render={<textarea />}
       className={cn(
-        "peer field-sizing-content min-h-20 w-full min-w-0 rounded-md border border-gray-400 bg-background-100 px-3 py-2.5 text-copy-14 text-gray-1000 outline-none transition-control",
-        "placeholder:text-gray-700 hover:border-gray-500 focus:focus-border",
-        // `disabled:` cubre el atributo nativo y `data-disabled:` el que pone
-        // un `Fieldset` deshabilitado. Los dos, porque los dos pasan.
+        inputControlClassName,
+        inputDisabledClassName,
+        inputInvalidClassName,
+        // Sin alto del sistema: `field-sizing-content` lo hace crecer con el texto.
+        "peer field-sizing-content min-h-20 w-full min-w-0 px-3 py-2.5 placeholder:text-gray-900 focus:focus-border",
+        // Además del `data-disabled:` de arriba —que es el que pone un `Fieldset`—, el
+        // `<textarea>` puede venir deshabilitado por el atributo nativo. Los dos pasan.
         "disabled:cursor-not-allowed disabled:border-gray-400 disabled:bg-gray-100 disabled:text-gray-700",
-        "data-disabled:cursor-not-allowed data-disabled:border-gray-400 data-disabled:bg-gray-100 data-disabled:text-gray-700",
-        "aria-invalid:border-red-800 aria-invalid:focus:focus-border-error data-invalid:border-red-800 data-invalid:focus:focus-border-error",
         className
       )}
       // `Field.Control` tipa sus props contra un `<input>`, así que no conoce

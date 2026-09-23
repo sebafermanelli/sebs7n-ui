@@ -16,7 +16,7 @@ import { cn } from "../lib/utils.js"
  * No es un `Skeleton` (eso es la forma de algo que todavía no llegó) ni un
  * spinner de botón (eso es `Button loading`).
  */
-type ProgressProps = Omit<ProgressPrimitive.Root.Props, "className"> & {
+type ProgressBaseProps = Omit<ProgressPrimitive.Root.Props, "className" | "aria-label"> & {
   className?: string
   /**
    * Alto de la pista: `sm` 4px, `md` 6px. No sigue la escala de 32/40px de los
@@ -24,13 +24,27 @@ type ProgressProps = Omit<ProgressPrimitive.Root.Props, "className"> & {
    * tiene por qué reservar un área táctil.
    */
   size?: "sm" | "md"
-  /** Etiqueta visible. Es lo que nombra la barra: sin ella hace falta `aria-label`. */
-  label?: React.ReactNode
   /** Muestra el porcentaje a la derecha. Indeterminada no muestra número, porque no hay. */
   showValue?: boolean
   /** Clases de la pista (el riel gris), por si hay que cambiarle el ancho o el radio. */
   trackClassName?: string
 }
+
+/**
+ * El nombre de la barra es obligatorio, y el tipo lo pide de las tres formas
+ * válidas: `label` (visible, la preferida), `aria-label` o `aria-labelledby`.
+ *
+ * Una `role="progressbar"` sin nombre se anuncia «60 %» y nada más: el 60 % de
+ * qué es justamente lo que hace falta saber. Como el número lo pone Base UI
+ * solo, es el caso donde más fácil se olvida el nombre y menos se nota mirando
+ * la pantalla —donde el contexto visual lo tapa—.
+ */
+type ProgressProps = ProgressBaseProps &
+  (
+    | { label: NonNullable<React.ReactNode>; "aria-label"?: string }
+    | { label?: undefined; "aria-label": string }
+    | { label?: undefined; "aria-labelledby": string }
+  )
 
 function Progress({ className, size = "md", label, showValue = false, trackClassName, ...props }: ProgressProps) {
   return (
@@ -78,4 +92,4 @@ function Progress({ className, size = "md", label, showValue = false, trackClass
   )
 }
 
-export { Progress, type ProgressProps }
+export { Progress, type ProgressBaseProps, type ProgressProps }

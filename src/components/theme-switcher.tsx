@@ -8,21 +8,14 @@ import { RadioGroup as RadioGroupPrimitive } from "@base-ui/react/radio-group"
 import { MonitorIcon, MoonIcon, SunIcon } from "lucide-react"
 import { useTheme } from "next-themes"
 
+import { useLabels, type Labels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
 
-type ThemeSwitcherLabels = {
-  group: string
-  light: string
-  dark: string
-  system: string
-}
-
-const DEFAULT_LABELS: ThemeSwitcherLabels = {
-  group: "Tema",
-  light: "Tema claro",
-  dark: "Tema oscuro",
-  system: "Tema del sistema",
-}
+/**
+ * Los textos viven una sola vez, en `sebs7n-ui/labels`. Acá queda el alias para
+ * que el tipo público siga llamándose igual y nadie tenga que cambiar un import.
+ */
+type ThemeSwitcherLabels = Labels["themeSwitcher"]
 
 type ThemeSwitcherProps = Omit<React.ComponentProps<"div">, "children" | "onChange"> & {
   labels?: Partial<ThemeSwitcherLabels>
@@ -65,7 +58,7 @@ function stopMenuKeys(event: React.KeyboardEvent) {
 function ThemeSwitcher({ className, labels: labelsProp, onKeyDown, ...props }: ThemeSwitcherProps) {
   const { theme, setTheme, options } = useThemeOptions()
   const mounted = useMounted()
-  const labels = { ...DEFAULT_LABELS, ...labelsProp }
+  const labels = { ...useLabels().themeSwitcher, ...labelsProp }
 
   return (
     <div
@@ -80,6 +73,8 @@ function ThemeSwitcher({ className, labels: labelsProp, onKeyDown, ...props }: T
       <RadioGroupPrimitive
         aria-label={labels.group}
         value={mounted ? theme : ""}
+        // El `value` de Base UI es `unknown` porque un RadioGroup acepta cualquier valor; acá
+        // los tres son los strings de `options`, así que el cast dice lo que el tipo no sabe.
         onValueChange={(value) => setTheme(value as string)}
         className={groupClassName}
       >
@@ -111,13 +106,15 @@ type ThemeMenuRadioProps = Omit<MenuPrimitive.RadioGroup.Props, "className" | "v
 function ThemeMenuRadio({ className, labels: labelsProp, ...props }: ThemeMenuRadioProps) {
   const { theme, setTheme, options } = useThemeOptions()
   const mounted = useMounted()
-  const labels = { ...DEFAULT_LABELS, ...labelsProp }
+  const labels = { ...useLabels().themeSwitcher, ...labelsProp }
 
   return (
     <MenuPrimitive.RadioGroup
       data-slot="theme-menu-radio"
       aria-label={labels.group}
       value={mounted ? theme : ""}
+      // Mismo caso que en ThemeSwitcher: `value` es `unknown` y los tres valores posibles
+      // son los strings de `options`.
       onValueChange={(value) => setTheme(value as string)}
       className={cn(groupClassName, className)}
       {...props}

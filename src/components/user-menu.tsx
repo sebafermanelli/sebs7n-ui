@@ -3,9 +3,10 @@
 import type * as React from "react"
 import { ChevronsUpDownIcon } from "lucide-react"
 
+import { useLabels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
 import { Children, Fragment, useContext, useRef } from "react"
-import { AppShellContext, useSidebarContext } from "../lib/shell-context.js"
+import { AppShellContext, useSidebarContext } from "../internal/shell-context.js"
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar.js"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuSeparator, DropdownMenuTrigger } from "./dropdown-menu.js"
 import { ThemeMenuRadio, type ThemeSwitcherLabels } from "./theme-switcher.js"
@@ -39,6 +40,10 @@ function initials(name: string) {
 
 // Fila de usuario estilo Vercel: identifica la sesión y abre el menú de cuenta.
 function UserMenu({ user, collapsed: collapsedProp, side, align, children, signOut, showTheme = true, labels, className }: UserMenuProps) {
+  // `useLabels()` va suelto y no adentro de un `??`: el `??` corta, y un hook que a veces se llama
+  // y a veces no rompe el orden de los hooks.
+  const l = useLabels().userMenu
+  const tema = labels?.theme ?? l.theme
   const sidebar = useSidebarContext()
   const shell = useContext(AppShellContext)
   // Si el ítem elegido cierra el Sheet mobile, el menú no devuelve el foco a su trigger (que se va con
@@ -131,8 +136,8 @@ function UserMenu({ user, collapsed: collapsedProp, side, align, children, signO
               "theme",
               showTheme && (
                 <div data-slot="user-menu-theme" className="flex h-10 items-center justify-between gap-2 pr-1 pl-2 text-copy-14 text-gray-1000">
-                  <span aria-hidden="true">{labels?.theme ?? "Tema"}</span>
-                  <ThemeMenuRadio labels={{ group: labels?.theme ?? "Tema", ...labels?.switcher }} />
+                  <span aria-hidden="true">{tema}</span>
+                  <ThemeMenuRadio labels={{ group: tema, ...labels?.switcher }} />
                 </div>
               ),
             ],

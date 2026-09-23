@@ -2,15 +2,15 @@
 
 import { Tabs as TabsPrimitive } from "@base-ui/react/tabs"
 
-import { cn } from "../lib/utils.js"
+import { cn, type WithClassName } from "../lib/utils.js"
 
-type TabsProps = Omit<TabsPrimitive.Root.Props, "className"> & { className?: string }
+type TabsProps = WithClassName<TabsPrimitive.Root.Props>
 
 function Tabs({ className, ...props }: TabsProps) {
   return <TabsPrimitive.Root data-slot="tabs" className={cn("flex flex-col gap-4", className)} {...props} />
 }
 
-type TabsListProps = Omit<TabsPrimitive.List.Props, "className"> & { className?: string }
+type TabsListProps = WithClassName<TabsPrimitive.List.Props>
 
 function TabsList({ className, ...props }: TabsListProps) {
   return (
@@ -22,7 +22,7 @@ function TabsList({ className, ...props }: TabsListProps) {
   )
 }
 
-type TabsTriggerProps = Omit<TabsPrimitive.Tab.Props, "className"> & { className?: string }
+type TabsTriggerProps = WithClassName<TabsPrimitive.Tab.Props>
 
 function TabsTrigger({ className, ...props }: TabsTriggerProps) {
   return (
@@ -46,10 +46,32 @@ function TabsTrigger({ className, ...props }: TabsTriggerProps) {
   )
 }
 
-type TabsContentProps = Omit<TabsPrimitive.Panel.Props, "className"> & { className?: string }
+type TabsContentProps = WithClassName<TabsPrimitive.Panel.Props>
 
+/**
+ * El panel es tabulable (Base UI le pone `tabIndex=0` para que el contenido
+ * scrolleable se pueda alcanzar con el teclado), así que el `outline-none`
+ * necesita reemplazo: sin él, quien llega por Tab desde el tablist no ve dónde
+ * quedó el foco (WCAG 2.4.7). El `rounded-md` es para que el anillo siga la
+ * forma del panel y no quede un rectángulo duro sobre contenido redondeado.
+ */
 function TabsContent({ className, ...props }: TabsContentProps) {
-  return <TabsPrimitive.Panel data-slot="tabs-content" className={cn("text-copy-14 outline-none", className)} {...props} />
+  return (
+    <TabsPrimitive.Panel
+      data-slot="tabs-content"
+      className={cn("text-copy-14 rounded-md outline-none focus-visible:focus-ring", className)}
+      {...props}
+    />
+  )
 }
 
-export { Tabs, TabsContent, TabsList, TabsTrigger }
+export {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  type TabsContentProps,
+  type TabsListProps,
+  type TabsProps,
+  type TabsTriggerProps,
+}

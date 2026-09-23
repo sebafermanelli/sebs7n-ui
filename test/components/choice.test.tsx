@@ -20,8 +20,8 @@ describe("Checkbox", () => {
     render(<Checkbox aria-label="x" />)
     expect(screen.getByRole("checkbox")).toHaveClass(
       "rounded-xs",
-      "border-gray-500",
-      "hover:border-gray-600",
+      "border-gray-700",
+      "hover:border-gray-800",
       "focus-visible:focus-ring",
       "data-checked:bg-gray-1000",
       "data-checked:hover:bg-button-primary-hover",
@@ -55,7 +55,7 @@ describe("Switch", () => {
     render(<Switch aria-label="Avisos" variant="accent" />)
     const sw = screen.getByRole("switch", { name: "Avisos" })
     expect(sw).toHaveAttribute("data-variant", "accent")
-    expect(sw).toHaveClass("bg-gray-400", "data-checked:bg-gray-1000", "data-[variant=accent]:data-checked:bg-brand-700")
+    expect(sw).toHaveClass("bg-gray-700", "data-checked:bg-gray-1000", "data-[variant=accent]:data-checked:bg-brand-700")
     await userEvent.click(sw)
     expect(sw).toHaveAttribute("data-checked")
   })

@@ -26,6 +26,22 @@ const FORBIDDEN = [
   "YnJhdWx0",
 ].map((encoded) => Buffer.from(encoded, "base64").toString("utf8"))
 
+/**
+ * La única excepción: el dominio del sitio de documentación.
+ *
+ * Contiene uno de los nombres de arriba, pero no es una fuga: es el sitio
+ * oficial del paquete, y sin él quien lo instala desde npm no tiene cómo llegar
+ * a la documentación. El `author` y el `homepage` del `package.json` ya dicen
+ * quién lo escribe, así que prohibirlo acá no ocultaba nada — solo escondía la
+ * doc. Se descuenta del texto antes de buscar, así que un nombre pegado a
+ * cualquier otra cosa sigue fallando.
+ *
+ * En base64 por la misma razón que los de arriba.
+ */
+const ALLOWED = ["dWkuc2ViYXN0aWFuZmVybWFuZWxsaS5jb20="].map((encoded) =>
+  Buffer.from(encoded, "base64").toString("utf8")
+)
+
 const EXTENSIONS = new Set([".ts", ".tsx", ".js", ".mjs", ".css", ".json", ".md"])
 
 function walk(dir: string, out: string[] = []): string[] {
@@ -49,7 +65,13 @@ describe("despersonalización", () => {
   // El título tampoco nombra: en un CI público el log del test sería otra fuga.
   FORBIDDEN.forEach((name, index) => {
     it(`el nombre interno #${index + 1} no aparece en src/, tokens/, README.md ni package.json`, () => {
-      const hits = files.filter((file) => readFileSync(file, "utf8").toLowerCase().includes(name))
+      const hits = files.filter((file) => {
+        const texto = ALLOWED.reduce(
+          (acc, allowed) => acc.replaceAll(allowed, ""),
+          readFileSync(file, "utf8").toLowerCase()
+        )
+        return texto.includes(name)
+      })
       expect(hits.map((file) => relative(root, file))).toEqual([])
     })
   })

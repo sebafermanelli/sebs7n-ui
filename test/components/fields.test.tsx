@@ -12,7 +12,7 @@ describe("Input", () => {
     expect(screen.getByPlaceholderText("Nombre")).toHaveClass(
       "border-gray-400",
       "bg-background-100",
-      "placeholder:text-gray-700",
+      "placeholder:text-gray-900",
       "hover:border-gray-500",
       "focus:focus-border",
       "rounded-md"

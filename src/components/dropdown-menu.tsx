@@ -4,19 +4,19 @@ import type * as React from "react"
 import { Menu as MenuPrimitive } from "@base-ui/react/menu"
 import { CheckIcon, ChevronRightIcon } from "lucide-react"
 
-import { cn } from "../lib/utils.js"
-import { menuItemClassName, menuPopupClassName } from "../variants/menu.js"
+import { cn, type WithClassName } from "../lib/utils.js"
+import { menuItemClassName, menuLabelClassName, menuPopupClassName, menuSeparatorClassName, type MenuInsetProps } from "../variants/menu.js"
 
 function DropdownMenu(props: MenuPrimitive.Root.Props) {
-  return <MenuPrimitive.Root data-slot="dropdown-menu" {...props} />
+  return <MenuPrimitive.Root {...props} />
 }
 
 function DropdownMenuTrigger(props: MenuPrimitive.Trigger.Props) {
   return <MenuPrimitive.Trigger data-slot="dropdown-menu-trigger" {...props} />
 }
 
-type DropdownMenuContentProps = Omit<MenuPrimitive.Popup.Props, "className"> &
-  Pick<MenuPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset"> & { className?: string }
+type DropdownMenuContentProps = WithClassName<MenuPrimitive.Popup.Props> &
+  Pick<MenuPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset">
 
 function DropdownMenuContent({ className, align = "start", alignOffset = 0, side = "bottom", sideOffset = 6, ...props }: DropdownMenuContentProps) {
   return (
@@ -32,23 +32,21 @@ function DropdownMenuGroup(props: MenuPrimitive.Group.Props) {
   return <MenuPrimitive.Group data-slot="dropdown-menu-group" {...props} />
 }
 
-type InsetProps = { inset?: boolean }
-
-type DropdownMenuLabelProps = Omit<MenuPrimitive.GroupLabel.Props, "className"> & InsetProps & { className?: string }
+type DropdownMenuLabelProps = WithClassName<MenuPrimitive.GroupLabel.Props> & MenuInsetProps
 
 function DropdownMenuLabel({ className, inset, ...props }: DropdownMenuLabelProps) {
   return (
     <MenuPrimitive.GroupLabel
       data-slot="dropdown-menu-label"
       data-inset={inset ? "" : undefined}
-      className={cn("px-2 py-1.5 text-label-12 text-gray-900 data-inset:pl-8", className)}
+      className={cn(menuLabelClassName, "data-inset:pl-8", className)}
       {...props}
     />
   )
 }
 
-type DropdownMenuItemProps = Omit<MenuPrimitive.Item.Props, "className"> &
-  InsetProps & { className?: string; variant?: "default" | "destructive" }
+type DropdownMenuItemProps = WithClassName<MenuPrimitive.Item.Props> &
+  MenuInsetProps & { variant?: "default" | "destructive" }
 
 function DropdownMenuItem({ className, inset, variant = "default", ...props }: DropdownMenuItemProps) {
   return (
@@ -66,7 +64,7 @@ function DropdownMenuItem({ className, inset, variant = "default", ...props }: D
   )
 }
 
-type DropdownMenuCheckboxItemProps = Omit<MenuPrimitive.CheckboxItem.Props, "className"> & { className?: string }
+type DropdownMenuCheckboxItemProps = WithClassName<MenuPrimitive.CheckboxItem.Props>
 
 function DropdownMenuCheckboxItem({ className, children, ...props }: DropdownMenuCheckboxItemProps) {
   return (
@@ -83,7 +81,7 @@ function DropdownMenuRadioGroup(props: MenuPrimitive.RadioGroup.Props) {
   return <MenuPrimitive.RadioGroup data-slot="dropdown-menu-radio-group" {...props} />
 }
 
-type DropdownMenuRadioItemProps = Omit<MenuPrimitive.RadioItem.Props, "className"> & { className?: string }
+type DropdownMenuRadioItemProps = WithClassName<MenuPrimitive.RadioItem.Props>
 
 function DropdownMenuRadioItem({ className, children, ...props }: DropdownMenuRadioItemProps) {
   return (
@@ -96,21 +94,30 @@ function DropdownMenuRadioItem({ className, children, ...props }: DropdownMenuRa
   )
 }
 
-type DropdownMenuSeparatorProps = Omit<MenuPrimitive.Separator.Props, "className"> & { className?: string }
+type DropdownMenuSeparatorProps = WithClassName<MenuPrimitive.Separator.Props>
 
 function DropdownMenuSeparator({ className, ...props }: DropdownMenuSeparatorProps) {
-  return <MenuPrimitive.Separator data-slot="dropdown-menu-separator" className={cn("-mx-1 my-1 h-px bg-gray-400", className)} {...props} />
+  return <MenuPrimitive.Separator data-slot="dropdown-menu-separator" className={cn(menuSeparatorClassName, className)} {...props} />
 }
 
-function DropdownMenuShortcut({ className, ...props }: React.ComponentProps<"span">) {
-  return <span data-slot="dropdown-menu-shortcut" className={cn("ml-auto text-label-12-mono text-gray-700", className)} {...props} />
+// El atajo es contenido, no decoración: un lector tiene que decir que existe. Pero pegado al
+// label se lee «Guardar⌘S» de corrido, porque el nombre accesible concatena los textos sin
+// separador. La coma sr-only más el espacio lo vuelven «Guardar, ⌘S». Misma técnica que
+// `SidebarItemBadge`, por el mismo motivo.
+function DropdownMenuShortcut({ className, children, ...props }: React.ComponentProps<"span">) {
+  return (
+    <span data-slot="dropdown-menu-shortcut" className={cn("ml-auto text-label-12-mono text-gray-900", className)} {...props}>
+      <span className="sr-only">,</span>{" "}
+      {children}
+    </span>
+  )
 }
 
 function DropdownMenuSub(props: MenuPrimitive.SubmenuRoot.Props) {
-  return <MenuPrimitive.SubmenuRoot data-slot="dropdown-menu-sub" {...props} />
+  return <MenuPrimitive.SubmenuRoot {...props} />
 }
 
-type DropdownMenuSubTriggerProps = Omit<MenuPrimitive.SubmenuTrigger.Props, "className"> & InsetProps & { className?: string }
+type DropdownMenuSubTriggerProps = WithClassName<MenuPrimitive.SubmenuTrigger.Props> & MenuInsetProps
 
 function DropdownMenuSubTrigger({ className, inset, children, ...props }: DropdownMenuSubTriggerProps) {
   return (
@@ -145,4 +152,11 @@ export {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
+  type DropdownMenuCheckboxItemProps,
+  type DropdownMenuContentProps,
+  type DropdownMenuItemProps,
+  type DropdownMenuLabelProps,
+  type DropdownMenuRadioItemProps,
+  type DropdownMenuSeparatorProps,
+  type DropdownMenuSubTriggerProps,
 }

@@ -1,8 +1,8 @@
-import { ChevronRightIcon } from "lucide-react"
 import * as React from "react"
+import { ChevronRightIcon } from "lucide-react"
 
 import { renderElement, type RenderElement } from "../lib/render.js"
-import { cn } from "../lib/utils.js"
+import { cn, type WithClassName } from "../lib/utils.js"
 import { linkVariants } from "../variants/link.js"
 
 type BreadcrumbProps = React.ComponentProps<"nav">
@@ -77,18 +77,25 @@ function BreadcrumbItem({ className, ...props }: React.ComponentProps<"li">) {
   return <li data-slot="breadcrumb-item" className={cn("inline-flex min-w-0 items-center gap-1.5", className)} {...props} />
 }
 
-type BreadcrumbLinkProps = Omit<React.ComponentProps<"a">, "className"> & {
-  className?: string
+type BreadcrumbLinkProps = WithClassName<React.ComponentProps<"a">> & {
   /** El elemento que se renderiza en lugar del `<a>`: `render={<Link href="/facturas" />}`. */
   render?: RenderElement
 }
 
-/** El link de un nivel. Usa `linkVariants({ variant: "subtle" })`, como cualquier link suelto del sistema. */
+/**
+ * El link de un nivel. Usa `linkVariants({ variant: "subtle" })`, como cualquier link suelto del
+ * sistema.
+ *
+ * El `py-1` no es aire decorativo: el texto es `text-label-13`, de 16px de alto, y sin él el link
+ * medía 16px de alto —abajo de los 24 que pide WCAG 2.5.8— y en un celular se erraba. Como el
+ * `BreadcrumbItem` es un flex container, el `<a>` es un ítem de flex y el padding sí cuenta para el
+ * alto; en un `<a>` inline suelto no contaría.
+ */
 function BreadcrumbLink({ className, render, ...props }: BreadcrumbLinkProps) {
   return renderElement(render, "a", {
     "data-slot": "breadcrumb-link",
     ...props,
-    className: cn(linkVariants({ variant: "subtle" }), "truncate", className),
+    className: cn(linkVariants({ variant: "subtle" }), "truncate py-1", className),
   })
 }
 
@@ -133,7 +140,11 @@ function BreadcrumbEllipsis({ className, label = "Rutas intermedias", ...props }
     <li
       data-slot="breadcrumb-ellipsis"
       role="presentation"
-      className={cn("inline-flex shrink-0 items-center text-gray-700", className)}
+      // Mismo criterio que el «…» del Pagination: los puntos avisan que hay
+      // niveles colapsados, así que son información y no adorno. El separador
+      // de al lado sí se queda en `gray-700` —un chevron más oscuro competiría
+      // con los nombres de las rutas, y la jerarquía ya la da el orden—.
+      className={cn("inline-flex shrink-0 items-center text-gray-900", className)}
       {...props}
     >
       <span aria-hidden="true">…</span>
@@ -150,6 +161,8 @@ export {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
+  type BreadcrumbEllipsisProps,
+  type BreadcrumbLinkProps,
   type BreadcrumbListProps,
   type BreadcrumbProps,
 }

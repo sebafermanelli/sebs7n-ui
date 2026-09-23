@@ -1,4 +1,4 @@
-Una app define **tres variables** y nada más. No hay que tocar ningún archivo del paquete ni recompilar nada.
+Una app define **cuatro variables** y nada más. No hay que tocar ningún archivo del paquete ni recompilar nada.
 
 ## Color de marca
 
@@ -6,35 +6,85 @@ Una app define **tres variables** y nada más. No hay que tocar ningún archivo 
 :root {
   --brand-base: oklch(0.55 0.16 35);        /* acento en claro */
   --brand-base-dark: oklch(0.55 0.16 35);   /* acento en oscuro; por defecto, igual a la base */
-  --brand-contrast-dark: #fff;              /* texto sobre el acento en oscuro */
+  --brand-contrast: #fff;                   /* texto sobre el acento en claro; por defecto #fff */
+  --brand-contrast-dark: #fff;              /* texto sobre el acento en oscuro; por defecto, igual a --brand-contrast */
 }
 ```
 
 De ahí el paquete deriva la escala `brand-100…1000` y `brand-contrast`, con `oklch(from …)`: se fija la luminosidad del paso equivalente de `blue` en Geist y se escala el croma. Por eso un acento naranja y uno azul dan escalas que «pesan» igual.
 
-**La regla es una sola: el texto sobre `brand-700` tiene que llegar a 4,5:1.** Si el acento es claro, `--brand-contrast-dark: #000`. Hay un test en el paquete que recalcula el ratio desde OKLCH y falla si una marca no da.
+**La regla es una sola: el texto sobre `brand-700` tiene que llegar a 4,5:1.** Si el acento es claro, `--brand-contrast: #000` (y su par oscuro, si el acento oscuro también lo es). Hay un test en el paquete que recalcula el ratio desde OKLCH y falla si una marca no da.
 
-`tokens/brands.json` trae cuatro marcas de ejemplo (`teal`, `terracotta`, `emerald`, `blue`) que usan el playground y los tests de contraste. **Son solo demos del sistema**: una app real no las usa ni edita ese archivo.
+`tokens/brands.json` trae cuatro marcas de ejemplo (`teal`, `terracotta`, `emerald`, `blue`) que usan las demos del sitio y los tests de contraste. **Son solo demos del sistema**: una app real no las usa ni edita ese archivo.
+
+### Testear tu propia marca
+
+El test del paquete cubre esas cuatro marcas y ninguna más, así que la tuya la testeás vos. La función de contraste sale por `sebs7n-ui/lib/contrast`, es pura y no arrastra nada:
+
+```ts
+import { contrastRatio, luminanceOfHex, luminanceOfOklch } from "sebs7n-ui/lib/contrast"
+
+// Los mismos valores que están en el globals.css de la app.
+const MARCA = {
+  claro: { base: [0.55, 0.16, 35] as const, contraste: "#fff" },
+  oscuro: { base: [0.62, 0.15, 35] as const, contraste: "#000" },
+}
+
+describe("la marca llega a AA", () => {
+  it.each(Object.entries(MARCA))("%s: texto sobre brand-700 ≥ 4,5:1", (_, { base, contraste }) => {
+    const ratio = contrastRatio(luminanceOfOklch(base), luminanceOfHex(contraste))
+    expect(ratio).toBeGreaterThanOrEqual(4.5)
+  })
+})
+```
+
+`luminanceOfOklch` recorta a sRGB antes de medir, que es lo que hace el navegador: un OKLCH fuera del gamut se pinta recortado, y el ratio real es el del color recortado. Para un token con alfa —`gray-alpha-*`, el halo de foco— está `flattenAlpha(hex, fondo)`, que lo compone contra el fondo antes de medirlo.
 
 ### Dónde aparece el acento
 
 | Token | Dónde |
 |---|---|
-| `brand-700` | `Button variant="accent"`, `Switch variant="accent"`, anillo de foco, borde de `Card selected`. |
+| `brand-700` | `Button variant="accent"`, `Switch variant="accent"`, anillo de foco, borde de `Card selected`, franja de `Alert variant="brand"`, `Badge solid color="brand"`. |
 | `brand-800` | Hover del acento. |
-| `brand-900` | `Button variant="link"`, texto de `Badge color="brand"`, `linkVariants`. |
-| `brand-100…400` | Fondos y bordes suaves: `Badge variant="subtle" color="brand"`. |
+| `brand-900` | `Button variant="link"`, texto de `Badge subtle color="brand"`, ícono de `Alert variant="brand"`. |
+| `brand-1000` | Hover del `Button variant="link"`. |
+| `brand-100` · `brand-400` | Fondo y borde suaves: `Badge variant="subtle" color="brand"`, fila seleccionada de `Table`. |
 | `brand-contrast` | El texto **encima** del acento. |
+
+`brand-200`, `brand-300`, `brand-500` y `brand-600` no los usa ningún componente: existen para la app, que también tiene la escala completa. Y `linkVariants` **no usa la marca**: los links de texto son grises (`gray-900` → `gray-1000`), para que un párrafo con tres links no se convierta en tres manchas de color.
 
 **Un solo acento por pantalla.** Si el CTA principal es `accent`, el switch de al lado no.
 
 ## Claro y oscuro
 
-Por clase (`.dark` en `<html>`), vía `next-themes` con `attribute="class"`:
+**El tema oscuro se activa solo con la clase `.dark`.** No hay `data-theme`, y tampoco alcanza con que el sistema operativo esté en oscuro: el paquete no tiene ninguna regla atada a `prefers-color-scheme`. La única definición es esta línea de `theme.css`:
+
+```css
+@custom-variant dark (&:where(.dark, .dark *));
+```
+
+Con `next-themes` eso sale de `attribute="class"`, que es el default:
 
 ```tsx
 <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
 ```
+
+Si ponés `attribute="data-theme"`, el atributo cambia, el botón de tema parece funcionar y **no pasa nada**: los colores se quedan en claro. Es el error más silencioso de la instalación, porque nada avisa.
+
+**Sin `next-themes`** la clase la pone la app, a mano y en `<html>`:
+
+```tsx
+document.documentElement.classList.toggle("dark", oscuro)
+```
+
+Si además querés seguir la preferencia del sistema, eso también es de la app —una media query en JS, no en CSS—:
+
+```tsx
+const oscuro = window.matchMedia("(prefers-color-scheme: dark)").matches
+document.documentElement.classList.toggle("dark", oscuro)
+```
+
+Hacerlo con una clase y no con la media query es lo que permite que el usuario elija un tema distinto al del sistema, que es lo que espera cualquiera que haya visto un botón de tema. En un `<html>` renderizado en el server, acordate del `suppressHydrationWarning`.
 
 Dos controles para cambiarlo:
 

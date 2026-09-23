@@ -85,10 +85,9 @@ La regla: si el elemento **es** la página, `bg-background`; si flota **sobre** 
 
 No llevan `"use client"` y se pueden usar desde un Server Component:
 
-- Las variantes: `buttonVariants`, `badgeVariants`, `cardVariants`, `linkVariants`, `toggleVariants`, `sidebarItemVariants`, y las clases de `menu` e `input`.
-- Los componentes sin estado: `Kbd`, `PageHeader`, `EmptyState`, `Stat` y `AppShellContent`.
+- **Los diez módulos de `sebs7n-ui/variants/*`**, sin excepción: `badge`, `button`, `card`, `input`, `link`, `menu`, `overlay`, `sidebar`, `tag` y `toggle`. Ninguno lleva `"use client"`, y todos salen también por el barrel.
+- **Los dieciséis componentes sin estado**: `Alert`, `AppShellContent`, `Badge`, `Breadcrumb`, `Card`, `EmptyState`, `Kbd`, `Label`, `PageHeader`, `Pagination`, `Separator`, `Skeleton`, `Spinner`, `Stat`, `Table` y `Tag`. Los otros 42 son `"use client"`, que es lo que corresponde: un `DropdownMenu` necesita estado.
 
-Todo lo demás es `"use client"`, que es lo que corresponde: un `DropdownMenu` necesita estado.
 
 ## Tipografía
 

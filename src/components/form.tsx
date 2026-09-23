@@ -2,7 +2,7 @@
 
 import { Form as FormPrimitive } from "@base-ui/react/form"
 
-import { cn } from "../lib/utils.js"
+import { cn, type WithClassName } from "../lib/utils.js"
 
 /**
  * Un `<form>` de verdad, con los errores de todos los campos en un solo lugar.
@@ -38,10 +38,7 @@ import { cn } from "../lib/utils.js"
  * `sebs7n-ui/lib/schema`, que traduce el schema a lo que esperan `Form` y
  * `Field`.
  */
-type FormProps<Values extends Record<string, unknown> = Record<string, unknown>> = Omit<
-  FormPrimitive.Props<Values>,
-  "className"
-> & { className?: string }
+type FormProps<Values extends Record<string, unknown> = Record<string, unknown>> = WithClassName<FormPrimitive.Props<Values>>
 
 function Form<Values extends Record<string, unknown> = Record<string, unknown>>({
   className,

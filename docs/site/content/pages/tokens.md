@@ -2,6 +2,8 @@ La paleta, los radios y las sombras por defecto de Tailwind están **reseteados*
 
 Los valores viven en `tokens/geist.json` y se compilan a `src/styles/colors.css` con `npm run tokens`; un test falla si el CSS quedó desactualizado. Las tablas de esta página se generan de esos mismos archivos.
 
+`geist.json` está en un **formato propio**, no en W3C DTCG: es un objeto `{ light, dark }` con `familia → paso → hex`, sin `$value` ni `$type`. Y solo tiene color: la tipografía, los radios y las sombras viven directo en `theme.css`, y las tablas de abajo salen de parsear ese CSS. Es a propósito mientras el único consumidor sea este repo — el JSON existe para generar `colors.css` y para que el sitio dibuje la paleta, no para intercambiar tokens con nadie. El día que haya un Figma o un Style Dictionary del otro lado, el formato a adoptar es DTCG y la migración empieza por sacar la tipografía del CSS.
+
 ## Fondos: página, superficie y banda
 
 Son tres roles distintos y cada uno tiene su token. Elegir mal se nota sobre todo en oscuro, donde la página es negro puro:
@@ -16,9 +18,33 @@ Los valores de oscuro son los de vercel.com medidos con `getComputedStyle` (cont
 
 Diez pasos por familia, de `100` (el más claro en tema claro) a `1000`. La convención de Geist: **100–400 son fondos, 500–700 son bordes y elementos, 800–1000 son texto**. El contraste de `gray-900` sobre cualquier fondo de la misma familia llega a AA.
 
+**`gray-800` es la excepción y no se usa como texto**: sobre la superficie clara da 4,12:1, abajo del 4,5 de WCAG 1.4.3. El paso de texto tenue de este sistema es `gray-900` (8,45:1 en claro, 7,57:1 en oscuro). Está en [Accesibilidad](/docs/accesibilidad).
+
 {{colores}}
 
-`brand` no está en la tabla porque no tiene valores fijos: se deriva de las tres variables de la app. Ver [Theming](/docs/theming).
+`brand` no está en la tabla porque no tiene valores fijos: se deriva de las cuatro variables de la app. Ver [Theming](/docs/theming).
+
+## Alias de compatibilidad con shadcn
+
+`theme.css` define además el vocabulario semántico de shadcn, apuntando a los tokens de arriba:
+
+| Alias | Apunta a | Su `-foreground` |
+|---|---|---|
+| `--color-foreground` | `gray-1000` | — |
+| `--color-card` | `background-100` | `gray-1000` |
+| `--color-popover` | `background-100` | `gray-1000` |
+| `--color-muted` | `gray-100` | `gray-900` |
+| `--color-primary` | `gray-1000` | `background-100` |
+| `--color-secondary` | `gray-100` | `gray-1000` |
+| `--color-accent` | `gray-200` | `gray-1000` |
+| `--color-destructive` | `red-800` | `#fff` |
+| `--color-border` | `gray-400` | — |
+| `--color-input` | `gray-400` | — |
+| `--color-ring` | `brand-700` | — |
+
+**Existen para que un componente pegado de shadcn se vea bien sin tocarlo**, que es el caso real: el registry (`shadcn add`) funciona y tarde o temprano alguien copia un bloque de shadcn.io a una app que ya usa este paquete. Sin los alias, ese bloque saldría sin color; con ellos sale en la paleta de Geist. Los pares resuelven a combinaciones que pasan AA: `primary` 17,9:1 claro y 16,9:1 oscuro, `muted-foreground` sobre `muted` 7,55 y 6,66, `destructive` 4,75 y 4,79.
+
+**No los uses en código nuevo.** Los 58 componentes del paquete no los tocan: usan `bg-background-100`, `text-gray-900`, `border-gray-400`. Dos vocabularios para lo mismo es exactamente lo que las [reglas](/docs/reglas) dicen que no queremos, así que el segundo es una compuerta de entrada, no una opción.
 
 ## Tipografía
 
@@ -44,7 +70,7 @@ Cuándo usar cada familia:
 
 {{radios}}
 
-`rounded-md` (6px) es el radio del sistema: botones, inputs, ítems de menú. `rounded-xl` (12px) es el de las tarjetas. `rounded-full` solo en `Badge`, en avatares y en `Button shape="pill"`.
+`rounded-md` (6px) es el radio del sistema: botones, inputs, ítems de menú. `rounded-xl` (12px) es el de las tarjetas. `rounded-full` es la forma de lo que es redondo por definición —avatares, puntos, pulgares, pistas de `Slider`, `Progress` y `Meter`— y de lo que es una píldora: `Badge`, `Tag`, `Toggle`, `ThemeSwitcher` y `Button shape="pill"`. Fuera de esos dos casos, no.
 
 ## Sombras
 

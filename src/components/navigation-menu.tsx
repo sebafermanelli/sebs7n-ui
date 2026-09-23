@@ -4,7 +4,7 @@ import type * as React from "react"
 import { NavigationMenu as NavigationMenuPrimitive } from "@base-ui/react/navigation-menu"
 import { ChevronDownIcon } from "lucide-react"
 
-import { cn } from "../lib/utils.js"
+import { cn, type WithClassName } from "../lib/utils.js"
 
 /**
  * Navegación de sitio con paneles: el "mega menú" de vercel.com.
@@ -52,8 +52,7 @@ function NavigationMenuItem(props: NavigationMenuPrimitive.Item.Props) {
  * ninguna parte, y `aria-current` sobre un botón le dice al lector de pantalla
  * que este control **es** la página actual, que no es cierto.
  */
-type NavigationMenuTriggerProps = Omit<NavigationMenuPrimitive.Trigger.Props, "className"> & {
-  className?: string
+type NavigationMenuTriggerProps = WithClassName<NavigationMenuPrimitive.Trigger.Props> & {
   /** Si alguna de las páginas del panel es la que se está leyendo. */
   active?: boolean
   /** `false` saca el chevron (un trigger que ya se explica solo). */
@@ -108,7 +107,7 @@ function NavigationMenuTrigger({ className, active, chevron = true, children, ..
  * el menú. Si hiciera falta después de cerrar, el `keepMounted` que hay que
  * poner es el del portal, no el del contenido.
  */
-type NavigationMenuContentProps = Omit<NavigationMenuPrimitive.Content.Props, "className"> & { className?: string }
+type NavigationMenuContentProps = WithClassName<NavigationMenuPrimitive.Content.Props>
 
 function NavigationMenuContent({ className, ...props }: NavigationMenuContentProps) {
   return (
@@ -248,7 +247,7 @@ function NavigationMenuPositioner({
 }
 
 /** La superficie del panel: los tokens del menú del sistema. */
-type NavigationMenuPopupProps = Omit<NavigationMenuPrimitive.Popup.Props, "className"> & { className?: string }
+type NavigationMenuPopupProps = WithClassName<NavigationMenuPrimitive.Popup.Props>
 
 function NavigationMenuPopup({ className, ...props }: NavigationMenuPopupProps) {
   return (
@@ -258,7 +257,9 @@ function NavigationMenuPopup({ className, ...props }: NavigationMenuPopupProps) 
         // `shadow-menu` ya trae el hairline de 1px del sistema: un `border`
         // encima lo dibujaría dos veces (misma regla que Popover y DropdownMenu).
         "relative h-(--popup-height) w-(--popup-width) origin-(--transform-origin) overflow-hidden",
-        "rounded-xl bg-background-100 p-1 text-gray-1000 shadow-menu outline-none",
+        // El `focus-visible:focus-ring` es por el mismo motivo que en Popover y HoverCard: si el
+        // panel no tiene links adentro, Base UI lo enfoca a él y con `outline-none` no se veía nada.
+        "rounded-xl bg-background-100 p-1 text-gray-1000 shadow-menu outline-none focus-visible:focus-ring",
         "transition-[opacity,transform,width,height] duration-200 ease-out motion-reduce:transition-none",
         "data-starting-style:scale-[0.98] data-starting-style:opacity-0",
         "data-ending-style:scale-[0.98] data-ending-style:opacity-0",
@@ -279,8 +280,7 @@ function NavigationMenuPopup({ className, ...props }: NavigationMenuPopupProps) 
  * `NavigationMenuPopup` quedan sueltas para armarlo a mano (una flecha, otro
  * contenedor, un portal a un nodo propio).
  */
-type NavigationMenuViewportProps = Omit<NavigationMenuPrimitive.Viewport.Props, "className"> & {
-  className?: string
+type NavigationMenuViewportProps = WithClassName<NavigationMenuPrimitive.Viewport.Props> & {
   /** Clases de la superficie (ancho máximo, padding). */
   popupClassName?: string
   /** Clases y props de posición del posicionador. */
@@ -330,4 +330,10 @@ export {
   NavigationMenuPositioner,
   NavigationMenuTrigger,
   NavigationMenuViewport,
+  type NavigationMenuContentProps,
+  type NavigationMenuLinkProps,
+  type NavigationMenuPopupProps,
+  type NavigationMenuPositionerProps,
+  type NavigationMenuTriggerProps,
+  type NavigationMenuViewportProps,
 }

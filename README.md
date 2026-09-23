@@ -1,5 +1,9 @@
 # sebs7n-ui
 
+[![npm](https://img.shields.io/npm/v/sebs7n-ui?logo=npm&color=0a0a0a)](https://www.npmjs.com/package/sebs7n-ui)
+[![CI](https://github.com/sebafermanelli/sebs7n-ui/actions/workflows/ci.yml/badge.svg)](https://github.com/sebafermanelli/sebs7n-ui/actions/workflows/ci.yml)
+[![licencia MIT](https://img.shields.io/npm/l/sebs7n-ui?color=0a0a0a)](./LICENSE)
+
 Design system para React: **Geist** —el lenguaje visual de Vercel— sobre las
 primitivas de **shadcn/ui `base-nova`** (Base UI), empaquetado como una sola
 dependencia.
@@ -7,13 +11,32 @@ dependencia.
 Nació de unificar cuatro aplicaciones reales que compartían componentes copiados
 y pegados: mismos neutros, misma tipografía, mismos radios y sombras, mismos
 estados de foco. Lo único que cambia entre productos es el color de marca, que
-son **tres variables CSS**.
+son **cuatro variables CSS**.
 
 - 58 componentes accesibles sobre Base UI, cada uno con su entry point.
 - Tokens de color, tipografía, radios y sombras como variables CSS y utilidades
   de Tailwind v4 — sin `tailwind.config`.
 - Server Components donde no hace falta estado; `"use client"` solo donde sí.
 - Contraste AA verificado por tests, no a ojo.
+
+**El detalle de cada componente vive en
+[ui.sebastianfermanelli.com](https://ui.sebastianfermanelli.com)** —58 páginas con
+demos en vivo, la tabla de props generada del TypeScript y las reglas de uso— y no
+se duplica acá. Cada página se sirve también como markdown y hay un `llms.txt`
+para agentes. Para levantarlo local, `cd docs/site && npm run dev`.
+
+## Índice
+
+- [Instalación](#instalación) · [CSS](#1-css) · [Layout raíz](#2-layout-raíz) · [Usar](#3-usar)
+- [Compatibilidad](#compatibilidad)
+- [Imports por componente](#imports-por-componente) — la tabla de subpaths y por qué no usar el barrel
+- [Tokens](#tokens) — fondos, color, tipografía, radios, sombras
+- [Theming](#theming) — las cuatro variables de marca, claro y oscuro
+- [Reglas de uso](#reglas-de-uso)
+- [Accesibilidad](#accesibilidad)
+- [Idioma](#idioma)
+- [Recetas](#recetas) — lo que resuelve la app, no el paquete
+- [Desarrollo](#desarrollo) · [Sitio de documentación](#sitio-de-documentación) · [Versionado](#versionado)
 
 ---
 
@@ -40,9 +63,9 @@ React y de Base UI:
 | `next-themes` | `^0.4.6` |
 | `sonner` | `^2.0.7` |
 
-`geist` no es un peer declarado, pero va en el mismo comando: los tokens de
-tipografía leen `--font-geist-sans` y `--font-geist-mono`, que define la app en
-el layout raíz.
+`geist` está declarado como peer **opcional** —npm no se queja si no lo
+instalás—, pero va en el mismo comando: los tokens de tipografía leen
+`--font-geist-sans` y `--font-geist-mono`, que define la app en el layout raíz.
 
 ### 1. CSS
 
@@ -51,22 +74,28 @@ En `globals.css`, **en este orden**:
 ```css
 @import "tailwindcss";
 @import "sebs7n-ui/theme.css";
-/* Las clases de los componentes las genera el Tailwind de la app, en una sola
-   hoja ordenada. La ruta es relativa a ESTE archivo:
-   app/globals.css → "../node_modules/…"; src/app/globals.css → "../../node_modules/…". */
-@source "../../node_modules/sebs7n-ui/dist";
 
 :root {
   --brand-base: oklch(0.573 0.214 258);
   --brand-base-dark: oklch(0.573 0.214 258);
+  --brand-contrast: #fff;
   --brand-contrast-dark: #fff;
 }
 ```
 
-> Existe también `@import "sebs7n-ui/styles.css"` (la hoja precompilada), pero con
-> dos hojas de utilidades un `hidden lg:block` de la app pierde contra el
-> `hidden` del paquete. **No combines `@source` con `@import "sebs7n-ui/styles.css"`**:
-> es una cosa o la otra, y la recomendada es `@source`.
+Eso es todo: **no hace falta ningún `@source`**. El `@source "../../dist"` lo
+trae el propio `theme.css`, y Tailwind v4 lo resuelve relativo a ese archivo
+aunque venga de `node_modules`.
+
+Si querés achicar el CSS final, podés excluir lo que tu app no usa. Esto falla
+ruidosamente —el componente se ve sin estilo—, al revés que olvidarse el
+`@source`:
+
+```css
+@source not "../../node_modules/sebs7n-ui/dist/components/combobox.js";
+```
+
+Los caros son `combobox`, `autocomplete`, los tres menús, `drawer` y `user-menu`.
 
 ### 2. Layout raíz
 
@@ -77,8 +106,11 @@ En `globals.css`, **en este orden**:
 ```tsx
 import { GeistMono } from "geist/font/mono"
 import { GeistSans } from "geist/font/sans"
-import { Toaster, TooltipProvider } from "sebs7n-ui"
 import { ThemeProvider } from "next-themes"
+// Por subpath, no por el barrel: el layout raíz envuelve TODAS las páginas, así
+// que un `from "sebs7n-ui"` acá le suma los 58 componentes a cada una.
+import { Toaster } from "sebs7n-ui/sonner"
+import { TooltipProvider } from "sebs7n-ui/tooltip"
 import "./globals.css"
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -96,6 +128,30 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   )
 }
 ```
+
+`geist/font/mono` precarga `GeistMono-Variable.woff2` en **cada ruta**: **71,4 KB**
+que compiten por el ancho de banda de la primera pantalla. Vale la pena si la app
+muestra código o tablas de números; si el mono aparece en dos o tres etiquetas
+—un id, una fecha, un `404`—, declaralo con `next/font/local` y `preload: false`,
+así se descarga recién cuando aparece el primer elemento que lo usa:
+
+```tsx
+const geistMono = localFont({
+  src: "../node_modules/geist/dist/fonts/geist-mono/GeistMono-Variable.woff2",
+  variable: "--font-geist-mono",
+  weight: "100 900",
+  display: "swap",
+  preload: false,
+  // `geist/font/mono` lo trae en `false`, así el fallback queda sin `size-adjust`
+  // y el swap salta. Next solo ofrece Arial y Times New Roman como base: ninguna
+  // es monoespaciada, pero Arial acerca más que nada.
+  adjustFontFallback: "Arial",
+  fallback: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
+})
+```
+
+`GeistSans` no necesita nada: `geist/font/sans` no desactiva `adjustFontFallback`,
+así que Next ya le calcula el `size-adjust` del fallback.
 
 ### 3. Usar
 
@@ -143,11 +199,19 @@ import { buttonVariants } from "sebs7n-ui/variants/button" // sin "use client"
 import { cn } from "sebs7n-ui/lib/utils"
 ```
 
-| Subpath | Archivo |
+<!-- subpaths: generado por scripts/gen-subpaths.mjs -->
+
+| Subpath | Qué trae |
 |---|---|
-| `sebs7n-ui/<componente>` | `src/components/<componente>.tsx` (kebab-case: `alert-dialog`, `app-shell`, `user-menu`, …) |
-| `sebs7n-ui/variants/<nombre>` | `src/variants/<nombre>.ts` (`button`, `badge`, `card`, `link`, `menu`, `sidebar`, `input`, `tag`, `toggle`) |
-| `sebs7n-ui/lib/<nombre>` | `src/lib/<nombre>.ts` (`utils`, `render`, `pagination`) |
+| `sebs7n-ui` | El barrel: los 58 componentes, las variantes y `cn`. Ver la nota de abajo antes de usarlo. |
+| `sebs7n-ui/<componente>` | 58, en kebab-case: `accordion` · `alert` · `alert-dialog` · `app-shell` · `app-shell-content` · `autocomplete` · `avatar` · `badge` · `breadcrumb` · `button` · `card` · `checkbox` · `checkbox-group` · `collapsible` · `combobox` · `context-menu` · `dialog` · `drawer` · `dropdown-menu` · `empty-state` · `field` · `fieldset` · `form` · `hover-card` · `input` · `kbd` · `label` · `menubar` · `meter` · `navigation-menu` · `number-field` · `otp-field` · `page-header` · `pagination` · `popover` · `progress` · `radio-group` · `scroll-area` · `select` · `separator` · `sheet` · `sidebar` · `skeleton` · `slider` · `sonner` · `spinner` · `stat` · `switch` · `table` · `tabs` · `tag` · `textarea` · `theme-switcher` · `toggle` · `toggle-group` · `toolbar` · `tooltip` · `user-menu` |
+| `sebs7n-ui/variants/<nombre>` | Clases sin `"use client"`: `badge` · `button` · `card` · `input` · `link` · `menu` · `overlay` · `sidebar` · `tag` · `toggle` |
+| `sebs7n-ui/lib/<nombre>` | Funciones puras: `contrast` · `pagination` · `render` · `schema` · `utils` |
+| `sebs7n-ui/labels` | `LabelsProvider`, `useLabels` y `defaultLabels`: los textos internos, para traducirlos. |
+| `sebs7n-ui/tokens/<archivo>.json` | Los tokens en crudo: `brands` · `geist` |
+| `sebs7n-ui/theme.css` | Los tokens y el `@source` del `dist`. Es el único import obligatorio. |
+
+<!-- /subpaths -->
 
 Por qué: el barrel hace `export *` de ~30 módulos `"use client"`. Next no puede
 podar referencias cliente a través de ese barrel (tampoco con
@@ -156,6 +220,36 @@ podar referencias cliente a través de ese barrel (tampoco con
 Medido en Next 16.3 (Turbopack) con esa página: **297,5 KB → 234,8 KB** de JS
 cliente gzip (−21 %). No mezcles barrel y subpaths en la misma página: el barrel
 vuelve a traer todo.
+
+Donde más caro sale es en el **layout raíz**, que envuelve todas las páginas: un
+`from "sebs7n-ui"` ahí le suma el paquete entero hasta a la landing. Por eso el
+ejemplo del layout de arriba importa `sebs7n-ui/sonner` y `sebs7n-ui/tooltip`.
+
+El barrel sigue existiendo —hoy es la única forma de llegar a `cn` sin conocer
+la ruta— así que si tu app ya lo tiene, la regla se pone en el linter y no en la
+memoria:
+
+```js
+// eslint.config.mjs
+export default [
+  {
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "sebs7n-ui",
+              message:
+                "Importá por subpath: sebs7n-ui/button, sebs7n-ui/card, sebs7n-ui/lib/utils. El barrel arrastra los 58 componentes a la página.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+]
+```
 
 ## Tokens
 
@@ -198,8 +292,9 @@ tres, y el tercero —la página— es `--sf-background`, que vive en
 `src/styles/theme.css` porque no es un primitivo de Geist.
 
 **Tipografía.** `cn()` entiende las utilidades de Geist como tamaño de fuente,
-así que conviven con `text-gray-900`. Desde 1.4 los `heading` llevan el peso
-**corregido ópticamente**, no 600 fijo: 72/64 → 400, 56/48/40 → 450, 32/24 →
+así que conviven con `text-gray-900`. Los `heading` llevan el peso **corregido
+ópticamente**, no 600 fijo: un mismo peso no se ve igual a 14px que a 64px, y 600
+a 64px sale plomizo. Los números son los medidos en vercel.com: 72/64 → 400, 56/48/40 → 450, 32/24 →
 500, 20 → 550, 16/14 → 600. No lo pises con `font-semibold`: para eso está el
 paso de arriba de la escala. Necesita Geist como **fuente variable** (rango
 `100 900`); con una estática los pesos intermedios se redondean y la corrección
@@ -209,28 +304,37 @@ se pierde.
 
 ### Color de marca
 
-Una app define **tres variables** y nada más. No hay que tocar ningún archivo del
-paquete:
+Una app define **cuatro variables** y nada más. No hay que tocar ningún archivo
+del paquete:
 
 ```css
 :root {
   --brand-base: oklch(0.55 0.16 35);        /* acento en claro */
   --brand-base-dark: oklch(0.55 0.16 35);   /* acento en oscuro; por defecto, igual a la base */
-  --brand-contrast-dark: #fff;              /* texto sobre el acento en oscuro */
+  --brand-contrast: #fff;                   /* texto sobre el acento en claro; por defecto #fff */
+  --brand-contrast-dark: #fff;              /* texto sobre el acento en oscuro; por defecto, igual a --brand-contrast */
 }
 ```
 
-De ahí el paquete deriva la escala `brand-100…1000` y `brand-contrast`. La regla
-es una sola: **el texto sobre `brand-700` tiene que llegar a 4,5:1**. Si el
-acento es claro, `--brand-contrast-dark: #000`.
+De ahí el paquete deriva la escala `brand-100…1000` y `brand-contrast`. Las dos
+de contraste vienen en `#fff` por defecto y `--brand-contrast-dark` cae en
+`--brand-contrast` si no se declara, así que con un acento oscuro alcanza con las
+dos primeras. La regla es una sola: **el texto sobre `brand-700` tiene que llegar
+a 4,5:1**. Si el acento es claro, `--brand-contrast: #000`.
 
 `tokens/brands.json` trae cuatro marcas de ejemplo (`teal`, `terracotta`,
-`emerald`, `blue`) que usan el playground y los tests de contraste. **Son solo
+`emerald`, `blue`) que usan las demos del sitio y los tests de contraste. **Son solo
 demos del sistema**: una app real no las usa ni edita ese archivo.
 
 ### Claro y oscuro
 
-Por clase (`.dark` en `<html>`), vía `next-themes` con `attribute="class"`.
+**Solo por la clase `.dark` en `<html>`.** No hay `data-theme` ni regla de
+`prefers-color-scheme`: la única definición es
+`@custom-variant dark (&:where(.dark, .dark *))`. Con `next-themes` eso sale de
+`attribute="class"`; con `attribute="data-theme"` el botón parece andar y los
+colores no cambian. Sin `next-themes`, la clase la pone la app
+(`document.documentElement.classList.toggle("dark", oscuro)`).
+
 `ThemeSwitcher` es para fuera de un menú (header público, ajustes); dentro de un
 `DropdownMenu` propio, `ThemeMenuRadio`. Sin `enableSystem` no muestran la
 opción "Sistema".
@@ -245,8 +349,10 @@ opción "Sistema".
   `lg` 28px), con cualquier variante y tamaño; en `icon-*` se ignora, que ya es
   cuadrado con su propio radio. **Nunca en el chrome de una app** —nav, tablas,
   formularios, diálogos—. Dos formas de botón en la misma pantalla se leen como
-  un descuido, no como una jerarquía. Sin `shape`, `buttonVariants` emite
-  exactamente lo mismo que en 1.3.0.
+  un descuido, no como una jerarquía. `shape` es opcional y su default no agrega
+  ninguna clase: sin pasarlo, `buttonVariants` emite exactamente la misma cadena
+  que antes de que la variante existiera, y hay un test que compara la cadena
+  entera.
 - **Links con forma de botón o card:** `buttonVariants()` / `cardVariants()`
   sobre `<a>` o `<Link>`. No uses `render` para links: Base UI les pone
   `role="button"`.
@@ -285,8 +391,10 @@ opción "Sistema".
   desaparece.
 - **`DropdownMenuLabel` va dentro de `DropdownMenuGroup`.** Suelto, Base UI tira
   la página abajo.
-- **`NavigationMenu` si los ítems navegan, `DropdownMenu` si ejecutan algo.**
-  Ver [NavigationMenu](#navigationmenu).
+- **`NavigationMenu` si los ítems navegan, `DropdownMenu` si ejecutan algo.** No
+  es cosmético: `DropdownMenu` emite `role="menu"` / `role="menuitem"`, y el modo
+  de navegación por links de un lector de pantalla no ve esos ítems.
+  Ver la página de **NavigationMenu** del sitio de documentación.
 - **Los triggers** (Dialog, Popover, Tooltip, DropdownMenu, Sheet) usan
   `render={<Button … />}`, no `asChild`.
 - `buttonVariants`, `badgeVariants`, `cardVariants`, `linkVariants`,
@@ -312,242 +420,110 @@ Es parte del contrato del paquete, no un extra:
 - **Estado anunciado.** `SidebarItem active` pone `aria-current="page"`;
   `SidebarItemBadge` acepta `label` para que el contador se lea con contexto
   ("Clientes, 3 pendientes"); `SidebarSearch shortcut` emite `aria-keyshortcuts`.
-- **Movimiento.** Todas las animaciones pasan por `motion-reduce`, además del
-  reset global del paquete.
-- **`aria-invalid`** en el input es lo único que hace falta para el estado de
-  error: el estilo sale de ahí, no de una clase aparte.
+- **Movimiento.** Todas pasan por el reset global de `base.css`; las que tienen
+  un recorrido (la franja de `Progress`, el deslizamiento del `Drawer`) suman su
+  propia regla `motion-reduce`.
+- **Nombres accesibles que exige el tipo.** `Button size="icon-*"` pide
+  `aria-label` o `aria-labelledby`; `Progress` y `Meter`, `label` o
+  `aria-label`; `AvatarImage`, `alt` (aunque sea `""`); `ToolbarGroup`,
+  `aria-label`. `DialogContent`, `SheetContent` y `DrawerContent` no se pueden
+  tipar —el título es un hijo— y avisan por consola en desarrollo.
+- **Objetivos táctiles.** Todo lo que se toca llega a 24×24 de área (WCAG
+  2.5.8), con `::after` donde el dibujo es más chico.
+- **`aria-invalid`** en el input sincroniza el estilo con la semántica —el borde
+  rojo sale de ahí, no de una clase aparte—, pero no alcanza solo: el mensaje
+  tiene que decir qué arreglar, y escribirlo con `match` o `validate`.
+- **LTR only.** El paquete asume texto de izquierda a derecha. En RTL no se
+  rompe: queda espejado. Está detallado en la página de Accesibilidad del sitio.
+
+Todo esto, con los números medidos y las excepciones, en la página
+**Accesibilidad** del sitio de documentación.
 
 ---
 
-## NavigationMenu
+## Idioma
 
-La navegación de un sitio cuando un grupo de páginas no entra como links
-sueltos: el "mega menú". Un trigger despliega un panel donde cada ítem es un
-link con título, una línea de descripción y un ícono opcional.
+El sistema habla **español**: los textos que los componentes escriben solos
+—«Cerrar», «Sin resultados», «Ir al contenido», «Buscando…»— están en español y
+son el default.
 
-```tsx
-import NextLink from "next/link"
-import {
-  NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink,
-  NavigationMenuList, NavigationMenuTrigger, NavigationMenuViewport,
-} from "sebs7n-ui/navigation-menu"
-
-<NavigationMenu render={<div />}>
-  <NavigationMenuList>
-    <NavigationMenuItem>
-      <NavigationMenuTrigger active={enAlgunaDeEsasPaginas}>Productos</NavigationMenuTrigger>
-      <NavigationMenuContent keepMounted className="sm:w-[32rem]">
-        <ul className="grid gap-0.5 sm:grid-cols-2">
-          {productos.map((p) => (
-            <li key={p.href}>
-              <NavigationMenuLink
-                render={<NextLink href={p.href} />}
-                title={p.nombre}
-                description={p.bajada}
-                icon={<p.Icono />}
-              />
-            </li>
-          ))}
-        </ul>
-      </NavigationMenuContent>
-    </NavigationMenuItem>
-
-    <NavigationMenuItem>
-      <NavigationMenuLink render={<NextLink href="/blog" />}>Blog</NavigationMenuLink>
-    </NavigationMenuItem>
-  </NavigationMenuList>
-
-  {/* Una sola vez, hermano de la lista: el panel es uno para todos los ítems. */}
-  <NavigationMenuViewport />
-</NavigationMenu>
-```
-
-| Pieza | Qué hace |
-|---|---|
-| `NavigationMenu` | Root. Renderiza `<nav>`; adentro de un `<nav>` que ya existe, `render={<div />}` para no anidar dos landmarks. `delay`/`closeDelay` (50ms), `orientation`, `value`/`onValueChange` para manejarlo a mano. |
-| `NavigationMenuList` · `NavigationMenuItem` | `<ul>` / `<li>`. La lista trae `flex items-center gap-2`. |
-| `NavigationMenuTrigger` | Botón con el **cuerpo de un link de nav** (14px, peso 400, `gray-900` → `gray-1000`, sin fondo en ningún estado) y chevron que gira al abrir (`chevron={false}` lo saca). `active` lo marca cuando estás en alguna de las páginas del panel. |
-| `NavigationMenuContent` | El contenido de ese ítem, que se mueve al panel. Varias columnas: ancho por `className` y una grilla adentro. `keepMounted` deja los links en el DOM cerrados. |
-| `NavigationMenuLink` | El `<a>`. Con `title` arma la **tarjeta** del panel (ícono opcional + título + `description` de una línea, truncada); sin `title` pone solo radio, foco y `transition-control`, y manda el `className` — el modo para un link suelto de la barra. `render={<NextLink … />}` para navegación del lado del cliente. |
-| `NavigationMenuViewport` | Portal + posicionador + superficie + viewport en una pieza. Va una sola vez, hermano de la lista. `align`, `side`, `sideOffset`, `container`, y `popupClassName`/`positionerClassName` para el ancho máximo. |
-| `NavigationMenuPositioner` · `NavigationMenuPopup` | Las piezas sueltas, para armar el panel a mano (una flecha, otro contenedor). El 99% de las veces alcanza `NavigationMenuViewport`. |
-
-**Cuándo `NavigationMenu` y cuándo `DropdownMenu`.** Si los ítems **navegan**,
-`NavigationMenu`; si **ejecutan** algo sobre la página en la que estás,
-`DropdownMenu`. No es cosmético: `DropdownMenu` emite `role="menu"` /
-`role="menuitem"`, atrapa el foco y se recorre con las flechas como una barra de
-aplicación, así que un lector de pantalla anuncia "menú, 3 elementos" en vez de
-una lista de links, y el modo de navegación por links no los ve.
-`NavigationMenu` es `<nav>` + `<ul>` + `<a>`, que es lo que son. El menú de
-idioma y el de usuario siguen siendo `DropdownMenu` (cambian el estado, no la
-página).
-
-**`keepMounted` y el crawler.** Por defecto el contenido no existe en el DOM
-hasta que el menú abre, así que un crawler —que no pasa el mouse ni tabula—
-nunca ve esos links. `keepMounted` los deja en el HTML del server, ocultos.
-Cuesta un poco de markup por panel; si el nav es el link principal a esas
-páginas, se pone. Un test verifica que salen en `renderToString`. Alcance: cubre
-el HTML del server y el DOM hasta la primera apertura. Al abrir, el contenido se
-muda al popup —que vive en un portal sin `keepMounted`— y al cerrar se desmonta
-con él. Para el crawler da igual, porque no abre el menú.
-
-**Accesibilidad.** Abre con hover y con teclado (Enter, Espacio, flechas);
-Escape cierra y devuelve el foco al trigger; `aria-expanded` y `aria-controls`
-los pone Base UI. El movimiento pasa por `motion-reduce` además del reset global
-del paquete. El trigger **no** lleva `aria-current`: no es un link y no es la
-página actual — para eso está `active`, que solo lo pinta.
-
-## Combobox y Autocomplete
-
-Para pickers y buscadores (país, cliente, categoría, ciudad, dirección) usá
-estos en vez de armar la lista a mano: el input tiene el cuerpo y los estados de
-`Input` (tamaños `sm`/`md`/`lg`, foco, `aria-invalid`, `disabled`) y la lista es
-la de `DropdownMenu`/`Select`.
+Se traducen todos de una vez con un `LabelsProvider` arriba del árbol:
 
 ```tsx
-import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from "sebs7n-ui/combobox"
+import { LabelsProvider, defaultLabels, type Labels } from "sebs7n-ui/labels"
 
-<Combobox items={countries} value={country} onValueChange={setCountry}>
-  <ComboboxInput id="pais" placeholder="Elegí un país" />
-  <ComboboxContent>
-    <ComboboxEmpty />{/* "Sin resultados" */}
-    <ComboboxList>
-      {(c: string) => <ComboboxItem key={c} value={c}>{c}</ComboboxItem>}
-    </ComboboxList>
-  </ComboboxContent>
-</Combobox>
-```
-
-| Pieza | Qué hace |
-|---|---|
-| `Combobox` | Root de Base UI: `items`, `value`/`onValueChange`, `multiple`, `filter`, `itemToStringLabel` (objetos `{ value, label }` andan solos), `disabled`. |
-| `ComboboxInput` | Input + limpiar + chevron. `size`, `showClear` (default sí, aparece con valor), `showTrigger` (default sí), `labels`, `groupClassName`. |
-| `ComboboxContent` | Panel `menuPopupClassName`, al menos tan ancho como el input. `side`, `align`, `sideOffset`. |
-| `ComboboxList` · `ComboboxItem` | Lista (función por ítem) e ítem `menuItemClassName` con check si está elegido. |
-| `ComboboxGroup` · `ComboboxLabel` · `ComboboxCollection` · `ComboboxSeparator` | Grupos: `items={[{ value: "Europa", items: [...] }]}`, y dentro de cada `ComboboxGroup items={g.items}` un `ComboboxCollection`. |
-| `ComboboxEmpty` | Se muestra solo con la lista vacía. Sin children: "Sin resultados"; `{null}` no muestra nada. |
-| `ComboboxStatus` | Región `aria-live`. `loading` muestra la fila con spinner ("Buscando…", `labels.loading`). |
-| `ComboboxChips` · `ComboboxChip` · `ComboboxChipsInput` · `ComboboxValue` | Múltiple: chips `Badge` subtle con botón "Quitar …" (`removeLabel`). |
-| `useComboboxFilter` | `contains`/`startsWith` con locale, para filtrar a mano. |
-
-**Búsqueda async** (clientes, direcciones): `filter={null}`, buscá en
-`onInputValueChange` (salteá `reason === "item-press"`) y mientras carga
-`<ComboboxStatus loading />` + `<ComboboxEmpty>{loading ? null : undefined}</ComboboxEmpty>`.
-**Múltiple**: `multiple` y, en vez de `ComboboxInput`,
-`<ComboboxChips><ComboboxValue>{(values) => <>{values.map((v) => <ComboboxChip key={v}>{v}</ComboboxChip>)}<ComboboxChipsInput /></>}</ComboboxValue></ComboboxChips>`.
-
-**`Autocomplete`** (`sebs7n-ui/autocomplete`) es texto libre con sugerencias: el
-valor es el texto (`value`/`onValueChange` son strings) y un texto que no está
-en la lista vale. Mismas piezas con prefijo `Autocomplete`
-(`AutocompleteInput` sin chevron por defecto, `AutocompleteItem` sin check).
-Para ciudad o dirección donde se acepta cualquier cosa, `Autocomplete`; si el
-valor tiene que ser uno de la lista, `Combobox`.
-
-`disabled` va en el root (`<Combobox disabled>`) para bloquear todo; en el input
-también apaga la superficie. `aria-invalid` va en el input.
-
-**Lista a medida** (raro): `menuPopupClassName` y `menuItemClassName` (de
-`sebs7n-ui` o `sebs7n-ui/variants/menu`) sobre primitivas de Base UI que pongan
-`data-highlighted`; e `inputShellClassName` / `inputShellInputClassName` /
-`inputShellButtonClassName` (`sebs7n-ui/variants/input`) para un control compuesto
-con superficie de Input. Sin `"use client"`.
-
-## Shell de dashboard
-
-`AppShell` arma el layout de panel: sidebar sticky a todo el alto desde `lg` y,
-debajo, una barra de 56px cuya hamburguesa abre el mismo sidebar en un `Sheet`.
-
-```tsx
-"use client"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import {
-  AppShell, AppShellContent, Badge, Button, DropdownMenuItem, Sidebar, SidebarContent, SidebarFooter, SidebarGroup,
-  SidebarGroupLabel, SidebarHeader, SidebarItem, SidebarItemBadge, SidebarSearch, UserMenu,
-} from "sebs7n-ui"
-import { LogOutIcon, PanelLeftIcon, ReceiptIcon, SettingsIcon, UsersIcon } from "lucide-react"
-import { useCallback, useEffect, useState } from "react"
-
-function PanelSidebar({ user, pending, collapsed }: { user: { name: string; email: string }; pending: number; collapsed: boolean }) {
-  const pathname = usePathname()
-  const item = (href: string, icon: React.ReactNode, label: React.ReactNode) => (
-    <SidebarItem render={<Link href={href} />} icon={icon} active={pathname.startsWith(href)}>
-      {label}
-    </SidebarItem>
-  )
-  return (
-    <Sidebar collapsed={collapsed}>
-      <SidebarHeader>
-        <div className="flex h-8 items-center gap-2 px-1">
-          <Logo className="size-6" />
-          <span className="text-label-14 font-medium group-data-collapsed/sidebar:hidden">Acme</span>
-          <Badge size="sm" className="group-data-collapsed/sidebar:hidden">Admin</Badge>
-        </div>
-        {/* El atajo lo registra la app (useHotkey / keydown en window); shortcut solo lo muestra y lo anuncia. */}
-        <SidebarSearch shortcut="⌘K" onClick={openCommandPalette} />
-      </SidebarHeader>
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Operación</SidebarGroupLabel>
-          {item("/panel/facturas", <ReceiptIcon />, "Facturas")}
-          {item("/panel/clientes", <UsersIcon />, <>Clientes{pending > 0 && <SidebarItemBadge label={`${pending} pendientes`}>{pending}</SidebarItemBadge>}</>)}
-        </SidebarGroup>
-      </SidebarContent>
-      <SidebarFooter>
-        <UserMenu
-          user={user}
-          signOut={<DropdownMenuItem onClick={signOut}><LogOutIcon />Cerrar sesión</DropdownMenuItem>}
-        >
-          <DropdownMenuItem render={<Link href="/panel/ajustes" />}><SettingsIcon />Ajustes de cuenta</DropdownMenuItem>
-        </UserMenu>
-      </SidebarFooter>
-    </Sidebar>
-  )
+const en: Labels = {
+  ...defaultLabels,
+  dialog: { close: "Close" },
+  sheet: { close: "Close" },
+  drawer: { close: "Close" },
+  combobox: { clear: "Clear", trigger: "Open list", loading: "Searching…", empty: "No results", remove: "Remove" },
+  // …
 }
 
-export function DashboardShell({ children, user, pending, defaultCollapsed }) {
-  const pathname = usePathname()
-  const [collapsed, setCollapsed] = useSidebarCollapsed(defaultCollapsed)
-  return (
-    <AppShell
-      pathname={pathname}
-      sidebar={<PanelSidebar user={user} pending={pending} collapsed={collapsed} />}
-      mobileBar={<><Logo className="size-6" /><span className="ml-auto" /><UserMenu user={user} collapsed /></>}
-    >
-      <AppShellContent>
-        <Button variant="ghost" size="icon-sm" className="hidden lg:inline-flex" aria-label="Colapsar sidebar"
-          aria-pressed={collapsed} onClick={() => setCollapsed(!collapsed)}>
-          <PanelLeftIcon />
-        </Button>
-        {children}
-      </AppShellContent>
-    </AppShell>
-  )
+export default function RootLayout({ children }) {
+  return <LabelsProvider value={en}>{children}</LabelsProvider>
 }
 ```
 
-**Colapsar el sidebar (receta de la app).** El paquete no guarda el estado: la
-app decide dónde vive. Con una cookie el server ya renderiza el ancho correcto
-(sin salto):
+`defaultLabels` está tipado como `Labels` completo, así que anotar la traducción
+con `: Labels` hace que TypeScript marque lo que falte en vez de que aparezca en
+español en producción. Los providers anidados se suman, para una sección en otro
+idioma sin repetir todo.
+
+La prop `labels` de cada componente sigue existiendo y **le gana al provider**:
+es para la excepción de una pantalla («Quitar del carrito» en vez de «Quitar»),
+no para traducir.
+
+`Breadcrumb`, `Pagination`, `Tag` y `PageHeader` no leen del provider: leerlo
+pide un contexto de React y eso los convertiría en componentes de cliente, y los
+cuatro se pueden renderizar hoy en un Server Component. Sus textos se pasan por
+prop, como venían (`ellipsisLabel`, `removeLabel`, `breadcrumbLabel`, `labels`,
+`aria-label`).
+
+El `lang` del `<html>` es de la app, y no es opcional: cambia la pronunciación
+del lector de pantalla.
+
+---
+
+## Recetas
+
+Lo que el paquete **no** resuelve porque no le corresponde, con la implementación
+que vienen usando las apps.
+
+Las piezas, sus props y sus reglas no están acá: están en las páginas de
+`NavigationMenu`, `Combobox`, `Autocomplete`, `AppShell` y `Sidebar` del sitio de
+documentación, con demo en vivo y la tabla de props sacada del TypeScript. Tener
+las dos versiones garantizaba que una quedara vieja.
+
+### Colapsar el sidebar y recordarlo
+
+`Sidebar` recibe `collapsed`; **dónde vive ese booleano lo decide la app**. Con
+una cookie el server ya renderiza el ancho correcto y no hay salto al hidratar:
 
 ```tsx
-// layout.tsx (Server Component): const defaultCollapsed = (await cookies()).get("sidebar")?.value === "collapsed"
+// layout.tsx (Server Component)
+const defaultCollapsed = (await cookies()).get("sidebar")?.value === "collapsed"
+
+// El hook del lado del cliente: cookie + ⌘B / Ctrl+B.
 function useSidebarCollapsed(initial: boolean) {
   const [collapsed, setCollapsed] = useState(initial)
+  const recordar = (next: boolean) => {
+    document.cookie = `sidebar=${next ? "collapsed" : "expanded"}; path=/; max-age=31536000; samesite=lax`
+  }
   const set = useCallback((next: boolean) => {
     setCollapsed(next)
-    document.cookie = `sidebar=${next ? "collapsed" : "expanded"}; path=/; max-age=31536000; samesite=lax`
+    recordar(next)
   }, [])
   useEffect(() => {
-    // ⌘B / Ctrl+B, salvo que se esté escribiendo en un campo.
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key.toLowerCase() !== "b" || !(event.metaKey || event.ctrlKey)) return
+      // Dentro de un campo, ⌘B es negrita: no se lo robamos.
       if ((event.target as HTMLElement)?.closest("input, textarea, [contenteditable]")) return
       event.preventDefault()
       setCollapsed((prev) => {
-        const next = !prev
-        document.cookie = `sidebar=${next ? "collapsed" : "expanded"}; path=/; max-age=31536000; samesite=lax`
-        return next
+        recordar(!prev)
+        return !prev
       })
     }
     window.addEventListener("keydown", onKeyDown)
@@ -557,40 +533,51 @@ function useSidebarCollapsed(initial: boolean) {
 }
 ```
 
-- `SidebarItem` es un `<a>`; con Next, `render={<Link href />}`. `active` pone
-  `aria-current="page"`. Dentro del Sheet mobile, el click lo cierra (salvo
-  ⌘/Ctrl/click del medio) y manda el foco al `main`.
-- **Pasale `pathname={usePathname()}` a `AppShell`**: cualquier navegación (un
-  link del contenido, un `router.push`) cierra el Sheet. También se cierra al
-  pasar a ≥ lg y al elegir un ítem del `UserMenu`. Para un caso propio:
-  `useAppShell().closeMobile({ focusMain: true })`.
-- `SidebarItemBadge`: el lector lo lee separado ("Clientes, 3"); con
-  `label="3 pendientes"` da contexto. Con el sidebar colapsado, un punto marca
-  los contadores distintos de cero.
-- `SidebarSearch` no registra ningún atajo: la app escucha ⌘K y abre su paleta.
-  Con `shortcut="⌘K"` se muestra el `Kbd` y se anuncia `aria-keyshortcuts`; sin
-  `shortcut`, nada.
-- `<Sidebar collapsed>` deja solo los íconos (64px, sin animar el ancho) con
-  tooltip del label; lo que sea texto del header se oculta con
-  `group-data-collapsed/sidebar:hidden`. `UserMenu` toma el estado del sidebar:
-  colapsado muestra solo el avatar.
-- `UserMenu` agrega solo la fila "Tema" (`ThemeMenuRadio`: ítems `menuitemradio`
-  que se recorren con las flechas y no cierran el menú). `signOut` es un
-  `DropdownMenuItem` neutral, **no** `variant="destructive"`.
-- **Usar `AppShellContent` como hijo directo de `AppShell`**: es el contenedor de
-  página (`mx-auto w-full max-w-7xl`, `px-4 py-6 md:px-6 md:py-8`, columna con
-  `gap-6`), así todas las pantallas tienen el mismo ancho. `size="wide"`
-  (1600px) para tablas anchas, `size="full"` sin máximo. No tiene
-  `"use client"`: `sebs7n-ui/app-shell-content` sirve en Server Components.
-- `AppShell` usa `--app-shell-height` (100dvh); para embeberlo en una caja,
-  `className="[--app-shell-height:720px]"`.
-- Página: `PageHeader` (`PageHeaderTitle`, `PageHeaderDescription`,
-  `PageHeaderActions`, prop `breadcrumb`), `Stat` para KPIs dentro de un `Card`,
-  `EmptyState` para vacíos, `AlertDialog` para confirmar lo destructivo.
-  `AlertDialogAction` no cierra sola: o controlás `open` (y cerrás al terminar,
-  útil con `loading`), o sin controlar la envolvés:
-  `<AlertDialogClose render={<AlertDialogAction variant="destructive" />}>Eliminar</AlertDialogClose>`.
-  `AlertDialogCancel` ya cierra.
+El botón que lo alterna es de la app y necesita nombre y estado:
+`<Button size="icon-sm" variant="ghost" aria-label="Colapsar sidebar" aria-pressed={collapsed} …>`.
+
+### Cerrar el menú mobile al navegar
+
+**Pasale `pathname={usePathname()}` a `AppShell`**: cualquier navegación —un link
+del contenido, un `router.push`— cierra el `Sheet`. También se cierra al pasar a
+≥ `lg` y al elegir un ítem del `UserMenu`. Para un caso propio,
+`useAppShell().closeMobile({ focusMain: true })`.
+
+### El atajo de la búsqueda
+
+`SidebarSearch shortcut="⌘K"` **solo muestra el `Kbd` y lo anuncia**
+(`aria-keyshortcuts`). Escuchar la tecla y abrir la paleta es de la app: el
+paquete no registra atajos globales, porque dos componentes peleándose el mismo
+`keydown` es un bug que no se ve hasta producción.
+
+### Links del mega menú que vea un crawler
+
+`NavigationMenuContent` no existe en el DOM hasta que el menú abre, así que un
+crawler —que no pasa el mouse ni tabula— nunca ve esos links. Con `keepMounted`
+quedan en el HTML del server, ocultos. Cuesta markup por panel; si el nav es el
+link principal a esas páginas, se paga. Alcance: cubre el HTML del server y el
+DOM hasta la primera apertura — al abrir, el contenido se muda al popup, que vive
+en un portal sin `keepMounted`. Para el crawler da igual, porque no abre el menú.
+
+### Combobox contra el servidor
+
+El filtrado del `Combobox` es **en memoria y en cada tecla, sin debounce**, que
+es lo correcto con una lista local: esperar se nota. Si los resultados vienen del
+servidor, el debounce lo pone la app:
+
+```tsx
+<Combobox items={resultados} filter={null} onInputValueChange={(texto, detalles) => {
+  if (detalles.reason === "item-press") return
+  debounced(texto)
+}}>
+  <ComboboxInput placeholder="Buscar cliente" />
+  <ComboboxContent>
+    <ComboboxStatus loading={cargando} />
+    <ComboboxEmpty>{cargando ? null : undefined}</ComboboxEmpty>
+    <ComboboxList>{(c) => <ComboboxItem key={c.value} value={c}>{c.label}</ComboboxItem>}</ComboboxList>
+  </ComboboxContent>
+</Combobox>
+```
 
 ---
 
@@ -601,27 +588,16 @@ npm install
 npm test          # tokens, contraste, componentes y build
 npm run typecheck
 npm run tokens    # regenera src/styles/colors.css desde tokens/geist.json
-npm run build     # dist/ (tsc) + dist/styles.css (Tailwind)
+npm run build     # dist/ (tsc)
 ```
-
-Playground — todas las primitivas en todos sus estados, las cuatro marcas de
-ejemplo, claro y oscuro:
-
-```bash
-cd playground && npm install && npm run dev   # http://localhost:4000
-```
-
-`npm run dev` empaqueta el paquete con `npm pack` y lo instala como tarball. Es a
-propósito, y no es lo que hace una app: una app instala desde npm
-(`pnpm add sebs7n-ui`). Acá se empaca el código local para probar los cambios sin
-publicar, y con exactamente los archivos que salen en el tarball publicado.
 
 ## Sitio de documentación
 
 Vive en `docs/site/` y es una app de Next 16 + Tailwind v4 que **usa el propio
-design system**: es su mejor demo. Consume el paquete con `npm pack`, igual que el
-playground y por la misma razón: documenta el código de este repo, no la última
-versión publicada en npm. Una app normal instala desde npm.
+design system**: es su mejor demo, y el lugar donde se prueba cada componente en
+todos sus estados. Consume el paquete con `npm pack` y no desde npm, a propósito:
+documenta el código de este repo, no la última versión publicada. Una app normal
+sí instala desde npm.
 
 ```bash
 cd docs/site

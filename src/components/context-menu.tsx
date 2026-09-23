@@ -4,8 +4,8 @@ import type * as React from "react"
 import { ContextMenu as ContextMenuPrimitive } from "@base-ui/react/context-menu"
 import { CheckIcon, ChevronRightIcon } from "lucide-react"
 
-import { cn } from "../lib/utils.js"
-import { menuItemClassName, menuPopupClassName } from "../variants/menu.js"
+import { cn, type WithClassName } from "../lib/utils.js"
+import { menuItemClassName, menuLabelClassName, menuPopupClassName, menuSeparatorClassName, type MenuInsetProps } from "../variants/menu.js"
 
 /**
  * El menú del botón derecho: las mismas acciones, ancladas al puntero.
@@ -23,7 +23,7 @@ import { menuItemClassName, menuPopupClassName } from "../variants/menu.js"
  * el atajo de quien ya sabe que está, no la puerta de entrada.
  */
 function ContextMenu(props: ContextMenuPrimitive.Root.Props) {
-  return <ContextMenuPrimitive.Root data-slot="context-menu" {...props} />
+  return <ContextMenuPrimitive.Root {...props} />
 }
 
 /**
@@ -54,8 +54,7 @@ function openFromKeyboard(element: HTMLElement) {
   )
 }
 
-type ContextMenuTriggerProps = Omit<ContextMenuPrimitive.Trigger.Props, "className"> & {
-  className?: string
+type ContextMenuTriggerProps = WithClassName<ContextMenuPrimitive.Trigger.Props> & {
   /**
    * `false` saca la parada de tabulación y con ella la apertura por teclado.
    * Solo cuando el área ya contiene un control enfocable que abre el mismo menú.
@@ -86,8 +85,8 @@ function ContextMenuTrigger({ className, focusable = true, onKeyDown, tabIndex, 
   )
 }
 
-type ContextMenuContentProps = Omit<ContextMenuPrimitive.Popup.Props, "className"> &
-  Pick<ContextMenuPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset"> & { className?: string }
+type ContextMenuContentProps = WithClassName<ContextMenuPrimitive.Popup.Props> &
+  Pick<ContextMenuPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset">
 
 /**
  * El panel, ya dentro del portal.
@@ -117,23 +116,21 @@ function ContextMenuGroup(props: ContextMenuPrimitive.Group.Props) {
   return <ContextMenuPrimitive.Group data-slot="context-menu-group" {...props} />
 }
 
-type InsetProps = { inset?: boolean }
-
-type ContextMenuLabelProps = Omit<ContextMenuPrimitive.GroupLabel.Props, "className"> & InsetProps & { className?: string }
+type ContextMenuLabelProps = WithClassName<ContextMenuPrimitive.GroupLabel.Props> & MenuInsetProps
 
 function ContextMenuLabel({ className, inset, ...props }: ContextMenuLabelProps) {
   return (
     <ContextMenuPrimitive.GroupLabel
       data-slot="context-menu-label"
       data-inset={inset ? "" : undefined}
-      className={cn("px-2 py-1.5 text-label-12 text-gray-900 data-inset:pl-8", className)}
+      className={cn(menuLabelClassName, "data-inset:pl-8", className)}
       {...props}
     />
   )
 }
 
-type ContextMenuItemProps = Omit<ContextMenuPrimitive.Item.Props, "className"> &
-  InsetProps & { className?: string; variant?: "default" | "destructive" }
+type ContextMenuItemProps = WithClassName<ContextMenuPrimitive.Item.Props> &
+  MenuInsetProps & { variant?: "default" | "destructive" }
 
 function ContextMenuItem({ className, inset, variant = "default", ...props }: ContextMenuItemProps) {
   return (
@@ -151,7 +148,7 @@ function ContextMenuItem({ className, inset, variant = "default", ...props }: Co
   )
 }
 
-type ContextMenuCheckboxItemProps = Omit<ContextMenuPrimitive.CheckboxItem.Props, "className"> & { className?: string }
+type ContextMenuCheckboxItemProps = WithClassName<ContextMenuPrimitive.CheckboxItem.Props>
 
 function ContextMenuCheckboxItem({ className, children, ...props }: ContextMenuCheckboxItemProps) {
   return (
@@ -168,7 +165,7 @@ function ContextMenuRadioGroup(props: ContextMenuPrimitive.RadioGroup.Props) {
   return <ContextMenuPrimitive.RadioGroup data-slot="context-menu-radio-group" {...props} />
 }
 
-type ContextMenuRadioItemProps = Omit<ContextMenuPrimitive.RadioItem.Props, "className"> & { className?: string }
+type ContextMenuRadioItemProps = WithClassName<ContextMenuPrimitive.RadioItem.Props>
 
 function ContextMenuRadioItem({ className, children, ...props }: ContextMenuRadioItemProps) {
   return (
@@ -181,10 +178,10 @@ function ContextMenuRadioItem({ className, children, ...props }: ContextMenuRadi
   )
 }
 
-type ContextMenuSeparatorProps = Omit<ContextMenuPrimitive.Separator.Props, "className"> & { className?: string }
+type ContextMenuSeparatorProps = WithClassName<ContextMenuPrimitive.Separator.Props>
 
 function ContextMenuSeparator({ className, ...props }: ContextMenuSeparatorProps) {
-  return <ContextMenuPrimitive.Separator data-slot="context-menu-separator" className={cn("-mx-1 my-1 h-px bg-gray-400", className)} {...props} />
+  return <ContextMenuPrimitive.Separator data-slot="context-menu-separator" className={cn(menuSeparatorClassName, className)} {...props} />
 }
 
 /**
@@ -193,15 +190,24 @@ function ContextMenuSeparator({ className, ...props }: ContextMenuSeparatorProps
  * Acá pesa más que en un `DropdownMenu`: es el cartel que enseña el otro camino
  * a la misma acción, el que va a usar quien no puede abrir este menú.
  */
-function ContextMenuShortcut({ className, ...props }: React.ComponentProps<"span">) {
-  return <span data-slot="context-menu-shortcut" className={cn("ml-auto text-label-12-mono text-gray-700", className)} {...props} />
+// El atajo es contenido, no decoración: un lector tiene que decir que existe. Pero pegado al
+// label se lee «Guardar⌘S» de corrido, porque el nombre accesible concatena los textos sin
+// separador. La coma sr-only más el espacio lo vuelven «Guardar, ⌘S». Misma técnica que
+// `SidebarItemBadge`, por el mismo motivo.
+function ContextMenuShortcut({ className, children, ...props }: React.ComponentProps<"span">) {
+  return (
+    <span data-slot="context-menu-shortcut" className={cn("ml-auto text-label-12-mono text-gray-900", className)} {...props}>
+      <span className="sr-only">,</span>{" "}
+      {children}
+    </span>
+  )
 }
 
 function ContextMenuSub(props: ContextMenuPrimitive.SubmenuRoot.Props) {
-  return <ContextMenuPrimitive.SubmenuRoot data-slot="context-menu-sub" {...props} />
+  return <ContextMenuPrimitive.SubmenuRoot {...props} />
 }
 
-type ContextMenuSubTriggerProps = Omit<ContextMenuPrimitive.SubmenuTrigger.Props, "className"> & InsetProps & { className?: string }
+type ContextMenuSubTriggerProps = WithClassName<ContextMenuPrimitive.SubmenuTrigger.Props> & MenuInsetProps
 
 function ContextMenuSubTrigger({ className, inset, children, ...props }: ContextMenuSubTriggerProps) {
   return (
@@ -245,4 +251,12 @@ export {
   ContextMenuSubContent,
   ContextMenuSubTrigger,
   ContextMenuTrigger,
+  type ContextMenuCheckboxItemProps,
+  type ContextMenuContentProps,
+  type ContextMenuItemProps,
+  type ContextMenuLabelProps,
+  type ContextMenuRadioItemProps,
+  type ContextMenuSeparatorProps,
+  type ContextMenuSubTriggerProps,
+  type ContextMenuTriggerProps,
 }

@@ -1,12 +1,14 @@
 "use client"
 
+import type * as React from "react"
 import { Autocomplete as AutocompletePrimitive } from "@base-ui/react/autocomplete"
 import { ChevronDownIcon, XIcon } from "lucide-react"
-import type * as React from "react"
 
-import { cn } from "../lib/utils.js"
+import { renderShellTrigger } from "../internal/shell-trigger.js"
+import { useLabels } from "../lib/labels.js"
+import { cn, type WithClassName } from "../lib/utils.js"
 import { inputShellButtonClassName, inputShellClassName, inputShellInputClassName } from "../variants/input.js"
-import { menuItemClassName } from "../variants/menu.js"
+import { menuItemClassName, menuSeparatorClassName } from "../variants/menu.js"
 import {
   ComboboxCollection,
   ComboboxContent,
@@ -16,11 +18,6 @@ import {
   ComboboxList,
   ComboboxStatus,
 } from "./combobox.js"
-
-// Ver renderShellTrigger en combobox.tsx: el input siempre está afuera del popup.
-const renderShellTrigger = (props: React.ComponentProps<"button">) => (
-  <button {...props} id={undefined} role={undefined} tabIndex={-1} aria-haspopup="listbox" />
-)
 
 // Texto libre con sugerencias: el valor es el texto del input (value/onValueChange son strings).
 // Popup, lista, grupos, vacío y estado son las mismas piezas que Combobox.
@@ -54,6 +51,9 @@ function AutocompleteInput({
   disabled,
   ...props
 }: AutocompleteInputProps) {
+  // El provider gana sobre el español; la prop `labels` gana sobre el provider, porque es la
+  // excepción de una pantalla y no una traducción.
+  const l = useLabels().autocomplete
   return (
     <AutocompletePrimitive.InputGroup
       data-slot="autocomplete-input-group"
@@ -64,12 +64,12 @@ function AutocompleteInput({
     >
       <AutocompletePrimitive.Input data-slot="autocomplete-input" disabled={disabled} className={cn(inputShellInputClassName, className)} {...props} />
       {showClear && (
-        <AutocompletePrimitive.Clear data-slot="autocomplete-clear" aria-label={labels?.clear ?? "Limpiar"} disabled={disabled} className={inputShellButtonClassName}>
+        <AutocompletePrimitive.Clear data-slot="autocomplete-clear" aria-label={labels?.clear ?? l.clear} disabled={disabled} className={inputShellButtonClassName}>
           <XIcon />
         </AutocompletePrimitive.Clear>
       )}
       {showTrigger && (
-        <AutocompletePrimitive.Trigger data-slot="autocomplete-trigger" render={renderShellTrigger} aria-label={labels?.trigger ?? "Ver sugerencias"} disabled={disabled} className={inputShellButtonClassName}>
+        <AutocompletePrimitive.Trigger data-slot="autocomplete-trigger" render={renderShellTrigger} aria-label={labels?.trigger ?? l.trigger} disabled={disabled} className={inputShellButtonClassName}>
           <ChevronDownIcon />
         </AutocompletePrimitive.Trigger>
       )}
@@ -77,17 +77,17 @@ function AutocompleteInput({
   )
 }
 
-type AutocompleteItemProps = Omit<AutocompletePrimitive.Item.Props, "className"> & { className?: string }
+type AutocompleteItemProps = WithClassName<AutocompletePrimitive.Item.Props>
 
 // Sin check: una sugerencia no queda "elegida", completa el texto.
 function AutocompleteItem({ className, ...props }: AutocompleteItemProps) {
   return <AutocompletePrimitive.Item data-slot="autocomplete-item" className={cn(menuItemClassName, "w-full", className)} {...props} />
 }
 
-type AutocompleteSeparatorProps = Omit<AutocompletePrimitive.Separator.Props, "className"> & { className?: string }
+type AutocompleteSeparatorProps = WithClassName<AutocompletePrimitive.Separator.Props>
 
 function AutocompleteSeparator({ className, ...props }: AutocompleteSeparatorProps) {
-  return <AutocompletePrimitive.Separator data-slot="autocomplete-separator" className={cn("-mx-1 my-1 h-px bg-gray-400", className)} {...props} />
+  return <AutocompletePrimitive.Separator data-slot="autocomplete-separator" className={cn(menuSeparatorClassName, className)} {...props} />
 }
 
 export {
@@ -105,4 +105,5 @@ export {
   useAutocompleteFilter,
   type AutocompleteInputProps,
   type AutocompleteItemProps,
+  type AutocompleteSeparatorProps,
 }

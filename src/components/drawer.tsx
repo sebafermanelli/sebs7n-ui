@@ -4,7 +4,10 @@ import type * as React from "react"
 import { Drawer as DrawerPrimitive } from "@base-ui/react/drawer"
 import { XIcon } from "lucide-react"
 
-import { cn } from "../lib/utils.js"
+import { useAvisoDeNombre } from "../internal/dialog-name-warning.js"
+import { useLabels } from "../lib/labels.js"
+import { cn, type WithClassName } from "../lib/utils.js"
+import { backdropClassName, overlayCloseClassName } from "../variants/overlay.js"
 import { Button } from "./button.js"
 
 /**
@@ -59,7 +62,7 @@ type DrawerProps = DrawerPrimitive.Root.Props
  * se descarta: `down` (por defecto) es la hoja de abajo, la de mobile.
  */
 function Drawer(props: DrawerProps) {
-  return <DrawerPrimitive.Root data-slot="drawer" {...props} />
+  return <DrawerPrimitive.Root {...props} />
 }
 
 type DrawerTriggerProps = DrawerPrimitive.Trigger.Props
@@ -74,7 +77,7 @@ function DrawerClose(props: DrawerCloseProps) {
   return <DrawerPrimitive.Close data-slot="drawer-close" {...props} />
 }
 
-type DrawerSwipeAreaProps = Omit<DrawerPrimitive.SwipeArea.Props, "className"> & { className?: string }
+type DrawerSwipeAreaProps = WithClassName<DrawerPrimitive.SwipeArea.Props>
 
 /**
  * Franja invisible pegada al borde que abre el drawer con un swipe hacia
@@ -138,12 +141,17 @@ function DrawerHandle({ className, ...props }: DrawerHandleProps) {
   )
 }
 
-type DrawerContentProps = Omit<DrawerPrimitive.Popup.Props, "className"> & {
-  className?: string
+type DrawerContentProps = WithClassName<DrawerPrimitive.Popup.Props> & {
   /** Botón de cierre arriba a la derecha. Apagarlo deja el drawer sin control visible de cierre. */
   showCloseButton?: boolean
   /** La barra de arrastre. Apagala solo si el drawer no se puede arrastrar. */
   showHandle?: boolean
+  /**
+   * El texto del botón X. Con un `LabelsProvider` arriba se traduce de una vez para toda la app;
+   * esta prop es la excepción de una pantalla puntual. Hasta 0.4.0 este texto no se podía cambiar
+   * de ninguna forma: era el único «Cerrar» del paquete sin salida.
+   */
+  labels?: { close?: string }
 }
 
 /**
@@ -152,7 +160,9 @@ type DrawerContentProps = Omit<DrawerPrimitive.Popup.Props, "className"> & {
  * como `data-swipe-direction` en el popup—, así que no hay una prop `side` que
  * pueda contradecirlo.
  */
-function DrawerContent({ className, children, showCloseButton = true, showHandle = true, ...props }: DrawerContentProps) {
+function DrawerContent({ className, children, showCloseButton = true, showHandle = true, labels, ...props }: DrawerContentProps) {
+  const ref = useAvisoDeNombre<HTMLDivElement>("DrawerContent", "DrawerTitle", props.ref)
+  const l = useLabels().drawer
   return (
     <DrawerPrimitive.Portal>
       {/* El fondo se aclara mientras se arrastra: `--drawer-swipe-progress` va
@@ -160,7 +170,9 @@ function DrawerContent({ className, children, showCloseButton = true, showHandle
           gana por especificidad, así que la apertura sigue siendo un fundido. */}
       <DrawerPrimitive.Backdrop
         data-slot="drawer-overlay"
-        className="fixed inset-0 z-50 bg-backdrop opacity-[calc(1_-_var(--drawer-swipe-progress))] transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0 motion-reduce:transition-none"
+        // El velo del sistema más la opacidad atada al gesto: mientras se arrastra, el velo
+        // se aclara igual que se va la hoja.
+        className={cn(backdropClassName, "opacity-[calc(1_-_var(--drawer-swipe-progress))] motion-reduce:transition-none")}
       />
       {/* El viewport es obligatorio: es quien escucha el gesto y bloquea el
           scroll táctil de atrás. Sin él Base UI avisa por consola y el drawer
@@ -168,6 +180,7 @@ function DrawerContent({ className, children, showCloseButton = true, showHandle
       <DrawerPrimitive.Viewport data-slot="drawer-viewport" className="fixed inset-0 z-50">
         <DrawerPrimitive.Popup
           data-slot="drawer-content"
+          ref={ref}
           className={cn(
             "group/drawer absolute flex bg-background-100 text-copy-14 text-gray-1000 shadow-modal outline-none",
             // Redondeado solo del lado de adentro. Contra el borde de la
@@ -206,11 +219,11 @@ function DrawerContent({ className, children, showCloseButton = true, showHandle
           {showCloseButton && (
             <DrawerPrimitive.Close
               data-base-ui-swipe-ignore=""
-              data-slot="drawer-close"
-              render={<Button variant="ghost" size="icon-sm" className="absolute top-4 right-4" />}
+              data-slot="drawer-close-button"
+              // Mismo motivo que en Dialog: el nombre en `aria-label`, que es lo que el tipo exige.
+              render={<Button variant="ghost" size="icon-sm" aria-label={labels?.close ?? l.close} className={overlayCloseClassName} />}
             >
               <XIcon />
-              <span className="sr-only">Cerrar</span>
             </DrawerPrimitive.Close>
           )}
         </DrawerPrimitive.Popup>
@@ -219,7 +232,7 @@ function DrawerContent({ className, children, showCloseButton = true, showHandle
   )
 }
 
-type DrawerBodyProps = Omit<DrawerPrimitive.Content.Props, "className"> & { className?: string }
+type DrawerBodyProps = WithClassName<DrawerPrimitive.Content.Props>
 
 /**
  * El contenido scrolleable. Es `Drawer.Content` de Base UI, renombrado porque
@@ -259,13 +272,13 @@ function DrawerFooter({ className, ...props }: React.ComponentProps<"div">) {
   return <div data-slot="drawer-footer" className={cn("mt-auto flex flex-col gap-2 border-t border-gray-400 p-6", className)} {...props} />
 }
 
-type DrawerTitleProps = Omit<DrawerPrimitive.Title.Props, "className"> & { className?: string }
+type DrawerTitleProps = WithClassName<DrawerPrimitive.Title.Props>
 
 function DrawerTitle({ className, ...props }: DrawerTitleProps) {
   return <DrawerPrimitive.Title data-slot="drawer-title" className={cn("text-heading-20 text-gray-1000", className)} {...props} />
 }
 
-type DrawerDescriptionProps = Omit<DrawerPrimitive.Description.Props, "className"> & { className?: string }
+type DrawerDescriptionProps = WithClassName<DrawerPrimitive.Description.Props>
 
 function DrawerDescription({ className, ...props }: DrawerDescriptionProps) {
   return <DrawerPrimitive.Description data-slot="drawer-description" className={cn("text-copy-14 text-gray-900", className)} {...props} />
@@ -283,4 +296,13 @@ export {
   DrawerSwipeArea,
   DrawerTitle,
   DrawerTrigger,
+  type DrawerBodyProps,
+  type DrawerCloseProps,
+  type DrawerContentProps,
+  type DrawerDescriptionProps,
+  type DrawerHandleProps,
+  type DrawerProps,
+  type DrawerSwipeAreaProps,
+  type DrawerTitleProps,
+  type DrawerTriggerProps,
 }

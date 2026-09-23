@@ -2,7 +2,7 @@
 
 import { ScrollArea as ScrollAreaPrimitive } from "@base-ui/react/scroll-area"
 
-import { cn } from "../lib/utils.js"
+import { cn, type WithClassName } from "../lib/utils.js"
 
 /**
  * Una caja con scroll y una barra propia, discreta: aparece al pasar el mouse o
@@ -19,8 +19,7 @@ import { cn } from "../lib/utils.js"
  * Base UI le pone `tabIndex={0}` al viewport cuando hay desborde, así que se
  * llega con Tab y se scrollea con las flechas. Por eso el foco es visible.
  */
-type ScrollAreaProps = Omit<ScrollAreaPrimitive.Root.Props, "className"> & {
-  className?: string
+type ScrollAreaProps = WithClassName<ScrollAreaPrimitive.Root.Props> & {
   /** Qué barras se dibujan. `both` agrega también la esquina entre las dos. */
   orientation?: "vertical" | "horizontal" | "both"
   /** Clases del viewport (el elemento que scrollea y recibe el foco). */
@@ -36,7 +35,7 @@ function ScrollArea({ className, children, contentClassName, orientation = "vert
         data-slot="scroll-area-viewport"
         className={cn("size-full overscroll-contain rounded-[inherit] outline-none focus-visible:focus-ring", viewportClassName)}
       >
-        <ScrollAreaPrimitive.Content data-slot="scroll-area-content" className={cn(contentClassName)}>
+        <ScrollAreaPrimitive.Content data-slot="scroll-area-content" className={contentClassName}>
           {children}
         </ScrollAreaPrimitive.Content>
       </ScrollAreaPrimitive.Viewport>
@@ -48,7 +47,7 @@ function ScrollArea({ className, children, contentClassName, orientation = "vert
   )
 }
 
-type ScrollAreaScrollbarProps = Omit<ScrollAreaPrimitive.Scrollbar.Props, "className"> & { className?: string }
+type ScrollAreaScrollbarProps = WithClassName<ScrollAreaPrimitive.Scrollbar.Props>
 
 /** La barra. `ScrollArea` ya pone la que corresponda: esto es para armar una caja a mano. */
 function ScrollAreaScrollbar({ className, ...props }: ScrollAreaScrollbarProps) {

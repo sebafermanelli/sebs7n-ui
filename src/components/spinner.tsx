@@ -1,13 +1,12 @@
-import { Loader2Icon } from "lucide-react"
 import type * as React from "react"
+import { Loader2Icon } from "lucide-react"
 
-import { cn } from "../lib/utils.js"
+import { cn, type WithClassName } from "../lib/utils.js"
 
 /** 16 / 20 / 24px. El del `Button` es el `sm`; el `md` es el de una fila o una card. */
 const spinnerSizes = { sm: "size-4", md: "size-5", lg: "size-6" } as const
 
-type SpinnerProps = Omit<React.ComponentProps<"svg">, "className"> & {
-  className?: string
+type SpinnerProps = WithClassName<React.ComponentProps<"svg">> & {
   size?: keyof typeof spinnerSizes
   /**
    * Nombre accesible. Con `label` el spinner es una región `role="status"` y el

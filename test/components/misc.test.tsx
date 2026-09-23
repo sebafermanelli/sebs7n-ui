@@ -51,6 +51,22 @@ describe("Separator / Skeleton", () => {
     expect(screen.getByRole("separator")).toHaveClass("bg-gray-400", "data-[orientation=horizontal]:h-px")
   })
 
+  // Dejó de ser el primitivo de Base UI —que traía `'use client'` por un elemento sin
+  // estado— y pasó a ser un `<div>` a mano. Lo que no puede cambiar es lo que anuncia.
+  it("separator anuncia su orientación por rol y por data-orientation", () => {
+    render(
+      <>
+        <Separator />
+        <Separator orientation="vertical" />
+      </>
+    )
+    const [horizontal, vertical] = screen.getAllByRole("separator")
+    expect(horizontal).toHaveAttribute("aria-orientation", "horizontal")
+    expect(horizontal).toHaveAttribute("data-orientation", "horizontal")
+    expect(vertical).toHaveAttribute("aria-orientation", "vertical")
+    expect(vertical).toHaveAttribute("data-orientation", "vertical")
+  })
+
   it("skeleton con el pulso de Geist", () => {
     render(<Skeleton data-testid="sk" />)
     expect(screen.getByTestId("sk")).toHaveClass("animate-skeleton", "bg-gray-100", "rounded-md")

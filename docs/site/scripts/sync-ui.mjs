@@ -3,7 +3,7 @@
 //
 // En Vercel el repo se clona entero (hay que dejar prendido "Include files
 // outside of the Root Directory"), pero la raíz no tiene node_modules: si falta,
-// se instala antes de empacar, porque `npm pack` corre el `prepare` del paquete
+// se instala antes de empacar, porque `npm pack` corre el `prepack` del paquete
 // (tsc + tailwind) y necesita las devDependencies de la raíz.
 import { execFileSync } from "node:child_process"
 import { existsSync, mkdirSync } from "node:fs"
@@ -19,7 +19,7 @@ if (!existsSync(join(repo, "node_modules", "typescript"))) {
   const lock = existsSync(join(repo, "package-lock.json"))
   // `--include=dev` es obligatorio: Vercel corre el build con NODE_ENV=production y ahí npm
   // saltea las devDependencies, que es donde viven React, sus tipos y Base UI. Sin eso `npm pack`
-  // dispara el `prepare` (tsc) contra un node_modules de 5 paquetes y tsc tira ~300 errores de
+  // dispara el `prepack` (tsc) contra un node_modules de 5 paquetes y tsc tira ~300 errores de
   // "Could not find a declaration file for module 'react'".
   execFileSync("npm", [lock ? "ci" : "install", "--include=dev", "--no-audit", "--no-fund", "--ignore-scripts"], {
     cwd: repo,

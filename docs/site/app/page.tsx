@@ -18,8 +18,8 @@ const RAZONES = [
     body: "Los tokens son variables CSS y utilidades de @theme. No hay tailwind.config.js en ninguna app.",
   },
   {
-    title: "Tres variables de marca",
-    body: "Lo único que cambia entre productos. De ahí sale la escala brand-100…1000 y su contraste.",
+    title: "Cuatro variables de marca",
+    body: "Lo único que cambia entre productos: el acento en claro y en oscuro, y el texto que va encima de cada uno.",
   },
   {
     title: "Accesible por contrato",
@@ -52,7 +52,7 @@ export default function Home() {
           </h1>
           <p className="max-w-2xl text-copy-18 text-gray-900">
             Geist —el lenguaje visual de Vercel— sobre las primitivas de shadcn/ui <code>base-nova</code> (Base UI).{" "}
-            {site.components.length} componentes accesibles, tokens de color, tipografía, radios y sombras, y tres
+            {site.components.length} componentes accesibles, tokens de color, tipografía, radios y sombras, y cuatro
             variables para el color de marca.
           </p>
           <div className="flex flex-wrap items-center gap-3">

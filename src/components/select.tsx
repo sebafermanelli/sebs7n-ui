@@ -3,13 +3,13 @@
 import { Select as SelectPrimitive } from "@base-ui/react/select"
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react"
 
-import { cn } from "../lib/utils.js"
-import { menuItemClassName, menuPopupClassName } from "../variants/menu.js"
+import { cn, type WithClassName } from "../lib/utils.js"
+import { inputControlClassName, inputDisabledClassName, inputSizeClassName } from "../variants/input.js"
+import { menuItemClassName, menuLabelClassName, menuPopupClassName, menuSeparatorClassName } from "../variants/menu.js"
 
 const Select = SelectPrimitive.Root
 
-type SelectTriggerProps = Omit<SelectPrimitive.Trigger.Props, "className"> & {
-  className?: string
+type SelectTriggerProps = WithClassName<SelectPrimitive.Trigger.Props> & {
   size?: "sm" | "md" | "lg"
 }
 
@@ -20,10 +20,14 @@ function SelectTrigger({ className, size = "md", children, ...props }: SelectTri
       data-slot="select-trigger"
       data-size={size}
       className={cn(
-        "flex w-full min-w-0 cursor-pointer items-center justify-between gap-2 rounded-md border border-gray-400 bg-background-100 px-3 text-copy-14 whitespace-nowrap text-gray-1000 outline-none select-none transition-control",
-        "data-[size=sm]:h-8 data-[size=md]:h-10 data-[size=lg]:h-12 data-[size=lg]:text-copy-16",
-        "hover:border-gray-500 focus-visible:focus-border data-popup-open:focus-border data-placeholder:text-gray-700",
-        "data-disabled:cursor-not-allowed data-disabled:border-gray-400 data-disabled:bg-gray-100 data-disabled:text-gray-700",
+        inputControlClassName,
+        inputSizeClassName,
+        inputDisabledClassName,
+        "flex w-full min-w-0 cursor-pointer items-center justify-between gap-2 px-3 whitespace-nowrap select-none",
+        // El foco va por `focus-visible` y no por `focus`, que es lo que hacen los demás: el
+        // trigger es un botón y con `focus:` el borde aparecía también al hacer click. Por eso
+        // tampoco usa `inputInvalidClassName`, que trae el halo rojo en `focus:`.
+        "focus-visible:focus-border data-popup-open:focus-border data-placeholder:text-gray-900",
         "aria-invalid:border-red-800 data-invalid:border-red-800",
         "*:data-[slot=select-value]:line-clamp-1 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className
@@ -36,16 +40,14 @@ function SelectTrigger({ className, size = "md", children, ...props }: SelectTri
   )
 }
 
-type SelectValueProps = Omit<SelectPrimitive.Value.Props, "className"> & { className?: string }
+type SelectValueProps = WithClassName<SelectPrimitive.Value.Props>
 
 function SelectValue({ className, ...props }: SelectValueProps) {
   return <SelectPrimitive.Value data-slot="select-value" className={cn("flex-1 text-left", className)} {...props} />
 }
 
-type SelectContentProps = Omit<SelectPrimitive.Popup.Props, "className"> &
-  Pick<SelectPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset" | "alignItemWithTrigger"> & {
-    className?: string
-  }
+type SelectContentProps = WithClassName<SelectPrimitive.Popup.Props> &
+  Pick<SelectPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset" | "alignItemWithTrigger">
 
 function SelectContent({
   className,
@@ -81,7 +83,7 @@ function SelectContent({
   )
 }
 
-type SelectItemProps = Omit<SelectPrimitive.Item.Props, "className"> & { className?: string }
+type SelectItemProps = WithClassName<SelectPrimitive.Item.Props>
 
 function SelectItem({ className, children, ...props }: SelectItemProps) {
   return (
@@ -94,22 +96,38 @@ function SelectItem({ className, children, ...props }: SelectItemProps) {
   )
 }
 
-type SelectGroupProps = Omit<SelectPrimitive.Group.Props, "className"> & { className?: string }
+type SelectGroupProps = WithClassName<SelectPrimitive.Group.Props>
 
 function SelectGroup({ className, ...props }: SelectGroupProps) {
   return <SelectPrimitive.Group data-slot="select-group" className={cn("py-1", className)} {...props} />
 }
 
-type SelectLabelProps = Omit<SelectPrimitive.GroupLabel.Props, "className"> & { className?: string }
+type SelectLabelProps = WithClassName<SelectPrimitive.GroupLabel.Props>
 
 function SelectLabel({ className, ...props }: SelectLabelProps) {
-  return <SelectPrimitive.GroupLabel data-slot="select-label" className={cn("px-2 py-1.5 text-label-12 text-gray-900", className)} {...props} />
+  return <SelectPrimitive.GroupLabel data-slot="select-label" className={cn(menuLabelClassName, className)} {...props} />
 }
 
-type SelectSeparatorProps = Omit<SelectPrimitive.Separator.Props, "className"> & { className?: string }
+type SelectSeparatorProps = WithClassName<SelectPrimitive.Separator.Props>
 
 function SelectSeparator({ className, ...props }: SelectSeparatorProps) {
-  return <SelectPrimitive.Separator data-slot="select-separator" className={cn("-mx-1 my-1 h-px bg-gray-400", className)} {...props} />
+  return <SelectPrimitive.Separator data-slot="select-separator" className={cn(menuSeparatorClassName, className)} {...props} />
 }
 
-export { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue }
+export {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+  type SelectContentProps,
+  type SelectGroupProps,
+  type SelectItemProps,
+  type SelectLabelProps,
+  type SelectSeparatorProps,
+  type SelectTriggerProps,
+  type SelectValueProps,
+}

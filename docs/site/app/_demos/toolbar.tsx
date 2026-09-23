@@ -59,7 +59,7 @@ export function Formato() {
         <LinkIcon />
       </ToolbarButton>
 
-      <ToolbarLink className="ml-auto" href="#historial">
+      <ToolbarLink className="ml-auto" href="#">
         Editado hace 5 min
       </ToolbarLink>
     </Toolbar>

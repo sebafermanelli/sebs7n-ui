@@ -1,7 +1,7 @@
 @import "tailwindcss";
+/* El @source del dist lo trae el propio theme.css: el sitio es el primer
+   consumidor que lo prueba. */
 @import "sebs7n-ui/theme.css";
-/* Las clases de los componentes las genera el Tailwind del sitio, en una sola hoja ordenada. */
-@source "../node_modules/sebs7n-ui/dist";
 
 :root {
   /* El sitio usa el acento del paquete por defecto (blue). Una app pondría el suyo acá. */

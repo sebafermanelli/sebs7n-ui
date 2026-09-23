@@ -2,7 +2,8 @@
 
 import { Toolbar as ToolbarPrimitive } from "@base-ui/react/toolbar"
 
-import { cn } from "../lib/utils.js"
+import { cn, type WithClassName } from "../lib/utils.js"
+import { inputControlClassName, inputDisabledClassName } from "../variants/input.js"
 import { Button } from "./button.js"
 
 /**
@@ -22,7 +23,7 @@ import { Button } from "./button.js"
  *
  * `orientation="vertical"` cambia las flechas a ↑ ↓ y da vuelta los separadores.
  */
-type ToolbarProps = Omit<ToolbarPrimitive.Root.Props, "className"> & { className?: string }
+type ToolbarProps = WithClassName<ToolbarPrimitive.Root.Props>
 
 /**
  * Los hijos que el primitivo metió en el recorrido.
@@ -87,10 +88,24 @@ function Toolbar({ className, onKeyDown, ...props }: ToolbarProps) {
  * deshabilitado que desaparece del recorrido con flechas mueve la barra abajo
  * de los dedos, y encima nunca se puede leer por qué está apagado.
  */
-type ToolbarButtonProps = Omit<ToolbarPrimitive.Button.Props, "className"> & { className?: string }
+type ToolbarButtonProps = WithClassName<ToolbarPrimitive.Button.Props>
 
-function ToolbarButton({ className, render = <Button size="icon-sm" variant="ghost" />, ...props }: ToolbarButtonProps) {
-  return <ToolbarPrimitive.Button data-slot="toolbar-button" className={className} render={render} {...props} />
+// El `aria-label` se saca de las props y se vuelve a poner a mano en el `render` por defecto en vez
+// de viajar con el resto: ese render es un botón de ícono, y el `aria-label` que trae el elemento de
+// `render` le gana al que pone Base UI desde afuera. Si no se copiara acá, un
+// `<ToolbarButton aria-label="Centrar">` terminaría anunciándose por su ícono. El `?? ""` es el caso
+// "el llamador no puso nombre": un `aria-label` vacío la spec de accname lo ignora, así que el botón
+// queda nombrado por su contenido, igual que un botón cualquiera.
+function ToolbarButton({ className, render, "aria-label": ariaLabel, ...props }: ToolbarButtonProps) {
+  return (
+    <ToolbarPrimitive.Button
+      data-slot="toolbar-button"
+      className={className}
+      aria-label={ariaLabel}
+      render={render ?? <Button size="icon-sm" variant="ghost" aria-label={ariaLabel ?? ""} />}
+      {...props}
+    />
+  )
 }
 
 /**
@@ -100,7 +115,10 @@ function ToolbarButton({ className, render = <Button size="icon-sm" variant="gho
  * Visualmente pega los ítems, sin el `gap` de la barra, para que se vean como
  * un segmento y no como tres botones que cayeron cerca.
  */
-type ToolbarGroupProps = Omit<ToolbarPrimitive.Group.Props, "className"> & { className?: string }
+type ToolbarGroupProps = Omit<ToolbarPrimitive.Group.Props, "className" | "aria-label"> & { className?: string } & (
+    | { "aria-label": string }
+    | { "aria-labelledby": string }
+  )
 
 function ToolbarGroup({ className, ...props }: ToolbarGroupProps) {
   return (
@@ -119,7 +137,7 @@ function ToolbarGroup({ className, ...props }: ToolbarGroupProps) {
  * lleva separadores verticales— así que las dos alturas van escritas y la que
  * manda la elige el `data-orientation` que pone el primitivo.
  */
-type ToolbarSeparatorProps = Omit<ToolbarPrimitive.Separator.Props, "className"> & { className?: string }
+type ToolbarSeparatorProps = WithClassName<ToolbarPrimitive.Separator.Props>
 
 function ToolbarSeparator({ className, ...props }: ToolbarSeparatorProps) {
   return (
@@ -143,7 +161,7 @@ function ToolbarSeparator({ className, ...props }: ToolbarSeparatorProps) {
  * botón: en una barra de acciones, lo único que navega tiene que verse distinto
  * de lo que ejecuta. Para el `Link` del framework, `render={<NextLink … />}`.
  */
-type ToolbarLinkProps = Omit<ToolbarPrimitive.Link.Props, "className"> & { className?: string }
+type ToolbarLinkProps = WithClassName<ToolbarPrimitive.Link.Props>
 
 function ToolbarLink({ className, ...props }: ToolbarLinkProps) {
   return (
@@ -168,18 +186,18 @@ function ToolbarLink({ className, ...props }: ToolbarLinkProps) {
  * texto en vez de saltar al control de al lado, así que escribir funciona como
  * en cualquier input.
  */
-type ToolbarInputProps = Omit<ToolbarPrimitive.Input.Props, "className"> & { className?: string }
+type ToolbarInputProps = WithClassName<ToolbarPrimitive.Input.Props>
 
 function ToolbarInput({ className, ...props }: ToolbarInputProps) {
   return (
     <ToolbarPrimitive.Input
       data-slot="toolbar-input"
       className={cn(
+        inputControlClassName,
+        inputDisabledClassName,
         // Mismo cuerpo que `Input size="sm"`, sin el `w-full`: en una barra el
         // ancho lo pone quien lo usa (`className="w-20"`), no el componente.
-        "h-8 min-w-0 rounded-md border border-gray-400 bg-background-100 px-2 text-copy-14 text-gray-1000 outline-none transition-control",
-        "placeholder:text-gray-700 hover:border-gray-500 focus:focus-border",
-        "data-disabled:cursor-not-allowed data-disabled:border-gray-400 data-disabled:bg-gray-100 data-disabled:text-gray-700",
+        "h-8 min-w-0 px-2 placeholder:text-gray-900 focus:focus-border",
         className
       )}
       {...props}
@@ -187,4 +205,17 @@ function ToolbarInput({ className, ...props }: ToolbarInputProps) {
   )
 }
 
-export { Toolbar, ToolbarButton, ToolbarGroup, ToolbarInput, ToolbarLink, ToolbarSeparator }
+export {
+  Toolbar,
+  ToolbarButton,
+  ToolbarGroup,
+  ToolbarInput,
+  ToolbarLink,
+  ToolbarSeparator,
+  type ToolbarButtonProps,
+  type ToolbarGroupProps,
+  type ToolbarInputProps,
+  type ToolbarLinkProps,
+  type ToolbarProps,
+  type ToolbarSeparatorProps,
+}

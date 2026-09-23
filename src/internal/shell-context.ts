@@ -2,7 +2,12 @@
 
 import { createContext, useContext } from "react"
 
-// Contextos internos que comparten Sidebar, AppShell y UserMenu (no se exportan del paquete).
+// Contextos internos que comparten Sidebar, AppShell y UserMenu.
+//
+// Vive en `src/internal/` y no en `src/lib/` porque el mapa `exports` tiene un
+// patrón `./lib/*`: mientras estuvo ahí, `import "sebs7n-ui/lib/shell-context"`
+// resolvía y funcionaba, así que "no se exporta del paquete" era un comentario y
+// no un hecho. `./internal/*` no está en `exports`, y eso sí lo hace cumplir Node.
 
 export type SidebarContextValue = { collapsed: boolean }
 export const SidebarContext = createContext<SidebarContextValue | null>(null)

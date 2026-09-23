@@ -5,8 +5,9 @@ import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import { SearchIcon } from "lucide-react"
 
-import { cn } from "../lib/utils.js"
-import { AppShellContext, SidebarContext, SidebarInSheetContext, useSidebarContext } from "../lib/shell-context.js"
+import { useLabels } from "../lib/labels.js"
+import { cn, type WithClassName } from "../lib/utils.js"
+import { AppShellContext, SidebarContext, SidebarInSheetContext, useSidebarContext } from "../internal/shell-context.js"
 import { sidebarItemVariants } from "../variants/sidebar.js"
 import { Kbd } from "./kbd.js"
 import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip.js"
@@ -50,11 +51,12 @@ function SidebarHeader({ className, ...props }: React.ComponentProps<"div">) {
 type SidebarContentProps = React.ComponentProps<"nav">
 
 // La zona que scrollea. Es un <nav>: nombralo con aria-label si hay más de uno en la página.
-function SidebarContent({ className, "aria-label": ariaLabel = "Navegación principal", ...props }: SidebarContentProps) {
+function SidebarContent({ className, "aria-label": ariaLabel, ...props }: SidebarContentProps) {
+  const l = useLabels().sidebar
   return (
     <nav
       data-slot="sidebar-content"
-      aria-label={ariaLabel}
+      aria-label={ariaLabel ?? l.nav}
       className={cn(
         "flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto overscroll-contain p-2 group-data-collapsed/sidebar:items-center",
         className
@@ -80,11 +82,14 @@ function SidebarFooter({ className, ...props }: React.ComponentProps<"div">) {
 const SidebarGroupContext = React.createContext<string | null>(null)
 
 function findGroupLabel(children: React.ReactNode): React.ReactElement<{ id?: string }> | undefined {
+  // El genérico de `isValidElement` hace de type guard: describe las dos props que este
+  // recorrido mira —el `id` del label y los `children` del fragment— y evita los dos casts
+  // que había acá, que decían lo mismo pero después del `if`.
   for (const child of React.Children.toArray(children)) {
-    if (!React.isValidElement(child)) continue
-    if (child.type === SidebarGroupLabel) return child as React.ReactElement<{ id?: string }>
+    if (!React.isValidElement<{ id?: string; children?: React.ReactNode }>(child)) continue
+    if (child.type === SidebarGroupLabel) return child
     if (child.type === React.Fragment) {
-      const nested = findGroupLabel((child.props as { children?: React.ReactNode }).children)
+      const nested = findGroupLabel(child.props.children)
       if (nested) return nested
     }
   }
@@ -171,8 +176,7 @@ function textOf(nodes: React.ReactNode[]): string | undefined {
   return parts.length === nodes.length && parts.length > 0 ? parts.join("").trim() : undefined
 }
 
-type SidebarItemProps = Omit<useRender.ComponentProps<"a">, "className"> & {
-  className?: string
+type SidebarItemProps = WithClassName<useRender.ComponentProps<"a">> & {
   icon?: React.ReactNode
   /** Marca la sección actual: pone aria-current="page" y data-active. */
   active?: boolean
@@ -221,9 +225,11 @@ function SidebarItem({ className, icon, active = false, tooltip, render, childre
           </>
         ),
       },
-      props,
-      { "data-active": active ? "" : undefined } as React.ComponentProps<"a">
+      props
     ),
+    // `state` es lo que Base UI convierte en `data-*`: de acá salen `data-slot="sidebar-item"`
+    // y, cuando `active` es true, `data-active`. Antes el `data-active` se agregaba además a
+    // mano en un tercer argumento de `mergeProps`, con un cast: era el mismo atributo dos veces.
     state: { slot: "sidebar-item", active },
   })
 
@@ -252,12 +258,16 @@ const KEYSHORTCUTS: Record<string, string | undefined> = { "⌘K": "Meta+K", "Ct
 // Botón con aspecto de Input que abre la paleta de comandos (la pone la app).
 function SidebarSearch({
   className,
-  placeholder = "Buscar…",
+  placeholder,
   shortcut,
   "aria-keyshortcuts": keyshortcuts = KEYSHORTCUTS[String(shortcut)],
   ...props
 }: SidebarSearchProps) {
   const collapsed = useSidebarContext()?.collapsed ?? false
+  // `useLabels()` va suelto y no adentro de un `??`: el `??` corta, y un hook que a veces se llama
+  // y a veces no rompe el orden de los hooks.
+  const l = useLabels().sidebar
+  const texto = placeholder ?? l.search
   const button = (
     <button
       type="button"
@@ -271,7 +281,7 @@ function SidebarSearch({
       {...props}
     >
       <SearchIcon aria-hidden="true" />
-      <span className="min-w-0 flex-1 truncate group-data-collapsed/sidebar:sr-only">{placeholder}</span>
+      <span className="min-w-0 flex-1 truncate group-data-collapsed/sidebar:sr-only">{texto}</span>
       {shortcut != null && (
         <Kbd aria-hidden="true" className="group-data-collapsed/sidebar:hidden">
           {shortcut}
@@ -304,6 +314,7 @@ export {
   SidebarItemBadge,
   SidebarSearch,
   useSidebar,
+  type SidebarContentProps,
   type SidebarItemBadgeProps,
   type SidebarItemProps,
   type SidebarProps,

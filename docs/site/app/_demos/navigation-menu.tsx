@@ -25,7 +25,7 @@ export function Basico() {
             <ul className="grid gap-0.5 sm:grid-cols-2">
               <li>
                 <NavigationMenuLink
-                  description="Una dependencia y tres variables"
+                  description="Una dependencia y cuatro variables"
                   href="/docs/instalacion"
                   icon={<BookOpenIcon />}
                   title="Instalación"

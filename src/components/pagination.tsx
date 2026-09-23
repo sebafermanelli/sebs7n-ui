@@ -1,5 +1,5 @@
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
 import type * as React from "react"
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
 
 import { paginationRange } from "../lib/pagination.js"
 import { renderElement, type RenderElement } from "../lib/render.js"
@@ -105,7 +105,10 @@ function Pagination({
             <li
               data-slot="pagination-ellipsis"
               role="presentation"
-              className={cn("inline-flex items-center justify-center text-gray-700", size === "sm" ? "size-8" : "size-10")}
+              // `gray-900` y no `gray-700`: los puntos son `aria-hidden`, pero
+              // se ven, y en claro `gray-700` sobre la página da 3,23:1. Que al
+              // lado haya un `sr-only` resuelve a quien escucha, no a quien mira.
+              className={cn("inline-flex items-center justify-center text-gray-900", size === "sm" ? "size-8" : "size-10")}
               key={`ellipsis-${slot.side}`}
             >
               <span aria-hidden="true">…</span>

@@ -19,6 +19,11 @@ import { componentSlugs, extractProps } from "./lib/props.mjs"
 import { buildRegistry } from "./lib/registry.mjs"
 import { readBackgrounds, readColors, readRadii, readShadows, readTypography } from "./lib/tokens.mjs"
 
+// La tabla de subpaths la genera el paquete desde su propio `exports`: el sitio
+// no la copia, la pide. Antes estaba escrita a mano acá y en el README, y las dos
+// versiones decían cosas distintas.
+const { subpathsTable } = await import(new URL("../../../scripts/subpaths.mjs", import.meta.url))
+
 const here = join(dirname(fileURLToPath(import.meta.url)), "..")
 const root = join(here, "..", "..")
 const SITE = "https://ui.sebastianfermanelli.com"
@@ -35,7 +40,11 @@ if (missing.length) throw new Error(`Falta metadata en content/meta.mjs para: ${
 const extraneous = Object.keys(COMPONENTS).filter((slug) => !slugs.includes(slug))
 if (extraneous.length) throw new Error(`content/meta.mjs describe componentes que no existen: ${extraneous.join(", ")}`)
 
-const propsBySlug = extractProps({ root, files: slugs.map((slug) => `src/components/${slug}.tsx`) })
+const propsBySlug = extractProps({
+  root,
+  files: slugs.map((slug) => `src/components/${slug}.tsx`),
+  documented: (slug, component) => Object.keys(COMPONENTS[slug]?.props?.[component] ?? {}),
+})
 
 // ── 2. Ejemplos desde app/_demos ─────────────────────────────────────────────
 const demosDir = join(here, "app/_demos")
@@ -60,7 +69,11 @@ const components = slugs.map((slug) => {
       ...exported,
       props: exported.props.map((prop) => ({
         ...prop,
-        description: meta.props?.[exported.name]?.[prop.name] ?? prop.description ?? PROP_DESCRIPTIONS[prop.name] ?? "",
+        // `||` y no `??`: `prop.description` es siempre un string, `""` cuando no hay
+        // JSDoc. Con `??` la cadena cortaba en el primer eslabón y `PROP_DESCRIPTIONS`
+        // no se usaba nunca — 195 filas `className` salían vacías teniendo la
+        // descripción escrita a dos archivos de distancia.
+        description: meta.props?.[exported.name]?.[prop.name] || prop.description || PROP_DESCRIPTIONS[prop.name] || "",
       })),
     })),
     examples: examplesBySlug.get(slug) ?? [],
@@ -74,6 +87,23 @@ const components = slugs.map((slug) => {
 for (const component of components) {
   if (!component.examples.length) throw new Error(`Falta app/_demos/${component.slug}.tsx con al menos una demo`)
 }
+
+// Una descripción escrita en meta.mjs para una prop que no existe es trabajo que
+// nadie va a ver: ni como fila propia ni como heredada. Antes pasaba en silencio.
+const fantasmas = []
+for (const slug of slugs) {
+  for (const [exportado, props] of Object.entries(COMPONENTS[slug].props ?? {})) {
+    const reales = components.find((component) => component.slug === slug).exports.find((entry) => entry.name === exportado)
+    if (!reales) {
+      fantasmas.push(`${slug}: meta.props describe "${exportado}", que no es un export del componente`)
+      continue
+    }
+    for (const prop of Object.keys(props)) {
+      if (!reales.props.some((entry) => entry.name === prop)) fantasmas.push(`${slug}.${exportado}.${prop}`)
+    }
+  }
+}
+if (fantasmas.length) throw new Error(`meta.mjs describe props que no existen:\n  ${fantasmas.join("\n  ")}`)
 
 // ── 4. Páginas de sistema ────────────────────────────────────────────────────
 const colors = readColors(root)
@@ -115,6 +145,7 @@ const shadowsTable = table(
 )
 
 const substitutions = {
+  subpaths: subpathsTable(root),
   colores: colorTables,
   fondos: backgroundsTable,
   tipografia: typographyTable,
@@ -137,7 +168,7 @@ const pages = [
   {
     slug: "instalacion",
     title: "Instalación",
-    description: "Una dependencia, un `@import` y tres variables de marca.",
+    description: "Una dependencia, un `@import` y cuatro variables de marca.",
     body: loadPage("instalacion"),
   },
   {
@@ -149,7 +180,7 @@ const pages = [
   {
     slug: "theming",
     title: "Theming",
-    description: "Tres variables de marca, claro y oscuro, radio y densidad.",
+    description: "Cuatro variables de marca, claro y oscuro, radio y densidad.",
     body: loadPage("theming"),
   },
   {
@@ -216,24 +247,29 @@ writeFileSync(join(generated, "search.json"), JSON.stringify(search, null, 2))
 
 // Registro de demos: id → componente. Lo escribe el generador para que no haya
 // una lista a mano que se desactualice al agregar una demo.
+//
+// Cada entrada es un `next/dynamic`, no un import estático. Antes esto era un
+// barrel con 59 `import * as`, y como las 59 demos son componentes de cliente,
+// `/docs/components/<slug>` —que es una sola ruta dinámica— se llevaba las 59 al
+// bundle para mostrar dos o tres: 454 KB raw / 137 KB gz de chunk en cada página.
+// Con `import()` el bundler corta un chunk por demo y la página pide solo los
+// suyos. `ssr` queda en su default (`true`): el HTML prerenderizado tiene que
+// seguir trayendo la demo dibujada, no un hueco.
 const registryLines = [
   "// Generado por scripts/generate.mjs. No editar.",
-  ...demoFiles.map((file) => `import * as ${varName(basename(file, ".tsx"))} from "./${basename(file, ".tsx")}"`),
+  'import dynamic from "next/dynamic"',
   "",
-  "export const DEMOS: Record<string, () => React.JSX.Element> = {",
+  "export const DEMOS: Record<string, React.ComponentType> = {",
   ...[...examplesBySlug.entries()].flatMap(([slug, examples]) =>
-    examples.map((example) => `  ${JSON.stringify(example.id)}: ${varName(slug)}.${example.component},`)
+    examples.map(
+      (example) =>
+        `  ${JSON.stringify(example.id)}: dynamic(() => import("./${slug}").then((mod) => ({ default: mod.${example.component} }))),`
+    )
   ),
   "}",
   "",
 ]
 writeFileSync(join(demosDir, "registry.ts"), registryLines.join("\n"))
-
-/** `toggle-group` → `demoToggleGroup`. El prefijo evita chocar con palabras reservadas (`switch`). */
-function varName(slug) {
-  const camel = slug.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase())
-  return `demo${camel[0].toUpperCase()}${camel.slice(1)}`
-}
 
 // Markdown plano, uno por página.
 const publicDir = join(here, "public")
@@ -280,7 +316,13 @@ writeFileSync(
       {
         title: "Opcional",
         items: [
-          { title: "Registry", description: "Ítems con formato shadcn para `shadcn add <url>`.", href: "/registry" },
+          {
+            title: "Registry",
+            description: "Índice de ítems con formato shadcn, para `shadcn add <url>/r/<item>.json`.",
+            // `/registry` y `/registry.md` nunca existieron: el archivo que se
+            // sirve es este, y es el que hay que linkear.
+            url: `${SITE}/r/registry.json`,
+          },
         ],
       },
     ],
@@ -320,7 +362,18 @@ for (const item of registry.items) {
   writeFileSync(join(publicDir, `r/${item.name}.json`), JSON.stringify(item, null, 2))
 }
 
+// La celda "Descripción" vacía es el defecto que no rompe nada y se ve en cada página.
+// Acá sale el número en cada corrida; el test de `generado.test.ts` es el que lo frena
+// en cero para las props propias.
+const todasLasProps = components.flatMap((component) => component.exports.flatMap((exported) => exported.props))
+const sinDescripcion = todasLasProps.filter((prop) => !prop.description)
+const propiasSinDescripcion = sinDescripcion.filter((prop) => !prop.inherited)
+
 console.log(
   `[generate] ${components.length} componentes · ${pages.length} páginas de sistema · ` +
     `${markdowns.length} .md · ${registry.items.length} ítems de registry`
+)
+console.log(
+  `[generate] ${todasLasProps.length} props · ${sinDescripcion.length} sin descripción ` +
+    `(${propiasSinDescripcion.length} propias, ${sinDescripcion.length - propiasSinDescripcion.length} heredadas de Base UI)`
 )

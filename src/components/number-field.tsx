@@ -3,7 +3,8 @@
 import { NumberField as NumberFieldPrimitive } from "@base-ui/react/number-field"
 import { MinusIcon, PlusIcon } from "lucide-react"
 
-import { cn } from "../lib/utils.js"
+import { useLabels } from "../lib/labels.js"
+import { cn, type WithClassName } from "../lib/utils.js"
 import { inputShellButtonClassName, inputShellClassName, inputShellInputClassName } from "../variants/input.js"
 
 /**
@@ -28,7 +29,7 @@ import { inputShellButtonClassName, inputShellClassName, inputShellInputClassNam
  * Teclado: ↑/↓ mueven un `step`, con Shift un `largeStep`, con Alt un
  * `smallStep`, e Inicio/Fin van al `min` y al `max` cuando están definidos.
  */
-type NumberFieldProps = Omit<NumberFieldPrimitive.Root.Props, "className"> & {
+type NumberFieldProps = WithClassName<NumberFieldPrimitive.Root.Props> & {
   /** Clases de la superficie con borde (el grupo). Acá va el ancho: `className="w-32"`. */
   className?: string
   /** Clases del `<input>`, por si hay que cambiarle la alineación del número. */
@@ -52,6 +53,9 @@ function NumberField({
   size = "md",
   ...props
 }: NumberFieldProps) {
+  // El provider gana sobre el español; la prop `labels` gana sobre el provider, porque es la
+  // excepción de una pantalla y no una traducción.
+  const l = useLabels().numberField
   return (
     // El Root no dibuja nada: es el que guarda el valor numérico y el input oculto
     // que se lleva el submit. Lo que se ve —borde, foco, estados— vive en el Group.
@@ -64,7 +68,7 @@ function NumberField({
       >
         {/* Base UI nombra los steppers "Increase"/"Decrease" en inglés. */}
         <NumberFieldPrimitive.Decrement
-          aria-label={labels?.decrement ?? "Disminuir"}
+          aria-label={labels?.decrement ?? l.decrement}
           className={inputShellButtonClassName}
           data-slot="number-field-decrement"
         >
@@ -75,7 +79,7 @@ function NumberField({
           // Sin `Field` alrededor, el nombre del control tiene que caer en el
           // <input>: el Root es un div y un `aria-label` ahí no se lee.
           aria-label={ariaLabel}
-          aria-roledescription={labels?.roleDescription ?? "Campo numérico"}
+          aria-roledescription={labels?.roleDescription ?? l.roleDescription}
           // Centrado y con cifras de ancho fijo: al pulsar −/+ repetido el número
           // crece y se achica sin que el resto de la fila se mueva.
           className={cn(inputShellInputClassName, "px-2 text-center tabular-nums", inputClassName)}
@@ -84,7 +88,7 @@ function NumberField({
         />
 
         <NumberFieldPrimitive.Increment
-          aria-label={labels?.increment ?? "Aumentar"}
+          aria-label={labels?.increment ?? l.increment}
           className={inputShellButtonClassName}
           data-slot="number-field-increment"
         >

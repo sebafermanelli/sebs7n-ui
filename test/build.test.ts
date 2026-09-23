@@ -36,36 +36,44 @@ describe("build", () => {
     for (const file of ["sidebar", "app-shell", "user-menu", "theme-switcher", "alert-dialog", "combobox", "autocomplete"]) {
       expect(read(`dist/components/${file}.js`).startsWith('"use client"'), file).toBe(true)
     }
-    // Sin estado: se pueden usar en Server Components.
-    for (const file of ["kbd", "page-header", "empty-state", "stat", "app-shell-content"]) {
-      expect(read(`dist/components/${file}.js`), file).not.toContain("use client")
+    // Sin estado: se pueden usar en Server Components. `badge` y `separator` estaban
+    // acá por transitividad —importaban Base UI, que trae su propio `'use client'`—;
+    // desde 0.5.0 son un `renderElement` y un `<div>` a mano, y el DOM no cambió.
+    // Se mira la directiva, no la cadena: los docblocks de `badge` y `separator`
+    // explican justamente por qué NO la llevan, y nombrarla no los hace de cliente.
+    for (const file of ["kbd", "page-header", "empty-state", "stat", "app-shell-content", "badge", "separator"]) {
+      expect(read(`dist/components/${file}.js`).startsWith('"use client"'), file).toBe(false)
     }
     expect(read("dist/variants/sidebar.js")).not.toContain("use client")
     expect(read("dist/variants/input.js")).not.toContain("use client")
   })
 
-  it("dist/styles.css trae las clases de los componentes y no la paleta de Tailwind", () => {
-    const css = read("dist/styles.css")
-    for (const selector of [
-      ".bg-gray-1000",
-      ".hover\\:bg-button-primary-hover",
-      ".focus-visible\\:focus-ring",
-      ".focus\\:focus-border",
-      ".data-highlighted\\:bg-gray-200",
-      ".shadow-menu",
-      ".text-heading-20",
-      ".animate-skeleton",
-    ]) {
-      expect(css, selector).toContain(selector)
-    }
-    expect(css).not.toContain("--color-red-500:")
-    expect(css).not.toMatch(/\*,\s*::after,\s*::before\s*\{\s*box-sizing/)
+  // La hoja precompilada `dist/styles.css` se sacó en 0.5.0: ninguna app la usaba y,
+  // cargada junto a la hoja de la app, le ganaba por orden de declaración (el `.hidden`
+  // del paquete contra el `lg:block` de la app). Ver el CHANGELOG.
+  it("el paquete no publica una segunda hoja de utilidades", () => {
+    expect(existsSync(join(root, "dist/styles.css"))).toBe(false)
+    expect(JSON.parse(read("package.json")).exports["./styles.css"]).toBeUndefined()
   })
 
   it("exporta el tipado", () => {
     expect(read("dist/index.d.ts")).toContain("export * from \"./components/button.js\"")
-    // Clases de menú e Input públicas para la lista a medida (v1.2).
-    expect(read("dist/index.d.ts")).toContain('export { menuItemClassName, menuPopupClassName } from "./variants/menu.js"')
+    // Las clases de menú, de overlay y de Input son públicas a propósito: quien arma una lista
+    // o un panel a medida las necesita para que se vea como los del sistema. Se miran los
+    // nombres y no la línea entera, que ya se rompió dos veces por agregar un export al lado.
+    for (const nombre of [
+      "menuItemClassName",
+      "menuLabelClassName",
+      "menuPopupClassName",
+      "menuSeparatorClassName",
+      "MenuInsetProps",
+      "backdropClassName",
+      "modalPopupClassName",
+      "floatingPopupClassName",
+      "inputShellClassName",
+    ]) {
+      expect(read("dist/index.d.ts"), nombre).toContain(nombre)
+    }
     expect(read("dist/index.d.ts")).toContain('export * from "./components/combobox.js"')
     expect(read("dist/index.d.ts")).toContain('export * from "./components/autocomplete.js"')
   })
@@ -86,8 +94,28 @@ describe("build", () => {
     expect(resolve("sebs7n-ui/theme-switcher")).toMatch(/\/dist\/components\/theme-switcher\.js$/)
     expect(resolve("sebs7n-ui/variants/button")).toMatch(/\/dist\/variants\/button\.js$/)
     expect(resolve("sebs7n-ui/lib/utils")).toMatch(/\/dist\/lib\/utils\.js$/)
-    expect(resolve("sebs7n-ui/styles.css")).toMatch(/\/dist\/styles\.css$/)
     expect(resolve("sebs7n-ui/theme.css")).toMatch(/\/src\/styles\/theme\.css$/)
+    // Los JSON de tokens tienen su patrón propio. Con el comodín `./*` solo,
+    // `sebs7n-ui/tokens/geist.json` resolvía a `dist/components/tokens/geist.json.js`.
+    expect(resolve("sebs7n-ui/tokens/geist.json")).toMatch(/\/tokens\/geist\.json$/)
+    expect(existsSync(new URL(resolve("sebs7n-ui/tokens/brands.json")))).toBe(true)
+  })
+
+  // Un `exports` con comodines hace que "esto es interno" sea una promesa del
+  // comentario y no del paquete: mientras `shell-context.ts` estuvo en `src/lib/`,
+  // `import "sebs7n-ui/lib/shell-context"` resolvía y funcionaba. En
+  // `src/internal/` no hay patrón que lo alcance.
+  it("lo interno no es alcanzable por ningún subpath", () => {
+    for (const specifier of ["sebs7n-ui/lib/shell-context", "sebs7n-ui/internal/shell-context"]) {
+      let resuelto: string | null = null
+      try {
+        resuelto = resolve(specifier)
+      } catch {
+        resuelto = null
+      }
+      expect(resuelto === null || !existsSync(new URL(resuelto)), specifier).toBe(true)
+    }
+    expect(existsSync(join(root, "dist/internal/shell-context.js"))).toBe(true)
   })
 
   it("npm pack incluye los entry points por módulo", () => {
@@ -98,11 +126,12 @@ describe("build", () => {
     const expected = [
       "dist/index.js",
       "dist/index.d.ts",
-      "dist/styles.css",
       "src/styles/theme.css",
       ...components.flatMap((name) => [`dist/components/${name}.js`, `dist/components/${name}.d.ts`]),
       ...variants.flatMap((name) => [`dist/variants/${name}.js`, `dist/variants/${name}.d.ts`]),
       ...libs.flatMap((name) => [`dist/lib/${name}.js`, `dist/lib/${name}.d.ts`]),
+      // Interno pero publicado: los componentes del shell lo importan en runtime.
+      "dist/internal/shell-context.js",
     ]
     for (const file of expected) expect(files.has(file), file).toBe(true)
   })
