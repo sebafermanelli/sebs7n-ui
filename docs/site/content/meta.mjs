@@ -138,7 +138,31 @@ export const COMPONENTS = {
       "**Del tamaño de lo que viene.** Un skeleton que no coincide con el contenido final produce un salto peor que un spinner.",
       "Para una carga de menos de ~300 ms, nada: el parpadeo molesta más que la espera.",
     ],
-    related: ["card", "table"],
+    related: ["card", "table", "spinner"],
+  },
+  spinner: {
+    title: "Spinner",
+    group: "fundamentos",
+    description: "El indicador de carga: tres tamaños, el color del texto y nombre accesible opcional.",
+    keyboard: [["—", "No es interactivo."]],
+    a11y: [
+      "Sin `label` es decoración (`aria-hidden`): quien anuncia la espera es el contenedor, con `aria-busy`.",
+      "Con `label` emite `role=\"status\"` y el lector anuncia el texto al aparecer, sin robar el foco.",
+      "Con `prefers-reduced-motion` deja de girar pero **no se esconde**: un spinner que desaparece borra la única señal de que algo está pasando.",
+      "Sin `\"use client\"`: sirve en un Server Component.",
+    ],
+    usage: [
+      "**Dentro de un `Button` no lo pongas a mano**: `Button loading` ya usa este mismo Spinner, lo centra y pone `aria-busy`.",
+      "Hereda el color del texto (`currentColor`): no tiene prop de color, se pinta con `text-*` del contenedor.",
+      "Para una carga que reemplaza contenido que ya tiene forma —una tabla, una card— va `Skeleton`, no un spinner.",
+      "Un solo nombre accesible por región: si el spinner está al lado de un texto «Buscando…», el que lleva `label` es uno de los dos.",
+    ],
+    props: {
+      Spinner: {
+        size: "`sm` 16px (el del botón) · `md` 20px · `lg` 24px.",
+      },
+    },
+    related: ["button", "skeleton", "empty-state"],
   },
   stat: {
     title: "Stat",

@@ -258,6 +258,11 @@ opción "Sistema".
   repitas en el llamador. `icon: true` alinea una flecha con el texto. Un link
   que solo se revela en hover no existe en un celular: si es la acción principal
   de la sección, va `inline`.
+- **Un solo Spinner.** `Button loading` usa el mismo `Spinner` del paquete: no
+  metas un ícono que gire adentro de un botón. Suelto lleva `label` solo si es
+  él quien anuncia la espera; si el contenedor ya tiene `aria-busy`, va sin
+  nombre (`aria-hidden`). Con `prefers-reduced-motion` se queda quieto, no
+  desaparece.
 - **`DropdownMenuLabel` va dentro de `DropdownMenuGroup`.** Suelto, Base UI tira
   la página abajo.
 - **`NavigationMenu` si los ítems navegan, `DropdownMenu` si ejecutan algo.**
@@ -266,8 +271,8 @@ opción "Sistema".
   `render={<Button … />}`, no `asChild`.
 - `buttonVariants`, `badgeVariants`, `cardVariants`, `linkVariants`,
   `toggleVariants` y `sidebarItemVariants` no tienen `"use client"`: se pueden
-  llamar desde un Server Component. `Kbd`, `PageHeader`, `EmptyState`, `Stat` y
-  `AppShellContent` tampoco.
+  llamar desde un Server Component. `Kbd`, `PageHeader`, `EmptyState`, `Stat`,
+  `Spinner` y `AppShellContent` tampoco.
 
 ## Accesibilidad
 
