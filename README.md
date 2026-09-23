@@ -146,7 +146,7 @@ import { cn } from "sebs7n-ui/lib/utils"
 | Subpath | Archivo |
 |---|---|
 | `sebs7n-ui/<componente>` | `src/components/<componente>.tsx` (kebab-case: `alert-dialog`, `app-shell`, `user-menu`, …) |
-| `sebs7n-ui/variants/<nombre>` | `src/variants/<nombre>.ts` (`button`, `badge`, `card`, `link`, `menu`, `sidebar`, `input`, `toggle`) |
+| `sebs7n-ui/variants/<nombre>` | `src/variants/<nombre>.ts` (`button`, `badge`, `card`, `link`, `menu`, `sidebar`, `input`, `tag`, `toggle`) |
 | `sebs7n-ui/lib/<nombre>` | `src/lib/<nombre>.ts` (`utils`, `render`, `pagination`) |
 
 Por qué: el barrel hace `export *` de ~30 módulos `"use client"`. Next no puede
@@ -270,6 +270,14 @@ opción "Sistema".
   repitas en el llamador. `icon: true` alinea una flecha con el texto. Un link
   que solo se revela en hover no existe en un celular: si es la acción principal
   de la sección, va `inline`.
+- **Badge informa, Tag es un dato.** El `Badge` cuenta un estado que calculó el
+  sistema y que el usuario no eligió ni puede sacar («Pagada», «Vencida»,
+  «Admin»). El `Tag` es algo que el usuario puso —un filtro aplicado, una
+  etiqueta, un destinatario— y por eso trae el botón de quitar, con nombre
+  accesible («Quitar Chile»). **Si tiene ×, es Tag; si no se puede sacar, es
+  Badge.** Comparten forma y paleta a propósito: el sistema tiene una sola forma
+  de etiqueta, lo que cambia es qué significa. Dentro de un `Combobox` múltiple
+  ya está `ComboboxChip`: ahí no va `Tag`.
 - **Un solo Spinner.** `Button loading` usa el mismo `Spinner` del paquete: no
   metas un ícono que gire adentro de un botón. Suelto lleva `label` solo si es
   él quien anuncia la espera; si el contenedor ya tiene `aria-busy`, va sin

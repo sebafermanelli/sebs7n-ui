@@ -87,7 +87,39 @@ export const COMPONENTS = {
         dot: "Agrega un punto del color del badge a la izquierda del texto.",
       },
     },
-    related: ["button", "table", "alert"],
+    related: ["button", "table", "alert", "tag"],
+  },
+  tag: {
+    title: "Tag",
+    group: "fundamentos",
+    description: "Un dato que puso el usuario y puede sacar: un filtro, una etiqueta, un destinatario.",
+    keyboard: [
+      ["Tab", "Entra al botón de quitar. El cuerpo del tag no es interactivo."],
+      ["Enter · Espacio", "Quita el tag."],
+    ],
+    a11y: [
+      "El botón de quitar siempre tiene nombre accesible: «Quitar Chile», armado con el texto del tag. Si `children` no es texto, pasale `textValue`.",
+      "El cuerpo es un `<span>`: lo único enfocable es el botón, así que una lista de diez tags son diez paradas de tabulación, no veinte.",
+      "Quitar un tag saca el foco de la página. Devolvelo al contenedor de la lista o al control que los genera, y anunciá el cambio con una región `aria-live` si la lista es lo único que cambió.",
+      "El color no puede ser la única señal de nada: el texto del tag es el dato.",
+      "Sin `\"use client\"`: sirve en un Server Component (aunque `onRemove` lo pasa, por definición, un componente cliente).",
+    ],
+    usage: [
+      "**Badge informa, Tag es un dato.** El `Badge` cuenta un estado que calculó el sistema y que el usuario no eligió ni puede sacar («Pagada», «Vencida», «Admin»). El `Tag` es algo que el usuario puso —un filtro aplicado, una etiqueta, un destinatario— y por eso se puede quitar. **Si tiene ×, es Tag; si no se puede sacar, es Badge.**",
+      "Comparte forma y paleta con `Badge subtle` a propósito: el sistema tiene una sola forma de etiqueta. Lo que cambia es qué significa, no el radio.",
+      "Dentro de un `Combobox` múltiple ya está `ComboboxChip`, conectado al estado del combobox: ahí no va `Tag`.",
+      "`size=\"sm\"` dentro de una fila de tabla; `md` suelto, arriba de una lista de resultados.",
+      "Si la etiqueta además filtra al hacer click en el cuerpo, eso es un `Toggle`, no un Tag con `onClick`.",
+    ],
+    props: {
+      Tag: {
+        onRemove: "Qué hacer al quitar. Sin esto no aparece el botón — y sin botón, probablemente sea un `Badge`.",
+        removeLabel: "Prefijo del nombre del botón: «Quitar Chile».",
+        textValue: "El texto del tag para el nombre del botón, cuando `children` no es texto.",
+        color: "Los mismos nueve tonos del Badge.",
+      },
+    },
+    related: ["badge", "combobox", "toggle"],
   },
   avatar: {
     title: "Avatar",
