@@ -5,7 +5,7 @@ import { Menu as MenuPrimitive } from "@base-ui/react/menu"
 import { CheckIcon, ChevronRightIcon } from "lucide-react"
 
 import { cn } from "../lib/utils.js"
-import { menuItemClassName, menuPopupClassName } from "../variants/menu.js"
+import { menuItemClassName, menuPopupClassName, type MenuInsetProps } from "../variants/menu.js"
 
 function DropdownMenu(props: MenuPrimitive.Root.Props) {
   return <MenuPrimitive.Root data-slot="dropdown-menu" {...props} />
@@ -32,9 +32,7 @@ function DropdownMenuGroup(props: MenuPrimitive.Group.Props) {
   return <MenuPrimitive.Group data-slot="dropdown-menu-group" {...props} />
 }
 
-type InsetProps = { inset?: boolean }
-
-type DropdownMenuLabelProps = Omit<MenuPrimitive.GroupLabel.Props, "className"> & InsetProps & { className?: string }
+type DropdownMenuLabelProps = Omit<MenuPrimitive.GroupLabel.Props, "className"> & MenuInsetProps & { className?: string }
 
 function DropdownMenuLabel({ className, inset, ...props }: DropdownMenuLabelProps) {
   return (
@@ -48,7 +46,7 @@ function DropdownMenuLabel({ className, inset, ...props }: DropdownMenuLabelProp
 }
 
 type DropdownMenuItemProps = Omit<MenuPrimitive.Item.Props, "className"> &
-  InsetProps & { className?: string; variant?: "default" | "destructive" }
+  MenuInsetProps & { className?: string; variant?: "default" | "destructive" }
 
 function DropdownMenuItem({ className, inset, variant = "default", ...props }: DropdownMenuItemProps) {
   return (
@@ -110,7 +108,7 @@ function DropdownMenuSub(props: MenuPrimitive.SubmenuRoot.Props) {
   return <MenuPrimitive.SubmenuRoot data-slot="dropdown-menu-sub" {...props} />
 }
 
-type DropdownMenuSubTriggerProps = Omit<MenuPrimitive.SubmenuTrigger.Props, "className"> & InsetProps & { className?: string }
+type DropdownMenuSubTriggerProps = Omit<MenuPrimitive.SubmenuTrigger.Props, "className"> & MenuInsetProps & { className?: string }
 
 function DropdownMenuSubTrigger({ className, inset, children, ...props }: DropdownMenuSubTriggerProps) {
   return (
@@ -145,4 +143,11 @@ export {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
+  type DropdownMenuCheckboxItemProps,
+  type DropdownMenuContentProps,
+  type DropdownMenuItemProps,
+  type DropdownMenuLabelProps,
+  type DropdownMenuRadioItemProps,
+  type DropdownMenuSeparatorProps,
+  type DropdownMenuSubTriggerProps,
 }

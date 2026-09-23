@@ -7,7 +7,7 @@ export { buttonVariants, type ButtonIconSize, type ButtonShape, type ButtonSize,
 export { cardVariants } from "./variants/card.js"
 export { linkVariants } from "./variants/link.js"
 export { inputShellButtonClassName, inputShellClassName, inputShellInputClassName } from "./variants/input.js"
-export { menuItemClassName, menuPopupClassName } from "./variants/menu.js"
+export { menuItemClassName, menuPopupClassName, type MenuInsetProps } from "./variants/menu.js"
 export { sidebarItemVariants } from "./variants/sidebar.js"
 export { tagRemoveClassName, tagVariants, TAG_COLORS, type TagColor, type TagSize } from "./variants/tag.js"
 export { toggleVariants } from "./variants/toggle.js"

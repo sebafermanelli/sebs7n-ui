@@ -94,4 +94,16 @@ function SheetDescription({ className, ...props }: SheetDescriptionProps) {
   return <SheetPrimitive.Description data-slot="sheet-description" className={cn("text-copy-14 text-gray-900", className)} {...props} />
 }
 
-export { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger }
+export {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  type SheetContentProps,
+  type SheetDescriptionProps,
+  type SheetTitleProps,
+}

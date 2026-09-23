@@ -6,7 +6,7 @@ import { Menubar as MenubarPrimitive } from "@base-ui/react/menubar"
 import { CheckIcon, ChevronRightIcon } from "lucide-react"
 
 import { cn } from "../lib/utils.js"
-import { menuItemClassName, menuPopupClassName } from "../variants/menu.js"
+import { menuItemClassName, menuPopupClassName, type MenuInsetProps } from "../variants/menu.js"
 
 /**
  * La barra de menús de una aplicación: Archivo, Editar, Ver.
@@ -79,9 +79,7 @@ function MenubarGroup(props: MenuPrimitive.Group.Props) {
   return <MenuPrimitive.Group data-slot="menubar-group" {...props} />
 }
 
-type InsetProps = { inset?: boolean }
-
-type MenubarLabelProps = Omit<MenuPrimitive.GroupLabel.Props, "className"> & InsetProps & { className?: string }
+type MenubarLabelProps = Omit<MenuPrimitive.GroupLabel.Props, "className"> & MenuInsetProps & { className?: string }
 
 function MenubarLabel({ className, inset, ...props }: MenubarLabelProps) {
   return (
@@ -95,7 +93,7 @@ function MenubarLabel({ className, inset, ...props }: MenubarLabelProps) {
 }
 
 type MenubarItemProps = Omit<MenuPrimitive.Item.Props, "className"> &
-  InsetProps & { className?: string; variant?: "default" | "destructive" }
+  MenuInsetProps & { className?: string; variant?: "default" | "destructive" }
 
 function MenubarItem({ className, inset, variant = "default", ...props }: MenubarItemProps) {
   return (
@@ -170,7 +168,7 @@ function MenubarSub(props: MenuPrimitive.SubmenuRoot.Props) {
   return <MenuPrimitive.SubmenuRoot data-slot="menubar-sub" {...props} />
 }
 
-type MenubarSubTriggerProps = Omit<MenuPrimitive.SubmenuTrigger.Props, "className"> & InsetProps & { className?: string }
+type MenubarSubTriggerProps = Omit<MenuPrimitive.SubmenuTrigger.Props, "className"> & MenuInsetProps & { className?: string }
 
 function MenubarSubTrigger({ className, inset, children, ...props }: MenubarSubTriggerProps) {
   return (
@@ -212,4 +210,13 @@ export {
   MenubarSubContent,
   MenubarSubTrigger,
   MenubarTrigger,
+  type MenubarCheckboxItemProps,
+  type MenubarContentProps,
+  type MenubarItemProps,
+  type MenubarLabelProps,
+  type MenubarProps,
+  type MenubarRadioItemProps,
+  type MenubarSeparatorProps,
+  type MenubarSubTriggerProps,
+  type MenubarTriggerProps,
 }

@@ -56,4 +56,14 @@ function PopoverDescription({ className, ...props }: PopoverDescriptionProps) {
   return <PopoverPrimitive.Description data-slot="popover-description" className={cn("text-copy-14 text-gray-900", className)} {...props} />
 }
 
-export { Popover, PopoverContent, PopoverDescription, PopoverHeader, PopoverTitle, PopoverTrigger }
+export {
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
+  type PopoverContentProps,
+  type PopoverDescriptionProps,
+  type PopoverTitleProps,
+}

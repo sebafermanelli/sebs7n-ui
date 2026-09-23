@@ -44,4 +44,4 @@ function TooltipContent({ className, side = "top", sideOffset = 6, align = "cent
   )
 }
 
-export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger }
+export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, type TooltipContentProps }

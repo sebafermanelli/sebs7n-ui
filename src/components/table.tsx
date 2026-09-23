@@ -55,9 +55,10 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
   )
 }
 
-type CellProps = { numeric?: boolean }
+/** Alineación numérica: a la derecha y con cifras tabulares. El `<th>` y el `<td>` la declaran igual. */
+type TableHeadProps = React.ComponentProps<"th"> & { numeric?: boolean }
 
-function TableHead({ className, numeric = false, ...props }: React.ComponentProps<"th"> & CellProps) {
+function TableHead({ className, numeric = false, ...props }: TableHeadProps) {
   return (
     <th
       data-slot="table-head"
@@ -71,7 +72,9 @@ function TableHead({ className, numeric = false, ...props }: React.ComponentProp
   )
 }
 
-function TableCell({ className, numeric = false, ...props }: React.ComponentProps<"td"> & CellProps) {
+type TableCellProps = React.ComponentProps<"td"> & { numeric?: boolean }
+
+function TableCell({ className, numeric = false, ...props }: TableCellProps) {
   return (
     <td
       data-slot="table-cell"
@@ -85,4 +88,16 @@ function TableCaption({ className, ...props }: React.ComponentProps<"caption">) 
   return <caption data-slot="table-caption" className={cn("mt-4 text-copy-13 text-gray-900", className)} {...props} />
 }
 
-export { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow, type TableProps }
+export {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+  type TableCellProps,
+  type TableHeadProps,
+  type TableProps,
+}

@@ -109,4 +109,5 @@ export {
   useAutocompleteFilter,
   type AutocompleteInputProps,
   type AutocompleteItemProps,
+  type AutocompleteSeparatorProps,
 }

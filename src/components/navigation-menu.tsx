@@ -332,4 +332,10 @@ export {
   NavigationMenuPositioner,
   NavigationMenuTrigger,
   NavigationMenuViewport,
+  type NavigationMenuContentProps,
+  type NavigationMenuLinkProps,
+  type NavigationMenuPopupProps,
+  type NavigationMenuPositionerProps,
+  type NavigationMenuTriggerProps,
+  type NavigationMenuViewportProps,
 }

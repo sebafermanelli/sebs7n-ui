@@ -310,6 +310,7 @@ export {
   SidebarItemBadge,
   SidebarSearch,
   useSidebar,
+  type SidebarContentProps,
   type SidebarItemBadgeProps,
   type SidebarItemProps,
   type SidebarProps,

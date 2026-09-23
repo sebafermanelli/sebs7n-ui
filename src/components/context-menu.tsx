@@ -5,7 +5,7 @@ import { ContextMenu as ContextMenuPrimitive } from "@base-ui/react/context-menu
 import { CheckIcon, ChevronRightIcon } from "lucide-react"
 
 import { cn } from "../lib/utils.js"
-import { menuItemClassName, menuPopupClassName } from "../variants/menu.js"
+import { menuItemClassName, menuPopupClassName, type MenuInsetProps } from "../variants/menu.js"
 
 /**
  * El menú del botón derecho: las mismas acciones, ancladas al puntero.
@@ -117,9 +117,7 @@ function ContextMenuGroup(props: ContextMenuPrimitive.Group.Props) {
   return <ContextMenuPrimitive.Group data-slot="context-menu-group" {...props} />
 }
 
-type InsetProps = { inset?: boolean }
-
-type ContextMenuLabelProps = Omit<ContextMenuPrimitive.GroupLabel.Props, "className"> & InsetProps & { className?: string }
+type ContextMenuLabelProps = Omit<ContextMenuPrimitive.GroupLabel.Props, "className"> & MenuInsetProps & { className?: string }
 
 function ContextMenuLabel({ className, inset, ...props }: ContextMenuLabelProps) {
   return (
@@ -133,7 +131,7 @@ function ContextMenuLabel({ className, inset, ...props }: ContextMenuLabelProps)
 }
 
 type ContextMenuItemProps = Omit<ContextMenuPrimitive.Item.Props, "className"> &
-  InsetProps & { className?: string; variant?: "default" | "destructive" }
+  MenuInsetProps & { className?: string; variant?: "default" | "destructive" }
 
 function ContextMenuItem({ className, inset, variant = "default", ...props }: ContextMenuItemProps) {
   return (
@@ -201,7 +199,7 @@ function ContextMenuSub(props: ContextMenuPrimitive.SubmenuRoot.Props) {
   return <ContextMenuPrimitive.SubmenuRoot data-slot="context-menu-sub" {...props} />
 }
 
-type ContextMenuSubTriggerProps = Omit<ContextMenuPrimitive.SubmenuTrigger.Props, "className"> & InsetProps & { className?: string }
+type ContextMenuSubTriggerProps = Omit<ContextMenuPrimitive.SubmenuTrigger.Props, "className"> & MenuInsetProps & { className?: string }
 
 function ContextMenuSubTrigger({ className, inset, children, ...props }: ContextMenuSubTriggerProps) {
   return (
@@ -245,4 +243,12 @@ export {
   ContextMenuSubContent,
   ContextMenuSubTrigger,
   ContextMenuTrigger,
+  type ContextMenuCheckboxItemProps,
+  type ContextMenuContentProps,
+  type ContextMenuItemProps,
+  type ContextMenuLabelProps,
+  type ContextMenuRadioItemProps,
+  type ContextMenuSeparatorProps,
+  type ContextMenuSubTriggerProps,
+  type ContextMenuTriggerProps,
 }

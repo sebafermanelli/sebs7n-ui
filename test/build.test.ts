@@ -60,7 +60,9 @@ describe("build", () => {
     expect(read("dist/index.d.ts")).toContain("export * from \"./components/button.js\"")
     // Las clases de menú e Input son públicas a propósito: quien arma una lista a
     // medida las necesita para que se vea como las del sistema.
-    expect(read("dist/index.d.ts")).toContain('export { menuItemClassName, menuPopupClassName } from "./variants/menu.js"')
+    expect(read("dist/index.d.ts")).toContain(
+      'export { menuItemClassName, menuPopupClassName, type MenuInsetProps } from "./variants/menu.js"'
+    )
     expect(read("dist/index.d.ts")).toContain('export * from "./components/combobox.js"')
     expect(read("dist/index.d.ts")).toContain('export * from "./components/autocomplete.js"')
   })

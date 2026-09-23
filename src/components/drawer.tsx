@@ -294,4 +294,13 @@ export {
   DrawerSwipeArea,
   DrawerTitle,
   DrawerTrigger,
+  type DrawerBodyProps,
+  type DrawerCloseProps,
+  type DrawerContentProps,
+  type DrawerDescriptionProps,
+  type DrawerHandleProps,
+  type DrawerProps,
+  type DrawerSwipeAreaProps,
+  type DrawerTitleProps,
+  type DrawerTriggerProps,
 }

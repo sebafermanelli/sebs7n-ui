@@ -162,6 +162,8 @@ export {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
+  type BreadcrumbEllipsisProps,
+  type BreadcrumbLinkProps,
   type BreadcrumbListProps,
   type BreadcrumbProps,
 }

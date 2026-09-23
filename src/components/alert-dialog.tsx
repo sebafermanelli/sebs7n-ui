@@ -132,4 +132,9 @@ export {
   AlertDialogTitle,
   AlertDialogTrigger,
   type AlertDialogActionProps,
+  type AlertDialogCancelProps,
+  type AlertDialogContentProps,
+  type AlertDialogDescriptionProps,
+  type AlertDialogOverlayProps,
+  type AlertDialogTitleProps,
 }
