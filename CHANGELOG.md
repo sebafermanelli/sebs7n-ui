@@ -9,72 +9,14 @@ major.
 
 ## [Unreleased]
 
-Fase 1 de la auditoría de 0.4.0: los bugs con evidencia.
+## [0.5.0] - 2026-09-23
 
-### Fixed
+Una auditoría completa de la 0.4.0 —arquitectura, accesibilidad, rendimiento, API
+y documentación— ejecutada de punta a punta. No hay componentes nuevos: hay bugs
+arreglados, contraste que ahora llega a AA, la mitad del JS de las páginas de
+documentación, y 181 tests más.
 
-- **`shadcn add` generaba código que no compila.** `npx shadcn@latest add
-  <url>/r/button.json` dejaba un `components/ui/button.tsx` que se importaba a sí
-  mismo (`TS2303 Circular definition of import alias 'buttonVariants'`). El CLI
-  resuelve los imports por basename cuando la ruta exacta no está, y
-  `variants/button.ts` se copiaba como `button.ts` al lado de `button.tsx`. Las
-  variantes ahora se copian como `<x>-variants.ts` y los helpers como
-  `<x>-helpers.ts`, con un guard en el generador para que no vuelva a pasar.
-- **El registry no traía los tokens.** Ítem `theme` de tipo `registry:theme`, del
-  que depende todo componente: la paleta, las cuatro variables de marca, los
-  radios, las sombras y las utilidades de foco y tipografía. Antes el componente
-  copiado compilaba y se veía sin estilo.
-- **`TabsContent` no mostraba el foco** al llegar por Tab: tenía `outline-none`
-  sin reemplazo (WCAG 2.4.7).
-- **`Button variant="destructive"` abajo de AA** (WCAG 1.4.3). Claro en reposo
-  daba 4,36:1; oscuro en hover 2,99:1 y en active **1,81:1**. Los tres estados
-  pasan a blanco puro sobre rojos que oscurecen en los dos temas: 4,75 / 6,65 /
-  10,70 en claro y 4,79 / 6,65 / 10,70 en oscuro.
-- **Atajos de menú de `DropdownMenu`, `ContextMenu` y `Menubar`** de `gray-700` a
-  `gray-900`: en claro pasan de 3,23:1 sobre el popup y 2,71:1 sobre el ítem
-  resaltado a 8,45:1 y 7,09:1. Son contenido, no decoración.
-- **`exports` que no resolvían.** `sebs7n-ui/tokens/*.json` caía en el comodín
-  `./*` y apuntaba a un archivo inexistente; ahora tiene su patrón propio. Y
-  `src/lib/shell-context.ts` —interno— era alcanzable por
-  `sebs7n-ui/lib/shell-context`: se muda a `src/internal/`, que ningún patrón de
-  `exports` alcanza.
-- **Links rotos del sitio:** `llms.txt` mandaba a `/registry` y `/registry.md`,
-  que no existen (lo que se sirve es `/r/registry.json`), y tres demos linkeaban
-  rutas inventadas. Hay un test que recorre las dos superficies.
-
-### Changed
-
-- **El `@source` del `dist` lo pone el paquete.** `theme.css` trae
-  `@source "../../dist"`, así que la app ya no escribe ninguna ruta a
-  `node_modules`. Olvidarla —o errarle— dejaba la app entera sin estilo sin un
-  solo warning. Se documenta `@source not` como opt-in para achicar el CSS.
-  **Si tu `globals.css` ya tiene el `@source` a mano, sacalo**: duplicado no
-  rompe, pero no hace falta.
-- **Las props heredadas que la doc describe salen en la tabla** del sitio,
-  marcadas «heredada de Base UI»: 19 descripciones escritas a mano no se
-  mostraban en ninguna parte. El generador ahora falla si `meta.mjs` nombra una
-  prop que no existe.
-- **La tabla de subpaths se genera** desde `package.json#exports` (`npm run
-  subpaths`). Estaba a mano en dos archivos que se contradecían y a los dos les
-  faltaban entry points.
-
-### Docs
-
-- `Select` necesita `items` para que el trigger muestre la etiqueta y no el
-  `value` crudo: documentado y aplicado en las tres demos.
-- La doc de teclado de `Tabs` decía que las flechas activan al pasar; la
-  activación es manual (Enter o Espacio), que es el patrón de APG para paneles
-  caros.
-- Son **cuatro** variables de marca, no tres: faltaba `--brand-contrast`.
-- El ejemplo del layout raíz del README importa por subpath, con el bloque de
-  ESLint `no-restricted-imports` para las apps.
-- `geist` es peer **opcional**, no "no declarado"; y el paso de verificación de
-  la instalación usaba `bg-blue-500`, que sí compila (Geist tiene escala `blue`).
-- Se sacan las referencias a versiones que nunca existieron (1.2, 1.3.0, 1.4).
-
----
-
-Fase 2 de la auditoría de 0.4.0: accesibilidad.
+Lo que conviene mirar antes de actualizar está en **Breaking**, al final.
 
 ### Added
 
@@ -97,86 +39,45 @@ Fase 2 de la auditoría de 0.4.0: accesibilidad.
 - **Aviso en desarrollo** cuando un `DialogContent`, `SheetContent` o
   `DrawerContent` se monta sin nombre accesible. No se puede exigir por tipo
   —el título es un hijo—, y en producción el aviso no existe.
-
-### Fixed
-
-- **Placeholders a `gray-900`** (WCAG 1.4.3): en claro `gray-700` daba 3,23:1;
-  ahora 8,45:1 en claro y 7,57:1 en oscuro. Toca `Input`, `Textarea`,
-  `SelectTrigger`, `Combobox`, `Autocomplete` y `ToolbarInput`.
-- **El contorno de Checkbox, Radio, Switch y Toggle sin marcar a `gray-700`**
-  (WCAG 1.4.11, 3:1): Checkbox y Radio pasan de 1,66/2,06 a 3,23/6,12; Switch y
-  Toggle apagados, de 1,20/1,46 a lo mismo. En el Switch además arregla que el
-  pulgar blanco era invisible contra su propia pista (1,20:1 → 3,23:1). El borde
-  del `Input` se deja como está y la decisión queda escrita en
-  `accesibilidad.md`.
-- **El borde de foco de los campos se ve en claro** (WCAG 2.4.11): de 1,78:1 a
-  4,12:1. En oscuro se queda donde estaba, que ya daba 5,51.
-- **Anillo de foco en los popups de `Popover`, `HoverCard` y `NavigationMenu`**:
-  sin nada tabulable adentro, Base UI enfoca el popup y con `outline-none` no se
-  veía nada (WCAG 2.4.7).
-- **Objetivos táctiles de 24×24** (WCAG 2.5.8): el botón de quitar de `Tag` y de
-  `ComboboxChip` suman área con un `::after` sin cambiar el dibujo (16→24 y
-  20→28), y el link de `Breadcrumb` pasa de 32×16 a 32×24.
-
-### Changed
-
-- **Breaking — los nombres accesibles que el sistema puede exigir, los exige.**
-  `Button` con un `size` de ícono escrito literal pide `aria-label` o
-  `aria-labelledby`; `Progress` y `Meter` piden `label`, `aria-label` o
-  `aria-labelledby`; `AvatarImage` pide `alt` (aunque sea `""`); `ToolbarGroup`
-  pide `aria-label`. `ButtonProps` es genérico en el `size` para que la
-  exigencia no rompa a quien envuelve el botón y ya pasa el nombre bien.
-  *Migración:* agregá el nombre donde el compilador lo pida. Si ya está en los
-  hijos o en un envoltorio, escribilo igual en el `aria-label` del `Button`, que
-  es el que termina en el DOM.
-- `AlertDialogAction` y `AlertDialogCancel` aceptan solo los tamaños con texto:
-  sus botones nunca son de ícono.
-- La X de `Dialog`, `Sheet` y `Drawer` lleva el nombre en `aria-label` en vez de
-  un `<span class="sr-only">`.
-
-### Docs
-
-- **`accesibilidad.md` reescrita**: cinco líneas prometían de más. `gray-800` no
-  es un color de texto (4,12:1 en claro, y no se usa como texto en ningún
-  componente); el foco visible ahora dice "sin reemplazarlo" y nombra los casos;
-  la reducción de movimiento dice la verdad —el reset global cubre todo y las
-  que tienen recorrido suman `motion-reduce`—; y `aria-invalid` sincroniza el
-  estilo con la semántica pero no es garantía por sí solo.
-- **RTL: LTR only, y dicho**, con la lista de lo que asume dirección física y el
-  camino de migración si algún día hace falta.
-- Sección **Idioma** en el README y en `instalacion.md`.
-- Los errores de formulario se escriben siempre con `match` o `validate`: el
-  mensaje del navegador sale en el idioma del navegador, no en el de la página.
-  La demo `Valores` del sitio lo muestra.
-
-### Tests
-
-- `test/contrast.test.ts` pasa de 12 a 62 pares: los grises de texto sobre los
-  tres fondos, el `Badge` en las paletas fijas, el anillo de foco de las cuatro
-  marcas y todo lo corregido en esta fase. Sigue leyendo los hexadecimales de
-  `colors.css` y `theme.css`, no una copia. Los deshabilitados quedan exentos y
-  el archivo dice por qué.
-- `test/nombres-accesibles.test.tsx` verifica los tipos con `@ts-expect-error`:
-  si alguien afloja uno, falla el `typecheck`.
-
----
-
-Fase 3 de la auditoría de 0.4.0: rendimiento.
+- **`sebs7n-ui/lib/contrast`**: `contrastRatio`, `luminanceOfHex`,
+  `luminanceOfOklch` y `flattenAlpha`, que hasta ahora vivían adentro de `test/`.
+  Cada app puede testear su propia marca —que el texto sobre `brand-700` llegue a
+  4,5:1— en vez de confiar en que las cuatro marcas de ejemplo del paquete
+  alcancen. Hay un ejemplo de test en la página de Theming. Puro, sin
+  dependencias y sin `"use client"`.
+- **Los 83 `*Props` que faltaban.** `dialog`, `sheet`, `drawer`, `tabs`,
+  `select`, `popover`, `tooltip`, `toolbar`, `navigation-menu` y los tres menús
+  no exportaban **ninguno** de sus tipos de props: eran 85 declarados y no
+  exportados sobre 156. Quien envuelve un `DialogContent` en su propio componente
+  ahora puede nombrar sus props. `InsetProps`, que estaba tres veces con el mismo
+  nombre, pasa a `MenuInsetProps` en `variants/menu.ts`; `CellProps` de `table` se
+  parte en `TableHeadProps` y `TableCellProps`.
+- **`lib/schema` y `lib/render` salen por el barrel.** `form.tsx` ya los
+  documentaba como públicos. Con ellos van `badgeDotColor`, `TagVariantProps` y
+  las constantes nuevas de `variants/input.ts` y `variants/overlay.ts`.
+- **`variants/overlay.ts`**: `backdropClassName`, `modalPopupClassName`,
+  `modalFooterClassName`, `overlayCloseClassName` y `floatingPopupClassName`.
+  Más `menuLabelClassName` y `menuSeparatorClassName` en `variants/menu.ts`, e
+  `inputControlClassName`, `inputSizeClassName`, `inputDisabledClassName` e
+  `inputInvalidClassName` en `variants/input.ts`. Sin cambio de API: son los
+  mismos strings que estaban copiados entre dos y ocho veces.
+- **`WithClassName<P>`** en `lib/utils.ts`, por las 110 copias de
+  `Omit<P, "className"> & { className?: string }`. Existe porque Base UI tipa
+  `className` como `string | ((state) => string)` y acá se estrecha a `string`.
+- Las props más importantes de Base UI aparecen en la tabla del componente que
+  las recibe: `open`, `defaultOpen`, `onOpenChange`, `modal`, `initialFocus`,
+  `finalFocus`, `value`, `onValueChange`, `keepMounted`, `loopFocus` y el resto,
+  con una sola descripción compartida. Un `<Dialog>` salía con **cero** props
+  documentadas.
 
 ### Changed
 
-- **El build cuelga de `prepack`, no de `prepare`.** `npm install` en el repo
-  corría `tsc`, así que un error de tipos hacía fallar el **install**, no el
-  build. `prepack` lo corre igual `npm pack` y `npm publish`, que es donde hace
-  falta. En CI el job de `size` ahora pide `npm run build` explícito.
-- **El pulso del `Skeleton` deja de repintar.** `@keyframes skeleton` animaba
-  `background-color`, o sea interpolación de color en el hilo principal y un
-  repintado por frame durante toda la carga —justo cuando el hilo está ocupado—.
-  Ahora `animate-skeleton` es una utilidad que pone una capa de `gray-200` con
-  `opacity` animada encima del `gray-100`, que el compositor resuelve sin
-  repintar. Se ve igual: componer `gray-200` con alfa *t* sobre `gray-100` da la
-  misma mezcla sRGB que interpolar de un color al otro, y con
-  `prefers-reduced-motion` queda en `gray-100` como antes.
+- **El `@source` del `dist` lo pone el paquete.** `theme.css` trae
+  `@source "../../dist"`, así que la app ya no escribe ninguna ruta a
+  `node_modules`. Olvidarla —o errarle— dejaba la app entera sin estilo sin un
+  solo warning. Se documenta `@source not` como opt-in para achicar el CSS.
+  **Si tu `globals.css` ya tiene el `@source` a mano, sacalo**: duplicado no
+  rompe, pero no hace falta.
 - **`Badge` y `Separator` dejan de ser componentes de cliente.** No tenían estado
   ni handlers: arrastraban `"use client"` por transitividad, porque uno usaba el
   hook `useRender` de Base UI y el otro el primitivo `Separator`, que trae su
@@ -186,11 +87,26 @@ Fase 3 de la auditoría de 0.4.0: rendimiento.
   al anterior, atributo por atributo. Pasan de 14 a **16** los componentes
   usables en un Server Component. Medido con esbuild resolviendo Base UI:
   `Badge` 15,18 → 13,59 KB gz y `Separator` 14,42 → 9,88 KB gz cuando se importan
-  sueltos; en una página RSC que solo los use, el ahorro es todo el JS.
-  **Breaking menor:** `render` ya no acepta una función, solo un elemento
-  (`render={<a href="/planes" />}`), y `Separator` ya no acepta las props
-  propias del primitivo de Base UI.
-
+  sueltos; en una página RSC que solo los use, el ahorro es todo el JS. Los dos
+  recortan su API: ver **Breaking**.
+- **El pulso del `Skeleton` deja de repintar.** `@keyframes skeleton` animaba
+  `background-color`, o sea interpolación de color en el hilo principal y un
+  repintado por frame durante toda la carga —justo cuando el hilo está ocupado—.
+  Ahora `animate-skeleton` es una utilidad que pone una capa de `gray-200` con
+  `opacity` animada encima del `gray-100`, que el compositor resuelve sin
+  repintar. Se ve igual: componer `gray-200` con alfa *t* sobre `gray-100` da la
+  misma mezcla sRGB que interpolar de un color al otro, y con
+  `prefers-reduced-motion` queda en `gray-100` como antes.
+- La X de `Dialog`, `Sheet` y `Drawer` lleva el nombre en `aria-label` en vez de
+  un `<span class="sr-only">`.
+- `AlertDialogAction` y `AlertDialogCancel` aceptan solo los tamaños con texto:
+  sus botones nunca son de ícono.
+- **README: 814 → 664 líneas.** Se fueron las 273 de NavigationMenu, «Combobox y
+  Autocomplete» y «Shell de dashboard», que repetían lo que el sitio muestra con
+  demo en vivo y tabla de props generada. Quedan como **Recetas** las 92 líneas
+  que el sitio no puede mostrar: el colapsado con cookie y ⌘B, el `pathname` que
+  cierra el Sheet, el atajo que registra la app, el `keepMounted` para el crawler
+  y el Combobox contra el servidor. Arriba, badges (npm, CI, licencia) e índice.
 - **El sitio de docs carga las demos por página, no las 59 de golpe.**
   `/docs/components/<slug>` es una sola ruta para los 58 componentes, así que todo
   componente de cliente alcanzable desde ella entraba en el manifiesto de las 58
@@ -202,116 +118,76 @@ Fase 3 de la auditoría de 0.4.0: rendimiento.
   componente (−29 %). Las páginas sin demos pagan 6,6 KB gz más porque Turbopack
   reparte el código compartido en más chunks (home 284,0 → 290,6). El
   prerenderizado y el «Ver el código» quedan igual.
-
-### Removed
-
-- **`sebs7n-ui/styles.css`, la hoja precompilada** (70 KB, el 15 % del tarball).
-  **Breaking** para quien la importara, aunque el propio README desaconsejaba
-  usarla y ninguna de las cuatro apps lo hacía. Cargada junto a la hoja de la app
-  quedaban dos capas de utilidades, y la que gana es la declarada último y no la
-  más específica: un `hidden lg:block` de la app perdía contra el `hidden` del
-  paquete. Desde que `theme.css` trae su propio `@source` (Fase 1), no tenía
-  ninguna razón de existir. Si dependías de ella, la migración es la instalación
-  normal: `@import "tailwindcss"` y después `@import "sebs7n-ui/theme.css"`.
-  Se van con ella el script `build:css`, `src/styles/build.css` y las
-  devDependencies `tailwindcss` y `@tailwindcss/cli`, que solo servían para eso.
-
----
-
-Fase 4 de la auditoría de 0.4.0: API y tests.
-
-### Added
-
-- **Los 83 `*Props` que faltaban.** `dialog`, `sheet`, `drawer`, `tabs`,
-  `select`, `popover`, `tooltip`, `toolbar`, `navigation-menu` y los tres menús
-  no exportaban **ninguno** de sus tipos de props: eran 85 declarados y no
-  exportados sobre 156. Quien envuelve un `DialogContent` en su propio componente
-  ahora puede nombrar sus props. `InsetProps`, que estaba tres veces con el mismo
-  nombre, pasa a `MenuInsetProps` en `variants/menu.ts`; `CellProps` de `table` se
-  parte en `TableHeadProps` y `TableCellProps`.
-- **`WithClassName<P>`** en `lib/utils.ts`, por las 110 copias de
-  `Omit<P, "className"> & { className?: string }`. Existe porque Base UI tipa
-  `className` como `string | ((state) => string)` y acá se estrecha a `string`.
-- **`lib/schema` y `lib/render` salen por el barrel.** `form.tsx` ya los
-  documentaba como públicos. Con ellos van `badgeDotColor`, `TagVariantProps` y
-  las constantes nuevas de `variants/input.ts` y `variants/overlay.ts`.
-- **`variants/overlay.ts`**: `backdropClassName`, `modalPopupClassName`,
-  `modalFooterClassName`, `overlayCloseClassName` y `floatingPopupClassName`.
-  Más `menuLabelClassName` y `menuSeparatorClassName` en `variants/menu.ts`, e
-  `inputControlClassName`, `inputSizeClassName`, `inputDisabledClassName` e
-  `inputInvalidClassName` en `variants/input.ts`. Sin cambio de API: son los
-  mismos strings que estaban copiados entre dos y ocho veces.
+- **Las props heredadas que la doc describe salen en la tabla** del sitio,
+  marcadas «heredada de Base UI»: 19 descripciones escritas a mano no se
+  mostraban en ninguna parte. El generador ahora falla si `meta.mjs` nombra una
+  prop que no existe.
+- **La tabla de subpaths se genera** desde `package.json#exports` (`npm run
+  subpaths`). Estaba a mano en dos archivos que se contradecían y a los dos les
+  faltaban entry points.
+- **El build cuelga de `prepack`, no de `prepare`.** `npm install` en el repo
+  corría `tsc`, así que un error de tipos hacía fallar el **install**, no el
+  build. `prepack` lo corre igual `npm pack` y `npm publish`, que es donde hace
+  falta. En CI el job de `size` ahora pide `npm run build` explícito.
 
 ### Fixed
 
+- **`shadcn add` generaba código que no compila.** `npx shadcn@latest add
+  <url>/r/button.json` dejaba un `components/ui/button.tsx` que se importaba a sí
+  mismo (`TS2303 Circular definition of import alias 'buttonVariants'`). El CLI
+  resuelve los imports por basename cuando la ruta exacta no está, y
+  `variants/button.ts` se copiaba como `button.ts` al lado de `button.tsx`. Las
+  variantes ahora se copian como `<x>-variants.ts` y los helpers como
+  `<x>-helpers.ts`, con un guard en el generador para que no vuelva a pasar.
+- **El registry no traía los tokens.** Ítem `theme` de tipo `registry:theme`, del
+  que depende todo componente: la paleta, las cuatro variables de marca, los
+  radios, las sombras y las utilidades de foco y tipografía. Antes el componente
+  copiado compilaba y se veía sin estilo.
+- **`exports` que no resolvían.** `sebs7n-ui/tokens/*.json` caía en el comodín
+  `./*` y apuntaba a un archivo inexistente; ahora tiene su patrón propio. Y
+  `src/lib/shell-context.ts` —interno— era alcanzable por
+  `sebs7n-ui/lib/shell-context`: se muda a `src/internal/`, que ningún patrón de
+  `exports` alcanza.
+- **`Button variant="destructive"` abajo de AA** (WCAG 1.4.3). Claro en reposo
+  daba 4,36:1; oscuro en hover 2,99:1 y en active **1,81:1**. Los tres estados
+  pasan a blanco puro sobre rojos que oscurecen en los dos temas: 4,75 / 6,65 /
+  10,70 en claro y 4,79 / 6,65 / 10,70 en oscuro.
+- **Placeholders a `gray-900`** (WCAG 1.4.3): en claro `gray-700` daba 3,23:1;
+  ahora 8,45:1 en claro y 7,57:1 en oscuro. Toca `Input`, `Textarea`,
+  `SelectTrigger`, `Combobox`, `Autocomplete` y `ToolbarInput`.
+- **Atajos de menú de `DropdownMenu`, `ContextMenu` y `Menubar`** de `gray-700` a
+  `gray-900`: en claro pasan de 3,23:1 sobre el popup y 2,71:1 sobre el ítem
+  resaltado a 8,45:1 y 7,09:1. Son contenido, no decoración.
+- **El contorno de Checkbox, Radio, Switch y Toggle sin marcar a `gray-700`**
+  (WCAG 1.4.11, 3:1): Checkbox y Radio pasan de 1,66/2,06 a 3,23/6,12; Switch y
+  Toggle apagados, de 1,20/1,46 a lo mismo. En el Switch además arregla que el
+  pulgar blanco era invisible contra su propia pista (1,20:1 → 3,23:1). El borde
+  del `Input` se deja como está y la decisión queda escrita en
+  `accesibilidad.md`.
+- **El borde de foco de los campos se ve en claro** (WCAG 2.4.11): de 1,78:1 a
+  4,12:1. En oscuro se queda donde estaba, que ya daba 5,51.
+- **`TabsContent` no mostraba el foco** al llegar por Tab: tenía `outline-none`
+  sin reemplazo (WCAG 2.4.7).
+- **Anillo de foco en los popups de `Popover`, `HoverCard` y `NavigationMenu`**:
+  sin nada tabulable adentro, Base UI enfoca el popup y con `outline-none` no se
+  veía nada (WCAG 2.4.7).
+- **Objetivos táctiles de 24×24** (WCAG 2.5.8): el botón de quitar de `Tag` y de
+  `ComboboxChip` suman área con un `::after` sin cambiar el dibujo (16→24 y
+  20→28), y el link de `Breadcrumb` pasa de 32×16 a 32×24.
+- **El nombre accesible de un ítem de menú con atajo** salía «Guardar⌘S» de
+  corrido. Ahora lleva una coma `sr-only`, como `SidebarItemBadge`: «Guardar, ⌘S».
+  En `DropdownMenu`, `ContextMenu` y `Menubar`.
 - **`ComboboxChip` reimplementaba `Tag`** y las dos copias ya habían quedado
   distintas: el botón de quitar medía `size-5` contra `size-4`, el hover era
   `gray-alpha-200` contra `gray-alpha-300` y el aire a la derecha del texto era
   la mitad. Ahora sale de `tagVariants({ removable: true })` y
-  `tagRemoveClassName.md`. **El botón de quitar del chip se ve 4px más chico**;
-  el área de toque sigue arriba de los 24px de WCAG 2.5.8.
-- **El nombre accesible de un ítem de menú con atajo** salía «Guardar⌘S» de
-  corrido. Ahora lleva una coma `sr-only`, como `SidebarItemBadge`: «Guardar, ⌘S».
-  En `DropdownMenu`, `ContextMenu` y `Menubar`.
+  `tagRemoveClassName.md`. Cambia el dibujo del botón de quitar: ver **Breaking**.
 - **`data-slot` duplicados con significado distinto.** `dialog-close`,
   `sheet-close` y `drawer-close` nombraban el wrapper y la X de arriba a la
-  derecha: **la X pasa a `*-close-button`**. `combobox-input` estaba en
-  `ComboboxInput` y en `ComboboxChipsInput`: **el segundo pasa a
-  `combobox-chips-input`**. Y se sacan doce `data-slot` puestos en `*.Root` de
-  Base UI que no renderizan elemento, así que nunca llegaban al DOM.
-- **Siete casts sin explicación**: tres se van porque no hacían falta —el
-  `data-active` de `SidebarItem` ya lo emitía `state`— y los otros cuatro quedan
-  con el porqué escrito.
-- **El import de React** no iba primero en seis archivos, y `textarea`, `badge` y
-  `separator` usaban `React.ComponentProps` sin importar React.
-
-### Docs
-
-- `Table` no virtualiza (hasta ~500 filas; más, `Pagination` o virtualización
-  afuera) y `Combobox`/`Autocomplete` filtran en memoria y sin debounce.
-- Docblocks que habían quedado viejos: `variants/menu.ts` (son seis componentes,
-  no dos), `field.tsx` (también se enganchan `NumberField`, `OTPField`, `Slider`
-  y `CheckboxGroup`), `variants/tag.ts` (ahora sí `ComboboxChip` es el mismo
-  objeto) y `button.tsx` («como antes» no era un porqué).
-- `related` de `meta.mjs` es **direccional** a propósito, y queda dicho; lo que
-  sí se verifica es que todo slug apunte a un componente que existe.
-- Queda anotado para la próxima major que `ellipsisLabel`, `breadcrumbLabel` y
-  `removeLabel` tendrían que pasar a un objeto `labels`.
-
-### Tests
-
-- De **471 a 569** en el paquete (52 archivos), y de 108 a 110 en el sitio.
-- `test/api-publica.test.ts`: ningún `*Props` sin exportar, ningún nombre
-  repetido entre componentes, y nada de `lib/` ni `variants/` afuera del barrel.
-- `test/imports.test.ts`: React primero y `React.` importado donde se usa.
-- `test/render.test.tsx`: la precedencia que promete el docblock de
-  `renderElement`, que se probaba solo de rebote.
-- `test/components/dropdown-menu.test.tsx`: submenú, casilla, radio y atajo, que
-  no tenían ninguno.
-- `test/components/sub-partes.test.tsx`: las trece piezas exportadas sin un solo
-  test, y la rama sin `enableSystem` de `theme-switcher`.
-- `combobox.test.tsx` deja de ser flaky: el servidor simulado pasa de un
-  `setTimeout(…, 20)` a una promesa que resuelve el test.
-- `Toaster` tenía un smoke test que pasaba aunque no renderizara nada.
-
-Fase 5 de la auditoría de 0.4.0: documentación y DX. La última.
-
-### Added
-
-- **`sebs7n-ui/lib/contrast`**: `contrastRatio`, `luminanceOfHex`,
-  `luminanceOfOklch` y `flattenAlpha`, que hasta ahora vivían adentro de `test/`.
-  Cada app puede testear su propia marca —que el texto sobre `brand-700` llegue a
-  4,5:1— en vez de confiar en que las cuatro marcas de ejemplo del paquete
-  alcancen. Hay un ejemplo de test en la página de Theming. Puro, sin
-  dependencias y sin `"use client"`.
-- Las props más importantes de Base UI aparecen en la tabla del componente que
-  las recibe: `open`, `defaultOpen`, `onOpenChange`, `modal`, `initialFocus`,
-  `finalFocus`, `value`, `onValueChange`, `keepMounted`, `loopFocus` y el resto,
-  con una sola descripción compartida. Un `<Dialog>` salía con **cero** props
-  documentadas.
-
-### Fixed
-
+  derecha, y `combobox-input` estaba en `ComboboxInput` y en `ComboboxChipsInput`.
+  Ahora cada uno nombra una sola cosa, y se sacan doce `data-slot` puestos en
+  `*.Root` de Base UI que no renderizan elemento, así que nunca llegaban al DOM.
+  Los nombres nuevos están en **Breaking**.
 - **`PROP_DESCRIPTIONS` no se usaba nunca.** El generador del sitio encadenaba el
   diccionario con `??`, pero la descripción del JSDoc es siempre un string —`""`
   cuando no hay—, así que la cadena cortaba en el primer eslabón. Efecto:
@@ -323,15 +199,26 @@ Fase 5 de la auditoría de 0.4.0: documentación y DX. La última.
 - La tabla de props imprimía `boolean` para uniones que no lo son: `initialFocus`
   es `boolean | RefObject<HTMLElement> | ((…) => …)` y salía como un simple
   `boolean`.
+- **Links rotos del sitio:** `llms.txt` mandaba a `/registry` y `/registry.md`,
+  que no existen (lo que se sirve es `/r/registry.json`), y tres demos linkeaban
+  rutas inventadas. Hay un test que recorre las dos superficies.
+- **Siete casts sin explicación**: tres se van porque no hacían falta —el
+  `data-active` de `SidebarItem` ya lo emitía `state`— y los otros cuatro quedan
+  con el porqué escrito.
+- **El import de React** no iba primero en seis archivos, y `textarea`, `badge` y
+  `separator` usaban `React.ComponentProps` sin importar React.
 
-### Changed
+### Removed
 
-- **README: 814 → 664 líneas.** Se fueron las 273 de NavigationMenu, «Combobox y
-  Autocomplete» y «Shell de dashboard», que repetían lo que el sitio muestra con
-  demo en vivo y tabla de props generada. Quedan como **Recetas** las 92 líneas
-  que el sitio no puede mostrar: el colapsado con cookie y ⌘B, el `pathname` que
-  cierra el Sheet, el atajo que registra la app, el `keepMounted` para el crawler
-  y el Combobox contra el servidor. Arriba, badges (npm, CI, licencia) e índice.
+- **`sebs7n-ui/styles.css`, la hoja precompilada** (70 KB, el 15 % del tarball).
+  El propio README desaconsejaba usarla y ninguna de las cuatro apps lo hacía:
+  cargada junto a la hoja de la app quedaban dos capas de utilidades, y la que
+  gana es la declarada último y no la más específica, así que un `hidden lg:block`
+  de la app perdía contra el `hidden` del paquete. Desde que `theme.css` trae su
+  propio `@source`, no tenía ninguna razón de existir. Se van con ella el script
+  `build:css`, `src/styles/build.css` y las devDependencies `tailwindcss` y
+  `@tailwindcss/cli`, que solo servían para eso. Si la importabas, la migración
+  está en **Breaking**.
 
 ### Docs
 
@@ -339,21 +226,53 @@ Fase 5 de la auditoría de 0.4.0: documentación y DX. La última.
   con `attribute="data-theme"` en `next-themes` el botón de tema parece andar y
   los colores no cambian. Queda escrito en Theming y en el README, con las líneas
   para quien no usa `next-themes`.
+- **Verificar la instalación** arranca con un check binario: un `<Button>` tiene
+  que verse con fondo negro y texto blanco. Antes había que leer si una clase
+  compila y comparar dos negros en devtools. De paso, el paso del tema oscuro
+  citaba «la 2.0», una versión que no existe.
+- `geist` es peer **opcional**, no "no declarado"; y el paso de verificación de
+  la instalación usaba `bg-blue-500`, que sí compila (Geist tiene escala `blue`).
+- El ejemplo del layout raíz del README importa por subpath, con el bloque de
+  ESLint `no-restricted-imports` para las apps.
+- Sección **Idioma** en el README y en `instalacion.md`.
+- Los errores de formulario se escriben siempre con `match` o `validate`: el
+  mensaje del navegador sale en el idioma del navegador, no en el de la página.
+  La demo `Valores` del sitio lo muestra.
+- **RTL: LTR only, y dicho**, con la lista de lo que asume dirección física y el
+  camino de migración si algún día hace falta.
+- **`accesibilidad.md` reescrita**: cinco líneas prometían de más. `gray-800` no
+  es un color de texto (4,12:1 en claro, y no se usa como texto en ningún
+  componente); el foco visible ahora dice "sin reemplazarlo" y nombra los casos;
+  la reducción de movimiento dice la verdad —el reset global cubre todo y las
+  que tienen recorrido suman `motion-reduce`—; y `aria-invalid` sincroniza el
+  estilo con la semántica pero no es garantía por sí solo.
 - **Los tokens semánticos de shadcn** (`--color-card`, `--color-muted`,
   `--color-primary`, …) se documentan como **alias de compatibilidad**: 0 usos en
   `src/` y 0 menciones en la doc hacían dudar si eran restos. Se quedan porque el
   registry funciona y un componente pegado de shadcn los usa; los pares se
   recalcularon y todos pasan AA. Y se dice lo que faltaba: **no van en código
   nuevo**.
-- **Verificar la instalación** arranca con un check binario: un `<Button>` tiene
-  que verse con fondo negro y texto blanco. Antes había que leer si una clase
-  compila y comparar dos negros en devtools. De paso, el paso del tema oscuro
-  citaba «la 2.0», una versión que no existe.
 - Nota en Tokens sobre el formato de `geist.json`: es propio, no W3C DTCG, y solo
   tiene color —tipografía, radios y sombras se parsean del CSS—. Es a propósito
   mientras el único consumidor sea este repo.
+- `Select` necesita `items` para que el trigger muestre la etiqueta y no el
+  `value` crudo: documentado y aplicado en las tres demos.
+- La doc de teclado de `Tabs` decía que las flechas activan al pasar; la
+  activación es manual (Enter o Espacio), que es el patrón de APG para paneles
+  caros.
+- `Table` no virtualiza (hasta ~500 filas; más, `Pagination` o virtualización
+  afuera) y `Combobox`/`Autocomplete` filtran en memoria y sin debounce.
+- `related` de `meta.mjs` es **direccional** a propósito, y queda dicho; lo que
+  sí se verifica es que todo slug apunte a un componente que existe.
+- Docblocks que habían quedado viejos: `variants/menu.ts` (son seis componentes,
+  no dos), `field.tsx` (también se enganchan `NumberField`, `OTPField`, `Slider`
+  y `CheckboxGroup`), `variants/tag.ts` (ahora sí `ComboboxChip` es el mismo
+  objeto) y `button.tsx` («como antes» no era un porqué).
+- Queda anotado para la próxima major que `ellipsisLabel`, `breadcrumbLabel` y
+  `removeLabel` tendrían que pasar a un objeto `labels`.
+- Se sacan las referencias a versiones que nunca existieron (1.2, 1.3.0, 1.4).
 
-Y la revisión final de coherencia, página por página contra el código. **Veinte
+Y una revisión de coherencia, página por página contra el código. **Veinte
 afirmaciones que el código desmiente**, las tres que más importan:
 
 - **Un `Button disabled` SÍ sale del orden de tabulación.** La doc decía lo
@@ -361,9 +280,9 @@ afirmaciones que el código desmiente**, las tres que más importan:
   `nativeButton` (el default) y sin `focusableWhenDisabled`, Base UI escribe
   **además** el `disabled` nativo: `<button … tabindex="0" disabled="">`.
 - **`Select` no emite `aria-activedescendant`** —ese es el mecanismo del
-  `Combobox`—, y su placeholder es `gray-900` desde la Fase 2, no `gray-700`.
-- **La home decía «tres variables de marca»** y son cuatro desde la Fase 1: la
-  corrección había llegado a las páginas y no a la portada.
+  `Combobox`—, y su placeholder es `gray-900` desde esta versión, no `gray-700`.
+- **Son cuatro variables de marca, no tres**: faltaba `--brand-contrast`. La
+  corrección llegó a las páginas y no a la portada, que seguía diciendo «tres».
 
 El resto: `linkVariants` no usa la marca (`theming.md` lo listaba), `reglas.md`
 contaba 5 componentes sin estado cuando son 16 y se contradecía con
@@ -379,9 +298,75 @@ no existen.
 
 ### Tests
 
-- 569 en el paquete (52 archivos) y de 110 a **113** en el sitio: ninguna prop
-  propia puede quedar sin descripción, y las heredadas sin texto se cuentan y
-  avisan. `npm run generate` imprime el conteo en cada corrida.
+- De **388 a 569** en el paquete (52 archivos) y de **33 a 113** en el sitio.
+- `test/contrast.test.ts` pasa de 12 a 62 pares: los grises de texto sobre los
+  tres fondos, el `Badge` en las paletas fijas, el anillo de foco de las cuatro
+  marcas y todo lo corregido en esta versión. Sigue leyendo los hexadecimales de
+  `colors.css` y `theme.css`, no una copia. Los deshabilitados quedan exentos y
+  el archivo dice por qué.
+- `test/nombres-accesibles.test.tsx` verifica los tipos con `@ts-expect-error`:
+  si alguien afloja uno, falla el `typecheck`.
+- `test/api-publica.test.ts`: ningún `*Props` sin exportar, ningún nombre
+  repetido entre componentes, y nada de `lib/` ni `variants/` afuera del barrel.
+- En el sitio, ninguna prop propia puede quedar sin descripción, y las heredadas
+  sin texto se cuentan y avisan. `npm run generate` imprime el conteo en cada
+  corrida.
+- `test/imports.test.ts`: React primero y `React.` importado donde se usa.
+- `test/render.test.tsx`: la precedencia que promete el docblock de
+  `renderElement`, que se probaba solo de rebote.
+- `test/components/dropdown-menu.test.tsx`: submenú, casilla, radio y atajo, que
+  no tenían ninguno.
+- `test/components/sub-partes.test.tsx`: las trece piezas exportadas sin un solo
+  test, y la rama sin `enableSystem` de `theme-switcher`.
+- `combobox.test.tsx` deja de ser flaky: el servidor simulado pasa de un
+  `setTimeout(…, 20)` a una promesa que resuelve el test.
+- `Toaster` tenía un smoke test que pasaba aunque no renderizara nada.
+
+### Breaking
+
+- **Los nombres accesibles que el sistema puede exigir, los exige.** Es el cambio
+  que más se va a notar al actualizar, porque lo tira el compilador. `Button` con
+  un `size` de ícono escrito literal (`icon-sm`, `icon-md`, `icon-lg`) pide
+  `aria-label` o `aria-labelledby`; `Progress` y `Meter` piden `label`,
+  `aria-label` o `aria-labelledby`; `AvatarImage` pide `alt` (aunque sea `""`);
+  `ToolbarGroup` pide `aria-label`. `ButtonProps` es genérico en el `size` para
+  que la exigencia no rompa a quien envuelve el botón y ya pasa el nombre bien.
+  *Qué vas a ver:* en `<Button size="icon-sm" />`, un `TS2322: Type
+  '{ size: "icon-sm"; }' is not assignable to type 'IntrinsicAttributes &
+  ButtonProps<"icon-sm">'. Property '"aria-labelledby"' is missing`; en
+  `<AvatarImage src="…" />`, un `TS2741: Property 'alt' is missing`. Cuidado con
+  el mensaje: el compilador nombra `aria-labelledby` porque es el último miembro
+  de la unión, pero `aria-label` alcanza igual. *Migración:* agregá el nombre
+  donde el compilador lo pida. Si ya está en los hijos o en un envoltorio,
+  escribilo igual en el `aria-label` del `Button`, que es el que termina en el
+  DOM.
+- **`sebs7n-ui/styles.css` ya no existe.** Rompe a quien la importara: el subpath
+  no resuelve. *Migración:* la instalación normal, `@import "tailwindcss"` y
+  después `@import "sebs7n-ui/theme.css"`. Como `theme.css` ahora trae su propio
+  `@source` al `dist`, no hace falta nada más —y las utilidades dejan de venir
+  duplicadas, que era el bug que traía la hoja—.
+- **`render` de `Badge` acepta un elemento, ya no una función.** Salió del hook
+  `useRender` de Base UI para poder renderizarse en el servidor. *Migración:*
+  pasá el elemento en vez de la función: `render={<a href="/planes" />}`.
+- **`Separator` ya no acepta las props propias del primitivo de Base UI.** Ahora
+  es un `<div role="separator" aria-orientation>` del paquete, también para salir
+  del cliente. El DOM que emite es idéntico al anterior, atributo por atributo,
+  así que solo rompe si le pasabas algo que entendía únicamente el primitivo.
+  *Migración:* sacá esas props; `className`, `orientation` y el resto de lo que
+  documenta el componente siguen andando igual.
+- **`data-slot` renombrados y sacados.** La X de arriba a la derecha de `Dialog`,
+  `Sheet` y `Drawer` pasa a `dialog-close-button`, `sheet-close-button` y
+  `drawer-close-button` —`*-close` queda para el wrapper, que es lo que siempre
+  nombró—, y el `combobox-input` de `ComboboxChipsInput` pasa a
+  `combobox-chips-input`. Además se sacan doce `data-slot` que estaban en `*.Root`
+  de Base UI. *Migración:* si tenés CSS, tests o selectores de e2e apuntando a
+  `[data-slot="dialog-close"]` para la X, o a `[data-slot="combobox-input"]`
+  dentro de un combobox de chips, actualizá el nombre. Los doce de `*.Root` no
+  hacía falta migrarlos: nunca llegaron al DOM.
+- **El botón de quitar del `ComboboxChip` se ve 4px más chico** (`size-5` →
+  `size-4`), porque el chip dejó de tener su propia copia y sale de `Tag`. El área
+  de toque sigue arriba de los 24×24 de WCAG 2.5.8. *Migración:* ninguna, salvo
+  que tengas capturas de referencia que comparar.
 
 ## [0.4.0] - 2026-09-23
 
@@ -666,7 +651,8 @@ pnpm add sebs7n-ui @base-ui/react next-themes sonner geist
   global —un provider de locale o un diccionario único—, así que una app en otro
   idioma tiene que pasar `labels` en cada punto de uso.
 
-[Unreleased]: https://github.com/sebafermanelli/sebs7n-ui/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/sebafermanelli/sebs7n-ui/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/sebafermanelli/sebs7n-ui/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/sebafermanelli/sebs7n-ui/compare/v0.3.3...v0.4.0
 [0.3.3]: https://github.com/sebafermanelli/sebs7n-ui/compare/v0.3.2...v0.3.3
 [0.3.2]: https://github.com/sebafermanelli/sebs7n-ui/compare/v0.3.1...v0.3.2
