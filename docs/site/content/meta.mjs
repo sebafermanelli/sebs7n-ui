@@ -109,7 +109,7 @@ export const COMPONENTS = {
     keyboard: [
       ["Enter", "Activa el botón."],
       ["Espacio", "Activa el botón."],
-      ["Tab", "Entra y sale. Un botón `disabled` sigue en el orden de tabulación porque Base UI usa `data-disabled`, no el atributo nativo."],
+      ["Tab", "Entra y sale. Un botón `disabled` **sale** del orden de tabulación: Base UI le pone el atributo nativo `disabled` además del `data-disabled` del que cuelgan los estilos. Si necesitás que se pueda leer por qué está apagado, no lo deshabilites — `aria-disabled` y un `onClick` que no hace nada, o el `focusableWhenDisabled` de `ToolbarButton`."],
     ],
     a11y: [
       "`loading` pone `aria-busy` y `aria-disabled`, y cancela el `onClick`: el botón se lee como ocupado en vez de desaparecer del foco.",
@@ -120,7 +120,7 @@ export const COMPONENTS = {
     usage: [
       "**Un solo acento por pantalla.** `variant=\"accent\"` para la acción principal; el CTA por defecto es el negro (`variant=\"default\"`).",
       "**`shape=\"pill\"` solo en los CTA de un hero o de una sección de marketing.** Nunca en el chrome de una app —nav, tablas, formularios, diálogos—: dos formas de botón en la misma pantalla se leen como un descuido.",
-      "**Un link con forma de botón es un `<a>`**: `className={buttonVariants({ variant })}` sobre `<Link>`. No uses `render` para links, que Base UI les pone `role=\"button\"`.",
+      "**Un link con forma de botón es un `<a>`**: `className={buttonVariants({ variant })}` sobre `<Link>`. No uses `render` para links: con el `nativeButton` que trae el `Button` por defecto, Base UI le pone `type=\"button\"` al `<a>` y avisa por consola en desarrollo.",
       "`variant=\"destructive\"` solo cuando la acción borra algo, y siempre detrás de un `AlertDialog`.",
       "`loading` no reemplaza al `disabled` del formulario: deshabilitá también el submit si no querés dobles envíos.",
     ],
@@ -232,7 +232,7 @@ export const COMPONENTS = {
       "Sin `\"use client\"`: sirve en un Server Component. Por eso es un `<div>` propio y no el primitivo de Base UI, que trae su `'use client'`.",
       "Si solo separa visualmente y ya hay una estructura semántica alrededor (`<ul>`, `<section>`), conviene `aria-hidden`.",
     ],
-    usage: ["Vertical dentro de un `flex` necesita alto: `className=\"h-4\"`.", "Entre ítems de un menú va `DropdownMenuSeparator`, no este."],
+    usage: ["Vertical dentro de un `flex` ya se estira solo (`self-stretch`): el que necesita alto es el contenedor. Poné `h-4` únicamente si querés una línea **más corta** que la fila.", "Entre ítems de un menú va `DropdownMenuSeparator`, no este."],
     related: ["dropdown-menu", "card"],
   },
   skeleton: {
@@ -488,8 +488,8 @@ export const COMPONENTS = {
       ["Escape", "Cierra y devuelve el foco al trigger."],
     ],
     a11y: [
-      "Base UI emite el patrón de listbox completo: `aria-expanded`, `aria-activedescendant` y el recorrido por flechas.",
-      "`SelectValue` necesita `placeholder`; sin valor, el trigger queda con `data-placeholder` y el texto en `gray-700`.",
+      "Base UI emite el patrón de listbox completo: `aria-haspopup=\"listbox\"` y `aria-expanded` en el trigger, `role=\"listbox\"` en la lista y `role=\"option\"` en cada ítem. El foco real se mueve al ítem resaltado: no hay `aria-activedescendant`, que es el mecanismo del `Combobox`.",
+      "`SelectValue` necesita `placeholder`; sin valor, el trigger queda con `data-placeholder` y el texto en `gray-900`, que es el gris tenue que sí llega a AA.",
       "**El `Select` raíz necesita `items`.** Sin eso, `SelectValue` muestra —y el lector de pantalla anuncia— el `value` crudo: elegís «Consumidor final» y el trigger dice `cf`. Es el caso de la demo de abajo, y pasa siempre que el `value` no sea ya el texto que se lee.",
       "El error se marca con `aria-invalid` en el `SelectTrigger`, igual que en `Input`.",
       "El popup vive en un portal con `z-50` y devuelve el foco al trigger al cerrar.",
@@ -702,7 +702,7 @@ export const COMPONENTS = {
     ],
     props: {
       Switch: {
-        size: "`sm` 16×28px · `md` 20×36px. El área táctil es de 32px en los dos, por el `after:-inset-2`.",
+        size: "`sm` 16×28px · `md` 20×36px. El `after:-inset-2` suma 8px por lado, así que el área que recibe el dedo es de 32×44px y de 36×52px: las dos pasan los 24px de la 2.5.8 sin cambiar el dibujo.",
         variant: "`default` pinta la pista encendida de `gray-1000`; `accent`, del color de marca.",
         ...heredadas("checked", "defaultChecked", "onCheckedChange", "name", "required", "readOnly", "disabled"),
       },
@@ -712,13 +712,17 @@ export const COMPONENTS = {
   toggle: {
     title: "Toggle",
     group: "formularios",
-    description: "Un botón que queda apretado: negrita, filtro activo, vista de lista.",
+    description: "Un chip de filtro que queda apretado: apagado con borde punteado, prendido sólido y con fondo.",
     keyboard: [["Espacio · Enter", "Alterna."]],
     a11y: [
       "Emite `aria-pressed`. Sin texto (solo ícono) necesita `aria-label`.",
-      "El estado se ve por fondo y por `data-pressed`, no solo por color.",
+      "El estado se ve por la forma del borde —punteado apagado, sólido prendido— además del fondo y de `data-pressed`: no depende del color, y por eso nunca usa la marca.",
     ],
-    usage: ["Si la acción navega o abre algo, es un `Button`.", "Varios toggles relacionados van en un `ToggleGroup`."],
+    usage: [
+      "Si la acción navega o abre algo, es un `Button`.",
+      "Varios toggles relacionados van en un `ToggleGroup`.",
+      "**El botón de negrita de una barra no es este.** Ahí va un `ToolbarButton render={<ToggleGroupItem />}`, que toma la forma del `Button` en `ghost`. `Toggle` es el chip suelto que filtra.",
+    ],
     related: ["toggle-group", "switch", "button"],
   },
   "toggle-group": {
@@ -890,7 +894,7 @@ export const COMPONENTS = {
     keyboard: [["Escape", "Cierra y devuelve el foco."], ["Tab", "Atrapado adentro."], ["Click en el fondo", "Cierra."]],
     a11y: [
       "Mismo contrato que `Dialog`: `SheetTitle` obligatorio, foco atrapado, fondo inerte. Sin título, aviso por consola en desarrollo.",
-      "El movimiento de entrada pasa por `motion-reduce`.",
+      "El movimiento de entrada lo corta el reset global de `base.css`, no una clase del componente: con `prefers-reduced-motion` el panel aparece en lugar de deslizarse.",
     ],
     usage: [
       "Un formulario largo o una lista de filtros sin perder la tabla de atrás.",
@@ -1149,7 +1153,7 @@ export const COMPONENTS = {
     ],
     props: {
       BreadcrumbList: {
-        maxItems: "A partir de cuántos ítems se colapsa el medio. Sin valor, no colapsa nunca.",
+        maxItems: "A partir de cuántos ítems se colapsa el medio. Sin valor, no colapsa nunca. El «…» además tiene que tapar **dos o más** ítems, así que con `maxItems={4}` el colapso arranca recién en el quinto nivel.",
         separator: "Reemplaza el chevron. Es decoración: va `aria-hidden`.",
       },
       BreadcrumbLink: {
@@ -1186,7 +1190,7 @@ export const COMPONENTS = {
         render: "Modo links: devuelve el elemento de cada página. Clona el elemento del llamador, así que sigue siendo un `<a>`.",
         onPageChange: "Modo botones: se llama con la página destino.",
         siblings: "Cuántas páginas a cada lado de la actual.",
-        boundaries: "Cuántas páginas fijas en cada punta.",
+        boundaries: "Cuántas páginas fijas en cada punta. El mínimo real es 1: un `0` se sube a 1, porque un paginador sin la página 1 a la vista no se puede usar.",
       },
     },
     related: ["breadcrumb", "table", "button"],
