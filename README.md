@@ -1,5 +1,9 @@
 # sebs7n-ui
 
+[![npm](https://img.shields.io/npm/v/sebs7n-ui?logo=npm&color=0a0a0a)](https://www.npmjs.com/package/sebs7n-ui)
+[![CI](https://github.com/sebafermanelli/sebs7n-ui/actions/workflows/ci.yml/badge.svg)](https://github.com/sebafermanelli/sebs7n-ui/actions/workflows/ci.yml)
+[![licencia MIT](https://img.shields.io/npm/l/sebs7n-ui?color=0a0a0a)](./LICENSE)
+
 Design system para React: **Geist** —el lenguaje visual de Vercel— sobre las
 primitivas de **shadcn/ui `base-nova`** (Base UI), empaquetado como una sola
 dependencia.
@@ -14,6 +18,24 @@ son **cuatro variables CSS**.
   de Tailwind v4 — sin `tailwind.config`.
 - Server Components donde no hace falta estado; `"use client"` solo donde sí.
 - Contraste AA verificado por tests, no a ojo.
+
+**El detalle de cada componente vive en el sitio de documentación** —58 páginas
+con demos en vivo, la tabla de props generada del TypeScript y las reglas de uso—
+y no se duplica acá. La URL está en la home del repo; para levantarlo local,
+`cd docs/site && npm run dev`.
+
+## Índice
+
+- [Instalación](#instalación) · [CSS](#1-css) · [Layout raíz](#2-layout-raíz) · [Usar](#3-usar)
+- [Compatibilidad](#compatibilidad)
+- [Imports por componente](#imports-por-componente) — la tabla de subpaths y por qué no usar el barrel
+- [Tokens](#tokens) — fondos, color, tipografía, radios, sombras
+- [Theming](#theming) — las cuatro variables de marca, claro y oscuro
+- [Reglas de uso](#reglas-de-uso)
+- [Accesibilidad](#accesibilidad)
+- [Idioma](#idioma)
+- [Recetas](#recetas) — lo que resuelve la app, no el paquete
+- [Desarrollo](#desarrollo) · [Sitio de documentación](#sitio-de-documentación) · [Versionado](#versionado)
 
 ---
 
@@ -368,8 +390,10 @@ opción "Sistema".
   desaparece.
 - **`DropdownMenuLabel` va dentro de `DropdownMenuGroup`.** Suelto, Base UI tira
   la página abajo.
-- **`NavigationMenu` si los ítems navegan, `DropdownMenu` si ejecutan algo.**
-  Ver [NavigationMenu](#navigationmenu).
+- **`NavigationMenu` si los ítems navegan, `DropdownMenu` si ejecutan algo.** No
+  es cosmético: `DropdownMenu` emite `role="menu"` / `role="menuitem"`, y el modo
+  de navegación por links de un lector de pantalla no ve esos ítems.
+  Ver la página de **NavigationMenu** del sitio de documentación.
 - **Los triggers** (Dialog, Popover, Tooltip, DropdownMenu, Sheet) usan
   `render={<Button … />}`, no `asChild`.
 - `buttonVariants`, `badgeVariants`, `cardVariants`, `linkVariants`,
@@ -461,235 +485,44 @@ del lector de pantalla.
 
 ---
 
-## NavigationMenu
+## Recetas
 
-La navegación de un sitio cuando un grupo de páginas no entra como links
-sueltos: el "mega menú". Un trigger despliega un panel donde cada ítem es un
-link con título, una línea de descripción y un ícono opcional.
+Lo que el paquete **no** resuelve porque no le corresponde, con la implementación
+que vienen usando las apps.
 
-```tsx
-import NextLink from "next/link"
-import {
-  NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink,
-  NavigationMenuList, NavigationMenuTrigger, NavigationMenuViewport,
-} from "sebs7n-ui/navigation-menu"
+Las piezas, sus props y sus reglas no están acá: están en las páginas de
+`NavigationMenu`, `Combobox`, `Autocomplete`, `AppShell` y `Sidebar` del sitio de
+documentación, con demo en vivo y la tabla de props sacada del TypeScript. Tener
+las dos versiones garantizaba que una quedara vieja.
 
-<NavigationMenu render={<div />}>
-  <NavigationMenuList>
-    <NavigationMenuItem>
-      <NavigationMenuTrigger active={enAlgunaDeEsasPaginas}>Productos</NavigationMenuTrigger>
-      <NavigationMenuContent keepMounted className="sm:w-[32rem]">
-        <ul className="grid gap-0.5 sm:grid-cols-2">
-          {productos.map((p) => (
-            <li key={p.href}>
-              <NavigationMenuLink
-                render={<NextLink href={p.href} />}
-                title={p.nombre}
-                description={p.bajada}
-                icon={<p.Icono />}
-              />
-            </li>
-          ))}
-        </ul>
-      </NavigationMenuContent>
-    </NavigationMenuItem>
+### Colapsar el sidebar y recordarlo
 
-    <NavigationMenuItem>
-      <NavigationMenuLink render={<NextLink href="/blog" />}>Blog</NavigationMenuLink>
-    </NavigationMenuItem>
-  </NavigationMenuList>
-
-  {/* Una sola vez, hermano de la lista: el panel es uno para todos los ítems. */}
-  <NavigationMenuViewport />
-</NavigationMenu>
-```
-
-| Pieza | Qué hace |
-|---|---|
-| `NavigationMenu` | Root. Renderiza `<nav>`; adentro de un `<nav>` que ya existe, `render={<div />}` para no anidar dos landmarks. `delay`/`closeDelay` (50ms), `orientation`, `value`/`onValueChange` para manejarlo a mano. |
-| `NavigationMenuList` · `NavigationMenuItem` | `<ul>` / `<li>`. La lista trae `flex items-center gap-2`. |
-| `NavigationMenuTrigger` | Botón con el **cuerpo de un link de nav** (14px, peso 400, `gray-900` → `gray-1000`, sin fondo en ningún estado) y chevron que gira al abrir (`chevron={false}` lo saca). `active` lo marca cuando estás en alguna de las páginas del panel. |
-| `NavigationMenuContent` | El contenido de ese ítem, que se mueve al panel. Varias columnas: ancho por `className` y una grilla adentro. `keepMounted` deja los links en el DOM cerrados. |
-| `NavigationMenuLink` | El `<a>`. Con `title` arma la **tarjeta** del panel (ícono opcional + título + `description` de una línea, truncada); sin `title` pone solo radio, foco y `transition-control`, y manda el `className` — el modo para un link suelto de la barra. `render={<NextLink … />}` para navegación del lado del cliente. |
-| `NavigationMenuViewport` | Portal + posicionador + superficie + viewport en una pieza. Va una sola vez, hermano de la lista. `align`, `side`, `sideOffset`, `container`, y `popupClassName`/`positionerClassName` para el ancho máximo. |
-| `NavigationMenuPositioner` · `NavigationMenuPopup` | Las piezas sueltas, para armar el panel a mano (una flecha, otro contenedor). El 99% de las veces alcanza `NavigationMenuViewport`. |
-
-**Cuándo `NavigationMenu` y cuándo `DropdownMenu`.** Si los ítems **navegan**,
-`NavigationMenu`; si **ejecutan** algo sobre la página en la que estás,
-`DropdownMenu`. No es cosmético: `DropdownMenu` emite `role="menu"` /
-`role="menuitem"`, atrapa el foco y se recorre con las flechas como una barra de
-aplicación, así que un lector de pantalla anuncia "menú, 3 elementos" en vez de
-una lista de links, y el modo de navegación por links no los ve.
-`NavigationMenu` es `<nav>` + `<ul>` + `<a>`, que es lo que son. El menú de
-idioma y el de usuario siguen siendo `DropdownMenu` (cambian el estado, no la
-página).
-
-**`keepMounted` y el crawler.** Por defecto el contenido no existe en el DOM
-hasta que el menú abre, así que un crawler —que no pasa el mouse ni tabula—
-nunca ve esos links. `keepMounted` los deja en el HTML del server, ocultos.
-Cuesta un poco de markup por panel; si el nav es el link principal a esas
-páginas, se pone. Un test verifica que salen en `renderToString`. Alcance: cubre
-el HTML del server y el DOM hasta la primera apertura. Al abrir, el contenido se
-muda al popup —que vive en un portal sin `keepMounted`— y al cerrar se desmonta
-con él. Para el crawler da igual, porque no abre el menú.
-
-**Accesibilidad.** Abre con hover y con teclado (Enter, Espacio, flechas);
-Escape cierra y devuelve el foco al trigger; `aria-expanded` y `aria-controls`
-los pone Base UI. El movimiento pasa por `motion-reduce` además del reset global
-del paquete. El trigger **no** lleva `aria-current`: no es un link y no es la
-página actual — para eso está `active`, que solo lo pinta.
-
-## Combobox y Autocomplete
-
-Para pickers y buscadores (país, cliente, categoría, ciudad, dirección) usá
-estos en vez de armar la lista a mano: el input tiene el cuerpo y los estados de
-`Input` (tamaños `sm`/`md`/`lg`, foco, `aria-invalid`, `disabled`) y la lista es
-la de `DropdownMenu`/`Select`.
+`Sidebar` recibe `collapsed`; **dónde vive ese booleano lo decide la app**. Con
+una cookie el server ya renderiza el ancho correcto y no hay salto al hidratar:
 
 ```tsx
-import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from "sebs7n-ui/combobox"
+// layout.tsx (Server Component)
+const defaultCollapsed = (await cookies()).get("sidebar")?.value === "collapsed"
 
-<Combobox items={countries} value={country} onValueChange={setCountry}>
-  <ComboboxInput id="pais" placeholder="Elegí un país" />
-  <ComboboxContent>
-    <ComboboxEmpty />{/* "Sin resultados" */}
-    <ComboboxList>
-      {(c: string) => <ComboboxItem key={c} value={c}>{c}</ComboboxItem>}
-    </ComboboxList>
-  </ComboboxContent>
-</Combobox>
-```
-
-| Pieza | Qué hace |
-|---|---|
-| `Combobox` | Root de Base UI: `items`, `value`/`onValueChange`, `multiple`, `filter`, `itemToStringLabel` (objetos `{ value, label }` andan solos), `disabled`. |
-| `ComboboxInput` | Input + limpiar + chevron. `size`, `showClear` (default sí, aparece con valor), `showTrigger` (default sí), `labels`, `groupClassName`. |
-| `ComboboxContent` | Panel `menuPopupClassName`, al menos tan ancho como el input. `side`, `align`, `sideOffset`. |
-| `ComboboxList` · `ComboboxItem` | Lista (función por ítem) e ítem `menuItemClassName` con check si está elegido. |
-| `ComboboxGroup` · `ComboboxLabel` · `ComboboxCollection` · `ComboboxSeparator` | Grupos: `items={[{ value: "Europa", items: [...] }]}`, y dentro de cada `ComboboxGroup items={g.items}` un `ComboboxCollection`. |
-| `ComboboxEmpty` | Se muestra solo con la lista vacía. Sin children: "Sin resultados"; `{null}` no muestra nada. |
-| `ComboboxStatus` | Región `aria-live`. `loading` muestra la fila con spinner ("Buscando…", `labels.loading`). |
-| `ComboboxChips` · `ComboboxChip` · `ComboboxChipsInput` · `ComboboxValue` | Múltiple: chips `Badge` subtle con botón "Quitar …" (`removeLabel`). |
-| `useComboboxFilter` | `contains`/`startsWith` con locale, para filtrar a mano. |
-
-**Búsqueda async** (clientes, direcciones): `filter={null}`, buscá en
-`onInputValueChange` (salteá `reason === "item-press"`) y mientras carga
-`<ComboboxStatus loading />` + `<ComboboxEmpty>{loading ? null : undefined}</ComboboxEmpty>`.
-**Múltiple**: `multiple` y, en vez de `ComboboxInput`,
-`<ComboboxChips><ComboboxValue>{(values) => <>{values.map((v) => <ComboboxChip key={v}>{v}</ComboboxChip>)}<ComboboxChipsInput /></>}</ComboboxValue></ComboboxChips>`.
-
-**`Autocomplete`** (`sebs7n-ui/autocomplete`) es texto libre con sugerencias: el
-valor es el texto (`value`/`onValueChange` son strings) y un texto que no está
-en la lista vale. Mismas piezas con prefijo `Autocomplete`
-(`AutocompleteInput` sin chevron por defecto, `AutocompleteItem` sin check).
-Para ciudad o dirección donde se acepta cualquier cosa, `Autocomplete`; si el
-valor tiene que ser uno de la lista, `Combobox`.
-
-`disabled` va en el root (`<Combobox disabled>`) para bloquear todo; en el input
-también apaga la superficie. `aria-invalid` va en el input.
-
-**Lista a medida** (raro): `menuPopupClassName` y `menuItemClassName` (de
-`sebs7n-ui` o `sebs7n-ui/variants/menu`) sobre primitivas de Base UI que pongan
-`data-highlighted`; e `inputShellClassName` / `inputShellInputClassName` /
-`inputShellButtonClassName` (`sebs7n-ui/variants/input`) para un control compuesto
-con superficie de Input. Sin `"use client"`.
-
-## Shell de dashboard
-
-`AppShell` arma el layout de panel: sidebar sticky a todo el alto desde `lg` y,
-debajo, una barra de 56px cuya hamburguesa abre el mismo sidebar en un `Sheet`.
-
-```tsx
-"use client"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import {
-  AppShell, AppShellContent, Badge, Button, DropdownMenuItem, Sidebar, SidebarContent, SidebarFooter, SidebarGroup,
-  SidebarGroupLabel, SidebarHeader, SidebarItem, SidebarItemBadge, SidebarSearch, UserMenu,
-} from "sebs7n-ui"
-import { LogOutIcon, PanelLeftIcon, ReceiptIcon, SettingsIcon, UsersIcon } from "lucide-react"
-import { useCallback, useEffect, useState } from "react"
-
-function PanelSidebar({ user, pending, collapsed }: { user: { name: string; email: string }; pending: number; collapsed: boolean }) {
-  const pathname = usePathname()
-  const item = (href: string, icon: React.ReactNode, label: React.ReactNode) => (
-    <SidebarItem render={<Link href={href} />} icon={icon} active={pathname.startsWith(href)}>
-      {label}
-    </SidebarItem>
-  )
-  return (
-    <Sidebar collapsed={collapsed}>
-      <SidebarHeader>
-        <div className="flex h-8 items-center gap-2 px-1">
-          <Logo className="size-6" />
-          <span className="text-label-14 font-medium group-data-collapsed/sidebar:hidden">Acme</span>
-          <Badge size="sm" className="group-data-collapsed/sidebar:hidden">Admin</Badge>
-        </div>
-        {/* El atajo lo registra la app (useHotkey / keydown en window); shortcut solo lo muestra y lo anuncia. */}
-        <SidebarSearch shortcut="⌘K" onClick={openCommandPalette} />
-      </SidebarHeader>
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Operación</SidebarGroupLabel>
-          {item("/panel/facturas", <ReceiptIcon />, "Facturas")}
-          {item("/panel/clientes", <UsersIcon />, <>Clientes{pending > 0 && <SidebarItemBadge label={`${pending} pendientes`}>{pending}</SidebarItemBadge>}</>)}
-        </SidebarGroup>
-      </SidebarContent>
-      <SidebarFooter>
-        <UserMenu
-          user={user}
-          signOut={<DropdownMenuItem onClick={signOut}><LogOutIcon />Cerrar sesión</DropdownMenuItem>}
-        >
-          <DropdownMenuItem render={<Link href="/panel/ajustes" />}><SettingsIcon />Ajustes de cuenta</DropdownMenuItem>
-        </UserMenu>
-      </SidebarFooter>
-    </Sidebar>
-  )
-}
-
-export function DashboardShell({ children, user, pending, defaultCollapsed }) {
-  const pathname = usePathname()
-  const [collapsed, setCollapsed] = useSidebarCollapsed(defaultCollapsed)
-  return (
-    <AppShell
-      pathname={pathname}
-      sidebar={<PanelSidebar user={user} pending={pending} collapsed={collapsed} />}
-      mobileBar={<><Logo className="size-6" /><span className="ml-auto" /><UserMenu user={user} collapsed /></>}
-    >
-      <AppShellContent>
-        <Button variant="ghost" size="icon-sm" className="hidden lg:inline-flex" aria-label="Colapsar sidebar"
-          aria-pressed={collapsed} onClick={() => setCollapsed(!collapsed)}>
-          <PanelLeftIcon />
-        </Button>
-        {children}
-      </AppShellContent>
-    </AppShell>
-  )
-}
-```
-
-**Colapsar el sidebar (receta de la app).** El paquete no guarda el estado: la
-app decide dónde vive. Con una cookie el server ya renderiza el ancho correcto
-(sin salto):
-
-```tsx
-// layout.tsx (Server Component): const defaultCollapsed = (await cookies()).get("sidebar")?.value === "collapsed"
+// El hook del lado del cliente: cookie + ⌘B / Ctrl+B.
 function useSidebarCollapsed(initial: boolean) {
   const [collapsed, setCollapsed] = useState(initial)
+  const recordar = (next: boolean) => {
+    document.cookie = `sidebar=${next ? "collapsed" : "expanded"}; path=/; max-age=31536000; samesite=lax`
+  }
   const set = useCallback((next: boolean) => {
     setCollapsed(next)
-    document.cookie = `sidebar=${next ? "collapsed" : "expanded"}; path=/; max-age=31536000; samesite=lax`
+    recordar(next)
   }, [])
   useEffect(() => {
-    // ⌘B / Ctrl+B, salvo que se esté escribiendo en un campo.
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key.toLowerCase() !== "b" || !(event.metaKey || event.ctrlKey)) return
+      // Dentro de un campo, ⌘B es negrita: no se lo robamos.
       if ((event.target as HTMLElement)?.closest("input, textarea, [contenteditable]")) return
       event.preventDefault()
       setCollapsed((prev) => {
-        const next = !prev
-        document.cookie = `sidebar=${next ? "collapsed" : "expanded"}; path=/; max-age=31536000; samesite=lax`
-        return next
+        recordar(!prev)
+        return !prev
       })
     }
     window.addEventListener("keydown", onKeyDown)
@@ -699,40 +532,51 @@ function useSidebarCollapsed(initial: boolean) {
 }
 ```
 
-- `SidebarItem` es un `<a>`; con Next, `render={<Link href />}`. `active` pone
-  `aria-current="page"`. Dentro del Sheet mobile, el click lo cierra (salvo
-  ⌘/Ctrl/click del medio) y manda el foco al `main`.
-- **Pasale `pathname={usePathname()}` a `AppShell`**: cualquier navegación (un
-  link del contenido, un `router.push`) cierra el Sheet. También se cierra al
-  pasar a ≥ lg y al elegir un ítem del `UserMenu`. Para un caso propio:
-  `useAppShell().closeMobile({ focusMain: true })`.
-- `SidebarItemBadge`: el lector lo lee separado ("Clientes, 3"); con
-  `label="3 pendientes"` da contexto. Con el sidebar colapsado, un punto marca
-  los contadores distintos de cero.
-- `SidebarSearch` no registra ningún atajo: la app escucha ⌘K y abre su paleta.
-  Con `shortcut="⌘K"` se muestra el `Kbd` y se anuncia `aria-keyshortcuts`; sin
-  `shortcut`, nada.
-- `<Sidebar collapsed>` deja solo los íconos (64px, sin animar el ancho) con
-  tooltip del label; lo que sea texto del header se oculta con
-  `group-data-collapsed/sidebar:hidden`. `UserMenu` toma el estado del sidebar:
-  colapsado muestra solo el avatar.
-- `UserMenu` agrega solo la fila "Tema" (`ThemeMenuRadio`: ítems `menuitemradio`
-  que se recorren con las flechas y no cierran el menú). `signOut` es un
-  `DropdownMenuItem` neutral, **no** `variant="destructive"`.
-- **Usar `AppShellContent` como hijo directo de `AppShell`**: es el contenedor de
-  página (`mx-auto w-full max-w-7xl`, `px-4 py-6 md:px-6 md:py-8`, columna con
-  `gap-6`), así todas las pantallas tienen el mismo ancho. `size="wide"`
-  (1600px) para tablas anchas, `size="full"` sin máximo. No tiene
-  `"use client"`: `sebs7n-ui/app-shell-content` sirve en Server Components.
-- `AppShell` usa `--app-shell-height` (100dvh); para embeberlo en una caja,
-  `className="[--app-shell-height:720px]"`.
-- Página: `PageHeader` (`PageHeaderTitle`, `PageHeaderDescription`,
-  `PageHeaderActions`, prop `breadcrumb`), `Stat` para KPIs dentro de un `Card`,
-  `EmptyState` para vacíos, `AlertDialog` para confirmar lo destructivo.
-  `AlertDialogAction` no cierra sola: o controlás `open` (y cerrás al terminar,
-  útil con `loading`), o sin controlar la envolvés:
-  `<AlertDialogClose render={<AlertDialogAction variant="destructive" />}>Eliminar</AlertDialogClose>`.
-  `AlertDialogCancel` ya cierra.
+El botón que lo alterna es de la app y necesita nombre y estado:
+`<Button size="icon-sm" variant="ghost" aria-label="Colapsar sidebar" aria-pressed={collapsed} …>`.
+
+### Cerrar el menú mobile al navegar
+
+**Pasale `pathname={usePathname()}` a `AppShell`**: cualquier navegación —un link
+del contenido, un `router.push`— cierra el `Sheet`. También se cierra al pasar a
+≥ `lg` y al elegir un ítem del `UserMenu`. Para un caso propio,
+`useAppShell().closeMobile({ focusMain: true })`.
+
+### El atajo de la búsqueda
+
+`SidebarSearch shortcut="⌘K"` **solo muestra el `Kbd` y lo anuncia**
+(`aria-keyshortcuts`). Escuchar la tecla y abrir la paleta es de la app: el
+paquete no registra atajos globales, porque dos componentes peleándose el mismo
+`keydown` es un bug que no se ve hasta producción.
+
+### Links del mega menú que vea un crawler
+
+`NavigationMenuContent` no existe en el DOM hasta que el menú abre, así que un
+crawler —que no pasa el mouse ni tabula— nunca ve esos links. Con `keepMounted`
+quedan en el HTML del server, ocultos. Cuesta markup por panel; si el nav es el
+link principal a esas páginas, se paga. Alcance: cubre el HTML del server y el
+DOM hasta la primera apertura — al abrir, el contenido se muda al popup, que vive
+en un portal sin `keepMounted`. Para el crawler da igual, porque no abre el menú.
+
+### Combobox contra el servidor
+
+El filtrado del `Combobox` es **en memoria y en cada tecla, sin debounce**, que
+es lo correcto con una lista local: esperar se nota. Si los resultados vienen del
+servidor, el debounce lo pone la app:
+
+```tsx
+<Combobox items={resultados} filter={null} onInputValueChange={(texto, detalles) => {
+  if (detalles.reason === "item-press") return
+  debounced(texto)
+}}>
+  <ComboboxInput placeholder="Buscar cliente" />
+  <ComboboxContent>
+    <ComboboxStatus loading={cargando} />
+    <ComboboxEmpty>{cargando ? null : undefined}</ComboboxEmpty>
+    <ComboboxList>{(c) => <ComboboxItem key={c.value} value={c}>{c.label}</ComboboxItem>}</ComboboxList>
+  </ComboboxContent>
+</Combobox>
+```
 
 ---
 
