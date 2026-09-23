@@ -77,8 +77,11 @@ En `globals.css`, **en este orden**:
 ```tsx
 import { GeistMono } from "geist/font/mono"
 import { GeistSans } from "geist/font/sans"
-import { Toaster, TooltipProvider } from "sebs7n-ui"
 import { ThemeProvider } from "next-themes"
+// Por subpath, no por el barrel: el layout raíz envuelve TODAS las páginas, así
+// que un `from "sebs7n-ui"` acá le suma los 58 componentes a cada una.
+import { Toaster } from "sebs7n-ui/sonner"
+import { TooltipProvider } from "sebs7n-ui/tooltip"
 import "./globals.css"
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -156,6 +159,36 @@ podar referencias cliente a través de ese barrel (tampoco con
 Medido en Next 16.3 (Turbopack) con esa página: **297,5 KB → 234,8 KB** de JS
 cliente gzip (−21 %). No mezcles barrel y subpaths en la misma página: el barrel
 vuelve a traer todo.
+
+Donde más caro sale es en el **layout raíz**, que envuelve todas las páginas: un
+`from "sebs7n-ui"` ahí le suma el paquete entero hasta a la landing. Por eso el
+ejemplo del layout de arriba importa `sebs7n-ui/sonner` y `sebs7n-ui/tooltip`.
+
+El barrel sigue existiendo —hoy es la única forma de llegar a `cn` sin conocer
+la ruta— así que si tu app ya lo tiene, la regla se pone en el linter y no en la
+memoria:
+
+```js
+// eslint.config.mjs
+export default [
+  {
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "sebs7n-ui",
+              message:
+                "Importá por subpath: sebs7n-ui/button, sebs7n-ui/card, sebs7n-ui/lib/utils. El barrel arrastra los 58 componentes a la página.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+]
+```
 
 ## Tokens
 
