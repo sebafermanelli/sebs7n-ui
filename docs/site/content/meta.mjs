@@ -50,7 +50,7 @@ export const PROP_DESCRIPTIONS = {
   open: "Si está abierto. Pasarla lo vuelve controlado: sin `onOpenChange` ya no se cierra solo.",
   defaultOpen: "Si arranca abierto. Es la versión no controlada de `open`.",
   onOpenChange: "Se llama con el estado nuevo cada vez que se abre o se cierra.",
-  modal: "Con `true`, mientras está abierto el resto de la página no recibe clicks ni foco. Con `\"trap-focus\"` atrapa el foco pero deja pasar los clicks de afuera.",
+  modal: "Con `true`, mientras está abierto el resto de la página no recibe clicks ni foco.",
   actionsRef: "Ref con las acciones imperativas de Base UI (`unmount()`), para desmontarlo sin esperar la animación de salida.",
   keepMounted: "Deja el contenido en el DOM mientras está cerrado, en vez de desmontarlo. Cuesta peso; sirve para que un crawler lo vea.",
   initialFocus: "Qué recibe el foco al abrir. Por defecto, el primer elemento tabulable de adentro.",
@@ -841,7 +841,10 @@ export const COMPONENTS = {
       "El footer va con la acción principal a la derecha y «Cancelar» a su izquierda.",
     ],
     props: {
-      Dialog: heredadas("open", "defaultOpen", "onOpenChange", "modal", "actionsRef"),
+      Dialog: {
+        ...heredadas("open", "defaultOpen", "onOpenChange", "modal", "actionsRef"),
+        modal: "Con `true`, mientras está abierto el resto de la página no recibe clicks ni foco. Con `\"trap-focus\"` atrapa el foco pero deja pasar los clicks de afuera.",
+      },
       DialogContent: {
         labels: "El texto del botón X. Con un `LabelsProvider` se traduce para toda la app; esta prop es la excepción de una pantalla puntual.",
         showCloseButton: "El botón X de la esquina. Si lo sacás, tiene que haber otra salida visible.",
@@ -895,7 +898,10 @@ export const COMPONENTS = {
       "En desktop, más de 640px de ancho es una página, no un panel.",
     ],
     props: {
-      Sheet: heredadas("open", "defaultOpen", "onOpenChange", "modal", "actionsRef"),
+      Sheet: {
+        ...heredadas("open", "defaultOpen", "onOpenChange", "modal", "actionsRef"),
+        modal: "Con `true`, mientras está abierto el resto de la página no recibe clicks ni foco. Con `\"trap-focus\"` atrapa el foco pero deja pasar los clicks de afuera.",
+      },
       SheetContent: {
         labels: "El texto del botón X. Con un `LabelsProvider` se traduce para toda la app; esta prop es la excepción de una pantalla puntual.",
         showCloseButton: "El botón X de la esquina. Si lo sacás, tiene que haber otra salida visible.",
@@ -932,7 +938,10 @@ export const COMPONENTS = {
       "`DrawerSwipeArea` abre con un swipe desde el borde, pero nunca va sola: sin un `DrawerTrigger` al lado, el drawer no existe para quien usa teclado.",
     ],
     props: {
-      Drawer: heredadas("open", "defaultOpen", "onOpenChange", "modal", "actionsRef"),
+      Drawer: {
+        ...heredadas("open", "defaultOpen", "onOpenChange", "modal", "actionsRef"),
+        modal: "Con `true`, mientras está abierto el resto de la página no recibe clicks ni foco. Con `\"trap-focus\"` atrapa el foco pero deja pasar los clicks de afuera.",
+      },
       DrawerContent: {
         ...heredadas("initialFocus", "finalFocus"),
         labels: "El texto del botón X. Con un `LabelsProvider` se traduce para toda la app; esta prop es la excepción de una pantalla puntual.",
@@ -956,7 +965,10 @@ export const COMPONENTS = {
       "En mobile un popover ancho se sale de la pantalla: usá `Sheet`.",
     ],
     props: {
-      Popover: heredadas("open", "defaultOpen", "onOpenChange", "modal", "actionsRef"),
+      Popover: {
+        ...heredadas("open", "defaultOpen", "onOpenChange", "modal", "actionsRef"),
+        modal: "Con `true`, mientras está abierto el resto de la página no recibe clicks ni foco. Con `\"trap-focus\"` atrapa el foco pero deja pasar los clicks de afuera.",
+      },
       PopoverContent: heredadas("initialFocus", "finalFocus"),
     },
     related: ["dropdown-menu", "tooltip", "dialog"],
