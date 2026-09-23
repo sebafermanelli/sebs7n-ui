@@ -213,6 +213,82 @@ export const COMPONENTS = {
   },
 
   // ─────────────────────────────── Formularios ───────────────────────────────
+  field: {
+    title: "Field",
+    group: "formularios",
+    detallado: true,
+    description: "Un campo: la etiqueta, la ayuda y el error atados al control, sin un solo id escrito a mano.",
+    keyboard: [
+      ["Tab", "Entra y sale del control. La etiqueta no recibe foco: al clickearla, lo recibe el control."],
+    ],
+    a11y: [
+      "**Esto es lo que resuelve el componente.** La etiqueta nombra al control, la ayuda y el error lo describen, y el error pone `aria-invalid`: todo por anidar las partes, sin `useId`, sin `htmlFor` y sin armar un `aria-describedby` condicional que es justo lo que se olvida.",
+      "El asterisco de `required` es `aria-hidden`: nadie escucha \"Razón social asterisco\". Que el campo sea obligatorio lo anuncia el `required` del control.",
+      "`FieldError` no ocupa lugar mientras el campo está bien, y cuando aparece ya está referenciado: no hace falta mover el foco para que se lea.",
+      "`Input`, `Textarea` y `Select` se enganchan solos. Para cualquier otro control va `FieldControl` con `render`.",
+    ],
+    usage: [
+      "**El `name` es la bisagra con `Form`**: es la clave de los valores del submit y la del objeto `errors` que devuelve el servidor. Para datos anidados se usa punto (`domicilio.calle`), que es lo que devuelve el adaptador de schemas.",
+      "**`validationMode=\"onSubmit\"` (el default) casi siempre.** Marcar el email en rojo mientras se escribe es castigar a alguien por no haber terminado. `onBlur` para un dato que recién se puede juzgar completo; `onChange` solo cuando se puede evaluar desde el primer carácter, como el largo de una contraseña.",
+      "La ayuda va visible en `FieldDescription`, no en un tooltip: una ayuda que hay que descubrir no ayuda a quien más la necesita.",
+      "Un mensaje propio para un motivo puntual se escribe con `match` (`<FieldError match=\"valueMissing\">Falta el email</FieldError>`): habla del dato, no del input.",
+      "Validar contra Zod, Valibot o ArkType: `fieldValidator` de `sebs7n-ui/lib/schema`.",
+    ],
+    props: {
+      Field: {
+        name: "Identifica al campo en los valores del submit y en el objeto `errors` de `Form`.",
+        validate: "Devolvé el mensaje si el valor está mal, o `null` si está bien. Puede ser asíncrona.",
+        validationMode: "`onSubmit` (default), `onBlur` u `onChange`. Tiene precedencia sobre el del `Form`.",
+      },
+      FieldLabel: { required: "Dibuja el asterisco. No hace obligatorio al campo: eso es el `required` del control." },
+    },
+    related: ["form", "fieldset", "input", "select"],
+  },
+  fieldset: {
+    title: "Fieldset",
+    group: "formularios",
+    description: "Un grupo de campos con un título común, y un disabled que los apaga a todos.",
+    keyboard: [["Tab", "Recorre los campos del grupo en orden. El título no recibe foco."]],
+    a11y: [
+      "El grupo tiene nombre accesible: es lo que distingue dos campos \"Calle\" en la misma pantalla, uno en \"Domicilio fiscal\" y otro en \"Dirección de entrega\".",
+      "El título va con `aria-labelledby` en vez de un `<legend>` nativo, que no se puede ubicar libremente sin pelear con el navegador.",
+      "`disabled` en el grupo apaga todos los campos de adentro sin que haya que repetirlo campo por campo.",
+    ],
+    usage: [
+      "Para opciones excluyentes va `RadioGroup`, que ya trae su propia semántica de grupo.",
+      "Un formulario de tres campos no necesita un `Fieldset`: agrupar de a uno agrega ruido, no estructura.",
+    ],
+    related: ["field", "form", "radio-group"],
+  },
+  form: {
+    title: "Form",
+    group: "formularios",
+    detallado: true,
+    description: "Un form nativo que junta los valores por name y reparte los errores del servidor a cada campo.",
+    keyboard: [
+      ["Enter", "Envía el formulario desde cualquier campo de texto, como cualquier `<form>`."],
+      ["Tab", "Recorre los campos y llega al submit."],
+    ],
+    a11y: [
+      "Es un `<form>` de verdad: lo entiende el navegador y sigue funcionando sin JavaScript.",
+      "Al fallar la validación, el foco va al primer campo con error en vez de quedarse en el botón.",
+      "Cada error aparece en su campo, no en un cartel arriba de todo: quien navega con lector de pantalla lo encuentra donde tiene que arreglarlo.",
+    ],
+    usage: [
+      "**`errors` es para lo que el navegador no puede saber**: que un email ya está usado, que el cupón venció, que el CUIT no existe en AFIP. Se limpia solo cuando el campo cambia.",
+      "`onFormSubmit` recibe los valores ya juntados por `name`: no hace falta `FormData` ni un `useState` por campo.",
+      "Para validar todo contra un schema está `validate()` de `sebs7n-ui/lib/schema`, que devuelve el valor parseado o los errores con la forma que espera esta prop.",
+      "El submit se deshabilita mientras se envía (`<Button loading>`), o el mismo formulario se manda dos veces.",
+    ],
+    props: {
+      Form: {
+        errors: "Objeto `{ nombreDelCampo: mensaje }`. Es para los errores que solo conoce el servidor.",
+        onFormSubmit: "Recibe los valores juntados por `name`. Ya hace `preventDefault()`.",
+        validationMode: "Cuándo se validan los campos que no lo definan por su cuenta.",
+      },
+    },
+    related: ["field", "fieldset", "button"],
+  },
   input: {
     title: "Input",
     group: "formularios",
@@ -224,18 +300,18 @@ export const COMPONENTS = {
     ],
     a11y: [
       "**`aria-invalid` es todo lo que hace falta para el error**: el borde rojo y el anillo salen de ahí, no de una clase aparte.",
-      "Siempre con `Label` asociado por `htmlFor`/`id`. Un `placeholder` no es una etiqueta: desaparece al escribir.",
-      "El mensaje de error va en un `<p id=\"…-error\">` referenciado con `aria-describedby`, para que se lea al enfocar.",
+      "**Adentro de un `Field` no hay nada que cablear**: la etiqueta, la ayuda y el error se atan solos. `Label` con `htmlFor`/`id` a mano queda para un campo suelto fuera de un formulario.",
+      "Un `placeholder` no es una etiqueta: desaparece al escribir, justo cuando hace falta recordar qué se estaba llenando.",
       "`focus:focus-border` en vez del anillo: en un campo el borde teñido molesta menos y se ve igual.",
     ],
     usage: [
       "**El tamaño se elige una vez por formulario**, no por campo. `md` (40px) es el de una app; `lg` para un formulario de una sola pregunta.",
       "`type` importa más que el estilo: `email`, `tel`, `url` y `numeric` cambian el teclado del celular.",
-      "Un campo obligatorio se marca en el `Label` (`required`), no con un asterisco pegado al placeholder.",
+      "Un campo obligatorio se marca en la etiqueta (`required` en `FieldLabel` o en `Label`), no con un asterisco pegado al placeholder.",
       "Para un buscador con sugerencias no uses `Input` a mano: `Combobox` o `Autocomplete`.",
     ],
     props: { Input: { size: "`sm` 32px · `md` 40px · `lg` 48px, con el texto un paso más grande." } },
-    related: ["label", "textarea", "select", "combobox"],
+    related: ["field", "label", "textarea", "select", "combobox"],
   },
   textarea: {
     title: "Textarea",
@@ -260,6 +336,43 @@ export const COMPONENTS = {
     ],
     usage: ["Arriba del campo, no al costado: en un celular al costado no entra.", "El texto de ayuda va debajo del campo, no dentro del label."],
     related: ["input", "textarea", "checkbox"],
+  },
+  "otp-field": {
+    title: "OTPField",
+    group: "formularios",
+    description: "El código de verificación: una casilla por dígito y un solo valor, con el autorrelleno del SMS.",
+    keyboard: [
+      ["Tab", "Entra y sale del campo entero. Adentro hay una sola casilla tabulable, la activa."],
+      ["0-9", "Escribe en la casilla y salta a la siguiente."],
+      ["Backspace", "Borra el dígito y retrocede. Con ⌘/Ctrl borra el código entero."],
+      ["Delete", "Borra el dígito sin moverse de casilla."],
+      ["← →", "Se mueve entre casillas. Con ⌘/Ctrl va al principio o al final."],
+      ["Home / End", "Primera casilla · última casilla escrita."],
+      ["⌘V", "Pega el código completo y lo reparte entre las casillas."],
+    ],
+    a11y: [
+      "El contenedor es un `role=\"group\"` nombrado por el `FieldLabel`, y cada casilla hereda ese nombre: se anuncia un campo con nombre, no seis campos de texto anónimos.",
+      "Debajo viaja un input oculto con el valor entero: es el que lleva el `name`, el `required` y el largo, así que la validación y el submit hablan del código, no de un dígito.",
+      "Solo la casilla activa queda en el orden de tabulación: se entra y se sale con un Tab, no con seis.",
+      "`autoComplete=\"one-time-code\"` va en la primera casilla y en el input oculto: es lo que hace que iOS y Android ofrezcan el código del SMS. Pisarlo lo apaga.",
+      "El error lo anuncia `FieldError` una sola vez, sobre el grupo. `aria-invalid` aparece cuando la invalidez la declara la app (`<Field invalid>` o un error del servidor); la que calcula el navegador pinta con `data-invalid`.",
+    ],
+    usage: [
+      "**Siempre dentro de un `Field` con `FieldLabel`.** Sin etiqueta, seis casillas son seis cajas sin nombre.",
+      "**Seis casillas y `validationType=\"numeric\"`** salvo que el proveedor mande otra cosa: es lo que la gente espera y lo que pone el teclado numérico en el celular.",
+      "`onValueComplete` en lugar de un botón «Continuar»: cuando entra el último dígito no queda nada que decidir. Dejá el botón solo si el envío cuesta plata o es irreversible.",
+      "`autoSubmit` manda el formulario solo al completarse. Úsalo cuando el error se puede reintentar sin costo; si no, el envío accidental es peor que un click de más.",
+      "`mask` tapa los dígitos como una contraseña: casi nunca hace falta. Ver lo que se escribió es justamente lo que evita el segundo intento.",
+      "No lo uses para un CUIT, una tarjeta ni un teléfono: esos son un `Input` con `inputMode`, porque se copian, se corrigen al medio y no tienen largo fijo de una cifra por casilla.",
+    ],
+    props: {
+      OTPField: {
+        length: "Cuántas casillas. Seis es lo que manda casi todo el mundo por SMS.",
+        size: "`sm` 32px · `md` 40px · `lg` 48px, las mismas alturas que `Input`.",
+        inputClassName: "Clases de cada casilla, para tocar el ancho o el tipo de letra sin reescribir el componente.",
+      },
+    },
+    related: ["input", "label", "textarea"],
   },
   select: {
     title: "Select",
@@ -446,6 +559,45 @@ export const COMPONENTS = {
       },
     },
     related: ["input", "switch", "progress"],
+  },
+  "number-field": {
+    title: "NumberField",
+    group: "formularios",
+    description: "Un número con botones de −/+, topes de verdad y formato por locale. El valor sale como `number`, no como texto.",
+    keyboard: [
+      ["↑ ↓", "Suben y bajan un `step`."],
+      ["Shift + ↑ ↓", "Un `largeStep` (10 por defecto)."],
+      ["Alt + ↑ ↓", "Un `smallStep` (0,1 por defecto)."],
+      ["Inicio · Fin", "Van al `min` y al `max`, pero solo cuando ese tope está definido."],
+      ["Tab", "Una sola parada: el input. Los botones −/+ tienen `tabindex=\"-1\"` a propósito, porque el teclado ya sube y baja con las flechas."],
+      ["Re Pág · Av Pág", "No hacen nada: Base UI no las ata. Para saltos grandes está Shift + flecha."],
+    ],
+    a11y: [
+      "El input es `type=\"text\"` con `inputmode=\"numeric\"`, no `type=\"number\"`: así el número formateado («$ 12.500») se puede mostrar sin que el navegador lo rechace, y el teclado del celular sigue siendo el numérico.",
+      "`aria-roledescription` se lee «Campo numérico» antes del valor; los botones se anuncian «Aumentar» y «Disminuir». Los tres textos se cambian con `labels`.",
+      "Adentro de un `Field`, la etiqueta nombra al input por `aria-labelledby`, sin `htmlFor` ni `id`. Suelto, el `aria-label` que pases viaja al input, no al grupo.",
+      "En el tope, el botón queda `disabled` de verdad: no es solo un gris.",
+      "El borde rojo sale del `aria-invalid` del input (`has-[input[aria-invalid=true]]`), así que el estado inválido lo maneja el `Field` y no hay que pintarlo a mano.",
+    ],
+    usage: [
+      "**Si el número exacto importa, es este componente y no un `Slider`.** El slider es para proporciones; acá el dato se tipea, se pega y se verifica.",
+      "**No uses `<input type=\"number\">`.** El valor sale como string, el navegador acepta «1e5» y «--3», y no hay forma de mostrar moneda sin romper lo que se envía.",
+      "`format` y `locale` son los de `Intl.NumberFormat`: cambian lo que se ve, nunca lo que viaja en el submit, que es siempre el número crudo.",
+      "Un campo vacío es `null`, no `0`. Distinguir «no cargó nada» de «cargó cero» es casi siempre lo que hace falta.",
+      "`min` y `max` son topes reales: los steppers y las flechas clampean. Si querés que se pueda escribir fuera de rango y que valide el navegador, `allowOutOfRange`.",
+      "`onValueCommitted` para lo caro (pegarle a la API): `onValueChange` dispara en cada tecla.",
+      "No trae zona de arrastre (`ScrubArea`). Es un gesto sin afordancia visible, sin equivalente de teclado y que cambia un dato en silencio: en un formulario es un problema, no una comodidad. Quien la necesite la compone con `@base-ui/react/number-field`.",
+    ],
+    props: {
+      NumberField: {
+        size: "`sm` 32px · `md` 40px · `lg` 48px. Los mismos altos que `Input`.",
+        className: "Clases de la superficie con borde. Acá va el ancho: `className=\"w-32\"`.",
+        inputClassName: "Clases del `<input>`. Por defecto va centrado y con cifras de ancho fijo.",
+        labels: "`increment`, `decrement` y `roleDescription`: los tres textos que lee el lector de pantalla.",
+        placeholder: "Texto del input vacío. Con `format` casi nunca hace falta: el formato ya dice qué se espera.",
+      },
+    },
+    related: ["input", "slider", "textarea"],
   },
   // ───────────────────────────── Superposiciones ─────────────────────────────
   dialog: {
