@@ -484,6 +484,45 @@ export const COMPONENTS = {
     },
     related: ["input", "switch", "progress"],
   },
+  "number-field": {
+    title: "NumberField",
+    group: "formularios",
+    description: "Un número con botones de −/+, topes de verdad y formato por locale. El valor sale como `number`, no como texto.",
+    keyboard: [
+      ["↑ ↓", "Suben y bajan un `step`."],
+      ["Shift + ↑ ↓", "Un `largeStep` (10 por defecto)."],
+      ["Alt + ↑ ↓", "Un `smallStep` (0,1 por defecto)."],
+      ["Inicio · Fin", "Van al `min` y al `max`, pero solo cuando ese tope está definido."],
+      ["Tab", "Una sola parada: el input. Los botones −/+ tienen `tabindex=\"-1\"` a propósito, porque el teclado ya sube y baja con las flechas."],
+      ["Re Pág · Av Pág", "No hacen nada: Base UI no las ata. Para saltos grandes está Shift + flecha."],
+    ],
+    a11y: [
+      "El input es `type=\"text\"` con `inputmode=\"numeric\"`, no `type=\"number\"`: así el número formateado («$ 12.500») se puede mostrar sin que el navegador lo rechace, y el teclado del celular sigue siendo el numérico.",
+      "`aria-roledescription` se lee «Campo numérico» antes del valor; los botones se anuncian «Aumentar» y «Disminuir». Los tres textos se cambian con `labels`.",
+      "Adentro de un `Field`, la etiqueta nombra al input por `aria-labelledby`, sin `htmlFor` ni `id`. Suelto, el `aria-label` que pases viaja al input, no al grupo.",
+      "En el tope, el botón queda `disabled` de verdad: no es solo un gris.",
+      "El borde rojo sale del `aria-invalid` del input (`has-[input[aria-invalid=true]]`), así que el estado inválido lo maneja el `Field` y no hay que pintarlo a mano.",
+    ],
+    usage: [
+      "**Si el número exacto importa, es este componente y no un `Slider`.** El slider es para proporciones; acá el dato se tipea, se pega y se verifica.",
+      "**No uses `<input type=\"number\">`.** El valor sale como string, el navegador acepta «1e5» y «--3», y no hay forma de mostrar moneda sin romper lo que se envía.",
+      "`format` y `locale` son los de `Intl.NumberFormat`: cambian lo que se ve, nunca lo que viaja en el submit, que es siempre el número crudo.",
+      "Un campo vacío es `null`, no `0`. Distinguir «no cargó nada» de «cargó cero» es casi siempre lo que hace falta.",
+      "`min` y `max` son topes reales: los steppers y las flechas clampean. Si querés que se pueda escribir fuera de rango y que valide el navegador, `allowOutOfRange`.",
+      "`onValueCommitted` para lo caro (pegarle a la API): `onValueChange` dispara en cada tecla.",
+      "No trae zona de arrastre (`ScrubArea`). Es un gesto sin afordancia visible, sin equivalente de teclado y que cambia un dato en silencio: en un formulario es un problema, no una comodidad. Quien la necesite la compone con `@base-ui/react/number-field`.",
+    ],
+    props: {
+      NumberField: {
+        size: "`sm` 32px · `md` 40px · `lg` 48px. Los mismos altos que `Input`.",
+        className: "Clases de la superficie con borde. Acá va el ancho: `className=\"w-32\"`.",
+        inputClassName: "Clases del `<input>`. Por defecto va centrado y con cifras de ancho fijo.",
+        labels: "`increment`, `decrement` y `roleDescription`: los tres textos que lee el lector de pantalla.",
+        placeholder: "Texto del input vacío. Con `format` casi nunca hace falta: el formato ya dice qué se espera.",
+      },
+    },
+    related: ["input", "slider", "textarea"],
+  },
   // ───────────────────────────── Superposiciones ─────────────────────────────
   dialog: {
     title: "Dialog",
