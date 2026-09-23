@@ -26,6 +26,9 @@
     "url": "https://github.com/sebafermanelli/sebs7n-ui/issues"
   },
   "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
   "sideEffects": [
     "**/*.css"
   ],
@@ -40,6 +43,7 @@
   "publishConfig": {
     "access": "public"
   },
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
