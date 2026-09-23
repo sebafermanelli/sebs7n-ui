@@ -160,8 +160,17 @@ function MenubarSeparator({ className, ...props }: MenubarSeparatorProps) {
  * En un menubar es la mitad del trabajo del componente: el menú se abre una vez
  * para descubrir el comando y después se usa el atajo para siempre.
  */
-function MenubarShortcut({ className, ...props }: React.ComponentProps<"span">) {
-  return <span data-slot="menubar-shortcut" className={cn("ml-auto pl-6 text-label-12-mono text-gray-900", className)} {...props} />
+// El atajo es contenido, no decoración: un lector tiene que decir que existe. Pero pegado al
+// label se lee «Guardar⌘S» de corrido, porque el nombre accesible concatena los textos sin
+// separador. La coma sr-only más el espacio lo vuelven «Guardar, ⌘S». Misma técnica que
+// `SidebarItemBadge`, por el mismo motivo.
+function MenubarShortcut({ className, children, ...props }: React.ComponentProps<"span">) {
+  return (
+    <span data-slot="menubar-shortcut" className={cn("ml-auto pl-6 text-label-12-mono text-gray-900", className)} {...props}>
+      <span className="sr-only">,</span>{" "}
+      {children}
+    </span>
+  )
 }
 
 function MenubarSub(props: MenuPrimitive.SubmenuRoot.Props) {

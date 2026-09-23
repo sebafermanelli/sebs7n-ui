@@ -190,8 +190,17 @@ function ContextMenuSeparator({ className, ...props }: ContextMenuSeparatorProps
  * Acá pesa más que en un `DropdownMenu`: es el cartel que enseña el otro camino
  * a la misma acción, el que va a usar quien no puede abrir este menú.
  */
-function ContextMenuShortcut({ className, ...props }: React.ComponentProps<"span">) {
-  return <span data-slot="context-menu-shortcut" className={cn("ml-auto text-label-12-mono text-gray-900", className)} {...props} />
+// El atajo es contenido, no decoración: un lector tiene que decir que existe. Pero pegado al
+// label se lee «Guardar⌘S» de corrido, porque el nombre accesible concatena los textos sin
+// separador. La coma sr-only más el espacio lo vuelven «Guardar, ⌘S». Misma técnica que
+// `SidebarItemBadge`, por el mismo motivo.
+function ContextMenuShortcut({ className, children, ...props }: React.ComponentProps<"span">) {
+  return (
+    <span data-slot="context-menu-shortcut" className={cn("ml-auto text-label-12-mono text-gray-900", className)} {...props}>
+      <span className="sr-only">,</span>{" "}
+      {children}
+    </span>
+  )
 }
 
 function ContextMenuSub(props: ContextMenuPrimitive.SubmenuRoot.Props) {

@@ -100,8 +100,17 @@ function DropdownMenuSeparator({ className, ...props }: DropdownMenuSeparatorPro
   return <MenuPrimitive.Separator data-slot="dropdown-menu-separator" className={cn(menuSeparatorClassName, className)} {...props} />
 }
 
-function DropdownMenuShortcut({ className, ...props }: React.ComponentProps<"span">) {
-  return <span data-slot="dropdown-menu-shortcut" className={cn("ml-auto text-label-12-mono text-gray-900", className)} {...props} />
+// El atajo es contenido, no decoración: un lector tiene que decir que existe. Pero pegado al
+// label se lee «Guardar⌘S» de corrido, porque el nombre accesible concatena los textos sin
+// separador. La coma sr-only más el espacio lo vuelven «Guardar, ⌘S». Misma técnica que
+// `SidebarItemBadge`, por el mismo motivo.
+function DropdownMenuShortcut({ className, children, ...props }: React.ComponentProps<"span">) {
+  return (
+    <span data-slot="dropdown-menu-shortcut" className={cn("ml-auto text-label-12-mono text-gray-900", className)} {...props}>
+      <span className="sr-only">,</span>{" "}
+      {children}
+    </span>
+  )
 }
 
 function DropdownMenuSub(props: MenuPrimitive.SubmenuRoot.Props) {
