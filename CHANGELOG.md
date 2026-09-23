@@ -9,6 +9,18 @@ major.
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-09-23
+
+### Fixed
+
+- **Los sourcemaps que estrenó la 0.5.0 apuntaban a archivos que no existen.**
+  `dist/*.js.map` referenciaba `../../src/*.tsx`, y `src/` no viaja en el
+  tarball: en cada corrida de tests de una app consumidora, Vitest escupía un
+  `Sourcemap for … points to missing source files` por módulo —78 líneas de ruido
+  en una app real— y el stack trace no mejoraba igual. Ahora el fuente va adentro
+  del mapa (`inlineSources`), así que funcionan de verdad. El tarball pasa de 118
+  a 258 KB comprimido; los `.map` no entran en el bundle de la app.
+
 ## [0.5.0] - 2026-09-23
 
 Una auditoría completa de la 0.4.0 —arquitectura, accesibilidad, rendimiento, API
@@ -651,7 +663,8 @@ pnpm add sebs7n-ui @base-ui/react next-themes sonner geist
   global —un provider de locale o un diccionario único—, así que una app en otro
   idioma tiene que pasar `labels` en cada punto de uso.
 
-[Unreleased]: https://github.com/sebafermanelli/sebs7n-ui/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/sebafermanelli/sebs7n-ui/compare/v0.5.1...HEAD
+[0.5.1]: https://github.com/sebafermanelli/sebs7n-ui/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/sebafermanelli/sebs7n-ui/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/sebafermanelli/sebs7n-ui/compare/v0.3.3...v0.4.0
 [0.3.3]: https://github.com/sebafermanelli/sebs7n-ui/compare/v0.3.2...v0.3.3

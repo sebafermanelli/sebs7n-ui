@@ -6,9 +6,18 @@
     "declaration": true,
     // Sourcemaps del JS: cuando una app cae en un stack trace adentro de `dist/`, el bundler
     // puede devolverle la línea del `.tsx` original en vez de la del compilado.
-    // `declarationMap` NO: apuntaría a `src/`, que no está en `files` y no se publica, así que
-    // el editor seguiría al "ir a la definición" hacia un archivo que en node_modules no existe.
+    //
+    // `inlineSources` es obligatorio acá, no un lujo: `src/` no está en `files`, así que un
+    // mapa que solo apunte a `../../src/*.tsx` referencia archivos que en `node_modules` no
+    // existen. Vitest lo detecta y escupe un warning por módulo —58 líneas de ruido en cada
+    // corrida de cada app— y el stack trace igual no mejora. Con el fuente adentro del mapa,
+    // funciona de verdad. Cuesta ~200 KB en el tarball, que es lo que vale que un error en
+    // producción diga la línea del `.tsx`.
     "sourceMap": true,
+    "inlineSources": true,
+    // `declarationMap` NO: apuntaría a `src/` igual que arriba, pero no tiene equivalente de
+    // `inlineSources`, así que el "ir a la definición" del editor caería en un archivo que no
+    // está. Los `.d.ts` ya llevan los comentarios, que es lo que se quiere leer ahí.
     "noEmit": false,
     "types": []
   },
