@@ -5,7 +5,7 @@ import { CheckIcon, ChevronDownIcon, Loader2Icon, XIcon } from "lucide-react"
 import type * as React from "react"
 
 import { useLabels } from "../lib/labels.js"
-import { cn } from "../lib/utils.js"
+import { cn, type WithClassName } from "../lib/utils.js"
 import { badgeVariants } from "../variants/badge.js"
 import { inputShellButtonClassName, inputShellClassName, inputShellInputClassName } from "../variants/input.js"
 import { menuItemClassName, menuPopupClassName } from "../variants/menu.js"
@@ -80,10 +80,8 @@ function ComboboxInput({
   )
 }
 
-type ComboboxContentProps = Omit<ComboboxPrimitive.Popup.Props, "className"> &
-  Pick<ComboboxPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset" | "anchor"> & {
-    className?: string
-  }
+type ComboboxContentProps = WithClassName<ComboboxPrimitive.Popup.Props> &
+  Pick<ComboboxPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset" | "anchor">
 
 // Panel de menú (shadow-menu, radio 12, p-1), al menos tan ancho como el input.
 function ComboboxContent({ className, side = "bottom", sideOffset = 6, align = "start", alignOffset = 0, anchor, ...props }: ComboboxContentProps) {
@@ -100,13 +98,13 @@ function ComboboxContent({ className, side = "bottom", sideOffset = 6, align = "
   )
 }
 
-type ComboboxListProps = Omit<ComboboxPrimitive.List.Props, "className"> & { className?: string }
+type ComboboxListProps = WithClassName<ComboboxPrimitive.List.Props>
 
 function ComboboxList({ className, ...props }: ComboboxListProps) {
   return <ComboboxPrimitive.List data-slot="combobox-list" className={cn("scroll-py-1 outline-none", className)} {...props} />
 }
 
-type ComboboxItemProps = Omit<ComboboxPrimitive.Item.Props, "className"> & { className?: string }
+type ComboboxItemProps = WithClassName<ComboboxPrimitive.Item.Props>
 
 // menuItemClassName + check a la derecha si está elegido.
 function ComboboxItem({ className, children, ...props }: ComboboxItemProps) {
@@ -120,26 +118,25 @@ function ComboboxItem({ className, children, ...props }: ComboboxItemProps) {
   )
 }
 
-type ComboboxGroupProps = Omit<ComboboxPrimitive.Group.Props, "className"> & { className?: string }
+type ComboboxGroupProps = WithClassName<ComboboxPrimitive.Group.Props>
 
 function ComboboxGroup({ className, ...props }: ComboboxGroupProps) {
   return <ComboboxPrimitive.Group data-slot="combobox-group" className={cn("py-1", className)} {...props} />
 }
 
-type ComboboxLabelProps = Omit<ComboboxPrimitive.GroupLabel.Props, "className"> & { className?: string }
+type ComboboxLabelProps = WithClassName<ComboboxPrimitive.GroupLabel.Props>
 
 function ComboboxLabel({ className, ...props }: ComboboxLabelProps) {
   return <ComboboxPrimitive.GroupLabel data-slot="combobox-label" className={cn("px-2 py-1.5 text-label-12 text-gray-900", className)} {...props} />
 }
 
-type ComboboxSeparatorProps = Omit<ComboboxPrimitive.Separator.Props, "className"> & { className?: string }
+type ComboboxSeparatorProps = WithClassName<ComboboxPrimitive.Separator.Props>
 
 function ComboboxSeparator({ className, ...props }: ComboboxSeparatorProps) {
   return <ComboboxPrimitive.Separator data-slot="combobox-separator" className={cn("-mx-1 my-1 h-px bg-gray-400", className)} {...props} />
 }
 
-type ComboboxEmptyProps = Omit<ComboboxPrimitive.Empty.Props, "className"> & {
-  className?: string
+type ComboboxEmptyProps = WithClassName<ComboboxPrimitive.Empty.Props> & {
   labels?: { empty?: string }
 }
 
@@ -155,8 +152,7 @@ function ComboboxEmpty({ className, children, labels, ...props }: ComboboxEmptyP
   )
 }
 
-type ComboboxStatusProps = Omit<ComboboxPrimitive.Status.Props, "className"> & {
-  className?: string
+type ComboboxStatusProps = WithClassName<ComboboxPrimitive.Status.Props> & {
   /** Búsqueda async en curso: fila con spinner. */
   loading?: boolean
   labels?: { loading?: string }
@@ -180,8 +176,7 @@ function ComboboxStatus({ className, loading = false, labels, children, ...props
   )
 }
 
-type ComboboxChipsProps = Omit<ComboboxPrimitive.Chips.Props, "className"> & {
-  className?: string
+type ComboboxChipsProps = WithClassName<ComboboxPrimitive.Chips.Props> & {
   size?: InputSize
   showTrigger?: boolean
   showClear?: boolean
@@ -225,8 +220,7 @@ function ComboboxChips({ className, size = "md", showTrigger = true, showClear =
   )
 }
 
-type ComboboxChipProps = Omit<ComboboxPrimitive.Chip.Props, "className"> & {
-  className?: string
+type ComboboxChipProps = WithClassName<ComboboxPrimitive.Chip.Props> & {
   /** Prefijo del nombre del botón de quitar: "Quitar Chile". */
   removeLabel?: string
   /** Texto para el nombre accesible cuando children no es texto. */

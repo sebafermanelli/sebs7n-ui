@@ -193,7 +193,11 @@ describe("registry", () => {
     expect(button.files[0].type).toBe("registry:ui")
     expect(button.files[0].path).toMatch(/^registry\/sebs7n-ui\/ui\/button\.tsx$/)
     expect(button.dependencies).toContain("@base-ui/react")
-    expect(button.files[0].content).toContain('import { cn } from "@/lib/utils"')
+    // El import de `lib/utils` se reescribe al alias estándar de shadcn, traiga lo que traiga:
+    // `cn` siempre, y desde 0.5.0 también el tipo `WithClassName`. Lo que no puede faltar es la
+    // dependencia al ítem `utils`, que es el que copia ese archivo al proyecto destino.
+    expect(button.files[0].content).toMatch(/^import \{ cn(, [^}]*)? \} from "@\/lib\/utils"$/m)
+    expect(button.registryDependencies).toContain("https://ui.sebastianfermanelli.com/r/utils.json")
   })
 })
 

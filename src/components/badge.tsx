@@ -1,4 +1,4 @@
-import { cn } from "../lib/utils.js"
+import { cn, type WithClassName } from "../lib/utils.js"
 import { renderElement, type RenderElement } from "../lib/render.js"
 import { badgeDotColor, badgeVariants, type BadgeColor } from "../variants/badge.js"
 
@@ -7,9 +7,10 @@ type BadgeTone =
   | { variant?: "subtle"; color?: BadgeColor }
   | { variant: "solid"; color?: "gray" | "brand" }
 
-type BadgeProps = Omit<React.ComponentProps<"span">, "color" | "className"> &
+// El `color` del `<span>` también se saca: acá `color` es la paleta del badge, no el
+// atributo HTML heredado, y dejarlos conviviendo hace que TypeScript acepte `color="#333"`.
+type BadgeProps = WithClassName<Omit<React.ComponentProps<"span">, "color">> &
   BadgeTone & {
-    className?: string
     size?: "sm" | "md"
     dot?: boolean
     /** El elemento que se renderiza en lugar del `<span>`: `render={<a href="/planes" />}`. */

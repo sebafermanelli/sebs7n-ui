@@ -2,10 +2,9 @@
 
 import { Switch as SwitchPrimitive } from "@base-ui/react/switch"
 
-import { cn } from "../lib/utils.js"
+import { cn, type WithClassName } from "../lib/utils.js"
 
-type SwitchProps = Omit<SwitchPrimitive.Root.Props, "className"> & {
-  className?: string
+type SwitchProps = WithClassName<SwitchPrimitive.Root.Props> & {
   size?: "sm" | "md"
   variant?: "default" | "accent"
 }

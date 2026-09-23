@@ -3,7 +3,7 @@
 import type * as React from "react"
 import { AlertDialog as AlertDialogPrimitive } from "@base-ui/react/alert-dialog"
 
-import { cn } from "../lib/utils.js"
+import { cn, type WithClassName } from "../lib/utils.js"
 import type { ButtonTextSize } from "../variants/button.js"
 import { Button, type ButtonBaseProps } from "./button.js"
 
@@ -23,7 +23,7 @@ function AlertDialogClose(props: AlertDialogPrimitive.Close.Props) {
   return <AlertDialogPrimitive.Close data-slot="alert-dialog-close" {...props} />
 }
 
-type AlertDialogOverlayProps = Omit<AlertDialogPrimitive.Backdrop.Props, "className"> & { className?: string }
+type AlertDialogOverlayProps = WithClassName<AlertDialogPrimitive.Backdrop.Props>
 
 function AlertDialogOverlay({ className, ...props }: AlertDialogOverlayProps) {
   return (
@@ -38,7 +38,7 @@ function AlertDialogOverlay({ className, ...props }: AlertDialogOverlayProps) {
   )
 }
 
-type AlertDialogContentProps = Omit<AlertDialogPrimitive.Popup.Props, "className"> & { className?: string }
+type AlertDialogContentProps = WithClassName<AlertDialogPrimitive.Popup.Props>
 
 function AlertDialogContent({ className, ...props }: AlertDialogContentProps) {
   return (
@@ -71,13 +71,13 @@ function AlertDialogFooter({ className, ...props }: React.ComponentProps<"div">)
   )
 }
 
-type AlertDialogTitleProps = Omit<AlertDialogPrimitive.Title.Props, "className"> & { className?: string }
+type AlertDialogTitleProps = WithClassName<AlertDialogPrimitive.Title.Props>
 
 function AlertDialogTitle({ className, ...props }: AlertDialogTitleProps) {
   return <AlertDialogPrimitive.Title data-slot="alert-dialog-title" className={cn("text-heading-20 text-gray-1000", className)} {...props} />
 }
 
-type AlertDialogDescriptionProps = Omit<AlertDialogPrimitive.Description.Props, "className"> & { className?: string }
+type AlertDialogDescriptionProps = WithClassName<AlertDialogPrimitive.Description.Props>
 
 function AlertDialogDescription({ className, ...props }: AlertDialogDescriptionProps) {
   return (
@@ -101,8 +101,7 @@ function AlertDialogAction({ variant = "default", ...props }: AlertDialogActionP
   return <Button data-slot="alert-dialog-action" variant={variant} {...props} />
 }
 
-type AlertDialogCancelProps = Omit<AlertDialogPrimitive.Close.Props, "className"> & {
-  className?: string
+type AlertDialogCancelProps = WithClassName<AlertDialogPrimitive.Close.Props> & {
   /** Mismo motivo que en `AlertDialogAction`: acá siempre hay texto. */
   size?: ButtonTextSize
 }

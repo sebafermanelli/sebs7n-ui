@@ -2,7 +2,7 @@
 
 import { Button as ButtonPrimitive } from "@base-ui/react/button"
 
-import { cn } from "../lib/utils.js"
+import { cn, type WithClassName } from "../lib/utils.js"
 import {
   buttonVariants,
   type ButtonIconSize,
@@ -11,9 +11,8 @@ import {
 } from "../variants/button.js"
 import { Spinner } from "./spinner.js"
 
-type ButtonBaseProps = Omit<ButtonPrimitive.Props, "className"> &
+type ButtonBaseProps = WithClassName<ButtonPrimitive.Props> &
   Omit<ButtonVariantProps, "size"> & {
-    className?: string
     loading?: boolean
   }
 

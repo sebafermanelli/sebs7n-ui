@@ -3,7 +3,7 @@
 import type * as React from "react"
 import { Slider as SliderPrimitive } from "@base-ui/react/slider"
 
-import { cn } from "../lib/utils.js"
+import { cn, type WithClassName } from "../lib/utils.js"
 
 /**
  * Elegir un número —o un rango— arrastrando. Va cuando el valor exacto importa
@@ -15,11 +15,7 @@ import { cn } from "../lib/utils.js"
  * mueve con las flechas, salta de a `largeStep` con Página arriba/abajo y va a
  * los extremos con Inicio/Fin.
  */
-type SliderProps<Value extends number | readonly number[] = number | readonly number[]> = Omit<
-  SliderPrimitive.Root.Props<Value>,
-  "className"
-> & {
-  className?: string
+type SliderProps<Value extends number | readonly number[] = number | readonly number[]> = WithClassName<SliderPrimitive.Root.Props<Value>> & {
   /** Alto del área que recibe el arrastre: `sm` 32px, `md` 40px, como el resto de los controles. */
   size?: "sm" | "md"
   /** Etiqueta visible. Base UI la asocia sola con los thumbs; sin ella hace falta `aria-label`. */

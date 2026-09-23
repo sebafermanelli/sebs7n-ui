@@ -4,7 +4,7 @@ import type * as React from "react"
 import { Menu as MenuPrimitive } from "@base-ui/react/menu"
 import { CheckIcon, ChevronRightIcon } from "lucide-react"
 
-import { cn } from "../lib/utils.js"
+import { cn, type WithClassName } from "../lib/utils.js"
 import { menuItemClassName, menuPopupClassName, type MenuInsetProps } from "../variants/menu.js"
 
 function DropdownMenu(props: MenuPrimitive.Root.Props) {
@@ -15,8 +15,8 @@ function DropdownMenuTrigger(props: MenuPrimitive.Trigger.Props) {
   return <MenuPrimitive.Trigger data-slot="dropdown-menu-trigger" {...props} />
 }
 
-type DropdownMenuContentProps = Omit<MenuPrimitive.Popup.Props, "className"> &
-  Pick<MenuPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset"> & { className?: string }
+type DropdownMenuContentProps = WithClassName<MenuPrimitive.Popup.Props> &
+  Pick<MenuPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset">
 
 function DropdownMenuContent({ className, align = "start", alignOffset = 0, side = "bottom", sideOffset = 6, ...props }: DropdownMenuContentProps) {
   return (
@@ -32,7 +32,7 @@ function DropdownMenuGroup(props: MenuPrimitive.Group.Props) {
   return <MenuPrimitive.Group data-slot="dropdown-menu-group" {...props} />
 }
 
-type DropdownMenuLabelProps = Omit<MenuPrimitive.GroupLabel.Props, "className"> & MenuInsetProps & { className?: string }
+type DropdownMenuLabelProps = WithClassName<MenuPrimitive.GroupLabel.Props> & MenuInsetProps
 
 function DropdownMenuLabel({ className, inset, ...props }: DropdownMenuLabelProps) {
   return (
@@ -45,8 +45,8 @@ function DropdownMenuLabel({ className, inset, ...props }: DropdownMenuLabelProp
   )
 }
 
-type DropdownMenuItemProps = Omit<MenuPrimitive.Item.Props, "className"> &
-  MenuInsetProps & { className?: string; variant?: "default" | "destructive" }
+type DropdownMenuItemProps = WithClassName<MenuPrimitive.Item.Props> &
+  MenuInsetProps & { variant?: "default" | "destructive" }
 
 function DropdownMenuItem({ className, inset, variant = "default", ...props }: DropdownMenuItemProps) {
   return (
@@ -64,7 +64,7 @@ function DropdownMenuItem({ className, inset, variant = "default", ...props }: D
   )
 }
 
-type DropdownMenuCheckboxItemProps = Omit<MenuPrimitive.CheckboxItem.Props, "className"> & { className?: string }
+type DropdownMenuCheckboxItemProps = WithClassName<MenuPrimitive.CheckboxItem.Props>
 
 function DropdownMenuCheckboxItem({ className, children, ...props }: DropdownMenuCheckboxItemProps) {
   return (
@@ -81,7 +81,7 @@ function DropdownMenuRadioGroup(props: MenuPrimitive.RadioGroup.Props) {
   return <MenuPrimitive.RadioGroup data-slot="dropdown-menu-radio-group" {...props} />
 }
 
-type DropdownMenuRadioItemProps = Omit<MenuPrimitive.RadioItem.Props, "className"> & { className?: string }
+type DropdownMenuRadioItemProps = WithClassName<MenuPrimitive.RadioItem.Props>
 
 function DropdownMenuRadioItem({ className, children, ...props }: DropdownMenuRadioItemProps) {
   return (
@@ -94,7 +94,7 @@ function DropdownMenuRadioItem({ className, children, ...props }: DropdownMenuRa
   )
 }
 
-type DropdownMenuSeparatorProps = Omit<MenuPrimitive.Separator.Props, "className"> & { className?: string }
+type DropdownMenuSeparatorProps = WithClassName<MenuPrimitive.Separator.Props>
 
 function DropdownMenuSeparator({ className, ...props }: DropdownMenuSeparatorProps) {
   return <MenuPrimitive.Separator data-slot="dropdown-menu-separator" className={cn("-mx-1 my-1 h-px bg-gray-400", className)} {...props} />
@@ -108,7 +108,7 @@ function DropdownMenuSub(props: MenuPrimitive.SubmenuRoot.Props) {
   return <MenuPrimitive.SubmenuRoot data-slot="dropdown-menu-sub" {...props} />
 }
 
-type DropdownMenuSubTriggerProps = Omit<MenuPrimitive.SubmenuTrigger.Props, "className"> & MenuInsetProps & { className?: string }
+type DropdownMenuSubTriggerProps = WithClassName<MenuPrimitive.SubmenuTrigger.Props> & MenuInsetProps
 
 function DropdownMenuSubTrigger({ className, inset, children, ...props }: DropdownMenuSubTriggerProps) {
   return (

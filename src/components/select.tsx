@@ -3,13 +3,12 @@
 import { Select as SelectPrimitive } from "@base-ui/react/select"
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react"
 
-import { cn } from "../lib/utils.js"
+import { cn, type WithClassName } from "../lib/utils.js"
 import { menuItemClassName, menuPopupClassName } from "../variants/menu.js"
 
 const Select = SelectPrimitive.Root
 
-type SelectTriggerProps = Omit<SelectPrimitive.Trigger.Props, "className"> & {
-  className?: string
+type SelectTriggerProps = WithClassName<SelectPrimitive.Trigger.Props> & {
   size?: "sm" | "md" | "lg"
 }
 
@@ -36,16 +35,14 @@ function SelectTrigger({ className, size = "md", children, ...props }: SelectTri
   )
 }
 
-type SelectValueProps = Omit<SelectPrimitive.Value.Props, "className"> & { className?: string }
+type SelectValueProps = WithClassName<SelectPrimitive.Value.Props>
 
 function SelectValue({ className, ...props }: SelectValueProps) {
   return <SelectPrimitive.Value data-slot="select-value" className={cn("flex-1 text-left", className)} {...props} />
 }
 
-type SelectContentProps = Omit<SelectPrimitive.Popup.Props, "className"> &
-  Pick<SelectPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset" | "alignItemWithTrigger"> & {
-    className?: string
-  }
+type SelectContentProps = WithClassName<SelectPrimitive.Popup.Props> &
+  Pick<SelectPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset" | "alignItemWithTrigger">
 
 function SelectContent({
   className,
@@ -81,7 +78,7 @@ function SelectContent({
   )
 }
 
-type SelectItemProps = Omit<SelectPrimitive.Item.Props, "className"> & { className?: string }
+type SelectItemProps = WithClassName<SelectPrimitive.Item.Props>
 
 function SelectItem({ className, children, ...props }: SelectItemProps) {
   return (
@@ -94,19 +91,19 @@ function SelectItem({ className, children, ...props }: SelectItemProps) {
   )
 }
 
-type SelectGroupProps = Omit<SelectPrimitive.Group.Props, "className"> & { className?: string }
+type SelectGroupProps = WithClassName<SelectPrimitive.Group.Props>
 
 function SelectGroup({ className, ...props }: SelectGroupProps) {
   return <SelectPrimitive.Group data-slot="select-group" className={cn("py-1", className)} {...props} />
 }
 
-type SelectLabelProps = Omit<SelectPrimitive.GroupLabel.Props, "className"> & { className?: string }
+type SelectLabelProps = WithClassName<SelectPrimitive.GroupLabel.Props>
 
 function SelectLabel({ className, ...props }: SelectLabelProps) {
   return <SelectPrimitive.GroupLabel data-slot="select-label" className={cn("px-2 py-1.5 text-label-12 text-gray-900", className)} {...props} />
 }
 
-type SelectSeparatorProps = Omit<SelectPrimitive.Separator.Props, "className"> & { className?: string }
+type SelectSeparatorProps = WithClassName<SelectPrimitive.Separator.Props>
 
 function SelectSeparator({ className, ...props }: SelectSeparatorProps) {
   return <SelectPrimitive.Separator data-slot="select-separator" className={cn("-mx-1 my-1 h-px bg-gray-400", className)} {...props} />

@@ -5,7 +5,7 @@ import { ChevronDownIcon, XIcon } from "lucide-react"
 import type * as React from "react"
 
 import { useLabels } from "../lib/labels.js"
-import { cn } from "../lib/utils.js"
+import { cn, type WithClassName } from "../lib/utils.js"
 import { inputShellButtonClassName, inputShellClassName, inputShellInputClassName } from "../variants/input.js"
 import { menuItemClassName } from "../variants/menu.js"
 import {
@@ -81,14 +81,14 @@ function AutocompleteInput({
   )
 }
 
-type AutocompleteItemProps = Omit<AutocompletePrimitive.Item.Props, "className"> & { className?: string }
+type AutocompleteItemProps = WithClassName<AutocompletePrimitive.Item.Props>
 
 // Sin check: una sugerencia no queda "elegida", completa el texto.
 function AutocompleteItem({ className, ...props }: AutocompleteItemProps) {
   return <AutocompletePrimitive.Item data-slot="autocomplete-item" className={cn(menuItemClassName, "w-full", className)} {...props} />
 }
 
-type AutocompleteSeparatorProps = Omit<AutocompletePrimitive.Separator.Props, "className"> & { className?: string }
+type AutocompleteSeparatorProps = WithClassName<AutocompletePrimitive.Separator.Props>
 
 function AutocompleteSeparator({ className, ...props }: AutocompleteSeparatorProps) {
   return <AutocompletePrimitive.Separator data-slot="autocomplete-separator" className={cn("-mx-1 my-1 h-px bg-gray-400", className)} {...props} />

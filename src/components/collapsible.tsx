@@ -2,7 +2,7 @@
 
 import { Collapsible as CollapsiblePrimitive } from "@base-ui/react/collapsible"
 
-import { cn } from "../lib/utils.js"
+import { cn, type WithClassName } from "../lib/utils.js"
 
 /**
  * Mostrar y ocultar un bloque con un botón. Es la pieza simple que hay detrás
@@ -17,7 +17,7 @@ import { cn } from "../lib/utils.js"
  * El trigger no trae estilo: va `render={<Button variant="ghost" />}` o el
  * elemento que corresponda, como en el resto del paquete.
  */
-type CollapsibleProps = Omit<CollapsiblePrimitive.Root.Props, "className"> & { className?: string }
+type CollapsibleProps = WithClassName<CollapsiblePrimitive.Root.Props>
 
 function Collapsible({ className, ...props }: CollapsibleProps) {
   return <CollapsiblePrimitive.Root data-slot="collapsible" className={cn("flex flex-col", className)} {...props} />
@@ -27,8 +27,7 @@ function CollapsibleTrigger(props: CollapsiblePrimitive.Trigger.Props) {
   return <CollapsiblePrimitive.Trigger data-slot="collapsible-trigger" {...props} />
 }
 
-type CollapsibleContentProps = Omit<CollapsiblePrimitive.Panel.Props, "className"> & {
-  className?: string
+type CollapsibleContentProps = WithClassName<CollapsiblePrimitive.Panel.Props> & {
   /** Clases del panel que anima el alto. El `className` viaja al contenido, no acá. */
   panelClassName?: string
 }

@@ -1,7 +1,6 @@
-import { cn } from "../lib/utils.js"
+import { cn, type WithClassName } from "../lib/utils.js"
 
-type SeparatorProps = Omit<React.ComponentProps<"div">, "className"> & {
-  className?: string
+type SeparatorProps = WithClassName<React.ComponentProps<"div">> & {
   /** `horizontal` ocupa el ancho; `vertical` se estira al alto del flex y necesita uno. */
   orientation?: "horizontal" | "vertical"
 }

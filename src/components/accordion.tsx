@@ -3,7 +3,7 @@
 import { Accordion as AccordionPrimitive } from "@base-ui/react/accordion"
 import { ChevronDownIcon } from "lucide-react"
 
-import { cn } from "../lib/utils.js"
+import { cn, type WithClassName } from "../lib/utils.js"
 
 /**
  * Secciones plegables que se leen como una lista: preguntas frecuentes, un
@@ -18,7 +18,7 @@ import { cn } from "../lib/utils.js"
  * global del paquete, así que con movimiento reducido el panel aparece y
  * desaparece sin recorrido.
  */
-type AccordionProps = Omit<AccordionPrimitive.Root.Props, "className"> & { className?: string }
+type AccordionProps = WithClassName<AccordionPrimitive.Root.Props>
 
 function Accordion({ className, ...props }: AccordionProps) {
   return (
@@ -30,14 +30,13 @@ function Accordion({ className, ...props }: AccordionProps) {
   )
 }
 
-type AccordionItemProps = Omit<AccordionPrimitive.Item.Props, "className"> & { className?: string }
+type AccordionItemProps = WithClassName<AccordionPrimitive.Item.Props>
 
 function AccordionItem({ className, ...props }: AccordionItemProps) {
   return <AccordionPrimitive.Item data-slot="accordion-item" className={cn("border-t border-gray-400", className)} {...props} />
 }
 
-type AccordionTriggerProps = Omit<AccordionPrimitive.Trigger.Props, "className"> & {
-  className?: string
+type AccordionTriggerProps = WithClassName<AccordionPrimitive.Trigger.Props> & {
   /** Clases del `<h3>` que envuelve al botón. */
   headerClassName?: string
   /** Saca el chevron, para poner otro indicador. */
@@ -75,8 +74,7 @@ function AccordionTrigger({ className, chevron = true, children, headerClassName
   )
 }
 
-type AccordionContentProps = Omit<AccordionPrimitive.Panel.Props, "className"> & {
-  className?: string
+type AccordionContentProps = WithClassName<AccordionPrimitive.Panel.Props> & {
   /** Clases del panel que anima el alto. El `className` viaja al contenido, no acá. */
   panelClassName?: string
 }

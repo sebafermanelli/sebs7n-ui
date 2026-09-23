@@ -2,10 +2,9 @@
 
 import { Avatar as AvatarPrimitive } from "@base-ui/react/avatar"
 
-import { cn } from "../lib/utils.js"
+import { cn, type WithClassName } from "../lib/utils.js"
 
-type AvatarProps = Omit<AvatarPrimitive.Root.Props, "className"> & {
-  className?: string
+type AvatarProps = WithClassName<AvatarPrimitive.Root.Props> & {
   size?: "sm" | "md" | "lg"
 }
 
@@ -43,7 +42,7 @@ function AvatarImage({ className, ...props }: AvatarImageProps) {
   return <AvatarPrimitive.Image data-slot="avatar-image" className={cn("size-full object-cover", className)} {...props} />
 }
 
-type AvatarFallbackProps = Omit<AvatarPrimitive.Fallback.Props, "className"> & { className?: string }
+type AvatarFallbackProps = WithClassName<AvatarPrimitive.Fallback.Props>
 
 // Sin color por persona: siempre gris.
 function AvatarFallback({ className, ...props }: AvatarFallbackProps) {

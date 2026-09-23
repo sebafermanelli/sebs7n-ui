@@ -2,7 +2,7 @@ import { ChevronRightIcon } from "lucide-react"
 import * as React from "react"
 
 import { renderElement, type RenderElement } from "../lib/render.js"
-import { cn } from "../lib/utils.js"
+import { cn, type WithClassName } from "../lib/utils.js"
 import { linkVariants } from "../variants/link.js"
 
 type BreadcrumbProps = React.ComponentProps<"nav">
@@ -77,8 +77,7 @@ function BreadcrumbItem({ className, ...props }: React.ComponentProps<"li">) {
   return <li data-slot="breadcrumb-item" className={cn("inline-flex min-w-0 items-center gap-1.5", className)} {...props} />
 }
 
-type BreadcrumbLinkProps = Omit<React.ComponentProps<"a">, "className"> & {
-  className?: string
+type BreadcrumbLinkProps = WithClassName<React.ComponentProps<"a">> & {
   /** El elemento que se renderiza en lugar del `<a>`: `render={<Link href="/facturas" />}`. */
   render?: RenderElement
 }

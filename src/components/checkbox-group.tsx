@@ -5,7 +5,7 @@ import { Checkbox as CheckboxPrimitive } from "@base-ui/react/checkbox"
 import { CheckboxGroup as CheckboxGroupPrimitive } from "@base-ui/react/checkbox-group"
 import { Field as FieldPrimitive } from "@base-ui/react/field"
 
-import { cn } from "../lib/utils.js"
+import { cn, type WithClassName } from "../lib/utils.js"
 import { Checkbox } from "./checkbox.js"
 import { FieldDescription, FieldLabel } from "./field.js"
 
@@ -38,7 +38,7 @@ import { FieldDescription, FieldLabel } from "./field.js"
  * Para opciones excluyentes va `RadioGroup`; para una sola casilla —aceptar los
  * términos— alcanza con `Checkbox`.
  */
-type CheckboxGroupProps = Omit<CheckboxGroupPrimitive.Props, "className"> & { className?: string }
+type CheckboxGroupProps = WithClassName<CheckboxGroupPrimitive.Props>
 
 function CheckboxGroup({ className, ...props }: CheckboxGroupProps) {
   return (

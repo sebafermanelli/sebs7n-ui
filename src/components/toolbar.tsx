@@ -2,7 +2,7 @@
 
 import { Toolbar as ToolbarPrimitive } from "@base-ui/react/toolbar"
 
-import { cn } from "../lib/utils.js"
+import { cn, type WithClassName } from "../lib/utils.js"
 import { Button } from "./button.js"
 
 /**
@@ -22,7 +22,7 @@ import { Button } from "./button.js"
  *
  * `orientation="vertical"` cambia las flechas a ↑ ↓ y da vuelta los separadores.
  */
-type ToolbarProps = Omit<ToolbarPrimitive.Root.Props, "className"> & { className?: string }
+type ToolbarProps = WithClassName<ToolbarPrimitive.Root.Props>
 
 /**
  * Los hijos que el primitivo metió en el recorrido.
@@ -87,7 +87,7 @@ function Toolbar({ className, onKeyDown, ...props }: ToolbarProps) {
  * deshabilitado que desaparece del recorrido con flechas mueve la barra abajo
  * de los dedos, y encima nunca se puede leer por qué está apagado.
  */
-type ToolbarButtonProps = Omit<ToolbarPrimitive.Button.Props, "className"> & { className?: string }
+type ToolbarButtonProps = WithClassName<ToolbarPrimitive.Button.Props>
 
 // El `aria-label` se saca de las props y se vuelve a poner a mano en el `render` por defecto en vez
 // de viajar con el resto: ese render es un botón de ícono, y el `aria-label` que trae el elemento de
@@ -136,7 +136,7 @@ function ToolbarGroup({ className, ...props }: ToolbarGroupProps) {
  * lleva separadores verticales— así que las dos alturas van escritas y la que
  * manda la elige el `data-orientation` que pone el primitivo.
  */
-type ToolbarSeparatorProps = Omit<ToolbarPrimitive.Separator.Props, "className"> & { className?: string }
+type ToolbarSeparatorProps = WithClassName<ToolbarPrimitive.Separator.Props>
 
 function ToolbarSeparator({ className, ...props }: ToolbarSeparatorProps) {
   return (
@@ -160,7 +160,7 @@ function ToolbarSeparator({ className, ...props }: ToolbarSeparatorProps) {
  * botón: en una barra de acciones, lo único que navega tiene que verse distinto
  * de lo que ejecuta. Para el `Link` del framework, `render={<NextLink … />}`.
  */
-type ToolbarLinkProps = Omit<ToolbarPrimitive.Link.Props, "className"> & { className?: string }
+type ToolbarLinkProps = WithClassName<ToolbarPrimitive.Link.Props>
 
 function ToolbarLink({ className, ...props }: ToolbarLinkProps) {
   return (
@@ -185,7 +185,7 @@ function ToolbarLink({ className, ...props }: ToolbarLinkProps) {
  * texto en vez de saltar al control de al lado, así que escribir funciona como
  * en cualquier input.
  */
-type ToolbarInputProps = Omit<ToolbarPrimitive.Input.Props, "className"> & { className?: string }
+type ToolbarInputProps = WithClassName<ToolbarPrimitive.Input.Props>
 
 function ToolbarInput({ className, ...props }: ToolbarInputProps) {
   return (

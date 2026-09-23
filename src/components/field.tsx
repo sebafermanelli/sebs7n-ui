@@ -2,7 +2,7 @@
 
 import { Field as FieldPrimitive } from "@base-ui/react/field"
 
-import { cn } from "../lib/utils.js"
+import { cn, type WithClassName } from "../lib/utils.js"
 
 /**
  * Un campo: la etiqueta, el control, la ayuda y el error, atados entre sí.
@@ -29,7 +29,7 @@ import { cn } from "../lib/utils.js"
  * `name` es lo que ata el campo con `Form`: es la clave que se usa tanto en los
  * valores del submit como en el objeto `errors` que devuelve el servidor.
  */
-type FieldProps = Omit<FieldPrimitive.Root.Props, "className"> & { className?: string }
+type FieldProps = WithClassName<FieldPrimitive.Root.Props>
 
 function Field({ className, ...props }: FieldProps) {
   return (
@@ -44,8 +44,7 @@ function Field({ className, ...props }: FieldProps) {
  * `required` solo dibuja el asterisco. Que el campo sea obligatorio de verdad
  * lo decide el `required` del control, que es lo que valida el navegador.
  */
-type FieldLabelProps = Omit<FieldPrimitive.Label.Props, "className"> & {
-  className?: string
+type FieldLabelProps = WithClassName<FieldPrimitive.Label.Props> & {
   required?: boolean
 }
 
@@ -75,7 +74,7 @@ function FieldLabel({ className, required = false, children, ...props }: FieldLa
  * se deja vacío. Va siempre visible, no en un tooltip: una ayuda que hay que
  * descubrir no ayuda a quien más la necesita.
  */
-type FieldDescriptionProps = Omit<FieldPrimitive.Description.Props, "className"> & { className?: string }
+type FieldDescriptionProps = WithClassName<FieldPrimitive.Description.Props>
 
 function FieldDescription({ className, ...props }: FieldDescriptionProps) {
   return (
@@ -118,8 +117,7 @@ function FieldDescription({ className, ...props }: FieldDescriptionProps) {
  * razonamiento sale del modelo de regiones vivas, no de una sesión de
  * VoiceOver.
  */
-type FieldErrorProps = Omit<FieldPrimitive.Error.Props, "className"> & {
-  className?: string
+type FieldErrorProps = WithClassName<FieldPrimitive.Error.Props> & {
   /** `role="alert"` para que el error se anuncie al aparecer. Solo con `validationMode="onChange"`. */
   alert?: boolean
 }

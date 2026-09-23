@@ -3,7 +3,7 @@
 import type * as React from "react"
 import { PreviewCard as PreviewCardPrimitive } from "@base-ui/react/preview-card"
 
-import { cn } from "../lib/utils.js"
+import { cn, type WithClassName } from "../lib/utils.js"
 
 /**
  * La tarjeta que aparece al pasar el mouse por un link: la ficha de una
@@ -25,7 +25,7 @@ function HoverCard(props: PreviewCardPrimitive.Root.Props) {
   return <PreviewCardPrimitive.Root {...props} />
 }
 
-type HoverCardTriggerProps = Omit<PreviewCardPrimitive.Trigger.Props, "className"> & { className?: string }
+type HoverCardTriggerProps = WithClassName<PreviewCardPrimitive.Trigger.Props>
 
 function HoverCardTrigger({ className, closeDelay = 300, delay = 600, ...props }: HoverCardTriggerProps) {
   return (
@@ -39,8 +39,8 @@ function HoverCardTrigger({ className, closeDelay = 300, delay = 600, ...props }
   )
 }
 
-type HoverCardContentProps = Omit<PreviewCardPrimitive.Popup.Props, "className"> &
-  Pick<PreviewCardPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset"> & { className?: string }
+type HoverCardContentProps = WithClassName<PreviewCardPrimitive.Popup.Props> &
+  Pick<PreviewCardPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset">
 
 function HoverCardContent({
   align = "center",

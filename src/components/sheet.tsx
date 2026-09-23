@@ -6,7 +6,7 @@ import { XIcon } from "lucide-react"
 
 import { useAvisoDeNombre } from "../internal/dialog-name-warning.js"
 import { useLabels } from "../lib/labels.js"
-import { cn } from "../lib/utils.js"
+import { cn, type WithClassName } from "../lib/utils.js"
 import { Button } from "./button.js"
 
 function Sheet(props: SheetPrimitive.Root.Props) {
@@ -21,8 +21,7 @@ function SheetClose(props: SheetPrimitive.Close.Props) {
   return <SheetPrimitive.Close data-slot="sheet-close" {...props} />
 }
 
-type SheetContentProps = Omit<SheetPrimitive.Popup.Props, "className"> & {
-  className?: string
+type SheetContentProps = WithClassName<SheetPrimitive.Popup.Props> & {
   side?: "top" | "right" | "bottom" | "left"
   showCloseButton?: boolean
   /**
@@ -82,13 +81,13 @@ function SheetFooter({ className, ...props }: React.ComponentProps<"div">) {
   return <div data-slot="sheet-footer" className={cn("mt-auto flex flex-col gap-2 border-t border-gray-400 p-6", className)} {...props} />
 }
 
-type SheetTitleProps = Omit<SheetPrimitive.Title.Props, "className"> & { className?: string }
+type SheetTitleProps = WithClassName<SheetPrimitive.Title.Props>
 
 function SheetTitle({ className, ...props }: SheetTitleProps) {
   return <SheetPrimitive.Title data-slot="sheet-title" className={cn("text-heading-20 text-gray-1000", className)} {...props} />
 }
 
-type SheetDescriptionProps = Omit<SheetPrimitive.Description.Props, "className"> & { className?: string }
+type SheetDescriptionProps = WithClassName<SheetPrimitive.Description.Props>
 
 function SheetDescription({ className, ...props }: SheetDescriptionProps) {
   return <SheetPrimitive.Description data-slot="sheet-description" className={cn("text-copy-14 text-gray-900", className)} {...props} />

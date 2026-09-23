@@ -2,15 +2,15 @@
 
 import { Tabs as TabsPrimitive } from "@base-ui/react/tabs"
 
-import { cn } from "../lib/utils.js"
+import { cn, type WithClassName } from "../lib/utils.js"
 
-type TabsProps = Omit<TabsPrimitive.Root.Props, "className"> & { className?: string }
+type TabsProps = WithClassName<TabsPrimitive.Root.Props>
 
 function Tabs({ className, ...props }: TabsProps) {
   return <TabsPrimitive.Root data-slot="tabs" className={cn("flex flex-col gap-4", className)} {...props} />
 }
 
-type TabsListProps = Omit<TabsPrimitive.List.Props, "className"> & { className?: string }
+type TabsListProps = WithClassName<TabsPrimitive.List.Props>
 
 function TabsList({ className, ...props }: TabsListProps) {
   return (
@@ -22,7 +22,7 @@ function TabsList({ className, ...props }: TabsListProps) {
   )
 }
 
-type TabsTriggerProps = Omit<TabsPrimitive.Tab.Props, "className"> & { className?: string }
+type TabsTriggerProps = WithClassName<TabsPrimitive.Tab.Props>
 
 function TabsTrigger({ className, ...props }: TabsTriggerProps) {
   return (
@@ -46,7 +46,7 @@ function TabsTrigger({ className, ...props }: TabsTriggerProps) {
   )
 }
 
-type TabsContentProps = Omit<TabsPrimitive.Panel.Props, "className"> & { className?: string }
+type TabsContentProps = WithClassName<TabsPrimitive.Panel.Props>
 
 /**
  * El panel es tabulable (Base UI le pone `tabIndex=0` para que el contenido

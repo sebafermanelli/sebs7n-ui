@@ -6,7 +6,7 @@ import { useRender } from "@base-ui/react/use-render"
 import { SearchIcon } from "lucide-react"
 
 import { useLabels } from "../lib/labels.js"
-import { cn } from "../lib/utils.js"
+import { cn, type WithClassName } from "../lib/utils.js"
 import { AppShellContext, SidebarContext, SidebarInSheetContext, useSidebarContext } from "../internal/shell-context.js"
 import { sidebarItemVariants } from "../variants/sidebar.js"
 import { Kbd } from "./kbd.js"
@@ -176,8 +176,7 @@ function textOf(nodes: React.ReactNode[]): string | undefined {
   return parts.length === nodes.length && parts.length > 0 ? parts.join("").trim() : undefined
 }
 
-type SidebarItemProps = Omit<useRender.ComponentProps<"a">, "className"> & {
-  className?: string
+type SidebarItemProps = WithClassName<useRender.ComponentProps<"a">> & {
   icon?: React.ReactNode
   /** Marca la sección actual: pone aria-current="page" y data-active. */
   active?: boolean

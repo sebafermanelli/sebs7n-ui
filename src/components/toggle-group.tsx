@@ -2,10 +2,10 @@
 
 import { ToggleGroup as ToggleGroupPrimitive } from "@base-ui/react/toggle-group"
 
-import { cn } from "../lib/utils.js"
+import { cn, type WithClassName } from "../lib/utils.js"
 import { Toggle, type ToggleProps } from "./toggle.js"
 
-type ToggleGroupProps = Omit<ToggleGroupPrimitive.Props, "className"> & { className?: string }
+type ToggleGroupProps = WithClassName<ToggleGroupPrimitive.Props>
 
 function ToggleGroup({ className, ...props }: ToggleGroupProps) {
   return (

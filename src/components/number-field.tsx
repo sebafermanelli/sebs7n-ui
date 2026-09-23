@@ -4,7 +4,7 @@ import { NumberField as NumberFieldPrimitive } from "@base-ui/react/number-field
 import { MinusIcon, PlusIcon } from "lucide-react"
 
 import { useLabels } from "../lib/labels.js"
-import { cn } from "../lib/utils.js"
+import { cn, type WithClassName } from "../lib/utils.js"
 import { inputShellButtonClassName, inputShellClassName, inputShellInputClassName } from "../variants/input.js"
 
 /**
@@ -29,7 +29,7 @@ import { inputShellButtonClassName, inputShellClassName, inputShellInputClassNam
  * Teclado: ↑/↓ mueven un `step`, con Shift un `largeStep`, con Alt un
  * `smallStep`, e Inicio/Fin van al `min` y al `max` cuando están definidos.
  */
-type NumberFieldProps = Omit<NumberFieldPrimitive.Root.Props, "className"> & {
+type NumberFieldProps = WithClassName<NumberFieldPrimitive.Root.Props> & {
   /** Clases de la superficie con borde (el grupo). Acá va el ancho: `className="w-32"`. */
   className?: string
   /** Clases del `<input>`, por si hay que cambiarle la alineación del número. */

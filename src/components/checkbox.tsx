@@ -3,9 +3,9 @@
 import { Checkbox as CheckboxPrimitive } from "@base-ui/react/checkbox"
 import { CheckIcon, MinusIcon } from "lucide-react"
 
-import { cn } from "../lib/utils.js"
+import { cn, type WithClassName } from "../lib/utils.js"
 
-type CheckboxProps = Omit<CheckboxPrimitive.Root.Props, "className"> & { className?: string }
+type CheckboxProps = WithClassName<CheckboxPrimitive.Root.Props>
 
 function Checkbox({ className, ...props }: CheckboxProps) {
   return (
