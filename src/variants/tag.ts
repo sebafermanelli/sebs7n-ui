@@ -32,14 +32,21 @@ export const tagVariants = ({ color = "gray", size = "md", removable = false, cl
     className
   )
 
-/** El botón de quitar. Hereda el color del tag y se apoya en `gray-alpha` para el hover. */
+/**
+ * El botón de quitar. Hereda el color del tag y se apoya en `gray-alpha` para el hover.
+ *
+ * El círculo mide 4px menos que el alto del tag, así el aire que le queda arriba
+ * y abajo (2px en `sm`, 4px en `md`) es el mismo que el `pr` del cuerpo. Con un
+ * círculo más grande el hover se lee aplastado contra los bordes aunque esté
+ * centrado: lo que se compara no es el centro sino los tres espacios.
+ */
 export const tagRemoveClassName: Record<TagSize, string> = {
   sm: cn(
     "inline-flex size-4 shrink-0 cursor-pointer items-center justify-center rounded-full outline-none transition-control",
     "hover:bg-gray-alpha-300 focus-visible:focus-ring [&_svg]:pointer-events-none [&_svg]:size-3"
   ),
   md: cn(
-    "inline-flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-full outline-none transition-control",
+    "inline-flex size-4 shrink-0 cursor-pointer items-center justify-center rounded-full outline-none transition-control",
     "hover:bg-gray-alpha-300 focus-visible:focus-ring [&_svg]:pointer-events-none [&_svg]:size-3"
   ),
 }

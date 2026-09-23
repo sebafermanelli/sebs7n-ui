@@ -67,6 +67,9 @@ describe("Tag", () => {
     expect(screen.getByRole("button")).toHaveClass("focus-visible:focus-ring", "transition-control", "rounded-full")
   })
 
+  // El botón mide 4px menos que el tag en los dos tamaños: ese es el aire que le
+  // queda arriba y abajo, y tiene que coincidir con el `pr` del cuerpo (2px en
+  // `sm`, 4px en `md`) o el círculo del hover se lee descentrado.
   it("tamaños: 20px y 24px, con su botón proporcional", () => {
     const { rerender } = render(
       <Tag onRemove={() => {}} size="sm">
@@ -77,7 +80,7 @@ describe("Tag", () => {
     expect(screen.getByRole("button")).toHaveClass("size-4")
     rerender(<Tag onRemove={() => {}}>React</Tag>)
     expect(screen.getByText("React").closest("[data-slot=tag]")).toHaveClass("h-6", "pr-1")
-    expect(screen.getByRole("button")).toHaveClass("size-5")
+    expect(screen.getByRole("button")).toHaveClass("size-4")
   })
 
   it("el className del llamador gana sobre la variante", () => {
