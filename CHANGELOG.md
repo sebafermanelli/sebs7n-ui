@@ -72,6 +72,93 @@ Fase 1 de la auditoría de 0.4.0: los bugs con evidencia.
   la instalación usaba `bg-blue-500`, que sí compila (Geist tiene escala `blue`).
 - Se sacan las referencias a versiones que nunca existieron (1.2, 1.3.0, 1.4).
 
+---
+
+Fase 2 de la auditoría de 0.4.0: accesibilidad.
+
+### Added
+
+- **`sebs7n-ui/labels`: `LabelsProvider`, `useLabels` y `defaultLabels`.** Los
+  textos que los componentes escriben solos —«Cerrar», «Sin resultados», «Ir al
+  contenido», «Buscando…»— se traducen todos de una vez desde el layout raíz.
+  `defaultLabels` está tipado como `Labels` completo, así que
+  `{ ...defaultLabels, ...en }` hace que TypeScript marque lo que falte. La prop
+  `labels` de cada componente sigue existiendo y le gana al provider: es la
+  excepción de una pantalla, no la traducción. `Breadcrumb`, `Pagination`, `Tag`
+  y `PageHeader` no leen del provider a propósito —los volvería componentes de
+  cliente y hoy se pueden renderizar en un Server Component—: sus textos van por
+  prop, como venían.
+- **`labels={{ close }}` en `DialogContent`, `SheetContent` y `DrawerContent`.**
+  Era el único texto del paquete que no se podía cambiar de ninguna forma.
+- **`alert` en `FieldError`**: le pone `role="alert"` para que el error se
+  anuncie al aparecer. Es opt-in y solo para `validationMode="onChange"`: en el
+  camino de enviar, `Form` ya mueve el foco al campo y un `role="alert"`
+  duplicaría el anuncio interrumpiendo el del nombre del campo.
+- **Aviso en desarrollo** cuando un `DialogContent`, `SheetContent` o
+  `DrawerContent` se monta sin nombre accesible. No se puede exigir por tipo
+  —el título es un hijo—, y en producción el aviso no existe.
+
+### Fixed
+
+- **Placeholders a `gray-900`** (WCAG 1.4.3): en claro `gray-700` daba 3,23:1;
+  ahora 8,45:1 en claro y 7,57:1 en oscuro. Toca `Input`, `Textarea`,
+  `SelectTrigger`, `Combobox`, `Autocomplete` y `ToolbarInput`.
+- **El contorno de Checkbox, Radio, Switch y Toggle sin marcar a `gray-700`**
+  (WCAG 1.4.11, 3:1): Checkbox y Radio pasan de 1,66/2,06 a 3,23/6,12; Switch y
+  Toggle apagados, de 1,20/1,46 a lo mismo. En el Switch además arregla que el
+  pulgar blanco era invisible contra su propia pista (1,20:1 → 3,23:1). El borde
+  del `Input` se deja como está y la decisión queda escrita en
+  `accesibilidad.md`.
+- **El borde de foco de los campos se ve en claro** (WCAG 2.4.11): de 1,78:1 a
+  4,12:1. En oscuro se queda donde estaba, que ya daba 5,51.
+- **Anillo de foco en los popups de `Popover`, `HoverCard` y `NavigationMenu`**:
+  sin nada tabulable adentro, Base UI enfoca el popup y con `outline-none` no se
+  veía nada (WCAG 2.4.7).
+- **Objetivos táctiles de 24×24** (WCAG 2.5.8): el botón de quitar de `Tag` y de
+  `ComboboxChip` suman área con un `::after` sin cambiar el dibujo (16→24 y
+  20→28), y el link de `Breadcrumb` pasa de 32×16 a 32×24.
+
+### Changed
+
+- **Breaking — los nombres accesibles que el sistema puede exigir, los exige.**
+  `Button` con un `size` de ícono escrito literal pide `aria-label` o
+  `aria-labelledby`; `Progress` y `Meter` piden `label`, `aria-label` o
+  `aria-labelledby`; `AvatarImage` pide `alt` (aunque sea `""`); `ToolbarGroup`
+  pide `aria-label`. `ButtonProps` es genérico en el `size` para que la
+  exigencia no rompa a quien envuelve el botón y ya pasa el nombre bien.
+  *Migración:* agregá el nombre donde el compilador lo pida. Si ya está en los
+  hijos o en un envoltorio, escribilo igual en el `aria-label` del `Button`, que
+  es el que termina en el DOM.
+- `AlertDialogAction` y `AlertDialogCancel` aceptan solo los tamaños con texto:
+  sus botones nunca son de ícono.
+- La X de `Dialog`, `Sheet` y `Drawer` lleva el nombre en `aria-label` en vez de
+  un `<span class="sr-only">`.
+
+### Docs
+
+- **`accesibilidad.md` reescrita**: cinco líneas prometían de más. `gray-800` no
+  es un color de texto (4,12:1 en claro, y no se usa como texto en ningún
+  componente); el foco visible ahora dice "sin reemplazarlo" y nombra los casos;
+  la reducción de movimiento dice la verdad —el reset global cubre todo y las
+  que tienen recorrido suman `motion-reduce`—; y `aria-invalid` sincroniza el
+  estilo con la semántica pero no es garantía por sí solo.
+- **RTL: LTR only, y dicho**, con la lista de lo que asume dirección física y el
+  camino de migración si algún día hace falta.
+- Sección **Idioma** en el README y en `instalacion.md`.
+- Los errores de formulario se escriben siempre con `match` o `validate`: el
+  mensaje del navegador sale en el idioma del navegador, no en el de la página.
+  La demo `Valores` del sitio lo muestra.
+
+### Tests
+
+- `test/contrast.test.ts` pasa de 12 a 62 pares: los grises de texto sobre los
+  tres fondos, el `Badge` en las paletas fijas, el anillo de foco de las cuatro
+  marcas y todo lo corregido en esta fase. Sigue leyendo los hexadecimales de
+  `colors.css` y `theme.css`, no una copia. Los deshabilitados quedan exentos y
+  el archivo dice por qué.
+- `test/nombres-accesibles.test.tsx` verifica los tipos con `@ts-expect-error`:
+  si alguien afloja uno, falla el `typecheck`.
+
 ## [0.4.0] - 2026-09-23
 
 Con esta versión el paquete cubre **todas las primitivas de Base UI**: 58
