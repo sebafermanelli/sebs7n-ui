@@ -35,7 +35,7 @@ function ScrollArea({ className, children, contentClassName, orientation = "vert
         data-slot="scroll-area-viewport"
         className={cn("size-full overscroll-contain rounded-[inherit] outline-none focus-visible:focus-ring", viewportClassName)}
       >
-        <ScrollAreaPrimitive.Content data-slot="scroll-area-content" className={cn(contentClassName)}>
+        <ScrollAreaPrimitive.Content data-slot="scroll-area-content" className={contentClassName}>
           {children}
         </ScrollAreaPrimitive.Content>
       </ScrollAreaPrimitive.Viewport>

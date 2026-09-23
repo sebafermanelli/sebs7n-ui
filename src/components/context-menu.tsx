@@ -23,7 +23,7 @@ import { menuItemClassName, menuLabelClassName, menuPopupClassName, menuSeparato
  * el atajo de quien ya sabe que está, no la puerta de entrada.
  */
 function ContextMenu(props: ContextMenuPrimitive.Root.Props) {
-  return <ContextMenuPrimitive.Root data-slot="context-menu" {...props} />
+  return <ContextMenuPrimitive.Root {...props} />
 }
 
 /**
@@ -195,7 +195,7 @@ function ContextMenuShortcut({ className, ...props }: React.ComponentProps<"span
 }
 
 function ContextMenuSub(props: ContextMenuPrimitive.SubmenuRoot.Props) {
-  return <ContextMenuPrimitive.SubmenuRoot data-slot="context-menu-sub" {...props} />
+  return <ContextMenuPrimitive.SubmenuRoot {...props} />
 }
 
 type ContextMenuSubTriggerProps = WithClassName<ContextMenuPrimitive.SubmenuTrigger.Props> & MenuInsetProps

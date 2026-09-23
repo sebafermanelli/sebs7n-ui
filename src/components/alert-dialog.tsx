@@ -12,7 +12,7 @@ import { Button, type ButtonBaseProps } from "./button.js"
 // en el backdrop y no tiene botón X (exige una respuesta).
 
 function AlertDialog(props: AlertDialogPrimitive.Root.Props) {
-  return <AlertDialogPrimitive.Root data-slot="alert-dialog" {...props} />
+  return <AlertDialogPrimitive.Root {...props} />
 }
 
 function AlertDialogTrigger(props: AlertDialogPrimitive.Trigger.Props) {

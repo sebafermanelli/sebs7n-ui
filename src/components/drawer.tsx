@@ -62,7 +62,7 @@ type DrawerProps = DrawerPrimitive.Root.Props
  * se descarta: `down` (por defecto) es la hoja de abajo, la de mobile.
  */
 function Drawer(props: DrawerProps) {
-  return <DrawerPrimitive.Root data-slot="drawer" {...props} />
+  return <DrawerPrimitive.Root {...props} />
 }
 
 type DrawerTriggerProps = DrawerPrimitive.Trigger.Props
@@ -219,7 +219,7 @@ function DrawerContent({ className, children, showCloseButton = true, showHandle
           {showCloseButton && (
             <DrawerPrimitive.Close
               data-base-ui-swipe-ignore=""
-              data-slot="drawer-close"
+              data-slot="drawer-close-button"
               // Mismo motivo que en Dialog: el nombre en `aria-label`, que es lo que el tipo exige.
               render={<Button variant="ghost" size="icon-sm" aria-label={labels?.close ?? l.close} className={overlayCloseClassName} />}
             >

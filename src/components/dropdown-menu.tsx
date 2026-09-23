@@ -8,7 +8,7 @@ import { cn, type WithClassName } from "../lib/utils.js"
 import { menuItemClassName, menuLabelClassName, menuPopupClassName, menuSeparatorClassName, type MenuInsetProps } from "../variants/menu.js"
 
 function DropdownMenu(props: MenuPrimitive.Root.Props) {
-  return <MenuPrimitive.Root data-slot="dropdown-menu" {...props} />
+  return <MenuPrimitive.Root {...props} />
 }
 
 function DropdownMenuTrigger(props: MenuPrimitive.Trigger.Props) {
@@ -105,7 +105,7 @@ function DropdownMenuShortcut({ className, ...props }: React.ComponentProps<"spa
 }
 
 function DropdownMenuSub(props: MenuPrimitive.SubmenuRoot.Props) {
-  return <MenuPrimitive.SubmenuRoot data-slot="dropdown-menu-sub" {...props} />
+  return <MenuPrimitive.SubmenuRoot {...props} />
 }
 
 type DropdownMenuSubTriggerProps = WithClassName<MenuPrimitive.SubmenuTrigger.Props> & MenuInsetProps

@@ -11,7 +11,7 @@ import { backdropClassName, modalFooterClassName, modalPopupClassName, overlayCl
 import { Button } from "./button.js"
 
 function Dialog(props: DialogPrimitive.Root.Props) {
-  return <DialogPrimitive.Root data-slot="dialog" {...props} />
+  return <DialogPrimitive.Root {...props} />
 }
 
 function DialogTrigger(props: DialogPrimitive.Trigger.Props) {
@@ -59,7 +59,7 @@ function DialogContent({ className, children, showCloseButton = true, labels, ..
         {children}
         {showCloseButton && (
           <DialogPrimitive.Close
-            data-slot="dialog-close"
+            data-slot="dialog-close-button"
             // El nombre va en `aria-label` y no en un `<span class="sr-only">`: el botón es solo el
             // ícono, y `ButtonProps` exige el nombre en el tipo justamente para que no se pueda
             // olvidar. Un texto escondido nombra igual de bien, pero no hay tipo que lo vea.

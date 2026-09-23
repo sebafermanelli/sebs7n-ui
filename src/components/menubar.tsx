@@ -34,7 +34,7 @@ function Menubar({ className, ...props }: MenubarProps) {
 
 /** Un título de la barra con su menú. Va directo adentro de `Menubar`. */
 function MenubarMenu(props: MenuPrimitive.Root.Props) {
-  return <MenuPrimitive.Root data-slot="menubar-menu" {...props} />
+  return <MenuPrimitive.Root {...props} />
 }
 
 type MenubarTriggerProps = WithClassName<MenuPrimitive.Trigger.Props>
@@ -165,7 +165,7 @@ function MenubarShortcut({ className, ...props }: React.ComponentProps<"span">) 
 }
 
 function MenubarSub(props: MenuPrimitive.SubmenuRoot.Props) {
-  return <MenuPrimitive.SubmenuRoot data-slot="menubar-sub" {...props} />
+  return <MenuPrimitive.SubmenuRoot {...props} />
 }
 
 type MenubarSubTriggerProps = WithClassName<MenuPrimitive.SubmenuTrigger.Props> & MenuInsetProps

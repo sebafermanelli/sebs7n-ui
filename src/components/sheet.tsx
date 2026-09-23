@@ -11,7 +11,7 @@ import { backdropClassName, overlayCloseClassName } from "../variants/overlay.js
 import { Button } from "./button.js"
 
 function Sheet(props: SheetPrimitive.Root.Props) {
-  return <SheetPrimitive.Root data-slot="sheet" {...props} />
+  return <SheetPrimitive.Root {...props} />
 }
 
 function SheetTrigger(props: SheetPrimitive.Trigger.Props) {
@@ -62,7 +62,7 @@ function SheetContent({ className, children, side = "right", showCloseButton = t
         {children}
         {showCloseButton && (
           <SheetPrimitive.Close
-            data-slot="sheet-close"
+            data-slot="sheet-close-button"
             // Mismo motivo que en Dialog: el nombre en `aria-label`, que es lo que el tipo exige.
             render={<Button variant="ghost" size="icon-sm" aria-label={labels?.close ?? l.close} className={overlayCloseClassName} />}
           >

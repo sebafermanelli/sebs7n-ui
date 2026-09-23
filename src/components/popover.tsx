@@ -7,7 +7,7 @@ import { cn, type WithClassName } from "../lib/utils.js"
 import { floatingPopupClassName } from "../variants/overlay.js"
 
 function Popover(props: PopoverPrimitive.Root.Props) {
-  return <PopoverPrimitive.Root data-slot="popover" {...props} />
+  return <PopoverPrimitive.Root {...props} />
 }
 
 function PopoverTrigger(props: PopoverPrimitive.Trigger.Props) {

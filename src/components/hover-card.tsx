@@ -32,7 +32,7 @@ function HoverCardTrigger({ className, closeDelay = 300, delay = 600, ...props }
   return (
     <PreviewCardPrimitive.Trigger
       data-slot="hover-card-trigger"
-      className={cn(className)}
+      className={className}
       closeDelay={closeDelay}
       delay={delay}
       {...props}
