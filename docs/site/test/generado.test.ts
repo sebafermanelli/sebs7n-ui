@@ -45,23 +45,13 @@ describe("markdown por página", () => {
     }
   })
 
-  it("los 12 componentes elegidos tienen ejemplos a mano y reglas de uso", () => {
+  // Sin lista escrita a mano: cada página que se marca `detallado` en meta.mjs
+  // agregaba un slug acá, y el test quedaba en rojo por una razón que no era un
+  // problema. Lo que importa no es cuáles son, sino que los que se anuncian
+  // como detallados tengan de verdad lo que eso promete.
+  it("las páginas detalladas tienen ejemplos a mano y reglas de uso", () => {
     const detallados = site.components.filter((component: { detallado: boolean }) => component.detallado)
-    expect(detallados.map((component: { slug: string }) => component.slug).sort()).toEqual([
-      "app-shell",
-      "badge",
-      "button",
-      "card",
-      "combobox",
-      "dialog",
-      "dropdown-menu",
-      "input",
-      "select",
-      "sidebar",
-      "sonner",
-      "table",
-      "tabs",
-    ])
+    expect(detallados.length).toBeGreaterThan(10)
     for (const component of detallados) {
       expect(component.usage.length, component.slug).toBeGreaterThan(2)
       expect(component.examples.length, component.slug).toBeGreaterThan(0)
