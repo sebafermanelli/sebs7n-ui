@@ -54,8 +54,8 @@ describe("cleanTypeText", () => {
 })
 
 describe("extractProps", () => {
-  it("encuentra los 40 componentes del barrel", () => {
-    expect(slugs).toHaveLength(40)
+  it("encuentra los 41 componentes del barrel", () => {
+    expect(slugs).toHaveLength(41)
   })
 
   it("rescata las variantes de cva, que declaran en node_modules pero son props del componente", () => {

@@ -357,6 +357,40 @@ export const COMPONENTS = {
     related: ["toggle", "radio-group", "tabs"],
   },
 
+  slider: {
+    title: "Slider",
+    group: "formularios",
+    description: "Elegir un número —o un rango— arrastrando. Marcas opcionales y valor visible.",
+    keyboard: [
+      ["← ↓", "Baja un `step`."],
+      ["→ ↑", "Sube un `step`."],
+      ["Shift + flecha", "Se mueve un `largeStep` (10 por defecto)."],
+      ["Re Pág · Av Pág", "Igual que Shift + flecha."],
+      ["Inicio · Fin", "Va al mínimo y al máximo."],
+      ["Tab", "Entra y sale. En un rango, cada thumb es su propia parada."],
+    ],
+    a11y: [
+      "Cada thumb es un `<input type=\"range\">` de verdad: el teclado y los lectores de pantalla lo tratan como el control nativo.",
+      "El `label` visible queda asociado a los thumbs por Base UI. Sin `label`, el `aria-label` que pases viaja al input, no solo al grupo.",
+      "En un rango, `aria-valuetext` distingue el thumb de inicio del de fin.",
+      "El anillo de foco va en el thumb (`has-[input:focus-visible]:focus-ring`), porque el foco real vive en el input de adentro.",
+      "Las marcas son `aria-hidden`: el valor lo canta el thumb, no un punto.",
+    ],
+    usage: [
+      "**Si el número exacto importa, es un `Input`.** El slider es para proporciones: volumen, opacidad, un presupuesto «de tanto a tanto».",
+      "Con `showValue` el número se lee mientras se arrastra; sin él, el valor solo existe para el lector de pantalla.",
+      "`marks` son referencias, no topes: el valor sigue siendo continuo salvo que subas el `step`.",
+      "En un rango, `minStepsBetweenValues` evita que los dos thumbs terminen encimados.",
+      "`onValueCommitted` para lo caro (pegarle a la API): `onValueChange` dispara en cada píxel del arrastre.",
+    ],
+    props: {
+      Slider: {
+        size: "`sm` 32px · `md` 40px de área arrastrable. La pista es 4px y 6px.",
+        marks: "Valores donde va un punto de referencia. Siguen a `min` y `max`, no al 0–100 fijo.",
+      },
+    },
+    related: ["input", "switch", "progress"],
+  },
   // ───────────────────────────── Superposiciones ─────────────────────────────
   dialog: {
     title: "Dialog",
