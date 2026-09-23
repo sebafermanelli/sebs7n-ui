@@ -9,7 +9,7 @@ y pegados: mismos neutros, misma tipografía, mismos radios y sombras, mismos
 estados de foco. Lo único que cambia entre productos es el color de marca, que
 son **tres variables CSS**.
 
-- ~30 componentes accesibles sobre Base UI, cada uno con su entry point.
+- 47 componentes accesibles sobre Base UI, cada uno con su entry point.
 - Tokens de color, tipografía, radios y sombras como variables CSS y utilidades
   de Tailwind v4 — sin `tailwind.config`.
 - Server Components donde no hace falta estado; `"use client"` solo donde sí.
@@ -146,8 +146,8 @@ import { cn } from "sebs7n-ui/lib/utils"
 | Subpath | Archivo |
 |---|---|
 | `sebs7n-ui/<componente>` | `src/components/<componente>.tsx` (kebab-case: `alert-dialog`, `app-shell`, `user-menu`, …) |
-| `sebs7n-ui/variants/<nombre>` | `src/variants/<nombre>.ts` (`button`, `badge`, `card`, `link`, `menu`, `sidebar`, `input`, `toggle`) |
-| `sebs7n-ui/lib/<nombre>` | `src/lib/<nombre>.ts` (`utils`) |
+| `sebs7n-ui/variants/<nombre>` | `src/variants/<nombre>.ts` (`button`, `badge`, `card`, `link`, `menu`, `sidebar`, `input`, `tag`, `toggle`) |
+| `sebs7n-ui/lib/<nombre>` | `src/lib/<nombre>.ts` (`utils`, `render`, `pagination`) |
 
 Por qué: el barrel hace `export *` de ~30 módulos `"use client"`. Next no puede
 podar referencias cliente a través de ese barrel (tampoco con
@@ -250,6 +250,18 @@ opción "Sistema".
 - **Links con forma de botón o card:** `buttonVariants()` / `cardVariants()`
   sobre `<a>` o `<Link>`. No uses `render` para links: Base UI les pone
   `role="button"`.
+- **Breadcrumb: `<nav>` + `<ol>`, y el último no es link.** Los separadores los
+  pone `BreadcrumbList` (decorativos, `aria-hidden`), los links son
+  `linkVariants({ variant: "subtle" })` y el nivel actual es un `BreadcrumbPage`
+  con `aria-current="page"`. Dentro de `PageHeader` va `BreadcrumbList` **suelto**:
+  el `<nav>` ya lo pone la prop `breadcrumb`. De cuatro niveles para arriba,
+  `maxItems={4}` colapsa el medio en un «…» con nombre accesible.
+- **Paginación: links si la página está en la URL.**
+  `render={(page) => <Link href={`?page=${page}`} />}` emite `<a>` de verdad —el
+  crawler los ve, se abren en una pestaña nueva—; `onPageChange` (botones) solo
+  para una lista que se pagina sin cambiar de URL. Qué números mostrar sale de
+  `paginationRange` (`sebs7n-ui/lib/pagination`), que es pura: si necesitás el
+  mismo cálculo en otro lado, llamala en vez de copiarla.
 - **Links de texto:** `linkVariants({ variant })` — `inline` dentro de una frase
   (subrayado siempre, línea tenue que se refuerza en hover), `subtle` suelto y
   secundario (sin subrayado en reposo; en hover sube a `gray-1000` y aparece la
@@ -258,6 +270,19 @@ opción "Sistema".
   repitas en el llamador. `icon: true` alinea una flecha con el texto. Un link
   que solo se revela en hover no existe en un celular: si es la acción principal
   de la sección, va `inline`.
+- **Badge informa, Tag es un dato.** El `Badge` cuenta un estado que calculó el
+  sistema y que el usuario no eligió ni puede sacar («Pagada», «Vencida»,
+  «Admin»). El `Tag` es algo que el usuario puso —un filtro aplicado, una
+  etiqueta, un destinatario— y por eso trae el botón de quitar, con nombre
+  accesible («Quitar Chile»). **Si tiene ×, es Tag; si no se puede sacar, es
+  Badge.** Comparten forma y paleta a propósito: el sistema tiene una sola forma
+  de etiqueta, lo que cambia es qué significa. Dentro de un `Combobox` múltiple
+  ya está `ComboboxChip`: ahí no va `Tag`.
+- **Un solo Spinner.** `Button loading` usa el mismo `Spinner` del paquete: no
+  metas un ícono que gire adentro de un botón. Suelto lleva `label` solo si es
+  él quien anuncia la espera; si el contenedor ya tiene `aria-busy`, va sin
+  nombre (`aria-hidden`). Con `prefers-reduced-motion` se queda quieto, no
+  desaparece.
 - **`DropdownMenuLabel` va dentro de `DropdownMenuGroup`.** Suelto, Base UI tira
   la página abajo.
 - **`NavigationMenu` si los ítems navegan, `DropdownMenu` si ejecutan algo.**
@@ -266,8 +291,8 @@ opción "Sistema".
   `render={<Button … />}`, no `asChild`.
 - `buttonVariants`, `badgeVariants`, `cardVariants`, `linkVariants`,
   `toggleVariants` y `sidebarItemVariants` no tienen `"use client"`: se pueden
-  llamar desde un Server Component. `Kbd`, `PageHeader`, `EmptyState`, `Stat` y
-  `AppShellContent` tampoco.
+  llamar desde un Server Component. `Kbd`, `PageHeader`, `EmptyState`, `Stat`,
+  `Spinner` y `AppShellContent` tampoco.
 
 ## Accesibilidad
 

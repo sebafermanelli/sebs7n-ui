@@ -87,7 +87,39 @@ export const COMPONENTS = {
         dot: "Agrega un punto del color del badge a la izquierda del texto.",
       },
     },
-    related: ["button", "table", "alert"],
+    related: ["button", "table", "alert", "tag"],
+  },
+  tag: {
+    title: "Tag",
+    group: "fundamentos",
+    description: "Un dato que puso el usuario y puede sacar: un filtro, una etiqueta, un destinatario.",
+    keyboard: [
+      ["Tab", "Entra al botón de quitar. El cuerpo del tag no es interactivo."],
+      ["Enter · Espacio", "Quita el tag."],
+    ],
+    a11y: [
+      "El botón de quitar siempre tiene nombre accesible: «Quitar Chile», armado con el texto del tag. Si `children` no es texto, pasale `textValue`.",
+      "El cuerpo es un `<span>`: lo único enfocable es el botón, así que una lista de diez tags son diez paradas de tabulación, no veinte.",
+      "Quitar un tag saca el foco de la página. Devolvelo al contenedor de la lista o al control que los genera, y anunciá el cambio con una región `aria-live` si la lista es lo único que cambió.",
+      "El color no puede ser la única señal de nada: el texto del tag es el dato.",
+      "Sin `\"use client\"`: sirve en un Server Component (aunque `onRemove` lo pasa, por definición, un componente cliente).",
+    ],
+    usage: [
+      "**Badge informa, Tag es un dato.** El `Badge` cuenta un estado que calculó el sistema y que el usuario no eligió ni puede sacar («Pagada», «Vencida», «Admin»). El `Tag` es algo que el usuario puso —un filtro aplicado, una etiqueta, un destinatario— y por eso se puede quitar. **Si tiene ×, es Tag; si no se puede sacar, es Badge.**",
+      "Comparte forma y paleta con `Badge subtle` a propósito: el sistema tiene una sola forma de etiqueta. Lo que cambia es qué significa, no el radio.",
+      "Dentro de un `Combobox` múltiple ya está `ComboboxChip`, conectado al estado del combobox: ahí no va `Tag`.",
+      "`size=\"sm\"` dentro de una fila de tabla; `md` suelto, arriba de una lista de resultados.",
+      "Si la etiqueta además filtra al hacer click en el cuerpo, eso es un `Toggle`, no un Tag con `onClick`.",
+    ],
+    props: {
+      Tag: {
+        onRemove: "Qué hacer al quitar. Sin esto no aparece el botón — y sin botón, probablemente sea un `Badge`.",
+        removeLabel: "Prefijo del nombre del botón: «Quitar Chile».",
+        textValue: "El texto del tag para el nombre del botón, cuando `children` no es texto.",
+        color: "Los mismos nueve tonos del Badge.",
+      },
+    },
+    related: ["badge", "combobox", "toggle"],
   },
   avatar: {
     title: "Avatar",
@@ -138,7 +170,31 @@ export const COMPONENTS = {
       "**Del tamaño de lo que viene.** Un skeleton que no coincide con el contenido final produce un salto peor que un spinner.",
       "Para una carga de menos de ~300 ms, nada: el parpadeo molesta más que la espera.",
     ],
-    related: ["card", "table"],
+    related: ["card", "table", "spinner"],
+  },
+  spinner: {
+    title: "Spinner",
+    group: "fundamentos",
+    description: "El indicador de carga: tres tamaños, el color del texto y nombre accesible opcional.",
+    keyboard: [["—", "No es interactivo."]],
+    a11y: [
+      "Sin `label` es decoración (`aria-hidden`): quien anuncia la espera es el contenedor, con `aria-busy`.",
+      "Con `label` emite `role=\"status\"` y el lector anuncia el texto al aparecer, sin robar el foco.",
+      "Con `prefers-reduced-motion` deja de girar pero **no se esconde**: un spinner que desaparece borra la única señal de que algo está pasando.",
+      "Sin `\"use client\"`: sirve en un Server Component.",
+    ],
+    usage: [
+      "**Dentro de un `Button` no lo pongas a mano**: `Button loading` ya usa este mismo Spinner, lo centra y pone `aria-busy`.",
+      "Hereda el color del texto (`currentColor`): no tiene prop de color, se pinta con `text-*` del contenedor.",
+      "Para una carga que reemplaza contenido que ya tiene forma —una tabla, una card— va `Skeleton`, no un spinner.",
+      "Un solo nombre accesible por región: si el spinner está al lado de un texto «Buscando…», el que lleva `label` es uno de los dos.",
+    ],
+    props: {
+      Spinner: {
+        size: "`sm` 16px (el del botón) · `md` 20px · `lg` 24px.",
+      },
+    },
+    related: ["button", "skeleton", "empty-state"],
   },
   stat: {
     title: "Stat",
@@ -357,6 +413,40 @@ export const COMPONENTS = {
     related: ["toggle", "radio-group", "tabs"],
   },
 
+  slider: {
+    title: "Slider",
+    group: "formularios",
+    description: "Elegir un número —o un rango— arrastrando. Marcas opcionales y valor visible.",
+    keyboard: [
+      ["← ↓", "Baja un `step`."],
+      ["→ ↑", "Sube un `step`."],
+      ["Shift + flecha", "Se mueve un `largeStep` (10 por defecto)."],
+      ["Re Pág · Av Pág", "Igual que Shift + flecha."],
+      ["Inicio · Fin", "Va al mínimo y al máximo."],
+      ["Tab", "Entra y sale. En un rango, cada thumb es su propia parada."],
+    ],
+    a11y: [
+      "Cada thumb es un `<input type=\"range\">` de verdad: el teclado y los lectores de pantalla lo tratan como el control nativo.",
+      "El `label` visible queda asociado a los thumbs por Base UI. Sin `label`, el `aria-label` que pases viaja al input, no solo al grupo.",
+      "En un rango, `aria-valuetext` distingue el thumb de inicio del de fin.",
+      "El anillo de foco va en el thumb (`has-[input:focus-visible]:focus-ring`), porque el foco real vive en el input de adentro.",
+      "Las marcas son `aria-hidden`: el valor lo canta el thumb, no un punto.",
+    ],
+    usage: [
+      "**Si el número exacto importa, es un `Input`.** El slider es para proporciones: volumen, opacidad, un presupuesto «de tanto a tanto».",
+      "Con `showValue` el número se lee mientras se arrastra; sin él, el valor solo existe para el lector de pantalla.",
+      "`marks` son referencias, no topes: el valor sigue siendo continuo salvo que subas el `step`.",
+      "En un rango, `minStepsBetweenValues` evita que los dos thumbs terminen encimados.",
+      "`onValueCommitted` para lo caro (pegarle a la API): `onValueChange` dispara en cada píxel del arrastre.",
+    ],
+    props: {
+      Slider: {
+        size: "`sm` 32px · `md` 40px de área arrastrable. La pista es 4px y 6px.",
+        marks: "Valores donde va un punto de referencia. Siguen a `min` y `max`, no al 0–100 fijo.",
+      },
+    },
+    related: ["input", "switch", "progress"],
+  },
   // ───────────────────────────── Superposiciones ─────────────────────────────
   dialog: {
     title: "Dialog",
@@ -454,6 +544,34 @@ export const COMPONENTS = {
     ],
     related: ["popover", "button", "kbd"],
   },
+  "hover-card": {
+    title: "HoverCard",
+    group: "superposiciones",
+    description: "Una tarjeta con el adelanto de un link, al pasar el mouse. Nunca contenido crítico.",
+    keyboard: [
+      ["Tab", "Enfocar el link la abre."],
+      ["Escape", "Cierra y deja el foco en el link."],
+    ],
+    a11y: [
+      "**En táctil no existe.** No hay hover y un toque navega: todo lo que esté en la tarjeta tiene que estar también del otro lado del link.",
+      "El trigger es un `<a>`: se le pasa `href`, no `render={<Button />}`.",
+      "Abre también con el foco del teclado, no solo con el mouse.",
+      "El retardo de apertura (600 ms) existe para no dispararla al pasar de largo; el de cierre (300 ms) para poder llegar con el mouse.",
+    ],
+    usage: [
+      "**Un adelanto, nunca la información.** Si el contenido es el dato, va en la página.",
+      "Si hace falta interactuar con algo, es un `Popover`: abre con click y se cierra con Escape en cualquier dispositivo.",
+      "Si es una línea que aclara un control, es un `Tooltip`.",
+      "No la cargues: una ficha, no una pantalla.",
+    ],
+    props: {
+      HoverCardTrigger: {
+        delay: "Cuánto espera antes de abrir, en ms.",
+        closeDelay: "Cuánto espera antes de cerrar, en ms.",
+      },
+    },
+    related: ["popover", "tooltip", "avatar"],
+  },
   "dropdown-menu": {
     title: "DropdownMenu",
     group: "superposiciones",
@@ -509,6 +627,73 @@ export const COMPONENTS = {
   },
 
   // ──────────────────────────────── Navegación ────────────────────────────────
+  breadcrumb: {
+    title: "Breadcrumb",
+    group: "navegacion",
+    description: "Dónde estoy en la jerarquía del sitio: `<nav>` + `<ol>`, con el medio colapsable en «…».",
+    keyboard: [
+      ["Tab", "Recorre los links. El último nivel no es link, así que no entra al orden de tabulación."],
+      ["Enter", "Navega."],
+    ],
+    a11y: [
+      "Es un `<nav aria-label=\"Migas de pan\">` con un `<ol>` adentro: el orden de los niveles es información, no estilo.",
+      "El separador es un `<li role=\"presentation\" aria-hidden=\"true\">`: el lector lee «Inicio, Clientes, 0012», no «Inicio barra Clientes».",
+      "El último nivel lleva `aria-current=\"page\"` y **no** es un link: no se navega a donde ya estás.",
+      "El «…» del colapso tiene nombre accesible (`ellipsisLabel`); el carácter en sí es `aria-hidden`.",
+      "Sin `\"use client\"`: los `<a>` salen en el HTML del server, que es lo que ve un crawler.",
+    ],
+    usage: [
+      "**Dentro de `PageHeader` va `BreadcrumbList` suelto**, sin `Breadcrumb`: el `<nav>` ya lo pone la prop `breadcrumb`, y dos landmarks anidados confunden.",
+      "**Los separadores los pone `BreadcrumbList`**, no el llamador. Para cambiarlos, `separator={<SlashIcon />}`.",
+      "**No inventes otro estilo de link**: usa `linkVariants({ variant: \"subtle\" })`, el mismo de cualquier link suelto del sistema.",
+      "Con Next, `render={<Link href=\"/clientes\" />}`: sigue siendo un `<a>`, se abre en una pestaña nueva y el crawler lo ve.",
+      "De cuatro niveles para arriba, `maxItems={4}`. En mobile un breadcrumb de seis niveles ocupa tres líneas.",
+      "No es un reemplazo del botón «Volver» del navegador ni de la navegación principal: es contexto.",
+    ],
+    props: {
+      BreadcrumbList: {
+        maxItems: "A partir de cuántos ítems se colapsa el medio. Sin valor, no colapsa nunca.",
+        separator: "Reemplaza el chevron. Es decoración: va `aria-hidden`.",
+      },
+      BreadcrumbLink: {
+        render: "El elemento que se renderiza en lugar del `<a>`: `render={<Link href=\"/x\" />}`. Clona el elemento del llamador —no es el `render` de Base UI— así que sigue siendo un `<a>`.",
+      },
+    },
+    related: ["page-header", "navigation-menu", "pagination"],
+  },
+  pagination: {
+    title: "Pagination",
+    group: "navegacion",
+    description: "Anterior, números con «…» y siguiente. Con links de verdad o con botones.",
+    keyboard: [
+      ["Tab", "Recorre los controles en el orden visual. Anterior y siguiente siguen tabulables en las puntas."],
+      ["Enter", "Va a esa página. En un control sin destino no hace nada."],
+    ],
+    a11y: [
+      "Es un `<nav aria-label=\"Paginación\">` con un `<ul>`: un lector anuncia «navegación, lista, 7 elementos».",
+      "Cada número tiene nombre accesible propio («Página 3»), no solo el dígito suelto.",
+      "La página actual lleva `aria-current=\"page\"`.",
+      "En las puntas, anterior y siguiente usan `aria-disabled` y **no** `disabled`: si se deshabilitaran, el foco se perdería justo después de hacer click. Es la misma decisión que `Button loading`.",
+      "El «…» es `role=\"presentation\"` con texto solo para lectores («Más páginas»).",
+      "Sin `\"use client\"`: en modo links los `<a>` salen en el HTML del server.",
+    ],
+    usage: [
+      "**Si la página vive en la URL, `render`**: `render={(page) => <Link href={`?page=${page}`} />}`. Son `<a>` de verdad, así que el crawler los ve, se abren en una pestaña nueva y se puede copiar el link.",
+      "**`onPageChange` solo para una lista que se pagina sin cambiar de URL.** Si al recargar volvés a la página 1, elegiste mal.",
+      "**Qué páginas mostrar es una función pura**: `paginationRange` (`sebs7n-ui/lib/pagination`). Si necesitás el mismo cálculo en otro lado —un resumen «4 de 27»—, llamala, no la copies.",
+      "El ancho no salta al cambiar de página: cuando un «…» desaparece, lo reemplaza un número.",
+      "Para una lista infinita o un scroll continuo esto no sirve: hace falta saber cuántas páginas hay.",
+    ],
+    props: {
+      Pagination: {
+        render: "Modo links: devuelve el elemento de cada página. Clona el elemento del llamador, así que sigue siendo un `<a>`.",
+        onPageChange: "Modo botones: se llama con la página destino.",
+        siblings: "Cuántas páginas a cada lado de la actual.",
+        boundaries: "Cuántas páginas fijas en cada punta.",
+      },
+    },
+    related: ["breadcrumb", "table", "button"],
+  },
   "navigation-menu": {
     title: "NavigationMenu",
     group: "navegacion",
@@ -753,6 +938,114 @@ export const COMPONENTS = {
       "Una sola acción.",
     ],
     related: ["alert", "card", "table"],
+  },
+  progress: {
+    title: "Progress",
+    group: "contenido",
+    description: "Cuánto falta para que termine algo. Determinada o indeterminada, en dos altos.",
+    keyboard: [["—", "No es interactivo."]],
+    a11y: [
+      "Emite `role=\"progressbar\"` con `aria-valuenow`, `aria-valuemin` y `aria-valuemax`.",
+      "Con `value={null}` es indeterminada: desaparece `aria-valuenow` y el lector anuncia que está en curso, sin porcentaje.",
+      "El `label` visible es el nombre accesible. Sin `label` hace falta `aria-label`.",
+      "Con movimiento reducido la franja indeterminada no queda congelada a mitad de camino: la pista se llena de un gris más apagado.",
+    ],
+    usage: [
+      "**Si sabés cuánto falta, pasá el número.** La indeterminada es para cuando no se puede saber.",
+      "La forma de algo que todavía no llegó es un `Skeleton`; el spinner de una acción es `Button loading`.",
+      "Poné `label` o `aria-label`: una barra sin nombre no dice qué está progresando.",
+      "`size=\"sm\"` dentro de una fila o una card chica; `md` suelto.",
+    ],
+    props: {
+      Progress: {
+        value: "El valor actual. `null` la deja indeterminada.",
+        size: "`sm` 4px · `md` 6px de alto de la pista.",
+        showValue: "Muestra el porcentaje a la derecha. Indeterminada no muestra número.",
+      },
+    },
+    related: ["skeleton", "slider", "button"],
+  },
+  collapsible: {
+    title: "Collapsible",
+    group: "contenido",
+    description: "Mostrar y ocultar un bloque con un botón. La pieza simple detrás del Accordion.",
+    keyboard: [
+      ["Enter · Espacio", "Abre y cierra."],
+      ["Tab", "Entra y sale del trigger."],
+    ],
+    a11y: [
+      "El trigger lleva `aria-expanded` y `aria-controls`, puestos por Base UI.",
+      "El contenido cerrado no está en el DOM salvo `keepMounted`; con `hiddenUntilFound` queda y lo encuentra el buscador del navegador.",
+      "El alto pasa por `motion-reduce`, además del reset global del paquete.",
+    ],
+    usage: [
+      "**Si hay varias secciones que son un grupo, es un `Accordion`**: trae el `<h3>` por sección.",
+      "El trigger no trae estilo a propósito: va `render={<Button variant=\"ghost\" />}`.",
+      "`className` cae en el contenido, no en el elemento que anima el alto: ahí va el padding.",
+      "Lo que está plegado no se lee ni se indexa: `keepMounted` si esos links importan para el crawler.",
+    ],
+    related: ["accordion", "card", "button"],
+  },
+  accordion: {
+    title: "Accordion",
+    group: "contenido",
+    description: "Secciones plegables que se leen como una lista. Una sola abierta, o varias.",
+    keyboard: [
+      ["Enter · Espacio", "Abre y cierra la sección enfocada."],
+      ["Tab", "Cada trigger es su propia parada: desde Base UI 1.8 no hay foco rotativo, siguiendo la corrección de la APG."],
+    ],
+    a11y: [
+      "Cada trigger va dentro de un `<h3>`: eso es lo que deja saltar de sección en sección con un lector de pantalla.",
+      "`aria-expanded` y `aria-controls` los pone Base UI; el panel es un `role=\"region\"` con el nombre del trigger.",
+      "El alto y el chevron pasan por `motion-reduce`, además del reset global del paquete.",
+      "`hiddenUntilFound` deja que el buscador del navegador (⌘F) encuentre y abra el contenido cerrado.",
+    ],
+    usage: [
+      "**Una sola sección plegable es un `Collapsible`.** El `Accordion` existe para el grupo.",
+      "Por defecto se abre una a la vez. `multiple` solo si comparar dos secciones es parte del uso.",
+      "El trigger dice de qué es la sección, no «Ver más».",
+      "No escondas ahí lo que la pantalla tiene que mostrar: lo plegado no se lee.",
+      "Si las secciones son excluyentes y cortas, probablemente sean `Tabs`.",
+    ],
+    props: {
+      Accordion: {
+        multiple: "Deja varias secciones abiertas a la vez.",
+      },
+      AccordionTrigger: {
+        chevron: "Saca el chevron para poner otro indicador.",
+      },
+    },
+    related: ["collapsible", "tabs", "card"],
+  },
+  "scroll-area": {
+    title: "ScrollArea",
+    group: "contenido",
+    description: "Una caja con scroll y una barra propia, discreta: aparece al pasar el mouse o al scrollear.",
+    keyboard: [
+      ["Tab", "Llega al viewport cuando hay desborde."],
+      ["↑ ↓ ← →", "Scrollean, como en cualquier caja con overflow."],
+      ["Re Pág · Av Pág · Inicio · Fin", "Saltan de a una pantalla o a los extremos."],
+    ],
+    a11y: [
+      "Adentro hay un `div` con `overflow` nativo: la rueda, el trackpad y el arrastre táctil funcionan como siempre. Lo único que cambia es que se oculta la barra del sistema.",
+      "Base UI le pone `tabIndex={0}` al viewport cuando hay desborde, así que se llega con Tab y se scrollea con las flechas. Por eso el foco es visible.",
+      "En táctil la barra propia no se muestra: ahí la nativa ya es un overlay que aparece y se va.",
+      "`overscroll-contain` evita que el scroll se escape a la página al llegar al final.",
+    ],
+    usage: [
+      "**No para la página entera.** El scroll del documento es del navegador; esto es para una caja: una lista dentro de un panel, un log, una tabla ancha.",
+      "La caja necesita un alto (o un ancho) propio: sin límite no hay desborde y no hay nada que scrollear.",
+      "El padding va en `contentClassName`, no en el viewport: si no, el contenido se corta contra la barra.",
+      "`orientation=\"both\"` solo cuando de verdad desborda en los dos ejes; si no, sobra una barra.",
+    ],
+    props: {
+      ScrollArea: {
+        orientation: "`vertical` (default) · `horizontal` · `both`, que agrega la esquina.",
+        contentClassName: "Clases del contenido, dentro del viewport. Ahí va el padding.",
+        viewportClassName: "Clases del viewport: el elemento que scrollea y recibe el foco.",
+      },
+    },
+    related: ["table", "card", "sidebar"],
   },
   "page-header": {
     title: "PageHeader",

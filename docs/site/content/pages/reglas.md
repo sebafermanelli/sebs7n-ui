@@ -8,6 +8,12 @@ Las decisiones que no se ven en una tabla de props. Cada una existe porque rompe
 
 **`variant="destructive"` solo cuando la acción borra algo**, y siempre detrás de un `AlertDialog`.
 
+## Etiquetas
+
+**Badge informa, Tag es un dato.** El `Badge` cuenta un estado que calculó el sistema y que el usuario no eligió ni puede sacar: «Pagada», «Vencida», «Admin». El `Tag` es algo que el usuario puso —un filtro aplicado, una etiqueta, un destinatario— y por eso trae el botón de quitar, con nombre accesible («Quitar Chile»). **Si tiene ×, es Tag; si no se puede sacar, es Badge.**
+
+Comparten forma y paleta a propósito: el sistema tiene una sola forma de etiqueta y lo que cambia es qué significa, no el radio. Dentro de un `Combobox` múltiple ya está `ComboboxChip`, conectado al estado del combobox: ahí no va `Tag`. Y si al hacer click en el cuerpo de la etiqueta se filtra, eso es un `Toggle`.
+
 ## Links
 
 **Links con forma de botón o card:** `buttonVariants()` / `cardVariants()` sobre `<a>` o `<Link>`. **No uses `render` para links:** Base UI les pone `role="button"` y dejan de ser links para un lector de pantalla.

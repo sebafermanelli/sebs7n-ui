@@ -4,9 +4,10 @@ import Link from "next/link"
 import site from "@/.generated/site.json"
 import { Inline } from "../_components/inline"
 
+// La cuenta sale del índice generado: escrita a mano quedaba vieja en cada release.
 export const metadata: Metadata = {
   title: "Documentación",
-  description: "Todas las páginas del sistema y los 37 componentes.",
+  description: `Todas las páginas del sistema y los ${site.components.length} componentes.`,
 }
 
 export default function DocsIndex() {

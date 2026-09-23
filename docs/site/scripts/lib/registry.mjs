@@ -12,8 +12,8 @@
 //   ../lib/utils.js      → @/lib/utils
 //   ../variants/x.js     → @/lib/sebs7n-ui/x
 //   ./button.js          → @/components/ui/button
-import { readFileSync } from "node:fs"
-import { join } from "node:path"
+import { readdirSync, readFileSync } from "node:fs"
+import { basename, join } from "node:path"
 
 const NPM = new Set(["@base-ui/react", "class-variance-authority", "clsx", "lucide-react", "next-themes", "react", "sonner", "tailwind-merge"])
 
@@ -49,6 +49,14 @@ function registryDependencies(source, site) {
 
 const ITEM_SCHEMA = "https://ui.shadcn.com/schema/registry-item.json"
 
+/** Los módulos `.ts` de `src/<dir>`, en orden alfabético. */
+function modules(root, dir) {
+  return readdirSync(join(root, "src", dir))
+    .filter((file) => file.endsWith(".ts"))
+    .map((file) => basename(file, ".ts"))
+    .sort()
+}
+
 export function buildRegistry({ root, site, components, author }) {
   const items = []
 
@@ -73,7 +81,10 @@ export function buildRegistry({ root, site, components, author }) {
     ],
   })
 
-  for (const name of ["shell-context"]) {
+  // `src/lib` y `src/variants` se leen del disco: un helper nuevo entra solo al
+  // registry. Con la lista a mano, el primer componente que importara un helper
+  // nuevo generaba una registryDependency a un ítem que no existía.
+  for (const name of modules(root, "lib").filter((name) => name !== "utils")) {
     const source = read(`src/lib/${name}.ts`)
     items.push({
       $schema: ITEM_SCHEMA,
@@ -90,7 +101,7 @@ export function buildRegistry({ root, site, components, author }) {
     })
   }
 
-  for (const name of ["badge", "button", "card", "input", "link", "menu", "sidebar", "toggle"]) {
+  for (const name of modules(root, "variants")) {
     const source = read(`src/variants/${name}.ts`)
     items.push({
       $schema: ITEM_SCHEMA,
