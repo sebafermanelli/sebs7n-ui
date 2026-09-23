@@ -35,7 +35,9 @@ describe("Tabs", () => {
       </Tabs>
     )
     const pagos = screen.getByRole("tab", { name: "Pagos" })
-    expect(pagos).toHaveClass("text-gray-900", "hover:text-gray-1000", "hover:before:bg-gray-200", "after:bg-gray-1000", "data-active:after:opacity-100")
+    expect(pagos).toHaveClass("text-gray-900", "hover:text-gray-1000", "after:bg-gray-1000", "data-active:after:opacity-100")
+    // En hover solo cambia el texto: una pestaña no se pinta como botón.
+    expect(pagos.className).not.toMatch(/hover:before:bg-/)
     expect(pagos.className).not.toMatch(/brand/)
     await userEvent.click(pagos)
     expect(pagos).toHaveAttribute("data-active")

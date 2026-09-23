@@ -140,6 +140,19 @@ describe("Sheet", () => {
     await userEvent.click(screen.getByRole("button", { name: "Menú" }))
     expect(await screen.findByRole("dialog")).toHaveAttribute("data-side", "left")
   })
+
+  it("va de punta a punta: sin esquinas redondeadas contra el borde de la pantalla", async () => {
+    render(
+      <Sheet>
+        <SheetTrigger render={<Button />}>Abrir</SheetTrigger>
+        <SheetContent side="bottom">
+          <SheetTitle>Acciones</SheetTitle>
+        </SheetContent>
+      </Sheet>
+    )
+    await userEvent.click(screen.getByRole("button", { name: "Abrir" }))
+    expect((await screen.findByRole("dialog")).className).not.toMatch(/rounded-(t|b|l|r)-/)
+  })
 })
 
 describe("Sheet foco", () => {
