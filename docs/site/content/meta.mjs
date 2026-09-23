@@ -1074,13 +1074,15 @@ export const COMPONENTS = {
     detallado: true,
     description: "Secciones de la misma página que se turnan. Subrayado bajo la activa.",
     keyboard: [
-      ["← →", "Se mueve entre tabs y activa al pasar."],
+      ["← →", "Mueve el foco entre tabs. **No** activa al pasar."],
+      ["Enter · Espacio", "Activa la tab que tiene el foco."],
       ["Home · End", "Primera y última."],
       ["Tab", "Sale de la lista al panel: la lista entera es una sola parada."],
     ],
     a11y: [
       "Base UI emite `role=\"tablist\"` / `tab` / `tabpanel` con `aria-selected` y `aria-controls`.",
-      "El panel es enfocable (`tabindex=\"0\"`) para poder llegar a su contenido con el teclado.",
+      "La activación es **manual**: las flechas mueven el foco y recién Enter o Espacio cambian de panel. Es el patrón que recomienda APG cuando el panel puede tardar en aparecer — con activación automática, recorrer cinco tabs con el teclado monta y desmonta cinco paneles.",
+      "El panel es enfocable (`tabindex=\"0\"`) para poder llegar a su contenido con el teclado, y muestra el anillo de foco al llegar por Tab.",
       "La tab activa se marca con el subrayado **y** con el color del texto: no depende solo del color.",
     ],
     usage: [

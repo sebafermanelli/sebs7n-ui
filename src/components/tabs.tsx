@@ -48,8 +48,21 @@ function TabsTrigger({ className, ...props }: TabsTriggerProps) {
 
 type TabsContentProps = Omit<TabsPrimitive.Panel.Props, "className"> & { className?: string }
 
+/**
+ * El panel es tabulable (Base UI le pone `tabIndex=0` para que el contenido
+ * scrolleable se pueda alcanzar con el teclado), así que el `outline-none`
+ * necesita reemplazo: sin él, quien llega por Tab desde el tablist no ve dónde
+ * quedó el foco (WCAG 2.4.7). El `rounded-md` es para que el anillo siga la
+ * forma del panel y no quede un rectángulo duro sobre contenido redondeado.
+ */
 function TabsContent({ className, ...props }: TabsContentProps) {
-  return <TabsPrimitive.Panel data-slot="tabs-content" className={cn("text-copy-14 outline-none", className)} {...props} />
+  return (
+    <TabsPrimitive.Panel
+      data-slot="tabs-content"
+      className={cn("text-copy-14 rounded-md outline-none focus-visible:focus-ring", className)}
+      {...props}
+    />
+  )
 }
 
 export { Tabs, TabsContent, TabsList, TabsTrigger }
