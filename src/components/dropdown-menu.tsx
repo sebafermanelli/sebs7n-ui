@@ -103,7 +103,7 @@ function DropdownMenuSeparator({ className, ...props }: DropdownMenuSeparatorPro
 }
 
 function DropdownMenuShortcut({ className, ...props }: React.ComponentProps<"span">) {
-  return <span data-slot="dropdown-menu-shortcut" className={cn("ml-auto text-label-12-mono text-gray-700", className)} {...props} />
+  return <span data-slot="dropdown-menu-shortcut" className={cn("ml-auto text-label-12-mono text-gray-900", className)} {...props} />
 }
 
 function DropdownMenuSub(props: MenuPrimitive.SubmenuRoot.Props) {

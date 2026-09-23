@@ -163,7 +163,7 @@ function MenubarSeparator({ className, ...props }: MenubarSeparatorProps) {
  * para descubrir el comando y después se usa el atajo para siempre.
  */
 function MenubarShortcut({ className, ...props }: React.ComponentProps<"span">) {
-  return <span data-slot="menubar-shortcut" className={cn("ml-auto pl-6 text-label-12-mono text-gray-700", className)} {...props} />
+  return <span data-slot="menubar-shortcut" className={cn("ml-auto pl-6 text-label-12-mono text-gray-900", className)} {...props} />
 }
 
 function MenubarSub(props: MenuPrimitive.SubmenuRoot.Props) {

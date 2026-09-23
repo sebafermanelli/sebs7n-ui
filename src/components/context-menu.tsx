@@ -194,7 +194,7 @@ function ContextMenuSeparator({ className, ...props }: ContextMenuSeparatorProps
  * a la misma acción, el que va a usar quien no puede abrir este menú.
  */
 function ContextMenuShortcut({ className, ...props }: React.ComponentProps<"span">) {
-  return <span data-slot="context-menu-shortcut" className={cn("ml-auto text-label-12-mono text-gray-700", className)} {...props} />
+  return <span data-slot="context-menu-shortcut" className={cn("ml-auto text-label-12-mono text-gray-900", className)} {...props} />
 }
 
 function ContextMenuSub(props: ContextMenuPrimitive.SubmenuRoot.Props) {

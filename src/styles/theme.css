@@ -122,7 +122,21 @@
     --sf-brand-1000: oklch(from var(--sf-brand-src) 0.269 calc(c * 0.433) h);
 
     --sf-button-primary-hover: #383838;
-    --sf-button-error-fg: #f5f5f5;
+    /**
+     * Los tres del botón destructivo son iguales en claro y en oscuro, y por eso
+     * no se repiten abajo en `.dark`.
+     *
+     * El fondo de reposo sí cambia por tema (`bg-red-800`: #e70022 en claro,
+     * #e2162a en oscuro), pero los dos son rojos oscuros y el mismo blanco puro
+     * les da 4,75:1 y 4,79:1. Antes en claro el texto era #f5f5f5 y quedaba en
+     * 4,36:1, abajo del 4,5 de WCAG 1.4.3.
+     *
+     * En hover y en active el botón se oscurece en los dos temas. En oscuro
+     * antes se ACLARABA (#ff5e63 y #ffaba3): sobre blanco eso daba 2,99:1 y
+     * 1,81:1, que es texto ilegible sobre un botón que borra cosas. Oscurecer en
+     * los dos temas además hace que el gesto se lea igual en los dos.
+     */
+    --sf-button-error-fg: #fff;
     --sf-button-error-hover: #ae292f;
     --sf-button-error-active: #7c1316;
     --sf-backdrop: #00000033;
@@ -166,9 +180,6 @@
     --sf-brand-1000: oklch(from var(--sf-brand-src) 0.968 calc(c * 0.077) h);
 
     --sf-button-primary-hover: #cccccc;
-    --sf-button-error-fg: #fff;
-    --sf-button-error-hover: var(--sf-red-900);
-    --sf-button-error-active: #ffaba3;
     --sf-backdrop: #00000080;
     --sf-focus-halo: #ffffff3d;
 
