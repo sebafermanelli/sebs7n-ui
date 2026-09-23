@@ -4,6 +4,18 @@ Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Versionado
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-09-23
+
+### Changed
+
+- `Sheet` va de punta a punta: se le sacaron las esquinas redondeadas de los
+  cuatro lados. Un radio contra el borde de la pantalla se lee como un recorte
+  mal hecho.
+- `TabsTrigger` deja de pintar una pastilla gris en hover: una pestaña no es un
+  botón, así que al pasar por encima solo se aclara el texto. La pestaña activa
+  la sigue marcando la línea de abajo, y el pseudo-elemento queda solo para el
+  anillo de foco.
+
 ## [0.1.0] - 2026-09-22
 
 Primera versión pública de `sebs7n-ui`: un design system para React que pone
