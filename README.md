@@ -9,7 +9,7 @@ y pegados: mismos neutros, misma tipografía, mismos radios y sombras, mismos
 estados de foco. Lo único que cambia entre productos es el color de marca, que
 son **tres variables CSS**.
 
-- ~30 componentes accesibles sobre Base UI, cada uno con su entry point.
+- 47 componentes accesibles sobre Base UI, cada uno con su entry point.
 - Tokens de color, tipografía, radios y sombras como variables CSS y utilidades
   de Tailwind v4 — sin `tailwind.config`.
 - Server Components donde no hace falta estado; `"use client"` solo donde sí.

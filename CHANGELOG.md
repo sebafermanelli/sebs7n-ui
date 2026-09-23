@@ -4,6 +4,44 @@ Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Versionado
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-09-23
+
+Diez componentes nuevos: los que faltaban para cubrir una app entera sin salir
+del sistema. Van de 37 a 47.
+
+### Added
+
+- **`Progress`** — barra determinada o indeterminada (`value={null}`), con
+  `label` propio que hace de nombre accesible y `showValue` para el porcentaje.
+  Dos alturas: `sm` (4px) dentro de una fila, `md` (6px) suelta.
+- **`Collapsible`** — mostrar y ocultar un bloque con un botón, animando la
+  altura real del contenido.
+- **`Accordion`** — secciones plegables, una sola abierta o varias
+  (`multiple`), recorribles con las flechas.
+- **`Slider`** — elegir un número o un rango arrastrando, con teclado completo
+  (flechas, `Home`/`End`, `PageUp`/`PageDown`) y `formatValue` para lo que
+  anuncia el lector de pantalla.
+- **`ScrollArea`** — caja con scroll y barra propia discreta, que no tapa el
+  contenido ni cambia de ancho entre sistemas operativos.
+- **`HoverCard`** — tarjeta de adelanto de un link. Aparece en hover **y en
+  foco**, con demora de entrada y de salida: con el teclado también existe.
+- **`Spinner`** — indicador de carga en `currentColor`, así hereda el color de
+  quien lo contiene; se detiene con `prefers-reduced-motion`.
+- **`Breadcrumb`** — migas de pan como `<nav>` + `<ol>`, con la página actual
+  marcada `aria-current="page"` y colapso del medio cuando la ruta es larga.
+- **`Pagination`** — paginador que renderiza links reales (`<a>`) o botones
+  según le pases `href`. El cálculo del rango vive aparte, en
+  `sebs7n-ui/lib/pagination`, y es una función pura testeable sin DOM.
+- **`Tag`** — etiqueta que puso el usuario y puede sacar. Comparte forma y
+  paleta con `Badge` a propósito; lo que la distingue es el botón de quitar,
+  no otro radio.
+
+### Changed
+
+- El estado `loading` del `Button` usa el `Spinner` del sistema en lugar de su
+  propio ícono. Un solo indicador de carga en todo el paquete, y el del botón
+  también respeta `prefers-reduced-motion`. No cambia la API.
+
 ## [0.1.2] - 2026-09-23
 
 ### Changed
