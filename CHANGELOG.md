@@ -216,6 +216,84 @@ Fase 3 de la auditoría de 0.4.0: rendimiento.
   Se van con ella el script `build:css`, `src/styles/build.css` y las
   devDependencies `tailwindcss` y `@tailwindcss/cli`, que solo servían para eso.
 
+---
+
+Fase 4 de la auditoría de 0.4.0: API y tests.
+
+### Added
+
+- **Los 83 `*Props` que faltaban.** `dialog`, `sheet`, `drawer`, `tabs`,
+  `select`, `popover`, `tooltip`, `toolbar`, `navigation-menu` y los tres menús
+  no exportaban **ninguno** de sus tipos de props: eran 85 declarados y no
+  exportados sobre 156. Quien envuelve un `DialogContent` en su propio componente
+  ahora puede nombrar sus props. `InsetProps`, que estaba tres veces con el mismo
+  nombre, pasa a `MenuInsetProps` en `variants/menu.ts`; `CellProps` de `table` se
+  parte en `TableHeadProps` y `TableCellProps`.
+- **`WithClassName<P>`** en `lib/utils.ts`, por las 110 copias de
+  `Omit<P, "className"> & { className?: string }`. Existe porque Base UI tipa
+  `className` como `string | ((state) => string)` y acá se estrecha a `string`.
+- **`lib/schema` y `lib/render` salen por el barrel.** `form.tsx` ya los
+  documentaba como públicos. Con ellos van `badgeDotColor`, `TagVariantProps` y
+  las constantes nuevas de `variants/input.ts` y `variants/overlay.ts`.
+- **`variants/overlay.ts`**: `backdropClassName`, `modalPopupClassName`,
+  `modalFooterClassName`, `overlayCloseClassName` y `floatingPopupClassName`.
+  Más `menuLabelClassName` y `menuSeparatorClassName` en `variants/menu.ts`, e
+  `inputControlClassName`, `inputSizeClassName`, `inputDisabledClassName` e
+  `inputInvalidClassName` en `variants/input.ts`. Sin cambio de API: son los
+  mismos strings que estaban copiados entre dos y ocho veces.
+
+### Fixed
+
+- **`ComboboxChip` reimplementaba `Tag`** y las dos copias ya habían quedado
+  distintas: el botón de quitar medía `size-5` contra `size-4`, el hover era
+  `gray-alpha-200` contra `gray-alpha-300` y el aire a la derecha del texto era
+  la mitad. Ahora sale de `tagVariants({ removable: true })` y
+  `tagRemoveClassName.md`. **El botón de quitar del chip se ve 4px más chico**;
+  el área de toque sigue arriba de los 24px de WCAG 2.5.8.
+- **El nombre accesible de un ítem de menú con atajo** salía «Guardar⌘S» de
+  corrido. Ahora lleva una coma `sr-only`, como `SidebarItemBadge`: «Guardar, ⌘S».
+  En `DropdownMenu`, `ContextMenu` y `Menubar`.
+- **`data-slot` duplicados con significado distinto.** `dialog-close`,
+  `sheet-close` y `drawer-close` nombraban el wrapper y la X de arriba a la
+  derecha: **la X pasa a `*-close-button`**. `combobox-input` estaba en
+  `ComboboxInput` y en `ComboboxChipsInput`: **el segundo pasa a
+  `combobox-chips-input`**. Y se sacan doce `data-slot` puestos en `*.Root` de
+  Base UI que no renderizan elemento, así que nunca llegaban al DOM.
+- **Siete casts sin explicación**: tres se van porque no hacían falta —el
+  `data-active` de `SidebarItem` ya lo emitía `state`— y los otros cuatro quedan
+  con el porqué escrito.
+- **El import de React** no iba primero en seis archivos, y `textarea`, `badge` y
+  `separator` usaban `React.ComponentProps` sin importar React.
+
+### Docs
+
+- `Table` no virtualiza (hasta ~500 filas; más, `Pagination` o virtualización
+  afuera) y `Combobox`/`Autocomplete` filtran en memoria y sin debounce.
+- Docblocks que habían quedado viejos: `variants/menu.ts` (son seis componentes,
+  no dos), `field.tsx` (también se enganchan `NumberField`, `OTPField`, `Slider`
+  y `CheckboxGroup`), `variants/tag.ts` (ahora sí `ComboboxChip` es el mismo
+  objeto) y `button.tsx` («como antes» no era un porqué).
+- `related` de `meta.mjs` es **direccional** a propósito, y queda dicho; lo que
+  sí se verifica es que todo slug apunte a un componente que existe.
+- Queda anotado para la próxima major que `ellipsisLabel`, `breadcrumbLabel` y
+  `removeLabel` tendrían que pasar a un objeto `labels`.
+
+### Tests
+
+- De **471 a 569** en el paquete (52 archivos), y de 108 a 110 en el sitio.
+- `test/api-publica.test.ts`: ningún `*Props` sin exportar, ningún nombre
+  repetido entre componentes, y nada de `lib/` ni `variants/` afuera del barrel.
+- `test/imports.test.ts`: React primero y `React.` importado donde se usa.
+- `test/render.test.tsx`: la precedencia que promete el docblock de
+  `renderElement`, que se probaba solo de rebote.
+- `test/components/dropdown-menu.test.tsx`: submenú, casilla, radio y atajo, que
+  no tenían ninguno.
+- `test/components/sub-partes.test.tsx`: las trece piezas exportadas sin un solo
+  test, y la rama sin `enableSystem` de `theme-switcher`.
+- `combobox.test.tsx` deja de ser flaky: el servidor simulado pasa de un
+  `setTimeout(…, 20)` a una promesa que resuelve el test.
+- `Toaster` tenía un smoke test que pasaba aunque no renderizara nada.
+
 ## [0.4.0] - 2026-09-23
 
 Con esta versión el paquete cubre **todas las primitivas de Base UI**: 58
