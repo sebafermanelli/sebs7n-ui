@@ -711,7 +711,42 @@ export const COMPONENTS = {
       "`side=\"left\"` es el del menú mobile —lo usa `AppShell`—; para contenido, `right`.",
       "En desktop, más de 640px de ancho es una página, no un panel.",
     ],
-    related: ["dialog", "app-shell", "sidebar"],
+    related: ["dialog", "app-shell", "sidebar", "drawer"],
+  },
+  drawer: {
+    title: "Drawer",
+    group: "superposiciones",
+    description: "La hoja que se arrastra: entra desde un borde, se cierra deslizándola y para en puntos de anclaje.",
+    keyboard: [
+      ["Enter · Espacio", "Abre desde el trigger."],
+      ["Escape", "Cierra y devuelve el foco al trigger. Es el camino de teclado, y no se puede apagar."],
+      ["Tab · ⇧Tab", "Recorre solo el contenido del drawer: el foco queda atrapado adentro."],
+      ["Click en el fondo", "Cierra."],
+      ["—", "**No hay tecla para arrastrar.** El gesto es un atajo: el cierre accesible es Escape y el botón X."],
+    ],
+    a11y: [
+      "**Un drawer que solo se cierra deslizando es un drawer que no se puede cerrar.** Por eso `showCloseButton` viene prendido y Escape siempre funciona: arrastrar no es una opción con teclado, con switch control ni con una sola mano ocupada.",
+      "El handle es `aria-hidden`: es una pista visual, no un control. No recibe foco ni se anuncia, así que nunca cuenta como la salida del drawer.",
+      "`DrawerTitle` no es opcional: es el nombre accesible del diálogo.",
+      "El movimiento pasa por `motion-reduce`: con `prefers-reduced-motion` la hoja aparece en lugar de deslizarse.",
+      "Lo que arrastra es todo el popup menos `DrawerBody`. Un control que se maneja con el dedo adentro del área de arrastre —un slider, un canvas— necesita `data-base-ui-swipe-ignore` para que el gesto no se lo robe.",
+    ],
+    usage: [
+      "**El dedo lo mueve → `Drawer`. Solo se lee y se cierra → `Sheet`. Está centrado y es una decisión → `Dialog`.** Esa es toda la regla.",
+      "**No reemplaza a `Sheet`, y `Sheet` no está construido sobre esto.** `Sheet` es un `Dialog` pegado a un borde, sin gesto; `Drawer` trae `swipeDirection`, `snapPoints`, el área de swipe y el handle. Son dos patrones, y `Sheet` ya vive en producción: darle gesto por abajo sería un cambio de comportamiento que no aparece en ningún diff.",
+      "En desktop, casi siempre querés `Sheet`: nadie arrastra una hoja con el mouse. `Drawer` es para la mano.",
+      "Lo que scrollea va adentro de `DrawerBody`. Es la zona donde el dedo mueve el contenido en vez de la hoja; sin eso, cada intento de scrollear cierra el drawer.",
+      "`snapPoints` solo tiene sentido con `swipeDirection` vertical (`down` o `up`), que es el default.",
+      "El lado sale de `swipeDirection` del root, no de una prop del contenido: una sola fuente de verdad para de dónde entra y hacia dónde se descarta.",
+      "`DrawerSwipeArea` abre con un swipe desde el borde, pero nunca va sola: sin un `DrawerTrigger` al lado, el drawer no existe para quien usa teclado.",
+    ],
+    props: {
+      DrawerContent: {
+        showCloseButton: "El botón X de la esquina. Apagarlo deja al drawer sin control visible de cierre: si lo hacés, poné otro.",
+        showHandle: "La barra de arrastre. Es decoración: apagala solo si el drawer no se puede arrastrar.",
+      },
+    },
+    related: ["sheet", "dialog", "popover"],
   },
   popover: {
     title: "Popover",
