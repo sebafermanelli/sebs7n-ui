@@ -9,8 +9,16 @@ export const inputShellClassName =
   "data-invalid:border-red-800 data-invalid:has-[input:focus]:focus-border-error"
 
 // El <input> dentro de la superficie.
+//
+// El placeholder va en `gray-900` y no en `gray-700` —que es el tono de Geist— porque en claro
+// `gray-700` (#8f8f8f) sobre la superficie blanca da 3,23:1 y WCAG 1.4.3 pide 4,5:1 para texto. Un
+// placeholder es texto: dice qué formato espera el campo, y en un formulario largo es lo único que
+// queda visible hasta que se escribe. `gray-900` da 8,45:1 en claro y 7,57:1 en oscuro, y sigue
+// siendo netamente más tenue que el valor tipeado (`gray-1000`), que es lo que el tono tiene que
+// comunicar. Un solo tono para los dos temas: `gray-900` ya pasa en ambos, así que no hace falta
+// una variante por tema ni un token nuevo.
 export const inputShellInputClassName =
-  "h-full min-w-0 flex-1 bg-transparent px-3 text-inherit outline-none placeholder:text-gray-700 disabled:cursor-not-allowed"
+  "h-full min-w-0 flex-1 bg-transparent px-3 text-inherit outline-none placeholder:text-gray-900 disabled:cursor-not-allowed"
 
 // Botones chicos dentro de la superficie (limpiar, chevron, quitar chip).
 export const inputShellButtonClassName =

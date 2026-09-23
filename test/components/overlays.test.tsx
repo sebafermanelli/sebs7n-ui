@@ -100,7 +100,7 @@ describe("Select", () => {
       </Select>
     )
     const trigger = screen.getByRole("combobox", { name: "Moneda" })
-    expect(trigger).toHaveClass("border-gray-400", "hover:border-gray-500", "focus-visible:focus-border", "data-placeholder:text-gray-700", "data-[size=md]:h-10")
+    expect(trigger).toHaveClass("border-gray-400", "hover:border-gray-500", "focus-visible:focus-border", "data-placeholder:text-gray-900", "data-[size=md]:h-10")
     await userEvent.click(trigger)
     await userEvent.click(await screen.findByRole("option", { name: "USD" }))
     expect(onValueChange).toHaveBeenCalledWith("usd", expect.anything())

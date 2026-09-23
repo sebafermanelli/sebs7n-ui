@@ -73,7 +73,7 @@ describe("Combobox", () => {
       "has-[input[aria-invalid=true]]:border-red-800", "data-disabled:bg-gray-100"
     )
     expect(group(md)).toHaveClass("text-copy-14", "data-[size=lg]:text-copy-16")
-    expect(md).toHaveClass("placeholder:text-gray-700", "bg-transparent", "outline-none")
+    expect(md).toHaveClass("placeholder:text-gray-900", "bg-transparent", "outline-none")
     expect(group(sm)).toHaveAttribute("data-size", "sm")
     expect(sm).toHaveAttribute("aria-invalid", "true")
     expect(group(lg)).toHaveAttribute("data-size", "lg")

@@ -250,7 +250,7 @@ function ComboboxChipsInput({ className, ...props }: ComboboxChipsInputProps) {
   return (
     <ComboboxPrimitive.Input
       data-slot="combobox-input"
-      className={cn("h-6 min-w-16 flex-1 bg-transparent px-1.5 text-inherit outline-none placeholder:text-gray-700 disabled:cursor-not-allowed", className)}
+      className={cn("h-6 min-w-16 flex-1 bg-transparent px-1.5 text-inherit outline-none placeholder:text-gray-900 disabled:cursor-not-allowed", className)}
       {...props}
     />
   )

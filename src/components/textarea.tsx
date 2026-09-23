@@ -24,7 +24,7 @@ function Textarea({ className, ...props }: TextareaProps) {
       render={<textarea />}
       className={cn(
         "peer field-sizing-content min-h-20 w-full min-w-0 rounded-md border border-gray-400 bg-background-100 px-3 py-2.5 text-copy-14 text-gray-1000 outline-none transition-control",
-        "placeholder:text-gray-700 hover:border-gray-500 focus:focus-border",
+        "placeholder:text-gray-900 hover:border-gray-500 focus:focus-border",
         // `disabled:` cubre el atributo nativo y `data-disabled:` el que pone
         // un `Fieldset` deshabilitado. Los dos, porque los dos pasan.
         "disabled:cursor-not-allowed disabled:border-gray-400 disabled:bg-gray-100 disabled:text-gray-700",

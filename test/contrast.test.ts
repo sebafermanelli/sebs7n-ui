@@ -73,3 +73,17 @@ describe("Atajo de menú sobre el popup (WCAG 1.4.3)", () => {
     }
   }
 })
+
+// El placeholder es texto, no decoración: en un formulario largo es lo único
+// que dice qué espera el campo hasta que alguien escribe. En `gray-700` —el
+// tono de Geist— daba 3,23:1 en claro. Un solo tono para los dos temas: el
+// mismo `gray-900` del texto secundario pasa en los dos.
+describe("Placeholder sobre la superficie del campo (WCAG 1.4.3)", () => {
+  for (const theme of ["light", "dark"] as const) {
+    const fg = paleta[theme]["--sf-gray-900"]!
+    const bg = paleta[theme]["--sf-background-100"]!
+    it(`${theme}: ${fg} sobre ${bg} llega a 4.5:1`, () => {
+      expect(ratio(fg, bg)).toBeGreaterThanOrEqual(4.5)
+    })
+  }
+})

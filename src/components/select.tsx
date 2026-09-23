@@ -22,7 +22,7 @@ function SelectTrigger({ className, size = "md", children, ...props }: SelectTri
       className={cn(
         "flex w-full min-w-0 cursor-pointer items-center justify-between gap-2 rounded-md border border-gray-400 bg-background-100 px-3 text-copy-14 whitespace-nowrap text-gray-1000 outline-none select-none transition-control",
         "data-[size=sm]:h-8 data-[size=md]:h-10 data-[size=lg]:h-12 data-[size=lg]:text-copy-16",
-        "hover:border-gray-500 focus-visible:focus-border data-popup-open:focus-border data-placeholder:text-gray-700",
+        "hover:border-gray-500 focus-visible:focus-border data-popup-open:focus-border data-placeholder:text-gray-900",
         "data-disabled:cursor-not-allowed data-disabled:border-gray-400 data-disabled:bg-gray-100 data-disabled:text-gray-700",
         "aria-invalid:border-red-800 data-invalid:border-red-800",
         "*:data-[slot=select-value]:line-clamp-1 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
