@@ -24,7 +24,20 @@ function Avatar({ className, size = "md", ...props }: AvatarProps) {
   )
 }
 
-type AvatarImageProps = Omit<AvatarPrimitive.Image.Props, "className"> & { className?: string }
+/**
+ * La foto. El `alt` es **obligatorio y explícito**, incluso vacío.
+ *
+ * Un `<img>` sin `alt` lo anuncian los lectores leyendo la URL del archivo:
+ * «a-v-a-t-a-r-guion-3-4-f-2 punto j-p-g». Un `alt=""` lo saca del árbol y deja
+ * que nombre el contexto —lo correcto cuando al lado ya está el nombre de la
+ * persona, que es el caso más común—. Las dos decisiones son válidas; la que no
+ * lo es es no haber decidido, y por eso el tipo obliga a escribir una.
+ */
+type AvatarImageProps = Omit<AvatarPrimitive.Image.Props, "className" | "alt"> & {
+  className?: string
+  /** El texto alternativo. `""` es la respuesta correcta cuando el nombre ya está al lado. */
+  alt: string
+}
 
 function AvatarImage({ className, ...props }: AvatarImageProps) {
   return <AvatarPrimitive.Image data-slot="avatar-image" className={cn("size-full object-cover", className)} {...props} />
@@ -43,4 +56,4 @@ function AvatarFallback({ className, ...props }: AvatarFallbackProps) {
   )
 }
 
-export { Avatar, AvatarFallback, AvatarImage, type AvatarProps }
+export { Avatar, AvatarFallback, AvatarImage, type AvatarFallbackProps, type AvatarImageProps, type AvatarProps }

@@ -4,7 +4,8 @@ import type * as React from "react"
 import { AlertDialog as AlertDialogPrimitive } from "@base-ui/react/alert-dialog"
 
 import { cn } from "../lib/utils.js"
-import { Button, type ButtonProps } from "./button.js"
+import type { ButtonTextSize } from "../variants/button.js"
+import { Button, type ButtonBaseProps } from "./button.js"
 
 // Mismas superficies que Dialog. Diferencias: role="alertdialog", no se cierra con click
 // en el backdrop y no tiene botón X (exige una respuesta).
@@ -88,7 +89,11 @@ function AlertDialogDescription({ className, ...props }: AlertDialogDescriptionP
   )
 }
 
-type AlertDialogActionProps = Omit<ButtonProps, "variant"> & { variant?: "default" | "destructive" }
+type AlertDialogActionProps = Omit<ButtonBaseProps, "variant"> & {
+  variant?: "default" | "destructive"
+  /** Los botones de un AlertDialog siempre llevan texto: los tamaños de ícono no aplican acá. */
+  size?: ButtonTextSize
+}
 
 // No cierra solo (como shadcn base-nova): así sirve con `loading` mientras corre la acción.
 // Controlá `open` en AlertDialog y cerralo cuando termine, o envolvela en AlertDialogClose.
@@ -98,7 +103,8 @@ function AlertDialogAction({ variant = "default", ...props }: AlertDialogActionP
 
 type AlertDialogCancelProps = Omit<AlertDialogPrimitive.Close.Props, "className"> & {
   className?: string
-  size?: ButtonProps["size"]
+  /** Mismo motivo que en `AlertDialogAction`: acá siempre hay texto. */
+  size?: ButtonTextSize
 }
 
 function AlertDialogCancel({ className, size, children = "Cancelar", ...props }: AlertDialogCancelProps) {

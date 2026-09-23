@@ -4,6 +4,7 @@ import type * as React from "react"
 import { Drawer as DrawerPrimitive } from "@base-ui/react/drawer"
 import { XIcon } from "lucide-react"
 
+import { useAvisoDeNombre } from "../internal/dialog-name-warning.js"
 import { cn } from "../lib/utils.js"
 import { Button } from "./button.js"
 
@@ -153,6 +154,7 @@ type DrawerContentProps = Omit<DrawerPrimitive.Popup.Props, "className"> & {
  * pueda contradecirlo.
  */
 function DrawerContent({ className, children, showCloseButton = true, showHandle = true, ...props }: DrawerContentProps) {
+  const ref = useAvisoDeNombre<HTMLDivElement>("DrawerContent", "DrawerTitle", props.ref)
   return (
     <DrawerPrimitive.Portal>
       {/* El fondo se aclara mientras se arrastra: `--drawer-swipe-progress` va
@@ -168,6 +170,7 @@ function DrawerContent({ className, children, showCloseButton = true, showHandle
       <DrawerPrimitive.Viewport data-slot="drawer-viewport" className="fixed inset-0 z-50">
         <DrawerPrimitive.Popup
           data-slot="drawer-content"
+          ref={ref}
           className={cn(
             "group/drawer absolute flex bg-background-100 text-copy-14 text-gray-1000 shadow-modal outline-none",
             // Redondeado solo del lado de adentro. Contra el borde de la
@@ -207,10 +210,10 @@ function DrawerContent({ className, children, showCloseButton = true, showHandle
             <DrawerPrimitive.Close
               data-base-ui-swipe-ignore=""
               data-slot="drawer-close"
-              render={<Button variant="ghost" size="icon-sm" className="absolute top-4 right-4" />}
+              // Mismo motivo que en Dialog: el nombre en `aria-label`, que es lo que el tipo exige.
+              render={<Button variant="ghost" size="icon-sm" aria-label="Cerrar" className="absolute top-4 right-4" />}
             >
               <XIcon />
-              <span className="sr-only">Cerrar</span>
             </DrawerPrimitive.Close>
           )}
         </DrawerPrimitive.Popup>

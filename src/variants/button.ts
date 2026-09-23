@@ -66,3 +66,16 @@ export type ButtonVariantProps = VariantProps<typeof buttonVariants>
 
 /** La forma del botón: rectángulo del sistema o píldora de marketing. */
 export type ButtonShape = NonNullable<ButtonVariantProps["shape"]>
+
+export type ButtonSize = NonNullable<ButtonVariantProps["size"]>
+
+/**
+ * Los tamaños cuadrados. Un botón de este tamaño es **solo** el ícono: no hay
+ * texto que lo nombre, así que `ButtonProps` le exige `aria-label` o
+ * `aria-labelledby`. Están separados del resto para que esa regla se pueda
+ * escribir en el tipo y no solo en la documentación.
+ */
+export type ButtonIconSize = Extract<ButtonSize, `icon-${string}`>
+
+/** Los tamaños con texto: el nombre accesible sale del contenido. */
+export type ButtonTextSize = Exclude<ButtonSize, ButtonIconSize>

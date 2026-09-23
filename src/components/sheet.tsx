@@ -4,6 +4,7 @@ import type * as React from "react"
 import { Dialog as SheetPrimitive } from "@base-ui/react/dialog"
 import { XIcon } from "lucide-react"
 
+import { useAvisoDeNombre } from "../internal/dialog-name-warning.js"
 import { cn } from "../lib/utils.js"
 import { Button } from "./button.js"
 
@@ -27,6 +28,7 @@ type SheetContentProps = Omit<SheetPrimitive.Popup.Props, "className"> & {
 
 // Solo se redondean las esquinas que no tocan el borde de la pantalla.
 function SheetContent({ className, children, side = "right", showCloseButton = true, ...props }: SheetContentProps) {
+  const ref = useAvisoDeNombre<HTMLDivElement>("SheetContent", "SheetTitle", props.ref)
   return (
     <SheetPrimitive.Portal>
       <SheetPrimitive.Backdrop
@@ -36,6 +38,7 @@ function SheetContent({ className, children, side = "right", showCloseButton = t
       <SheetPrimitive.Popup
         data-slot="sheet-content"
         data-side={side}
+        ref={ref}
         className={cn(
           // Sin esquinas redondeadas: la hoja va de punta a punta contra el borde de la pantalla, y un
         // radio contra ese borde se ve como un error de recorte.
@@ -52,10 +55,10 @@ function SheetContent({ className, children, side = "right", showCloseButton = t
         {showCloseButton && (
           <SheetPrimitive.Close
             data-slot="sheet-close"
-            render={<Button variant="ghost" size="icon-sm" className="absolute top-4 right-4" />}
+            // Mismo motivo que en Dialog: el nombre en `aria-label`, que es lo que el tipo exige.
+            render={<Button variant="ghost" size="icon-sm" aria-label="Cerrar" className="absolute top-4 right-4" />}
           >
             <XIcon />
-            <span className="sr-only">Cerrar</span>
           </SheetPrimitive.Close>
         )}
       </SheetPrimitive.Popup>

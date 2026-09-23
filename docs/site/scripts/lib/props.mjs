@@ -82,11 +82,27 @@ function propsTypeText(typeNode, checker) {
   return typeNode.getText()
 }
 
-/** Une los literales de una unión (`"sm" | "md"`), o null si no es una unión de literales. */
+/**
+ * Une los literales de una unión (`"sm" | "md"`), o null si no es una unión de literales.
+ *
+ * Un parámetro de tipo se reemplaza por su restricción. `ButtonProps` es genérico en el `size`
+ * —así la exigencia de `aria-label` cae solo sobre los tamaños de ícono escritos literales—, y en
+ * la tabla de props lo que sirve es la lista de tamaños, no la letra `S`.
+ */
 function literalUnionText(type, checker) {
-  if (!type.isUnion()) return null
+  if (!type.isUnion() && !(type.flags & ts.TypeFlags.TypeParameter)) return null
+  const planos = []
+  const aplanar = (candidato) => {
+    if (candidato.flags & ts.TypeFlags.TypeParameter) {
+      const base = checker.getBaseConstraintOfType(candidato)
+      if (base && base !== candidato) return aplanar(base)
+    }
+    if (candidato.isUnion()) return candidato.types.forEach(aplanar)
+    planos.push(candidato)
+  }
+  aplanar(type)
   const parts = []
-  for (const constituent of type.types) {
+  for (const constituent of planos) {
     if (constituent.flags & (ts.TypeFlags.Undefined | ts.TypeFlags.Null)) continue
     if (constituent.flags & (ts.TypeFlags.Boolean | ts.TypeFlags.BooleanLiteral)) return "boolean"
     if (!constituent.isStringLiteral() && !constituent.isNumberLiteral()) return null

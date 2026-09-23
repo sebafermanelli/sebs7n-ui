@@ -89,8 +89,22 @@ function Toolbar({ className, onKeyDown, ...props }: ToolbarProps) {
  */
 type ToolbarButtonProps = Omit<ToolbarPrimitive.Button.Props, "className"> & { className?: string }
 
-function ToolbarButton({ className, render = <Button size="icon-sm" variant="ghost" />, ...props }: ToolbarButtonProps) {
-  return <ToolbarPrimitive.Button data-slot="toolbar-button" className={className} render={render} {...props} />
+// El `aria-label` se saca de las props y se vuelve a poner a mano en el `render` por defecto en vez
+// de viajar con el resto: ese render es un botón de ícono, y el `aria-label` que trae el elemento de
+// `render` le gana al que pone Base UI desde afuera. Si no se copiara acá, un
+// `<ToolbarButton aria-label="Centrar">` terminaría anunciándose por su ícono. El `?? ""` es el caso
+// "el llamador no puso nombre": un `aria-label` vacío la spec de accname lo ignora, así que el botón
+// queda nombrado por su contenido, igual que un botón cualquiera.
+function ToolbarButton({ className, render, "aria-label": ariaLabel, ...props }: ToolbarButtonProps) {
+  return (
+    <ToolbarPrimitive.Button
+      data-slot="toolbar-button"
+      className={className}
+      aria-label={ariaLabel}
+      render={render ?? <Button size="icon-sm" variant="ghost" aria-label={ariaLabel ?? ""} />}
+      {...props}
+    />
+  )
 }
 
 /**
@@ -100,7 +114,10 @@ function ToolbarButton({ className, render = <Button size="icon-sm" variant="gho
  * Visualmente pega los ítems, sin el `gap` de la barra, para que se vean como
  * un segmento y no como tres botones que cayeron cerca.
  */
-type ToolbarGroupProps = Omit<ToolbarPrimitive.Group.Props, "className"> & { className?: string }
+type ToolbarGroupProps = Omit<ToolbarPrimitive.Group.Props, "className" | "aria-label"> & { className?: string } & (
+    | { "aria-label": string }
+    | { "aria-labelledby": string }
+  )
 
 function ToolbarGroup({ className, ...props }: ToolbarGroupProps) {
   return (

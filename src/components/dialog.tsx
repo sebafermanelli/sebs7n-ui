@@ -4,6 +4,7 @@ import type * as React from "react"
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
 import { XIcon } from "lucide-react"
 
+import { useAvisoDeNombre } from "../internal/dialog-name-warning.js"
 import { cn } from "../lib/utils.js"
 import { Button } from "./button.js"
 
@@ -40,11 +41,13 @@ type DialogContentProps = Omit<DialogPrimitive.Popup.Props, "className"> & {
 }
 
 function DialogContent({ className, children, showCloseButton = true, ...props }: DialogContentProps) {
+  const ref = useAvisoDeNombre<HTMLDivElement>("DialogContent", "DialogTitle", props.ref)
   return (
     <DialogPrimitive.Portal>
       <DialogOverlay />
       <DialogPrimitive.Popup
         data-slot="dialog-content"
+        ref={ref}
         className={cn(
           "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-background-100 p-6 text-copy-14 text-gray-1000 shadow-modal outline-none sm:max-w-lg",
           "transition-[opacity,translate] duration-150 data-ending-style:opacity-0 data-starting-style:translate-y-[calc(-50%+8px)] data-starting-style:opacity-0",
@@ -56,10 +59,12 @@ function DialogContent({ className, children, showCloseButton = true, ...props }
         {showCloseButton && (
           <DialogPrimitive.Close
             data-slot="dialog-close"
-            render={<Button variant="ghost" size="icon-sm" className="absolute top-4 right-4" />}
+            // El nombre va en `aria-label` y no en un `<span class="sr-only">`: el botón es solo el
+            // ícono, y `ButtonProps` exige el nombre en el tipo justamente para que no se pueda
+            // olvidar. Un texto escondido nombra igual de bien, pero no hay tipo que lo vea.
+            render={<Button variant="ghost" size="icon-sm" aria-label="Cerrar" className="absolute top-4 right-4" />}
           >
             <XIcon />
-            <span className="sr-only">Cerrar</span>
           </DialogPrimitive.Close>
         )}
       </DialogPrimitive.Popup>

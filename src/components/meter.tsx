@@ -19,7 +19,7 @@ import { cn } from "../lib/utils.js"
  * Comparte la forma, los altos y los tokens de `Progress` a propósito: el
  * sistema tiene una sola barra, no dos que se parecen.
  */
-type MeterProps = Omit<MeterPrimitive.Root.Props, "className"> & {
+type MeterBaseProps = Omit<MeterPrimitive.Root.Props, "className" | "aria-label"> & {
   className?: string
   /**
    * Alto de la pista: `sm` 4px, `md` 6px. Los mismos que `Progress`, y por el
@@ -27,13 +27,24 @@ type MeterProps = Omit<MeterPrimitive.Root.Props, "className"> & {
    * táctil.
    */
   size?: "sm" | "md"
-  /** Etiqueta visible. Es lo que nombra la barra: sin ella hace falta `aria-label`. */
-  label?: React.ReactNode
   /** Muestra el valor formateado a la derecha, el mismo texto que lee el lector. */
   showValue?: boolean
   /** Clases de la pista (el riel gris), por si hay que cambiarle el ancho o el radio. */
   trackClassName?: string
 }
+
+/**
+ * Mismo contrato de nombre que `Progress`, y por el mismo motivo: un
+ * `role="meter"` sin nombre se anuncia «73 %» y el 73 % de qué es lo que hace
+ * falta saber. `label` (visible) es la forma preferida; si no hay lugar para
+ * texto, va `aria-label` o `aria-labelledby`.
+ */
+type MeterProps = MeterBaseProps &
+  (
+    | { label: NonNullable<React.ReactNode>; "aria-label"?: string }
+    | { label?: undefined; "aria-label": string }
+    | { label?: undefined; "aria-labelledby": string }
+  )
 
 function Meter({ className, label, showValue = false, size = "md", trackClassName, ...props }: MeterProps) {
   return (
@@ -75,4 +86,4 @@ function Meter({ className, label, showValue = false, size = "md", trackClassNam
   )
 }
 
-export { Meter, type MeterProps }
+export { Meter, type MeterBaseProps, type MeterProps }

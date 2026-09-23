@@ -44,7 +44,7 @@ export const COMPONENTS = {
     a11y: [
       "`loading` pone `aria-busy` y `aria-disabled`, y cancela el `onClick`: el botón se lee como ocupado en vez de desaparecer del foco.",
       "El anillo de foco (`focus-visible:focus-ring`) usa `brand-700` y no se saca nunca.",
-      "En `size=\"icon-*\"` hace falta `aria-label`: no hay texto que leer.",
+      "En `size=\"icon-*\"` **el tipo exige** `aria-label` o `aria-labelledby`: no hay texto que leer, y un botón de ícono sin nombre se anuncia «botón» a secas. Si el nombre ya está en los hijos (un `sr-only`, el número de un día) o lo pone un envoltorio (`<DropdownMenuTrigger aria-label=\"Menú\" render={<Button size=\"icon-sm\" />} />`), escribilo igual en el `aria-label` del `Button`: es el que termina en el DOM.",
       "El texto sobre `variant=\"accent\"` llega a 4,5:1 en claro y en oscuro; hay un test que lo recalcula desde OKLCH.",
     ],
     usage: [
@@ -127,7 +127,7 @@ export const COMPONENTS = {
     description: "Foto de una persona con iniciales de respaldo cuando la imagen no carga.",
     keyboard: [["—", "No es interactivo."]],
     a11y: [
-      "`AvatarImage` necesita `alt`. Si el nombre ya está al lado, `alt=\"\"` para no repetirlo.",
+      "`AvatarImage` **exige `alt` en el tipo**, incluso vacío. Sin `alt` el lector lee la URL del archivo letra por letra; con `alt=\"\"` la foto sale del árbol y la nombra el contexto, que es lo correcto cuando el nombre de la persona ya está al lado. Las dos decisiones son válidas; no haber decidido, no.",
       "El fallback es siempre gris: un color por persona sería una señal que nadie puede interpretar.",
     ],
     usage: ["Las iniciales, dos letras como máximo.", "Dentro de un `UserMenu` ya viene armado: no lo rehagas."],
@@ -673,6 +673,7 @@ export const COMPONENTS = {
       "`DialogDescription` se asocia con `aria-describedby` y se lee después del título.",
       "El foco entra al abrir y vuelve al trigger al cerrar, y el fondo queda inerte.",
       "El botón X trae su propio nombre accesible; `showCloseButton={false}` obliga a dejar otra salida visible.",
+      "Si el diálogo se monta sin `DialogTitle` ni `aria-labelledby`, en desarrollo sale un aviso por consola. No hay tipo que pueda exigirlo —el título es un hijo—, y mirando la pantalla no se nota: el título casi siempre está escrito, pero como un `<h2>` suelto en vez de `DialogTitle`.",
     ],
     usage: [
       "**Los triggers usan `render={<Button … />}`, no `asChild`.**",
@@ -711,7 +712,7 @@ export const COMPONENTS = {
     description: "Un panel que entra desde un borde. Los cuatro lados.",
     keyboard: [["Escape", "Cierra y devuelve el foco."], ["Tab", "Atrapado adentro."], ["Click en el fondo", "Cierra."]],
     a11y: [
-      "Mismo contrato que `Dialog`: `SheetTitle` obligatorio, foco atrapado, fondo inerte.",
+      "Mismo contrato que `Dialog`: `SheetTitle` obligatorio, foco atrapado, fondo inerte. Sin título, aviso por consola en desarrollo.",
       "El movimiento de entrada pasa por `motion-reduce`.",
     ],
     usage: [
@@ -735,7 +736,7 @@ export const COMPONENTS = {
     a11y: [
       "**Un drawer que solo se cierra deslizando es un drawer que no se puede cerrar.** Por eso `showCloseButton` viene prendido y Escape siempre funciona: arrastrar no es una opción con teclado, con switch control ni con una sola mano ocupada.",
       "El handle es `aria-hidden`: es una pista visual, no un control. No recibe foco ni se anuncia, así que nunca cuenta como la salida del drawer.",
-      "`DrawerTitle` no es opcional: es el nombre accesible del diálogo.",
+      "`DrawerTitle` no es opcional: es el nombre accesible del diálogo. Sin él, aviso por consola en desarrollo.",
       "El movimiento pasa por `motion-reduce`: con `prefers-reduced-motion` la hoja aparece en lugar de deslizarse.",
       "Lo que arrastra es todo el popup menos `DrawerBody`. Un control que se maneja con el dedo adentro del área de arrastre —un slider, un canvas— necesita `data-base-ui-swipe-ignore` para que el gesto no se lo robe.",
     ],
@@ -1053,7 +1054,7 @@ export const COMPONENTS = {
     a11y: [
       "Base UI emite `role=\"toolbar\"` con `aria-orientation` y maneja el roving tabindex: un solo hijo tiene `tabIndex=0` a la vez.",
       "Home y End las pone el componente. El patrón toolbar de la WAI las pide y el composite de Base UI las trae detrás de un flag que `Menubar` prende y `Toolbar` no; en una barra larga son la diferencia entre una tecla y quince flechas.",
-      "`ToolbarGroup` necesita `aria-label`: sin él el lector anuncia «grupo» y nada más.",
+      "`ToolbarGroup` **exige `aria-label` o `aria-labelledby` en el tipo**: sin él el lector anuncia «grupo» y nada más.",
       "`focusableWhenDisabled` viene en `true`: un control apagado sigue en el recorrido, así se puede leer por qué está apagado y la barra no se mueve abajo de los dedos.",
       "Los `ToolbarButton` de ícono necesitan `aria-label`: no hay texto que leer.",
     ],
@@ -1308,7 +1309,7 @@ export const COMPONENTS = {
     a11y: [
       "Emite `role=\"progressbar\"` con `aria-valuenow`, `aria-valuemin` y `aria-valuemax`.",
       "Con `value={null}` es indeterminada: desaparece `aria-valuenow` y el lector anuncia que está en curso, sin porcentaje.",
-      "El `label` visible es el nombre accesible. Sin `label` hace falta `aria-label`.",
+      "El nombre es **obligatorio y lo exige el tipo**: `label` (visible, la preferida), `aria-label` o `aria-labelledby`. Una barra sin nombre se anuncia «60 %» y nada más, y el 60 % de qué es justamente lo que hace falta saber.",
       "Con movimiento reducido la franja indeterminada no queda congelada a mitad de camino: la pista se llena de un gris más apagado.",
     ],
     usage: [
@@ -1335,7 +1336,7 @@ export const COMPONENTS = {
       "Emite `role=\"meter\"`, no `role=\"progressbar\"`: el lector anuncia una medida y no una tarea en curso. Es la diferencia que hace que valga la pena tener los dos componentes.",
       "`aria-valuetext` lleva el valor ya formateado —«62%», «$ 321.400»—, que es más útil que el número crudo de `aria-valuenow`.",
       "Lo que se ve con `showValue` y lo que se lee salen del mismo texto: no se pueden desincronizar.",
-      "El `label` visible es el nombre accesible. Sin `label` hace falta `aria-label`.",
+      "El nombre es **obligatorio y lo exige el tipo**: `label` (visible, la preferida), `aria-label` o `aria-labelledby`. Mismo motivo que en `Progress`.",
       "Un valor fuera de rango se recorta contra `min` y `max` en vez de desbordar la pista.",
     ],
     usage: [
