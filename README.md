@@ -19,14 +19,16 @@ son **tres variables CSS**.
 
 ## Instalación
 
+Está publicado en npm como [`sebs7n-ui`](https://www.npmjs.com/package/sebs7n-ui),
+público y MIT.
+
 ```bash
 pnpm add sebs7n-ui @base-ui/react next-themes sonner geist
 ```
 
-> **Todavía no está en npm.** Hasta que se publique, el paquete se distribuye
-> como tarball: `npm pack` en este repo y `pnpm add ./sebs7n-ui-0.1.0.tgz`, o
-> `pnpm add github:sebafermanelli/sebs7n-ui#v0.1.0`. Los ejemplos de abajo valen
-> igual en los dos casos.
+```bash
+npm install sebs7n-ui @base-ui/react next-themes sonner geist
+```
 
 Las `peerDependencies` las instala la app, para que haya **una sola copia** de
 React y de Base UI:
@@ -37,6 +39,10 @@ React y de Base UI:
 | `@base-ui/react` | `^1.8.0` |
 | `next-themes` | `^0.4.6` |
 | `sonner` | `^2.0.7` |
+
+`geist` no es un peer declarado, pero va en el mismo comando: los tokens de
+tipografía leen `--font-geist-sans` y `--font-geist-mono`, que define la app en
+el layout raíz.
 
 ### 1. CSS
 
@@ -580,14 +586,17 @@ ejemplo, claro y oscuro:
 cd playground && npm install && npm run dev   # http://localhost:4000
 ```
 
-`npm run dev` empaqueta el paquete con `npm pack` y lo instala como tarball: la
-misma forma en que lo recibe una app.
+`npm run dev` empaqueta el paquete con `npm pack` y lo instala como tarball. Es a
+propósito, y no es lo que hace una app: una app instala desde npm
+(`pnpm add sebs7n-ui`). Acá se empaca el código local para probar los cambios sin
+publicar, y con exactamente los archivos que salen en el tarball publicado.
 
 ## Sitio de documentación
 
 Vive en `docs/site/` y es una app de Next 16 + Tailwind v4 que **usa el propio
-design system**: es su mejor demo. Consume el paquete como tarball, igual que el
-playground, así documenta exactamente lo que se publica.
+design system**: es su mejor demo. Consume el paquete con `npm pack`, igual que el
+playground y por la misma razón: documenta el código de este repo, no la última
+versión publicada en npm. Una app normal instala desde npm.
 
 ```bash
 cd docs/site
