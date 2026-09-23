@@ -1,6 +1,6 @@
 {
   "name": "sebs7n-ui",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Design system para React: Geist (Vercel) sobre las primitivas de shadcn/ui base-nova (Base UI).",
   "keywords": [
     "design-system",
