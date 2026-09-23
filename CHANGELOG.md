@@ -6,33 +6,34 @@ Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Versionado
 
 ## [0.1.1] - 2026-09-23
 
-### Changed
-
-- `Sheet` va de punta a punta: se le sacaron las esquinas redondeadas de los
-  cuatro lados. Un radio contra el borde de la pantalla se lee como un recorte
-  mal hecho.
-- `TabsTrigger` deja de pintar una pastilla gris en hover: una pestaña no es un
-  botón, así que al pasar por encima solo se aclara el texto. La pestaña activa
-  la sigue marcando la línea de abajo, y el pseudo-elemento queda solo para el
-  anillo de foco.
-
-## [0.1.0] - 2026-09-22
-
-Primera versión pública de `sebs7n-ui`: un design system para React que pone
+Primera versión publicada de `sebs7n-ui`: un design system para React que pone
 **Geist** —el lenguaje visual de Vercel— sobre las primitivas de **shadcn/ui
 `base-nova`** (Base UI), empaquetado como una sola dependencia.
+
+Se instala desde npm:
+
+```bash
+pnpm add sebs7n-ui @base-ui/react next-themes sonner geist
+```
 
 ### Added
 
 - **37 componentes** accesibles sobre Base UI, cada uno con su propio entry
   point (`sebs7n-ui/<componente>`), más el barrel `sebs7n-ui`. Primitivas de
   formulario (Input, Textarea, Label, Select, Checkbox, RadioGroup, Switch,
-  Toggle, ToggleGroup, Combobox, Autocomplete), superposiciones (Dialog,
-  AlertDialog, Sheet, Popover, Tooltip, DropdownMenu, Toaster), navegación
-  (NavigationMenu, Tabs, Sidebar, UserMenu, ThemeSwitcher) y contenido (Card,
-  Table, Badge, Avatar, Alert, Separator, Skeleton, Stat, Kbd, EmptyState,
-  PageHeader, Button), más el shell de aplicación (`AppShell`,
-  `AppShellContent`).
+  Toggle, ToggleGroup), superposiciones (Dialog, AlertDialog, Sheet, Popover,
+  Tooltip, DropdownMenu, Toaster) y contenido (Card, Table, Tabs, Badge,
+  Avatar, Alert, Separator, Skeleton, Kbd, Button).
+- **Búsqueda dentro de un campo: `Combobox` y `Autocomplete`.** El primero
+  elige de una lista cerrada; el segundo sugiere sobre texto libre. Los dos
+  filtran, se recorren con las flechas y anuncian el resultado.
+- **Shell de aplicación completo**: `AppShell` y `AppShellContent` (con su
+  «Ir al contenido» como primera parada de tabulación), `Sidebar`, `UserMenu`,
+  `ThemeSwitcher`, `PageHeader`, `EmptyState` y `Stat`. Una app arranca con
+  navegación, cabecera, menú de usuario y cambio de tema sin escribirlos.
+- **`NavigationMenu`** sobre `@base-ui/react/navigation-menu`: navegación de
+  sitio con paneles animados, con `keepMounted` para que los links estén en el
+  HTML del server y un crawler los vea.
 - **Tokens de Geist** como variables CSS y utilidades de Tailwind v4, sin
   `tailwind.config`: 9 escalas de 10 pasos (`gray`, `gray-alpha`, `blue`, `red`,
   `amber`, `green`, `teal`, `purple`, `pink`) en claro y oscuro, radios, sombras
@@ -52,22 +53,24 @@ Primera versión pública de `sebs7n-ui`: un design system para React que pone
   card, sheet) y `--sf-background-200` el fondo sutil o banda (sidebar,
   `thead`/`tfoot`, `EmptyState`). En oscuro las superficies son `#0a0a0a` sobre
   una página `#000000`, así que se despegan.
+- **`shape="pill"` en `Button`**: `rounded-full` con un escalón más de padding
+  horizontal (`sm` 20px, `md` 24px, `lg` 28px), pensado para los CTA de un hero
+  o de una sección de marketing, no para el chrome de una app.
 - **Variantes exportadas aparte** para componer sin montar el componente:
   `buttonVariants`, `badgeVariants`, `cardVariants`, `linkVariants`,
   `toggleVariants`, `sidebarItemVariants`, `menuItemClassName` /
   `menuPopupClassName` e `inputShell*ClassName`, en `sebs7n-ui/variants/*`.
   `linkVariants` cubre los links de texto (`inline`, `subtle`, `row`), que no
-  tienen forma de botón.
-- **`NavigationMenu`** sobre `@base-ui/react/navigation-menu`: navegación de
-  sitio con paneles animados, con `keepMounted` para que los links estén en el
-  HTML del server y un crawler los vea.
+  tienen forma de botón y por eso no pueden usar `buttonVariants`.
 - **Server Components por defecto.** `"use client"` solo donde hace falta
   estado; el resto (variantes, `AppShellContent`, `lib/utils`) sirve en el
-  server. Los entry points por módulo dejan que Next pode el bundle cliente.
+  server. Los entry points por módulo dejan que Next pode el bundle cliente:
+  medido en Next 16.3, una página con `Button` + `Card` + `ThemeSwitcher` baja
+  de 297,5 KB a 234,8 KB de JS cliente gzip importando por subpath.
 - **Contraste AA verificado por tests**, no a ojo: se calcula con la fórmula de
   WCAG 2.1 sobre `tokens/geist.json` y falla si un par cruza 4,5:1. También hay
   tests de tokens, de tipografía, de los componentes, del build y del contenido
-  del tarball.
+  del paquete publicado.
 - **`test/despersonalizacion.test.ts`**: falla si el nombre de una de las
   aplicaciones privadas vuelve a entrar en `src/`, `tokens/`, `README.md` o
   `package.json`.
@@ -75,15 +78,13 @@ Primera versión pública de `sebs7n-ui`: un design system para React que pone
   componente, la tabla de props generada desde el TypeScript, una superficie
   para agentes (`.md` por página, `llms.txt`, `llms-full.txt`) y una registry
   con formato shadcn para sacar un componente y editarlo (`shadcn add <url>`).
-- Metadata de publicación: `license` MIT + `LICENSE`, `keywords`, `author`,
-  `repository`, `homepage`, `bugs` y `publishConfig.access: public`.
+- **Licencia MIT** (`LICENSE`), más la metadata de publicación: `keywords`,
+  `author`, `repository`, `homepage`, `bugs` y `publishConfig.access: public`.
 
 ### Known issues
 
-- **i18n pendiente.** Los textos de interfaz vienen en español y se ajustan
-  componente por componente con la prop `labels` (`Combobox`, `Autocomplete`,
-  `ThemeSwitcher`, `UserMenu`, `AppShell`). No hay todavía un mecanismo global —un
-  provider de locale o un diccionario único—, así que una app en otro idioma
-  tiene que pasar `labels` en cada punto de uso.
-- Todavía no está publicado en npm: se distribuye como tarball (`npm pack`) o
-  desde GitHub.
+- **i18n sin provider global.** Los textos de interfaz vienen en español y se
+  ajustan componente por componente con la prop `labels` (`Combobox`,
+  `Autocomplete`, `ThemeSwitcher`, `UserMenu`, `AppShell`). No hay un mecanismo
+  global —un provider de locale o un diccionario único—, así que una app en otro
+  idioma tiene que pasar `labels` en cada punto de uso.
