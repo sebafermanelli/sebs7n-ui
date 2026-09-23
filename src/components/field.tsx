@@ -100,7 +100,18 @@ type FieldErrorProps = Omit<FieldPrimitive.Error.Props, "className"> & { classNa
 
 function FieldError({ className, ...props }: FieldErrorProps) {
   return (
-    <FieldPrimitive.Error data-slot="field-error" className={cn("text-copy-13 text-red-900", className)} {...props} />
+    <FieldPrimitive.Error
+      data-slot="field-error"
+      className={cn(
+        "text-copy-13 text-red-900",
+        // Con más de un mensaje, Base UI los mete en un `<ul>` sin estilo, que
+        // el reset de Tailwind deja como un párrafo pegado. Con viñeta y
+        // sangría se lee que son dos problemas distintos y no una frase larga.
+        "[&>ul]:list-disc [&>ul]:space-y-1 [&>ul]:pl-4",
+        className
+      )}
+      {...props}
+    />
   )
 }
 
@@ -111,6 +122,16 @@ function FieldError({ className, ...props }: FieldErrorProps) {
  * ```tsx
  * <FieldControl render={<input type="date" />} />
  * ```
+ *
+ * **Funciona si el componente de adentro reenvía lo que recibe.** `FieldControl`
+ * le pasa `id`, `name`, `aria-describedby`, `aria-invalid` y una `ref`; un
+ * componente que declara `id` y `name` como props propias y no hace spread del
+ * resto se queda sin nada, y el campo queda con la etiqueta apuntando al vacío.
+ * Es el caso típico de un date picker o un autocomplete propio, hechos con un
+ * `<input type="hidden">` más un botón: ahí el arreglo va adentro de ese
+ * componente —que acepte y reenvíe el spread, y que ponga la `ref` sobre el
+ * elemento enfocable—, no en cada lugar donde se usa. Mientras tanto siguen
+ * necesitando su `Label` con `htmlFor`, como antes.
  */
 function FieldControl(props: FieldPrimitive.Control.Props) {
   return <FieldPrimitive.Control data-slot="field-control" {...props} />

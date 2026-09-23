@@ -79,6 +79,27 @@ describe("Field", () => {
     // volver al campo, sin tener que buscarlo por la pantalla.
     expect(input).toHaveAccessibleDescription("Revisá el email")
   })
+
+  it("cuando hay más de un error los muestra como lista, no como una frase pegada", async () => {
+    render(
+      <Field
+        name="password"
+        validate={() => ["Mínimo 8 caracteres", "Le falta un número"]}
+        validationMode="onBlur"
+      >
+        <FieldLabel>Contraseña</FieldLabel>
+        <Input />
+        <FieldError />
+      </Field>
+    )
+
+    await userEvent.type(screen.getByLabelText("Contraseña"), "corta")
+    await userEvent.tab()
+
+    const error = await screen.findByText("Mínimo 8 caracteres")
+    expect(error.tagName).toBe("LI")
+    expect(screen.getByText("Le falta un número").tagName).toBe("LI")
+  })
 })
 
 describe("Fieldset", () => {

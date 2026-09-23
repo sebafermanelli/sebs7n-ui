@@ -226,6 +226,7 @@ export const COMPONENTS = {
       "El asterisco de `required` es `aria-hidden`: nadie escucha \"Razón social asterisco\". Que el campo sea obligatorio lo anuncia el `required` del control.",
       "`FieldError` no ocupa lugar mientras el campo está bien, y cuando aparece ya está referenciado: no hace falta mover el foco para que se lea.",
       "`Input`, `Textarea` y `Select` se enganchan solos. Para cualquier otro control va `FieldControl` con `render`.",
+      "**Un control propio se engancha solo si reenvía lo que recibe.** `FieldControl` le pasa `id`, `name`, `aria-describedby`, `aria-invalid` y una `ref`; un componente que declara `id` y `name` como props propias y no hace spread del resto se queda sin nada, y la etiqueta del campo apunta al vacío. Pasa seguido con un date picker o un autocomplete hechos con un `<input type=\"hidden\">` más un botón: el arreglo va adentro de ese componente, no en cada uso.",
     ],
     usage: [
       "**El `name` es la bisagra con `Form`**: es la clave de los valores del submit y la del objeto `errors` que devuelve el servidor. Para datos anidados se usa punto (`domicilio.calle`), que es lo que devuelve el adaptador de schemas.",
