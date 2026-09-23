@@ -2,6 +2,11 @@
 
 Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Versionado: SemVer 2.0.0.
 
+Mientras el paquete sea **0.x**, un minor puede traer cambios incompatibles: SemVer no protege
+la versión cero y acá todavía se mueven APIs. Cuando eso pasa, la entrada va marcada
+**Breaking** con qué se rompe y cómo se migra. De 1.0 en adelante, los incompatibles esperan al
+major.
+
 ## [Unreleased]
 
 ## [0.4.0] - 2026-09-23
@@ -286,3 +291,13 @@ pnpm add sebs7n-ui @base-ui/react next-themes sonner geist
   `Autocomplete`, `ThemeSwitcher`, `UserMenu`, `AppShell`). No hay un mecanismo
   global —un provider de locale o un diccionario único—, así que una app en otro
   idioma tiene que pasar `labels` en cada punto de uso.
+
+[Unreleased]: https://github.com/sebafermanelli/sebs7n-ui/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/sebafermanelli/sebs7n-ui/compare/v0.3.3...v0.4.0
+[0.3.3]: https://github.com/sebafermanelli/sebs7n-ui/compare/v0.3.2...v0.3.3
+[0.3.2]: https://github.com/sebafermanelli/sebs7n-ui/compare/v0.3.1...v0.3.2
+[0.3.1]: https://github.com/sebafermanelli/sebs7n-ui/compare/v0.3.0...v0.3.1
+[0.3.0]: https://github.com/sebafermanelli/sebs7n-ui/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/sebafermanelli/sebs7n-ui/compare/v0.1.2...v0.2.0
+[0.1.2]: https://github.com/sebafermanelli/sebs7n-ui/compare/v0.1.1...v0.1.2
+[0.1.1]: https://github.com/sebafermanelli/sebs7n-ui/releases/tag/v0.1.1
