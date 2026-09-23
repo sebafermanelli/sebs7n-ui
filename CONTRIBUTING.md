@@ -3,7 +3,8 @@
 ## Correr los tests
 
 ```bash
-npm ci          # dispara `prepare`, o sea el build: tsc + tailwind
+npm ci          # solo instala: el build cuelga de `prepack`, no de `prepare`
+npm run build   # dist/ (tsc)
 npm run typecheck
 npm test        # vitest; incluye build.test.ts, que reconstruye dist/ y revisa el tarball
 npm run size    # umbrales de peso, ver .size-limit.js

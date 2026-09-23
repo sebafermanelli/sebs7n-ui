@@ -165,6 +165,10 @@ Fase 3 de la auditoría de 0.4.0: rendimiento.
 
 ### Changed
 
+- **El build cuelga de `prepack`, no de `prepare`.** `npm install` en el repo
+  corría `tsc`, así que un error de tipos hacía fallar el **install**, no el
+  build. `prepack` lo corre igual `npm pack` y `npm publish`, que es donde hace
+  falta. En CI el job de `size` ahora pide `npm run build` explícito.
 - **El pulso del `Skeleton` deja de repintar.** `@keyframes skeleton` animaba
   `background-color`, o sea interpolación de color en el hilo principal y un
   repintado por frame durante toda la carga —justo cuando el hilo está ocupado—.

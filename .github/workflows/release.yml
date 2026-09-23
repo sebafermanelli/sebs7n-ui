@@ -46,7 +46,8 @@ jobs:
           fi
           echo "tag y package.json coinciden en $pkg"
 
-      # Igual que en CI: `npm ci` corre `prepare`, así que acá también queda compilado `dist/`.
+      # `npm ci` ya no compila (el hook es `prepack`): lo hace `npm test` por `build.test.ts`,
+      # y después `npm publish` vuelve a correr `prepack` sobre el árbol limpio.
       - run: npm ci
 
       - run: npm test

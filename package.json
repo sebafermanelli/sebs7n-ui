@@ -73,7 +73,7 @@
     "tokens": "node scripts/gen-colors.mjs",
     "subpaths": "node scripts/gen-subpaths.mjs",
     "build": "tsc -p tsconfig.build.json",
-    "prepare": "npm run build",
+    "prepack": "npm run build",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
     "size": "size-limit"
