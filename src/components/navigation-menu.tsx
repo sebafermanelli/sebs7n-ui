@@ -258,7 +258,9 @@ function NavigationMenuPopup({ className, ...props }: NavigationMenuPopupProps) 
         // `shadow-menu` ya trae el hairline de 1px del sistema: un `border`
         // encima lo dibujaría dos veces (misma regla que Popover y DropdownMenu).
         "relative h-(--popup-height) w-(--popup-width) origin-(--transform-origin) overflow-hidden",
-        "rounded-xl bg-background-100 p-1 text-gray-1000 shadow-menu outline-none",
+        // El `focus-visible:focus-ring` es por el mismo motivo que en Popover y HoverCard: si el
+        // panel no tiene links adentro, Base UI lo enfoca a él y con `outline-none` no se veía nada.
+        "rounded-xl bg-background-100 p-1 text-gray-1000 shadow-menu outline-none focus-visible:focus-ring",
         "transition-[opacity,transform,width,height] duration-200 ease-out motion-reduce:transition-none",
         "data-starting-style:scale-[0.98] data-starting-style:opacity-0",
         "data-ending-style:scale-[0.98] data-ending-style:opacity-0",

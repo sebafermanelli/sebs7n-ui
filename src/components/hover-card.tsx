@@ -63,6 +63,9 @@ function HoverCardContent({
           data-slot="hover-card-content"
           className={cn(
             "flex w-72 origin-(--transform-origin) flex-col gap-3 rounded-xl bg-background-100 p-4 text-copy-14 text-gray-1000 shadow-menu outline-none",
+            // Mismo motivo que en Popover: sin elementos tabulables adentro, Base UI enfoca el
+            // popup y con `outline-none` no se veía nada (WCAG 2.4.7).
+            "focus-visible:focus-ring",
             "transition-opacity duration-150 motion-reduce:transition-none data-ending-style:opacity-0 data-starting-style:opacity-0",
             className
           )}

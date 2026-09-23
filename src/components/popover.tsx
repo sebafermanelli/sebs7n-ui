@@ -24,6 +24,12 @@ function PopoverContent({ className, align = "center", alignOffset = 0, side = "
           data-slot="popover-content"
           className={cn(
             "flex w-72 origin-(--transform-origin) flex-col gap-3 rounded-xl bg-background-100 p-4 text-copy-14 text-gray-1000 shadow-menu outline-none",
+            // Si adentro no hay nada tabulable —un popover de solo texto—, Base UI enfoca el popup
+            // mismo para que Escape y las flechas funcionen. Con `outline-none` y sin reemplazo eso
+            // era foco invisible (WCAG 2.4.7): el usuario apretaba Tab y el foco desaparecía de la
+            // pantalla. El anillo pisa la `shadow-menu` mientras dura, y está bien que la pise:
+            // saber dónde está el foco importa más que el hairline.
+            "focus-visible:focus-ring",
             "transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0",
             className
           )}

@@ -47,6 +47,22 @@ describe("Popover", () => {
     expect(panel).toHaveClass("shadow-menu", "rounded-xl", "bg-background-100")
     expect(panel.className).not.toMatch(/\bborder\b/)
   })
+
+  // Un popover de solo texto no tiene nada tabulable adentro, así que Base UI
+  // enfoca el popup mismo. Con `outline-none` y sin reemplazo eso era foco
+  // invisible (WCAG 2.4.7).
+  it("el panel enfocado tiene anillo, no outline-none pelado", async () => {
+    render(
+      <Popover>
+        <PopoverTrigger render={<Button variant="outline" />}>Filtros</PopoverTrigger>
+        <PopoverContent>contenido</PopoverContent>
+      </Popover>
+    )
+    await userEvent.click(screen.getByRole("button", { name: "Filtros" }))
+    const panel = (await screen.findByText("contenido")).closest<HTMLElement>("[data-slot=popover-content]")!
+    expect(panel).toHaveClass("focus-visible:focus-ring")
+    await waitFor(() => expect(panel).toHaveFocus())
+  })
 })
 
 describe("DropdownMenu", () => {
