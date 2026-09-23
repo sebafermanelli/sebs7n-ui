@@ -123,9 +123,50 @@ describe("registry", () => {
     expect(nombres).toContain("lib-shell-context")
   })
 
+  // El hallazgo que hacía que `shadcn add .../r/button.json` no compilara: el CLI
+  // resuelve un import por basename cuando no da con la ruta exacta, y entre dos
+  // archivos del mismo `add` con el mismo nombre gana el `.tsx`. `button.ts` de
+  // las variantes y `button.tsx` del componente chocaban, y el componente
+  // terminaba importándose a sí mismo (TS2303).
+  it("ningún archivo del registry repite basename con otro", () => {
+    const porBasename = new Map<string, string[]>()
+    for (const item of registry.items) {
+      for (const file of item.files ?? []) {
+        const nombre = (file.path as string).split("/").pop()!.replace(/\.(tsx?|jsx?)$/, "")
+        porBasename.set(nombre, [...(porBasename.get(nombre) ?? []), item.name])
+      }
+    }
+    const repetidos = [...porBasename.entries()].filter(([, items]) => items.length > 1)
+    expect(repetidos).toEqual([])
+  })
+
+  it("el tema viaja como ítem registry:theme y todo componente depende de él", () => {
+    const tema = registry.items.find((item: { name: string }) => item.name === "theme")
+    expect(tema.type).toBe("registry:theme")
+    // Los tokens que la auditoría encontró faltando en el proyecto destino.
+    // `@theme inline` por cssVars y con las claves sin `--`; `:root`/`.dark` por
+    // `css`. El porqué de cada uno está en registry.mjs.
+    expect(tema.cssVars.theme["color-brand-700"]).toBe("var(--sf-brand-700)")
+    expect(Object.keys(tema.cssVars.theme).some((clave) => clave.startsWith("--"))).toBe(false)
+    expect(tema.cssVars.light).toBeUndefined()
+    expect(tema.css[":root"]["--brand-base"]).toBeTruthy()
+    expect(tema.css[".dark"]["--sf-background"]).toBe("#000000")
+    expect(tema.css["@utility focus-ring"]["box-shadow"]).toContain("--color-brand-700")
+    expect(tema.css["@utility text-button-14"]["font-size"]).toBe("14px")
+    // Y nada de reset.css/base.css, que pisarían el chrome de la app destino:
+    // de reset.css entran los radios y nada más.
+    expect(tema.cssVars.theme["radius-md"]).toBe("6px")
+    expect(tema.cssVars.theme["color-white"]).toBeUndefined()
+    expect(tema.cssVars.theme["color-*"]).toBeUndefined()
+    for (const component of site.components) {
+      const item = registry.items.find((otro: { name: string }) => otro.name === component.slug)
+      expect(item.registryDependencies, component.slug).toContain(`${site.site}/r/theme.json`)
+    }
+  })
+
   it("el contenido no tiene imports relativos del paquete: todos pasan por un alias", () => {
     for (const item of registry.items) {
-      for (const file of item.files) {
+      for (const file of item.files ?? []) {
         expect(file.content, `${item.name}/${file.path}`).not.toMatch(/from "\.\.?\//)
         expect(file.content, `${item.name}/${file.path}`).not.toMatch(/\.js"/)
       }

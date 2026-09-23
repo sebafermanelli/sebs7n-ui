@@ -22,6 +22,44 @@ npm test        # el `pretest` corre scripts/generate.mjs
 componente que no existe, o si falta `docs/site/app/_demos/<slug>.tsx` con al menos una demo.
 No es un olvido del generador: componente nuevo sin documentar no entra.
 
+## El registry de `shadcn add`
+
+`docs/site/scripts/lib/registry.mjs` arma los ítems con formato shadcn que se publican en
+`/r/*.json`. Los tests del sitio cubren lo que se puede verificar sin red —el esquema, que
+ningún archivo repita basename, que el ítem `theme` traiga los tokens—, pero **no** corren el
+CLI de shadcn: eso pide `create-next-app`, tres `npm install` y el registry de shadcn.com, que
+ni es rápido ni es determinista. Si tocás `registry.mjs`, la prueba de verdad se hace a mano y
+lleva unos minutos:
+
+```bash
+# 1. Servir el registry del build local
+cd docs/site && npm run build && npx next start --port 4123 &
+# Las registryDependencies apuntan al dominio de producción: reescribirlas al puerto local.
+node -e 'const fs=require("fs");for(const f of fs.readdirSync("public/r")){const q="public/r/"+f;fs.writeFileSync(q,fs.readFileSync(q,"utf8").replaceAll("https://ui.sebastianfermanelli.com/r/","http://localhost:4123/r/"))}'
+
+# 2. Proyecto destino limpio
+cd /tmp && npx create-next-app@latest probe --ts --tailwind --eslint --app --src-dir \
+  --import-alias "@/*" --use-npm --no-turbopack --yes
+cd probe && npx shadcn@latest init --defaults --yes
+
+# 3. El componente, y lo único que importa: que compile y que traiga los tokens
+npx shadcn@latest add http://localhost:4123/r/button.json --overwrite --yes
+npx tsc --noEmit                       # tiene que pasar
+grep -c 'var(----' src/app/globals.css # tiene que dar 0
+npx next build && grep -o '\.bg-gray-1000{[^}]*}' .next/static/chunks/*.css
+```
+
+Después, matar el `next start` por su PID. Dos trampas que ya se pagaron una vez:
+
+- **Basenames.** El CLI resuelve cada import buscándolo entre los archivos de ese mismo `add`:
+  primero por ruta exacta y, si no da, **por basename**, donde gana la extensión `.tsx`. Por eso
+  las variantes se copian como `<x>-variants.ts` y los helpers como `<x>-helpers.ts`. Con
+  `button.ts` al lado de `button.tsx`, el componente se importaba a sí mismo y `tsc` tiraba
+  `TS2303 Circular definition of import alias 'buttonVariants'`.
+- **`cssVars` vs `css`.** `@theme inline` solo funciona por `cssVars.theme` y con las claves sin
+  `--`; `:root` y `.dark` solo funcionan por `css`. El porqué de cada uno está comentado en
+  `registry.mjs`.
+
 ## Colores
 
 `src/styles/colors.css` está **generado**: sale de `tokens/geist.json` con `npm run tokens`. No
