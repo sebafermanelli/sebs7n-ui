@@ -51,22 +51,32 @@ En `globals.css`, **en este orden**:
 ```css
 @import "tailwindcss";
 @import "sebs7n-ui/theme.css";
-/* Las clases de los componentes las genera el Tailwind de la app, en una sola
-   hoja ordenada. La ruta es relativa a ESTE archivo:
-   app/globals.css → "../node_modules/…"; src/app/globals.css → "../../node_modules/…". */
-@source "../../node_modules/sebs7n-ui/dist";
 
 :root {
   --brand-base: oklch(0.573 0.214 258);
   --brand-base-dark: oklch(0.573 0.214 258);
+  --brand-contrast: #fff;
   --brand-contrast-dark: #fff;
 }
 ```
 
+Eso es todo: **no hace falta ningún `@source`**. El `@source "../../dist"` lo
+trae el propio `theme.css`, y Tailwind v4 lo resuelve relativo a ese archivo
+aunque venga de `node_modules`.
+
+Si querés achicar el CSS final, podés excluir lo que tu app no usa. Esto falla
+ruidosamente —el componente se ve sin estilo—, al revés que olvidarse el
+`@source`:
+
+```css
+@source not "../../node_modules/sebs7n-ui/dist/components/combobox.js";
+```
+
+Los caros son `combobox`, `autocomplete`, los tres menús, `drawer` y `user-menu`.
+
 > Existe también `@import "sebs7n-ui/styles.css"` (la hoja precompilada), pero con
 > dos hojas de utilidades un `hidden lg:block` de la app pierde contra el
-> `hidden` del paquete. **No combines `@source` con `@import "sebs7n-ui/styles.css"`**:
-> es una cosa o la otra, y la recomendada es `@source`.
+> `hidden` del paquete. Es una cosa o la otra, y la recomendada es la de arriba.
 
 ### 2. Layout raíz
 

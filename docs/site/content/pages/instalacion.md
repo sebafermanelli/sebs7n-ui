@@ -51,23 +51,34 @@ En `globals.css`, **en este orden**:
 ```css
 @import "tailwindcss";
 @import "sebs7n-ui/theme.css";
-/* Las clases de los componentes las genera el Tailwind de la app, en una sola
-   hoja ordenada. La ruta es relativa a ESTE archivo:
-   app/globals.css → "../node_modules/…"; src/app/globals.css → "../../node_modules/…". */
-@source "../node_modules/sebs7n-ui/dist";
 
 :root {
   --brand-base: oklch(0.573 0.214 258);
   --brand-base-dark: oklch(0.573 0.214 258);
+  --brand-contrast: #fff;
   --brand-contrast-dark: #fff;
 }
 ```
 
-`theme.css` trae los tokens (colores, tipografía, radios, sombras) y el reset de la paleta. `@source` le dice al Tailwind de la app que escanee el `dist/` del paquete y genere ahí las utilidades que usan los componentes.
+Eso es todo. `theme.css` trae los tokens (colores, tipografía, radios, sombras), el reset de la paleta y el `@source` que hace que el Tailwind de la app escanee el `dist/` del paquete y genere las utilidades que usan los componentes.
 
-### Por qué `@source` y no `styles.css`
+**No escribas vos el `@source`.** Antes esta página pedía un `@source "../node_modules/sebs7n-ui/dist"` con la ruta calculada a mano según dónde estuviera tu `globals.css`, y ese era el error de instalación más frecuente: si la ruta está mal, Tailwind **no avisa nada**. El build dice "Compiled", el CSS baja de 75 KB a 13 y la app entera queda sin estilo. Ahora el `@source` vive adentro del paquete, que es el único lugar donde la ruta siempre es la misma.
 
-El paquete también exporta `sebs7n-ui/styles.css`, la hoja precompilada. Con dos hojas de utilidades cargadas, un `hidden lg:block` de la app pierde contra el `hidden` del paquete, porque gana la que se declaró último y no la más específica. **Es una cosa o la otra, nunca las dos**, y la recomendada es `@source`: una sola hoja, en el orden que Tailwind sabe resolver.
+### Achicar el CSS: `@source not`
+
+El `@source` del paquete escanea los 58 componentes, así que el CSS final trae utilidades de componentes que tu app no importa. Se pueden excluir uno por uno:
+
+```css
+@import "sebs7n-ui/theme.css";
+@source not "../../node_modules/sebs7n-ui/dist/components/combobox.js";
+@source not "../../node_modules/sebs7n-ui/dist/components/drawer.js";
+```
+
+Los caros son `combobox`, `autocomplete`, los tres menús, `drawer` y `user-menu`. Esto es opt-in a propósito: equivocarse acá falla **ruidosamente** —el componente aparece sin estilo la primera vez que lo usás—, al revés que olvidarse el `@source`. Y ojo con las cadenas: `user-menu` arrastra avatar, dropdown-menu, theme-switcher y tooltip.
+
+### Por qué no `styles.css`
+
+El paquete también exporta `sebs7n-ui/styles.css`, la hoja precompilada. Con dos hojas de utilidades cargadas, un `hidden lg:block` de la app pierde contra el `hidden` del paquete, porque gana la que se declaró último y no la más específica. **Es una cosa o la otra, nunca las dos**, y la recomendada es la de arriba: una sola hoja, en el orden que Tailwind sabe resolver.
 
 `styles.css` queda para el caso en que el bundler de la app no corre Tailwind, o no puede escanear `node_modules`. Trae los tokens y solo las utilidades que usan los componentes; no trae el preflight de Tailwind, así que el reset base sigue siendo responsabilidad de la app.
 

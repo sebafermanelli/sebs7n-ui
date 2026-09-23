@@ -264,3 +264,27 @@
 @utility text-copy-13 { font-family: var(--font-sans); font-size: 13px; line-height: 18px; font-weight: 400; }
 @utility text-copy-14-mono { font-family: var(--font-mono); font-size: 14px; line-height: 20px; font-weight: 400; }
 @utility text-copy-13-mono { font-family: var(--font-mono); font-size: 13px; line-height: 18px; font-weight: 400; }
+
+/**
+ * Las utilidades de los componentes las genera el Tailwind de la app, pero el
+ * `@source` lo pone el paquete.
+ *
+ * Tailwind v4 resuelve `@source` **relativo al archivo que lo contiene**,
+ * también cuando ese archivo vive en node_modules: desde
+ * `node_modules/sebs7n-ui/src/styles/theme.css`, `../../dist` es el dist del
+ * paquete. Antes esta línea la escribía la app, con la ruta calculada a mano
+ * (`../node_modules/…` o `../../node_modules/…` según dónde estuviera su
+ * globals.css). Cuando se olvidaba o la ruta era incorrecta, Tailwind no avisa
+ * nada: el build dice "Compiled", el CSS baja de 75 KB a 13 y la app entera
+ * queda sin estilo. Era la fricción de instalación número uno.
+ *
+ * Para achicar el CSS final se puede EXCLUIR lo que la app no usa, que es
+ * seguro porque falla ruidosamente (no compila la clase, se ve el componente
+ * sin estilo):
+ *
+ *   @import "sebs7n-ui/theme.css";
+ *   @source not "../../node_modules/sebs7n-ui/dist/components/combobox.js";
+ *
+ * Los caros son combobox, autocomplete, los tres menús, drawer y user-menu.
+ */
+@source "../../dist";
