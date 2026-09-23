@@ -754,6 +754,32 @@ export const COMPONENTS = {
     ],
     related: ["alert", "card", "table"],
   },
+  progress: {
+    title: "Progress",
+    group: "contenido",
+    description: "Cuánto falta para que termine algo. Determinada o indeterminada, en dos altos.",
+    keyboard: [["—", "No es interactivo."]],
+    a11y: [
+      "Emite `role=\"progressbar\"` con `aria-valuenow`, `aria-valuemin` y `aria-valuemax`.",
+      "Con `value={null}` es indeterminada: desaparece `aria-valuenow` y el lector anuncia que está en curso, sin porcentaje.",
+      "El `label` visible es el nombre accesible. Sin `label` hace falta `aria-label`.",
+      "Con movimiento reducido la franja indeterminada no queda congelada a mitad de camino: la pista se llena de un gris más apagado.",
+    ],
+    usage: [
+      "**Si sabés cuánto falta, pasá el número.** La indeterminada es para cuando no se puede saber.",
+      "La forma de algo que todavía no llegó es un `Skeleton`; el spinner de una acción es `Button loading`.",
+      "Poné `label` o `aria-label`: una barra sin nombre no dice qué está progresando.",
+      "`size=\"sm\"` dentro de una fila o una card chica; `md` suelto.",
+    ],
+    props: {
+      Progress: {
+        value: "El valor actual. `null` la deja indeterminada.",
+        size: "`sm` 4px · `md` 6px de alto de la pista.",
+        showValue: "Muestra el porcentaje a la derecha. Indeterminada no muestra número.",
+      },
+    },
+    related: ["skeleton", "slider", "button"],
+  },
   "page-header": {
     title: "PageHeader",
     group: "contenido",
