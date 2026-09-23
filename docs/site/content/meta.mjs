@@ -213,6 +213,82 @@ export const COMPONENTS = {
   },
 
   // ─────────────────────────────── Formularios ───────────────────────────────
+  field: {
+    title: "Field",
+    group: "formularios",
+    detallado: true,
+    description: "Un campo: la etiqueta, la ayuda y el error atados al control, sin un solo id escrito a mano.",
+    keyboard: [
+      ["Tab", "Entra y sale del control. La etiqueta no recibe foco: al clickearla, lo recibe el control."],
+    ],
+    a11y: [
+      "**Esto es lo que resuelve el componente.** La etiqueta nombra al control, la ayuda y el error lo describen, y el error pone `aria-invalid`: todo por anidar las partes, sin `useId`, sin `htmlFor` y sin armar un `aria-describedby` condicional que es justo lo que se olvida.",
+      "El asterisco de `required` es `aria-hidden`: nadie escucha \"Razón social asterisco\". Que el campo sea obligatorio lo anuncia el `required` del control.",
+      "`FieldError` no ocupa lugar mientras el campo está bien, y cuando aparece ya está referenciado: no hace falta mover el foco para que se lea.",
+      "`Input`, `Textarea` y `Select` se enganchan solos. Para cualquier otro control va `FieldControl` con `render`.",
+    ],
+    usage: [
+      "**El `name` es la bisagra con `Form`**: es la clave de los valores del submit y la del objeto `errors` que devuelve el servidor. Para datos anidados se usa punto (`domicilio.calle`), que es lo que devuelve el adaptador de schemas.",
+      "**`validationMode=\"onSubmit\"` (el default) casi siempre.** Marcar el email en rojo mientras se escribe es castigar a alguien por no haber terminado. `onBlur` para un dato que recién se puede juzgar completo; `onChange` solo cuando se puede evaluar desde el primer carácter, como el largo de una contraseña.",
+      "La ayuda va visible en `FieldDescription`, no en un tooltip: una ayuda que hay que descubrir no ayuda a quien más la necesita.",
+      "Un mensaje propio para un motivo puntual se escribe con `match` (`<FieldError match=\"valueMissing\">Falta el email</FieldError>`): habla del dato, no del input.",
+      "Validar contra Zod, Valibot o ArkType: `fieldValidator` de `sebs7n-ui/lib/schema`.",
+    ],
+    props: {
+      Field: {
+        name: "Identifica al campo en los valores del submit y en el objeto `errors` de `Form`.",
+        validate: "Devolvé el mensaje si el valor está mal, o `null` si está bien. Puede ser asíncrona.",
+        validationMode: "`onSubmit` (default), `onBlur` u `onChange`. Tiene precedencia sobre el del `Form`.",
+      },
+      FieldLabel: { required: "Dibuja el asterisco. No hace obligatorio al campo: eso es el `required` del control." },
+    },
+    related: ["form", "fieldset", "input", "select"],
+  },
+  fieldset: {
+    title: "Fieldset",
+    group: "formularios",
+    description: "Un grupo de campos con un título común, y un disabled que los apaga a todos.",
+    keyboard: [["Tab", "Recorre los campos del grupo en orden. El título no recibe foco."]],
+    a11y: [
+      "El grupo tiene nombre accesible: es lo que distingue dos campos \"Calle\" en la misma pantalla, uno en \"Domicilio fiscal\" y otro en \"Dirección de entrega\".",
+      "El título va con `aria-labelledby` en vez de un `<legend>` nativo, que no se puede ubicar libremente sin pelear con el navegador.",
+      "`disabled` en el grupo apaga todos los campos de adentro sin que haya que repetirlo campo por campo.",
+    ],
+    usage: [
+      "Para opciones excluyentes va `RadioGroup`, que ya trae su propia semántica de grupo.",
+      "Un formulario de tres campos no necesita un `Fieldset`: agrupar de a uno agrega ruido, no estructura.",
+    ],
+    related: ["field", "form", "radio-group"],
+  },
+  form: {
+    title: "Form",
+    group: "formularios",
+    detallado: true,
+    description: "Un form nativo que junta los valores por name y reparte los errores del servidor a cada campo.",
+    keyboard: [
+      ["Enter", "Envía el formulario desde cualquier campo de texto, como cualquier `<form>`."],
+      ["Tab", "Recorre los campos y llega al submit."],
+    ],
+    a11y: [
+      "Es un `<form>` de verdad: lo entiende el navegador y sigue funcionando sin JavaScript.",
+      "Al fallar la validación, el foco va al primer campo con error en vez de quedarse en el botón.",
+      "Cada error aparece en su campo, no en un cartel arriba de todo: quien navega con lector de pantalla lo encuentra donde tiene que arreglarlo.",
+    ],
+    usage: [
+      "**`errors` es para lo que el navegador no puede saber**: que un email ya está usado, que el cupón venció, que el CUIT no existe en AFIP. Se limpia solo cuando el campo cambia.",
+      "`onFormSubmit` recibe los valores ya juntados por `name`: no hace falta `FormData` ni un `useState` por campo.",
+      "Para validar todo contra un schema está `validate()` de `sebs7n-ui/lib/schema`, que devuelve el valor parseado o los errores con la forma que espera esta prop.",
+      "El submit se deshabilita mientras se envía (`<Button loading>`), o el mismo formulario se manda dos veces.",
+    ],
+    props: {
+      Form: {
+        errors: "Objeto `{ nombreDelCampo: mensaje }`. Es para los errores que solo conoce el servidor.",
+        onFormSubmit: "Recibe los valores juntados por `name`. Ya hace `preventDefault()`.",
+        validationMode: "Cuándo se validan los campos que no lo definan por su cuenta.",
+      },
+    },
+    related: ["field", "fieldset", "button"],
+  },
   input: {
     title: "Input",
     group: "formularios",
@@ -224,18 +300,18 @@ export const COMPONENTS = {
     ],
     a11y: [
       "**`aria-invalid` es todo lo que hace falta para el error**: el borde rojo y el anillo salen de ahí, no de una clase aparte.",
-      "Siempre con `Label` asociado por `htmlFor`/`id`. Un `placeholder` no es una etiqueta: desaparece al escribir.",
-      "El mensaje de error va en un `<p id=\"…-error\">` referenciado con `aria-describedby`, para que se lea al enfocar.",
+      "**Adentro de un `Field` no hay nada que cablear**: la etiqueta, la ayuda y el error se atan solos. `Label` con `htmlFor`/`id` a mano queda para un campo suelto fuera de un formulario.",
+      "Un `placeholder` no es una etiqueta: desaparece al escribir, justo cuando hace falta recordar qué se estaba llenando.",
       "`focus:focus-border` en vez del anillo: en un campo el borde teñido molesta menos y se ve igual.",
     ],
     usage: [
       "**El tamaño se elige una vez por formulario**, no por campo. `md` (40px) es el de una app; `lg` para un formulario de una sola pregunta.",
       "`type` importa más que el estilo: `email`, `tel`, `url` y `numeric` cambian el teclado del celular.",
-      "Un campo obligatorio se marca en el `Label` (`required`), no con un asterisco pegado al placeholder.",
+      "Un campo obligatorio se marca en la etiqueta (`required` en `FieldLabel` o en `Label`), no con un asterisco pegado al placeholder.",
       "Para un buscador con sugerencias no uses `Input` a mano: `Combobox` o `Autocomplete`.",
     ],
     props: { Input: { size: "`sm` 32px · `md` 40px · `lg` 48px, con el texto un paso más grande." } },
-    related: ["label", "textarea", "select", "combobox"],
+    related: ["field", "label", "textarea", "select", "combobox"],
   },
   textarea: {
     title: "Textarea",
