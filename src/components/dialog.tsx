@@ -6,7 +6,7 @@ import { XIcon } from "lucide-react"
 
 import { useAvisoDeNombre } from "../internal/dialog-name-warning.js"
 import { useLabels } from "../lib/labels.js"
-import { cn } from "../lib/utils.js"
+import { cn, type WithClassName } from "../lib/utils.js"
 import { Button } from "./button.js"
 
 function Dialog(props: DialogPrimitive.Root.Props) {
@@ -21,7 +21,7 @@ function DialogClose(props: DialogPrimitive.Close.Props) {
   return <DialogPrimitive.Close data-slot="dialog-close" {...props} />
 }
 
-type DialogOverlayProps = Omit<DialogPrimitive.Backdrop.Props, "className"> & { className?: string }
+type DialogOverlayProps = WithClassName<DialogPrimitive.Backdrop.Props>
 
 function DialogOverlay({ className, ...props }: DialogOverlayProps) {
   return (
@@ -36,8 +36,7 @@ function DialogOverlay({ className, ...props }: DialogOverlayProps) {
   )
 }
 
-type DialogContentProps = Omit<DialogPrimitive.Popup.Props, "className"> & {
-  className?: string
+type DialogContentProps = WithClassName<DialogPrimitive.Popup.Props> & {
   showCloseButton?: boolean
   /**
    * El texto del botón X. Con un `LabelsProvider` arriba se traduce de una vez para toda la app;
@@ -94,13 +93,13 @@ function DialogFooter({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
-type DialogTitleProps = Omit<DialogPrimitive.Title.Props, "className"> & { className?: string }
+type DialogTitleProps = WithClassName<DialogPrimitive.Title.Props>
 
 function DialogTitle({ className, ...props }: DialogTitleProps) {
   return <DialogPrimitive.Title data-slot="dialog-title" className={cn("text-heading-20 text-gray-1000", className)} {...props} />
 }
 
-type DialogDescriptionProps = Omit<DialogPrimitive.Description.Props, "className"> & { className?: string }
+type DialogDescriptionProps = WithClassName<DialogPrimitive.Description.Props>
 
 function DialogDescription({ className, ...props }: DialogDescriptionProps) {
   return <DialogPrimitive.Description data-slot="dialog-description" className={cn("text-copy-14 text-gray-900", className)} {...props} />

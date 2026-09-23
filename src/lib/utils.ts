@@ -23,3 +23,15 @@ const twMerge = extendTailwindMerge({
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
+
+/**
+ * Las props de un primitivo con el `className` estrechado a `string`.
+ *
+ * Base UI tipa `className` como `string | ((state) => string)`: la función existe para
+ * calcular clases a partir del estado del componente. Acá eso no hace falta —el estado ya
+ * viaja en los `data-*` y las clases condicionales se escriben con `data-open:`,
+ * `data-highlighted:` y compañía— y además rompe el contrato de `cn()`, que espera strings.
+ * Por eso los 58 componentes reescriben `Omit<X, "className"> & { className?: string }`,
+ * que estaba copiado 110 veces: un ajuste al contrato había que hacerlo 110 veces.
+ */
+export type WithClassName<P> = Omit<P, "className"> & { className?: string }

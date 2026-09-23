@@ -96,6 +96,21 @@ describe("extractProps", () => {
     expect(content.props.map((entry) => entry.name).sort()).toEqual(["className", "labels", "showCloseButton"])
   })
 
+  // `WithClassName<P>` reemplaza las 110 copias de `Omit<P, "className"> & { className?: string }`.
+  // El generador lee el **texto** del tipo para la línea «hereda de» y mira dónde está declarada
+  // cada prop para decidir si es propia: los dos dependen de que el alias no tape nada. Si el día
+  // de mañana un cambio hace que `WithClassName` se lea como un tipo opaco, las tablas del sitio
+  // se vacían y el build sigue verde, así que esto se fija acá.
+  it("expande WithClassName: la línea de herencia y el className propio sobreviven al alias", () => {
+    const overlay = find("dialog", "DialogOverlay")
+    expect(overlay.bases).toEqual(["Dialog.Backdrop"])
+    const className = prop("dialog", "DialogOverlay", "className")
+    expect(className.type).toBe("string")
+    expect(className.inherited).toBe(false)
+    // Y las props de Base UI que el alias deja pasar siguen sin ensuciar la tabla.
+    expect(overlay.props.map((entry) => entry.name)).toEqual(["className"])
+  })
+
   it("resuelve un componente que es un alias del primitivo", () => {
     const combobox = find("combobox", "Combobox")
     expect(combobox.alias).toBe("ComboboxPrimitive.Root")
