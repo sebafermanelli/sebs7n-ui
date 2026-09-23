@@ -1,0 +1,190 @@
+"use client"
+
+import { Toolbar as ToolbarPrimitive } from "@base-ui/react/toolbar"
+
+import { cn } from "../lib/utils.js"
+import { Button } from "./button.js"
+
+/**
+ * Una barra de acciones agrupadas con **roving tabindex**.
+ *
+ * Todo el grupo es **una sola parada de tabulación**: entrás con Tab, te movés
+ * adentro con las flechas y salís con Tab. Veinte botones sueltos son veinte
+ * paradas de Tab entre el contenido de arriba y el de abajo; quien navega con
+ * teclado o con un switch los tiene que atravesar **todos** cada vez que quiere
+ * llegar al documento. Esa es toda la razón del componente: la barra ya se veía
+ * bien con un `<div className="flex gap-1">`.
+ *
+ * A cambio, adentro no van controles sueltos: cada hijo interactivo tiene que
+ * ser un `ToolbarButton`, `ToolbarLink` o `ToolbarInput` para entrar en el
+ * recorrido. Un `<button>` puesto a mano queda fuera y se vuelve inalcanzable,
+ * porque la barra le sacó el Tab al resto.
+ *
+ * `orientation="vertical"` cambia las flechas a ↑ ↓ y da vuelta los separadores.
+ */
+type ToolbarProps = Omit<ToolbarPrimitive.Root.Props, "className"> & { className?: string }
+
+/**
+ * Los hijos que el primitivo metió en el recorrido.
+ *
+ * Son los únicos con `tabindex`: el roving tabindex se lo pone a cada ítem (0 al
+ * activo, -1 al resto) y a nada más. Un `ToolbarSeparator` no lo tiene, así que
+ * el filtro sale gratis y no depende de adivinar qué componente rindió cada uno.
+ */
+function rovingItems(root: HTMLElement) {
+  return Array.from(root.querySelectorAll<HTMLElement>("[tabindex]"))
+}
+
+function Toolbar({ className, onKeyDown, ...props }: ToolbarProps) {
+  return (
+    <ToolbarPrimitive.Root
+      data-slot="toolbar"
+      // Home y End no las trae Base UI: su composite las tiene detrás de un
+      // `enableHomeAndEndKeys` que `Menubar` prende y `Toolbar` no. El patrón
+      // toolbar de la WAI las pide, y en una barra larga son la diferencia entre
+      // una tecla y quince flechas. Mover el foco a mano alcanza: el ítem, al
+      // recibirlo, le avisa al composite cuál quedó activo.
+      onKeyDown={(event) => {
+        onKeyDown?.(event)
+        if (event.defaultPrevented) return
+        if (event.key !== "Home" && event.key !== "End") return
+        // Dentro de un campo de texto, Home y End son principio y fin de línea.
+        if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) return
+        const items = rovingItems(event.currentTarget)
+        const target = event.key === "Home" ? items.at(0) : items.at(-1)
+        if (!target) return
+        event.preventDefault()
+        target.focus()
+      }}
+      className={cn(
+        "flex items-center gap-1 rounded-lg bg-background-100 p-1 text-gray-1000",
+        "data-[orientation=vertical]:w-fit data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-stretch",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+/**
+ * Un control de la barra. No trae estilos propios: los pone el `render`.
+ *
+ * Por defecto rinde el `Button` del sistema en `ghost`, que es el cuerpo de un
+ * ícono de barra. Para otra cosa, se pasa el componente entero y `ToolbarButton`
+ * solo le suma el comportamiento (roving tabindex, `disabled` heredado del
+ * grupo):
+ *
+ * ```tsx
+ * <ToolbarButton render={<Toggle />} aria-label="Negrita" />
+ * <ToolbarButton render={<Button variant="outline" size="sm" />}>Publicar</ToolbarButton>
+ * <ToolbarButton render={<DropdownMenuTrigger render={<Button variant="ghost" size="icon-sm" />} />} />
+ * ```
+ *
+ * Nunca hay dos juegos de clases peleando: el `className` que llega acá se
+ * fusiona con el del `render` por `cn()`, una sola vez.
+ *
+ * `focusableWhenDisabled` viene en `true` de Base UI y se deja así: un control
+ * deshabilitado que desaparece del recorrido con flechas mueve la barra abajo
+ * de los dedos, y encima nunca se puede leer por qué está apagado.
+ */
+type ToolbarButtonProps = Omit<ToolbarPrimitive.Button.Props, "className"> & { className?: string }
+
+function ToolbarButton({ className, render = <Button size="icon-sm" variant="ghost" />, ...props }: ToolbarButtonProps) {
+  return <ToolbarPrimitive.Button data-slot="toolbar-button" className={className} render={render} {...props} />
+}
+
+/**
+ * Agrupa controles que se leen como una unidad (alineación, formato de número).
+ *
+ * `aria-label` no es opcional: el lector anuncia «grupo» y nada más si falta.
+ * Visualmente pega los ítems, sin el `gap` de la barra, para que se vean como
+ * un segmento y no como tres botones que cayeron cerca.
+ */
+type ToolbarGroupProps = Omit<ToolbarPrimitive.Group.Props, "className"> & { className?: string }
+
+function ToolbarGroup({ className, ...props }: ToolbarGroupProps) {
+  return (
+    <ToolbarPrimitive.Group
+      data-slot="toolbar-group"
+      className={cn("flex items-center gap-0.5 data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-stretch", className)}
+      {...props}
+    />
+  )
+}
+
+/**
+ * El separador entre grupos.
+ *
+ * Base UI le da la orientación contraria a la de la barra —una barra horizontal
+ * lleva separadores verticales— así que las dos alturas van escritas y la que
+ * manda la elige el `data-orientation` que pone el primitivo.
+ */
+type ToolbarSeparatorProps = Omit<ToolbarPrimitive.Separator.Props, "className"> & { className?: string }
+
+function ToolbarSeparator({ className, ...props }: ToolbarSeparatorProps) {
+  return (
+    <ToolbarPrimitive.Separator
+      data-slot="toolbar-separator"
+      className={cn(
+        "mx-1 shrink-0 bg-gray-400",
+        "data-[orientation=vertical]:h-5 data-[orientation=vertical]:w-px",
+        "data-[orientation=horizontal]:my-1 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+/**
+ * Un link dentro de la barra: el «Editado hace 5 min» que lleva al historial.
+ *
+ * Renderiza un `<a>` de verdad, con el cuerpo de un link de texto y no el de un
+ * botón: en una barra de acciones, lo único que navega tiene que verse distinto
+ * de lo que ejecuta. Para el `Link` del framework, `render={<NextLink … />}`.
+ */
+type ToolbarLinkProps = Omit<ToolbarPrimitive.Link.Props, "className"> & { className?: string }
+
+function ToolbarLink({ className, ...props }: ToolbarLinkProps) {
+  return (
+    <ToolbarPrimitive.Link
+      data-slot="toolbar-link"
+      className={cn(
+        "inline-flex h-8 items-center rounded-md px-2 text-copy-14 text-gray-900 no-underline outline-none",
+        "transition-control hover:text-gray-1000 focus-visible:focus-ring",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+/**
+ * Un `<input>` que entra en el recorrido con flechas.
+ *
+ * Es el campo chico de una barra —el ancho de línea, el nivel de zoom—, no un
+ * campo de formulario: para eso está `Field` + `Input`, que traen label, error
+ * y descripción. Base UI deja que las flechas ← → muevan el cursor adentro del
+ * texto en vez de saltar al control de al lado, así que escribir funciona como
+ * en cualquier input.
+ */
+type ToolbarInputProps = Omit<ToolbarPrimitive.Input.Props, "className"> & { className?: string }
+
+function ToolbarInput({ className, ...props }: ToolbarInputProps) {
+  return (
+    <ToolbarPrimitive.Input
+      data-slot="toolbar-input"
+      className={cn(
+        // Mismo cuerpo que `Input size="sm"`, sin el `w-full`: en una barra el
+        // ancho lo pone quien lo usa (`className="w-20"`), no el componente.
+        "h-8 min-w-0 rounded-md border border-gray-400 bg-background-100 px-2 text-copy-14 text-gray-1000 outline-none transition-control",
+        "placeholder:text-gray-700 hover:border-gray-500 focus:focus-border",
+        "data-disabled:cursor-not-allowed data-disabled:border-gray-400 data-disabled:bg-gray-100 data-disabled:text-gray-700",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+export { Toolbar, ToolbarButton, ToolbarGroup, ToolbarInput, ToolbarLink, ToolbarSeparator }

@@ -951,6 +951,45 @@ export const COMPONENTS = {
     },
     related: ["dropdown-menu", "navigation-menu", "toolbar", "context-menu"],
   },
+  toolbar: {
+    title: "Toolbar",
+    group: "navegacion",
+    detallado: true,
+    description: "Acciones agrupadas con roving tabindex: una parada de tabulación para toda la barra.",
+    keyboard: [
+      ["Tab", "Entra a la barra y sale. Veinte botones adentro siguen siendo **una** parada."],
+      ["← →", "Mueve entre controles en una barra horizontal."],
+      ["↑ ↓", "Lo mismo con `orientation=\"vertical\"`."],
+      ["Home · End", "Primer y último control. Lo agrega sebs7n-ui: Base UI las deja apagadas en `Toolbar`."],
+      ["Enter · Espacio", "Activa el control enfocado."],
+      ["← → · Home · End dentro de un `ToolbarInput`", "Mueven el cursor en el texto, no saltan de control."],
+    ],
+    a11y: [
+      "Base UI emite `role=\"toolbar\"` con `aria-orientation` y maneja el roving tabindex: un solo hijo tiene `tabIndex=0` a la vez.",
+      "Home y End las pone el componente. El patrón toolbar de la WAI las pide y el composite de Base UI las trae detrás de un flag que `Menubar` prende y `Toolbar` no; en una barra larga son la diferencia entre una tecla y quince flechas.",
+      "`ToolbarGroup` necesita `aria-label`: sin él el lector anuncia «grupo» y nada más.",
+      "`focusableWhenDisabled` viene en `true`: un control apagado sigue en el recorrido, así se puede leer por qué está apagado y la barra no se mueve abajo de los dedos.",
+      "Los `ToolbarButton` de ícono necesitan `aria-label`: no hay texto que leer.",
+    ],
+    usage: [
+      "**El roving tabindex es toda la razón del componente.** Veinte botones sueltos son veinte paradas de Tab entre el contenido de arriba y el de abajo; quien navega con teclado o con un switch los atraviesa todos cada vez. La barra ya se veía bien con un `<div className=\"flex gap-1\">`.",
+      "**Todo hijo interactivo tiene que ser `ToolbarButton`, `ToolbarLink` o `ToolbarInput`.** Un `<button>` puesto a mano queda fuera del recorrido y se vuelve inalcanzable, porque la barra le sacó el Tab al resto.",
+      "**`render` en vez de estilos nuevos**: `render={<Toggle />}`, `render={<ToggleGroupItem value=\"bold\" />}`, `render={<DropdownMenuTrigger render={<Button />} />}`. El default ya es el `Button` del sistema en `ghost`.",
+      "`ToolbarInput` es el campo chico de una barra —zoom, ancho de línea—, no un campo de formulario: para eso está `Field` + `Input`, con label, error y descripción.",
+      "Menos de tres o cuatro controles no justifica la barra: son botones sueltos y se acabó.",
+    ],
+    props: {
+      Toolbar: {
+        orientation: "`vertical` cambia las flechas a ↑ ↓ y da vuelta los separadores.",
+        loopFocus: "Si al pasar del último control se vuelve al primero.",
+      },
+      ToolbarButton: {
+        render: "El componente que pone los estilos. Por defecto, `<Button size=\"icon-sm\" variant=\"ghost\" />`.",
+        focusableWhenDisabled: "Deshabilitado pero todavía en el recorrido con flechas. Dejalo en `true`.",
+      },
+    },
+    related: ["button", "toggle-group", "menubar", "dropdown-menu"],
+  },
   tabs: {
     title: "Tabs",
     group: "navegacion",
