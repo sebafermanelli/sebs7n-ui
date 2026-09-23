@@ -398,6 +398,7 @@ export const COMPONENTS = {
     a11y: [
       "Base UI emite el patrón de listbox completo: `aria-expanded`, `aria-activedescendant` y el recorrido por flechas.",
       "`SelectValue` necesita `placeholder`; sin valor, el trigger queda con `data-placeholder` y el texto en `gray-700`.",
+      "**El `Select` raíz necesita `items`.** Sin eso, `SelectValue` muestra —y el lector de pantalla anuncia— el `value` crudo: elegís «Consumidor final» y el trigger dice `cf`. Es el caso de la demo de abajo, y pasa siempre que el `value` no sea ya el texto que se lee.",
       "El error se marca con `aria-invalid` en el `SelectTrigger`, igual que en `Input`.",
       "El popup vive en un portal con `z-50` y devuelve el foco al trigger al cerrar.",
     ],
@@ -406,8 +407,15 @@ export const COMPONENTS = {
       "Para 2 o 3 opciones excluyentes que entran en pantalla, `RadioGroup` o `ToggleGroup`: se ven todas sin abrir nada.",
       "`alignItemWithTrigger` está en `false` a propósito: el popup se abre debajo, no encima del trigger.",
       "Agrupá con `SelectGroup` + `SelectLabel` cuando las opciones tienen categorías; no uses ítems deshabilitados como títulos.",
+      "**Pasale `items` al `Select` raíz** con el mismo mapa `value → label` que usan los `SelectItem`: es lo que le permite a `SelectValue` mostrar la etiqueta en vez del valor. La alternativa es `<SelectValue>{(value) => …}</SelectValue>`, que sirve para formatear, pero duplica el mapa.",
     ],
-    props: { SelectTrigger: { size: "Mismas tres alturas que `Input`, para que un formulario mixto quede alineado." } },
+    props: {
+      Select: {
+        items:
+          "El mapa `value → label` de las opciones. **Ponelo siempre**: sin él `SelectValue` muestra el `value` crudo. Acepta `{ ri: \"Responsable inscripto\" }` o `[{ value, label }]`.",
+      },
+      SelectTrigger: { size: "Mismas tres alturas que `Input`, para que un formulario mixto quede alineado." },
+    },
     related: ["combobox", "dropdown-menu", "radio-group"],
   },
   combobox: {
