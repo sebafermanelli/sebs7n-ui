@@ -413,6 +413,40 @@ export const COMPONENTS = {
     related: ["toggle", "radio-group", "tabs"],
   },
 
+  slider: {
+    title: "Slider",
+    group: "formularios",
+    description: "Elegir un número —o un rango— arrastrando. Marcas opcionales y valor visible.",
+    keyboard: [
+      ["← ↓", "Baja un `step`."],
+      ["→ ↑", "Sube un `step`."],
+      ["Shift + flecha", "Se mueve un `largeStep` (10 por defecto)."],
+      ["Re Pág · Av Pág", "Igual que Shift + flecha."],
+      ["Inicio · Fin", "Va al mínimo y al máximo."],
+      ["Tab", "Entra y sale. En un rango, cada thumb es su propia parada."],
+    ],
+    a11y: [
+      "Cada thumb es un `<input type=\"range\">` de verdad: el teclado y los lectores de pantalla lo tratan como el control nativo.",
+      "El `label` visible queda asociado a los thumbs por Base UI. Sin `label`, el `aria-label` que pases viaja al input, no solo al grupo.",
+      "En un rango, `aria-valuetext` distingue el thumb de inicio del de fin.",
+      "El anillo de foco va en el thumb (`has-[input:focus-visible]:focus-ring`), porque el foco real vive en el input de adentro.",
+      "Las marcas son `aria-hidden`: el valor lo canta el thumb, no un punto.",
+    ],
+    usage: [
+      "**Si el número exacto importa, es un `Input`.** El slider es para proporciones: volumen, opacidad, un presupuesto «de tanto a tanto».",
+      "Con `showValue` el número se lee mientras se arrastra; sin él, el valor solo existe para el lector de pantalla.",
+      "`marks` son referencias, no topes: el valor sigue siendo continuo salvo que subas el `step`.",
+      "En un rango, `minStepsBetweenValues` evita que los dos thumbs terminen encimados.",
+      "`onValueCommitted` para lo caro (pegarle a la API): `onValueChange` dispara en cada píxel del arrastre.",
+    ],
+    props: {
+      Slider: {
+        size: "`sm` 32px · `md` 40px de área arrastrable. La pista es 4px y 6px.",
+        marks: "Valores donde va un punto de referencia. Siguen a `min` y `max`, no al 0–100 fijo.",
+      },
+    },
+    related: ["input", "switch", "progress"],
+  },
   // ───────────────────────────── Superposiciones ─────────────────────────────
   dialog: {
     title: "Dialog",
@@ -509,6 +543,34 @@ export const COMPONENTS = {
       "No lo pongas en algo que ya dice lo que hace.",
     ],
     related: ["popover", "button", "kbd"],
+  },
+  "hover-card": {
+    title: "HoverCard",
+    group: "superposiciones",
+    description: "Una tarjeta con el adelanto de un link, al pasar el mouse. Nunca contenido crítico.",
+    keyboard: [
+      ["Tab", "Enfocar el link la abre."],
+      ["Escape", "Cierra y deja el foco en el link."],
+    ],
+    a11y: [
+      "**En táctil no existe.** No hay hover y un toque navega: todo lo que esté en la tarjeta tiene que estar también del otro lado del link.",
+      "El trigger es un `<a>`: se le pasa `href`, no `render={<Button />}`.",
+      "Abre también con el foco del teclado, no solo con el mouse.",
+      "El retardo de apertura (600 ms) existe para no dispararla al pasar de largo; el de cierre (300 ms) para poder llegar con el mouse.",
+    ],
+    usage: [
+      "**Un adelanto, nunca la información.** Si el contenido es el dato, va en la página.",
+      "Si hace falta interactuar con algo, es un `Popover`: abre con click y se cierra con Escape en cualquier dispositivo.",
+      "Si es una línea que aclara un control, es un `Tooltip`.",
+      "No la cargues: una ficha, no una pantalla.",
+    ],
+    props: {
+      HoverCardTrigger: {
+        delay: "Cuánto espera antes de abrir, en ms.",
+        closeDelay: "Cuánto espera antes de cerrar, en ms.",
+      },
+    },
+    related: ["popover", "tooltip", "avatar"],
   },
   "dropdown-menu": {
     title: "DropdownMenu",
@@ -876,6 +938,114 @@ export const COMPONENTS = {
       "Una sola acción.",
     ],
     related: ["alert", "card", "table"],
+  },
+  progress: {
+    title: "Progress",
+    group: "contenido",
+    description: "Cuánto falta para que termine algo. Determinada o indeterminada, en dos altos.",
+    keyboard: [["—", "No es interactivo."]],
+    a11y: [
+      "Emite `role=\"progressbar\"` con `aria-valuenow`, `aria-valuemin` y `aria-valuemax`.",
+      "Con `value={null}` es indeterminada: desaparece `aria-valuenow` y el lector anuncia que está en curso, sin porcentaje.",
+      "El `label` visible es el nombre accesible. Sin `label` hace falta `aria-label`.",
+      "Con movimiento reducido la franja indeterminada no queda congelada a mitad de camino: la pista se llena de un gris más apagado.",
+    ],
+    usage: [
+      "**Si sabés cuánto falta, pasá el número.** La indeterminada es para cuando no se puede saber.",
+      "La forma de algo que todavía no llegó es un `Skeleton`; el spinner de una acción es `Button loading`.",
+      "Poné `label` o `aria-label`: una barra sin nombre no dice qué está progresando.",
+      "`size=\"sm\"` dentro de una fila o una card chica; `md` suelto.",
+    ],
+    props: {
+      Progress: {
+        value: "El valor actual. `null` la deja indeterminada.",
+        size: "`sm` 4px · `md` 6px de alto de la pista.",
+        showValue: "Muestra el porcentaje a la derecha. Indeterminada no muestra número.",
+      },
+    },
+    related: ["skeleton", "slider", "button"],
+  },
+  collapsible: {
+    title: "Collapsible",
+    group: "contenido",
+    description: "Mostrar y ocultar un bloque con un botón. La pieza simple detrás del Accordion.",
+    keyboard: [
+      ["Enter · Espacio", "Abre y cierra."],
+      ["Tab", "Entra y sale del trigger."],
+    ],
+    a11y: [
+      "El trigger lleva `aria-expanded` y `aria-controls`, puestos por Base UI.",
+      "El contenido cerrado no está en el DOM salvo `keepMounted`; con `hiddenUntilFound` queda y lo encuentra el buscador del navegador.",
+      "El alto pasa por `motion-reduce`, además del reset global del paquete.",
+    ],
+    usage: [
+      "**Si hay varias secciones que son un grupo, es un `Accordion`**: trae el `<h3>` por sección.",
+      "El trigger no trae estilo a propósito: va `render={<Button variant=\"ghost\" />}`.",
+      "`className` cae en el contenido, no en el elemento que anima el alto: ahí va el padding.",
+      "Lo que está plegado no se lee ni se indexa: `keepMounted` si esos links importan para el crawler.",
+    ],
+    related: ["accordion", "card", "button"],
+  },
+  accordion: {
+    title: "Accordion",
+    group: "contenido",
+    description: "Secciones plegables que se leen como una lista. Una sola abierta, o varias.",
+    keyboard: [
+      ["Enter · Espacio", "Abre y cierra la sección enfocada."],
+      ["Tab", "Cada trigger es su propia parada: desde Base UI 1.8 no hay foco rotativo, siguiendo la corrección de la APG."],
+    ],
+    a11y: [
+      "Cada trigger va dentro de un `<h3>`: eso es lo que deja saltar de sección en sección con un lector de pantalla.",
+      "`aria-expanded` y `aria-controls` los pone Base UI; el panel es un `role=\"region\"` con el nombre del trigger.",
+      "El alto y el chevron pasan por `motion-reduce`, además del reset global del paquete.",
+      "`hiddenUntilFound` deja que el buscador del navegador (⌘F) encuentre y abra el contenido cerrado.",
+    ],
+    usage: [
+      "**Una sola sección plegable es un `Collapsible`.** El `Accordion` existe para el grupo.",
+      "Por defecto se abre una a la vez. `multiple` solo si comparar dos secciones es parte del uso.",
+      "El trigger dice de qué es la sección, no «Ver más».",
+      "No escondas ahí lo que la pantalla tiene que mostrar: lo plegado no se lee.",
+      "Si las secciones son excluyentes y cortas, probablemente sean `Tabs`.",
+    ],
+    props: {
+      Accordion: {
+        multiple: "Deja varias secciones abiertas a la vez.",
+      },
+      AccordionTrigger: {
+        chevron: "Saca el chevron para poner otro indicador.",
+      },
+    },
+    related: ["collapsible", "tabs", "card"],
+  },
+  "scroll-area": {
+    title: "ScrollArea",
+    group: "contenido",
+    description: "Una caja con scroll y una barra propia, discreta: aparece al pasar el mouse o al scrollear.",
+    keyboard: [
+      ["Tab", "Llega al viewport cuando hay desborde."],
+      ["↑ ↓ ← →", "Scrollean, como en cualquier caja con overflow."],
+      ["Re Pág · Av Pág · Inicio · Fin", "Saltan de a una pantalla o a los extremos."],
+    ],
+    a11y: [
+      "Adentro hay un `div` con `overflow` nativo: la rueda, el trackpad y el arrastre táctil funcionan como siempre. Lo único que cambia es que se oculta la barra del sistema.",
+      "Base UI le pone `tabIndex={0}` al viewport cuando hay desborde, así que se llega con Tab y se scrollea con las flechas. Por eso el foco es visible.",
+      "En táctil la barra propia no se muestra: ahí la nativa ya es un overlay que aparece y se va.",
+      "`overscroll-contain` evita que el scroll se escape a la página al llegar al final.",
+    ],
+    usage: [
+      "**No para la página entera.** El scroll del documento es del navegador; esto es para una caja: una lista dentro de un panel, un log, una tabla ancha.",
+      "La caja necesita un alto (o un ancho) propio: sin límite no hay desborde y no hay nada que scrollear.",
+      "El padding va en `contentClassName`, no en el viewport: si no, el contenido se corta contra la barra.",
+      "`orientation=\"both\"` solo cuando de verdad desborda en los dos ejes; si no, sobra una barra.",
+    ],
+    props: {
+      ScrollArea: {
+        orientation: "`vertical` (default) · `horizontal` · `both`, que agrega la esquina.",
+        contentClassName: "Clases del contenido, dentro del viewport. Ahí va el padding.",
+        viewportClassName: "Clases del viewport: el elemento que scrollea y recibe el foco.",
+      },
+    },
+    related: ["table", "card", "sidebar"],
   },
   "page-header": {
     title: "PageHeader",
