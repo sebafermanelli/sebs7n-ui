@@ -90,7 +90,9 @@ export function llmsTxt({ site, blurb, sections }) {
   for (const section of sections) {
     parts.push(`## ${section.title}`, "")
     for (const item of section.items) {
-      parts.push(`- [${item.title}](${site}${item.href}.md): ${item.description}`)
+      // `url` es para lo que no es una página del sitio y por lo tanto no tiene
+      // su gemelo en .md — hoy, el índice del registry.
+      parts.push(`- [${item.title}](${item.url ?? `${site}${item.href}.md`}): ${item.description}`)
     }
     parts.push("")
   }

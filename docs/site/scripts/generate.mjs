@@ -301,7 +301,13 @@ writeFileSync(
       {
         title: "Opcional",
         items: [
-          { title: "Registry", description: "Ítems con formato shadcn para `shadcn add <url>`.", href: "/registry" },
+          {
+            title: "Registry",
+            description: "Índice de ítems con formato shadcn, para `shadcn add <url>/r/<item>.json`.",
+            // `/registry` y `/registry.md` nunca existieron: el archivo que se
+            // sirve es este, y es el que hay que linkear.
+            url: `${SITE}/r/registry.json`,
+          },
         ],
       },
     ],

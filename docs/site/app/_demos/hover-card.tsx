@@ -14,7 +14,7 @@ export function Basico() {
     <p className="max-w-sm text-copy-14 text-gray-1000">
       La factura 0012 salió a nombre de{" "}
       <HoverCard>
-        <HoverCardTrigger className={linkVariants({ variant: "inline" })} href="/clientes/acme">
+        <HoverCardTrigger className={linkVariants({ variant: "inline" })} href="#">
           Acme S.A.
         </HoverCardTrigger>
         <HoverCardContent>
@@ -58,7 +58,7 @@ export function Retardos() {
       <span>
         Por defecto, 600 ms para abrir:{" "}
         <HoverCard>
-          <HoverCardTrigger className={linkVariants({ variant: "inline" })} href="/planes/pro">
+          <HoverCardTrigger className={linkVariants({ variant: "inline" })} href="#">
             Plan Pro
           </HoverCardTrigger>
           {ficha}
@@ -67,7 +67,7 @@ export function Retardos() {
       <span>
         Con 100 ms:{" "}
         <HoverCard>
-          <HoverCardTrigger className={linkVariants({ variant: "inline" })} closeDelay={100} delay={100} href="/planes/pro">
+          <HoverCardTrigger className={linkVariants({ variant: "inline" })} closeDelay={100} delay={100} href="#">
             Plan Pro
           </HoverCardTrigger>
           {ficha}
