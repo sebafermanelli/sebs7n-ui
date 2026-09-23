@@ -28,10 +28,6 @@ pnpm add sebs7n-ui @base-ui/react next-themes sonner geist
 > `pnpm add github:sebafermanelli/sebs7n-ui#v0.1.0`. Los ejemplos de abajo valen
 > igual en los dos casos.
 
-> **¿Venís de una versión interna?** Ver [`MIGRACION.md`](MIGRACION.md). Son dos
-> cambios: el paquete pasó de `@sf/ui` a `sebs7n-ui` y el fondo de página dejó de
-> ser `background-100` para tener su propio token.
-
 Las `peerDependencies` las instala la app, para que haya **una sola copia** de
 React y de Base UI:
 
@@ -609,7 +605,7 @@ Todo lo que se ve generado se genera: `npm run generate` (lo corren `predev`,
 | Tabla de props de cada componente | El compilador de TypeScript sobre `src/components/*.tsx` (`docs/site/scripts/lib/props.mjs`) |
 | Código de cada demo | El propio archivo de la demo, en `docs/site/app/_demos/` |
 | Tablas de tokens | `tokens/geist.json`, `src/styles/theme.css` y `src/styles/reset.css` |
-| Migración y changelog | `MIGRACION.md` y `CHANGELOG.md` de este repo |
+| Changelog | `CHANGELOG.md` de este repo |
 | `public/docs/**.md`, `llms.txt`, `llms-full.txt` | El mismo modelo que rinden las páginas |
 | `registry.json` y `public/r/*.json` | `src/`, reescribiendo los imports a los alias de shadcn |
 
@@ -640,9 +636,8 @@ SemVer 2.0.0. Para este paquete:
 | Prop que se saca o cambia de forma; cambio de nombre de un export | major |
 
 Cada versión está en [`CHANGELOG.md`](CHANGELOG.md) siguiendo
-[Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y los cambios
-incompatibles traen su guía: [`MIGRACION.md`](MIGRACION.md) para las apps que
-venían de las versiones internas.
+[Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y todo cambio
+incompatible se explica ahí.
 
 ## Licencia
 

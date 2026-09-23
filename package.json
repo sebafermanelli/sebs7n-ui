@@ -35,8 +35,7 @@
     "tokens",
     "LICENSE",
     "README.md",
-    "CHANGELOG.md",
-    "MIGRACION.md"
+    "CHANGELOG.md"
   ],
   "publishConfig": {
     "access": "public"

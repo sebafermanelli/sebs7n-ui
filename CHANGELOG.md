@@ -75,8 +75,6 @@ Primera versión pública de `sebs7n-ui`: un design system para React que pone
   componente, la tabla de props generada desde el TypeScript, una superficie
   para agentes (`.md` por página, `llms.txt`, `llms-full.txt`) y una registry
   con formato shadcn para sacar un componente y editarlo (`shadcn add <url>`).
-- **`MIGRACION.md`**, para las aplicaciones privadas que venían de las versiones
-  internas. Viaja en el tarball.
 - Metadata de publicación: `license` MIT + `LICENSE`, `keywords`, `author`,
   `repository`, `homepage`, `bugs` y `publishConfig.access: public`.
 

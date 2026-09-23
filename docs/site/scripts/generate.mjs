@@ -127,7 +127,7 @@ function loadPage(slug) {
   return body.replace(/\{\{([a-z]+)\}\}/g, (match, key) => substitutions[key] ?? match)
 }
 
-/** MIGRACION.md y CHANGELOG.md salen del repo: una sola copia, la del paquete. */
+/** CHANGELOG.md sale del repo: una sola copia, la del paquete. */
 function loadRepoDoc(file) {
   const body = readFileSync(join(root, file), "utf8")
   return body.replace(/^#\s+.*\n/, "").trim()
@@ -163,12 +163,6 @@ const pages = [
     title: "Reglas de uso",
     description: "Las decisiones que no se ven en una tabla de props.",
     body: loadPage("reglas"),
-  },
-  {
-    slug: "migracion",
-    title: "Migrar desde las versiones internas",
-    description: "Para las apps que ya usaban el sistema con su nombre viejo. Dos cambios, los dos mecánicos.",
-    body: loadRepoDoc("MIGRACION.md"),
   },
   {
     slug: "changelog",
