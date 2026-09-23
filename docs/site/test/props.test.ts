@@ -13,7 +13,7 @@ const root = fileURLToPath(new URL("../../..", import.meta.url))
 const slugs = componentSlugs(root)
 const extracted = extractProps({
   root,
-  files: ["button", "card", "table", "combobox", "dialog", "badge", "sidebar", "kbd"].map(
+  files: ["button", "card", "table", "combobox", "dialog", "badge", "sidebar", "kbd", "select"].map(
     (slug) => `src/components/${slug}.tsx`
   ),
 })
@@ -109,6 +109,23 @@ describe("extractProps", () => {
   it("no deja componentes sin exportar ni tipos colados como componentes", () => {
     expect(extracted.get("kbd")?.map((entry) => entry.name)).toEqual(["Kbd"])
     expect(find("card", "CardTitle").bases).toEqual(["<div>"])
+  })
+
+  // Antes, escribir la descripción de `items` en meta.mjs no hacía nada: el
+  // generador solo iteraba props propias y `items` es del primitivo de Base UI.
+  // Son justo las props que hacen al componente.
+  it("vuelca las props heredadas que meta.mjs describe, marcadas y con el tipo del primitivo", () => {
+    const conDocumentadas = extractProps({
+      root,
+      files: ["src/components/select.tsx"],
+      documented: (slug, component) => (slug === "select" && component === "Select" ? ["items"] : []),
+    })
+    const select = conDocumentadas.get("select")!.find((entry) => entry.name === "Select")!
+    const items = select.props.find((entry) => entry.name === "items")!
+    expect(items.inherited).toBe(true)
+    expect(items.type).toContain("label")
+    // Sin `documented` no aparece: la tabla sigue siendo la de las props propias.
+    expect(find("select", "Select").props.some((entry) => entry.name === "items")).toBe(false)
   })
 
   it("nunca devuelve un tipo vacío", () => {

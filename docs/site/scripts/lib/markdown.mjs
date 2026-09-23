@@ -20,7 +20,9 @@ function propsTable(props) {
       `\`${prop.name}\`${prop.required ? " *" : ""}`,
       `\`${prop.type}\``,
       prop.default ? `\`${prop.default}\`` : "—",
-      prop.description || "—",
+      // La marca va en la descripción y no en una columna nueva: es una nota de
+      // procedencia, no un dato que se compare fila contra fila.
+      [prop.inherited ? "**Heredada de Base UI.**" : "", prop.description].filter(Boolean).join(" ") || "—",
     ])
   )
 }

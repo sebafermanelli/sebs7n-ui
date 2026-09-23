@@ -2,7 +2,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "s
 
 import { Inline } from "./inline"
 
-type Prop = { name: string; type: string; required: boolean; default: string | null; description: string }
+type Prop = { name: string; type: string; required: boolean; default: string | null; description: string; inherited?: boolean }
 type Exportado = { name: string; bases: string[]; alias: string | null; props: Prop[] }
 
 export function PropsTable({ exports }: { exports: Exportado[] }) {
@@ -60,6 +60,9 @@ export function PropsTable({ exports }: { exports: Exportado[] }) {
                         )}
                       </TableCell>
                       <TableCell className="py-3 align-top whitespace-normal text-gray-900">
+                        {/* La procedencia va acá y no en una columna propia: es una nota, no un dato
+                            que se compare fila contra fila. */}
+                        {prop.inherited && <strong className="font-medium text-gray-1000">Heredada de Base UI. </strong>}
                         <Inline text={prop.description} />
                       </TableCell>
                     </TableRow>

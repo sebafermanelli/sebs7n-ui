@@ -35,7 +35,11 @@ if (missing.length) throw new Error(`Falta metadata en content/meta.mjs para: ${
 const extraneous = Object.keys(COMPONENTS).filter((slug) => !slugs.includes(slug))
 if (extraneous.length) throw new Error(`content/meta.mjs describe componentes que no existen: ${extraneous.join(", ")}`)
 
-const propsBySlug = extractProps({ root, files: slugs.map((slug) => `src/components/${slug}.tsx`) })
+const propsBySlug = extractProps({
+  root,
+  files: slugs.map((slug) => `src/components/${slug}.tsx`),
+  documented: (slug, component) => Object.keys(COMPONENTS[slug]?.props?.[component] ?? {}),
+})
 
 // ── 2. Ejemplos desde app/_demos ─────────────────────────────────────────────
 const demosDir = join(here, "app/_demos")
@@ -74,6 +78,23 @@ const components = slugs.map((slug) => {
 for (const component of components) {
   if (!component.examples.length) throw new Error(`Falta app/_demos/${component.slug}.tsx con al menos una demo`)
 }
+
+// Una descripción escrita en meta.mjs para una prop que no existe es trabajo que
+// nadie va a ver: ni como fila propia ni como heredada. Antes pasaba en silencio.
+const fantasmas = []
+for (const slug of slugs) {
+  for (const [exportado, props] of Object.entries(COMPONENTS[slug].props ?? {})) {
+    const reales = components.find((component) => component.slug === slug).exports.find((entry) => entry.name === exportado)
+    if (!reales) {
+      fantasmas.push(`${slug}: meta.props describe "${exportado}", que no es un export del componente`)
+      continue
+    }
+    for (const prop of Object.keys(props)) {
+      if (!reales.props.some((entry) => entry.name === prop)) fantasmas.push(`${slug}.${exportado}.${prop}`)
+    }
+  }
+}
+if (fantasmas.length) throw new Error(`meta.mjs describe props que no existen:\n  ${fantasmas.join("\n  ")}`)
 
 // ── 4. Páginas de sistema ────────────────────────────────────────────────────
 const colors = readColors(root)

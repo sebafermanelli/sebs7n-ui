@@ -111,10 +111,12 @@ function isComponentName(name) {
 }
 
 /**
- * @param {{ root: string, files: string[] }} options `root` es la raíz del paquete; `files`, rutas relativas.
+ * @param {{ root: string, files: string[], documented?: (slug: string, component: string) => string[] }} options
+ *   `root` es la raíz del paquete; `files`, rutas relativas. `documented` devuelve las props que
+ *   `meta.mjs` describe para ese export: las que no son propias entran igual, marcadas `inherited`.
  * @returns {Map<string, {name, file, description, bases, alias, props}[]>} por archivo (`button`, `card`, …)
  */
-export function extractProps({ root, files }) {
+export function extractProps({ root, files, documented }) {
   const absolute = files.map((file) => join(root, file))
   const program = ts.createProgram(absolute, {
     target: ts.ScriptTarget.ES2022,
@@ -132,6 +134,7 @@ export function extractProps({ root, files }) {
   const result = new Map()
 
   for (const path of absolute) {
+    const slug = path.slice(srcDir.length + "components/".length).replace(/\.tsx?$/, "")
     const source = program.getSourceFile(path)
     if (!source) throw new Error(`No se pudo leer ${path}`)
     const moduleSymbol = checker.getSymbolAtLocation(source)
@@ -169,6 +172,13 @@ export function extractProps({ root, files }) {
           ? declaration.initializer.getText()
           : ""
 
+      // Las props que meta.mjs describe para este export. Si no son propias son
+      // heredadas del primitivo, y **esas son justo las que hacen al componente**:
+      // `onFormSubmit` en Form, `items` en Select, `multiple` en Combobox. Antes se
+      // escribía la descripción en meta.mjs y el sitio no mostraba la fila, porque
+      // el generador solo iteraba props propias: 19 descripciones invisibles.
+      const documentedHere = new Set(documented?.(slug, name) ?? [])
+
       const props = []
       if (propsType) {
         for (const prop of checker.getPropertiesOfType(propsType)) {
@@ -177,7 +187,7 @@ export function extractProps({ root, files }) {
           const propDeclaration = prop.declarations?.[0]
           const declaredHere = propDeclaration?.getSourceFile().fileName.startsWith(srcDir) ?? false
           const isDestructured = defaults.has(propName)
-          if (!declaredHere && !isDestructured) continue
+          if (!declaredHere && !isDestructured && !documentedHere.has(propName)) continue
 
           const resolved = checker.getTypeOfSymbolAtLocation(prop, propDeclaration ?? param ?? declaration)
           const union = literalUnionText(resolved, checker)
@@ -198,12 +208,16 @@ export function extractProps({ root, files }) {
             required: !(prop.flags & ts.SymbolFlags.Optional),
             default: defaults.get(propName) ?? null,
             description: propDeclaration ? jsdocOf(prop, checker) : "",
+            inherited: !declaredHere && !isDestructured,
           })
         }
       }
 
+      // Las heredadas van después de las propias: la tabla se lee de lo más
+      // específico del paquete a lo que viene de Base UI.
       props.sort((a, b) => {
         if (a.required !== b.required) return a.required ? -1 : 1
+        if (a.inherited !== b.inherited) return a.inherited ? 1 : -1
         if (a.name === "className") return 1
         if (b.name === "className") return -1
         return a.name.localeCompare(b.name)
@@ -218,7 +232,6 @@ export function extractProps({ root, files }) {
       })
     }
 
-    const slug = path.slice(srcDir.length + "components/".length).replace(/\.tsx?$/, "")
     result.set(slug, components)
   }
 
