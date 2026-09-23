@@ -3,7 +3,6 @@ import { GeistMono } from "geist/font/mono"
 import { GeistSans } from "geist/font/sans"
 
 import site from "@/.generated/site.json"
-import { SiteHeader } from "./_components/site-header"
 import { Providers } from "./providers"
 import "./globals.css"
 
@@ -18,10 +17,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html className={`${GeistSans.variable} ${GeistMono.variable}`} lang="es" suppressHydrationWarning>
       <body>
-        <Providers>
-          <SiteHeader version={site.version} />
-          {children}
-        </Providers>
+        {/* El header propio vive en el home; /docs usa el AppShell del paquete. */}
+        <Providers>{children}</Providers>
       </body>
     </html>
   )

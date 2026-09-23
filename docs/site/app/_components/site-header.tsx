@@ -6,7 +6,7 @@ import { Badge } from "sebs7n-ui/badge"
 import { ThemeSwitcher } from "sebs7n-ui/theme-switcher"
 import { cn } from "sebs7n-ui/lib/utils"
 
-import { Search } from "./search"
+import { SearchButton } from "./search"
 
 const LINKS = [
   { href: "/docs/instalacion", label: "Docs" },
@@ -45,7 +45,7 @@ export function SiteHeader({ version }: { version: string }) {
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
-          <Search />
+          <SearchButton />
           <a
             className="hidden rounded-md px-2 py-1 text-copy-14 text-gray-900 outline-none transition-control hover:text-gray-1000 focus-visible:focus-ring sm:inline"
             href="https://github.com/sebafermanelli/sebs7n-ui"

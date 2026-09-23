@@ -4,7 +4,9 @@ import Link from "next/link"
 export function PageNav({ items }: { items: { text: string; id: string }[] }) {
   if (!items.length) return null
   return (
-    <nav aria-label="En esta página" className="sticky top-20 hidden w-56 shrink-0 xl:block">
+    // top-8 = el py-8 de AppShellContent: ya no hay header arriba del que despegarse.
+    // `self-start`: como ítem de un flex se estiraba a todo el alto de la fila y el sticky no pegaba.
+    <nav aria-label="En esta página" className="sticky top-8 hidden w-56 shrink-0 self-start xl:block">
       <div className="px-2 py-1 text-label-12 text-gray-900">En esta página</div>
       <ul className="flex flex-col gap-0.5">
         {items.map((item) => (
