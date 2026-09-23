@@ -36,9 +36,13 @@ describe("build", () => {
     for (const file of ["sidebar", "app-shell", "user-menu", "theme-switcher", "alert-dialog", "combobox", "autocomplete"]) {
       expect(read(`dist/components/${file}.js`).startsWith('"use client"'), file).toBe(true)
     }
-    // Sin estado: se pueden usar en Server Components.
-    for (const file of ["kbd", "page-header", "empty-state", "stat", "app-shell-content"]) {
-      expect(read(`dist/components/${file}.js`), file).not.toContain("use client")
+    // Sin estado: se pueden usar en Server Components. `badge` y `separator` estaban
+    // acá por transitividad —importaban Base UI, que trae su propio `'use client'`—;
+    // desde 0.5.0 son un `renderElement` y un `<div>` a mano, y el DOM no cambió.
+    // Se mira la directiva, no la cadena: los docblocks de `badge` y `separator`
+    // explican justamente por qué NO la llevan, y nombrarla no los hace de cliente.
+    for (const file of ["kbd", "page-header", "empty-state", "stat", "app-shell-content", "badge", "separator"]) {
+      expect(read(`dist/components/${file}.js`).startsWith('"use client"'), file).toBe(false)
     }
     expect(read("dist/variants/sidebar.js")).not.toContain("use client")
     expect(read("dist/variants/input.js")).not.toContain("use client")

@@ -74,6 +74,7 @@ export const COMPONENTS = {
       "Es un `<span>`: no anuncia nada por sí solo. El color no puede ser la única señal — el texto tiene que decir el estado.",
       "`solid` existe solo en `gray` y `brand` porque los 700 de Geist con texto blanco no llegan a 4,5:1 en el resto de los tonos.",
       "El punto (`dot`) es `aria-hidden`: es decoración.",
+      "Sin `\"use client\"`: sirve en un Server Component. Una tabla de facturas renderizada en el server no arrastra JS por tener un estado por fila.",
     ],
     usage: [
       "**Estado, no acción.** Si se puede hacer click, es un `Button` o un `Toggle`.",
@@ -151,7 +152,8 @@ export const COMPONENTS = {
     description: "Una línea de 1px, horizontal o vertical, que agrupa sin decir nada.",
     keyboard: [["—", "No es interactivo."]],
     a11y: [
-      "Por defecto Base UI lo emite con `role=\"separator\"` y su orientación.",
+      "Sale con `role=\"separator\"` y su orientación en `aria-orientation`.",
+      "Sin `\"use client\"`: sirve en un Server Component. Por eso es un `<div>` propio y no el primitivo de Base UI, que trae su `'use client'`.",
       "Si solo separa visualmente y ya hay una estructura semántica alrededor (`<ul>`, `<section>`), conviene `aria-hidden`.",
     ],
     usage: ["Vertical dentro de un `flex` necesita alto: `className=\"h-4\"`.", "Entre ítems de un menú va `DropdownMenuSeparator`, no este."],

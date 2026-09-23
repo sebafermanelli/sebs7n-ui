@@ -57,6 +57,23 @@ describe("Badge", () => {
     expect(dot).toHaveClass("bg-green-700", "size-1.5")
     expect(dot).toHaveAttribute("aria-hidden", "true")
   })
+
+  // `render` pasó de `useRender` de Base UI a `renderElement`, que es lo que deja
+  // al Badge sin `"use client"`. Esto fija que el cambio no se ve desde afuera:
+  // el elemento del llamador manda, sus props sobreviven y el punto sigue adentro.
+  it("render reemplaza el span y conserva las props del elemento", () => {
+    render(
+      <Badge color="green" dot render={<a className="underline" href="/planes" />}>
+        Pro
+      </Badge>
+    )
+    const link = screen.getByRole("link", { name: "Pro" })
+    expect(link).toHaveAttribute("href", "/planes")
+    expect(link).toHaveAttribute("data-slot", "badge")
+    expect(link).toHaveAttribute("data-color", "green")
+    expect(link).toHaveClass("bg-green-100", "underline")
+    expect(link.querySelector("[data-slot=badge-dot]")).not.toBeNull()
+  })
 })
 
 describe("Card", () => {

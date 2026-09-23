@@ -165,6 +165,20 @@ Fase 3 de la auditoría de 0.4.0: rendimiento.
 
 ### Changed
 
+- **`Badge` y `Separator` dejan de ser componentes de cliente.** No tenían estado
+  ni handlers: arrastraban `"use client"` por transitividad, porque uno usaba el
+  hook `useRender` de Base UI y el otro el primitivo `Separator`, que trae su
+  propio `'use client'`. `Badge` pasa a `renderElement` de `lib/render.ts` —que
+  existe exactamente para esto y cuyo docstring ya lo pedía— y `Separator` a un
+  `<div role="separator" aria-orientation>` propio. El DOM que sale es idéntico
+  al anterior, atributo por atributo. Pasan de 14 a **16** los componentes
+  usables en un Server Component. Medido con esbuild resolviendo Base UI:
+  `Badge` 15,18 → 13,59 KB gz y `Separator` 14,42 → 9,88 KB gz cuando se importan
+  sueltos; en una página RSC que solo los use, el ahorro es todo el JS.
+  **Breaking menor:** `render` ya no acepta una función, solo un elemento
+  (`render={<a href="/planes" />}`), y `Separator` ya no acepta las props
+  propias del primitivo de Base UI.
+
 - **El sitio de docs carga las demos por página, no las 59 de golpe.**
   `/docs/components/<slug>` es una sola ruta para los 58 componentes, así que todo
   componente de cliente alcanzable desde ella entraba en el manifiesto de las 58
