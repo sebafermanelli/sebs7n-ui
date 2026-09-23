@@ -47,7 +47,7 @@ function Form<Values extends Record<string, unknown> = Record<string, unknown>>(
   className,
   ...props
 }: FormProps<Values>) {
-  return <FormPrimitive data-slot="form" className={cn("flex w-full flex-col gap-6", className)} {...props} />
+  return <FormPrimitive data-slot="form" className={cn("flex flex-col gap-6", className)} {...props} />
 }
 
 export { Form, type FormProps }

@@ -33,7 +33,7 @@ type FieldProps = Omit<FieldPrimitive.Root.Props, "className"> & { className?: s
 
 function Field({ className, ...props }: FieldProps) {
   return (
-    <FieldPrimitive.Root data-slot="field" className={cn("flex w-full flex-col gap-2", className)} {...props} />
+    <FieldPrimitive.Root data-slot="field" className={cn("flex flex-col gap-2", className)} {...props} />
   )
 }
 

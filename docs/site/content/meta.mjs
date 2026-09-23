@@ -233,6 +233,8 @@ export const COMPONENTS = {
       "La ayuda va visible en `FieldDescription`, no en un tooltip: una ayuda que hay que descubrir no ayuda a quien más la necesita.",
       "Un mensaje propio para un motivo puntual se escribe con `match` (`<FieldError match=\"valueMissing\">Falta el email</FieldError>`): habla del dato, no del input.",
       "Validar contra Zod, Valibot o ArkType: `fieldValidator` de `sebs7n-ui/lib/schema`.",
+      "**`FieldError` es una fuente o la otra, no las dos.** Sin `match` se muestra ante *cualquier* invalidez —la del navegador y la que vino del servidor—, así que puesto al lado de uno con `match` imprime el mensaje dos veces. Si escribís mensajes propios con `match`, renderizá el genérico solo cuando el servidor devolvió algo para ese campo.",
+      "Un mensaje propio por `match` no es adorno: el del navegador sale en el idioma del navegador, no en el de la página, y habla del input (\"complete este campo\") en vez del dato que se pide.",
     ],
     props: {
       Field: {

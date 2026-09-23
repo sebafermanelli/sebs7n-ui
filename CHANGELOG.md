@@ -4,6 +4,24 @@ Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Versionado
 
 ## [Unreleased]
 
+## [0.3.3] - 2026-09-23
+
+### Changed
+
+- **`Field`, `Fieldset` y `Form` ya no traen `w-full`.** Era redundante —un
+  contenedor flex ya es de nivel bloque y ocupa el ancho disponible— y hacía
+  daño en el único caso donde se notaba: un campo puesto como ítem de un flex
+  horizontal se comía el renglón entero, y había que acordarse de pasarle
+  `w-auto`. Apareció migrando una app de verdad, donde hubo que parchear ocho
+  lugares. En un formulario vertical no cambia nada.
+
+### Docs
+
+- `Field` documenta que **`FieldError` es una fuente o la otra**: sin `match` se
+  muestra ante cualquier invalidez, así que junto a uno con `match` imprime el
+  mensaje dos veces. Es una trampa que se cobró dos migraciones antes de quedar
+  escrita.
+
 ## [0.3.2] - 2026-09-23
 
 ### Fixed

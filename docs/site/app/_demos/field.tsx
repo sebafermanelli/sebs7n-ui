@@ -12,7 +12,7 @@ import { Input } from "sebs7n-ui/input"
  */
 export function Basico() {
   return (
-    <Field className="max-w-sm" name="cuit">
+    <Field className="w-full max-w-sm" name="cuit">
       <FieldLabel required>CUIT</FieldLabel>
       <Input placeholder="30712345678" required />
       <FieldDescription>Once dígitos, sin guiones.</FieldDescription>
@@ -62,7 +62,7 @@ export function ErroresDelServidor() {
 
   return (
     <Form
-      className="max-w-sm"
+      className="w-full max-w-sm"
       errors={errors}
       onFormSubmit={async (valores) => {
         setEnviando(true)

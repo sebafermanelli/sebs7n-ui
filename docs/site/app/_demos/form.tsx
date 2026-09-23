@@ -15,7 +15,7 @@ export function Valores() {
   const [enviado, setEnviado] = useState<Record<string, unknown> | null>(null)
 
   return (
-    <Form className="max-w-sm" onFormSubmit={(valores) => setEnviado(valores)}>
+    <Form className="w-full max-w-sm" onFormSubmit={(valores) => setEnviado(valores)}>
       <Field name="nombre">
         <FieldLabel required>Nombre</FieldLabel>
         <Input required />
@@ -60,7 +60,7 @@ export function ConSchema() {
 
   return (
     <Form
-      className="max-w-sm"
+      className="w-full max-w-sm"
       errors={errors}
       onFormSubmit={async (valores) => {
         const resultado = await validate(esquema, valores)

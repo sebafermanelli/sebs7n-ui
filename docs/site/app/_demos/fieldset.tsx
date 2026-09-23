@@ -12,7 +12,7 @@ import { Textarea } from "sebs7n-ui/textarea"
  */
 export function Grupo() {
   return (
-    <Form className="max-w-sm">
+    <Form className="w-full max-w-sm">
       <Fieldset>
         <FieldsetLegend>Domicilio fiscal</FieldsetLegend>
         <Field name="domicilio.calle">

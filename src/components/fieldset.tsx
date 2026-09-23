@@ -21,7 +21,7 @@ type FieldsetProps = Omit<FieldsetPrimitive.Root.Props, "className"> & { classNa
 
 function Fieldset({ className, ...props }: FieldsetProps) {
   return (
-    <FieldsetPrimitive.Root data-slot="fieldset" className={cn("flex w-full flex-col gap-4", className)} {...props} />
+    <FieldsetPrimitive.Root data-slot="fieldset" className={cn("flex flex-col gap-4", className)} {...props} />
   )
 }
 
