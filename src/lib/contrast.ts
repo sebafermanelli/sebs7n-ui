@@ -1,3 +1,31 @@
+/**
+ * Contraste WCAG, para que cada app pueda testear su propia marca.
+ *
+ * El paquete deriva los diez pasos de `brand` de una sola variable
+ * (`--brand-base`), y `--brand-contrast` es el texto que se pinta encima de
+ * `brand-700`. Ese par tiene que llegar a 4,5:1, y no hay forma de verlo mirando
+ * la pantalla: un azul y un violeta que se ven parecidos pueden estar uno arriba
+ * y el otro abajo del umbral.
+ *
+ * Acá vivía adentro de `test/`, así que `brand-contrast.test.ts` cubría las
+ * cuatro marcas de ejemplo de `tokens/brands.json` y ninguna app podía cubrir la
+ * suya sin copiarse las funciones. Ahora sale por `sebs7n-ui/lib/contrast`, y un
+ * test de la app es cuatro líneas:
+ *
+ * ```ts
+ * import { contrastRatio, luminanceOfHex, luminanceOfOklch } from "sebs7n-ui/lib/contrast"
+ *
+ * it("la marca llega a AA sobre su texto", () => {
+ *   const marca = [0.573, 0.214, 258] as const // el --brand-base del globals.css
+ *   expect(contrastRatio(luminanceOfOklch(marca), luminanceOfHex("#fff"))).toBeGreaterThanOrEqual(4.5)
+ * })
+ * ```
+ *
+ * Es una función pura, sin dependencias y sin `"use client"`: corre en un test
+ * de Node, en un Server Component o en el navegador.
+ */
+
+/** Un color en OKLCH, igual que se escribe en CSS: `oklch(0.573 0.214 258)`. */
 export type Oklch = readonly [l: number, c: number, h: number]
 
 const toLinear = (c: number) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4)
@@ -17,12 +45,17 @@ function oklchToLinearRgb([l, c, h]: Oklch): [number, number, number] {
   ]
 }
 
-// Luminancia relativa WCAG del color ya recortado a sRGB (como lo pinta el navegador).
+/**
+ * Luminancia relativa WCAG de un color OKLCH, ya recortado a sRGB —que es como
+ * lo pinta el navegador—. Un OKLCH fuera del gamut sRGB se recorta, y el ratio
+ * que ve una persona es el del color recortado, no el del teórico.
+ */
 export function luminanceOfOklch(color: Oklch): number {
   const [r, g, b] = oklchToLinearRgb(color).map((v) => toLinear(clamp(toGamma(v))))
   return 0.2126 * r! + 0.7152 * g! + 0.0722 * b!
 }
 
+/** Luminancia relativa WCAG de un `#rrggbb`. */
 export function luminanceOfHex(hex: string): number {
   const n = hex.replace("#", "")
   const [r, g, b] = [0, 2, 4].map((i) => toLinear(parseInt(n.slice(i, i + 2), 16) / 255))
@@ -45,6 +78,11 @@ export function flattenAlpha(hex: string, background: string): string {
   return `#${[0, 2, 4].map((i) => canal(i).toString(16).padStart(2, "0")).join("")}`
 }
 
+/**
+ * El ratio de contraste entre dos luminancias, de 1:1 a 21:1. El orden no
+ * importa. AA pide 4,5 para texto normal, 3 para texto grande y para los
+ * indicadores no textuales (bordes de controles, anillo de foco).
+ */
 export function contrastRatio(a: number, b: number): number {
   const [hi, lo] = a > b ? [a, b] : [b, a]
   return (hi + 0.05) / (lo + 0.05)

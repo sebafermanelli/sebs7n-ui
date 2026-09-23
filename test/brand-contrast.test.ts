@@ -2,7 +2,7 @@
 import { describe, expect, it } from "vitest"
 
 import brands from "../tokens/brands.json"
-import { contrastRatio, luminanceOfHex, luminanceOfOklch, type Oklch } from "./color"
+import { contrastRatio, luminanceOfHex, luminanceOfOklch, type Oklch } from "../src/lib/contrast.js"
 
 type Theme = { base: number[]; contrast: string }
 

@@ -1,4 +1,5 @@
 export { cn, TYPE_SCALE, type WithClassName } from "./lib/utils.js"
+export { contrastRatio, flattenAlpha, luminanceOfHex, luminanceOfOklch, type Oklch } from "./lib/contrast.js"
 export { paginationRange, type PaginationRangeOptions, type PaginationSlot } from "./lib/pagination.js"
 export { defaultLabels, LabelsProvider, useLabels, type Labels, type PartialLabels } from "./lib/labels.js"
 export { renderElement, type RenderElement } from "./lib/render.js"

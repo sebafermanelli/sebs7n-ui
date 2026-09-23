@@ -183,7 +183,7 @@ import { cn } from "sebs7n-ui/lib/utils"
 | `sebs7n-ui` | El barrel: los 58 componentes, las variantes y `cn`. Ver la nota de abajo antes de usarlo. |
 | `sebs7n-ui/<componente>` | 58, en kebab-case: `accordion` · `alert` · `alert-dialog` · `app-shell` · `app-shell-content` · `autocomplete` · `avatar` · `badge` · `breadcrumb` · `button` · `card` · `checkbox` · `checkbox-group` · `collapsible` · `combobox` · `context-menu` · `dialog` · `drawer` · `dropdown-menu` · `empty-state` · `field` · `fieldset` · `form` · `hover-card` · `input` · `kbd` · `label` · `menubar` · `meter` · `navigation-menu` · `number-field` · `otp-field` · `page-header` · `pagination` · `popover` · `progress` · `radio-group` · `scroll-area` · `select` · `separator` · `sheet` · `sidebar` · `skeleton` · `slider` · `sonner` · `spinner` · `stat` · `switch` · `table` · `tabs` · `tag` · `textarea` · `theme-switcher` · `toggle` · `toggle-group` · `toolbar` · `tooltip` · `user-menu` |
 | `sebs7n-ui/variants/<nombre>` | Clases sin `"use client"`: `badge` · `button` · `card` · `input` · `link` · `menu` · `overlay` · `sidebar` · `tag` · `toggle` |
-| `sebs7n-ui/lib/<nombre>` | Funciones puras: `pagination` · `render` · `schema` · `utils` |
+| `sebs7n-ui/lib/<nombre>` | Funciones puras: `contrast` · `pagination` · `render` · `schema` · `utils` |
 | `sebs7n-ui/labels` | `LabelsProvider`, `useLabels` y `defaultLabels`: los textos internos, para traducirlos. |
 | `sebs7n-ui/tokens/<archivo>.json` | Los tokens en crudo: `brands` · `geist` |
 | `sebs7n-ui/theme.css` | Los tokens y el `@source` del `dist`. Es el único import obligatorio. |
@@ -305,7 +305,13 @@ demos del sistema**: una app real no las usa ni edita ese archivo.
 
 ### Claro y oscuro
 
-Por clase (`.dark` en `<html>`), vía `next-themes` con `attribute="class"`.
+**Solo por la clase `.dark` en `<html>`.** No hay `data-theme` ni regla de
+`prefers-color-scheme`: la única definición es
+`@custom-variant dark (&:where(.dark, .dark *))`. Con `next-themes` eso sale de
+`attribute="class"`; con `attribute="data-theme"` el botón parece andar y los
+colores no cambian. Sin `next-themes`, la clase la pone la app
+(`document.documentElement.classList.toggle("dark", oscuro)`).
+
 `ThemeSwitcher` es para fuera de un menú (header público, ajustes); dentro de un
 `DropdownMenu` propio, `ThemeMenuRadio`. Sin `enableSystem` no muestran la
 opción "Sistema".

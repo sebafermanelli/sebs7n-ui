@@ -4,7 +4,7 @@ import { join } from "node:path"
 import { describe, expect, it } from "vitest"
 
 import brands from "../tokens/brands.json"
-import { contrastRatio, flattenAlpha, luminanceOfHex, luminanceOfOklch, type Oklch } from "./color"
+import { contrastRatio, flattenAlpha, luminanceOfHex, luminanceOfOklch, type Oklch } from "../src/lib/contrast.js"
 
 /**
  * La tabla de contraste del sistema.
