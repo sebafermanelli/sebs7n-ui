@@ -9,7 +9,8 @@ import { Progress } from "sebs7n-ui/progress"
  * El `label` es el nombre accesible: no hace falta `aria-label`. `showValue` deja el porcentaje a la vista.
  */
 export function Subida() {
-  const [valor, setValor] = useState(0)
+  // Arranca a mitad de camino: una barra vacía como primer cuadro de la página no muestra nada.
+  const [valor, setValor] = useState(41)
   const [corriendo, setCorriendo] = useState(false)
 
   useEffect(() => {
