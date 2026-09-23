@@ -294,6 +294,95 @@ Fase 4 de la auditoría de 0.4.0: API y tests.
   `setTimeout(…, 20)` a una promesa que resuelve el test.
 - `Toaster` tenía un smoke test que pasaba aunque no renderizara nada.
 
+Fase 5 de la auditoría de 0.4.0: documentación y DX. La última.
+
+### Added
+
+- **`sebs7n-ui/lib/contrast`**: `contrastRatio`, `luminanceOfHex`,
+  `luminanceOfOklch` y `flattenAlpha`, que hasta ahora vivían adentro de `test/`.
+  Cada app puede testear su propia marca —que el texto sobre `brand-700` llegue a
+  4,5:1— en vez de confiar en que las cuatro marcas de ejemplo del paquete
+  alcancen. Hay un ejemplo de test en la página de Theming. Puro, sin
+  dependencias y sin `"use client"`.
+- Las props más importantes de Base UI aparecen en la tabla del componente que
+  las recibe: `open`, `defaultOpen`, `onOpenChange`, `modal`, `initialFocus`,
+  `finalFocus`, `value`, `onValueChange`, `keepMounted`, `loopFocus` y el resto,
+  con una sola descripción compartida. Un `<Dialog>` salía con **cero** props
+  documentadas.
+
+### Fixed
+
+- **`PROP_DESCRIPTIONS` no se usaba nunca.** El generador del sitio encadenaba el
+  diccionario con `??`, pero la descripción del JSDoc es siempre un string —`""`
+  cuando no hay—, así que la cadena cortaba en el primer eslabón. Efecto:
+  **254 de 440 filas de props salían con la celda «Descripción» vacía**, 195 de
+  ellas `className`, que tenía el texto escrito a dos archivos de distancia.
+- El JSDoc del `.d.ts` de Base UI se colaba **en inglés** en catorce filas de una
+  doc en castellano («CSS class applied to the element…»). Ahora solo se toma el
+  JSDoc de lo declarado en `src/`.
+- La tabla de props imprimía `boolean` para uniones que no lo son: `initialFocus`
+  es `boolean | RefObject<HTMLElement> | ((…) => …)` y salía como un simple
+  `boolean`.
+
+### Changed
+
+- **README: 814 → 664 líneas.** Se fueron las 273 de NavigationMenu, «Combobox y
+  Autocomplete» y «Shell de dashboard», que repetían lo que el sitio muestra con
+  demo en vivo y tabla de props generada. Quedan como **Recetas** las 92 líneas
+  que el sitio no puede mostrar: el colapsado con cookie y ⌘B, el `pathname` que
+  cierra el Sheet, el atajo que registra la app, el `keepMounted` para el crawler
+  y el Combobox contra el servidor. Arriba, badges (npm, CI, licencia) e índice.
+
+### Docs
+
+- **El modo oscuro es solo por la clase `.dark`.** No lo decía en ningún lado, y
+  con `attribute="data-theme"` en `next-themes` el botón de tema parece andar y
+  los colores no cambian. Queda escrito en Theming y en el README, con las líneas
+  para quien no usa `next-themes`.
+- **Los tokens semánticos de shadcn** (`--color-card`, `--color-muted`,
+  `--color-primary`, …) se documentan como **alias de compatibilidad**: 0 usos en
+  `src/` y 0 menciones en la doc hacían dudar si eran restos. Se quedan porque el
+  registry funciona y un componente pegado de shadcn los usa; los pares se
+  recalcularon y todos pasan AA. Y se dice lo que faltaba: **no van en código
+  nuevo**.
+- **Verificar la instalación** arranca con un check binario: un `<Button>` tiene
+  que verse con fondo negro y texto blanco. Antes había que leer si una clase
+  compila y comparar dos negros en devtools. De paso, el paso del tema oscuro
+  citaba «la 2.0», una versión que no existe.
+- Nota en Tokens sobre el formato de `geist.json`: es propio, no W3C DTCG, y solo
+  tiene color —tipografía, radios y sombras se parsean del CSS—. Es a propósito
+  mientras el único consumidor sea este repo.
+
+Y la revisión final de coherencia, página por página contra el código. **Veinte
+afirmaciones que el código desmiente**, las tres que más importan:
+
+- **Un `Button disabled` SÍ sale del orden de tabulación.** La doc decía lo
+  contrario «porque Base UI usa `data-disabled`, no el atributo nativo». Con
+  `nativeButton` (el default) y sin `focusableWhenDisabled`, Base UI escribe
+  **además** el `disabled` nativo: `<button … tabindex="0" disabled="">`.
+- **`Select` no emite `aria-activedescendant`** —ese es el mecanismo del
+  `Combobox`—, y su placeholder es `gray-900` desde la Fase 2, no `gray-700`.
+- **La home decía «tres variables de marca»** y son cuatro desde la Fase 1: la
+  corrección había llegado a las páginas y no a la portada.
+
+El resto: `linkVariants` no usa la marca (`theming.md` lo listaba), `reglas.md`
+contaba 5 componentes sin estado cuando son 16 y se contradecía con
+`instalacion.md`, el barrel son 42 módulos `"use client"` y no «~30», el ejemplo
+del layout raíz de `instalacion.md` importaba del barrel —justo lo que esa página
+desaconseja—, el truco de `: Labels` no marca nada si se escribe
+`{ ...defaultLabels, … }`, `Separator` vertical ya se estira solo, `Breadcrumb`
+tiene una segunda condición de colapso que no estaba escrita, `Pagination
+boundaries={0}` se sube a 1, el `Toggle` es un chip de filtro y no un botón de
+negrita, `rounded-full` no es «solo Badge, avatares y pill», `gray-800` faltaba
+como excepción en Tokens, y dos comentarios citaban archivos y versiones que ya
+no existen.
+
+### Tests
+
+- 569 en el paquete (52 archivos) y de 110 a **113** en el sitio: ninguna prop
+  propia puede quedar sin descripción, y las heredadas sin texto se cuentan y
+  avisan. `npm run generate` imprime el conteo en cada corrida.
+
 ## [0.4.0] - 2026-09-23
 
 Con esta versión el paquete cubre **todas las primitivas de Base UI**: 58
