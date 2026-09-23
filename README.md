@@ -19,10 +19,11 @@ son **cuatro variables CSS**.
 - Server Components donde no hace falta estado; `"use client"` solo donde sí.
 - Contraste AA verificado por tests, no a ojo.
 
-**El detalle de cada componente vive en el sitio de documentación** —58 páginas
-con demos en vivo, la tabla de props generada del TypeScript y las reglas de uso—
-y no se duplica acá. La URL está en la home del repo; para levantarlo local,
-`cd docs/site && npm run dev`.
+**El detalle de cada componente vive en
+[ui.sebastianfermanelli.com](https://ui.sebastianfermanelli.com)** —58 páginas con
+demos en vivo, la tabla de props generada del TypeScript y las reglas de uso— y no
+se duplica acá. Cada página se sirve también como markdown y hay un `llms.txt`
+para agentes. Para levantarlo local, `cd docs/site && npm run dev`.
 
 ## Índice
 
