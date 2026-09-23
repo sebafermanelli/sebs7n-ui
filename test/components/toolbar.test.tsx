@@ -57,7 +57,7 @@ describe("Toolbar", () => {
     expect(screen.getByRole("group", { name: "Alineación" })).toBeInTheDocument()
   })
 
-  // La razón entera del componente: seis controles, UNA parada de Tab.
+  // La razón entera del componente: siete controles, UNA parada de Tab.
   it("toda la barra es una sola parada de tabulación y las flechas mueven adentro", async () => {
     render(
       <>

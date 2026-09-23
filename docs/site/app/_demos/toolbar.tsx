@@ -22,7 +22,7 @@ import { Toolbar, ToolbarButton, ToolbarGroup, ToolbarInput, ToolbarLink, Toolba
 
 /**
  * La barra del editor de texto
- * Once controles y una sola parada de tabulación: se entra con Tab, se recorre con ← →, se sale con Tab. Sin la barra, llegar del título al cuerpo del artículo cuesta once teclas.
+ * Ocho controles y una sola parada de tabulación: se entra con Tab, se recorre con ← →, se sale con Tab. Sin la barra, llegar del título al cuerpo del artículo cuesta ocho teclas.
  */
 export function Formato() {
   return (
