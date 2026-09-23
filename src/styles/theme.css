@@ -36,7 +36,25 @@
   --color-brand-1000: var(--sf-brand-1000);
   --color-brand-contrast: var(--sf-brand-fg);
 
+  /* El fondo de página. No es un alias de nadie: es uno de los tres roles de fondo
+     del sistema, y `AppShell` lo usa. Los otros dos salen de colors.css. */
   --color-background: var(--sf-background);
+
+  /**
+   * De acá abajo, alias de compatibilidad con shadcn. **Ningún componente del
+   * paquete los usa**: los 58 van a `bg-background-100`, `text-gray-900`,
+   * `border-gray-400`.
+   *
+   * Están para el componente que alguien pega de shadcn.io —o que trae
+   * `shadcn add`— en una app que ya usa este paquete: sin estos nombres ese
+   * bloque sale sin color, y con ellos sale en la paleta de Geist. Los pares
+   * pasan AA (primary 17,9:1 claro / 16,9:1 oscuro, muted-foreground sobre muted
+   * 7,55 y 6,66, destructive 4,75 y 4,79), así que no hay que retocar nada.
+   *
+   * En código nuevo va el vocabulario de arriba, no este: dos nombres para el
+   * mismo color es lo que `reglas.md` dice que no queremos. Está documentado en
+   * la página de Tokens del sitio.
+   */
   --color-foreground: var(--sf-gray-1000);
   --color-card: var(--sf-background-100);
   --color-card-foreground: var(--sf-gray-1000);
