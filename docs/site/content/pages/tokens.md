@@ -18,7 +18,7 @@ Diez pasos por familia, de `100` (el más claro en tema claro) a `1000`. La conv
 
 {{colores}}
 
-`brand` no está en la tabla porque no tiene valores fijos: se deriva de las tres variables de la app. Ver [Theming](/docs/theming).
+`brand` no está en la tabla porque no tiene valores fijos: se deriva de las cuatro variables de la app. Ver [Theming](/docs/theming).
 
 ## Tipografía
 

@@ -7,7 +7,7 @@ dependencia.
 Nació de unificar cuatro aplicaciones reales que compartían componentes copiados
 y pegados: mismos neutros, misma tipografía, mismos radios y sombras, mismos
 estados de foco. Lo único que cambia entre productos es el color de marca, que
-son **tres variables CSS**.
+son **cuatro variables CSS**.
 
 - 58 componentes accesibles sobre Base UI, cada uno con su entry point.
 - Tokens de color, tipografía, radios y sombras como variables CSS y utilidades
@@ -40,9 +40,9 @@ React y de Base UI:
 | `next-themes` | `^0.4.6` |
 | `sonner` | `^2.0.7` |
 
-`geist` no es un peer declarado, pero va en el mismo comando: los tokens de
-tipografía leen `--font-geist-sans` y `--font-geist-mono`, que define la app en
-el layout raíz.
+`geist` está declarado como peer **opcional** —npm no se queja si no lo
+instalás—, pero va en el mismo comando: los tokens de tipografía leen
+`--font-geist-sans` y `--font-geist-mono`, que define la app en el layout raíz.
 
 ### 1. CSS
 
@@ -252,20 +252,23 @@ se pierde.
 
 ### Color de marca
 
-Una app define **tres variables** y nada más. No hay que tocar ningún archivo del
-paquete:
+Una app define **cuatro variables** y nada más. No hay que tocar ningún archivo
+del paquete:
 
 ```css
 :root {
   --brand-base: oklch(0.55 0.16 35);        /* acento en claro */
   --brand-base-dark: oklch(0.55 0.16 35);   /* acento en oscuro; por defecto, igual a la base */
-  --brand-contrast-dark: #fff;              /* texto sobre el acento en oscuro */
+  --brand-contrast: #fff;                   /* texto sobre el acento en claro; por defecto #fff */
+  --brand-contrast-dark: #fff;              /* texto sobre el acento en oscuro; por defecto, igual a --brand-contrast */
 }
 ```
 
-De ahí el paquete deriva la escala `brand-100…1000` y `brand-contrast`. La regla
-es una sola: **el texto sobre `brand-700` tiene que llegar a 4,5:1**. Si el
-acento es claro, `--brand-contrast-dark: #000`.
+De ahí el paquete deriva la escala `brand-100…1000` y `brand-contrast`. Las dos
+de contraste vienen en `#fff` por defecto y `--brand-contrast-dark` cae en
+`--brand-contrast` si no se declara, así que con un acento oscuro alcanza con las
+dos primeras. La regla es una sola: **el texto sobre `brand-700` tiene que llegar
+a 4,5:1**. Si el acento es claro, `--brand-contrast: #000`.
 
 `tokens/brands.json` trae cuatro marcas de ejemplo (`teal`, `terracotta`,
 `emerald`, `blue`) que usan el playground y los tests de contraste. **Son solo

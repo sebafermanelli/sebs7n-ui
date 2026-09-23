@@ -1,4 +1,4 @@
-Una dependencia, un `@import` y tres variables de marca. No hay `tailwind.config.js` ni archivos copiados al repo de la app.
+Una dependencia, un `@import` y cuatro variables de marca. No hay `tailwind.config.js` ni archivos copiados al repo de la app.
 
 ## Instalar
 
@@ -27,7 +27,7 @@ Las `peerDependencies` van así para que haya **una sola copia** de React y de B
 | `next-themes` | `^0.4.6` |
 | `sonner` | `^2.0.7` |
 
-`geist` **no es un peer declarado**, pero va en el mismo comando: los tokens de tipografía leen `--font-geist-sans` y `--font-geist-mono`, que define la app en el layout raíz. Si tu proyecto no es Next, cargá Geist variable por tu cuenta y definí esas dos variables.
+`geist` está declarado como peer **opcional**, así que npm no se queja si no lo instalás, pero va en el mismo comando: los tokens de tipografía leen `--font-geist-sans` y `--font-geist-mono`, que define la app en el layout raíz. Si tu proyecto no es Next, cargá Geist variable por tu cuenta y definí esas dos variables.
 
 El resto —`clsx`, `tailwind-merge`, `class-variance-authority`, `lucide-react`— viaja como dependencia normal del paquete: no las instalás vos.
 
@@ -82,9 +82,9 @@ El paquete también exporta `sebs7n-ui/styles.css`, la hoja precompilada. Con do
 
 `styles.css` queda para el caso en que el bundler de la app no corre Tailwind, o no puede escanear `node_modules`. Trae los tokens y solo las utilidades que usan los componentes; no trae el preflight de Tailwind, así que el reset base sigue siendo responsabilidad de la app.
 
-### Las tres variables de marca
+### Las cuatro variables de marca
 
-`--brand-base`, `--brand-base-dark` y `--brand-contrast-dark` son lo único que cambia entre productos: de ahí sale la escala `brand-100…1000`. El detalle de cómo se deriva, el requisito de contraste y el modo oscuro están en [Theming](/docs/theming).
+`--brand-base`, `--brand-base-dark`, `--brand-contrast` y `--brand-contrast-dark` son lo único que cambia entre productos: de ahí sale la escala `brand-100…1000`. Las dos de contraste vienen en `#fff` por defecto, y `--brand-contrast-dark` cae en `--brand-contrast` si no se declara, así que con un acento oscuro alcanza con las dos primeras. El detalle de cómo se deriva, el requisito de contraste y el modo oscuro están en [Theming](/docs/theming).
 
 ## 2. Layout raíz
 
@@ -161,6 +161,6 @@ No mezcles barrel y subpaths en la misma página: el barrel vuelve a traer todo.
 
 ## Verificar que quedó bien
 
-1. `bg-blue-500` **no** tiene que compilar: la paleta de Tailwind está reseteada y solo existen los tokens del paquete.
+1. `bg-slate-500` **no** tiene que compilar: la paleta de Tailwind está reseteada y solo existen los tokens del paquete. Ojo con el ejemplo: `bg-blue-500` **sí** compila, porque Geist tiene su propia escala `blue` en pasos 100–1000. Lo que no existe son las escalas de Tailwind que el paquete no repone (`slate`, `zinc`, `sky`…) ni los pasos que Geist no tiene (`bg-blue-50`).
 2. En oscuro, un `Input` tiene que verse **más claro** que el fondo de la página (`#0a0a0a` sobre `#000`). Si son el mismo negro, falta la 2.0 o hay un parche viejo pisando `--sf-background-100`.
 3. Tabulá: la primera parada de un `AppShell` es «Ir al contenido».

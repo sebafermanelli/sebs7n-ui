@@ -1,4 +1,4 @@
-Una app define **tres variables** y nada más. No hay que tocar ningún archivo del paquete ni recompilar nada.
+Una app define **cuatro variables** y nada más. No hay que tocar ningún archivo del paquete ni recompilar nada.
 
 ## Color de marca
 
@@ -6,13 +6,14 @@ Una app define **tres variables** y nada más. No hay que tocar ningún archivo 
 :root {
   --brand-base: oklch(0.55 0.16 35);        /* acento en claro */
   --brand-base-dark: oklch(0.55 0.16 35);   /* acento en oscuro; por defecto, igual a la base */
-  --brand-contrast-dark: #fff;              /* texto sobre el acento en oscuro */
+  --brand-contrast: #fff;                   /* texto sobre el acento en claro; por defecto #fff */
+  --brand-contrast-dark: #fff;              /* texto sobre el acento en oscuro; por defecto, igual a --brand-contrast */
 }
 ```
 
 De ahí el paquete deriva la escala `brand-100…1000` y `brand-contrast`, con `oklch(from …)`: se fija la luminosidad del paso equivalente de `blue` en Geist y se escala el croma. Por eso un acento naranja y uno azul dan escalas que «pesan» igual.
 
-**La regla es una sola: el texto sobre `brand-700` tiene que llegar a 4,5:1.** Si el acento es claro, `--brand-contrast-dark: #000`. Hay un test en el paquete que recalcula el ratio desde OKLCH y falla si una marca no da.
+**La regla es una sola: el texto sobre `brand-700` tiene que llegar a 4,5:1.** Si el acento es claro, `--brand-contrast: #000` (y su par oscuro, si el acento oscuro también lo es). Hay un test en el paquete que recalcula el ratio desde OKLCH y falla si una marca no da.
 
 `tokens/brands.json` trae cuatro marcas de ejemplo (`teal`, `terracotta`, `emerald`, `blue`) que usan el playground y los tests de contraste. **Son solo demos del sistema**: una app real no las usa ni edita ese archivo.
 

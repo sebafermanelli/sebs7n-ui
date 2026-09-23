@@ -158,7 +158,7 @@ const pages = [
   {
     slug: "instalacion",
     title: "Instalación",
-    description: "Una dependencia, un `@import` y tres variables de marca.",
+    description: "Una dependencia, un `@import` y cuatro variables de marca.",
     body: loadPage("instalacion"),
   },
   {
@@ -170,7 +170,7 @@ const pages = [
   {
     slug: "theming",
     title: "Theming",
-    description: "Tres variables de marca, claro y oscuro, radio y densidad.",
+    description: "Cuatro variables de marca, claro y oscuro, radio y densidad.",
     body: loadPage("theming"),
   },
   {
