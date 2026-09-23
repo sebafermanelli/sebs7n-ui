@@ -4,6 +4,68 @@ Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Versionado
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-09-23
+
+Con esta versión el paquete cubre **todas las primitivas de Base UI**: 58
+componentes. No quedó ninguna sin envolver.
+
+### Added
+
+- **`CheckboxGroup`** — varias casillas que son un solo dato: el valor sale como
+  array y el grupo se nombra y se valida como un campo. Incluye el padre con
+  estado indeterminado ("seleccionar todo"), que es la razón principal por la
+  que el componente existe. Va siempre adentro de un `Field`, porque la pieza
+  de Base UI que nombra cada opción por separado lo exige.
+- **`Meter`** — una **medida** en un rango: espacio usado, cupo consumido,
+  ocupación. No es `Progress`: si el número puede bajar solo, es `Meter`; si
+  arrancó, va para un lado y al terminar la pantalla cambia de estado, es
+  `Progress`. Comparte forma y tokens con `Progress` para que el sistema no
+  tenga dos barras distintas.
+- **`ContextMenu`** — el menú del botón derecho, **que también se abre con el
+  teclado**. Base UI escucha el evento `contextmenu` pero su trigger es un
+  `<div>` sin `tabIndex`, así que el foco nunca le llegaba: acá el trigger es
+  enfocable, anuncia `aria-keyshortcuts="Shift+F10"` y ancla el menú al
+  rectángulo del elemento, porque varios navegadores emiten esa tecla con las
+  coordenadas en cero y el menú saltaba a la esquina de la ventana.
+- **`Menubar`** — la barra de menús de una app (Archivo, Editar, Ver), con
+  recorrido entre títulos y apertura al pasar de uno a otro. El tilde de los
+  checks va a la izquierda, como en macOS y Windows, porque la derecha la ocupa
+  el atajo.
+- **`Toolbar`** — acciones agrupadas con roving tabindex: una sola parada de
+  tabulación para todo el grupo en vez de una por botón. Se le suman `Home` y
+  `End`, que el patrón de la WAI pide y Base UI deja apagadas en este
+  componente, con guarda para no pisarlas dentro de un campo de texto.
+- **`Drawer`** — la hoja que se arrastra y se cierra deslizando, con puntos de
+  anclaje. Convive con `Sheet` en lugar de reemplazarlo: no es el mismo panel
+  con gestos, es otro árbol de partes —su popup exige un viewport, y su
+  `Content` marca la zona donde el dedo *no* arrastra—. La regla queda escrita
+  en los dos: **el dedo lo mueve → `Drawer`; solo se lee y se cierra →
+  `Sheet`; centrado y es una decisión → `Dialog`**. Siempre con `Escape` y un
+  botón de cierre visible: un panel que solo se cierra deslizando es un panel
+  que no se puede cerrar.
+
+### Changed
+
+- `FieldError` muestra los mensajes múltiples como lista con viñeta. Base UI
+  los mete en un `<ul>` sin clases cuando hay más de uno, y el reset de
+  Tailwind lo dejaba como una frase pegada.
+
+### Docs
+
+- `Field` explica por qué un control propio a veces no se engancha:
+  `FieldControl` le pasa `id`, `name`, `aria-*` y una `ref`, y un componente que
+  declara `id` y `name` como props propias sin reenviar el resto se queda sin
+  nada. Es lo que les pasa a los date pickers hechos con un campo oculto más un
+  botón.
+- `Field` documenta que **`FieldError` es una fuente o la otra**: sin `match` se
+  muestra ante cualquier invalidez, así que junto a uno con `match` duplica el
+  mensaje.
+- `Fieldset` explica **dónde va el error que es del grupo**. No se agregó un
+  `FieldsetError`: un `<fieldset>` no tiene forma estándar de llevar un mensaje
+  que el lector de pantalla anuncie, así que sería un cartel rojo que media
+  pantalla nunca escucha. Cuando el error es de un conjunto de opciones, ese
+  conjunto es un campo: va un `Field` envolviéndolo.
+
 ## [0.3.3] - 2026-09-23
 
 ### Changed
