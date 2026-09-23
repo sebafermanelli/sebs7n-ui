@@ -141,7 +141,11 @@ function BreadcrumbEllipsis({ className, label = "Rutas intermedias", ...props }
     <li
       data-slot="breadcrumb-ellipsis"
       role="presentation"
-      className={cn("inline-flex shrink-0 items-center text-gray-700", className)}
+      // Mismo criterio que el «…» del Pagination: los puntos avisan que hay
+      // niveles colapsados, así que son información y no adorno. El separador
+      // de al lado sí se queda en `gray-700` —un chevron más oscuro competiría
+      // con los nombres de las rutas, y la jerarquía ya la da el orden—.
+      className={cn("inline-flex shrink-0 items-center text-gray-900", className)}
       {...props}
     >
       <span aria-hidden="true">…</span>
