@@ -4,6 +4,50 @@ Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Versionado
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-09-23
+
+Formularios. Hasta acá el sistema traía los controles sueltos —`Input`,
+`Select`, `Checkbox`— y cada app armaba a mano el andamiaje que los convierte
+en un formulario. Eso ya no.
+
+### Added
+
+- **`Field`** — el campo completo: `Field`, `FieldLabel`, `FieldDescription`,
+  `FieldError`, `FieldControl` y `FieldValidity`. La etiqueta nombra al
+  control, la ayuda y el error lo describen, y el error pone `aria-invalid`,
+  todo por anidar las partes. Sin `useId`, sin `htmlFor` y sin armar el
+  `aria-describedby` condicional que es justo el que se olvida. `Input`,
+  `Textarea` y `Select` se enganchan solos.
+- **`Fieldset`** y **`FieldsetLegend`** — un grupo de campos con nombre
+  accesible. Es lo que distingue dos campos "Calle" en la misma pantalla, uno
+  bajo "Domicilio fiscal" y otro bajo "Dirección de entrega". `disabled` en el
+  grupo apaga todo lo de adentro.
+- **`Form`** — un `<form>` nativo que junta los valores por `name`, reparte a
+  cada campo los errores que solo conoce el servidor (`errors`) y decide cuándo
+  se valida (`validationMode`, `onSubmit` por defecto). Al fallar, el foco va al
+  primer campo con error.
+- **`sebs7n-ui/lib/schema`** — puente con **Standard Schema**, la interfaz que
+  ya implementan Zod, Valibot y ArkType: `validate(schema, valores)` devuelve el
+  valor parseado o los errores con la forma que espera `Form`, y
+  `fieldValidator(schema)` arma el `validate` de un campo. El paquete no depende
+  de ninguna de las tres librerías: habla la interfaz. Son funciones puras, sin
+  React, así que el mismo schema revalida en el servidor.
+- **`NumberField`** — un número de verdad: flechas, `Shift`/`Alt` para paso
+  grande y chico, topes `min`/`max` y formato por locale (moneda, porcentaje,
+  unidades). El valor que sale es `number`, no el string del input. Sin zona de
+  arrastre a propósito: es un gesto invisible, sin equivalente de teclado, que
+  cambiaría en silencio un dato de formulario.
+- **`OTPField`** — código de verificación de N casillas (6 por defecto). Pegar
+  reparte el código, `Backspace` retrocede, y `autoComplete="one-time-code"`
+  hace que el teléfono ofrezca el código del SMS. Es **un solo valor** para el
+  formulario y para el lector de pantalla, no seis campos sueltos.
+
+### Changed
+
+- La guía de `Input` decía "siempre con `Label` asociado por `htmlFor`/`id`" y
+  explicaba cómo armar a mano el `aria-describedby` del error. Con `Field` eso
+  dejó de ser el camino recomendado.
+
 ## [0.2.0] - 2026-09-23
 
 Diez componentes nuevos: los que faltaban para cubrir una app entera sin salir
