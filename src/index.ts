@@ -1,12 +1,29 @@
 export { cn, TYPE_SCALE, type WithClassName } from "./lib/utils.js"
 export { paginationRange, type PaginationRangeOptions, type PaginationSlot } from "./lib/pagination.js"
 export { defaultLabels, LabelsProvider, useLabels, type Labels, type PartialLabels } from "./lib/labels.js"
+export { renderElement, type RenderElement } from "./lib/render.js"
+export {
+  fieldValidator,
+  validate,
+  type FormErrors,
+  type InferOutput,
+  type StandardSchemaV1,
+  type ValidationResult,
+} from "./lib/schema.js"
 
-export { badgeVariants, BADGE_COLORS, type BadgeColor } from "./variants/badge.js"
+export { badgeDotColor, badgeVariants, BADGE_COLORS, type BadgeColor } from "./variants/badge.js"
 export { buttonVariants, type ButtonIconSize, type ButtonShape, type ButtonSize, type ButtonTextSize, type ButtonVariantProps } from "./variants/button.js"
 export { cardVariants } from "./variants/card.js"
 export { linkVariants } from "./variants/link.js"
-export { inputShellButtonClassName, inputShellClassName, inputShellInputClassName } from "./variants/input.js"
+export {
+  inputControlClassName,
+  inputDisabledClassName,
+  inputInvalidClassName,
+  inputShellButtonClassName,
+  inputShellClassName,
+  inputShellInputClassName,
+  inputSizeClassName,
+} from "./variants/input.js"
 export { menuItemClassName, menuLabelClassName, menuPopupClassName, menuSeparatorClassName, type MenuInsetProps } from "./variants/menu.js"
 export {
   backdropClassName,
@@ -16,7 +33,7 @@ export {
   overlayCloseClassName,
 } from "./variants/overlay.js"
 export { sidebarItemVariants } from "./variants/sidebar.js"
-export { tagRemoveClassName, tagVariants, TAG_COLORS, type TagColor, type TagSize } from "./variants/tag.js"
+export { tagRemoveClassName, tagVariants, TAG_COLORS, type TagColor, type TagSize, type TagVariantProps } from "./variants/tag.js"
 export { toggleVariants } from "./variants/toggle.js"
 
 export * from "./components/accordion.js"

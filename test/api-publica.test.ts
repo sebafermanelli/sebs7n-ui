@@ -45,6 +45,38 @@ describe("API pública: los tipos de props se exportan", () => {
     expect(sinExportar).toEqual([])
   })
 
+  // El barrel es la única forma de llegar a `cn`, `validate` o `tagVariants` sin conocer la
+  // ruta, y hasta 0.5.0 se mantenía a mano: `lib/render`, `lib/schema` —que `form.tsx`
+  // documenta como públicos— y cuatro constantes de `variants/` no salían por ahí, así que
+  // existían para quien ya sabía el subpath y para nadie más.
+  //
+  // El orden del archivo no se toca: agrupa `lib`, `variants` y componentes, y dentro de cada
+  // grupo es el de `ls`. Lo que se verifica es que no falte nada, no cómo está ordenado.
+  it("el barrel exporta todo lo público de lib/ y variants/", () => {
+    const barrel = readFileSync(join(root, "src/index.ts"), "utf8")
+    const faltan: string[] = []
+    for (const carpeta of ["lib", "variants"]) {
+      const ruta = join(root, "src", carpeta)
+      for (const archivo of readdirSync(ruta)) {
+        const fuente = readFileSync(join(ruta, archivo), "utf8")
+        const nombres = new Set<string>()
+        for (const match of fuente.matchAll(/^export (?:async )?(?:function|const|type|interface)\s+(\w+)/gm)) {
+          nombres.add(match[1] as string)
+        }
+        for (const bloque of fuente.matchAll(/^export \{([^}]*)\}/gm)) {
+          for (const entrada of (bloque[1] ?? "").split(",")) {
+            const nombre = entrada.trim().replace(/^type\s+/, "").split(/\s+as\s+/).pop()?.trim()
+            if (nombre) nombres.add(nombre)
+          }
+        }
+        for (const nombre of nombres) {
+          if (!new RegExp(`\\b${nombre}\\b`).test(barrel)) faltan.push(`${carpeta}/${archivo}: ${nombre}`)
+        }
+      }
+    }
+    expect(faltan).toEqual([])
+  })
+
   // Un tipo declarado dos veces con el mismo nombre en dos componentes distintos no
   // se puede exportar: el barrel hace `export *` de los 58 y el nombre choca. Pasó con
   // `InsetProps`, que estaba tres veces —DropdownMenu, ContextMenu y Menubar— y terminó
