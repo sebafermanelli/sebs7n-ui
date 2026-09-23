@@ -29,6 +29,22 @@ export function luminanceOfHex(hex: string): number {
   return 0.2126 * r! + 0.7152 * g! + 0.0722 * b!
 }
 
+/**
+ * Aplana un color con alfa (`#rrggbbaa`) contra el fondo opaco sobre el que se
+ * pinta. Los tokens `gray-alpha-*` y el halo de foco son alfa: el navegador los
+ * compone antes de mostrarlos, así que el ratio que ve una persona es el del
+ * color YA compuesto, no el del hexadecimal declarado.
+ */
+export function flattenAlpha(hex: string, background: string): string {
+  const n = hex.replace("#", "")
+  if (n.length !== 8) return hex
+  const alpha = parseInt(n.slice(6, 8), 16) / 255
+  const bg = background.replace("#", "")
+  const canal = (i: number) =>
+    Math.round(parseInt(n.slice(i, i + 2), 16) * alpha + parseInt(bg.slice(i, i + 2), 16) * (1 - alpha))
+  return `#${[0, 2, 4].map((i) => canal(i).toString(16).padStart(2, "0")).join("")}`
+}
+
 export function contrastRatio(a: number, b: number): number {
   const [hi, lo] = a > b ? [a, b] : [b, a]
   return (hi + 0.05) / (lo + 0.05)

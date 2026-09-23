@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs"
 import { join } from "node:path"
 import { describe, expect, it } from "vitest"
 
-import { contrastRatio, luminanceOfHex } from "./color"
+import { contrastRatio, flattenAlpha, luminanceOfHex } from "./color"
 
 // Los valores salen de los CSS del paquete, no de una copia: si alguien cambia
 // un token, cambia el número que se verifica acá. Los pares son los que la
@@ -15,19 +15,40 @@ const read = (file: string) => readFileSync(join(root, "src/styles", file), "utf
 /** `#fff` → `#ffffff`: la fórmula de color.ts lee de a dos caracteres. */
 const expandir = (hex: string) => (hex.length === 4 ? `#${[...hex.slice(1)].map((c) => c + c).join("")}` : hex)
 
-/** `--x: #aabbcc;` dentro del bloque `:root` (claro) o `.dark` (oscuro). */
+/**
+ * `--x: #aabbcc;` dentro del bloque `:root` (claro) o `.dark` (oscuro).
+ *
+ * También junta los alias de un token a otro (`--sf-focus-border:
+ * var(--sf-gray-alpha-800)`), que se resuelven después en `resolver()`: un
+ * alias existe justamente para que el hexadecimal viva en un solo lugar, y si
+ * el test lo copiara volvería a haber dos.
+ */
 function tokens(file: string, theme: "light" | "dark"): Record<string, string> {
   const css = read(file)
   const inicio = css.indexOf(theme === "light" ? ":root {" : ".dark {")
   const cuerpo = css.slice(inicio, css.indexOf("\n  }", inicio))
   return Object.fromEntries(
-    [...cuerpo.matchAll(/(--sf-[a-z0-9-]+):\s*(#[0-9a-f]{3,8});/g)].map(([, name, value]) => [name, expandir(value!)])
+    [...cuerpo.matchAll(/(--sf-[a-z0-9-]+):\s*(#[0-9a-f]{3,8}|var\(--sf-[a-z0-9-]+\));/g)].map(([, name, value]) => [
+      name,
+      value!.startsWith("#") ? expandir(value!) : value!,
+    ])
   )
 }
 
+/** Sigue las cadenas `var(--sf-x)` hasta el hexadecimal. */
+function resolver(tabla: Record<string, string>): Record<string, string> {
+  const salida: Record<string, string> = {}
+  for (const [name, value] of Object.entries(tabla)) {
+    let actual = value
+    for (let i = 0; i < 8 && actual.startsWith("var("); i++) actual = tabla[actual.slice(4, -1)] ?? actual
+    if (actual.startsWith("#")) salida[name] = actual
+  }
+  return salida
+}
+
 const paleta = {
-  light: { ...tokens("colors.css", "light"), ...tokens("theme.css", "light") },
-  dark: { ...tokens("colors.css", "dark"), ...tokens("theme.css", "dark") },
+  light: resolver({ ...tokens("colors.css", "light"), ...tokens("theme.css", "light") }),
+  dark: resolver({ ...tokens("colors.css", "dark"), ...tokens("theme.css", "dark") }),
 }
 
 /**
@@ -71,6 +92,20 @@ describe("Atajo de menú sobre el popup (WCAG 1.4.3)", () => {
         expect(ratio(fg, bg)).toBeGreaterThanOrEqual(4.5)
       })
     }
+  }
+})
+
+// El borde del campo enfocado es el indicador de foco de los campos: es lo
+// único que dice dónde estás parado al tabular por un formulario. WCAG 2.4.11
+// (AA en 2.2) le pide 3:1 contra el fondo. Los `gray-alpha-*` son alfa, así que
+// el ratio que se ve es el del color YA compuesto contra la superficie.
+describe("Borde de foco de los campos (WCAG 2.4.11)", () => {
+  for (const theme of ["light", "dark"] as const) {
+    const bg = paleta[theme]["--sf-background-100"]!
+    const fg = flattenAlpha(paleta[theme]["--sf-focus-border"]!, bg)
+    it(`${theme}: ${fg} sobre ${bg} llega a 3:1`, () => {
+      expect(ratio(fg, bg)).toBeGreaterThanOrEqual(3)
+    })
   }
 })
 

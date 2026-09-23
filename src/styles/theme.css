@@ -140,6 +140,23 @@
     --sf-button-error-hover: #ae292f;
     --sf-button-error-active: #7c1316;
     --sf-backdrop: #00000033;
+    /**
+     * El borde del campo enfocado (`focus-border`).
+     *
+     * En claro era `gray-alpha-600` (#0000003d): compuesto sobre la superficie
+     * blanca queda en #c2c2c2, 1,78:1. WCAG 2.4.11 y 1.4.11 piden 3:1 para el
+     * indicador de foco, y con 1,78 tabular por un formulario era adivinar
+     * dónde estaba parado. `gray-alpha-800` (#00000082) compone #7d7d7d y da
+     * 4,12:1.
+     *
+     * En oscuro se queda en `gray-alpha-600` (#ffffff82 → #878787, 5,51:1), que
+     * ya pasaba: subirlo a alpha-800 lo BAJARÍA a 4,81, porque la escala alpha
+     * en oscuro no es monótona.
+     *
+     * El halo de 4px (`--sf-focus-halo`) no se toca: es énfasis, no es el
+     * indicador. Quien tiene que llegar al 3:1 es el borde, y llega.
+     */
+    --sf-focus-border: var(--sf-gray-alpha-800);
     --sf-focus-halo: #00000029;
 
     --sf-shadow-border-base: 0 0 0 1px #00000014;
@@ -181,6 +198,7 @@
 
     --sf-button-primary-hover: #cccccc;
     --sf-backdrop: #00000080;
+    --sf-focus-border: var(--sf-gray-alpha-600);
     --sf-focus-halo: #ffffff3d;
 
     --sf-shadow-border-base: 0 0 0 1px #ffffff25;
@@ -200,10 +218,10 @@
   box-shadow: 0 0 0 2px var(--color-background-100), 0 0 0 4px var(--color-brand-700);
 }
 
-/* Foco de inputs de Geist (--ds-focus-border). */
+/* Foco de inputs de Geist (--ds-focus-border), con el borde por tema: ver --sf-focus-border. */
 @utility focus-border {
   outline: none;
-  border-color: var(--color-gray-alpha-600);
+  border-color: var(--sf-focus-border);
   box-shadow: 0 0 0 4px var(--sf-focus-halo);
 }
 
