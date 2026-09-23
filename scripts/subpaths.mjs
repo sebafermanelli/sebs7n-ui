@@ -43,7 +43,6 @@ export function subpaths(root) {
   agregar("./labels", "`sebs7n-ui/labels`", "`LabelsProvider`, `useLabels` y `defaultLabels`: los textos internos, para traducirlos.")
   agregar("./tokens/*.json", "`sebs7n-ui/tokens/<archivo>.json`", `Los tokens en crudo: ${lista(tokens)}`)
   agregar("./theme.css", "`sebs7n-ui/theme.css`", "Los tokens y el `@source` del `dist`. Es el único import obligatorio.")
-  agregar("./styles.css", "`sebs7n-ui/styles.css`", "La hoja precompilada. Alternativa a `theme.css`, no complemento.")
   return filas
 }
 

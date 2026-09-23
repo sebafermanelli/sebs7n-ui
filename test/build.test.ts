@@ -44,22 +44,12 @@ describe("build", () => {
     expect(read("dist/variants/input.js")).not.toContain("use client")
   })
 
-  it("dist/styles.css trae las clases de los componentes y no la paleta de Tailwind", () => {
-    const css = read("dist/styles.css")
-    for (const selector of [
-      ".bg-gray-1000",
-      ".hover\\:bg-button-primary-hover",
-      ".focus-visible\\:focus-ring",
-      ".focus\\:focus-border",
-      ".data-highlighted\\:bg-gray-200",
-      ".shadow-menu",
-      ".text-heading-20",
-      ".animate-skeleton",
-    ]) {
-      expect(css, selector).toContain(selector)
-    }
-    expect(css).not.toContain("--color-red-500:")
-    expect(css).not.toMatch(/\*,\s*::after,\s*::before\s*\{\s*box-sizing/)
+  // La hoja precompilada `dist/styles.css` se sacó en 0.5.0: ninguna app la usaba y,
+  // cargada junto a la hoja de la app, le ganaba por orden de declaración (el `.hidden`
+  // del paquete contra el `lg:block` de la app). Ver el CHANGELOG.
+  it("el paquete no publica una segunda hoja de utilidades", () => {
+    expect(existsSync(join(root, "dist/styles.css"))).toBe(false)
+    expect(JSON.parse(read("package.json")).exports["./styles.css"]).toBeUndefined()
   })
 
   it("exporta el tipado", () => {
@@ -87,7 +77,6 @@ describe("build", () => {
     expect(resolve("sebs7n-ui/theme-switcher")).toMatch(/\/dist\/components\/theme-switcher\.js$/)
     expect(resolve("sebs7n-ui/variants/button")).toMatch(/\/dist\/variants\/button\.js$/)
     expect(resolve("sebs7n-ui/lib/utils")).toMatch(/\/dist\/lib\/utils\.js$/)
-    expect(resolve("sebs7n-ui/styles.css")).toMatch(/\/dist\/styles\.css$/)
     expect(resolve("sebs7n-ui/theme.css")).toMatch(/\/src\/styles\/theme\.css$/)
     // Los JSON de tokens tienen su patrón propio. Con el comodín `./*` solo,
     // `sebs7n-ui/tokens/geist.json` resolvía a `dist/components/tokens/geist.json.js`.
@@ -120,7 +109,6 @@ describe("build", () => {
     const expected = [
       "dist/index.js",
       "dist/index.d.ts",
-      "dist/styles.css",
       "src/styles/theme.css",
       ...components.flatMap((name) => [`dist/components/${name}.js`, `dist/components/${name}.d.ts`]),
       ...variants.flatMap((name) => [`dist/variants/${name}.js`, `dist/variants/${name}.d.ts`]),

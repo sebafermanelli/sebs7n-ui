@@ -76,11 +76,9 @@ El `@source` del paquete escanea los 58 componentes, así que el CSS final trae 
 
 Los caros son `combobox`, `autocomplete`, los tres menús, `drawer` y `user-menu`. Esto es opt-in a propósito: equivocarse acá falla **ruidosamente** —el componente aparece sin estilo la primera vez que lo usás—, al revés que olvidarse el `@source`. Y ojo con las cadenas: `user-menu` arrastra avatar, dropdown-menu, theme-switcher y tooltip.
 
-### Por qué no `styles.css`
+### Una sola hoja de utilidades
 
-El paquete también exporta `sebs7n-ui/styles.css`, la hoja precompilada. Con dos hojas de utilidades cargadas, un `hidden lg:block` de la app pierde contra el `hidden` del paquete, porque gana la que se declaró último y no la más específica. **Es una cosa o la otra, nunca las dos**, y la recomendada es la de arriba: una sola hoja, en el orden que Tailwind sabe resolver.
-
-`styles.css` queda para el caso en que el bundler de la app no corre Tailwind, o no puede escanear `node_modules`. Trae los tokens y solo las utilidades que usan los componentes; no trae el preflight de Tailwind, así que el reset base sigue siendo responsabilidad de la app.
+Hasta 0.4.0 el paquete publicaba además `sebs7n-ui/styles.css`, una hoja precompilada. Se sacó en 0.5.0: con dos hojas de utilidades cargadas, un `hidden lg:block` de la app perdía contra el `hidden` del paquete, porque gana la que se declaró último y no la más específica. Las clases de los componentes las genera el Tailwind de la app a partir del `@source` que trae `theme.css`, que es el orden que Tailwind sabe resolver.
 
 ### Las cuatro variables de marca
 

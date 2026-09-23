@@ -49,7 +49,6 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./styles.css": "./dist/styles.css",
     "./theme.css": "./src/styles/theme.css",
     "./labels": {
       "types": "./dist/lib/labels.d.ts",
@@ -73,9 +72,7 @@
   "scripts": {
     "tokens": "node scripts/gen-colors.mjs",
     "subpaths": "node scripts/gen-subpaths.mjs",
-    "build": "npm run build:js && npm run build:css",
-    "build:js": "tsc -p tsconfig.build.json",
-    "build:css": "tailwindcss -i src/styles/build.css -o dist/styles.css --minify",
+    "build": "tsc -p tsconfig.build.json",
     "prepare": "npm run build",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
@@ -103,7 +100,6 @@
   "devDependencies": {
     "@base-ui/react": "^1.8.0",
     "@size-limit/preset-small-lib": "^14.0.0",
-    "@tailwindcss/cli": "^4.3.3",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.3",
     "@testing-library/user-event": "^14.6.7",
@@ -117,7 +113,6 @@
     "react-dom": "^19.2.4",
     "size-limit": "^14.0.0",
     "sonner": "^2.0.8",
-    "tailwindcss": "^4.3.3",
     "typescript": "^5.9.3",
     "vitest": "^4.1.11"
   }

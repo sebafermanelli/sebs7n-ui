@@ -74,10 +74,6 @@ ruidosamente —el componente se ve sin estilo—, al revés que olvidarse el
 
 Los caros son `combobox`, `autocomplete`, los tres menús, `drawer` y `user-menu`.
 
-> Existe también `@import "sebs7n-ui/styles.css"` (la hoja precompilada), pero con
-> dos hojas de utilidades un `hidden lg:block` de la app pierde contra el
-> `hidden` del paquete. Es una cosa o la otra, y la recomendada es la de arriba.
-
 ### 2. Layout raíz
 
 `GeistSans.variable` y `GeistMono.variable` (de `geist/font/*`) en `<html>`, el
@@ -167,7 +163,6 @@ import { cn } from "sebs7n-ui/lib/utils"
 | `sebs7n-ui/labels` | `LabelsProvider`, `useLabels` y `defaultLabels`: los textos internos, para traducirlos. |
 | `sebs7n-ui/tokens/<archivo>.json` | Los tokens en crudo: `brands` · `geist` |
 | `sebs7n-ui/theme.css` | Los tokens y el `@source` del `dist`. Es el único import obligatorio. |
-| `sebs7n-ui/styles.css` | La hoja precompilada. Alternativa a `theme.css`, no complemento. |
 
 <!-- /subpaths -->
 
@@ -718,7 +713,7 @@ npm install
 npm test          # tokens, contraste, componentes y build
 npm run typecheck
 npm run tokens    # regenera src/styles/colors.css desde tokens/geist.json
-npm run build     # dist/ (tsc) + dist/styles.css (Tailwind)
+npm run build     # dist/ (tsc)
 ```
 
 Playground — todas las primitivas en todos sus estados, las cuatro marcas de

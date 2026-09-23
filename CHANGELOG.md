@@ -159,6 +159,23 @@ Fase 2 de la auditoría de 0.4.0: accesibilidad.
 - `test/nombres-accesibles.test.tsx` verifica los tipos con `@ts-expect-error`:
   si alguien afloja uno, falla el `typecheck`.
 
+---
+
+Fase 3 de la auditoría de 0.4.0: rendimiento.
+
+### Removed
+
+- **`sebs7n-ui/styles.css`, la hoja precompilada** (70 KB, el 15 % del tarball).
+  **Breaking** para quien la importara, aunque el propio README desaconsejaba
+  usarla y ninguna de las cuatro apps lo hacía. Cargada junto a la hoja de la app
+  quedaban dos capas de utilidades, y la que gana es la declarada último y no la
+  más específica: un `hidden lg:block` de la app perdía contra el `hidden` del
+  paquete. Desde que `theme.css` trae su propio `@source` (Fase 1), no tenía
+  ninguna razón de existir. Si dependías de ella, la migración es la instalación
+  normal: `@import "tailwindcss"` y después `@import "sebs7n-ui/theme.css"`.
+  Se van con ella el script `build:css`, `src/styles/build.css` y las
+  devDependencies `tailwindcss` y `@tailwindcss/cli`, que solo servían para eso.
+
 ## [0.4.0] - 2026-09-23
 
 Con esta versión el paquete cubre **todas las primitivas de Base UI**: 58
