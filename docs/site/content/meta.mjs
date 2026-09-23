@@ -261,6 +261,43 @@ export const COMPONENTS = {
     usage: ["Arriba del campo, no al costado: en un celular al costado no entra.", "El texto de ayuda va debajo del campo, no dentro del label."],
     related: ["input", "textarea", "checkbox"],
   },
+  "otp-field": {
+    title: "OTPField",
+    group: "formularios",
+    description: "El código de verificación: una casilla por dígito y un solo valor, con el autorrelleno del SMS.",
+    keyboard: [
+      ["Tab", "Entra y sale del campo entero. Adentro hay una sola casilla tabulable, la activa."],
+      ["0-9", "Escribe en la casilla y salta a la siguiente."],
+      ["Backspace", "Borra el dígito y retrocede. Con ⌘/Ctrl borra el código entero."],
+      ["Delete", "Borra el dígito sin moverse de casilla."],
+      ["← →", "Se mueve entre casillas. Con ⌘/Ctrl va al principio o al final."],
+      ["Home / End", "Primera casilla · última casilla escrita."],
+      ["⌘V", "Pega el código completo y lo reparte entre las casillas."],
+    ],
+    a11y: [
+      "El contenedor es un `role=\"group\"` nombrado por el `FieldLabel`, y cada casilla hereda ese nombre: se anuncia un campo con nombre, no seis campos de texto anónimos.",
+      "Debajo viaja un input oculto con el valor entero: es el que lleva el `name`, el `required` y el largo, así que la validación y el submit hablan del código, no de un dígito.",
+      "Solo la casilla activa queda en el orden de tabulación: se entra y se sale con un Tab, no con seis.",
+      "`autoComplete=\"one-time-code\"` va en la primera casilla y en el input oculto: es lo que hace que iOS y Android ofrezcan el código del SMS. Pisarlo lo apaga.",
+      "El error lo anuncia `FieldError` una sola vez, sobre el grupo. `aria-invalid` aparece cuando la invalidez la declara la app (`<Field invalid>` o un error del servidor); la que calcula el navegador pinta con `data-invalid`.",
+    ],
+    usage: [
+      "**Siempre dentro de un `Field` con `FieldLabel`.** Sin etiqueta, seis casillas son seis cajas sin nombre.",
+      "**Seis casillas y `validationType=\"numeric\"`** salvo que el proveedor mande otra cosa: es lo que la gente espera y lo que pone el teclado numérico en el celular.",
+      "`onValueComplete` en lugar de un botón «Continuar»: cuando entra el último dígito no queda nada que decidir. Dejá el botón solo si el envío cuesta plata o es irreversible.",
+      "`autoSubmit` manda el formulario solo al completarse. Úsalo cuando el error se puede reintentar sin costo; si no, el envío accidental es peor que un click de más.",
+      "`mask` tapa los dígitos como una contraseña: casi nunca hace falta. Ver lo que se escribió es justamente lo que evita el segundo intento.",
+      "No lo uses para un CUIT, una tarjeta ni un teléfono: esos son un `Input` con `inputMode`, porque se copian, se corrigen al medio y no tienen largo fijo de una cifra por casilla.",
+    ],
+    props: {
+      OTPField: {
+        length: "Cuántas casillas. Seis es lo que manda casi todo el mundo por SMS.",
+        size: "`sm` 32px · `md` 40px · `lg` 48px, las mismas alturas que `Input`.",
+        inputClassName: "Clases de cada casilla, para tocar el ancho o el tipo de letra sin reescribir el componente.",
+      },
+    },
+    related: ["input", "label", "textarea"],
+  },
   select: {
     title: "Select",
     group: "formularios",
