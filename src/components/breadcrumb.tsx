@@ -83,12 +83,20 @@ type BreadcrumbLinkProps = Omit<React.ComponentProps<"a">, "className"> & {
   render?: RenderElement
 }
 
-/** El link de un nivel. Usa `linkVariants({ variant: "subtle" })`, como cualquier link suelto del sistema. */
+/**
+ * El link de un nivel. Usa `linkVariants({ variant: "subtle" })`, como cualquier link suelto del
+ * sistema.
+ *
+ * El `py-1` no es aire decorativo: el texto es `text-label-13`, de 16px de alto, y sin él el link
+ * medía 16px de alto —abajo de los 24 que pide WCAG 2.5.8— y en un celular se erraba. Como el
+ * `BreadcrumbItem` es un flex container, el `<a>` es un ítem de flex y el padding sí cuenta para el
+ * alto; en un `<a>` inline suelto no contaría.
+ */
 function BreadcrumbLink({ className, render, ...props }: BreadcrumbLinkProps) {
   return renderElement(render, "a", {
     "data-slot": "breadcrumb-link",
     ...props,
-    className: cn(linkVariants({ variant: "subtle" }), "truncate", className),
+    className: cn(linkVariants({ variant: "subtle" }), "truncate py-1", className),
   })
 }
 

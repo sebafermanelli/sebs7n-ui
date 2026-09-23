@@ -229,14 +229,18 @@ function ComboboxChip({ className, children, removeLabel = "Quitar", textValue, 
   return (
     <ComboboxPrimitive.Chip
       data-slot="combobox-chip"
-      className={cn(badgeVariants({ variant: "subtle", color: "gray", size: "md" }), "gap-0.5 pr-0.5 outline-none focus-visible:focus-ring data-highlighted:focus-ring", className)}
+      // `overflow-visible` le gana al `overflow-hidden` del badge: con él recortado, el anillo de
+      // foco del botón de quitar y su área de toque quedaban cortados justo donde importan.
+      className={cn(badgeVariants({ variant: "subtle", color: "gray", size: "md" }), "max-w-full gap-0.5 overflow-visible pr-0.5 outline-none focus-visible:focus-ring data-highlighted:focus-ring", className)}
       {...props}
     >
       <span className="truncate">{children}</span>
       <ComboboxPrimitive.ChipRemove
         data-slot="combobox-chip-remove"
         aria-label={name ? `${removeLabel} ${name}` : removeLabel}
-        className="inline-flex size-5 cursor-pointer items-center justify-center rounded-full text-gray-900 outline-none transition-control hover:bg-gray-alpha-200 hover:text-gray-1000 focus-visible:focus-ring [&_svg]:size-3"
+        // El dibujo queda en 20px y el `::after` de `-inset-1` lleva el área de toque a 28×28,
+        // arriba de los 24 de WCAG 2.5.8, sin agrandar el círculo. Misma técnica que Tag y Checkbox.
+        className="relative inline-flex size-5 cursor-pointer items-center justify-center rounded-full text-gray-900 outline-none transition-control after:absolute after:-inset-1 hover:bg-gray-alpha-200 hover:text-gray-1000 focus-visible:focus-ring [&_svg]:size-3"
       >
         <XIcon />
       </ComboboxPrimitive.ChipRemove>

@@ -249,7 +249,13 @@ describe("Combobox", () => {
     await userEvent.keyboard("uru{ArrowDown}{Enter}")
     expect(onValueChange).toHaveBeenLastCalledWith(["Chile", "Uruguay"], expect.anything())
     expect(await screen.findByText("Uruguay", { selector: "[data-slot=combobox-chip] *" })).toBeInTheDocument()
-    await userEvent.click(screen.getByRole("button", { name: "Quitar Chile" }))
+    // El área de toque llega a 28px por el `::after` (WCAG 2.5.8 pide 24), y el
+    // chip tiene que dejar de recortar o ese área —y el anillo de foco— quedan
+    // cortados contra el borde del badge.
+    const quitar = screen.getByRole("button", { name: "Quitar Chile" })
+    expect(quitar).toHaveClass("relative", "size-5", "after:absolute", "after:-inset-1")
+    expect(chip).toHaveClass("overflow-visible")
+    await userEvent.click(quitar)
     expect(onValueChange).toHaveBeenLastCalledWith(["Uruguay"], expect.anything())
   })
 })

@@ -59,6 +59,13 @@ describe("Breadcrumb", () => {
     }
   })
 
+  // El texto es de 16px de alto: sin el `py-1` el link medía 16px y quedaba
+  // abajo de los 24×24 de WCAG 2.5.8.
+  it("los links llegan a 24px de alto de área", () => {
+    render(<Migas />)
+    expect(screen.getByRole("link", { name: "Clientes" })).toHaveClass("py-1")
+  })
+
   it("los separadores los pone la lista y son decorativos", () => {
     const { container } = render(<Migas />)
     const separadores = container.querySelectorAll("[data-slot=breadcrumb-separator]")
