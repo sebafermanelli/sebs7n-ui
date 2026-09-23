@@ -1,0 +1,18 @@
+{
+  "teal": {
+    "light": { "base": [0.515, 0.099, 183], "contrast": "#ffffff" },
+    "dark": { "base": [0.62, 0.11, 183], "contrast": "#000000" }
+  },
+  "terracotta": {
+    "light": { "base": [0.55, 0.16, 35], "contrast": "#ffffff" },
+    "dark": { "base": [0.55, 0.16, 35], "contrast": "#ffffff" }
+  },
+  "emerald": {
+    "light": { "base": [0.53, 0.13, 162], "contrast": "#ffffff" },
+    "dark": { "base": [0.74, 0.13, 162], "contrast": "#000000" }
+  },
+  "blue": {
+    "light": { "base": [0.573, 0.214, 258], "contrast": "#ffffff" },
+    "dark": { "base": [0.573, 0.214, 258], "contrast": "#ffffff" }
+  }
+}

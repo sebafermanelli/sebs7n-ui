@@ -1,0 +1,283 @@
+"use client"
+
+import { Combobox as ComboboxPrimitive } from "@base-ui/react/combobox"
+import { CheckIcon, ChevronDownIcon, Loader2Icon, XIcon } from "lucide-react"
+import type * as React from "react"
+
+import { cn } from "../lib/utils.js"
+import { badgeVariants } from "../variants/badge.js"
+import { inputShellButtonClassName, inputShellClassName, inputShellInputClassName } from "../variants/input.js"
+import { menuItemClassName, menuPopupClassName } from "../variants/menu.js"
+
+type InputSize = "sm" | "md" | "lg"
+
+// Base UI asume que el input está dentro del popup hasta que el input se registra (en un effect): el
+// HTML del server trae el chevron como role="combobox" con tabindex 0 y el mismo id que el input.
+// En estos wrappers el input siempre está afuera, así que se fijan los atributos de ese caso en el render.
+const renderShellTrigger = (props: React.ComponentProps<"button">) => (
+  <button {...props} id={undefined} role={undefined} tabIndex={-1} aria-haspopup="listbox" />
+)
+
+// Root de Base UI: items, value/onValueChange, multiple, filter, itemToStringLabel, etc.
+const Combobox = ComboboxPrimitive.Root
+const ComboboxValue = ComboboxPrimitive.Value
+const ComboboxCollection = ComboboxPrimitive.Collection
+const useComboboxFilter = ComboboxPrimitive.useFilter
+
+type ComboboxInputProps = Omit<ComboboxPrimitive.Input.Props, "className" | "size"> & {
+  className?: string
+  /** Clases del contenedor (la superficie con borde). */
+  groupClassName?: string
+  size?: InputSize
+  /** Chevron que abre la lista. */
+  showTrigger?: boolean
+  /** Botón para vaciar; aparece solo cuando hay un valor. */
+  showClear?: boolean
+  labels?: { clear?: string; trigger?: string }
+}
+
+// Mismo cuerpo y estados que Input: el borde y el foco van en el contenedor.
+function ComboboxInput({
+  className,
+  groupClassName,
+  size = "md",
+  showTrigger = true,
+  showClear = true,
+  labels,
+  disabled,
+  ...props
+}: ComboboxInputProps) {
+  return (
+    <ComboboxPrimitive.InputGroup
+      data-slot="combobox-input-group"
+      data-size={size}
+      // disabled en el input (no en el root) también apaga la superficie.
+      data-disabled={disabled ? "" : undefined}
+      className={cn(inputShellClassName, (showTrigger || showClear) && "pr-1", groupClassName)}
+    >
+      <ComboboxPrimitive.Input data-slot="combobox-input" disabled={disabled} className={cn(inputShellInputClassName, className)} {...props} />
+      {showClear && (
+        <ComboboxPrimitive.Clear data-slot="combobox-clear" aria-label={labels?.clear ?? "Limpiar"} disabled={disabled} className={inputShellButtonClassName}>
+          <XIcon />
+        </ComboboxPrimitive.Clear>
+      )}
+      {showTrigger && (
+        <ComboboxPrimitive.Trigger
+          data-slot="combobox-trigger"
+          render={renderShellTrigger}
+          aria-label={labels?.trigger ?? "Abrir lista"}
+          disabled={disabled}
+          className={cn(inputShellButtonClassName, "[&_svg]:transition-transform [&_svg]:duration-150 data-popup-open:[&_svg]:rotate-180")}
+        >
+          <ChevronDownIcon />
+        </ComboboxPrimitive.Trigger>
+      )}
+    </ComboboxPrimitive.InputGroup>
+  )
+}
+
+type ComboboxContentProps = Omit<ComboboxPrimitive.Popup.Props, "className"> &
+  Pick<ComboboxPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset" | "anchor"> & {
+    className?: string
+  }
+
+// Panel de menú (shadow-menu, radio 12, p-1), al menos tan ancho como el input.
+function ComboboxContent({ className, side = "bottom", sideOffset = 6, align = "start", alignOffset = 0, anchor, ...props }: ComboboxContentProps) {
+  return (
+    <ComboboxPrimitive.Portal>
+      <ComboboxPrimitive.Positioner side={side} sideOffset={sideOffset} align={align} alignOffset={alignOffset} anchor={anchor} className="isolate z-50">
+        <ComboboxPrimitive.Popup
+          data-slot="combobox-content"
+          className={cn(menuPopupClassName, "min-w-(--anchor-width) max-w-(--available-width)", className)}
+          {...props}
+        />
+      </ComboboxPrimitive.Positioner>
+    </ComboboxPrimitive.Portal>
+  )
+}
+
+type ComboboxListProps = Omit<ComboboxPrimitive.List.Props, "className"> & { className?: string }
+
+function ComboboxList({ className, ...props }: ComboboxListProps) {
+  return <ComboboxPrimitive.List data-slot="combobox-list" className={cn("scroll-py-1 outline-none", className)} {...props} />
+}
+
+type ComboboxItemProps = Omit<ComboboxPrimitive.Item.Props, "className"> & { className?: string }
+
+// menuItemClassName + check a la derecha si está elegido.
+function ComboboxItem({ className, children, ...props }: ComboboxItemProps) {
+  return (
+    <ComboboxPrimitive.Item data-slot="combobox-item" className={cn(menuItemClassName, "w-full pr-8", className)} {...props}>
+      <span className="flex min-w-0 flex-1 items-center gap-2 truncate">{children}</span>
+      <ComboboxPrimitive.ItemIndicator data-slot="combobox-item-indicator" className="absolute right-2 flex items-center">
+        <CheckIcon />
+      </ComboboxPrimitive.ItemIndicator>
+    </ComboboxPrimitive.Item>
+  )
+}
+
+type ComboboxGroupProps = Omit<ComboboxPrimitive.Group.Props, "className"> & { className?: string }
+
+function ComboboxGroup({ className, ...props }: ComboboxGroupProps) {
+  return <ComboboxPrimitive.Group data-slot="combobox-group" className={cn("py-1", className)} {...props} />
+}
+
+type ComboboxLabelProps = Omit<ComboboxPrimitive.GroupLabel.Props, "className"> & { className?: string }
+
+function ComboboxLabel({ className, ...props }: ComboboxLabelProps) {
+  return <ComboboxPrimitive.GroupLabel data-slot="combobox-label" className={cn("px-2 py-1.5 text-label-12 text-gray-900", className)} {...props} />
+}
+
+type ComboboxSeparatorProps = Omit<ComboboxPrimitive.Separator.Props, "className"> & { className?: string }
+
+function ComboboxSeparator({ className, ...props }: ComboboxSeparatorProps) {
+  return <ComboboxPrimitive.Separator data-slot="combobox-separator" className={cn("-mx-1 my-1 h-px bg-gray-400", className)} {...props} />
+}
+
+type ComboboxEmptyProps = Omit<ComboboxPrimitive.Empty.Props, "className"> & { className?: string }
+
+// Base UI renderiza los hijos solo con la lista vacía; el root queda montado para anunciar el cambio.
+// Sin children: "Sin resultados". children={null} (p. ej. mientras carga) no muestra nada.
+function ComboboxEmpty({ className, children, ...props }: ComboboxEmptyProps) {
+  const content = children === undefined ? "Sin resultados" : children
+  return (
+    <ComboboxPrimitive.Empty data-slot="combobox-empty" {...props}>
+      {content ? <div className={cn("px-2 py-6 text-center text-copy-14 text-gray-900", className)}>{content}</div> : null}
+    </ComboboxPrimitive.Empty>
+  )
+}
+
+type ComboboxStatusProps = Omit<ComboboxPrimitive.Status.Props, "className"> & {
+  className?: string
+  /** Búsqueda async en curso: fila con spinner. */
+  loading?: boolean
+  labels?: { loading?: string }
+}
+
+// Región aria-live siempre montada: con loading muestra la fila de carga; si no, sus children (si hay).
+function ComboboxStatus({ className, loading = false, labels, children, ...props }: ComboboxStatusProps) {
+  const content = loading ? (
+    <div data-slot="combobox-loading" className="flex h-8 items-center gap-2 px-2 text-copy-14 text-gray-900">
+      <Loader2Icon aria-hidden="true" className="size-4 shrink-0 animate-spin" />
+      {labels?.loading ?? "Buscando…"}
+    </div>
+  ) : children ? (
+    <div className="flex min-h-8 items-center px-2 text-copy-14 text-gray-900">{children}</div>
+  ) : null
+  return (
+    <ComboboxPrimitive.Status data-slot="combobox-status" className={className} {...props}>
+      {content}
+    </ComboboxPrimitive.Status>
+  )
+}
+
+type ComboboxChipsProps = Omit<ComboboxPrimitive.Chips.Props, "className"> & {
+  className?: string
+  size?: InputSize
+  showTrigger?: boolean
+  showClear?: boolean
+  disabled?: boolean
+  labels?: { clear?: string; trigger?: string }
+}
+
+// Selección múltiple: superficie de Input que crece con los chips.
+function ComboboxChips({ className, size = "md", showTrigger = true, showClear = false, disabled, labels, ...props }: ComboboxChipsProps) {
+  return (
+    <ComboboxPrimitive.InputGroup
+      data-slot="combobox-chips-group"
+      data-size={size}
+      // disabled en el input (no en el root) también apaga la superficie.
+      data-disabled={disabled ? "" : undefined}
+      className={cn(
+        inputShellClassName,
+        "h-auto! data-[size=sm]:min-h-8 data-[size=md]:min-h-10 data-[size=lg]:min-h-12 items-start py-1 pr-1 pl-1",
+        className
+      )}
+    >
+      <ComboboxPrimitive.Chips data-slot="combobox-chips" className="flex min-w-0 flex-1 flex-wrap items-center gap-1 self-center" {...props} />
+      {showClear && (
+        <ComboboxPrimitive.Clear data-slot="combobox-clear" aria-label={labels?.clear ?? "Limpiar"} disabled={disabled} className={cn(inputShellButtonClassName, "self-center")}>
+          <XIcon />
+        </ComboboxPrimitive.Clear>
+      )}
+      {showTrigger && (
+        <ComboboxPrimitive.Trigger
+          data-slot="combobox-trigger"
+          render={renderShellTrigger}
+          aria-label={labels?.trigger ?? "Abrir lista"}
+          disabled={disabled}
+          className={cn(inputShellButtonClassName, "self-center")}
+        >
+          <ChevronDownIcon />
+        </ComboboxPrimitive.Trigger>
+      )}
+    </ComboboxPrimitive.InputGroup>
+  )
+}
+
+type ComboboxChipProps = Omit<ComboboxPrimitive.Chip.Props, "className"> & {
+  className?: string
+  /** Prefijo del nombre del botón de quitar: "Quitar Chile". */
+  removeLabel?: string
+  /** Texto para el nombre accesible cuando children no es texto. */
+  textValue?: string
+}
+
+// Badge subtle gris con botón de quitar.
+function ComboboxChip({ className, children, removeLabel = "Quitar", textValue, ...props }: ComboboxChipProps) {
+  const name = textValue ?? (typeof children === "string" || typeof children === "number" ? String(children) : undefined)
+  return (
+    <ComboboxPrimitive.Chip
+      data-slot="combobox-chip"
+      className={cn(badgeVariants({ variant: "subtle", color: "gray", size: "md" }), "gap-0.5 pr-0.5 outline-none focus-visible:focus-ring data-highlighted:focus-ring", className)}
+      {...props}
+    >
+      <span className="truncate">{children}</span>
+      <ComboboxPrimitive.ChipRemove
+        data-slot="combobox-chip-remove"
+        aria-label={name ? `${removeLabel} ${name}` : removeLabel}
+        className="inline-flex size-5 cursor-pointer items-center justify-center rounded-full text-gray-900 outline-none transition-control hover:bg-gray-alpha-200 hover:text-gray-1000 focus-visible:focus-ring [&_svg]:size-3"
+      >
+        <XIcon />
+      </ComboboxPrimitive.ChipRemove>
+    </ComboboxPrimitive.Chip>
+  )
+}
+
+type ComboboxChipsInputProps = Omit<ComboboxPrimitive.Input.Props, "className" | "size"> & { className?: string }
+
+function ComboboxChipsInput({ className, ...props }: ComboboxChipsInputProps) {
+  return (
+    <ComboboxPrimitive.Input
+      data-slot="combobox-input"
+      className={cn("h-6 min-w-16 flex-1 bg-transparent px-1.5 text-inherit outline-none placeholder:text-gray-700 disabled:cursor-not-allowed", className)}
+      {...props}
+    />
+  )
+}
+
+export {
+  Combobox,
+  ComboboxChip,
+  ComboboxChips,
+  ComboboxChipsInput,
+  ComboboxCollection,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxGroup,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxLabel,
+  ComboboxList,
+  ComboboxSeparator,
+  ComboboxStatus,
+  ComboboxValue,
+  useComboboxFilter,
+  type ComboboxChipProps,
+  type ComboboxChipsProps,
+  type ComboboxContentProps,
+  type ComboboxEmptyProps,
+  type ComboboxInputProps,
+  type ComboboxItemProps,
+  type ComboboxStatusProps,
+}

@@ -1,0 +1,14 @@
+.next/
+.pack/
+node_modules/
+next-env.d.ts
+
+# Todo lo que escribe `npm run generate`. Se regenera en cada build.
+.generated/
+app/_demos/registry.ts
+public/docs/
+public/r/
+public/llms.txt
+public/llms-full.txt
+registry.json
+tsconfig.tsbuildinfo

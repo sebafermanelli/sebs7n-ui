@@ -1,0 +1,8 @@
+@import "tailwindcss";
+@import "sebs7n-ui/theme.css";
+/* Las clases de los componentes las genera el Tailwind de la app, en una sola hoja ordenada. */
+@source "../node_modules/sebs7n-ui/dist";
+
+/* Las muestras de color y tipografía se arman con template strings. */
+@source inline("bg-{gray,gray-alpha,brand,blue,red,amber,green,teal,purple,pink}-{100,200,300,400,500,600,700,800,900,1000}");
+@source inline("text-{heading-{72,64,56,48,40,32,24,20,16,14},button-{16,14,12},label-{20,18,16,14,13,12},label-{14,13,12}-mono,copy-{24,20,18,16,14,13},copy-{14,13}-mono}");

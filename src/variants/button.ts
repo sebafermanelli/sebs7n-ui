@@ -1,0 +1,68 @@
+import { cva, type VariantProps } from "class-variance-authority"
+
+import { cn } from "../lib/utils.js"
+
+const buttonVariantsBase = cva(
+  "relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-md border border-transparent whitespace-nowrap outline-none select-none transition-control focus-visible:focus-ring data-disabled:cursor-not-allowed data-disabled:border-gray-400 data-disabled:bg-gray-100 data-disabled:text-gray-700 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  {
+    variants: {
+      variant: {
+        default: "bg-gray-1000 text-background-100 hover:bg-button-primary-hover",
+        outline:
+          "border-gray-alpha-400 bg-background-100 text-gray-1000 hover:bg-gray-alpha-200 active:bg-gray-alpha-300",
+        secondary: "bg-gray-100 text-gray-1000 hover:bg-gray-200 active:bg-gray-300",
+        ghost: "text-gray-1000 hover:bg-gray-alpha-200 active:bg-gray-alpha-300",
+        accent: "bg-brand-700 text-brand-contrast hover:bg-brand-800 active:bg-brand-800",
+        destructive:
+          "bg-red-800 text-button-error-fg hover:bg-button-error-hover active:bg-button-error-active",
+        link: "h-auto! rounded-sm border-0 px-0! text-brand-900 underline-offset-4 hover:text-brand-1000 hover:underline data-disabled:bg-transparent",
+      },
+      size: {
+        sm: "h-8 px-3 text-button-14",
+        md: "h-10 px-4 text-button-14",
+        lg: "h-12 px-5 text-button-16 [&_svg:not([class*='size-'])]:size-5",
+        "icon-sm": "size-8",
+        "icon-md": "size-10",
+        "icon-lg": "size-12 [&_svg:not([class*='size-'])]:size-5",
+      },
+      /**
+       * La forma del botón.
+       *
+       * `pill` es `rounded-full` con un escalón más de padding horizontal: en
+       * una curva completa, el texto que empieza donde empezaba en un
+       * rectángulo queda pegado al borde.
+       *
+       * **Solo para los CTA de un hero o de una sección de marketing.** Es la
+       * regla de vercel.com, donde los dos CTA del hero son píldoras y el
+       * resto del sitio no: mezclar las dos formas en la misma pantalla se ve
+       * descuidado, así que en el chrome de una app —nav, tablas, formularios,
+       * diálogos— no va nunca.
+       */
+      shape: {
+        default: "",
+        pill: "rounded-full",
+      },
+    },
+    compoundVariants: [
+      // Un escalón más de aire, por tamaño. `lg` ya es ancho, así que sube
+      // menos: a 20px de padding la curva ya no toca el texto.
+      { shape: "pill", size: "sm", className: "px-5" },
+      { shape: "pill", size: "md", className: "px-6" },
+      { shape: "pill", size: "lg", className: "px-7" },
+      // Un botón de ícono ya es cuadrado con su propio radio: `pill` no aplica
+      // y se ignora, en vez de convertirlo en un círculo que nadie pidió.
+      { shape: "pill", size: "icon-sm", className: "rounded-md" },
+      { shape: "pill", size: "icon-md", className: "rounded-md" },
+      { shape: "pill", size: "icon-lg", className: "rounded-md" },
+    ],
+    defaultVariants: { variant: "default", size: "md", shape: "default" },
+  }
+)
+
+// Pasa por cn() (tailwind-merge): usada sobre <a>/<Link>, la clase de la variante tiene que ganarle a la base.
+export const buttonVariants = (props?: Parameters<typeof buttonVariantsBase>[0]) => cn(buttonVariantsBase(props))
+
+export type ButtonVariantProps = VariantProps<typeof buttonVariants>
+
+/** La forma del botón: rectángulo del sistema o píldora de marketing. */
+export type ButtonShape = NonNullable<ButtonVariantProps["shape"]>

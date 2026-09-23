@@ -1,0 +1,18 @@
+/* Va primero: borra la paleta, radios y sombras por defecto de Tailwind. */
+@theme {
+  --color-*: initial;
+  --color-white: #fff;
+  --color-black: #000;
+
+  --radius-*: initial;
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 6px;
+  --radius-lg: 12px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-3xl: 16px;
+  --radius-4xl: 9999px;
+
+  --shadow-*: initial;
+}

@@ -1,0 +1,88 @@
+@import "tailwindcss";
+@import "sebs7n-ui/theme.css";
+/* Las clases de los componentes las genera el Tailwind del sitio, en una sola hoja ordenada. */
+@source "../node_modules/sebs7n-ui/dist";
+
+:root {
+  /* El sitio usa el acento del paquete por defecto (blue). Una app pondría el suyo acá. */
+  --brand-base: oklch(0.573 0.214 258);
+  --brand-base-dark: oklch(0.573 0.214 258);
+  --brand-contrast-dark: #fff;
+}
+
+/* Texto largo renderizado desde markdown: las páginas de sistema y el changelog.
+   No es @tailwindcss/typography — son los tokens del paquete, que es de lo que
+   habla el sitio. */
+@layer components {
+  .prose {
+    @apply text-copy-16 text-gray-1000;
+  }
+  .prose > * + * {
+    @apply mt-4;
+  }
+  .prose h2 {
+    @apply mt-10 scroll-mt-24 border-t border-gray-400 pt-8 text-heading-24 text-gray-1000;
+  }
+  .prose h3 {
+    @apply mt-8 scroll-mt-24 text-heading-20 text-gray-1000;
+  }
+  .prose h4 {
+    @apply mt-6 scroll-mt-24 text-heading-16 text-gray-1000;
+  }
+  .prose p {
+    @apply text-copy-16 text-gray-1000;
+  }
+  .prose a {
+    @apply rounded-sm text-brand-900 underline underline-offset-4 transition-control hover:text-brand-1000 focus-visible:focus-ring;
+  }
+  .prose strong {
+    @apply font-medium text-gray-1000;
+  }
+  .prose ul {
+    @apply flex list-disc flex-col gap-2 pl-5 marker:text-gray-700;
+  }
+  .prose ol {
+    @apply flex list-decimal flex-col gap-2 pl-5 marker:text-gray-700;
+  }
+  .prose li > ul,
+  .prose li > ol {
+    @apply mt-2;
+  }
+  .prose blockquote {
+    @apply rounded-xl border border-gray-400 bg-background-200 px-4 py-3 text-copy-14 text-gray-900;
+  }
+  .prose blockquote p {
+    @apply text-copy-14 text-gray-900;
+  }
+  .prose code {
+    @apply rounded-sm bg-gray-100 px-1 py-0.5 text-copy-13-mono text-gray-1000;
+  }
+  .prose pre {
+    @apply overflow-x-auto rounded-xl border border-gray-400 bg-background-200 p-4;
+  }
+  .prose pre code {
+    @apply bg-transparent p-0 text-copy-13-mono text-gray-1000;
+  }
+  .prose table {
+    @apply w-full border-collapse text-left;
+  }
+  .prose thead {
+    @apply border-b border-gray-400 bg-background-200;
+  }
+  .prose th {
+    @apply px-3 py-2 text-label-12 text-gray-900;
+  }
+  .prose td {
+    @apply border-b border-gray-400 px-3 py-2 align-top text-copy-14 text-gray-1000;
+  }
+  .prose hr {
+    @apply border-gray-400;
+  }
+  .prose img {
+    @apply rounded-xl;
+  }
+  /* Las tablas anchas (color, tipografía) no rompen el ancho de la página. */
+  .prose .tabla {
+    @apply overflow-x-auto;
+  }
+}

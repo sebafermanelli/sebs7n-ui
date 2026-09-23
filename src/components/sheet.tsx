@@ -1,0 +1,84 @@
+"use client"
+
+import type * as React from "react"
+import { Dialog as SheetPrimitive } from "@base-ui/react/dialog"
+import { XIcon } from "lucide-react"
+
+import { cn } from "../lib/utils.js"
+import { Button } from "./button.js"
+
+function Sheet(props: SheetPrimitive.Root.Props) {
+  return <SheetPrimitive.Root data-slot="sheet" {...props} />
+}
+
+function SheetTrigger(props: SheetPrimitive.Trigger.Props) {
+  return <SheetPrimitive.Trigger data-slot="sheet-trigger" {...props} />
+}
+
+function SheetClose(props: SheetPrimitive.Close.Props) {
+  return <SheetPrimitive.Close data-slot="sheet-close" {...props} />
+}
+
+type SheetContentProps = Omit<SheetPrimitive.Popup.Props, "className"> & {
+  className?: string
+  side?: "top" | "right" | "bottom" | "left"
+  showCloseButton?: boolean
+}
+
+// Solo se redondean las esquinas que no tocan el borde de la pantalla.
+function SheetContent({ className, children, side = "right", showCloseButton = true, ...props }: SheetContentProps) {
+  return (
+    <SheetPrimitive.Portal>
+      <SheetPrimitive.Backdrop
+        data-slot="sheet-overlay"
+        className="fixed inset-0 z-50 bg-backdrop transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0"
+      />
+      <SheetPrimitive.Popup
+        data-slot="sheet-content"
+        data-side={side}
+        className={cn(
+          "fixed z-50 flex flex-col gap-4 bg-background-100 text-copy-14 text-gray-1000 shadow-modal outline-none transition-[translate] duration-200 ease-out",
+          "data-[side=right]:inset-y-0 data-[side=right]:right-0 data-[side=right]:w-3/4 data-[side=right]:rounded-l-xl data-[side=right]:sm:max-w-sm data-[side=right]:data-ending-style:translate-x-full data-[side=right]:data-starting-style:translate-x-full",
+          "data-[side=left]:inset-y-0 data-[side=left]:left-0 data-[side=left]:w-3/4 data-[side=left]:rounded-r-xl data-[side=left]:sm:max-w-sm data-[side=left]:data-ending-style:-translate-x-full data-[side=left]:data-starting-style:-translate-x-full",
+          "data-[side=top]:inset-x-0 data-[side=top]:top-0 data-[side=top]:rounded-b-xl data-[side=top]:data-ending-style:-translate-y-full data-[side=top]:data-starting-style:-translate-y-full",
+          "data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-0 data-[side=bottom]:rounded-t-xl data-[side=bottom]:data-ending-style:translate-y-full data-[side=bottom]:data-starting-style:translate-y-full",
+          className
+        )}
+        {...props}
+      >
+        {children}
+        {showCloseButton && (
+          <SheetPrimitive.Close
+            data-slot="sheet-close"
+            render={<Button variant="ghost" size="icon-sm" className="absolute top-4 right-4" />}
+          >
+            <XIcon />
+            <span className="sr-only">Cerrar</span>
+          </SheetPrimitive.Close>
+        )}
+      </SheetPrimitive.Popup>
+    </SheetPrimitive.Portal>
+  )
+}
+
+function SheetHeader({ className, ...props }: React.ComponentProps<"div">) {
+  return <div data-slot="sheet-header" className={cn("flex flex-col gap-1.5 p-6 pr-12", className)} {...props} />
+}
+
+function SheetFooter({ className, ...props }: React.ComponentProps<"div">) {
+  return <div data-slot="sheet-footer" className={cn("mt-auto flex flex-col gap-2 border-t border-gray-400 p-6", className)} {...props} />
+}
+
+type SheetTitleProps = Omit<SheetPrimitive.Title.Props, "className"> & { className?: string }
+
+function SheetTitle({ className, ...props }: SheetTitleProps) {
+  return <SheetPrimitive.Title data-slot="sheet-title" className={cn("text-heading-20 text-gray-1000", className)} {...props} />
+}
+
+type SheetDescriptionProps = Omit<SheetPrimitive.Description.Props, "className"> & { className?: string }
+
+function SheetDescription({ className, ...props }: SheetDescriptionProps) {
+  return <SheetPrimitive.Description data-slot="sheet-description" className={cn("text-copy-14 text-gray-900", className)} {...props} />
+}
+
+export { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger }

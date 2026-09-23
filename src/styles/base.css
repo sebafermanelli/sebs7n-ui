@@ -1,0 +1,43 @@
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: var(--color-gray-400);
+  }
+
+  html {
+    font-family: var(--font-sans);
+    color-scheme: light;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
+  /* El fondo de página es --color-background, no la superficie background-100:
+     si fueran el mismo token, en oscuro los inputs, popups y tarjetas quedan
+     del mismo negro que la página. */
+  body {
+    background-color: var(--color-background);
+    color: var(--color-gray-1000);
+  }
+
+  /* Foco por defecto para lo que no sea un componente del paquete. */
+  :focus-visible {
+    outline: 2px solid var(--color-brand-700);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

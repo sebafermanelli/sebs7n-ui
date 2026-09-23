@@ -1,0 +1,8 @@
+/* Entrada de dist/styles.css: solo lo que usan los componentes del paquete. */
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities) source(none);
+@import "./theme.css";
+
+@source "../components";
+@source "../variants";

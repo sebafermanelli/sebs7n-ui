@@ -1,0 +1,37 @@
+{
+  "name": "sebs7n-ui-docs",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "sync-ui": "node scripts/sync-ui.mjs",
+    "generate": "node scripts/generate.mjs",
+    "predev": "npm run sync-ui && npm run generate",
+    "dev": "next dev --port 4100",
+    "prebuild": "npm run sync-ui && npm run generate",
+    "build": "next build",
+    "start": "next start --port 4100",
+    "pretest": "npm run generate",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@base-ui/react": "^1.8.0",
+    "geist": "^1.7.2",
+    "lucide-react": "^1.47.0",
+    "marked": "^18.0.14",
+    "next": "^16.2.7",
+    "next-themes": "^0.4.6",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "sonner": "^2.0.8"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^22.20.4",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "ajv": "^8.20.0",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.11"
+  }
+}

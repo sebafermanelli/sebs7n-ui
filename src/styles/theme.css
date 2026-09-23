@@ -1,0 +1,243 @@
+/* sebs7n-ui — tokens. La app importa este archivo después de "tailwindcss". */
+
+@import "./reset.css";
+@import "./colors.css";
+@import "./base.css";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --animate-skeleton: skeleton 1.5s ease-in-out infinite;
+
+  @keyframes skeleton {
+    0%,
+    100% {
+      background-color: var(--color-gray-100);
+    }
+    50% {
+      background-color: var(--color-gray-200);
+    }
+  }
+}
+
+@theme inline {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+
+  --color-brand-100: var(--sf-brand-100);
+  --color-brand-200: var(--sf-brand-200);
+  --color-brand-300: var(--sf-brand-300);
+  --color-brand-400: var(--sf-brand-400);
+  --color-brand-500: var(--sf-brand-500);
+  --color-brand-600: var(--sf-brand-600);
+  --color-brand-700: var(--sf-brand-700);
+  --color-brand-800: var(--sf-brand-800);
+  --color-brand-900: var(--sf-brand-900);
+  --color-brand-1000: var(--sf-brand-1000);
+  --color-brand-contrast: var(--sf-brand-fg);
+
+  --color-background: var(--sf-background);
+  --color-foreground: var(--sf-gray-1000);
+  --color-card: var(--sf-background-100);
+  --color-card-foreground: var(--sf-gray-1000);
+  --color-popover: var(--sf-background-100);
+  --color-popover-foreground: var(--sf-gray-1000);
+  --color-muted: var(--sf-gray-100);
+  --color-muted-foreground: var(--sf-gray-900);
+  --color-border: var(--sf-gray-400);
+  --color-input: var(--sf-gray-400);
+  --color-ring: var(--sf-brand-700);
+  --color-primary: var(--sf-gray-1000);
+  --color-primary-foreground: var(--sf-background-100);
+  --color-secondary: var(--sf-gray-100);
+  --color-secondary-foreground: var(--sf-gray-1000);
+  --color-accent: var(--sf-gray-200);
+  --color-accent-foreground: var(--sf-gray-1000);
+  --color-destructive: var(--sf-red-800);
+  --color-destructive-foreground: var(--sf-button-error-fg);
+
+  --color-button-primary-hover: var(--sf-button-primary-hover);
+  --color-button-error-fg: var(--sf-button-error-fg);
+  --color-button-error-hover: var(--sf-button-error-hover);
+  --color-button-error-active: var(--sf-button-error-active);
+  --color-backdrop: var(--sf-backdrop);
+
+  --shadow-tooltip: var(--sf-shadow-tooltip);
+  --shadow-menu: var(--sf-shadow-menu);
+  --shadow-modal: var(--sf-shadow-modal);
+}
+
+@layer base {
+  :root {
+    /* Lo único que cada app sobreescribe (sin @layer, así gana). */
+    --brand-base: oklch(0.573 0.214 258);
+    --brand-base-dark: var(--brand-base);
+    --brand-contrast: #fff;
+    --brand-contrast-dark: var(--brand-contrast);
+
+    --sf-brand-src: var(--brand-base);
+    --sf-brand-fg: var(--brand-contrast);
+
+    /**
+     * Fondo de página. No es un primitivo de Geist (por eso vive acá y no en
+     * tokens/geist.json): Geist tiene dos fondos por tema y ninguno se llama
+     * "página". vercel.com resuelve eso pintando el body con
+     * --ds-background-200 y las superficies con --ds-background-100.
+     *
+     * Acá los tres roles están separados y nombrados:
+     *
+     *   --sf-background      → la página (body, raíz del AppShell)
+     *   --sf-background-100  → la superficie (input, popup, sheet, card, chrome)
+     *   --sf-background-200  → el fondo sutil / banda (sidebar, thead, Card subtle)
+     *
+     * En oscuro la página es negro puro y la superficie es #0a0a0a, que es
+     * exactamente lo medido en vercel.com (contact/sales, oscuro, 2026-09-22:
+     * body rgb(0,0,0), input rgb(10,10,10)). Antes los dos eran #000 y los
+     * inputs, popups y tarjetas no se despegaban del fondo.
+     */
+    --sf-background: #ffffff;
+
+    /* L fija = la del paso equivalente de blue en Geist; k = croma relativo a blue-700. */
+    --sf-brand-100: oklch(from var(--sf-brand-src) 0.973 calc(c * 0.059) h);
+    --sf-brand-200: oklch(from var(--sf-brand-src) 0.963 calc(c * 0.083) h);
+    --sf-brand-300: oklch(from var(--sf-brand-src) 0.946 calc(c * 0.123) h);
+    --sf-brand-400: oklch(from var(--sf-brand-src) 0.916 calc(c * 0.199) h);
+    --sf-brand-500: oklch(from var(--sf-brand-src) 0.827 calc(c * 0.414) h);
+    --sf-brand-600: oklch(from var(--sf-brand-src) 0.73 calc(c * 0.671) h);
+    --sf-brand-700: var(--sf-brand-src);
+    --sf-brand-800: oklch(from var(--sf-brand-src) calc(l - 0.058) calc(c * 0.943) h);
+    --sf-brand-900: oklch(from var(--sf-brand-src) 0.535 calc(c * 0.945) h);
+    --sf-brand-1000: oklch(from var(--sf-brand-src) 0.269 calc(c * 0.433) h);
+
+    --sf-button-primary-hover: #383838;
+    --sf-button-error-fg: #f5f5f5;
+    --sf-button-error-hover: #ae292f;
+    --sf-button-error-active: #7c1316;
+    --sf-backdrop: #00000033;
+    --sf-focus-halo: #00000029;
+
+    --sf-shadow-border-base: 0 0 0 1px #00000014;
+    /**
+     * Anillo exterior de las sombras: funde la sombra contra el fondo sobre el
+     * que flota la superficie. En vercel.com es siempre --ds-background-200,
+     * que allá es el fondo de página. Acá los dos roles se separaron, así que
+     * el anillo sigue al fondo de página: en claro es el tono #fafafa (igual
+     * que hoy y que Geist), en oscuro el negro puro (--sf-background), que es
+     * el valor medido en --ds-shadow-menu.
+     */
+    --sf-shadow-background-border: 0 0 0 1px var(--sf-background-200);
+    --sf-shadow-tooltip: var(--sf-shadow-border-base), 0px 1px 1px #00000005,
+      0px 4px 8px #0000000a, var(--sf-shadow-background-border);
+    --sf-shadow-menu: var(--sf-shadow-border-base), 0px 1px 1px #00000005,
+      0px 4px 8px -4px #0000000a, 0px 16px 24px -8px #0000000f,
+      var(--sf-shadow-background-border);
+    --sf-shadow-modal: var(--sf-shadow-border-base), 0px 1px 1px #00000005,
+      0px 8px 16px -4px #0000000a, 0px 24px 32px -8px #0000000f,
+      var(--sf-shadow-background-border);
+  }
+
+  .dark {
+    --sf-brand-src: var(--brand-base-dark);
+    --sf-brand-fg: var(--brand-contrast-dark);
+
+    --sf-background: #000000;
+
+    --sf-brand-100: oklch(from var(--sf-brand-src) 0.22 calc(c * 0.317) h);
+    --sf-brand-200: oklch(from var(--sf-brand-src) 0.255 calc(c * 0.369) h);
+    --sf-brand-300: oklch(from var(--sf-brand-src) 0.31 calc(c * 0.47) h);
+    --sf-brand-400: oklch(from var(--sf-brand-src) 0.342 calc(c * 0.521) h);
+    --sf-brand-500: oklch(from var(--sf-brand-src) 0.387 calc(c * 0.598) h);
+    --sf-brand-600: oklch(from var(--sf-brand-src) 0.649 calc(c * 0.889) h);
+    --sf-brand-700: var(--sf-brand-src);
+    --sf-brand-800: oklch(from var(--sf-brand-src) calc(l - 0.06) calc(c * 0.925) h);
+    --sf-brand-900: oklch(from var(--sf-brand-src) 0.717 calc(c * 0.705) h);
+    --sf-brand-1000: oklch(from var(--sf-brand-src) 0.968 calc(c * 0.077) h);
+
+    --sf-button-primary-hover: #cccccc;
+    --sf-button-error-fg: #fff;
+    --sf-button-error-hover: var(--sf-red-900);
+    --sf-button-error-active: #ffaba3;
+    --sf-backdrop: #00000080;
+    --sf-focus-halo: #ffffff3d;
+
+    --sf-shadow-border-base: 0 0 0 1px #ffffff25;
+    --sf-shadow-background-border: 0 0 0 1px var(--sf-background);
+  }
+}
+
+@utility transition-control {
+  transition-property: color, background-color, border-color, box-shadow, opacity;
+  transition-timing-function: ease;
+  transition-duration: 150ms;
+}
+
+/* Anillo de foco de Geist (--ds-focus-ring) con el color de marca. */
+@utility focus-ring {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-background-100), 0 0 0 4px var(--color-brand-700);
+}
+
+/* Foco de inputs de Geist (--ds-focus-border). */
+@utility focus-border {
+  outline: none;
+  border-color: var(--color-gray-alpha-600);
+  box-shadow: 0 0 0 4px var(--sf-focus-halo);
+}
+
+@utility focus-border-error {
+  outline: none;
+  border-color: var(--color-red-800);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-red-800) 24%, transparent);
+}
+
+/* Escala tipográfica de Geist (vercel.com/geist/typography). */
+
+/**
+ * Corrección óptica del peso de los títulos.
+ *
+ * Un mismo peso no se ve igual a 14px que a 64px: cuanto más grande el cuerpo,
+ * más gruesos se leen los trazos, y 600 a 64px sale plomizo. Vercel lo corrige
+ * bajando el peso a medida que sube el tamaño; nosotros teníamos 600 en los
+ * diez pasos, y por eso los títulos grandes se veían más pesados que los de
+ * ellos.
+ *
+ * Los números son los medidos en vercel.com el 2026-09-22 (computed style):
+ * h1 de 64px → 400, h2 de 56px → 450, 48px → 450, 24px → 450, 16px → 600.
+ * Los pasos que no aparecen en esa página (72, 40, 32, 20, 14) se interpolan
+ * en la misma curva. 72 no estaba en la medición: queda en 400 porque es más
+ * grande que 64 y la curva no sube.
+ *
+ * Los pesos intermedios (450, 500, 550) rinden de verdad: Geist se carga como
+ * fuente variable con rango "100 900". Con una estática se redondearían al
+ * peso instalado más cercano y la corrección se perdería.
+ */
+@utility text-heading-72 { font-family: var(--font-sans); font-size: 72px; line-height: 72px; font-weight: 400; letter-spacing: -4.32px; }
+@utility text-heading-64 { font-family: var(--font-sans); font-size: 64px; line-height: 64px; font-weight: 400; letter-spacing: -3.84px; }
+@utility text-heading-56 { font-family: var(--font-sans); font-size: 56px; line-height: 56px; font-weight: 450; letter-spacing: -3.36px; }
+@utility text-heading-48 { font-family: var(--font-sans); font-size: 48px; line-height: 56px; font-weight: 450; letter-spacing: -2.88px; }
+@utility text-heading-40 { font-family: var(--font-sans); font-size: 40px; line-height: 48px; font-weight: 450; letter-spacing: -2.4px; }
+@utility text-heading-32 { font-family: var(--font-sans); font-size: 32px; line-height: 40px; font-weight: 500; letter-spacing: -1.28px; }
+@utility text-heading-24 { font-family: var(--font-sans); font-size: 24px; line-height: 32px; font-weight: 500; letter-spacing: -0.96px; }
+@utility text-heading-20 { font-family: var(--font-sans); font-size: 20px; line-height: 26px; font-weight: 550; letter-spacing: -0.4px; }
+@utility text-heading-16 { font-family: var(--font-sans); font-size: 16px; line-height: 24px; font-weight: 600; letter-spacing: -0.32px; }
+@utility text-heading-14 { font-family: var(--font-sans); font-size: 14px; line-height: 20px; font-weight: 600; letter-spacing: -0.28px; }
+@utility text-button-16 { font-family: var(--font-sans); font-size: 16px; line-height: 20px; font-weight: 500; }
+@utility text-button-14 { font-family: var(--font-sans); font-size: 14px; line-height: 20px; font-weight: 500; }
+@utility text-button-12 { font-family: var(--font-sans); font-size: 12px; line-height: 16px; font-weight: 500; }
+@utility text-label-20 { font-family: var(--font-sans); font-size: 20px; line-height: 32px; font-weight: 400; }
+@utility text-label-18 { font-family: var(--font-sans); font-size: 18px; line-height: 20px; font-weight: 400; }
+@utility text-label-16 { font-family: var(--font-sans); font-size: 16px; line-height: 20px; font-weight: 400; }
+@utility text-label-14 { font-family: var(--font-sans); font-size: 14px; line-height: 20px; font-weight: 400; }
+@utility text-label-13 { font-family: var(--font-sans); font-size: 13px; line-height: 16px; font-weight: 400; }
+@utility text-label-12 { font-family: var(--font-sans); font-size: 12px; line-height: 16px; font-weight: 400; }
+@utility text-label-14-mono { font-family: var(--font-mono); font-size: 14px; line-height: 20px; font-weight: 400; }
+@utility text-label-13-mono { font-family: var(--font-mono); font-size: 13px; line-height: 20px; font-weight: 400; }
+@utility text-label-12-mono { font-family: var(--font-mono); font-size: 12px; line-height: 16px; font-weight: 400; }
+@utility text-copy-24 { font-family: var(--font-sans); font-size: 24px; line-height: 36px; font-weight: 400; }
+@utility text-copy-20 { font-family: var(--font-sans); font-size: 20px; line-height: 36px; font-weight: 400; }
+@utility text-copy-18 { font-family: var(--font-sans); font-size: 18px; line-height: 28px; font-weight: 400; }
+@utility text-copy-16 { font-family: var(--font-sans); font-size: 16px; line-height: 24px; font-weight: 400; }
+@utility text-copy-14 { font-family: var(--font-sans); font-size: 14px; line-height: 20px; font-weight: 400; }
+@utility text-copy-13 { font-family: var(--font-sans); font-size: 13px; line-height: 18px; font-weight: 400; }
+@utility text-copy-14-mono { font-family: var(--font-mono); font-size: 14px; line-height: 20px; font-weight: 400; }
+@utility text-copy-13-mono { font-family: var(--font-mono); font-size: 13px; line-height: 18px; font-weight: 400; }
