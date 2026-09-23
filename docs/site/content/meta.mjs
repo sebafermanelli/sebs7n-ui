@@ -801,6 +801,37 @@ export const COMPONENTS = {
     ],
     related: ["accordion", "card", "button"],
   },
+  accordion: {
+    title: "Accordion",
+    group: "contenido",
+    description: "Secciones plegables que se leen como una lista. Una sola abierta, o varias.",
+    keyboard: [
+      ["Enter · Espacio", "Abre y cierra la sección enfocada."],
+      ["Tab", "Cada trigger es su propia parada: desde Base UI 1.8 no hay foco rotativo, siguiendo la corrección de la APG."],
+    ],
+    a11y: [
+      "Cada trigger va dentro de un `<h3>`: eso es lo que deja saltar de sección en sección con un lector de pantalla.",
+      "`aria-expanded` y `aria-controls` los pone Base UI; el panel es un `role=\"region\"` con el nombre del trigger.",
+      "El alto y el chevron pasan por `motion-reduce`, además del reset global del paquete.",
+      "`hiddenUntilFound` deja que el buscador del navegador (⌘F) encuentre y abra el contenido cerrado.",
+    ],
+    usage: [
+      "**Una sola sección plegable es un `Collapsible`.** El `Accordion` existe para el grupo.",
+      "Por defecto se abre una a la vez. `multiple` solo si comparar dos secciones es parte del uso.",
+      "El trigger dice de qué es la sección, no «Ver más».",
+      "No escondas ahí lo que la pantalla tiene que mostrar: lo plegado no se lee.",
+      "Si las secciones son excluyentes y cortas, probablemente sean `Tabs`.",
+    ],
+    props: {
+      Accordion: {
+        multiple: "Deja varias secciones abiertas a la vez.",
+      },
+      AccordionTrigger: {
+        chevron: "Saca el chevron para poner otro indicador.",
+      },
+    },
+    related: ["collapsible", "tabs", "card"],
+  },
   "page-header": {
     title: "PageHeader",
     group: "contenido",

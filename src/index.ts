@@ -9,6 +9,7 @@ export { menuItemClassName, menuPopupClassName } from "./variants/menu.js"
 export { sidebarItemVariants } from "./variants/sidebar.js"
 export { toggleVariants } from "./variants/toggle.js"
 
+export * from "./components/accordion.js"
 export * from "./components/alert-dialog.js"
 export * from "./components/alert.js"
 export * from "./components/app-shell-content.js"
