@@ -3,12 +3,30 @@ import { readFileSync } from "node:fs"
 import { join } from "node:path"
 import { describe, expect, it } from "vitest"
 
-import { contrastRatio, flattenAlpha, luminanceOfHex } from "./color"
+import brands from "../tokens/brands.json"
+import { contrastRatio, flattenAlpha, luminanceOfHex, luminanceOfOklch, type Oklch } from "./color"
 
-// Los valores salen de los CSS del paquete, no de una copia: si alguien cambia
-// un token, cambia el número que se verifica acá. Los pares son los que la
-// auditoría de 0.4.0 encontró abajo de AA, más sus vecinos, para que la
-// corrección no se pierda en el próximo retoque de color.
+/**
+ * La tabla de contraste del sistema.
+ *
+ * Los valores salen de los CSS del paquete, no de una copia: si alguien cambia
+ * un token, cambia el número que se verifica acá. Están los pares que la
+ * auditoría de 0.4.0 encontró abajo del umbral —para que la corrección no se
+ * pierda en el próximo retoque de color— y también los que ya pasaban, que son
+ * los que evitan que una corrección de allá rompa acá.
+ *
+ * Umbrales: 4,5:1 para texto (WCAG 1.4.3, AA, cuerpo normal) y 3:1 para lo que
+ * dibuja un control o el foco (1.4.11 y 2.4.11).
+ *
+ * **Los estados deshabilitados quedan exentos a propósito.** 1.4.3 y 1.4.11
+ * eximen explícitamente a los componentes inactivos, y tiene sentido: un
+ * control apagado tiene que verse apagado, y subirlo a 4,5:1 lo haría
+ * indistinguible de uno que anda. Por eso `gray-400` como borde y `gray-700`
+ * como texto sobre `gray-100` no aparecen acá, y no es un olvido.
+ *
+ * El par texto/fondo del botón de marca lo verifica `brand-contrast.test.ts`;
+ * acá está el otro uso de `brand-700`, que es el anillo de foco.
+ */
 const root = join(import.meta.dirname, "..")
 const read = (file: string) => readFileSync(join(root, "src/styles", file), "utf8")
 
@@ -59,6 +77,87 @@ const paleta = {
 const heredado = (theme: "light" | "dark", token: string) => paleta[theme][token] ?? paleta.light[token]!
 
 const ratio = (fg: string, bg: string) => contrastRatio(luminanceOfHex(fg), luminanceOfHex(bg))
+
+/** Los tres roles de fondo del sistema: página, superficie y banda. */
+const FONDOS = {
+  página: "--sf-background",
+  superficie: "--sf-background-100",
+  banda: "--sf-background-200",
+} as const
+
+/** Las nueve paletas del Badge y del Tag. */
+const PALETAS = ["gray", "brand", "red", "amber", "green", "blue", "teal", "purple", "pink"] as const
+
+// Los grises que el paquete usa COMO TEXTO, sobre los tres fondos. `gray-800` no
+// está en la lista: no se usa como texto en ninguno de los 58 componentes, y en
+// claro da 4,12:1, así que no podría. `gray-700` tampoco: quedó como color de
+// borde y de estado deshabilitado, que es donde sí puede vivir.
+describe("Grises de texto sobre los tres fondos (WCAG 1.4.3)", () => {
+  for (const theme of ["light", "dark"] as const) {
+    for (const token of ["--sf-gray-900", "--sf-gray-1000"] as const) {
+      for (const [donde, fondo] of Object.entries(FONDOS)) {
+        const fg = paleta[theme][token]!
+        const bg = paleta[theme][fondo]!
+        it(`${theme} · ${token.replace("--sf-", "")} sobre ${donde}: ${fg} / ${bg} llega a 4.5:1`, () => {
+          expect(ratio(fg, bg)).toBeGreaterThanOrEqual(4.5)
+        })
+      }
+    }
+  }
+})
+
+// El Badge `subtle` es el mismo cuerpo en las nueve paletas: texto `-900` sobre
+// fondo `-100`. Una paleta que se retoque de a un paso rompe acá antes de
+// llegar a una pantalla.
+describe("Badge subtle en las nueve paletas (WCAG 1.4.3)", () => {
+  for (const theme of ["light", "dark"] as const) {
+    for (const color of PALETAS) {
+      // `brand` se calcula en OKLCH desde la variable de la app: lo cubre brand-contrast.test.ts.
+      if (color === "brand") continue
+      const fg = paleta[theme][`--sf-${color}-900`]!
+      const bg = paleta[theme][`--sf-${color}-100`]!
+      it(`${theme} · ${color}: ${fg} sobre ${bg} llega a 4.5:1`, () => {
+        expect(ratio(fg, bg)).toBeGreaterThanOrEqual(4.5)
+      })
+    }
+  }
+})
+
+/**
+ * El anillo de foco (`focus-ring`) es `0 0 0 2px background-100, 0 0 0 4px
+ * brand-700`: el anillo de marca con un separador del color de la superficie
+ * para que se despegue del control. Lo que tiene que llegar a 3:1 (WCAG 2.4.11)
+ * es `brand-700` contra ese separador, que es la superficie.
+ *
+ * Las cuatro marcas de `tokens/brands.json` son las de ejemplo; una app define
+ * la suya y no toca este archivo, pero el umbral es el mismo. Se calcula en
+ * OKLCH porque así se declaran.
+ */
+describe("Anillo de foco en las cuatro marcas (WCAG 2.4.11)", () => {
+  const marcas = brands as Record<string, Record<string, { base: number[]; contrast: string }>>
+  for (const [marca, temas] of Object.entries(marcas)) {
+    for (const [theme, { base }] of Object.entries(temas)) {
+      const bg = paleta[theme as "light" | "dark"]["--sf-background-100"]!
+      it(`${marca} (${theme}): el anillo sobre ${bg} llega a 3:1`, () => {
+        const r = contrastRatio(luminanceOfOklch(base as unknown as Oklch), luminanceOfHex(bg))
+        expect(r).toBeGreaterThanOrEqual(3)
+      })
+    }
+  }
+})
+
+// El Badge `solid` gris: el texto es el fondo de la superficie sobre el gris más
+// fuerte de la escala. Es el par que se invierte entre temas, y por eso vale
+// verificarlo aunque sea obvio mirándolo.
+describe("Badge solid gris (WCAG 1.4.3)", () => {
+  for (const theme of ["light", "dark"] as const) {
+    const fg = paleta[theme]["--sf-background-100"]!
+    const bg = paleta[theme]["--sf-gray-1000"]!
+    it(`${theme}: ${fg} sobre ${bg} llega a 4.5:1`, () => {
+      expect(ratio(fg, bg)).toBeGreaterThanOrEqual(4.5)
+    })
+  }
+})
 
 describe("Button variant=\"destructive\" (WCAG 1.4.3, texto normal)", () => {
   for (const theme of ["light", "dark"] as const) {
