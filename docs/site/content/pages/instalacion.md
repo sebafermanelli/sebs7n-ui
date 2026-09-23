@@ -213,6 +213,18 @@ El `lang` del `<html>` es tuyo y no es opcional: cambia la pronunciación del le
 
 ## Verificar que quedó bien
 
+**El check que no falla nunca: poné un `<Button>Hola</Button>` en una página y miralo.**
+
+```tsx
+import { Button } from "sebs7n-ui/button"
+
+<Button>Hola</Button>
+```
+
+En tema claro tiene que verse **con fondo negro y texto blanco**, con las esquinas apenas redondeadas y 40px de alto. Si sale como un botón del navegador —gris, con borde de sistema, sin redondear—, las utilidades del paquete no se generaron: revisá que `@import "sebs7n-ui/theme.css"` esté **después** de `@import "tailwindcss"` y que sea el paquete instalado y no una copia vieja en el repo. Es binario a propósito: no hay que leer ningún CSS ni abrir devtools, y es justo el síntoma que antes tenía una causa invisible —el `@source` con la ruta mal—, que ya no existe porque lo pone el paquete.
+
+Después, tres cosas más:
+
 1. `bg-slate-500` **no** tiene que compilar: la paleta de Tailwind está reseteada y solo existen los tokens del paquete. Ojo con el ejemplo: `bg-blue-500` **sí** compila, porque Geist tiene su propia escala `blue` en pasos 100–1000. Lo que no existe son las escalas de Tailwind que el paquete no repone (`slate`, `zinc`, `sky`…) ni los pasos que Geist no tiene (`bg-blue-50`).
-2. En oscuro, un `Input` tiene que verse **más claro** que el fondo de la página (`#0a0a0a` sobre `#000`). Si son el mismo negro, falta la 2.0 o hay un parche viejo pisando `--sf-background-100`.
+2. En oscuro —con la clase `.dark` en `<html>`; ver [Theming](/docs/theming)—, un `Input` tiene que verse **más claro** que el fondo de la página (`#0a0a0a` sobre `#000`). Si son el mismo negro, hay algo pisando `--sf-background-100`. Si no cambia nada al prender el tema oscuro, lo más probable es que `next-themes` esté con `attribute="data-theme"`: el paquete solo mira la clase.
 3. Tabulá: la primera parada de un `AppShell` es «Ir al contenido».
