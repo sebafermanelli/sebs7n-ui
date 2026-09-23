@@ -64,7 +64,8 @@ describe("build", () => {
 
   it("exporta el tipado", () => {
     expect(read("dist/index.d.ts")).toContain("export * from \"./components/button.js\"")
-    // Clases de menú e Input públicas para la lista a medida (v1.2).
+    // Las clases de menú e Input son públicas a propósito: quien arma una lista a
+    // medida las necesita para que se vea como las del sistema.
     expect(read("dist/index.d.ts")).toContain('export { menuItemClassName, menuPopupClassName } from "./variants/menu.js"')
     expect(read("dist/index.d.ts")).toContain('export * from "./components/combobox.js"')
     expect(read("dist/index.d.ts")).toContain('export * from "./components/autocomplete.js"')

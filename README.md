@@ -241,8 +241,9 @@ tres, y el tercero —la página— es `--sf-background`, que vive en
 `src/styles/theme.css` porque no es un primitivo de Geist.
 
 **Tipografía.** `cn()` entiende las utilidades de Geist como tamaño de fuente,
-así que conviven con `text-gray-900`. Desde 1.4 los `heading` llevan el peso
-**corregido ópticamente**, no 600 fijo: 72/64 → 400, 56/48/40 → 450, 32/24 →
+así que conviven con `text-gray-900`. Los `heading` llevan el peso **corregido
+ópticamente**, no 600 fijo: un mismo peso no se ve igual a 14px que a 64px, y 600
+a 64px sale plomizo. Los números son los medidos en vercel.com: 72/64 → 400, 56/48/40 → 450, 32/24 →
 500, 20 → 550, 16/14 → 600. No lo pises con `font-semibold`: para eso está el
 paso de arriba de la escala. Necesita Geist como **fuente variable** (rango
 `100 900`); con una estática los pesos intermedios se redondean y la corrección
@@ -291,8 +292,10 @@ opción "Sistema".
   `lg` 28px), con cualquier variante y tamaño; en `icon-*` se ignora, que ya es
   cuadrado con su propio radio. **Nunca en el chrome de una app** —nav, tablas,
   formularios, diálogos—. Dos formas de botón en la misma pantalla se leen como
-  un descuido, no como una jerarquía. Sin `shape`, `buttonVariants` emite
-  exactamente lo mismo que en 1.3.0.
+  un descuido, no como una jerarquía. `shape` es opcional y su default no agrega
+  ninguna clase: sin pasarlo, `buttonVariants` emite exactamente la misma cadena
+  que antes de que la variante existiera, y hay un test que compara la cadena
+  entera.
 - **Links con forma de botón o card:** `buttonVariants()` / `cardVariants()`
   sobre `<a>` o `<Link>`. No uses `render` para links: Base UI les pone
   `role="button"`.

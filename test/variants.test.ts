@@ -49,20 +49,21 @@ describe("variantes exportadas pasan por cn()", () => {
   })
 
   /**
-   * `shape` se sumó en 1.4 y no puede mover nada de lo que ya existía: son
-   * cuatro apps llamando a `buttonVariants` sin pasarlo. Las clases exactas de
-   * 1.3.0, copiadas acá a mano: si el default cambia, este test lo dice con el
-   * diff, no con una captura que alguien mire tres semanas después.
+   * `shape` es una variante opcional y no puede mover nada de lo que ya existía:
+   * son cuatro apps llamando a `buttonVariants` sin pasarlo, y una clase de más
+   * o de menos les cambia el botón en todas las pantallas. La cadena entera,
+   * copiada acá a mano: si el default cambia, este test lo dice con el diff, no
+   * con una captura que alguien mire tres semanas después.
    */
-  const V1_3_0 = {
+  const SIN_SHAPE = {
     "default/md":
       "relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-md border border-transparent whitespace-nowrap outline-none select-none transition-control focus-visible:focus-ring data-disabled:cursor-not-allowed data-disabled:border-gray-400 data-disabled:bg-gray-100 data-disabled:text-gray-700 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 bg-gray-1000 text-background-100 hover:bg-button-primary-hover h-10 px-4 text-button-14",
   } as const
 
-  it("sin shape, buttonVariants emite exactamente lo de 1.3.0", () => {
-    expect(buttonVariants()).toBe(V1_3_0["default/md"])
-    expect(buttonVariants({ variant: "default", size: "md" })).toBe(V1_3_0["default/md"])
-    expect(buttonVariants({ shape: "default" })).toBe(V1_3_0["default/md"])
+  it("sin shape, buttonVariants emite exactamente la misma cadena que antes de que existiera", () => {
+    expect(buttonVariants()).toBe(SIN_SHAPE["default/md"])
+    expect(buttonVariants({ variant: "default", size: "md" })).toBe(SIN_SHAPE["default/md"])
+    expect(buttonVariants({ shape: "default" })).toBe(SIN_SHAPE["default/md"])
     // Y el radio sigue siendo el del sistema en todos los tamaños.
     for (const size of ["sm", "md", "lg"] as const) {
       expect(classes(buttonVariants({ size })), size).toContain("rounded-md")
