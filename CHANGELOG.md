@@ -165,6 +165,14 @@ Fase 3 de la auditoría de 0.4.0: rendimiento.
 
 ### Changed
 
+- **El pulso del `Skeleton` deja de repintar.** `@keyframes skeleton` animaba
+  `background-color`, o sea interpolación de color en el hilo principal y un
+  repintado por frame durante toda la carga —justo cuando el hilo está ocupado—.
+  Ahora `animate-skeleton` es una utilidad que pone una capa de `gray-200` con
+  `opacity` animada encima del `gray-100`, que el compositor resuelve sin
+  repintar. Se ve igual: componer `gray-200` con alfa *t* sobre `gray-100` da la
+  misma mezcla sRGB que interpolar de un color al otro, y con
+  `prefers-reduced-motion` queda en `gray-100` como antes.
 - **`Badge` y `Separator` dejan de ser componentes de cliente.** No tenían estado
   ni handlers: arrastraban `"use client"` por transitividad, porque uno usaba el
   hook `useRender` de Base UI y el otro el primitivo `Separator`, que trae su

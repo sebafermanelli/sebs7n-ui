@@ -7,18 +7,6 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --animate-skeleton: skeleton 1.5s ease-in-out infinite;
-
-  @keyframes skeleton {
-    0%,
-    100% {
-      background-color: var(--color-gray-100);
-    }
-    50% {
-      background-color: var(--color-gray-200);
-    }
-  }
-
   /* Progress indeterminada: una franja del 40% que recorre la pista. */
   --animate-progress-indeterminate: progress-indeterminate 1.4s ease-in-out infinite;
 
@@ -203,6 +191,44 @@
 
     --sf-shadow-border-base: 0 0 0 1px #ffffff25;
     --sf-shadow-background-border: 0 0 0 1px var(--sf-background);
+  }
+}
+
+/* El pulso del Skeleton.
+ *
+ * Anima la `opacity` de una capa de gray-200 encima, y no el `background-color` del
+ * elemento. El color se interpola en el hilo principal y obliga a repintar cada frame
+ * mientras dura la carga —que es justo cuando el hilo está ocupado—; la opacidad la
+ * resuelve el compositor y no repinta nada.
+ *
+ * Se ve exactamente igual: componer gray-200 con alfa t sobre gray-100 da la misma
+ * mezcla sRGB que interpolar de un color al otro. El `opacity: 0` declarado en la
+ * capa no es redundante: el reset de `prefers-reduced-motion` de base.css corta la
+ * animación, y sin él la capa quedaría fija en gray-200 en vez de en gray-100, que es
+ * donde quedaba antes. El radio se hereda para que siga la forma que le ponga la app.
+ */
+@keyframes skeleton {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@utility animate-skeleton {
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background-color: var(--color-gray-200);
+    opacity: 0;
+    animation: skeleton 1.5s ease-in-out infinite;
+    pointer-events: none;
   }
 }
 
