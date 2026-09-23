@@ -75,7 +75,7 @@ export const PROP_DESCRIPTIONS = {
   name: "El nombre con el que el valor viaja en el submit y en el objeto `errors` de `Form`.",
   required: "Marca el campo como obligatorio para la validación nativa.",
   readOnly: "Se lee y se enfoca, pero no se cambia. No es lo mismo que `disabled`, que además lo saca del foco.",
-  disabled: "Apaga la interacción. Base UI lo marca con `data-disabled`, así que sigue en el recorrido de tabulación.",
+  disabled: "Apaga la interacción y lo marca con `data-disabled`, que es el atributo del que cuelgan los estilos de apagado.",
   nativeButton: "Si el elemento que se renderiza es un `<button>` de verdad. Ponelo en `false` si lo reemplazás por un `<a>` o un `<div>`.",
 
   // ── Navegación por teclado ─────────────────────────────────────────────────

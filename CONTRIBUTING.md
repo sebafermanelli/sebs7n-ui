@@ -23,6 +23,23 @@ npm test        # el `pretest` corre scripts/generate.mjs
 componente que no existe, o si falta `docs/site/app/_demos/<slug>.tsx` con al menos una demo.
 No es un olvido del generador: componente nuevo sin documentar no entra.
 
+## Describir una prop
+
+Cada corrida de `generate.mjs` imprime cuántas props quedaron sin descripción, y
+`generado.test.ts` **falla si una prop propia** —una que el paquete inventó— sale con la celda
+vacía. Hay tres lugares para escribir el texto, y ese es el orden de precedencia:
+
+1. `props` del componente en `meta.mjs`, para lo que solo vale ahí (`variant`, `size`, `items`).
+2. El JSDoc de la prop en `src/`, que es el que conviene cuando la explicación también sirve
+   leyendo el código. **Solo se toma si la prop está declarada en `src/`**: el JSDoc de Base UI
+   está en inglés y no entra.
+3. `PROP_DESCRIPTIONS` en `meta.mjs`, el diccionario compartido para el vocabulario que se
+   repite (`open`, `onOpenChange`, `disabled`, `value`, `className`…).
+
+Una entrada del diccionario **no** hace que la prop aparezca en la tabla: el generador solo
+vuelca las heredadas de Base UI que `props` nombra, y para eso está el helper `heredadas(…)`,
+que las saca del diccionario. Sin eso, un `<Dialog>` salía con cero props documentadas.
+
 ## El registry de `shadcn add`
 
 `docs/site/scripts/lib/registry.mjs` arma los ítems con formato shadcn que se publican en

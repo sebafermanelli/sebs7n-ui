@@ -6,6 +6,8 @@ Es parte del contrato del paquete, no un extra. Lo que sigue es lo que el paquet
 
 No es una revisión a ojo. `test/contrast.test.ts` recalcula 62 pares leyendo los hexadecimales de `colors.css` y `theme.css` —no una copia—, así que si alguien retoca un token cambia el número que se verifica. `test/brand-contrast.test.ts` hace lo mismo en OKLCH con las marcas de ejemplo.
 
+La función que usan los dos sale publicada en `sebs7n-ui/lib/contrast`: tu app puede escribir el mismo test para **su** marca, que es la única que el paquete no puede cubrir. El ejemplo está en [Theming](/docs/theming).
+
 Qué cubre esa tabla:
 
 | Par | Umbral |
