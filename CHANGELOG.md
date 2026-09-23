@@ -4,6 +4,17 @@ Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Versionado
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-09-23
+
+### Changed
+
+- `geist` pasa a estar declarada como dependencia par **opcional**. El sistema
+  la usa para las fuentes (`--font-geist-sans` / `--font-geist-mono`), así que
+  un proyecto que no la instale se queda con las tipografías del sistema y
+  nunca se entera de por qué. Ahora el gestor de paquetes lo avisa. Es opcional
+  porque `theme.css` tiene alternativas declaradas: quien cargue las fuentes
+  por su cuenta (`next/font`, self-hosted) sigue funcionando sin instalarla.
+
 ## [0.1.1] - 2026-09-23
 
 Primera versión publicada de `sebs7n-ui`: un design system para React que pone
