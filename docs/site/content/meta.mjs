@@ -446,6 +446,7 @@ export const COMPONENTS = {
       "`disabled` va en el root para bloquear todo; en el input solo apaga la superficie.",
       "Para búsqueda contra el servidor: `filter={null}`, buscá en `onInputValueChange` (salteando `reason === \"item-press\"`) y mostrá `<ComboboxStatus loading />` mientras tanto.",
       "Objetos `{ value, label }` andan solos; para otra forma, `itemToStringLabel`.",
+      "**El filtrado es en memoria y en cada tecla, sin debounce.** Con una lista local es lo correcto: esperar se nota. Para búsqueda contra el servidor el debounce lo pone la app, en su `onInputValueChange`; el componente no lo hace por vos.",
     ],
     props: {
       ComboboxInput: {
@@ -472,6 +473,7 @@ export const COMPONENTS = {
     usage: [
       "Ciudad, dirección, etiqueta libre. Si el valor tiene que existir en un catálogo, `Combobox`.",
       "`value`/`onValueChange` son strings, no objetos.",
+      "**El filtrado es en memoria y en cada tecla, sin debounce**, igual que en `Combobox`. Si las sugerencias vienen del servidor, el debounce lo pone la app.",
     ],
     related: ["combobox", "input"],
   },
@@ -1246,6 +1248,7 @@ export const COMPONENTS = {
       "En mobile una tabla de más de 3 columnas no entra: o hacés scroll horizontal con la primera columna fija, o cambiás a tarjetas.",
       "Las acciones de fila van en la última columna, en un `DropdownMenu`, no como tres botones sueltos.",
       "El `thead` y el `tfoot` usan `bg-background-200`: es la banda, no la superficie.",
+      "**No virtualiza.** Renderiza las filas que le pasás, todas. Hasta ~500 anda bien; más que eso, paginá con `Pagination` o virtualizá vos y pasale la ventana.",
     ],
     props: {
       Table: { density: "`compact` baja el alto de fila. Para listas largas." },
