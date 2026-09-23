@@ -260,8 +260,11 @@ export const COMPONENTS = {
     usage: [
       "Para opciones excluyentes va `RadioGroup`, que ya trae su propia semántica de grupo.",
       "Un formulario de tres campos no necesita un `Fieldset`: agrupar de a uno agrega ruido, no estructura.",
+      "**El error del grupo no va en el `Fieldset`.** No tiene parte de error a propósito: un `<fieldset>` no lleva un mensaje que el lector de pantalla anuncie —lo que anuncia al entrar es la leyenda—, así que sería un cartel rojo que media pantalla nunca escucha.",
+      "**Cuando el error es de un conjunto de opciones (\"tildá al menos un archivo\"), ese conjunto es un campo**: un `Field` con `name` alrededor de un `CheckboxGroup`, y el `FieldError` adentro. Ahí sí queda atado al `role=\"group\"` por `aria-describedby`, entra en el `errors` de `Form` por su `name` y se limpia solo al tildar. El `Fieldset` sigue siendo el que agrupa, si hace falta.",
+      "Un error que cruza campos que siguen siendo distintos (\"el domicilio no existe\", sobre calle + localidad) va en el campo que se puede corregir, o arriba del formulario en un `Alert`.",
     ],
-    related: ["field", "form", "radio-group"],
+    related: ["field", "checkbox-group", "form"],
   },
   form: {
     title: "Form",

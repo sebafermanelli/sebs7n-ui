@@ -16,6 +16,32 @@ import { cn } from "../lib/utils.js"
  *
  * Para un grupo de opciones excluyentes va `RadioGroup`, que ya trae su propia
  * semántica de grupo.
+ *
+ * **El error del grupo no va acá.** `Fieldset` no tiene parte de error, y no es
+ * un olvido de esta capa: el `<fieldset>` no tiene forma estándar de llevar un
+ * mensaje que el lector de pantalla anuncie —lo que anuncia al entrar es la
+ * leyenda—, así que un `FieldsetError` pintaría un cartel rojo que media
+ * pantalla nunca escucha. Base UI tampoco lo expone.
+ *
+ * Cuando el error es de un conjunto de opciones ("tildá al menos un servicio"),
+ * ese conjunto **es un campo**: un `name`, un valor, un error. Se arma con un
+ * `Field` alrededor del control de grupo, y ahí el `FieldError` sí queda atado
+ * al `role="group"` por `aria-describedby`, entra en el `errors` de `Form` por
+ * su `name` y se limpia solo al tildar:
+ *
+ * ```tsx
+ * <Field name="servicios" validate={(v) => ((v as string[]).length ? null : "Elegí al menos uno")}>
+ *   <FieldLabel>Servicios incluidos</FieldLabel>
+ *   <CheckboxGroup>
+ *     <CheckboxGroupItem value="vuelo">Vuelo</CheckboxGroupItem>
+ *   </CheckboxGroup>
+ *   <FieldError />
+ * </Field>
+ * ```
+ *
+ * Si el error cruza campos que siguen siendo distintos entre sí ("el domicilio
+ * no existe" sobre calle + localidad), va en el campo que se puede corregir, o
+ * arriba del formulario en un `Alert`; un `<fieldset>` no es el lugar.
  */
 type FieldsetProps = Omit<FieldsetPrimitive.Root.Props, "className"> & { className?: string }
 
