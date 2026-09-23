@@ -565,7 +565,40 @@ export const COMPONENTS = {
         render: "El elemento que se renderiza en lugar del `<a>`: `render={<Link href=\"/x\" />}`. Clona el elemento del llamador —no es el `render` de Base UI— así que sigue siendo un `<a>`.",
       },
     },
-    related: ["page-header", "navigation-menu"],
+    related: ["page-header", "navigation-menu", "pagination"],
+  },
+  pagination: {
+    title: "Pagination",
+    group: "navegacion",
+    description: "Anterior, números con «…» y siguiente. Con links de verdad o con botones.",
+    keyboard: [
+      ["Tab", "Recorre los controles en el orden visual. Anterior y siguiente siguen tabulables en las puntas."],
+      ["Enter", "Va a esa página. En un control sin destino no hace nada."],
+    ],
+    a11y: [
+      "Es un `<nav aria-label=\"Paginación\">` con un `<ul>`: un lector anuncia «navegación, lista, 7 elementos».",
+      "Cada número tiene nombre accesible propio («Página 3»), no solo el dígito suelto.",
+      "La página actual lleva `aria-current=\"page\"`.",
+      "En las puntas, anterior y siguiente usan `aria-disabled` y **no** `disabled`: si se deshabilitaran, el foco se perdería justo después de hacer click. Es la misma decisión que `Button loading`.",
+      "El «…» es `role=\"presentation\"` con texto solo para lectores («Más páginas»).",
+      "Sin `\"use client\"`: en modo links los `<a>` salen en el HTML del server.",
+    ],
+    usage: [
+      "**Si la página vive en la URL, `render`**: `render={(page) => <Link href={`?page=${page}`} />}`. Son `<a>` de verdad, así que el crawler los ve, se abren en una pestaña nueva y se puede copiar el link.",
+      "**`onPageChange` solo para una lista que se pagina sin cambiar de URL.** Si al recargar volvés a la página 1, elegiste mal.",
+      "**Qué páginas mostrar es una función pura**: `paginationRange` (`sebs7n-ui/lib/pagination`). Si necesitás el mismo cálculo en otro lado —un resumen «4 de 27»—, llamala, no la copies.",
+      "El ancho no salta al cambiar de página: cuando un «…» desaparece, lo reemplaza un número.",
+      "Para una lista infinita o un scroll continuo esto no sirve: hace falta saber cuántas páginas hay.",
+    ],
+    props: {
+      Pagination: {
+        render: "Modo links: devuelve el elemento de cada página. Clona el elemento del llamador, así que sigue siendo un `<a>`.",
+        onPageChange: "Modo botones: se llama con la página destino.",
+        siblings: "Cuántas páginas a cada lado de la actual.",
+        boundaries: "Cuántas páginas fijas en cada punta.",
+      },
+    },
+    related: ["breadcrumb", "table", "button"],
   },
   "navigation-menu": {
     title: "NavigationMenu",

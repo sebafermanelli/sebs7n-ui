@@ -1,4 +1,5 @@
 export { cn, TYPE_SCALE } from "./lib/utils.js"
+export { paginationRange, type PaginationRangeOptions, type PaginationSlot } from "./lib/pagination.js"
 
 export { badgeVariants, BADGE_COLORS, type BadgeColor } from "./variants/badge.js"
 export { buttonVariants, type ButtonShape, type ButtonVariantProps } from "./variants/button.js"
@@ -29,6 +30,7 @@ export * from "./components/kbd.js"
 export * from "./components/label.js"
 export * from "./components/navigation-menu.js"
 export * from "./components/page-header.js"
+export * from "./components/pagination.js"
 export * from "./components/popover.js"
 export * from "./components/radio-group.js"
 export * from "./components/select.js"
