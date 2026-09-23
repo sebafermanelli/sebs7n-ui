@@ -472,7 +472,47 @@ export const COMPONENTS = {
       "Varias opciones no excluyentes. Una sola opción excluyente con efecto inmediato es un `Switch`.",
       "El checkbox de «seleccionar todo» de una tabla va `indeterminate` cuando hay selección parcial.",
     ],
-    related: ["switch", "radio-group", "label"],
+    related: ["checkbox-group", "switch", "label"],
+  },
+  "checkbox-group": {
+    title: "CheckboxGroup",
+    group: "formularios",
+    description: "Varias casillas que son un solo dato: el valor sale como array y el error es del grupo.",
+    keyboard: [
+      ["Tab", "Una parada por casilla. No es un `RadioGroup`: acá no hay flechas, porque las opciones no compiten entre sí."],
+      ["Espacio", "Tilda y destilda la casilla que tiene el foco."],
+      ["Espacio en el padre", "Pasa de indeterminado a todos, y de todos a ninguno."],
+    ],
+    a11y: [
+      "El grupo es `role=\"group\"` con **un solo** nombre accesible: el `FieldLabel` del campo que lo envuelve. Cada casilla conserva el suyo.",
+      "El error del campo describe al grupo (`aria-describedby` sobre el `role=\"group\"`), así que se anuncia al entrar en el grupo y no hace falta moverle el foco.",
+      "El padre emite `aria-checked=\"mixed\"` cuando hay selección parcial, y `aria-controls` con los ids de las casillas que gobierna.",
+      "La ayuda de un ítem describe solo a ese ítem: por dentro cada opción es un `Field.Item`, que abre su propio ámbito de etiquetado.",
+      "La etiqueta de la opción es el `<label>` nativo de su casilla: clickear el texto tilda, que es la mitad del área útil de una lista de opciones.",
+    ],
+    usage: [
+      "**Va adentro de un `Field`, aunque no haya formulario.** De ahí salen el nombre del grupo, el error y el estado; un grupo suelto —los filtros de una lista— se envuelve igual en un `<Field>` pelado, que es un `<div>` con contexto.",
+      "**El `value` de cada ítem es lo que termina en el array, y no se reemplaza por `name`**: adentro de un `Field`, el `name` del campo le gana al de la casilla y las tres opciones terminarían con el mismo valor.",
+      "**«Seleccionar todo» necesita las dos piezas**: `allValues` en el grupo —la lista completa, que es de donde sale la cuenta— y `parent` en el ítem. El padre no aporta valor propio ni viaja en el submit.",
+      "El error de \"tildá al menos uno\" es del grupo: va en el `validate` del `Field`, no en cada casilla. Un `Fieldset` no tiene dónde mostrarlo.",
+      "De 2 a 7 opciones visibles. Más que eso se busca, no se recorre: `Combobox` con `multiple`.",
+      "Para opciones excluyentes, `RadioGroup`. Para una sola casilla —aceptar los términos—, `Checkbox` solo.",
+    ],
+    props: {
+      CheckboxGroup: {
+        allValues: "La lista completa de valores. Solo hace falta si hay un ítem `parent`.",
+        value: "Los valores tildados. Para dejarlo no controlado, `defaultValue`.",
+        onValueChange: "Recibe el array nuevo cada vez que se tilda o destilda una casilla.",
+      },
+      CheckboxGroupItem: {
+        value: "La identidad de la opción: es lo que entra y sale del array.",
+        parent: "Convierte al ítem en el «seleccionar todo» del grupo. Necesita `allValues` en el grupo.",
+        disabled: "Apaga la casilla y su etiqueta. El `disabled` del grupo o del `Field` le gana.",
+        description: "Ayuda debajo de la etiqueta. Describe a esa opción, no al grupo.",
+        checkboxClassName: "Clases de la casilla. En `className` van las de la fila entera.",
+      },
+    },
+    related: ["checkbox", "field", "radio-group"],
   },
   "radio-group": {
     title: "RadioGroup",
