@@ -77,11 +77,3 @@ Primera versión pública de `sebs7n-ui`: un design system para React que pone
   tiene que pasar `labels` en cada punto de uso.
 - Todavía no está publicado en npm: se distribuye como tarball (`npm pack`) o
   desde GitHub.
-
-## Antes de 0.1.0
-
-El sistema existió antes bajo el nombre interno `sf-ui` (y, antes de eso,
-`@sf/ui`), con versiones 1.x y 2.0 que se usaron solo dentro de aplicaciones
-privadas y nunca se publicaron. Ese changelog quedó fuera del repo público
-junto con el resto de los documentos de trabajo internos; `0.1.0` es la primera
-versión con nombre y numeración públicos.
