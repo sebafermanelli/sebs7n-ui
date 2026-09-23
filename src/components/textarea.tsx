@@ -15,9 +15,7 @@ import { cn } from "../lib/utils.js"
  *
  * Fuera de un `Field` se comporta igual que antes: es un `<textarea>` común.
  */
-type TextareaProps = Omit<FieldPrimitive.Control.Props, "className" | "render"> & {
-  className?: string
-}
+type TextareaProps = React.ComponentProps<"textarea">
 
 function Textarea({ className, ...props }: TextareaProps) {
   return (
@@ -34,7 +32,12 @@ function Textarea({ className, ...props }: TextareaProps) {
         "aria-invalid:border-red-800 aria-invalid:focus:focus-border-error data-invalid:border-red-800 data-invalid:focus:focus-border-error",
         className
       )}
-      {...props}
+      // `Field.Control` tipa sus props contra un `<input>`, así que no conoce
+      // `rows` ni `cols`. Las reenvía igual al elemento de `render`, que es un
+      // `<textarea>` de verdad: por eso el tipo público sigue siendo el del
+      // `<textarea>` —nadie tiene que cambiar su código— y el cast vive acá
+      // adentro, en el único lugar donde se sabe por qué es seguro.
+      {...(props as FieldPrimitive.Control.Props)}
     />
   )
 }

@@ -83,6 +83,15 @@ describe("Textarea", () => {
     expect(textarea).toHaveAttribute("name", "mensaje")
   })
 
+  // `Field.Control` tipa sus props contra un <input>, así que la primera versión
+  // de este arreglo dejó de aceptar `rows` y rompió el build de una app.
+  it("acepta las props propias del textarea y las lleva al DOM", () => {
+    render(<Textarea cols={40} placeholder="Notas" rows={5} />)
+    const textarea = screen.getByPlaceholderText("Notas")
+    expect(textarea).toHaveAttribute("rows", "5")
+    expect(textarea).toHaveAttribute("cols", "40")
+  })
+
   it("fuera de un Field sigue siendo un textarea común", () => {
     render(<Textarea name="notas" placeholder="Notas" />)
     const textarea = screen.getByPlaceholderText("Notas")

@@ -4,6 +4,16 @@ Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Versionado
 
 ## [Unreleased]
 
+## [0.3.2] - 2026-09-23
+
+### Fixed
+
+- **`Textarea` dejó de aceptar `rows` y `cols` en 0.3.1.** Al pasarlo por
+  `Field.Control` quedó tipado contra un `<input>`, que no conoce esas props, y
+  el build de cualquier app que usara `rows` fallaba. El tipo público vuelve a
+  ser el del `<textarea>`; el enganche con el campo sigue igual. Hay un test que
+  fija que `rows` y `cols` llegan al DOM.
+
 ## [0.3.1] - 2026-09-23
 
 ### Fixed
