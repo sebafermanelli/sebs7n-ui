@@ -2,6 +2,8 @@ Una dependencia, un `@import` y tres variables de marca. No hay `tailwind.config
 
 ## Instalar
 
+El paquete está publicado en npm como [`sebs7n-ui`](https://www.npmjs.com/package/sebs7n-ui): público y MIT.
+
 ```bash
 pnpm add sebs7n-ui @base-ui/react next-themes sonner geist
 ```
@@ -10,9 +12,13 @@ pnpm add sebs7n-ui @base-ui/react next-themes sonner geist
 npm install sebs7n-ui @base-ui/react next-themes sonner geist
 ```
 
-> **Todavía no está en npm.** Hasta que se publique, el paquete se distribuye como tarball: `npm pack` en el repo y `pnpm add ./sebs7n-ui-0.1.0.tgz`, o `pnpm add github:sebafermanelli/sebs7n-ui#v0.1.0`. Todo lo de abajo vale igual en los dos casos.
+```bash
+bun add sebs7n-ui @base-ui/react next-themes sonner geist
+```
 
-Las `peerDependencies` las instala la app, para que haya **una sola copia** de React y de Base UI:
+Todo lo que va después de `sebs7n-ui` lo instala la app, no el paquete.
+
+Las `peerDependencies` van así para que haya **una sola copia** de React y de Base UI en el árbol; dos copias de React rompen los hooks, y dos de Base UI rompen el foco de los popups:
 
 | Peer | Rango |
 |---|---|
@@ -20,6 +26,10 @@ Las `peerDependencies` las instala la app, para que haya **una sola copia** de R
 | `@base-ui/react` | `^1.8.0` |
 | `next-themes` | `^0.4.6` |
 | `sonner` | `^2.0.7` |
+
+`geist` **no es un peer declarado**, pero va en el mismo comando: los tokens de tipografía leen `--font-geist-sans` y `--font-geist-mono`, que define la app en el layout raíz. Si tu proyecto no es Next, cargá Geist variable por tu cuenta y definí esas dos variables.
+
+El resto —`clsx`, `tailwind-merge`, `class-variance-authority`, `lucide-react`— viaja como dependencia normal del paquete: no las instalás vos.
 
 ## Compatibilidad
 
@@ -53,7 +63,17 @@ En `globals.css`, **en este orden**:
 }
 ```
 
-> Existe también `@import "sebs7n-ui/styles.css"` (la hoja precompilada), pero con dos hojas de utilidades un `hidden lg:block` de la app pierde contra el `hidden` del paquete. **No combines `@source` con `@import "sebs7n-ui/styles.css"`**: es una cosa o la otra, y la recomendada es `@source`.
+`theme.css` trae los tokens (colores, tipografía, radios, sombras) y el reset de la paleta. `@source` le dice al Tailwind de la app que escanee el `dist/` del paquete y genere ahí las utilidades que usan los componentes.
+
+### Por qué `@source` y no `styles.css`
+
+El paquete también exporta `sebs7n-ui/styles.css`, la hoja precompilada. Con dos hojas de utilidades cargadas, un `hidden lg:block` de la app pierde contra el `hidden` del paquete, porque gana la que se declaró último y no la más específica. **Es una cosa o la otra, nunca las dos**, y la recomendada es `@source`: una sola hoja, en el orden que Tailwind sabe resolver.
+
+`styles.css` queda para el caso en que el bundler de la app no corre Tailwind, o no puede escanear `node_modules`. Trae los tokens y solo las utilidades que usan los componentes; no trae el preflight de Tailwind, así que el reset base sigue siendo responsabilidad de la app.
+
+### Las tres variables de marca
+
+`--brand-base`, `--brand-base-dark` y `--brand-contrast-dark` son lo único que cambia entre productos: de ahí sale la escala `brand-100…1000`. El detalle de cómo se deriva, el requisito de contraste y el modo oscuro están en [Theming](/docs/theming).
 
 ## 2. Layout raíz
 
@@ -81,6 +101,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   )
 }
 ```
+
+`geist/font/*` define `--font-geist-sans` y `--font-geist-mono` en la clase que devuelve `.variable`; los tokens `--font-sans` y `--font-mono` del paquete las leen de ahí. Sin esas clases en `<html>`, todo cae al `ui-sans-serif` del sistema.
 
 `suppressHydrationWarning` en `<html>` no es opcional: `next-themes` escribe la clase `dark` antes de hidratar y sin eso React avisa en cada carga.
 
