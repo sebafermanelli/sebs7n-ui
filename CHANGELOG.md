@@ -9,6 +9,17 @@ major.
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-09-24
+
+### Fixed
+
+- **El workflow de release no podía publicar.** `test/build.test.ts` hacía
+  destructuring de array sobre la salida de `npm pack --json`, que en las npm
+  más nuevas es un objeto suelto. El job de release hace
+  `npm install -g npm@latest`, así que corre con una npm distinta de la del
+  runner: el test pasaba en CI y reventaba en el publish con «object is not
+  iterable». Ahora acepta las dos formas. No cambia nada del paquete publicado.
+
 ## [0.6.0] - 2026-09-23
 
 Los tres agujeros que mostró el `LabelsProvider` al usarse por primera vez en una
@@ -711,7 +722,8 @@ pnpm add sebs7n-ui @base-ui/react next-themes sonner geist
   global —un provider de locale o un diccionario único—, así que una app en otro
   idioma tiene que pasar `labels` en cada punto de uso.
 
-[Unreleased]: https://github.com/sebafermanelli/sebs7n-ui/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/sebafermanelli/sebs7n-ui/compare/v0.6.1...HEAD
+[0.6.1]: https://github.com/sebafermanelli/sebs7n-ui/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/sebafermanelli/sebs7n-ui/compare/v0.5.1...v0.6.0
 [0.5.1]: https://github.com/sebafermanelli/sebs7n-ui/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/sebafermanelli/sebs7n-ui/compare/v0.4.0...v0.5.0

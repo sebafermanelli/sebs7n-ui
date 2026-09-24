@@ -119,9 +119,15 @@ describe("build", () => {
   })
 
   it("npm pack incluye los entry points por módulo", () => {
-    const [pack] = JSON.parse(execSync("npm pack --dry-run --json --ignore-scripts", { cwd: root, encoding: "utf8" })) as [
-      { files: { path: string }[] },
-    ]
+    // `npm pack --json` devuelve un array de paquetes en npm 11.9 y un objeto suelto en las
+    // más nuevas. Aceptar las dos formas no es paranoia: el workflow de release hace
+    // `npm install -g npm@latest`, así que corre con una npm distinta de la del runner y de
+    // la de esta máquina. La primera vez, este test pasó en CI y tiró
+    // «object is not iterable» justo en el publish, que es el peor momento para enterarse.
+    const salida = JSON.parse(execSync("npm pack --dry-run --json --ignore-scripts", { cwd: root, encoding: "utf8" })) as
+      | { files: { path: string }[] }
+      | { files: { path: string }[] }[]
+    const pack = Array.isArray(salida) ? salida[0] : salida
     const files = new Set(pack.files.map((file) => file.path))
     const expected = [
       "dist/index.js",
