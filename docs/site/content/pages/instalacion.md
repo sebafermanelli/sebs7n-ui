@@ -221,7 +221,9 @@ Ojo con el atajo: `const en: Labels = { ...defaultLabels, … }` **no** marca na
 
 Los providers anidados se suman. La prop `labels` de cada componente le gana al provider: es la excepción de una pantalla, no la traducción.
 
-`Breadcrumb`, `Pagination`, `Tag` y `PageHeader` no leen del provider —leerlo los volvería componentes de cliente y los cuatro se pueden renderizar en un Server Component—: sus textos van por prop.
+`Breadcrumb`, `Pagination` y `Tag` no leen del provider —leerlo los volvería componentes de cliente y los tres se pueden renderizar en un Server Component—: sus textos van por prop.
+
+`PageHeader` sí lo lee y sigue siendo Server Component: el `<nav>` de las migas es un subcomponente de cliente interno. Su `breadcrumbLabel` ya no tiene default en español, es el override de una pantalla.
 
 El `lang` del `<html>` es tuyo y no es opcional: cambia la pronunciación del lector de pantalla.
 

@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest"
 import { Combobox, ComboboxChip, ComboboxChips, ComboboxInput } from "../src/components/combobox.js"
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "../src/components/dialog.js"
 import { NumberField } from "../src/components/number-field.js"
+import { PageHeader, PageHeaderTitle } from "../src/components/page-header.js"
 import { defaultLabels, LabelsProvider } from "../src/lib/labels.js"
 
 /**
@@ -86,6 +87,30 @@ describe("LabelsProvider", () => {
     expect(screen.getByRole("button", { name: "Remove Chile" })).toBeInTheDocument()
   })
 
+  // El agujero que abrió la 0.5.0: `breadcrumbLabel` tenía default en español y era un
+  // `aria-label`, así que una app traducida lo dejaba en español sin que nadie lo notara.
+  it("el nombre del <nav> de las migas de PageHeader sale del provider", () => {
+    render(
+      <LabelsProvider value={{ pageHeader: { breadcrumb: "Breadcrumb" } }}>
+        <PageHeader breadcrumb={<span>Trips</span>}>
+          <PageHeaderTitle>Trips</PageHeaderTitle>
+        </PageHeader>
+      </LabelsProvider>
+    )
+    expect(screen.getByRole("navigation", { name: "Breadcrumb" })).toHaveAttribute("data-slot", "page-header-breadcrumb")
+  })
+
+  it("`breadcrumbLabel` le gana al provider, como cualquier prop `labels`", () => {
+    render(
+      <LabelsProvider value={{ pageHeader: { breadcrumb: "Breadcrumb" } }}>
+        <PageHeader breadcrumb={<span>Trips</span>} breadcrumbLabel="Where you are">
+          <PageHeaderTitle>Trips</PageHeaderTitle>
+        </PageHeader>
+      </LabelsProvider>
+    )
+    expect(screen.getByRole("navigation", { name: "Where you are" })).toBeInTheDocument()
+  })
+
   // Sin esto, armar una traducción con `{ ...defaultLabels, ...en }` no serviría
   // de nada: TypeScript no podría marcar lo que falta.
   it("defaultLabels trae todos los grupos con todas sus claves", () => {
@@ -96,6 +121,7 @@ describe("LabelsProvider", () => {
       "dialog",
       "drawer",
       "numberField",
+      "pageHeader",
       "sheet",
       "sidebar",
       "themeSwitcher",

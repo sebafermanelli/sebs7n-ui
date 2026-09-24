@@ -9,6 +9,25 @@ major.
 
 ## [Unreleased]
 
+### Fixed
+
+- **`PageHeader` ya no manda un `aria-label` en español a una app traducida.**
+  `breadcrumbLabel` tenía default `"Migas de pan"` y `PageHeader` era Server
+  Component, así que no había forma de que el `LabelsProvider` lo alcanzara: en
+  una app trilingüe, 18 de 22 pantallas dejaban el nombre del `<nav>` en español
+  en los tres idiomas y nadie se enteraba, porque un `aria-label` mal no se ve.
+  Ahora el `<nav>` de las migas es un subcomponente de cliente interno que lee el
+  provider (`pageHeader.breadcrumb`, grupo nuevo de `Labels`), y `breadcrumbLabel`
+  quedó como override de una pantalla, sin default. **`PageHeader` sigue siendo
+  Server Component** —un Server Component puede renderizar uno de cliente; lo que
+  no puede es llamar un hook— y sigue en la lista de los dieciséis.
+- **Migas envueltas en `<Breadcrumb>` adentro de `PageHeader`: dos landmarks
+  anidados.** La prop `breadcrumb` es un `ReactNode` y lo natural es pasarle un
+  `<Breadcrumb>`, que ya es un `<nav aria-label>`: quedaban dos entradas de
+  navegación para la misma lista. `ReactNode` no se puede tipar más finito, así
+  que en desarrollo se avisa por consola una vez, igual que con los diálogos sin
+  nombre.
+
 ## [0.5.1] - 2026-09-23
 
 ### Fixed

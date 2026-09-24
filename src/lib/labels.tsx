@@ -29,15 +29,22 @@ import * as React from "react"
  * traducción con `{ ...defaultLabels, ...en }` deja que TypeScript marque lo que
  * falte en `en` en vez de que aparezca en español en producción.
  *
- * **Faltan cuatro componentes a propósito**: `Breadcrumb`, `Pagination`, `Tag` y
- * `PageHeader` no leen del provider, porque leerlo pide un contexto de React y
- * eso los convertiría en componentes de cliente. Los cuatro están hoy en la
- * lista de los que se pueden renderizar en un Server Component, y eso vale más
- * que la comodidad: sus textos se pasan por prop (`ellipsisLabel`,
- * `removeLabel`, `breadcrumbLabel`, `labels`, `aria-label`), que es como venían.
+ * **Faltan tres componentes a propósito**: `Breadcrumb`, `Pagination` y `Tag` no
+ * leen del provider, porque leerlo pide un contexto de React y eso los
+ * convertiría en componentes de cliente. Los tres están hoy en la lista de los
+ * que se pueden renderizar en un Server Component, y eso vale más que la
+ * comodidad: sus textos se pasan por prop (`ellipsisLabel`, `removeLabel`,
+ * `labels`, `aria-label`), que es como venían.
  *
- * **Pendiente para la próxima major:** esos tres sueltos —`ellipsisLabel` de
- * `Breadcrumb` y `Pagination`, `breadcrumbLabel`, `removeLabel` de `Tag`— tendrían
+ * `PageHeader` estaba en esa lista hasta la 0.5.1 y salió: su `breadcrumbLabel`
+ * era un `aria-label` con default en español, y en una app trilingüe 18 de 22
+ * pantallas lo dejaban así sin que nadie se enterara —un `aria-label` mal no se
+ * ve—. Sigue siendo Server Component: el `<nav>` de las migas se mudó a un
+ * subcomponente de cliente (`internal/page-header-breadcrumb`) que sí lee el
+ * provider, y un Server Component puede renderizar uno de cliente.
+ *
+ * **Pendiente para la próxima major:** esos sueltos —`ellipsisLabel` de
+ * `Breadcrumb` y `Pagination`, `removeLabel` de `Tag`— tendrían
  * que pasar a un objeto `labels`, como los demás. Hoy conviven dos formas de decir
  * lo mismo. No se cambia acá porque renombrar una prop rompe a quien la use y no
  * hay nada que gane con eso ahora: queda anotado y se hace de una sola vez.
@@ -77,6 +84,10 @@ export type Labels = {
     increment: string
     /** `aria-roledescription` del campo: lo que el lector dice en vez de «campo de texto». */
     roleDescription: string
+  }
+  pageHeader: {
+    /** Nombre del `<nav>` de las migas del encabezado. */
+    breadcrumb: string
   }
   sheet: { close: string }
   sidebar: {
@@ -122,6 +133,7 @@ export const defaultLabels: Labels = {
     increment: "Aumentar",
     roleDescription: "Campo numérico",
   },
+  pageHeader: { breadcrumb: "Migas de pan" },
   sheet: { close: "Cerrar" },
   sidebar: {
     nav: "Navegación principal",

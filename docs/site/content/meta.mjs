@@ -1144,7 +1144,7 @@ export const COMPONENTS = {
       "Sin `\"use client\"`: los `<a>` salen en el HTML del server, que es lo que ve un crawler.",
     ],
     usage: [
-      "**Dentro de `PageHeader` va `BreadcrumbList` suelto**, sin `Breadcrumb`: el `<nav>` ya lo pone la prop `breadcrumb`, y dos landmarks anidados confunden.",
+      "**Dentro de `PageHeader` va `BreadcrumbList` suelto**, sin `Breadcrumb`: el `<nav>` ya lo pone la prop `breadcrumb`, y dos landmarks anidados confunden. Si igual lo envolvés, `PageHeader` avisa por consola en desarrollo.",
       "**Los separadores los pone `BreadcrumbList`**, no el llamador. Para cambiarlos, `separator={<SlashIcon />}`.",
       "**No inventes otro estilo de link**: usa `linkVariants({ variant: \"subtle\" })`, el mismo de cualquier link suelto del sistema.",
       "Con Next, `render={<Link href=\"/clientes\" />}`: sigue siendo un `<a>`, se abre en una pestaña nueva y el crawler lo ve.",
@@ -1728,14 +1728,22 @@ export const COMPONENTS = {
     keyboard: [["Tab", "Migas primero, después las acciones."]],
     a11y: [
       "`PageHeaderTitle` es el `<h1>` de la página: uno solo por pantalla.",
-      "`breadcrumb` emite un `<nav>` con su propio `aria-label` (configurable con `breadcrumbLabel`).",
-      "Sin `\"use client\"`: sirve en un Server Component.",
+      "`breadcrumb` emite un `<nav>` cuyo nombre sale del `LabelsProvider` (`pageHeader.breadcrumb`), así que en una app traducida ya está bien sin escribir nada. `breadcrumbLabel` sigue existiendo como override de una pantalla.",
+      "**Adentro de `breadcrumb` va `BreadcrumbList` suelto**, sin `Breadcrumb`: el `<nav>` lo pone `PageHeader`. Dos landmarks de navegación anidados le dan al lector dos entradas para la misma lista; en desarrollo avisa por consola.",
+      "Sin `\"use client\"`: sirve en un Server Component. El `<nav>` de las migas es un subcomponente de cliente interno —por eso puede leer el provider—, y un Server Component puede renderizar uno de cliente.",
     ],
     usage: [
       "Primer hijo de `AppShellContent`.",
       "Hasta dos acciones: la principal y una secundaria. El resto, en un `DropdownMenu`.",
       "La bajada es una línea que explica la pantalla, no una descripción de marketing.",
+      "**No pases `breadcrumbLabel` en cada página.** Es el override del caso raro; el idioma lo resuelve el `LabelsProvider` una vez, en el layout raíz.",
     ],
+    props: {
+      PageHeader: {
+        breadcrumb: "Las migas, solo en páginas de detalle. Va `BreadcrumbList` suelto: el `<nav>` lo pone `PageHeader`.",
+        breadcrumbLabel: "Nombre del `<nav>` de las migas para una pantalla puntual. Sin esto, el del `LabelsProvider`.",
+      },
+    },
     related: ["app-shell-content", "stat", "button"],
   },
 }

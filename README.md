@@ -475,11 +475,15 @@ La prop `labels` de cada componente sigue existiendo y **le gana al provider**:
 es para la excepción de una pantalla («Quitar del carrito» en vez de «Quitar»),
 no para traducir.
 
-`Breadcrumb`, `Pagination`, `Tag` y `PageHeader` no leen del provider: leerlo
-pide un contexto de React y eso los convertiría en componentes de cliente, y los
-cuatro se pueden renderizar hoy en un Server Component. Sus textos se pasan por
-prop, como venían (`ellipsisLabel`, `removeLabel`, `breadcrumbLabel`, `labels`,
-`aria-label`).
+`Breadcrumb`, `Pagination` y `Tag` no leen del provider: leerlo pide un contexto
+de React y eso los convertiría en componentes de cliente, y los tres se pueden
+renderizar hoy en un Server Component. Sus textos se pasan por prop, como venían
+(`ellipsisLabel`, `removeLabel`, `labels`, `aria-label`).
+
+`PageHeader` **sí** lo lee, sin dejar de ser Server Component: el `<nav>` de las
+migas es un subcomponente de cliente interno, y `breadcrumbLabel` quedó como
+override de una pantalla. Antes tenía default en español; un `aria-label` en el
+idioma equivocado no se ve, así que nadie lo notaba.
 
 El `lang` del `<html>` es de la app, y no es opcional: cambia la pronunciación
 del lector de pantalla.
