@@ -9,6 +9,11 @@ major.
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-09-23
+
+Los tres agujeros que mostró el `LabelsProvider` al usarse por primera vez en una
+app traducida de verdad. Ninguno se veía desde adentro del paquete.
+
 ### Added
 
 - **Los labels que se pegan a un dato aceptan una plantilla, no solo un
@@ -706,7 +711,8 @@ pnpm add sebs7n-ui @base-ui/react next-themes sonner geist
   global —un provider de locale o un diccionario único—, así que una app en otro
   idioma tiene que pasar `labels` en cada punto de uso.
 
-[Unreleased]: https://github.com/sebafermanelli/sebs7n-ui/compare/v0.5.1...HEAD
+[Unreleased]: https://github.com/sebafermanelli/sebs7n-ui/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/sebafermanelli/sebs7n-ui/compare/v0.5.1...v0.6.0
 [0.5.1]: https://github.com/sebafermanelli/sebs7n-ui/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/sebafermanelli/sebs7n-ui/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/sebafermanelli/sebs7n-ui/compare/v0.3.3...v0.4.0
