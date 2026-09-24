@@ -487,6 +487,20 @@ del objeto: un `value` nuevo con los mismos textos no re-renderiza a ningún
 consumidor. Son 24 comparaciones de strings —0,6 µs— contra re-renderizar todo
 lo que lee el contexto, que es la app entera.
 
+**Los labels que se pegan a un dato aceptan una función.** `combobox.remove` es
+el prefijo de «Quitar Chile», y eso solo funciona donde el verbo va adelante; en
+alemán es «Chile entfernen». Como plantilla sale en cualquier idioma, igual que
+el `labels.page` de `Pagination`:
+
+```tsx
+combobox: { remove: (name) => `${name} entfernen` }
+```
+
+Vale lo mismo para las props `removeLabel` de `Tag` y `ComboboxChip`. El string
+sigue andando igual: nadie que escriba en español tiene que escribir una
+función. Una función sí conviene declararla a nivel de módulo o memoizarla: es
+lo único de `Labels` que el provider compara por identidad.
+
 `Breadcrumb`, `Pagination` y `Tag` no leen del provider: leerlo pide un contexto
 de React y eso los convertiría en componentes de cliente, y los tres se pueden
 renderizar hoy en un Server Component. Sus textos se pasan por prop, como venían

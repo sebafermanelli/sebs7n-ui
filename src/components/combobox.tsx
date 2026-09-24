@@ -4,6 +4,7 @@ import type * as React from "react"
 import { Combobox as ComboboxPrimitive } from "@base-ui/react/combobox"
 import { CheckIcon, ChevronDownIcon, Loader2Icon, XIcon } from "lucide-react"
 
+import { nombreDeQuitar } from "../internal/remove-label.js"
 import { renderShellTrigger } from "../internal/shell-trigger.js"
 import { useLabels } from "../lib/labels.js"
 import { cn, type WithClassName } from "../lib/utils.js"
@@ -215,8 +216,12 @@ function ComboboxChips({ className, size = "md", showTrigger = true, showClear =
 }
 
 type ComboboxChipProps = WithClassName<ComboboxPrimitive.Chip.Props> & {
-  /** Prefijo del nombre del botón de quitar: "Quitar Chile". */
-  removeLabel?: string
+  /**
+   * Nombre del botón de quitar. Un string es el prefijo del dato («Quitar» → «Quitar Chile»);
+   * una función recibe el dato y devuelve la frase entera, para los idiomas donde el verbo no
+   * va adelante: `(name) => name + " entfernen"`.
+   */
+  removeLabel?: string | ((name: string) => string)
   /** Texto para el nombre accesible cuando children no es texto. */
   textValue?: string
 }
@@ -237,7 +242,6 @@ function ComboboxChip({ className, children, removeLabel, textValue, ...props }:
   // `useLabels()` va suelto y no adentro de un `??`: el `??` corta, y un hook que a veces se llama
   // y a veces no rompe el orden de los hooks.
   const l = useLabels().combobox
-  const prefijo = removeLabel ?? l.remove
   const name = textValue ?? (typeof children === "string" || typeof children === "number" ? String(children) : undefined)
   return (
     <ComboboxPrimitive.Chip
@@ -248,7 +252,7 @@ function ComboboxChip({ className, children, removeLabel, textValue, ...props }:
       <span className="truncate">{children}</span>
       <ComboboxPrimitive.ChipRemove
         data-slot="combobox-chip-remove"
-        aria-label={name ? `${prefijo} ${name}` : prefijo}
+        aria-label={nombreDeQuitar(removeLabel ?? l.remove, name)}
         className={tagRemoveClassName.md}
       >
         <XIcon />

@@ -88,6 +88,38 @@ describe("LabelsProvider", () => {
     expect(screen.getByRole("button", { name: "Remove Chile" })).toBeInTheDocument()
   })
 
+  // Un prefijo solo sirve donde el verbo va adelante: en alemán es «Chile entfernen».
+  // Como plantilla sale en cualquier idioma, y el string sigue andando igual.
+  it("`combobox.remove` también puede ser la plantilla entera", () => {
+    render(
+      <LabelsProvider value={{ combobox: { remove: (name) => `${name} entfernen` } }}>
+        <Combobox multiple defaultValue={["Chile"]} items={["Chile", "Uruguay"]}>
+          <ComboboxChips>
+            <ComboboxChip>Chile</ComboboxChip>
+            <ComboboxInput aria-label="Länder" />
+          </ComboboxChips>
+        </Combobox>
+      </LabelsProvider>
+    )
+    expect(screen.getByRole("button", { name: "Chile entfernen" })).toBeInTheDocument()
+  })
+
+  it("la prop `removeLabel` del chip le gana al provider, sea string o función", () => {
+    render(
+      <LabelsProvider value={{ combobox: { remove: "Remove" } }}>
+        <Combobox multiple defaultValue={["Chile", "Uruguay"]} items={["Chile", "Uruguay"]}>
+          <ComboboxChips>
+            <ComboboxChip removeLabel="Sacar">Chile</ComboboxChip>
+            <ComboboxChip removeLabel={(name) => `${name} entfernen`}>Uruguay</ComboboxChip>
+            <ComboboxInput aria-label="Países" />
+          </ComboboxChips>
+        </Combobox>
+      </LabelsProvider>
+    )
+    expect(screen.getByRole("button", { name: "Sacar Chile" })).toBeInTheDocument()
+    expect(screen.getByRole("button", { name: "Uruguay entfernen" })).toBeInTheDocument()
+  })
+
   // El agujero que abrió la 0.5.0: `breadcrumbLabel` tenía default en español y era un
   // `aria-label`, así que una app traducida lo dejaba en español sin que nadie lo notara.
   it("el nombre del <nav> de las migas de PageHeader sale del provider", () => {

@@ -82,8 +82,15 @@ export type Labels = {
     loading: string
     /** Lo que dice la lista cuando no hay resultados. */
     empty: string
-    /** Prefijo del nombre del botón de quitar un chip: «Quitar Chile». */
-    remove: string
+    /**
+     * Nombre del botón de quitar un chip. Un string es el **prefijo** del dato («Quitar» →
+     * «Quitar Chile»), que sirve donde el verbo va adelante. Una función es la **plantilla**
+     * entera y sirve en cualquier idioma: `(name) => name + " entfernen"`.
+     *
+     * Declarala a nivel de módulo o memoizala: es lo único de `Labels` que el provider compara
+     * por identidad, porque comparar funciones por contenido no existe.
+     */
+    remove: string | ((name: string) => string)
   }
   dialog: {
     /** Nombre del botón X. */
@@ -189,6 +196,11 @@ function mezclar(base: Labels, encima: PartialLabels | undefined): Labels {
  * Dos niveles y `Object.is` en las hojas, la misma forma que `mezclar`. Es lo que
  * decide si el provider puede reusar la identidad anterior: 24 `Object.is` medidos
  * en 0,6 µs, que al lado de re-renderizar la app entera no es nada.
+ *
+ * Un label que es función —hoy solo `combobox.remove`— se compara por identidad,
+ * porque comparar funciones por contenido no existe. Declarada adentro del
+ * componente cambia en cada render y ahí el provider sí propaga; a nivel de módulo
+ * o memoizada, no.
  */
 function mismosTextos(a: Labels, b: Labels): boolean {
   const grupos = Object.keys(a) as (keyof Labels)[]

@@ -9,6 +9,17 @@ major.
 
 ## [Unreleased]
 
+### Added
+
+- **Los labels que se pegan a un dato aceptan una plantilla, no solo un
+  prefijo.** `combobox.remove` del `LabelsProvider` y las props `removeLabel` de
+  `Tag` y `ComboboxChip` armaban el nombre del botón como «Quitar» + «Chile».
+  Eso funciona en español, inglés y portugués, y en ningún idioma donde el verbo
+  no vaya adelante: en alemán es «Chile entfernen» y no hay prefijo que lo arme.
+  Ahora los tres aceptan `string | ((name: string) => string)`, que es lo que ya
+  hacía `labels.page` de `Pagination`. El string sigue andando igual: no rompe
+  nada. Son los únicos tres labels del paquete que se concatenan con un dato.
+
 ### Changed
 
 - **`LabelsProvider` memoiza contra el contenido y no contra la identidad de

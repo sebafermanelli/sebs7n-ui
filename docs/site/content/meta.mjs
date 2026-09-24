@@ -171,7 +171,7 @@ export const COMPONENTS = {
       ["Enter · Espacio", "Quita el tag."],
     ],
     a11y: [
-      "El botón de quitar siempre tiene nombre accesible: «Quitar Chile», armado con el texto del tag. Si `children` no es texto, pasale `textValue`.",
+      "El botón de quitar siempre tiene nombre accesible: «Quitar Chile», armado con el texto del tag. Si `children` no es texto, pasale `textValue`; si el idioma no pone el verbo adelante, `removeLabel` acepta una función y arma la frase entera.",
       "El cuerpo es un `<span>`: lo único enfocable es el botón, así que una lista de diez tags son diez paradas de tabulación, no veinte.",
       "Quitar un tag saca el foco de la página. Devolvelo al contenedor de la lista o al control que los genera, y anunciá el cambio con una región `aria-live` si la lista es lo único que cambió.",
       "El color no puede ser la única señal de nada: el texto del tag es el dato.",
@@ -188,7 +188,7 @@ export const COMPONENTS = {
       Tag: {
         size: "Las dos alturas del `Badge`: `sm` 20px · `md` 24px.",
         onRemove: "Qué hacer al quitar. Sin esto no aparece el botón — y sin botón, probablemente sea un `Badge`.",
-        removeLabel: "Prefijo del nombre del botón: «Quitar Chile».",
+        removeLabel: "Nombre del botón de quitar. Un string es el prefijo del dato («Quitar» → «Quitar Chile»); una función recibe el dato y devuelve la frase entera, que es lo único que sirve donde el verbo no va adelante: `(name) => name + \" entfernen\"`.",
         textValue: "El texto del tag para el nombre del botón, cuando `children` no es texto.",
         color: "Los mismos nueve tonos del Badge.",
       },
@@ -530,7 +530,7 @@ export const COMPONENTS = {
     a11y: [
       "`ComboboxStatus` es una región `aria-live`: con `loading` anuncia «Buscando…» sin robar el foco.",
       "`ComboboxEmpty` sin children dice «Sin resultados»; con `{null}` no muestra nada (para el estado de carga).",
-      "Cada chip trae un botón «Quitar …» con nombre accesible propio (`removeLabel`).",
+      "Cada chip trae un botón «Quitar …» con nombre accesible propio. Sale de `combobox.remove` del `LabelsProvider` o de `removeLabel`, y los dos aceptan un string —el prefijo del dato— o una función que recibe el dato y arma la frase entera, para los idiomas donde el verbo no va adelante («Chile entfernen»).",
       "El input hereda los estados de `Input`: `aria-invalid`, `disabled` y el mismo `focus-border`.",
     ],
     usage: [
