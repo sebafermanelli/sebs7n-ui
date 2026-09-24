@@ -221,7 +221,39 @@ Ojo con el atajo: `const en: Labels = { ...defaultLabels, … }` **no** marca na
 
 Los providers anidados se suman. La prop `labels` de cada componente le gana al provider: es la excepción de una pantalla, no la traducción.
 
-`Breadcrumb`, `Pagination`, `Tag` y `PageHeader` no leen del provider —leerlo los volvería componentes de cliente y los cuatro se pueden renderizar en un Server Component—: sus textos van por prop.
+### El `value` se puede armar en el render
+
+Con i18n de verdad los textos salen de un hook, así que el objeto es nuevo en cada render:
+
+```tsx
+"use client"
+import { useTranslations } from "next-intl"
+
+export function UiLabels({ children }: { children: React.ReactNode }) {
+  const t = useTranslations("ui")
+  return <LabelsProvider value={{ dialog: { close: t("close") }, combobox: { empty: t("empty") } }}>{children}</LabelsProvider>
+}
+```
+
+**No hace falta envolverlo en `useMemo`.** El provider memoiza contra el **contenido**: si el `value` nuevo dice lo mismo que el anterior, el contexto conserva su identidad y nadie se re-renderiza. Son 24 comparaciones de strings —0,6 µs medidos— contra re-renderizar todo lo que lee el contexto, que es la app entera. Que el llamador tuviera que saber eso era pedirle que conociera la implementación del provider.
+
+### Los labels que se pegan a un dato son plantillas
+
+`combobox.remove` arma el nombre del botón de quitar un chip. Como string es un **prefijo** —«Quitar» + «Chile»—, y eso solo funciona donde el verbo va adelante: en alemán es «Chile entfernen». Por eso acepta también una función, igual que el `labels.page` de `Pagination`:
+
+```tsx
+// A nivel de módulo, no adentro del componente: es lo único de `Labels` que el
+// provider compara por identidad, porque comparar funciones por contenido no existe.
+const remove = (name: string) => `${name} entfernen`
+
+<LabelsProvider value={{ combobox: { remove } }}>
+```
+
+El string sigue andando igual y es lo que corresponde en español. Lo mismo vale para las props `removeLabel` de `Tag` y `ComboboxChip`, que le ganan al provider.
+
+`Breadcrumb`, `Pagination` y `Tag` no leen del provider —leerlo los volvería componentes de cliente y los tres se pueden renderizar en un Server Component—: sus textos van por prop.
+
+`PageHeader` sí lo lee y sigue siendo Server Component: el `<nav>` de las migas es un subcomponente de cliente interno. Su `breadcrumbLabel` ya no tiene default en español, es el override de una pantalla.
 
 El `lang` del `<html>` es tuyo y no es opcional: cambia la pronunciación del lector de pantalla.
 

@@ -88,6 +88,8 @@ No llevan `"use client"` y se pueden usar desde un Server Component:
 - **Los diez módulos de `sebs7n-ui/variants/*`**, sin excepción: `badge`, `button`, `card`, `input`, `link`, `menu`, `overlay`, `sidebar`, `tag` y `toggle`. Ninguno lleva `"use client"`, y todos salen también por el barrel.
 - **Los dieciséis componentes sin estado**: `Alert`, `AppShellContent`, `Badge`, `Breadcrumb`, `Card`, `EmptyState`, `Kbd`, `Label`, `PageHeader`, `Pagination`, `Separator`, `Skeleton`, `Spinner`, `Stat`, `Table` y `Tag`. Los otros 42 son `"use client"`, que es lo que corresponde: un `DropdownMenu` necesita estado.
 
+`PageHeader` está en esa lista aunque el `<nav>` de sus migas lea el `LabelsProvider`: ese `<nav>` es un subcomponente de cliente interno, y un Server Component puede renderizar uno de cliente. Lo que no puede es llamar un hook, y `PageHeader` no llama ninguno. Es la forma de que un texto salga traducido sin que el llamador tenga que acordarse de pasarlo.
+
 
 ## Tipografía
 

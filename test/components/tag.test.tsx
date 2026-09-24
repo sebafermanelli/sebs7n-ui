@@ -47,6 +47,26 @@ describe("Tag", () => {
     expect(screen.getByRole("button", { name: "Sacar" })).toBeInTheDocument()
   })
 
+  // «Quitar» + el dato solo funciona donde el verbo va adelante. En alemán es «Chile
+  // entfernen», y con un prefijo no hay forma. Mismo criterio que `labels.page` de
+  // `Pagination`, que ya aceptaba función.
+  it("removeLabel también puede ser la plantilla entera, para los idiomas con el verbo atrás", () => {
+    const entfernen = (name: string) => `${name} entfernen`
+    const { rerender } = render(
+      <Tag onRemove={() => {}} removeLabel={entfernen}>
+        Chile
+      </Tag>
+    )
+    expect(screen.getByRole("button", { name: "Chile entfernen" })).toBeInTheDocument()
+    // Sin nombre que poner, la plantilla no deja el espacio de adelante colgando.
+    rerender(
+      <Tag onRemove={() => {}} removeLabel={entfernen}>
+        <span>sin texto</span>
+      </Tag>
+    )
+    expect(screen.getByRole("button", { name: "entfernen" })).toBeInTheDocument()
+  })
+
   it("comparte forma y paleta con el Badge subtle: una sola etiqueta en el sistema", () => {
     render(
       <>

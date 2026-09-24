@@ -1,6 +1,7 @@
 import type * as React from "react"
 import { XIcon } from "lucide-react"
 
+import { nombreDeQuitar } from "../internal/remove-label.js"
 import { cn } from "../lib/utils.js"
 import { tagRemoveClassName, tagVariants, type TagColor, type TagSize } from "../variants/tag.js"
 
@@ -9,8 +10,12 @@ type TagProps = Omit<React.ComponentProps<"span">, "color"> & {
   size?: TagSize
   /** Qué hacer al quitar. Sin esto el tag no se puede sacar, y entonces probablemente sea un `Badge`. */
   onRemove?: () => void
-  /** Prefijo del nombre del botón de quitar: «Quitar Chile». */
-  removeLabel?: string
+  /**
+   * Nombre del botón de quitar. Un string es el prefijo del dato («Quitar» → «Quitar Chile»);
+   * una función recibe el dato y devuelve la frase entera, para los idiomas donde el verbo no
+   * va adelante: `(name) => name + " entfernen"`.
+   */
+  removeLabel?: string | ((name: string) => string)
   /** El texto del tag, para el nombre del botón, cuando `children` no es texto. */
   textValue?: string
 }
@@ -53,7 +58,7 @@ function Tag({
         <button
           data-slot="tag-remove"
           type="button"
-          aria-label={name ? `${removeLabel} ${name}` : removeLabel}
+          aria-label={nombreDeQuitar(removeLabel, name)}
           onClick={onRemove}
           className={tagRemoveClassName[size]}
         >

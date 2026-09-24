@@ -9,6 +9,49 @@ major.
 
 ## [Unreleased]
 
+### Added
+
+- **Los labels que se pegan a un dato aceptan una plantilla, no solo un
+  prefijo.** `combobox.remove` del `LabelsProvider` y las props `removeLabel` de
+  `Tag` y `ComboboxChip` armaban el nombre del botón como «Quitar» + «Chile».
+  Eso funciona en español, inglés y portugués, y en ningún idioma donde el verbo
+  no vaya adelante: en alemán es «Chile entfernen» y no hay prefijo que lo arme.
+  Ahora los tres aceptan `string | ((name: string) => string)`, que es lo que ya
+  hacía `labels.page` de `Pagination`. El string sigue andando igual: no rompe
+  nada. Son los únicos tres labels del paquete que se concatenan con un dato.
+
+### Changed
+
+- **`LabelsProvider` memoiza contra el contenido y no contra la identidad de
+  `value`.** Memoizar contra la identidad era correcto y no se notaba con el
+  ejemplo del README, que usa una constante de módulo; pero el caso de uso del
+  provider es i18n, donde el objeto lo arma un componente (`t("close")` por
+  clave) y es nuevo en cada render. Sin `useMemo` del lado del llamador, cada
+  render del layout re-renderizaba a todos los consumidores del contexto, o sea
+  a toda la app. Ahora compara los 24 textos con `Object.is` —0,6 µs medidos—
+  y, si dicen lo mismo, conserva la identidad anterior. Quien usa el provider no
+  tiene por qué conocer su implementación para que su app no se arrastre. El
+  `useMemo` del llamador sigue siendo válido y ahorra la comparación.
+
+### Fixed
+
+- **`PageHeader` ya no manda un `aria-label` en español a una app traducida.**
+  `breadcrumbLabel` tenía default `"Migas de pan"` y `PageHeader` era Server
+  Component, así que no había forma de que el `LabelsProvider` lo alcanzara: en
+  una app trilingüe, 18 de 22 pantallas dejaban el nombre del `<nav>` en español
+  en los tres idiomas y nadie se enteraba, porque un `aria-label` mal no se ve.
+  Ahora el `<nav>` de las migas es un subcomponente de cliente interno que lee el
+  provider (`pageHeader.breadcrumb`, grupo nuevo de `Labels`), y `breadcrumbLabel`
+  quedó como override de una pantalla, sin default. **`PageHeader` sigue siendo
+  Server Component** —un Server Component puede renderizar uno de cliente; lo que
+  no puede es llamar un hook— y sigue en la lista de los dieciséis.
+- **Migas envueltas en `<Breadcrumb>` adentro de `PageHeader`: dos landmarks
+  anidados.** La prop `breadcrumb` es un `ReactNode` y lo natural es pasarle un
+  `<Breadcrumb>`, que ya es un `<nav aria-label>`: quedaban dos entradas de
+  navegación para la misma lista. `ReactNode` no se puede tipar más finito, así
+  que en desarrollo se avisa por consola una vez, igual que con los diálogos sin
+  nombre.
+
 ## [0.5.1] - 2026-09-23
 
 ### Fixed

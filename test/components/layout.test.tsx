@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react"
 import { InboxIcon } from "lucide-react"
-import { describe, expect, it } from "vitest"
+import { describe, expect, it, vi } from "vitest"
 
 import { AppShellContent } from "../../src/components/app-shell-content"
 import { Button } from "../../src/components/button"
@@ -58,6 +58,45 @@ describe("PageHeader", () => {
     // Sin col-start-1 explícito, sin acciones la descripción caía en la columna 2 al lado del título.
     expect(screen.getByRole("heading", { level: 1, name: "Clientes" })).toHaveClass("sm:col-start-1")
     expect(screen.getByText("Todos los inquilinos")).toHaveClass("sm:col-start-1")
+  })
+
+  // La garantía es que `PageHeader` se pueda renderizar en un Server Component, y lo que la
+  // rompe es una sola cosa: que llame un hook. Un Server Component se invoca sin dispatcher de
+  // hooks, así que llamar la función a mano —fuera de un render— es exactamente esa prueba: si
+  // alguien le mete un `useLabels()` adentro, esto tira «Invalid hook call».
+  //
+  // El `<nav>` de las migas sí lee el provider, pero vive en un componente de cliente aparte:
+  // acá sale como elemento sin ejecutarse, que es lo que hace un Server Component con un hijo
+  // de cliente.
+  it("sigue siendo server-safe: se puede llamar sin dispatcher de hooks", () => {
+    expect(() =>
+      PageHeader({
+        breadcrumb: <span>Viajes</span>,
+        children: <PageHeaderTitle>Viajes</PageHeaderTitle>,
+      })
+    ).not.toThrow()
+    for (const parte of [PageHeaderTitle, PageHeaderDescription, PageHeaderActions]) {
+      expect(() => parte({ children: "x" })).not.toThrow()
+    }
+  })
+
+  it("avisa en desarrollo si las migas traen su propio <nav>: son dos landmarks anidados", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {})
+    render(
+      <PageHeader
+        breadcrumb={
+          <nav aria-label="breadcrumb">
+            <ol>
+              <li>Viajes</li>
+            </ol>
+          </nav>
+        }
+      >
+        <PageHeaderTitle>Viajes</PageHeaderTitle>
+      </PageHeader>
+    )
+    expect(warn.mock.calls.map(([mensaje]) => String(mensaje)).join("\n")).toMatch(/landmarks de navegación anidados/)
+    warn.mockRestore()
   })
 })
 

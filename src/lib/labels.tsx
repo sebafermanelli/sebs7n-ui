@@ -29,15 +29,33 @@ import * as React from "react"
  * traducción con `{ ...defaultLabels, ...en }` deja que TypeScript marque lo que
  * falte en `en` en vez de que aparezca en español en producción.
  *
- * **Faltan cuatro componentes a propósito**: `Breadcrumb`, `Pagination`, `Tag` y
- * `PageHeader` no leen del provider, porque leerlo pide un contexto de React y
- * eso los convertiría en componentes de cliente. Los cuatro están hoy en la
- * lista de los que se pueden renderizar en un Server Component, y eso vale más
- * que la comodidad: sus textos se pasan por prop (`ellipsisLabel`,
- * `removeLabel`, `breadcrumbLabel`, `labels`, `aria-label`), que es como venían.
+ * El `value` se puede armar en el render, que es lo que pasa con i18n:
  *
- * **Pendiente para la próxima major:** esos tres sueltos —`ellipsisLabel` de
- * `Breadcrumb` y `Pagination`, `breadcrumbLabel`, `removeLabel` de `Tag`— tendrían
+ * ```tsx
+ * const t = useTranslations("ui")
+ * <LabelsProvider value={{ dialog: { close: t("close") } }}>
+ * ```
+ *
+ * El provider compara el contenido, no la identidad del objeto: un `value` nuevo
+ * con los mismos textos no re-renderiza a nadie. El `useMemo` del lado del
+ * llamador es opcional.
+ *
+ * **Faltan tres componentes a propósito**: `Breadcrumb`, `Pagination` y `Tag` no
+ * leen del provider, porque leerlo pide un contexto de React y eso los
+ * convertiría en componentes de cliente. Los tres están hoy en la lista de los
+ * que se pueden renderizar en un Server Component, y eso vale más que la
+ * comodidad: sus textos se pasan por prop (`ellipsisLabel`, `removeLabel`,
+ * `labels`, `aria-label`), que es como venían.
+ *
+ * `PageHeader` estaba en esa lista hasta la 0.5.1 y salió: su `breadcrumbLabel`
+ * era un `aria-label` con default en español, y en una app trilingüe 18 de 22
+ * pantallas lo dejaban así sin que nadie se enterara —un `aria-label` mal no se
+ * ve—. Sigue siendo Server Component: el `<nav>` de las migas se mudó a un
+ * subcomponente de cliente (`internal/page-header-breadcrumb`) que sí lee el
+ * provider, y un Server Component puede renderizar uno de cliente.
+ *
+ * **Pendiente para la próxima major:** esos sueltos —`ellipsisLabel` de
+ * `Breadcrumb` y `Pagination`, `removeLabel` de `Tag`— tendrían
  * que pasar a un objeto `labels`, como los demás. Hoy conviven dos formas de decir
  * lo mismo. No se cambia acá porque renombrar una prop rompe a quien la use y no
  * hay nada que gane con eso ahora: queda anotado y se hace de una sola vez.
@@ -64,8 +82,15 @@ export type Labels = {
     loading: string
     /** Lo que dice la lista cuando no hay resultados. */
     empty: string
-    /** Prefijo del nombre del botón de quitar un chip: «Quitar Chile». */
-    remove: string
+    /**
+     * Nombre del botón de quitar un chip. Un string es el **prefijo** del dato («Quitar» →
+     * «Quitar Chile»), que sirve donde el verbo va adelante. Una función es la **plantilla**
+     * entera y sirve en cualquier idioma: `(name) => name + " entfernen"`.
+     *
+     * Declarala a nivel de módulo o memoizala: es lo único de `Labels` que el provider compara
+     * por identidad, porque comparar funciones por contenido no existe.
+     */
+    remove: string | ((name: string) => string)
   }
   dialog: {
     /** Nombre del botón X. */
@@ -77,6 +102,10 @@ export type Labels = {
     increment: string
     /** `aria-roledescription` del campo: lo que el lector dice en vez de «campo de texto». */
     roleDescription: string
+  }
+  pageHeader: {
+    /** Nombre del `<nav>` de las migas del encabezado. */
+    breadcrumb: string
   }
   sheet: { close: string }
   sidebar: {
@@ -122,6 +151,7 @@ export const defaultLabels: Labels = {
     increment: "Aumentar",
     roleDescription: "Campo numérico",
   },
+  pageHeader: { breadcrumb: "Migas de pan" },
   sheet: { close: "Cerrar" },
   sidebar: {
     nav: "Navegación principal",
@@ -161,16 +191,57 @@ function mezclar(base: Labels, encima: PartialLabels | undefined): Labels {
 }
 
 /**
+ * ¿Dicen lo mismo los dos objetos ya mezclados?
+ *
+ * Dos niveles y `Object.is` en las hojas, la misma forma que `mezclar`. Es lo que
+ * decide si el provider puede reusar la identidad anterior: 24 `Object.is` medidos
+ * en 0,6 µs, que al lado de re-renderizar la app entera no es nada.
+ *
+ * Un label que es función —hoy solo `combobox.remove`— se compara por identidad,
+ * porque comparar funciones por contenido no existe. Declarada adentro del
+ * componente cambia en cada render y ahí el provider sí propaga; a nivel de módulo
+ * o memoizada, no.
+ */
+function mismosTextos(a: Labels, b: Labels): boolean {
+  const grupos = Object.keys(a) as (keyof Labels)[]
+  if (grupos.length !== Object.keys(b).length) return false
+  for (const grupo of grupos) {
+    const unGrupo = a[grupo] as Record<string, unknown>
+    const otroGrupo = b[grupo] as Record<string, unknown> | undefined
+    if (!otroGrupo) return false
+    const claves = Object.keys(unGrupo)
+    if (claves.length !== Object.keys(otroGrupo).length) return false
+    for (const clave of claves) if (!Object.is(unGrupo[clave], otroGrupo[clave])) return false
+  }
+  return true
+}
+
+/**
  * Cambia los textos internos de todos los componentes que estén abajo.
  *
  * Anidados se suman: un provider adentro de otro mezcla sobre lo que ya había,
  * no sobre los textos en español. Sirve para una sección en otro idioma sin
  * repetir la traducción entera.
+ *
+ * **Memoiza contra el contenido y no contra la identidad de `value`.** El caso de
+ * uso principal es i18n, y ahí el objeto lo arma un componente —`useTranslations()`
+ * de next-intl, un `t(…)` por clave—: con `useMemo` del lado del llamador la
+ * identidad cambia en cada render, y un contexto que cambia re-renderiza a todos
+ * sus consumidores, que acá es la app entera. Quien lo usa no tiene por qué saber
+ * cómo está implementado el provider para que su app no se arrastre, así que el
+ * que compara es el provider. Envolver el `value` en un `useMemo` sigue siendo
+ * válido y ahorra la comparación, pero ya no hace falta.
  */
 export function LabelsProvider({ value, children }: { value?: PartialLabels; children?: React.ReactNode }) {
   const heredado = React.useContext(LabelsContext)
-  const mezclado = React.useMemo(() => mezclar(heredado, value), [heredado, value])
-  return <LabelsContext.Provider value={mezclado}>{children}</LabelsContext.Provider>
+  const mezclado = mezclar(heredado, value)
+  // El cache se escribe en render y no en un efecto: el valor tiene que salir
+  // ya estable en este mismo render, no en el siguiente. Es seguro aunque React
+  // descarte el render —lo único que se reusa es la identidad de un objeto con
+  // el mismo contenido—, que es lo que no valdría para un ref con estado.
+  const cache = React.useRef(mezclado)
+  if (cache.current !== mezclado && !mismosTextos(cache.current, mezclado)) cache.current = mezclado
+  return <LabelsContext.Provider value={cache.current}>{children}</LabelsContext.Provider>
 }
 
 /**

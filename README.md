@@ -475,11 +475,41 @@ La prop `labels` de cada componente sigue existiendo y **le gana al provider**:
 es para la excepción de una pantalla («Quitar del carrito» en vez de «Quitar»),
 no para traducir.
 
-`Breadcrumb`, `Pagination`, `Tag` y `PageHeader` no leen del provider: leerlo
-pide un contexto de React y eso los convertiría en componentes de cliente, y los
-cuatro se pueden renderizar hoy en un Server Component. Sus textos se pasan por
-prop, como venían (`ellipsisLabel`, `removeLabel`, `breadcrumbLabel`, `labels`,
-`aria-label`).
+El `value` se puede armar en el render, que es lo que pasa con i18n de verdad:
+
+```tsx
+const t = useTranslations("ui")
+return <LabelsProvider value={{ dialog: { close: t("close") } }}>{children}</LabelsProvider>
+```
+
+**No hace falta `useMemo`.** El provider compara el contenido, no la identidad
+del objeto: un `value` nuevo con los mismos textos no re-renderiza a ningún
+consumidor. Son 24 comparaciones de strings —0,6 µs— contra re-renderizar todo
+lo que lee el contexto, que es la app entera.
+
+**Los labels que se pegan a un dato aceptan una función.** `combobox.remove` es
+el prefijo de «Quitar Chile», y eso solo funciona donde el verbo va adelante; en
+alemán es «Chile entfernen». Como plantilla sale en cualquier idioma, igual que
+el `labels.page` de `Pagination`:
+
+```tsx
+combobox: { remove: (name) => `${name} entfernen` }
+```
+
+Vale lo mismo para las props `removeLabel` de `Tag` y `ComboboxChip`. El string
+sigue andando igual: nadie que escriba en español tiene que escribir una
+función. Una función sí conviene declararla a nivel de módulo o memoizarla: es
+lo único de `Labels` que el provider compara por identidad.
+
+`Breadcrumb`, `Pagination` y `Tag` no leen del provider: leerlo pide un contexto
+de React y eso los convertiría en componentes de cliente, y los tres se pueden
+renderizar hoy en un Server Component. Sus textos se pasan por prop, como venían
+(`ellipsisLabel`, `removeLabel`, `labels`, `aria-label`).
+
+`PageHeader` **sí** lo lee, sin dejar de ser Server Component: el `<nav>` de las
+migas es un subcomponente de cliente interno, y `breadcrumbLabel` quedó como
+override de una pantalla. Antes tenía default en español; un `aria-label` en el
+idioma equivocado no se ve, así que nadie lo notaba.
 
 El `lang` del `<html>` es de la app, y no es opcional: cambia la pronunciación
 del lector de pantalla.
