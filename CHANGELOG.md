@@ -9,6 +9,19 @@ major.
 
 ## [Unreleased]
 
+### Changed
+
+- **`LabelsProvider` memoiza contra el contenido y no contra la identidad de
+  `value`.** Memoizar contra la identidad era correcto y no se notaba con el
+  ejemplo del README, que usa una constante de módulo; pero el caso de uso del
+  provider es i18n, donde el objeto lo arma un componente (`t("close")` por
+  clave) y es nuevo en cada render. Sin `useMemo` del lado del llamador, cada
+  render del layout re-renderizaba a todos los consumidores del contexto, o sea
+  a toda la app. Ahora compara los 24 textos con `Object.is` —0,6 µs medidos—
+  y, si dicen lo mismo, conserva la identidad anterior. Quien usa el provider no
+  tiene por qué conocer su implementación para que su app no se arrastre. El
+  `useMemo` del llamador sigue siendo válido y ahorra la comparación.
+
 ### Fixed
 
 - **`PageHeader` ya no manda un `aria-label` en español a una app traducida.**

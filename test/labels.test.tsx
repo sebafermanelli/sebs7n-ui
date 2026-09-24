@@ -1,12 +1,13 @@
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
-import { describe, expect, it } from "vitest"
+import * as React from "react"
+import { beforeEach, describe, expect, it } from "vitest"
 
 import { Combobox, ComboboxChip, ComboboxChips, ComboboxInput } from "../src/components/combobox.js"
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "../src/components/dialog.js"
 import { NumberField } from "../src/components/number-field.js"
 import { PageHeader, PageHeaderTitle } from "../src/components/page-header.js"
-import { defaultLabels, LabelsProvider } from "../src/lib/labels.js"
+import { defaultLabels, LabelsProvider, useLabels } from "../src/lib/labels.js"
 
 /**
  * El «Cerrar» de Dialog, Sheet y Drawer era el único texto del paquete que no se
@@ -109,6 +110,42 @@ describe("LabelsProvider", () => {
       </LabelsProvider>
     )
     expect(screen.getByRole("navigation", { name: "Where you are" })).toBeInTheDocument()
+  })
+
+  // El caso real: el `value` lo arma un componente con i18n, así que es un objeto nuevo
+  // en cada render. Si el provider memoizara contra la identidad, cada render del layout
+  // re-renderizaría a todos los consumidores del contexto, que es toda la app.
+  describe("memoiza contra el contenido, no contra la identidad de `value`", () => {
+    let renders = 0
+    const Consumidor = React.memo(function Consumidor() {
+      renders += 1
+      return <span>{useLabels().dialog.close}</span>
+    })
+    // `value` se escribe inline, como saldría de un `useTranslations()`: objeto nuevo cada vez.
+    const App = ({ cerrar }: { cerrar: string }) => (
+      <LabelsProvider value={{ dialog: { close: cerrar }, sheet: { close: cerrar } }}>
+        <Consumidor />
+      </LabelsProvider>
+    )
+
+    beforeEach(() => {
+      renders = 0
+    })
+
+    it("un `value` nuevo con los mismos textos no vuelve a renderizar al consumidor", () => {
+      const { rerender } = render(<App cerrar="Close" />)
+      expect(renders).toBe(1)
+      for (let i = 0; i < 5; i++) rerender(<App cerrar="Close" />)
+      expect(renders).toBe(1)
+      expect(screen.getByText("Close")).toBeInTheDocument()
+    })
+
+    it("y un texto distinto sí llega", () => {
+      const { rerender } = render(<App cerrar="Close" />)
+      rerender(<App cerrar="Fermer" />)
+      expect(renders).toBe(2)
+      expect(screen.getByText("Fermer")).toBeInTheDocument()
+    })
   })
 
   // Sin esto, armar una traducción con `{ ...defaultLabels, ...en }` no serviría

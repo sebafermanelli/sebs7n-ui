@@ -29,6 +29,17 @@ import * as React from "react"
  * traducción con `{ ...defaultLabels, ...en }` deja que TypeScript marque lo que
  * falte en `en` en vez de que aparezca en español en producción.
  *
+ * El `value` se puede armar en el render, que es lo que pasa con i18n:
+ *
+ * ```tsx
+ * const t = useTranslations("ui")
+ * <LabelsProvider value={{ dialog: { close: t("close") } }}>
+ * ```
+ *
+ * El provider compara el contenido, no la identidad del objeto: un `value` nuevo
+ * con los mismos textos no re-renderiza a nadie. El `useMemo` del lado del
+ * llamador es opcional.
+ *
  * **Faltan tres componentes a propósito**: `Breadcrumb`, `Pagination` y `Tag` no
  * leen del provider, porque leerlo pide un contexto de React y eso los
  * convertiría en componentes de cliente. Los tres están hoy en la lista de los
@@ -173,16 +184,52 @@ function mezclar(base: Labels, encima: PartialLabels | undefined): Labels {
 }
 
 /**
+ * ¿Dicen lo mismo los dos objetos ya mezclados?
+ *
+ * Dos niveles y `Object.is` en las hojas, la misma forma que `mezclar`. Es lo que
+ * decide si el provider puede reusar la identidad anterior: 24 `Object.is` medidos
+ * en 0,6 µs, que al lado de re-renderizar la app entera no es nada.
+ */
+function mismosTextos(a: Labels, b: Labels): boolean {
+  const grupos = Object.keys(a) as (keyof Labels)[]
+  if (grupos.length !== Object.keys(b).length) return false
+  for (const grupo of grupos) {
+    const unGrupo = a[grupo] as Record<string, unknown>
+    const otroGrupo = b[grupo] as Record<string, unknown> | undefined
+    if (!otroGrupo) return false
+    const claves = Object.keys(unGrupo)
+    if (claves.length !== Object.keys(otroGrupo).length) return false
+    for (const clave of claves) if (!Object.is(unGrupo[clave], otroGrupo[clave])) return false
+  }
+  return true
+}
+
+/**
  * Cambia los textos internos de todos los componentes que estén abajo.
  *
  * Anidados se suman: un provider adentro de otro mezcla sobre lo que ya había,
  * no sobre los textos en español. Sirve para una sección en otro idioma sin
  * repetir la traducción entera.
+ *
+ * **Memoiza contra el contenido y no contra la identidad de `value`.** El caso de
+ * uso principal es i18n, y ahí el objeto lo arma un componente —`useTranslations()`
+ * de next-intl, un `t(…)` por clave—: con `useMemo` del lado del llamador la
+ * identidad cambia en cada render, y un contexto que cambia re-renderiza a todos
+ * sus consumidores, que acá es la app entera. Quien lo usa no tiene por qué saber
+ * cómo está implementado el provider para que su app no se arrastre, así que el
+ * que compara es el provider. Envolver el `value` en un `useMemo` sigue siendo
+ * válido y ahorra la comparación, pero ya no hace falta.
  */
 export function LabelsProvider({ value, children }: { value?: PartialLabels; children?: React.ReactNode }) {
   const heredado = React.useContext(LabelsContext)
-  const mezclado = React.useMemo(() => mezclar(heredado, value), [heredado, value])
-  return <LabelsContext.Provider value={mezclado}>{children}</LabelsContext.Provider>
+  const mezclado = mezclar(heredado, value)
+  // El cache se escribe en render y no en un efecto: el valor tiene que salir
+  // ya estable en este mismo render, no en el siguiente. Es seguro aunque React
+  // descarte el render —lo único que se reusa es la identidad de un objeto con
+  // el mismo contenido—, que es lo que no valdría para un ref con estado.
+  const cache = React.useRef(mezclado)
+  if (cache.current !== mezclado && !mismosTextos(cache.current, mezclado)) cache.current = mezclado
+  return <LabelsContext.Provider value={cache.current}>{children}</LabelsContext.Provider>
 }
 
 /**

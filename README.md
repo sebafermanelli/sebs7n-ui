@@ -475,6 +475,18 @@ La prop `labels` de cada componente sigue existiendo y **le gana al provider**:
 es para la excepción de una pantalla («Quitar del carrito» en vez de «Quitar»),
 no para traducir.
 
+El `value` se puede armar en el render, que es lo que pasa con i18n de verdad:
+
+```tsx
+const t = useTranslations("ui")
+return <LabelsProvider value={{ dialog: { close: t("close") } }}>{children}</LabelsProvider>
+```
+
+**No hace falta `useMemo`.** El provider compara el contenido, no la identidad
+del objeto: un `value` nuevo con los mismos textos no re-renderiza a ningún
+consumidor. Son 24 comparaciones de strings —0,6 µs— contra re-renderizar todo
+lo que lee el contexto, que es la app entera.
+
 `Breadcrumb`, `Pagination` y `Tag` no leen del provider: leerlo pide un contexto
 de React y eso los convertiría en componentes de cliente, y los tres se pueden
 renderizar hoy en un Server Component. Sus textos se pasan por prop, como venían

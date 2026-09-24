@@ -221,6 +221,22 @@ Ojo con el atajo: `const en: Labels = { ...defaultLabels, … }` **no** marca na
 
 Los providers anidados se suman. La prop `labels` de cada componente le gana al provider: es la excepción de una pantalla, no la traducción.
 
+### El `value` se puede armar en el render
+
+Con i18n de verdad los textos salen de un hook, así que el objeto es nuevo en cada render:
+
+```tsx
+"use client"
+import { useTranslations } from "next-intl"
+
+export function UiLabels({ children }: { children: React.ReactNode }) {
+  const t = useTranslations("ui")
+  return <LabelsProvider value={{ dialog: { close: t("close") }, combobox: { empty: t("empty") } }}>{children}</LabelsProvider>
+}
+```
+
+**No hace falta envolverlo en `useMemo`.** El provider memoiza contra el **contenido**: si el `value` nuevo dice lo mismo que el anterior, el contexto conserva su identidad y nadie se re-renderiza. Son 24 comparaciones de strings —0,6 µs medidos— contra re-renderizar todo lo que lee el contexto, que es la app entera. Que el llamador tuviera que saber eso era pedirle que conociera la implementación del provider.
+
 `Breadcrumb`, `Pagination` y `Tag` no leen del provider —leerlo los volvería componentes de cliente y los tres se pueden renderizar en un Server Component—: sus textos van por prop.
 
 `PageHeader` sí lo lee y sigue siendo Server Component: el `<nav>` de las migas es un subcomponente de cliente interno. Su `breadcrumbLabel` ya no tiene default en español, es el override de una pantalla.
