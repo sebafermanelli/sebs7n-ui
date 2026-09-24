@@ -14,11 +14,14 @@ major.
 ### Fixed
 
 - **El workflow de release no podía publicar.** `test/build.test.ts` hacía
-  destructuring de array sobre la salida de `npm pack --json`, que en las npm
-  más nuevas es un objeto suelto. El job de release hace
+  destructuring de array sobre la salida de `npm pack --json`, que cambió de
+  forma: array de paquetes hasta npm 11.9, mapa por nombre
+  (`{ "sebs7n-ui": { … } }`) desde npm 12. El job de release hace
   `npm install -g npm@latest`, así que corre con una npm distinta de la del
-  runner: el test pasaba en CI y reventaba en el publish con «object is not
-  iterable». Ahora acepta las dos formas. No cambia nada del paquete publicado.
+  runner y de la de desarrollo: el test pasaba en CI y reventaba en el publish.
+  Ahora acepta las tres formas y falla con un mensaje que lo dice si aparece una
+  cuarta. Verificado corriendo el test con npm 11.9 y con npm 12.1. No cambia
+  nada del paquete publicado.
 
 ## [0.6.0] - 2026-09-23
 

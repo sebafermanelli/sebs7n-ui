@@ -119,15 +119,29 @@ describe("build", () => {
   })
 
   it("npm pack incluye los entry points por módulo", () => {
-    // `npm pack --json` devuelve un array de paquetes en npm 11.9 y un objeto suelto en las
-    // más nuevas. Aceptar las dos formas no es paranoia: el workflow de release hace
-    // `npm install -g npm@latest`, así que corre con una npm distinta de la del runner y de
-    // la de esta máquina. La primera vez, este test pasó en CI y tiró
-    // «object is not iterable» justo en el publish, que es el peor momento para enterarse.
+    // `npm pack --json` cambió de forma entre versiones de npm: un array de paquetes hasta la
+    // 11.9 y un mapa por nombre (`{ "sebs7n-ui": { … } }`) desde la 12. El `files` de adentro
+    // es el mismo en las dos.
+    //
+    // No es paranoia: el workflow de release hace `npm install -g npm@latest`, así que corre
+    // con una npm distinta de la del runner y de la de esta máquina. Este test pasó en CI y
+    // reventó en el publish dos veces seguidas —primero «object is not iterable», después
+    // «cannot read properties of undefined»— que es el peor momento para enterarse.
+    type Pack = { files: { path: string }[] }
     const salida = JSON.parse(execSync("npm pack --dry-run --json --ignore-scripts", { cwd: root, encoding: "utf8" })) as
-      | { files: { path: string }[] }
-      | { files: { path: string }[] }[]
-    const pack = Array.isArray(salida) ? salida[0] : salida
+      | Pack
+      | Pack[]
+      | Record<string, Pack>
+    const pack = Array.isArray(salida)
+      ? salida[0]
+      : "files" in salida
+        ? (salida as Pack)
+        : Object.values(salida as Record<string, Pack>)[0]
+    // Un `throw` y no un `expect`: además de angostar el tipo, si aparece una cuarta forma el
+    // mensaje trae la salida real en vez de un «undefined» que no dice qué cambió.
+    if (!pack?.files) {
+      throw new Error(`npm pack --json cambió de formato otra vez: ${JSON.stringify(salida).slice(0, 300)}`)
+    }
     const files = new Set(pack.files.map((file) => file.path))
     const expected = [
       "dist/index.js",
