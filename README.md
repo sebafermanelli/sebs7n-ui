@@ -69,7 +69,8 @@ instalás—, pero va en el mismo comando: los tokens de tipografía leen
 `--font-geist-sans` y `--font-geist-mono`, que define la app en el layout raíz.
 
 `recharts` también es peer **opcional**, pero al revés: solo lo instala la app que
-usa `sebs7n-ui/chart`. Ningún otro subpath del paquete lo importa.
+usa `sebs7n-ui/chart`. Ningún otro subpath del paquete lo importa, y `Chart` **no
+está en el barrel** por eso mismo: `from "sebs7n-ui"` no lo trae.
 
 ### 1. CSS
 

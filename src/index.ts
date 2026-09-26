@@ -48,7 +48,10 @@ export * from "./components/badge.js"
 export * from "./components/breadcrumb.js"
 export * from "./components/button.js"
 export * from "./components/card.js"
-export * from "./components/chart.js"
+// `chart` NO va en el barrel: importa `recharts`, que es un peer opcional. Con el
+// `export *` acá, toda app que hiciera `from "sebs7n-ui"` sin tener recharts
+// instalado dejaba de compilar («Module not found: Can't resolve 'recharts'»),
+// aunque no usara ningún gráfico. Pasó en 0.7.0. Solo por subpath: `sebs7n-ui/chart`.
 export * from "./components/checkbox-group.js"
 export * from "./components/checkbox.js"
 export * from "./components/collapsible.js"

@@ -1793,7 +1793,7 @@ export const COMPONENTS = {
       "Un gráfico no es la única forma de leer un dato: ofrecé la tabla (ver el ejemplo *Cambio de datos*). Un sparkline decorativo va con `aria-hidden`.",
     ],
     usage: [
-      "**`recharts` es un peer opcional:** `npm install recharts` en la app que lo usa. Ningún otro subpath del paquete lo importa.",
+      "**`recharts` es un peer opcional:** `npm install recharts` en la app que lo usa. Ningún otro subpath del paquete lo importa, y `Chart` no está en el barrel: solo `sebs7n-ui/chart`.",
       "El gráfico lleva `responsive` (`<AreaChart responsive>`): mide con CSS y llena el `ChartContainer`, que es el que decide el tamaño (`aspect-video` por defecto).",
       "Cada serie pinta con su variable: `fill=\"var(--color-<dataKey>)\"`. La pone `ChartContainer` a partir de la `config`, en el orden en que está escrita, y no se reasigna si una serie se filtra.",
       "Marcas finas: barras de 24px como máximo (`maxBarSize`) redondeadas en la punta (`radius={[4, 4, 0, 0]}`), líneas de 2px, relleno de área al 10 %. Grilla horizontal sola (`vertical={false}`), sin línea de eje.",

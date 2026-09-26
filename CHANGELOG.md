@@ -9,6 +9,19 @@ major.
 
 ## [Unreleased]
 
+## [0.7.1] - 2026-09-26
+
+### Fixed
+
+- **El barrel arrastraba `recharts`.** `src/index.ts` hacía `export *` de
+  `chart`, que importa `recharts`, y `recharts` es un peer opcional: toda app
+  que hiciera `from "sebs7n-ui"` sin tenerlo instalado dejaba de compilar
+  (`Module not found: Can't resolve 'recharts'`), aunque no usara ningún
+  gráfico. Apareció en la primera app que instaló 0.7.0. `Chart` queda **solo
+  por subpath** (`sebs7n-ui/chart`), y un test verifica que el barrel no
+  nombre ningún módulo que importe un peer opcional.
+
+
 ## [0.7.0] - 2026-09-26
 
 Íconos, gráficos y un toque de profundidad. Salió de mirar el sitio con ojos de
