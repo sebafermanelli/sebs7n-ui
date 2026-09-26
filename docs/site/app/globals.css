@@ -86,3 +86,61 @@
     @apply overflow-x-auto;
   }
 }
+
+/* View Transitions de las páginas de /docs.
+ *
+ * Solo dos clases, y las dos cortas: la página que se va se desvanece en 150ms y
+ * la que llega entra en 210ms subiendo 6px. No hay dirección (izquierda/derecha)
+ * porque ir de Button a Card no es «más profundo», es al lado. La raíz no anima:
+ * el sidebar y el header se quedan quietos, que es lo que hace que se note que
+ * cambió el contenido y no la aplicación entera. */
+::view-transition-group(root) {
+  animation: none;
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+@keyframes vt-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes vt-rise {
+  from {
+    transform: translateY(6px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+::view-transition-old(.page-out) {
+  animation: 150ms ease-in both vt-fade reverse;
+}
+::view-transition-new(.page-in) {
+  animation:
+    210ms ease-out 150ms both vt-fade,
+    360ms cubic-bezier(0.2, 0.8, 0.2, 1) both vt-rise;
+}
+
+/* El cambio de estado de un ícono (demo de Icon): un cruce de 150ms. */
+::view-transition-old(.icon-out) {
+  animation: 120ms ease-in both vt-fade reverse;
+}
+::view-transition-new(.icon-in) {
+  animation: 150ms ease-out both vt-fade;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

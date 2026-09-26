@@ -3,18 +3,22 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "../lib/utils.js"
 
 const buttonVariantsBase = cva(
-  "relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-md border border-transparent whitespace-nowrap outline-none select-none transition-control focus-visible:focus-ring data-disabled:cursor-not-allowed data-disabled:border-gray-400 data-disabled:bg-gray-100 data-disabled:text-gray-700 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-md border border-transparent whitespace-nowrap outline-none select-none transition-surface focus-visible:focus-ring data-disabled:cursor-not-allowed data-disabled:border-gray-400 data-disabled:bg-gray-100 data-disabled:text-gray-700 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
-        default: "bg-gray-1000 text-background-100 hover:bg-button-primary-hover",
+        // Los sólidos llevan `shadow-button` (filo claro arriba, 1px de sombra abajo) y
+        // se hunden un pixel al apretar. Deshabilitados vuelven a ser planos.
+        default:
+          "bg-gray-1000 text-background-100 shadow-button hover:bg-button-primary-hover active:translate-y-px active:shadow-none data-disabled:shadow-none",
         outline:
-          "border-gray-alpha-400 bg-background-100 text-gray-1000 hover:bg-gray-alpha-200 active:bg-gray-alpha-300",
-        secondary: "bg-gray-100 text-gray-1000 hover:bg-gray-200 active:bg-gray-300",
+          "border-gray-alpha-400 bg-background-100 text-gray-1000 shadow-card hover:bg-gray-alpha-200 active:translate-y-px active:bg-gray-alpha-300 active:shadow-none data-disabled:shadow-none",
+        secondary: "bg-gray-100 text-gray-1000 hover:bg-gray-200 active:translate-y-px active:bg-gray-300",
         ghost: "text-gray-1000 hover:bg-gray-alpha-200 active:bg-gray-alpha-300",
-        accent: "bg-brand-700 text-brand-contrast hover:bg-brand-800 active:bg-brand-800",
+        accent:
+          "bg-brand-700 text-brand-contrast shadow-button hover:bg-brand-800 active:translate-y-px active:bg-brand-800 active:shadow-none data-disabled:shadow-none",
         destructive:
-          "bg-red-800 text-button-error-fg hover:bg-button-error-hover active:bg-button-error-active",
+          "bg-red-800 text-button-error-fg shadow-button hover:bg-button-error-hover active:translate-y-px active:bg-button-error-active active:shadow-none data-disabled:shadow-none",
         link: "h-auto! rounded-sm border-0 px-0! text-brand-900 underline-offset-4 hover:text-brand-1000 hover:underline data-disabled:bg-transparent",
       },
       size: {

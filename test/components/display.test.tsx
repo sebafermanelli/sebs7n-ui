@@ -77,7 +77,7 @@ describe("Badge", () => {
 })
 
 describe("Card", () => {
-  it("superficie Geist: borde gray-400, radio 12, sin sombra, padding 24", () => {
+  it("superficie Geist: borde gray-400, radio 12, la sombra de 1px de reposo, padding 24", () => {
     render(
       <Card>
         <CardHeader>
@@ -90,14 +90,21 @@ describe("Card", () => {
     )
     const card = screen.getByText("Ingresos").closest("[data-slot=card]")!
     expect(card).toHaveClass("border-gray-400", "bg-background-100", "rounded-xl", "[--card-spacing:--spacing(6)]")
-    expect(card.className).not.toMatch(/shadow/)
+    // `shadow-card` es 1px que la despega de la página; la de menú/modal no va en una card.
+    expect(card).toHaveClass("shadow-card")
+    expect(card.className).not.toMatch(/shadow-(menu|modal|tooltip)/)
     expect(screen.getByText("Ingresos")).toHaveClass("text-heading-20")
     expect(screen.getByText("Últimos 30 días")).toHaveClass("text-copy-14", "text-gray-900")
     expect(screen.getByText("pie")).toHaveClass("border-t", "border-gray-400")
   })
 
   it("interactiva y seleccionada", () => {
-    expect(cardVariants({ interactive: true })).toContain("hover:border-gray-500 hover:bg-gray-100 active:bg-gray-200 focus-visible:focus-ring")
+    const interactive = cardVariants({ interactive: true })
+    // Sube un pixel con la sombra grande; al apretar vuelve a su lugar y a la sombra de reposo.
+    expect(interactive).toContain("hover:-translate-y-px hover:border-gray-500 hover:shadow-card-hover")
+    expect(interactive).toContain("active:translate-y-0 active:bg-gray-100 active:shadow-card focus-visible:focus-ring")
+    // `translate` no está en `transition-control`: la interactiva usa la transición que sí lo incluye.
+    expect(interactive).toContain("transition-surface")
     render(<Card selected>sel</Card>)
     const card = screen.getByText("sel")
     expect(card).toHaveAttribute("data-selected")

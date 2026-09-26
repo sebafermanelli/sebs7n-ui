@@ -83,6 +83,24 @@
   --shadow-tooltip: var(--sf-shadow-tooltip);
   --shadow-menu: var(--sf-shadow-menu);
   --shadow-modal: var(--sf-shadow-modal);
+  --shadow-card: var(--sf-shadow-card);
+  --shadow-card-hover: var(--sf-shadow-card-hover);
+  --shadow-button: var(--sf-shadow-button);
+
+  /**
+   * Paleta categórica de los gráficos: cinco series, en este orden, siempre.
+   *
+   * No son «cinco colores lindos»: es el orden que pasa el validador de
+   * daltonismo (adyacentes con ΔE ≥ 8 en deutan/protan/tritan) y el de contraste
+   * 3:1 contra la superficie, en los dos temas. Por eso el ámbar es el 900 en
+   * claro (el 700, #ffb200, da 1,81:1 sobre blanco) y el 600 en oscuro. Una sexta
+   * serie no se inventa: se agrupa en «Otros» o se parte en varios gráficos.
+   */
+  --color-chart-1: var(--sf-chart-1);
+  --color-chart-2: var(--sf-chart-2);
+  --color-chart-3: var(--sf-chart-3);
+  --color-chart-4: var(--sf-chart-4);
+  --color-chart-5: var(--sf-chart-5);
 }
 
 @layer base {
@@ -183,6 +201,25 @@
     --sf-shadow-modal: var(--sf-shadow-border-base), 0px 1px 1px #00000005,
       0px 8px 16px -4px #0000000a, 0px 24px 32px -8px #0000000f,
       var(--sf-shadow-background-border);
+    /**
+     * Profundidad de reposo y de hover de una superficie que se puede tocar.
+     *
+     * Geist es plano de lejos y se despega al tocarlo: la card en reposo lleva
+     * una sombra de 1px que apenas la separa de la página, y al pasar el puntero
+     * sube un pixel y la sombra crece a la del menú. Un botón sólido lleva un
+     * filo claro arriba (inset) y una sombra de 1px abajo, que es lo que hace que
+     * se lea como algo que se puede apretar y no como un rectángulo pintado.
+     */
+    --sf-shadow-card: 0px 1px 2px #0000000a, 0px 1px 1px #00000005;
+    --sf-shadow-card-hover: 0px 1px 1px #00000005, 0px 4px 8px -4px #0000000a,
+      0px 12px 20px -8px #0000000f;
+    --sf-shadow-button: inset 0 1px 0 0 #ffffff1f, 0px 1px 2px #0000001a;
+
+    --sf-chart-1: var(--sf-blue-700);
+    --sf-chart-2: var(--sf-amber-900);
+    --sf-chart-3: var(--sf-pink-700);
+    --sf-chart-4: var(--sf-purple-700);
+    --sf-chart-5: var(--sf-green-700);
   }
 
   .dark {
@@ -209,6 +246,18 @@
 
     --sf-shadow-border-base: 0 0 0 1px #ffffff25;
     --sf-shadow-background-border: 0 0 0 1px var(--sf-background);
+    /* En oscuro una sombra negra sobre negro no existe: la profundidad la da el
+       filo claro de arriba, que acá sube un poco para que se vea. */
+    --sf-shadow-card: 0px 1px 2px #00000066, inset 0 1px 0 0 #ffffff0a;
+    --sf-shadow-card-hover: 0px 4px 8px -4px #00000080, 0px 12px 20px -8px #00000099,
+      inset 0 1px 0 0 #ffffff14;
+    --sf-shadow-button: inset 0 1px 0 0 #ffffff29, 0px 1px 2px #00000080;
+
+    --sf-chart-1: var(--sf-blue-700);
+    --sf-chart-2: var(--sf-amber-600);
+    --sf-chart-3: var(--sf-pink-700);
+    --sf-chart-4: var(--sf-purple-700);
+    --sf-chart-5: var(--sf-green-700);
   }
 }
 
@@ -252,6 +301,14 @@
 
 @utility transition-control {
   transition-property: color, background-color, border-color, box-shadow, opacity;
+  transition-timing-function: ease;
+  transition-duration: 150ms;
+}
+
+/* Lo mismo, más `translate`: para lo que sube al pasar el puntero (Card interactiva)
+   o se hunde al apretar (Button). `transform` no: Tailwind v4 escribe `translate`. */
+@utility transition-surface {
+  transition-property: color, background-color, border-color, box-shadow, opacity, translate;
   transition-timing-function: ease;
   transition-duration: 150ms;
 }

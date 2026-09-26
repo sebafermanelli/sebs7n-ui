@@ -68,9 +68,16 @@ export function readBackgrounds(root) {
 
 export function readShadows(root) {
   const css = readFileSync(join(root, "src/styles/theme.css"), "utf8")
-  return ["tooltip", "menu", "modal"].map((name) => ({
+  return ["tooltip", "menu", "modal", "card", "card-hover", "button"].map((name) => ({
     name: `shadow-${name}`,
-    uso: { tooltip: "Tooltip.", menu: "DropdownMenu, Select, Combobox, Popover.", modal: "Dialog, AlertDialog, Sheet." }[name],
+    uso: {
+      tooltip: "Tooltip.",
+      menu: "DropdownMenu, Select, Combobox, Popover, el tooltip de un Chart.",
+      modal: "Dialog, AlertDialog, Sheet.",
+      card: "Card `default` y Button `outline` en reposo: 1px que la despega de la página.",
+      "card-hover": "Card `interactive` al pasar el puntero: sube un pixel y la sombra crece.",
+      button: "Button sólido (`default`, `accent`, `destructive`): filo claro arriba, 1px abajo.",
+    }[name],
     presente: css.includes(`--sf-shadow-${name}:`),
   }))
 }

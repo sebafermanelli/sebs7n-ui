@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
+import { ViewTransition } from "react"
 
 import site from "@/.generated/site.json"
 import { MdLink } from "../../_components/md-link"
@@ -25,8 +26,11 @@ export default async function SystemPage({ params }: Params) {
   if (!page) notFound()
 
   return (
-    <div className="flex gap-10">
-      <article className="min-w-0 flex-1 pb-24">
+    // `default="none"`: solo anima al entrar y al salir por navegación, no en cada
+    // Suspense que se resuelve adentro (las demos cargan por chunk).
+    <ViewTransition default="none" enter="page-in" exit="page-out">
+      <div className="flex gap-10">
+        <article className="min-w-0 flex-1 pb-24">
         <header className="flex flex-col gap-3 pb-8">
           <h1 className="text-heading-40 text-gray-1000">{page.title}</h1>
           <p className="text-copy-18 text-gray-900">{page.description}</p>
@@ -38,5 +42,6 @@ export default async function SystemPage({ params }: Params) {
       </article>
       <PageNav items={headings(page.body)} />
     </div>
+    </ViewTransition>
   )
 }

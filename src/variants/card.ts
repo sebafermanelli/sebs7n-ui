@@ -7,7 +7,7 @@ const cardVariantsBase = cva(
   {
     variants: {
       variant: {
-        default: "border border-gray-400 bg-background-100",
+        default: "border border-gray-400 bg-background-100 shadow-card",
         subtle: "bg-background-200",
       },
       size: {
@@ -15,7 +15,9 @@ const cardVariantsBase = cva(
         md: "[--card-spacing:--spacing(6)]",
       },
       interactive: {
-        true: "cursor-pointer outline-none transition-control hover:border-gray-500 hover:bg-gray-100 active:bg-gray-200 focus-visible:focus-ring",
+        // Sube un pixel y la sombra crece: la profundidad se nota al tocar, no de lejos.
+        // Al apretar vuelve a su lugar, que es el gesto de «hundir».
+        true: "cursor-pointer outline-none transition-surface hover:-translate-y-px hover:border-gray-500 hover:shadow-card-hover active:translate-y-0 active:bg-gray-100 active:shadow-card focus-visible:focus-ring",
         false: "",
       },
       selected: {

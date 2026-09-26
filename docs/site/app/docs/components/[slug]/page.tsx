@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
+import { ViewTransition } from "react"
 import { Badge } from "sebs7n-ui/badge"
 
 import site from "@/.generated/site.json"
@@ -50,8 +51,11 @@ export default async function ComponentPage({ params }: Params) {
   ].filter((entry) => entry !== null)
 
   return (
-    <div className="flex gap-10">
-      <article className="flex min-w-0 flex-1 flex-col gap-10 pb-24">
+    // `default="none"`: solo anima al entrar y al salir por navegación, no en cada
+    // Suspense que se resuelve adentro (las demos cargan por chunk).
+    <ViewTransition default="none" enter="page-in" exit="page-out">
+      <div className="flex gap-10">
+        <article className="flex min-w-0 flex-1 flex-col gap-10 pb-24">
         <header className="flex flex-col gap-3">
           <div className="flex items-center gap-2 text-label-12 text-gray-900">
             <span>{grupo?.title}</span>
@@ -153,5 +157,6 @@ export default async function ComponentPage({ params }: Params) {
       </article>
       <PageNav items={indice} />
     </div>
+    </ViewTransition>
   )
 }

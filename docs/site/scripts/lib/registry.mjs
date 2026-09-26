@@ -29,7 +29,7 @@
 import { readdirSync, readFileSync } from "node:fs"
 import { basename, extname, join } from "node:path"
 
-const NPM = new Set(["@base-ui/react", "class-variance-authority", "clsx", "lucide-react", "next-themes", "react", "sonner", "tailwind-merge"])
+const NPM = new Set(["@base-ui/react", "class-variance-authority", "clsx", "lucide-react", "next-themes", "react", "recharts", "sonner", "tailwind-merge"])
 
 /** `pagination` → `pagination-helpers`; `utils` se queda con el alias estándar de shadcn. */
 const libFile = (name) => (name === "utils" ? "utils" : `${name}-helpers`)

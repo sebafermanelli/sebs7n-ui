@@ -204,8 +204,16 @@ const pages = [
 ]
 
 // ── 5. Navegación y búsqueda ─────────────────────────────────────────────────
+// Iconos no es una página de sistema (no hay .md: es un catálogo con búsqueda,
+// app/docs/iconos), pero cuelga del mismo grupo en la navegación y en el buscador.
+const ICONOS = { title: "Iconos", href: "/docs/iconos", description: "Los 1.800 íconos de lucide con búsqueda; un clic copia el import." }
+
 const nav = [
-  { id: "sistema", title: "Sistema", items: pages.map((page) => ({ title: page.title, href: `/docs/${page.slug}` })) },
+  {
+    id: "sistema",
+    title: "Sistema",
+    items: [...pages.map((page) => ({ title: page.title, href: `/docs/${page.slug}` })), { title: ICONOS.title, href: ICONOS.href }],
+  },
   ...GROUPS.map((group) => ({
     id: group.id,
     title: group.title,
@@ -216,6 +224,7 @@ const nav = [
 ]
 
 const search = [
+  { title: ICONOS.title, href: ICONOS.href, group: "Sistema", description: ICONOS.description, keywords: "icon lucide svg" },
   ...pages.map((page) => ({
     title: page.title,
     href: `/docs/${page.slug}`,

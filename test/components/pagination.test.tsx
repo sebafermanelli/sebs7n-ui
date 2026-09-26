@@ -98,7 +98,7 @@ describe("Pagination", () => {
   it("usa buttonVariants: el actual secundario, el resto ghost, y el className del llamador gana", () => {
     render(<Pagination className="justify-end" page={2} pageCount={5} size="sm" />)
     const actual = screen.getByRole("button", { name: "Página 2" })
-    expect(actual).toHaveClass("bg-gray-100", "size-8", "focus-visible:focus-ring", "transition-control")
+    expect(actual).toHaveClass("bg-gray-100", "size-8", "focus-visible:focus-ring", "transition-surface")
     expect(screen.getByRole("button", { name: "Página 3" })).toHaveClass("text-gray-900", "hover:bg-gray-alpha-200")
     expect(screen.getByRole("navigation")).toHaveClass("justify-end")
     expect(screen.getByRole("navigation")).not.toHaveClass("justify-center")

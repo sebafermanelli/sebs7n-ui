@@ -1,3 +1,4 @@
+import { ArrowRightIcon } from "lucide-react"
 import Link from "next/link"
 import { Badge } from "sebs7n-ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "sebs7n-ui/card"
@@ -91,10 +92,12 @@ export default function Home() {
           <h2 className="text-heading-32 text-gray-1000" id="destacados">
             Los que más se usan
           </h2>
+          {/* `h-full` en el <a> y en la Card: sin eso la fila de la grilla estira al <a> pero no a la
+              Card de adentro, y la de descripción más corta quedaba más baja que sus vecinas. */}
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {destacados.map((component) => (
-              <Link className="block" href={`/docs/components/${component.slug}`} key={component.slug}>
-                <Card interactive size="sm">
+              <Link className="block h-full" href={`/docs/components/${component.slug}`} key={component.slug}>
+                <Card className="h-full" interactive size="sm">
                   <CardHeader>
                     <CardTitle>{component.title}</CardTitle>
                     <CardDescription>
@@ -105,8 +108,9 @@ export default function Home() {
               </Link>
             ))}
           </div>
-          <Link className={buttonVariants({ variant: "ghost" }) + " self-start"} href="/docs">
-            Ver los {site.components.length} →
+          <Link className={buttonVariants({ variant: "ghost" }) + " group self-start"} href="/docs">
+            Ver los {site.components.length}
+            <ArrowRightIcon aria-hidden="true" className="transition-transform duration-150 group-hover:translate-x-0.5" />
           </Link>
         </section>
 

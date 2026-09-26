@@ -50,13 +50,27 @@ describe("Button", () => {
   })
 
   it("accent usa la marca con su color de contraste", () => {
-    expect(buttonVariants({ variant: "accent" })).toContain("bg-brand-700 text-brand-contrast hover:bg-brand-800")
+    expect(buttonVariants({ variant: "accent" })).toContain("bg-brand-700 text-brand-contrast shadow-button hover:bg-brand-800")
   })
 
   it("destructive usa los valores de error de Vercel", () => {
     expect(buttonVariants({ variant: "destructive" })).toContain(
-      "bg-red-800 text-button-error-fg hover:bg-button-error-hover active:bg-button-error-active"
+      "bg-red-800 text-button-error-fg shadow-button hover:bg-button-error-hover active:translate-y-px active:bg-button-error-active"
     )
+  })
+
+  it("profundidad sutil: los sólidos llevan shadow-button y se hunden al apretar; ghost y link quedan planos", () => {
+    for (const variant of ["default", "accent", "destructive"] as const) {
+      expect(buttonVariants({ variant }), variant).toContain("shadow-button")
+      expect(buttonVariants({ variant }), variant).toContain("active:translate-y-px")
+      // Apagado, plano: la sombra dice «se puede apretar», y un botón deshabilitado no se puede.
+      expect(buttonVariants({ variant }), variant).toContain("data-disabled:shadow-none")
+    }
+    expect(buttonVariants({ variant: "outline" })).toContain("shadow-card")
+    for (const variant of ["ghost", "link"] as const) {
+      expect(buttonVariants({ variant }), variant).not.toMatch(/shadow-(button|card)/)
+      expect(buttonVariants({ variant }), variant).not.toContain("active:translate-y-px")
+    }
   })
 
   it("outline y ghost hacen hover con gray-alpha-200", () => {
