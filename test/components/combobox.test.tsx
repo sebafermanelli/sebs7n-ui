@@ -126,6 +126,8 @@ describe("Combobox", () => {
     await userEvent.click(screen.getByRole("combobox", { name: "País" }))
     await userEvent.keyboard("zzz")
     expect(await screen.findByText("Sin resultados")).toBeInTheDocument()
+    // Del alto de un ítem, no de tres.
+    expect(screen.getByText("Sin resultados")).toHaveClass("h-8")
     expect(screen.queryAllByRole("option")).toHaveLength(0)
   })
 

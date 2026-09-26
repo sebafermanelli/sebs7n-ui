@@ -142,7 +142,9 @@ function ComboboxEmpty({ className, children, labels, ...props }: ComboboxEmptyP
   const content = children === undefined ? (labels?.empty ?? l.empty) : children
   return (
     <ComboboxPrimitive.Empty data-slot="combobox-empty" {...props}>
-      {content ? <div className={cn("px-2 py-6 text-center text-copy-14 text-gray-900", className)}>{content}</div> : null}
+      {/* Del alto de un ítem (h-8) y con su mismo padding: un popup con «Sin resultados» no
+          es más alto que uno con una sola coincidencia. Antes era py-6 y ocupaba tres filas. */}
+      {content ? <div className={cn("flex h-8 items-center px-2 text-copy-14 text-gray-900", className)}>{content}</div> : null}
     </ComboboxPrimitive.Empty>
   )
 }
