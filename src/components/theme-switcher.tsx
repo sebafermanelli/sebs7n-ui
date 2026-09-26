@@ -27,9 +27,9 @@ const OPTIONS = [
   { value: "system", Icon: MonitorIcon },
 ] as const
 
-const groupClassName = "inline-flex items-center gap-0.5 rounded-full border border-gray-alpha-400 bg-background-100 p-0.5"
+const groupClassName = "inline-flex items-center gap-0.5 rounded-full border border-gray-alpha-400 bg-background-100 p-0.5 shadow-card"
 const itemClassName =
-  "inline-flex size-7 cursor-pointer items-center justify-center rounded-full text-gray-900 outline-none transition-control hover:text-gray-1000 focus-visible:focus-ring data-checked:bg-gray-200 data-checked:text-gray-1000 [&_svg]:pointer-events-none [&_svg]:size-4"
+  "inline-flex size-7 cursor-pointer items-center justify-center rounded-full text-gray-900 outline-none transition-control hover:text-gray-1000 focus-visible:focus-ring data-checked:bg-gray-200 data-checked:text-gray-1000 data-checked:shadow-card [&_svg]:pointer-events-none [&_svg]:size-4"
 
 // Sin enableSystem en el ThemeProvider, next-themes no incluye "system" en themes: no se ofrece.
 function useThemeOptions() {

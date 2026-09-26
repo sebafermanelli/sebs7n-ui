@@ -14,7 +14,7 @@ import { cn } from "../lib/utils.js"
  * (`gray-600`, 2,38:1 en claro) contrastaba MENOS que el apagado nuevo, y eso se lee al revés.
  */
 const toggleVariantsBase = cva(
-  "inline-flex h-8 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-full border border-dashed border-gray-700 bg-background-100 px-3 text-copy-14 whitespace-nowrap text-gray-900 outline-none select-none transition-control hover:border-gray-800 hover:text-gray-1000 focus-visible:focus-ring data-pressed:border-solid data-pressed:border-gray-900 data-pressed:bg-gray-100 data-pressed:text-gray-1000 data-pressed:hover:bg-gray-200 data-disabled:cursor-not-allowed data-disabled:border-gray-400 data-disabled:bg-gray-100 data-disabled:text-gray-700 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+  "inline-flex h-8 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-full border border-dashed border-gray-700 bg-background-100 px-3 text-copy-14 whitespace-nowrap text-gray-900 shadow-card outline-none select-none transition-surface hover:border-gray-800 active:translate-y-px hover:text-gray-1000 focus-visible:focus-ring data-pressed:border-solid data-pressed:border-gray-900 data-pressed:bg-gray-100 data-pressed:text-gray-1000 data-pressed:hover:bg-gray-200 data-disabled:cursor-not-allowed data-disabled:border-gray-400 data-disabled:bg-gray-100 data-disabled:text-gray-700 data-disabled:shadow-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
 )
 
 // Pasa por cn() (tailwind-merge): usada sobre <a>/<Link>, la clase de la variante tiene que ganarle a la base.

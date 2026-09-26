@@ -84,9 +84,9 @@ function Slider<Value extends number | readonly number[] = number | readonly num
         <SliderPrimitive.Track
           data-slot="slider-track"
           className={cn(
-            "w-full rounded-full bg-gray-300",
+            "w-full rounded-full bg-gray-300 shadow-track",
             "group-data-[size=sm]/slider:h-1 group-data-[size=md]/slider:h-1.5",
-            "data-disabled:bg-gray-200"
+            "data-disabled:bg-gray-200 data-disabled:shadow-none"
           )}
         >
           <SliderPrimitive.Indicator

@@ -13,7 +13,7 @@
  * el contenido, una casilla de OTP es cuadrada y un input de barra de herramientas mide 32px—.
  */
 export const inputControlClassName =
-  "rounded-md border border-gray-400 bg-background-100 text-copy-14 text-gray-1000 outline-none transition-control hover:border-gray-500"
+  "rounded-md border border-gray-400 bg-background-100 text-copy-14 text-gray-1000 shadow-card outline-none transition-control hover:border-gray-500"
 
 /** Los tres altos del sistema, por `data-size`. El `lg` sube también la tipografía. */
 export const inputSizeClassName = "data-[size=sm]:h-8 data-[size=md]:h-10 data-[size=lg]:h-12 data-[size=lg]:text-copy-16"
@@ -23,7 +23,7 @@ export const inputSizeClassName = "data-[size=sm]:h-8 data-[size=md]:h-10 data-[
  * deshabilitado sobre sus hijos—. El `disabled:` nativo lo agrega aparte el que lo necesite.
  */
 export const inputDisabledClassName =
-  "data-disabled:cursor-not-allowed data-disabled:border-gray-400 data-disabled:bg-gray-100 data-disabled:text-gray-700"
+  "data-disabled:cursor-not-allowed data-disabled:border-gray-400 data-disabled:bg-gray-100 data-disabled:text-gray-700 data-disabled:shadow-none"
 
 /**
  * Inválido: borde rojo y, al enfocar, el halo rojo.

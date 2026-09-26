@@ -58,7 +58,7 @@ function Toolbar({ className, onKeyDown, ...props }: ToolbarProps) {
         target.focus()
       }}
       className={cn(
-        "flex items-center gap-1 rounded-lg bg-background-100 p-1 text-gray-1000",
+        "flex items-center gap-1 rounded-lg bg-background-100 p-1 text-gray-1000 shadow-card",
         "data-[orientation=vertical]:w-fit data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-stretch",
         className
       )}

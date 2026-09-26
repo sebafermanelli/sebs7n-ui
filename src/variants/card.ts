@@ -8,7 +8,7 @@ const cardVariantsBase = cva(
     variants: {
       variant: {
         default: "border border-gray-400 bg-background-100 shadow-card",
-        subtle: "bg-background-200",
+        subtle: "bg-background-200 shadow-track",
       },
       size: {
         sm: "[--card-spacing:--spacing(4)]",

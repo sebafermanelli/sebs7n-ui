@@ -69,7 +69,7 @@ function Progress({ className, size = "md", label, showValue = false, trackClass
       <ProgressPrimitive.Track
         data-slot="progress-track"
         className={cn(
-          "w-full overflow-hidden rounded-full bg-gray-300",
+          "w-full overflow-hidden rounded-full bg-gray-300 shadow-track",
           "group-data-[size=sm]/progress:h-1 group-data-[size=md]/progress:h-1.5",
           trackClassName
         )}

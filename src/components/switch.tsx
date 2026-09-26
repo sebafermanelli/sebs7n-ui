@@ -24,11 +24,11 @@ function Switch({ className, size = "md", variant = "default", ...props }: Switc
         // contra el pulgar: la pista y el pulgar eran el mismo blanco). `gray-700` (#8f8f8f en los
         // dos temas) es el punto medio que pasa por los dos lados: 3,23:1 contra el blanco en
         // claro, 6,12:1 contra el negro en oscuro, y 3,23:1 contra el pulgar en los dos.
-        "bg-gray-700 hover:bg-gray-800 focus-visible:focus-ring",
+        "bg-gray-700 shadow-track hover:bg-gray-800 focus-visible:focus-ring",
         "data-checked:bg-gray-1000 data-checked:hover:bg-button-primary-hover",
         "data-[variant=accent]:data-checked:bg-brand-700 data-[variant=accent]:data-checked:hover:bg-brand-800",
         "aria-invalid:ring-1 aria-invalid:ring-red-800 data-invalid:ring-1 data-invalid:ring-red-800",
-        "data-disabled:cursor-not-allowed data-disabled:bg-gray-100 data-disabled:hover:bg-gray-100",
+        "data-disabled:cursor-not-allowed data-disabled:bg-gray-100 data-disabled:shadow-none data-disabled:hover:bg-gray-100",
         className
       )}
       {...props}

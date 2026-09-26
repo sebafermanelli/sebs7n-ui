@@ -87,7 +87,7 @@ export function Barras() {
 
 /**
  * Donut con el total en el centro
- * Un hueco de 2px del color de la superficie separa los sectores. El número grande va en tinta, no en el color de un sector.
+ * Un hueco de 2px del color de la superficie separa los sectores, y cada uno lleva las puntas apenas redondeadas. El número grande va en tinta, no en el color de un sector.
  */
 export function Donut() {
   const motion = useChartMotion()
@@ -104,14 +104,17 @@ export function Donut() {
     telefono: { label: "Teléfono" },
     otros: { label: "Otros" },
   } satisfies ChartConfig
+  // `aspect-square` solo: con `max-h` el alto se frenaba pero el ancho seguía al contenedor y el
+  // donut se salía de la card. El tamaño lo fija `max-w-72`, y el alto lo sigue.
   return (
-    <ChartContainer className="aspect-square max-h-64" config={config}>
+    <ChartContainer className="mx-auto aspect-square w-full max-w-72" config={config}>
       <PieChart responsive>
         <ChartTooltip content={<ChartTooltipContent nameKey="canal" />} />
         <ChartLegend content={<ChartLegendContent nameKey="canal" />} />
         <Pie
           data={data.map((fila) => ({ ...fila, fill: `var(--color-${fila.canal})` }))}
           dataKey="monto"
+          cornerRadius={4}
           innerRadius="62%"
           nameKey="canal"
           paddingAngle={2}

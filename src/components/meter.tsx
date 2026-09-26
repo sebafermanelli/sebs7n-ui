@@ -69,7 +69,7 @@ function Meter({ className, label, showValue = false, size = "md", trackClassNam
       <MeterPrimitive.Track
         data-slot="meter-track"
         className={cn(
-          "w-full overflow-hidden rounded-full bg-gray-300",
+          "w-full overflow-hidden rounded-full bg-gray-300 shadow-track",
           "group-data-[size=sm]/meter:h-1 group-data-[size=md]/meter:h-1.5",
           trackClassName
         )}

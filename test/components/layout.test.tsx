@@ -115,7 +115,9 @@ describe("EmptyState", () => {
     expect(screen.getByText("Creá el primero para empezar a cargar pasajeros.")).toHaveClass("text-copy-14", "text-gray-900")
     const root = title.closest("[data-slot=empty-state]")!
     expect(root).toHaveClass("bg-background-200", "rounded-xl", "items-center", "text-center", "py-12")
-    expect(root.className).not.toMatch(/\bborder\b|shadow/)
+    // Zona hundida: sin borde y sin sombra que la levante. La única sombra válida es la interior de la pista.
+    expect(root.className).not.toMatch(/\bborder\b|shadow-(card|button|menu|modal|tooltip)/)
+    expect(root).toHaveClass("shadow-track")
     expect(root.querySelector("[data-slot=empty-state-icon]")).toHaveAttribute("aria-hidden", "true")
     expect(screen.getByRole("button", { name: "Nuevo viaje" })).toBeInTheDocument()
   })

@@ -86,6 +86,7 @@
   --shadow-card: var(--sf-shadow-card);
   --shadow-card-hover: var(--sf-shadow-card-hover);
   --shadow-button: var(--sf-shadow-button);
+  --shadow-track: var(--sf-shadow-track);
 
   /**
    * Paleta categórica de los gráficos: cinco series, en este orden, siempre.
@@ -214,6 +215,9 @@
     --sf-shadow-card-hover: 0px 1px 1px #00000005, 0px 4px 8px -4px #0000000a,
       0px 12px 20px -8px #0000000f;
     --sf-shadow-button: inset 0 1px 0 0 #ffffff1f, 0px 1px 2px #0000001a;
+    /* Lo hundido: la pista de un Switch, un Slider, un Progress; la Card `subtle`. Una
+       sombra interior de 1px arriba, que es lo contrario del filo claro del botón. */
+    --sf-shadow-track: inset 0 1px 2px #0000001a;
 
     --sf-chart-1: var(--sf-blue-700);
     --sf-chart-2: var(--sf-amber-900);
@@ -252,6 +256,7 @@
     --sf-shadow-card-hover: 0px 4px 8px -4px #00000080, 0px 12px 20px -8px #00000099,
       inset 0 1px 0 0 #ffffff14;
     --sf-shadow-button: inset 0 1px 0 0 #ffffff29, 0px 1px 2px #00000080;
+    --sf-shadow-track: inset 0 1px 2px #00000099;
 
     --sf-chart-1: var(--sf-blue-700);
     --sf-chart-2: var(--sf-amber-600);
