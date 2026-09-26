@@ -13,7 +13,10 @@ const buttonVariantsBase = cva(
           "bg-gray-1000 text-background-100 shadow-button hover:bg-button-primary-hover active:translate-y-px active:shadow-none data-disabled:shadow-none",
         outline:
           "border-gray-alpha-400 bg-background-100 text-gray-1000 shadow-card hover:bg-gray-alpha-200 active:translate-y-px active:bg-gray-alpha-300 active:shadow-none data-disabled:shadow-none",
-        secondary: "bg-gray-100 text-gray-1000 hover:bg-gray-200 active:translate-y-px active:bg-gray-300",
+        // Misma sombra de 1px que `outline`: los dos son superficies que flotan sobre la página.
+        // `ghost` no la lleva porque en reposo no tiene superficie, es texto.
+        secondary:
+          "bg-gray-100 text-gray-1000 shadow-card hover:bg-gray-200 active:translate-y-px active:bg-gray-300 active:shadow-none data-disabled:shadow-none",
         ghost: "text-gray-1000 hover:bg-gray-alpha-200 active:bg-gray-alpha-300",
         accent:
           "bg-brand-700 text-brand-contrast shadow-button hover:bg-brand-800 active:translate-y-px active:bg-brand-800 active:shadow-none data-disabled:shadow-none",

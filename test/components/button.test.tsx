@@ -66,7 +66,11 @@ describe("Button", () => {
       // Apagado, plano: la sombra dice «se puede apretar», y un botón deshabilitado no se puede.
       expect(buttonVariants({ variant }), variant).toContain("data-disabled:shadow-none")
     }
-    expect(buttonVariants({ variant: "outline" })).toContain("shadow-card")
+    // Las dos superficies que no son sólidas flotan con el 1px de las cards.
+    for (const variant of ["outline", "secondary"] as const) {
+      expect(buttonVariants({ variant }), variant).toContain("shadow-card")
+      expect(buttonVariants({ variant }), variant).toContain("data-disabled:shadow-none")
+    }
     for (const variant of ["ghost", "link"] as const) {
       expect(buttonVariants({ variant }), variant).not.toMatch(/shadow-(button|card)/)
       expect(buttonVariants({ variant }), variant).not.toContain("active:translate-y-px")
