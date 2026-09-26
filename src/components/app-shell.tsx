@@ -93,7 +93,7 @@ function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido
         <div data-slot="app-shell-column" className="flex min-w-0 flex-col">
           <header
             data-slot="app-shell-mobile-bar"
-            className="sticky top-0 z-40 flex h-14 shrink-0 items-center gap-2 border-b border-gray-400 bg-background-100 px-4 shadow-card lg:hidden"
+            className="sticky top-0 z-40 flex h-14 shrink-0 items-center gap-2 border-b border-gray-400 bg-background-100/80 px-4 shadow-card backdrop-blur-md backdrop-saturate-150 lg:hidden"
           >
             <Sheet
               open={mobileOpen}

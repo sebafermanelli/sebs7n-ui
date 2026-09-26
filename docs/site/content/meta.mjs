@@ -1225,6 +1225,36 @@ export const COMPONENTS = {
     },
     related: ["breadcrumb", "table", "button"],
   },
+  navbar: {
+    title: "Navbar",
+    group: "navegacion",
+    detallado: true,
+    description: "La barra de arriba de un sitio o un portal. `bar` se vuelve translúcida con blur al scrollear; `floating` se despega en una píldora con margen.",
+    keyboard: [["Tab", "Recorre los links y botones de adentro. La barra en sí no recibe foco."]],
+    a11y: [
+      "Es un `<header>` (landmark `banner` cuando está en el body). La navegación de adentro va en un `<nav>` con `aria-label` propio.",
+      "El fondo al scrollear es `background-100` al 80 % más blur: el texto de la barra conserva el contraste de la superficie sobre cualquier contenido que pase por debajo.",
+      "Con `prefers-reduced-motion` la barra cambia de estado igual, sin transición.",
+    ],
+    usage: [
+      "**`bar` para un portal o una app; `floating` para una landing o un sitio de marketing.** La píldora flotante se lee como pieza de marketing, igual que el botón `pill`: en el chrome de una app no va.",
+      "`position=\"fixed\"` cuando el hero tiene que llegar hasta el borde de arriba; `sticky` (el default) en todo lo demás, para que el contenido no quede tapado.",
+      "Una sola fila de 56px (`NavbarContent`). Una segunda fila (una barra de avisos) va como otro hijo del `Navbar`: se mueve y se despega con ella.",
+      "Dentro de un `AppShell` no va: la barra mobile del shell ya tiene el mismo tratamiento.",
+    ],
+    props: {
+      Navbar: {
+        variant: "`bar` (default) · `floating`.",
+        position: "`sticky` (default) ocupa su alto; `fixed` se superpone al contenido.",
+        scrollThreshold: "Cuántos px de scroll cambian el estado. Por defecto, 12.",
+        className: PROP_DESCRIPTIONS.className,
+      },
+      NavbarContent: {
+        className: PROP_DESCRIPTIONS.className,
+      },
+    },
+    related: ["navigation-menu", "user-menu", "theme-switcher"],
+  },
   "navigation-menu": {
     title: "NavigationMenu",
     group: "navegacion",

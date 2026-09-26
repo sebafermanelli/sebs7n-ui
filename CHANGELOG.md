@@ -9,6 +9,24 @@ major.
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-09-26
+
+### Added
+
+- **`Navbar`** (`sebs7n-ui/navbar`) + `NavbarContent`: la barra de arriba de un
+  sitio o un portal, con dos variantes. `bar` va a todo el ancho, transparente
+  arriba y translúcida con blur (`background-100` al 80 %) y borde abajo al
+  scrollear. `floating` arranca igual y al scrollear se despega en una píldora:
+  margen a los costados y arriba, `rounded-2xl`, borde y `shadow-menu`. La
+  transición es de 300 ms sobre padding, radio, fondo y blur. `position`
+  `sticky` (default) o `fixed`; `scrollThreshold` configurable; `data-scrolled`
+  en el `<header>` para que los hijos cambien con ella.
+
+### Changed
+
+- La barra mobile del `AppShell` es translúcida con blur, igual que `Navbar`.
+
+
 ## [0.7.2] - 2026-09-26
 
 ### Fixed
