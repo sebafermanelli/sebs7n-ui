@@ -9,6 +9,70 @@ major.
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-09-26
+
+Íconos, gráficos y un toque de profundidad. Salió de mirar el sitio con ojos de
+consumidor: no había forma de mostrar un dato en un gráfico, los íconos se
+ponían a mano en cada app, y todo era plano hasta que se tocaba.
+
+### Added
+
+- **`Icon`** (`sebs7n-ui/icon`): un ícono de lucide con los tamaños del sistema
+  (`sm` 16 · `md` 20 · `lg` 24), tonos (`current`, `muted`, `subtle`, `brand`,
+  `success`, `warning`, `danger`: el 900 de cada familia, que llega a 4,5:1) y la
+  semántica resuelta: sin `label` es decoración (`aria-hidden`, `focusable=false`);
+  con `label` es `role="img"`. Server-safe. No reemplaza al ícono pelado dentro de
+  `Button`, `Badge`, `SidebarItem` o `EmptyState`, que ya lo dimensionan.
+- **`Chart`** (`sebs7n-ui/chart`): `ChartContainer`, `ChartTooltip` +
+  `ChartTooltipContent`, `ChartLegend` + `ChartLegendContent`, `useChart` y
+  `useChartMotion` sobre **Recharts**, que entra como peer **opcional**
+  (`recharts@^3.10`): solo lo instala la app que grafica, y ningún otro subpath lo
+  importa. El contenedor pone `--color-<serie>` por config, en orden fijo, y viste
+  grilla, ejes y anillos con los tokens. El gráfico lleva `responsive`; no hay
+  `ResponsiveContainer`.
+- **Paleta de gráficos** `chart-1…chart-5` (`--sf-chart-n`, también `bg-chart-n`):
+  blue, amber (900 en claro, 600 en oscuro), pink, purple, green. Es el orden de
+  cinco tonos Geist que pasa el validador de daltonismo (ΔE ≥ 8 entre adyacentes
+  en deutan, protan y tritan) y el 3:1 contra la superficie. Una sexta serie no se
+  inventa.
+- **Tokens de profundidad** `shadow-card`, `shadow-card-hover`, `shadow-button` y
+  `shadow-track`, en claro y en oscuro (en oscuro la profundidad la da un filo
+  claro `inset`, porque negro sobre negro no existe). Utilidad `transition-surface`
+  = `transition-control` + `translate`.
+- Sitio: catálogo **Iconos** (`/docs/iconos`, los 1.848 de lucide con búsqueda; un
+  clic copia el import), páginas de `Icon` y `Chart`, y transiciones entre páginas
+  con `<ViewTransition>` (React 19.3 / Next 16, sin flag).
+
+### Changed
+
+- **Profundidad sutil, estilo Geist: se nota al tocar, no de lejos.** Lo que flota
+  lleva `shadow-card` (Card `default`, Button `outline` y `secondary`, todos los
+  controles de formulario vía `inputControlClassName`, Toggle, Kbd, Toolbar,
+  ThemeSwitcher, Alert, Table, SidebarSearch, la barra mobile del AppShell). Lo
+  sólido que se aprieta lleva `shadow-button` y se hunde 1px en `active` (Button
+  `default`/`accent`/`destructive`, Checkbox y Radio marcados). Lo hundido lleva
+  `shadow-track` (pistas de Switch, Slider, Progress y Meter; Card `subtle`, y con
+  ella `EmptyState`). Card `interactive` sube 1px en hover. Deshabilitado = plano.
+  `ghost` y `link` no cambian: en reposo no tienen superficie.
+- **Alert:** la franja de color de las variantes es un pseudo-elemento (`before:`,
+  píldora de 3px) y ya no un `box-shadow: inset`, para que `shadow-card` tenga
+  lugar. Si una app pisaba la franja con un `shadow-[…]` propio, ahora la pisa con
+  `before:bg-*`.
+- `ComboboxEmpty` / `AutocompleteEmpty`: «Sin resultados» mide lo que un ítem
+  (`h-8`), no tres filas, y va alineado a la izquierda como ellos.
+- `cn()` conoce las sombras nuevas: `shadow-card` y `shadow-menu` en el mismo
+  `className` se resuelven como conflicto, gana la última.
+
+### Fixed
+
+- Sitio: el botón de copiar de los bloques de código vivía `absolute` sobre un
+  `<pre>` con scroll, así que un comando largo pasaba por debajo y el hover
+  translúcido lo dejaba ver; además no estaba centrado. Ahora va al lado del
+  `<pre>`, en flex. Las cards de «Los que más se usan» miden lo mismo entre sí.
+- Sitio: Next 16.3 generaba `AGENTS.md` y `CLAUDE.md` en cada `next dev`;
+  `agentRules: false`.
+
+
 ## [0.6.1] - 2026-09-24
 
 ### Fixed

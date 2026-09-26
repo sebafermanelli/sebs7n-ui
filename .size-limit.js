@@ -35,6 +35,7 @@ export default [
     // usa y el barrel mide lo mismo que un componente suelto, que es justo lo que no pasa en Next.
     import: "*",
     gzip: true,
-    limit: "35 kB",
+    // 0.7.0: 36,52 KB. Entraron `icon` y `chart` (Recharts queda afuera: es peer).
+    limit: "38 kB",
   },
 ]

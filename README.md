@@ -13,14 +13,14 @@ y pegados: mismos neutros, misma tipografía, mismos radios y sombras, mismos
 estados de foco. Lo único que cambia entre productos es el color de marca, que
 son **cuatro variables CSS**.
 
-- 58 componentes accesibles sobre Base UI, cada uno con su entry point.
+- 60 componentes accesibles sobre Base UI, cada uno con su entry point.
 - Tokens de color, tipografía, radios y sombras como variables CSS y utilidades
   de Tailwind v4 — sin `tailwind.config`.
 - Server Components donde no hace falta estado; `"use client"` solo donde sí.
 - Contraste AA verificado por tests, no a ojo.
 
 **El detalle de cada componente vive en
-[ui.sebastianfermanelli.com](https://ui.sebastianfermanelli.com)** —58 páginas con
+[ui.sebastianfermanelli.com](https://ui.sebastianfermanelli.com)** —60 páginas con
 demos en vivo, la tabla de props generada del TypeScript y las reglas de uso— y no
 se duplica acá. Cada página se sirve también como markdown y hay un `llms.txt`
 para agentes. Para levantarlo local, `cd docs/site && npm run dev`.
@@ -62,10 +62,14 @@ React y de Base UI:
 | `@base-ui/react` | `^1.8.0` |
 | `next-themes` | `^0.4.6` |
 | `sonner` | `^2.0.7` |
+| `recharts` (opcional) | `^3.10.0` |
 
 `geist` está declarado como peer **opcional** —npm no se queja si no lo
 instalás—, pero va en el mismo comando: los tokens de tipografía leen
 `--font-geist-sans` y `--font-geist-mono`, que define la app en el layout raíz.
+
+`recharts` también es peer **opcional**, pero al revés: solo lo instala la app que
+usa `sebs7n-ui/chart`. Ningún otro subpath del paquete lo importa.
 
 ### 1. CSS
 
@@ -108,7 +112,7 @@ import { GeistMono } from "geist/font/mono"
 import { GeistSans } from "geist/font/sans"
 import { ThemeProvider } from "next-themes"
 // Por subpath, no por el barrel: el layout raíz envuelve TODAS las páginas, así
-// que un `from "sebs7n-ui"` acá le suma los 58 componentes a cada una.
+// que un `from "sebs7n-ui"` acá le suma los 60 componentes a cada una.
 import { Toaster } from "sebs7n-ui/sonner"
 import { TooltipProvider } from "sebs7n-ui/tooltip"
 import "./globals.css"
@@ -241,7 +245,7 @@ export default [
             {
               name: "sebs7n-ui",
               message:
-                "Importá por subpath: sebs7n-ui/button, sebs7n-ui/card, sebs7n-ui/lib/utils. El barrel arrastra los 58 componentes a la página.",
+                "Importá por subpath: sebs7n-ui/button, sebs7n-ui/card, sebs7n-ui/lib/utils. El barrel arrastra los 60 componentes a la página.",
             },
           ],
         },
