@@ -6,7 +6,7 @@
 // se instala antes de empacar, porque `npm pack` corre el `prepack` del paquete
 // (tsc + tailwind) y necesita las devDependencies de la raíz.
 import { execFileSync } from "node:child_process"
-import { existsSync, mkdirSync } from "node:fs"
+import { existsSync, mkdirSync, readFileSync } from "node:fs"
 import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
 
@@ -14,8 +14,16 @@ const here = join(dirname(fileURLToPath(import.meta.url)), "..")
 const repo = join(here, "..", "..")
 const packDir = join(here, ".pack")
 
-if (!existsSync(join(repo, "node_modules", "typescript"))) {
-  console.log("[sync-ui] la raíz no tiene node_modules: npm ci")
+// No alcanza con mirar si hay node_modules: Vercel restaura el de la build anterior desde
+// cache, y si el paquete sumó una dependencia desde entonces (recharts en 0.7.0) el directorio
+// existe pero le falta esa. `npm pack` corría `tsc` contra ese node_modules viejo y moría con
+// "Cannot find module 'recharts'" en Vercel, mientras en local y en CI (sin cache) pasaba.
+// Se mira cada dependencia declarada: falta una, se instala todo.
+const rootPkg = JSON.parse(readFileSync(join(repo, "package.json"), "utf8"))
+const declaradas = Object.keys({ ...rootPkg.dependencies, ...rootPkg.devDependencies })
+const faltan = declaradas.filter((name) => !existsSync(join(repo, "node_modules", name)))
+if (faltan.length) {
+  console.log(`[sync-ui] a la raíz le faltan ${faltan.length} dependencias (${faltan.slice(0, 3).join(", ")}${faltan.length > 3 ? ", …" : ""}): npm ci`)
   const lock = existsSync(join(repo, "package-lock.json"))
   // `--include=dev` es obligatorio: Vercel corre el build con NODE_ENV=production y ahí npm
   // saltea las devDependencies, que es donde viven React, sus tipos y Base UI. Sin eso `npm pack`
