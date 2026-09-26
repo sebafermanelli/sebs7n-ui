@@ -74,7 +74,7 @@ export function readShadows(root) {
       tooltip: "Tooltip.",
       menu: "DropdownMenu, Select, Combobox, Popover, el tooltip de un Chart.",
       modal: "Dialog, AlertDialog, Sheet.",
-      card: "Lo que flota en reposo: Card `default`, Button `outline`, los controles de formulario, Toggle, Kbd, Toolbar, ThemeSwitcher.",
+      card: "Lo que flota en reposo: Card `default`, Button `outline` y `secondary`, los controles de formulario, Toggle, Kbd, Toolbar, ThemeSwitcher, Alert, Table, SidebarSearch y la barra mobile del AppShell.",
       "card-hover": "Card `interactive` al pasar el puntero: sube un pixel y la sombra crece.",
       button: "Lo sólido que se aprieta: Button `default`/`accent`/`destructive`, Checkbox y Radio marcados. Filo claro arriba, 1px abajo.",
       track: "Lo hundido: la pista de Switch, Slider, Progress y Meter, y la Card `subtle`. Sombra interior de 1px.",

@@ -9,7 +9,7 @@ function Table({ className, density = "default", ...props }: TableProps) {
     <div
       data-slot="table-container"
       data-density={density}
-      className="group/table relative w-full overflow-x-auto rounded-xl border border-gray-400"
+      className="group/table relative w-full overflow-x-auto rounded-xl border border-gray-400 shadow-card"
     >
       <table data-slot="table" className={cn("w-full caption-bottom border-collapse text-copy-13", className)} {...props} />
     </div>

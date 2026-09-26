@@ -13,7 +13,7 @@ export function Example({ example }: { example: Ejemplo }) {
         </h3>
         {example.description && <p className="text-copy-14 text-gray-900">{example.description}</p>}
       </div>
-      <div className="flex min-h-32 items-center justify-center rounded-xl border border-gray-400 bg-background-100 p-6">
+      <div className="flex min-h-32 items-center justify-center rounded-xl border border-gray-400 bg-background-100 p-6 shadow-card">
         <DemoSlot id={example.id} />
       </div>
       <CodeBlock code={example.code} label={`Copiar el código de ${example.title}`} />

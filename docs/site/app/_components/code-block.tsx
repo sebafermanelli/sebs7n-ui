@@ -17,7 +17,7 @@ import { Button } from "sebs7n-ui/button"
 export function CodeBlock({ code, label = "Copiar el código" }: { code: string; label?: string }) {
   const [copiado, setCopiado] = useState(false)
   return (
-    <div className="flex items-center gap-2 rounded-xl border border-gray-400 bg-background-200 pr-2">
+    <div className="flex items-center gap-2 rounded-xl border border-gray-400 bg-background-200 pr-2 shadow-track">
       <pre className="min-w-0 flex-1 overflow-x-auto p-4">
         <code className="text-copy-13-mono text-gray-1000">{code}</code>
       </pre>

@@ -83,7 +83,7 @@ describe("Alert", () => {
       </Alert>
     )
     const alert = screen.getByRole("alert")
-    expect(alert).toHaveClass("bg-background-100", "border-gray-400", "rounded-xl", "shadow-[inset_3px_0_0_var(--color-amber-700)]", "*:[svg]:text-amber-900")
+    expect(alert).toHaveClass("bg-background-100", "border-gray-400", "rounded-xl", "shadow-card", "before:bg-amber-700", "*:[svg]:text-amber-900")
     expect(screen.getByText("Cargalo antes de facturar.")).toHaveClass("text-gray-900")
   })
 })

@@ -274,7 +274,7 @@ function SidebarSearch({
       data-slot="sidebar-search"
       aria-keyshortcuts={keyshortcuts}
       className={cn(
-        "flex h-8 w-full min-w-0 cursor-pointer items-center gap-2 rounded-md border border-gray-400 bg-background-100 px-2 text-left text-copy-14 text-gray-900 outline-none transition-control hover:border-gray-500 hover:text-gray-1000 focus-visible:focus-ring [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+        "flex h-8 w-full min-w-0 cursor-pointer items-center gap-2 rounded-md border border-gray-400 bg-background-100 px-2 text-left text-copy-14 text-gray-900 shadow-card outline-none transition-control hover:border-gray-500 hover:text-gray-1000 focus-visible:focus-ring [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
         "group-data-collapsed/sidebar:w-8 group-data-collapsed/sidebar:justify-center group-data-collapsed/sidebar:px-0",
         className
       )}

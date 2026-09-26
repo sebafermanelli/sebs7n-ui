@@ -19,7 +19,15 @@ describe("profundidad", () => {
     expect(inputDisabledClassName).toContain("data-disabled:shadow-none")
     expect(toggleVariants()).toContain("shadow-card")
     expect(toggleVariants()).toContain("data-disabled:shadow-none")
-    for (const file of ["components/kbd.tsx", "components/toolbar.tsx", "components/theme-switcher.tsx"]) {
+    for (const file of [
+      "components/kbd.tsx",
+      "components/toolbar.tsx",
+      "components/theme-switcher.tsx",
+      "components/alert.tsx",
+      "components/table.tsx",
+      "components/app-shell.tsx",
+      "components/sidebar.tsx",
+    ]) {
       expect(src(file), file).toContain("shadow-card")
     }
   })
