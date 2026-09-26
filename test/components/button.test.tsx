@@ -60,8 +60,10 @@ describe("Button", () => {
   })
 
   it("profundidad sutil: los sólidos llevan shadow-button y se hunden al apretar; ghost y link quedan planos", () => {
-    for (const variant of ["default", "accent", "destructive"] as const) {
-      expect(buttonVariants({ variant }), variant).toContain("shadow-button")
+    // `default` es gray-1000 (blanco en oscuro): lleva la sombra invertida, con el filo gris.
+    expect(buttonVariants({ variant: "default" })).toContain("shadow-button-inverted")
+    for (const variant of ["accent", "destructive"] as const) {
+      expect(buttonVariants({ variant }), variant).toMatch(/\bshadow-button\b/)
       expect(buttonVariants({ variant }), variant).toContain("active:translate-y-px")
       // Apagado, plano: la sombra dice «se puede apretar», y un botón deshabilitado no se puede.
       expect(buttonVariants({ variant }), variant).toContain("data-disabled:shadow-none")

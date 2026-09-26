@@ -8,9 +8,10 @@ const buttonVariantsBase = cva(
     variants: {
       variant: {
         // Los sólidos llevan `shadow-button` (filo claro arriba, 1px de sombra abajo) y
-        // se hunden un pixel al apretar. Deshabilitados vuelven a ser planos.
+        // se hunden un pixel al apretar. Deshabilitados vuelven a ser planos. `default`
+        // es gray-1000 (blanco en oscuro): lleva la variante invertida, con filo gris.
         default:
-          "bg-gray-1000 text-background-100 shadow-button hover:bg-button-primary-hover active:translate-y-px active:shadow-none data-disabled:shadow-none",
+          "bg-gray-1000 text-background-100 shadow-button-inverted hover:bg-button-primary-hover active:translate-y-px active:shadow-none data-disabled:shadow-none",
         outline:
           "border-gray-alpha-400 bg-background-100 text-gray-1000 shadow-card hover:bg-gray-alpha-200 active:translate-y-px active:bg-gray-alpha-300 active:shadow-none data-disabled:shadow-none",
         // Misma sombra de 1px que `outline`: los dos son superficies que flotan sobre la página.

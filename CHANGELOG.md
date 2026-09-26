@@ -9,6 +9,18 @@ major.
 
 ## [Unreleased]
 
+## [0.7.2] - 2026-09-26
+
+### Fixed
+
+- **El botón blanco no tenía relieve en oscuro.** `shadow-button` pone un filo
+  blanco arriba, y el Button `default` es `gray-1000`: negro en claro, **blanco**
+  en oscuro, donde un filo blanco no se ve. Token nuevo `shadow-button-inverted`
+  para lo que se pinta con `gray-1000` (Button `default`, Checkbox y Radio
+  marcados): en claro es el mismo filo claro; en oscuro el filo es un gris apenas
+  más oscuro que la superficie, que es lo que le da el relieve a algo blanco.
+
+
 ## [0.7.1] - 2026-09-26
 
 ### Fixed

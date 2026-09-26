@@ -68,7 +68,7 @@ export function readBackgrounds(root) {
 
 export function readShadows(root) {
   const css = readFileSync(join(root, "src/styles/theme.css"), "utf8")
-  return ["tooltip", "menu", "modal", "card", "card-hover", "button", "track"].map((name) => ({
+  return ["tooltip", "menu", "modal", "card", "card-hover", "button", "button-inverted", "track"].map((name) => ({
     name: `shadow-${name}`,
     uso: {
       tooltip: "Tooltip.",
@@ -76,7 +76,8 @@ export function readShadows(root) {
       modal: "Dialog, AlertDialog, Sheet.",
       card: "Lo que flota en reposo: Card `default`, Button `outline` y `secondary`, los controles de formulario, Toggle, Kbd, Toolbar, ThemeSwitcher, Alert, Table, SidebarSearch y la barra mobile del AppShell.",
       "card-hover": "Card `interactive` al pasar el puntero: sube un pixel y la sombra crece.",
-      button: "Lo sólido que se aprieta: Button `default`/`accent`/`destructive`, Checkbox y Radio marcados. Filo claro arriba, 1px abajo.",
+      button: "Lo sólido de color que se aprieta: Button `accent` y `destructive`. Filo claro arriba, 1px abajo.",
+      "button-inverted": "Lo sólido en gray-1000: Button `default`, Checkbox y Radio marcados. En claro es el mismo filo claro; en oscuro (superficie blanca) el filo es gris.",
       track: "Lo hundido: la pista de Switch, Slider, Progress y Meter, y la Card `subtle`. Sombra interior de 1px.",
     }[name],
     presente: css.includes(`--sf-shadow-${name}:`),

@@ -36,7 +36,7 @@ describe("profundidad", () => {
     for (const file of ["components/checkbox.tsx", "components/radio-group.tsx"]) {
       const code = src(file)
       expect(code, file).toContain("shadow-card")
-      expect(code, file).toContain("data-checked:shadow-button")
+      expect(code, file).toContain("data-checked:shadow-button-inverted")
       expect(code, file).toContain("data-disabled:shadow-none")
     }
   })
@@ -51,10 +51,10 @@ describe("profundidad", () => {
 
   it("los tokens existen en los dos temas y twMerge los conoce", () => {
     const css = src("styles/theme.css")
-    for (const name of ["card", "card-hover", "button", "track"]) {
+    for (const name of ["card", "card-hover", "button", "button-inverted", "track"]) {
       expect(css.match(new RegExp(`--sf-shadow-${name}:`, "g"))?.length, name).toBe(2)
       expect(css, name).toContain(`--shadow-${name}: var(--sf-shadow-${name})`)
     }
-    expect(src("lib/utils.ts")).toContain('"card", "card-hover", "button", "track"')
+    expect(src("lib/utils.ts")).toContain('"card", "card-hover", "button", "button-inverted", "track"')
   })
 })
