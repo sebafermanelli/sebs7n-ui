@@ -14,7 +14,7 @@
 //    que es AST puro y no sobrevive al .d.ts.
 //
 // `typescript` ya es devDependency del paquete, así que no agrega dependencias nuevas.
-import { readFileSync } from "node:fs"
+import { readdirSync, readFileSync } from "node:fs"
 import { join, sep } from "node:path"
 
 import ts from "typescript"
@@ -270,7 +270,11 @@ export function extractProps({ root, files, documented }) {
 }
 
 /** Lee `src/index.ts` y devuelve los slugs de componente en orden de export. */
+// Del directorio, no del barrel: desde 0.7.1 `chart` existe como subpath pero no está en
+// `src/index.ts` (importa un peer opcional), y leyendo el barrel el sitio lo perdía entero.
 export function componentSlugs(root) {
-  const index = readFileSync(join(root, "src/index.ts"), "utf8")
-  return [...index.matchAll(/export \* from "\.\/components\/([a-z0-9-]+)\.js"/g)].map(([, slug]) => slug).sort()
+  return readdirSync(join(root, "src/components"))
+    .filter((file) => file.endsWith(".tsx"))
+    .map((file) => file.slice(0, -".tsx".length))
+    .sort()
 }
