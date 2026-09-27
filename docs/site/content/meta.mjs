@@ -1616,6 +1616,81 @@ export const COMPONENTS = {
   },
 
   // ──────────────────────────── Contenido y datos ────────────────────────────
+  "ai-button": {
+    title: "AiButton",
+    group: "contenido",
+    description: "Lo que hace la IA: el botón, el ícono, el lanzador flotante del asistente y el placeholder de «está trabajando». Con su propio color, que no es el de marca.",
+    keyboard: [["Enter · Espacio", "Activa el botón."], ["Tab", "El lanzador es una parada de tabulación más; al enfocarlo muestra su etiqueta."]],
+    a11y: [
+      "`AiButton` es el `Button` del sistema: mismo foco, mismo apagado, misma espera (`aria-busy`).",
+      "`AiLauncher` no tiene texto adentro: su nombre accesible es `label` (por defecto, «Asistente»). La etiqueta que aparece al lado es el mismo texto y está fuera del árbol de accesibilidad, para que no se lea dos veces.",
+      "`AiIcon` y `AiShimmer` son decoración (`aria-hidden`). La espera la anuncia el contenedor: `aria-busy`, o el `role=\"status\"` de `ChatTyping`.",
+      "El texto en color IA llega a 4,5:1 sobre la superficie en los dos temas, y el blanco sobre el sólido también. Lo verifica un test.",
+    ],
+    usage: [
+      "`outline` para una acción de IA entre otras («Resumir», «Completar con IA»). `solid` para la principal de un flujo de IA. **Uno sólido por pantalla.**",
+      "El color de la IA es propio y no el de marca, a propósito: lo que hace la IA tiene que distinguirse de lo que hace la app, con cualquier brand.",
+      "`AiLauncher` no se posiciona solo: `className=\"fixed right-6 bottom-6\"`. Depende de qué más flote ahí.",
+      "Como trigger de un `Popover` o un `Sheet`: `render={<AiLauncher />}`.",
+      "`AiShimmer` va donde iría un `Skeleton`, en un flujo de IA: dice «alguien lo está escribiendo», no «esto está cargando».",
+    ],
+    props: {
+      AiButton: {
+        ...heredadas("disabled"),
+        className: PROP_DESCRIPTIONS.className,
+        loading: "Muestra el spinner y frena el click. Se anuncia con `aria-busy`, como en `Button`.",
+        size: "Los mismos seis tamaños de `Button`. Con uno de ícono (`icon-sm`, `icon-md`, `icon-lg`) el tipo exige `aria-label`.",
+      },
+      AiLauncher: { className: PROP_DESCRIPTIONS.className },
+    },
+    related: ["chat", "button", "skeleton", "popover"],
+  },
+  chat: {
+    title: "Chat",
+    group: "contenido",
+    description: "Las piezas de una conversación con un asistente: cabecera, mensajes, sugerencias, el campo para escribir y sus estados. No sabe de modelos ni de streaming: eso es de la app.",
+    keyboard: [
+      ["Enter", "Envía el mensaje. En una pantalla táctil, baja de renglón."],
+      ["Shift + Enter", "Baja de renglón."],
+      ["Tab", "Recorre la lista de mensajes, el campo y el botón."],
+      ["↑ ↓ · Re Pág · Av Pág", "Con el foco en la lista, la scrollean."],
+    ],
+    a11y: [
+      "La lista es un `role=\"log\"` con `aria-live=\"polite\"`: lo que se agrega se anuncia sin mover el foco. `busy` lo marca con `aria-busy`.",
+      "La lista es tabulable: una zona que scrollea sin nada enfocable adentro no se puede recorrer con el teclado.",
+      "`ChatTyping` es un `role=\"status\"` con nombre; `ChatError`, un `role=\"alert\"`.",
+      "El campo tiene su `<label>`, oculto a la vista. El botón de enviar y el de detener, su `aria-label`.",
+      "En táctil el campo mide 44px y la letra 16px: con menos, iOS hace zoom al enfocar.",
+      "Mientras se arma una palabra con un IME (japonés, coreano), Enter la confirma y no envía.",
+    ],
+    usage: [
+      "No dibuja superficie: va adentro de un `Popover`, un `Sheet` o una `Card`.",
+      "El texto de un mensaje va como `children`. Si la respuesta trae formato, convertila a elementos de React. **Nunca la inyectes como HTML**: lo que escribe un modelo es texto de un tercero.",
+      "`ChatMessages` sigue al último mensaje mientras el usuario esté abajo. Si subió a leer, no lo arrastra.",
+      "Con una respuesta en curso, `busy` convierte el botón de enviar en el de detener, en el mismo lugar.",
+      "Sin controlar, `ChatInput` se vacía solo al enviar. Controlado (`value`), vaciarlo es de la app, que es quien sabe si el envío salió.",
+      "La letra chica (`ChatDisclaimer`) va debajo del campo, no en la cabecera: ahí es donde se mira antes de enviar.",
+    ],
+    props: {
+      Chat: { className: PROP_DESCRIPTIONS.className },
+      ChatMessages: {
+        className: PROP_DESCRIPTIONS.className,
+        onScroll: "Se llama después de que la lista anota si el usuario sigue abajo. Sirve para mostrar un botón de «ir al final».",
+      },
+      ChatMessage: { className: PROP_DESCRIPTIONS.className },
+      ChatInput: {
+        className: PROP_DESCRIPTIONS.className,
+      },
+      ChatSuggestion: {
+        className: PROP_DESCRIPTIONS.className,
+        disabled: PROP_DESCRIPTIONS.disabled,
+        type: "Por defecto `button`, no `submit`: una sugerencia adentro de un `<form>` no tiene que enviarlo.",
+      },
+      ChatTyping: { className: PROP_DESCRIPTIONS.className },
+      ChatError: { className: PROP_DESCRIPTIONS.className },
+    },
+    related: ["ai-button", "popover", "sheet", "textarea"],
+  },
   table: {
     title: "Table",
     group: "contenido",

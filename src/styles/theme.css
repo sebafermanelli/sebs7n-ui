@@ -11,6 +11,18 @@
  * `:root`, y la app lo puede pisar igual que pisa `--brand-base`.
  */
 @theme {
+  /* El brillo del placeholder de IA: una franja que cruza de derecha a izquierda. */
+  --animate-ai-shimmer: ai-shimmer 1.6s ease-in-out infinite;
+
+  @keyframes ai-shimmer {
+    from {
+      background-position: 100% 0;
+    }
+    to {
+      background-position: -100% 0;
+    }
+  }
+
   /**
    * Los tres radios del sistema.
    *
@@ -126,6 +138,19 @@
   --color-purple-ink: color-mix(in srgb, var(--sf-purple-900) 60%, var(--sf-purple-1000));
   --color-pink-ink: color-mix(in srgb, var(--sf-pink-900) 60%, var(--sf-pink-1000));
 
+  /**
+   * El color de la IA. Es propio y no el de marca: lo que hace la IA tiene que distinguirse de
+   * lo que hace la app, en cualquier app, con cualquier brand.
+   *
+   * Son dos matices —violeta y magenta— porque el lenguaje visual de la IA es el degradé entre
+   * los dos: el canto del lanzador, el brillo del placeholder. `ai` es el que lleva texto e
+   * íconos; `ai-2` solo acompaña.
+   */
+  --color-ai: var(--sf-ai);
+  --color-ai-2: var(--sf-ai-2);
+  --color-ai-solid: var(--sf-ai-solid);
+  --color-ai-solid-hover: var(--sf-ai-solid-hover);
+
   --color-highlight: var(--sf-highlight);
   --color-highlight-active: var(--sf-highlight-active);
 
@@ -139,6 +164,7 @@
   --shadow-button-accent: var(--sf-shadow-button-accent);
   --shadow-track: var(--sf-shadow-track);
   --shadow-chip: var(--sf-shadow-chip);
+  --shadow-ai: var(--sf-shadow-ai);
 
   /**
    * Paleta categórica de los gráficos: cinco series, en este orden, siempre.
@@ -281,6 +307,19 @@
      */
     --sf-tint-fill: 12%;
     --sf-tint-border: 24%;
+
+    --sf-ai: oklch(0.56 0.22 293);
+    --sf-ai-2: oklch(0.62 0.24 330);
+    /**
+     * El fondo del botón de IA sólido. Es el mismo tono en los dos temas, y por eso no se
+     * repite en `.dark`: el texto de encima es blanco siempre, y `--sf-ai` en oscuro se aclara
+     * (0,68) hasta un violeta sobre el que el blanco no llega a 4,5:1.
+     */
+    --sf-ai-solid: oklch(0.5 0.23 293);
+    --sf-ai-solid-hover: oklch(0.46 0.23 293);
+    /* El halo del botón de IA sólido, como el del botón de marca. Escala con el vidrio. */
+    --sf-shadow-ai: var(--sf-shadow-button),
+      0 8px 18px -8px color-mix(in srgb, var(--sf-ai-solid) calc(var(--sf-g) * 80%), transparent);
     /* El filo de luz de un chip: lo que hace que el tinte se lea como material y no como relleno. */
     --sf-shadow-chip: inset 0 1px 0 0 rgb(255 255 255 / calc(0.2 + var(--sf-g) * 0.4));
     /**
@@ -397,6 +436,9 @@
     --sf-highlight-active: color-mix(in srgb, var(--sf-brand-700) 26%, transparent);
     --sf-tint-fill: 22%;
     --sf-tint-border: 34%;
+
+    --sf-ai: oklch(0.68 0.19 293);
+    --sf-ai-2: oklch(0.72 0.2 330);
     --sf-shadow-chip: inset 0 1px 0 0 rgb(255 255 255 / calc(0.04 + var(--sf-g) * 0.1));
     --sf-focus-halo: color-mix(in srgb, var(--sf-brand-700) 30%, transparent);
 
@@ -540,6 +582,56 @@
     -webkit-mask-composite: xor;
     mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
   }
+}
+
+/**
+ * El canto de la IA: el mismo borde de 1px en degradé del cromo, pero en los dos matices de
+ * la IA. Es lo que dice «esto lo hace la IA» sin pintar el botón entero de violeta.
+ *
+ * Igual que `glass-rim`, el elemento tiene que estar posicionado. El degradé no se anima ni
+ * se transiciona —un `background` en degradé no se puede interpolar, y el hover saltaba de
+ * golpe—: lo que cambia al pasar el puntero es la opacidad del canto, que sí.
+ */
+@utility ai-rim {
+  &::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    padding: 1.5px;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(135deg, var(--sf-ai), var(--sf-ai-2) 55%, var(--sf-ai));
+    opacity: 0.7;
+    transition: opacity 150ms ease;
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  }
+
+  &:hover::after,
+  &:focus-visible::after,
+  &[data-popup-open]::after {
+    opacity: 1;
+  }
+}
+
+/**
+ * «La IA está trabajando». Reemplaza al Skeleton en los flujos de IA: un Skeleton dice «esto
+ * está cargando»; esto dice «alguien lo está escribiendo».
+ *
+ * Con `prefers-reduced-motion` la franja se queda quieta —lo corta el reset de base.css— y
+ * sigue viéndose el tinte.
+ */
+@utility ai-shimmer {
+  border-radius: var(--radius-control);
+  background-image: linear-gradient(
+    100deg,
+    color-mix(in oklch, var(--sf-ai) 8%, transparent) 30%,
+    color-mix(in oklch, var(--sf-ai-2) 22%, transparent) 50%,
+    color-mix(in oklch, var(--sf-ai) 8%, transparent) 70%
+  );
+  background-size: 200% 100%;
+  animation: var(--animate-ai-shimmer);
 }
 
 /* El brillo de arriba de un botón de color: la mitad superior más clara, como una gota. */

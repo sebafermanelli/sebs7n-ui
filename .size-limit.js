@@ -38,7 +38,13 @@ export default [
     // 0.7.0: 36,52 KB. Entraron `icon` y `chart` (Recharts queda afuera: es peer).
     // 1.0.0: 39,24 KB. Entraron `calendar`, `date-picker` y `lib/dates` (+2,9 KB); el vidrio
     // casi no pesa, porque vive en el CSS. El botón por subpath no se movió: 11,87 KB.
-    // Con `color-picker` y `lib/color` sube otro escalón: ver la medición en el CHANGELOG.
-    limit: "43 kB",
+    // Con `color-picker` y `lib/color`: 42,53 KB.
+    // 1.1.0: 44,84 KB. Entraron `ai-button` y `chat` (+2,3 KB).
+    //
+    // El barrel crece con cada componente, y va a seguir: desde 1.0 la regla es que lo que se
+    // repite en las apps pasa al paquete. El umbral no está para frenar eso sino para que un
+    // salto que no se explique por un componente nuevo se vea en el PR. El que importa para una
+    // app es el de arriba, el subpath, que no se movió.
+    limit: "47 kB",
   },
 ]

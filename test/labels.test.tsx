@@ -184,9 +184,11 @@ describe("LabelsProvider", () => {
   // de nada: TypeScript no podría marcar lo que falta.
   it("defaultLabels trae todos los grupos con todas sus claves", () => {
     expect(Object.keys(defaultLabels).sort()).toEqual([
+      "ai",
       "appShell",
       "autocomplete",
       "calendar",
+      "chat",
       "colorPicker",
       "combobox",
       "datePicker",

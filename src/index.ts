@@ -69,6 +69,7 @@ export { tagRemoveClassName, tagVariants, TAG_COLORS, type TagColor, type TagSiz
 export { toggleVariants } from "./variants/toggle.js"
 
 export * from "./components/accordion.js"
+export * from "./components/ai-button.js"
 export * from "./components/alert-dialog.js"
 export * from "./components/alert.js"
 export * from "./components/app-shell-content.js"
@@ -85,6 +86,7 @@ export * from "./components/card.js"
 // instalado dejaba de compilar («Module not found: Can't resolve 'recharts'»),
 // aunque no usara ningún gráfico. Pasó en 0.7.0. Solo por subpath: `sebs7n-ui/chart`.
 export * from "./components/checkbox-group.js"
+export * from "./components/chat.js"
 export * from "./components/checkbox.js"
 export * from "./components/collapsible.js"
 export * from "./components/color-picker.js"

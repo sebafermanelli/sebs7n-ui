@@ -9,6 +9,27 @@ major.
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-09-27
+
+### Added
+
+- **`AiButton`** (`sebs7n-ui/ai-button`), con `AiIcon`, `AiLauncher` y `AiShimmer`: lo que hace
+  la IA, con su propio color. `AiButton` es el `Button` del sistema en `outline` o `solid`;
+  `AiLauncher`, el botón redondo de vidrio que abre el asistente, con el canto en el degradé de
+  la IA y una etiqueta que aparece al pasar el puntero; `AiShimmer`, el placeholder de «la IA
+  está trabajando».
+- **`Chat`** (`sebs7n-ui/chat`): las piezas de una conversación con un asistente. `Chat`,
+  `ChatHeader`, `ChatTitle`, `ChatActions`, `ChatMessages`, `ChatMessage`,
+  `ChatMessageActions`, `ChatEmpty`, `ChatSuggestions`, `ChatSuggestion`, `ChatTyping`,
+  `ChatError`, `ChatFooter`, `ChatInput` y `ChatDisclaimer`. La lista sigue al último mensaje
+  mientras el usuario esté abajo; Enter envía y en táctil baja de renglón; con una respuesta en
+  curso, el botón de enviar pasa a ser el de detener. No sabe de modelos ni de streaming.
+- **El color de la IA**: `text-ai`, `bg-ai-solid`, `bg-ai-solid-hover` y `ai-2`, más las
+  utilidades `ai-rim` y `ai-shimmer` y la sombra `shadow-ai`. Es propio y no el de marca: una
+  acción de IA se reconoce igual con cualquier brand. El sólido es el mismo tono en los dos
+  temas, para que el texto blanco pase 4,5:1.
+- `Labels` suma los grupos `ai` y `chat`.
+
 ## [1.0.0] - 2026-09-27
 
 El material pasa a ser vidrio. La guía para migrar el código de una app está en

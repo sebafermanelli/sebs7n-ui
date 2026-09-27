@@ -61,6 +61,10 @@ import * as React from "react"
  * hay nada que gane con eso ahora: queda anotado y se hace de una sola vez.
  */
 export type Labels = {
+  ai: {
+    /** Nombre del botón flotante que abre el asistente. */
+    launcher: string
+  }
   appShell: {
     /** Nombre del botón hamburguesa en mobile. */
     openMenu: string
@@ -74,6 +78,22 @@ export type Labels = {
     clear: string
     /** Nombre del botón que abre la lista. */
     trigger: string
+  }
+  chat: {
+    /** Nombre de la zona de mensajes, para quien no la ve. */
+    log: string
+    /** Nombre del campo donde se escribe. */
+    input: string
+    /** Lo que dice el campo vacío. */
+    placeholder: string
+    /** Nombre del botón de enviar. */
+    send: string
+    /** Nombre del botón que corta una respuesta en curso. */
+    stop: string
+    /** Lo que se anuncia mientras el asistente escribe. */
+    typing: string
+    /** Texto del botón para volver a intentar después de un error. */
+    retry: string
   }
   calendar: {
     /** Nombre del botón que va al mes anterior. */
@@ -161,6 +181,7 @@ export type Labels = {
 }
 
 export const defaultLabels: Labels = {
+  ai: { launcher: "Asistente" },
   appShell: {
     openMenu: "Abrir menú",
     navigation: "Navegación",
@@ -169,6 +190,15 @@ export const defaultLabels: Labels = {
   autocomplete: {
     clear: "Limpiar",
     trigger: "Ver sugerencias",
+  },
+  chat: {
+    log: "Conversación",
+    input: "Mensaje",
+    placeholder: "Escribí tu pregunta…",
+    send: "Enviar",
+    stop: "Detener respuesta",
+    typing: "Escribiendo una respuesta",
+    retry: "Reintentar",
   },
   calendar: {
     previousMonth: "Mes anterior",
