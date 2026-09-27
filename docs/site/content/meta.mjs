@@ -644,9 +644,9 @@ export const COMPONENTS = {
   calendar: {
     title: "Calendar",
     group: "formularios",
-    description: "Un mes en una grilla, para elegir una fecha o un rango. Es el calendario de `DatePicker`, suelto.",
+    description: "Un mes en una grilla —o varios, uno al lado del otro—, para elegir una fecha o un rango. Es el calendario de `DatePicker`, suelto.",
     keyboard: [
-      ["← → ↑ ↓", "Un día o una semana. Al salir del mes, el mes cambia."],
+      ["← → ↑ ↓", "Un día o una semana. Al salir de los meses a la vista, la vista se corre."],
       ["Inicio · Fin", "Primer y último día de la semana."],
       ["Re Pág · Av Pág", "Un mes atrás o adelante. Con Shift, un año."],
       ["Enter · Espacio", "Elige el día enfocado."],
@@ -658,11 +658,14 @@ export const COMPONENTS = {
       "Hoy lleva `aria-current=\"date\"`; el título del mes, `aria-live`, así cambiar de mes con los botones se anuncia.",
       "Una fecha apagada usa `aria-disabled` y no `disabled`: sigue siendo enfocable, que es lo que deja pasar por arriba con las flechas.",
       "Los días de los meses vecinos completan las semanas pero están fuera del árbol de accesibilidad.",
+      "Con varios meses hay una grilla por mes, cada una con su nombre, y siguen siendo una sola parada de tabulación entre todas.",
     ],
     usage: [
       "No dibuja superficie: va adentro de un `Popover`, de una `Card` o suelto. El vidrio lo pone quien lo contiene.",
       "Para un campo de formulario, usá `DatePicker`, que ya lo trae adentro.",
       "Siempre son seis semanas, aunque el mes entre en cinco: con un alto fijo, lo que está debajo no se mueve al cambiar de mes.",
+      "`numberOfMonths={2}` para un rango que suele cruzar de un mes al otro: una estadía, un alquiler. Cada fecha aparece una sola vez; los huecos de un mes quedan vacíos.",
+      "En un teléfono va un solo mes: dos no entran a lo ancho y quedan uno debajo del otro.",
     ],
     props: {
       Calendar: {

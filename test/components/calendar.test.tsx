@@ -197,4 +197,64 @@ describe("Calendar mode=range", () => {
     expect(toISODate(rango.from!)).toBe("2026-09-20")
     expect(rango.to).toBeNull()
   })
+
+  describe("varios meses", () => {
+    const rango: DateRange = { from: d("2026-10-02"), to: d("2026-10-14") }
+
+    it("una grilla por mes, con los botones en las puntas", () => {
+      render(<Calendar defaultMonth={d("2026-09-01")} mode="range" numberOfMonths={2} value={rango} />)
+      const grillas = screen.getAllByRole("grid")
+      expect(grillas.map((g) => g.getAttribute("aria-labelledby")).map((id) => document.getElementById(id!)!.textContent)).toEqual([
+        "septiembre de 2026",
+        "octubre de 2026",
+      ])
+      const [primero, segundo] = [...document.querySelectorAll<HTMLElement>("[data-slot=calendar-month]")]
+      expect(within(primero!).getByRole("button", { name: "Mes anterior" })).toBeInTheDocument()
+      expect(within(primero!).queryByRole("button", { name: "Mes siguiente" })).toBeNull()
+      expect(within(segundo!).getByRole("button", { name: "Mes siguiente" })).toBeInTheDocument()
+      expect(within(segundo!).queryByRole("button", { name: "Mes anterior" })).toBeNull()
+    })
+
+    it("cada fecha aparece una sola vez: los huecos de un mes quedan vacíos", () => {
+      render(<Calendar defaultMonth={d("2026-09-01")} mode="range" numberOfMonths={2} value={rango} />)
+      // El 2 de octubre cae en la última semana de la grilla de septiembre. Dibujado ahí también,
+      // el rango se ve dos veces: una en cada mes.
+      expect(document.querySelectorAll('[data-date="2026-10-02"]')).toHaveLength(1)
+      expect(document.querySelectorAll("[data-selected]")).toHaveLength(2)
+      for (const hueco of document.querySelectorAll("[data-outside]")) expect(hueco).toBeEmptyDOMElement()
+      expect(document.querySelectorAll("[data-slot=calendar-day]")).toHaveLength(30 + 31)
+    })
+
+    it("la banda del rango se cierra en los bordes del mes", () => {
+      render(<Calendar defaultMonth={d("2026-09-01")} mode="range" numberOfMonths={2} value={{ from: d("2026-09-28"), to: d("2026-10-03") }} />)
+      expect(dia("2026-09-30").closest("td")).toHaveAttribute("data-month-end")
+      expect(dia("2026-09-30").closest("td")).toHaveAttribute("data-range", "middle")
+      expect(dia("2026-10-01").closest("td")).toHaveAttribute("data-month-start")
+      expect(dia("2026-09-29").closest("td")).not.toHaveAttribute("data-month-end")
+    })
+
+    it("sigue siendo una sola parada de tabulación, y las flechas cruzan de un mes al otro sin mover la vista", async () => {
+      const onMonthChange = vi.fn()
+      render(<Calendar defaultMonth={d("2026-09-01")} defaultValue={d("2026-09-30")} numberOfMonths={2} onMonthChange={onMonthChange} />)
+      expect([...document.querySelectorAll("[data-slot=calendar-day]")].filter((b) => b.getAttribute("tabindex") === "0")).toHaveLength(1)
+      dia("2026-09-30").focus()
+      await userEvent.keyboard("{ArrowRight}")
+      expect(dia("2026-10-01")).toHaveFocus()
+      expect(onMonthChange).not.toHaveBeenCalled()
+    })
+
+    it("al salir por el final, la vista avanza lo justo: el mes nuevo queda último", async () => {
+      const onMonthChange = vi.fn()
+      render(<Calendar defaultMonth={d("2026-09-01")} defaultValue={d("2026-10-31")} numberOfMonths={2} onMonthChange={onMonthChange} />)
+      dia("2026-10-31").focus()
+      await userEvent.keyboard("{ArrowRight}")
+      expect(dia("2026-11-01")).toHaveFocus()
+      expect(toISODate(onMonthChange.mock.calls[0]![0])).toBe("2026-10-01")
+    })
+
+    it("«siguiente» se apaga cuando el último mes a la vista ya llega a `max`", () => {
+      render(<Calendar defaultMonth={d("2026-09-01")} max={d("2026-10-20")} numberOfMonths={2} />)
+      expect(screen.getByRole("button", { name: "Mes siguiente" })).toBeDisabled()
+    })
+  })
 })

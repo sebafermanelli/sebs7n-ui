@@ -9,6 +9,24 @@ major.
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-09-27
+
+### Added
+
+- **`Calendar` y `DatePicker` con varios meses** (`numberOfMonths`). Para un rango que cruza
+  de un mes al otro. Cada fecha aparece una sola vez: con más de un mes a la vista, los
+  huecos de cada grilla quedan vacíos en vez de repetir los días del mes de al lado, que es
+  lo que hace que un rango se vea partido. Los botones van en las puntas, las flechas cruzan
+  de un mes al otro sin mover la vista y sigue siendo una sola parada de tabulación.
+
+### Changed
+
+- `Calendar`: la banda de un rango se cierra redonda en el primer y el último día del mes,
+  igual que en las puntas de una semana.
+- `Calendar`: el contenedor pasa a tener un bloque por mes (`data-slot="calendar-month"`).
+  Quien le pasaba `className` con `gap-*` o `flex-*` a la raíz para separar título y grilla
+  ya no los mueve.
+
 ## [1.4.1] - 2026-09-27
 
 ### Changed

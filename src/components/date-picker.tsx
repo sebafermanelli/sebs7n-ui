@@ -39,6 +39,8 @@ type DatePickerBaseProps = Omit<React.ComponentProps<"button">, "value" | "defau
   format?: Intl.DateTimeFormatOptions
   /** Con qué día arranca la semana: `1` lunes (el default), `0` domingo. */
   weekStartsOn?: WeekStart
+  /** Cuántos meses muestra el calendario, uno al lado del otro. Por defecto, 1. */
+  numberOfMonths?: number
   /** El calendario abierto o cerrado, controlado. */
   open?: boolean
   /** Avisa cuando se abre o se cierra. */
@@ -102,6 +104,7 @@ function DatePicker(props: DatePickerProps) {
     locale = "es-AR",
     format,
     weekStartsOn,
+    numberOfMonths,
     open: openProp,
     onOpenChange,
     labels: labelsProp,
@@ -142,7 +145,7 @@ function DatePicker(props: DatePickerProps) {
     if (completo) abrir(false)
   }
 
-  const calendario = { min, max, isDateDisabled, locale, weekStartsOn, labels: labelsProp }
+  const calendario = { min, max, isDateDisabled, locale, weekStartsOn, numberOfMonths, labels: labelsProp }
 
   return (
     <PopoverPrimitive.Root onOpenChange={abrir} open={abierto}>

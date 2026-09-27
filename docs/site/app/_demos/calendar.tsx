@@ -36,6 +36,21 @@ export function Rango() {
 }
 
 /**
+ * Dos meses
+ * Para un rango que cruza de un mes al otro. Cada fecha aparece una sola vez: los huecos de un mes quedan vacíos, porque esos días están en el de al lado.
+ */
+export function DosMeses() {
+  const [rango, setRango] = useState<DateRange>({ from: new Date(2026, 8, 28), to: new Date(2026, 9, 9) })
+  return (
+    <Card size="sm">
+      <CardContent>
+        <Calendar defaultMonth={new Date(2026, 8, 1)} mode="range" numberOfMonths={2} onValueChange={setRango} value={rango} />
+      </CardContent>
+    </Card>
+  )
+}
+
+/**
  * Con límites y días apagados
  * `min` y `max` apagan lo que queda afuera y los botones de mes; `isDateDisabled`, fechas sueltas. Acá no hay turnos los fines de semana.
  */
