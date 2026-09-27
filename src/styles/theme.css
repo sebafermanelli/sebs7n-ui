@@ -20,6 +20,23 @@
   initial-value: 0deg;
 }
 
+/**
+ * Los dos ajustes de un vidrio denso (`glass-dense`). Registrados con `inherits: false`: son
+ * de la superficie que los declara. Heredados, un vidrio adentro de un menú saldría denso sin
+ * haberlo pedido.
+ */
+@property --sf-glass-clear {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 1;
+}
+
+@property --sf-glass-backdrop {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0.06;
+}
+
 @theme {
   /* El borde de la IA mientras trabaja: una vuelta cada cuatro segundos. */
   --animate-ai-glow: ai-glow 4s linear infinite;
@@ -261,6 +278,17 @@
      * el total con `--ambient`.
      */
     --sf-ambient-gain: 1;
+
+    /**
+     * El vidrio denso, el de las listas de texto (`glass-dense`): cuánto fill lleva con
+     * `--glass: 1` y cuánto le cambia el brillo a lo que tiene detrás.
+     *
+     * En claro el texto es oscuro y lo que lo tapa es un fondo oscuro. Eso no se arregla
+     * aclarando lo de atrás —el negro por cualquier número sigue siendo negro—, así que todo
+     * el trabajo lo hace el fill: 80 %.
+     */
+    --sf-glass-dense-fill: 0.8;
+    --sf-glass-dense-backdrop: 0.06;
     --sf-ambient-1: oklch(from var(--sf-brand-src) 0.8 calc(c * 0.75) h);
     --sf-ambient-2: oklch(from var(--sf-brand-src) 0.84 calc(c * 0.6) calc(h + 55));
     --sf-ambient-3: oklch(from var(--sf-brand-src) 0.86 calc(c * 0.55) calc(h - 45));
@@ -439,6 +467,11 @@
        penumbra. Menos croma, menos alfa y los focos más cerca del matiz del brand —30° y −25°,
        no 55° y −45°—, para que detrás del vidrio haya un color y no tres. */
     --sf-ambient-gain: 0.5;
+
+    /* En oscuro lo que tapa al texto es un fondo claro, y ese sí se puede apagar: lo de atrás
+       baja al 40 % de su brillo antes de pasar por el vidrio, y el fill alcanza con 65 %. */
+    --sf-glass-dense-fill: 0.65;
+    --sf-glass-dense-backdrop: -0.6;
     --sf-ambient-1: oklch(from var(--sf-brand-src) 0.38 calc(c * 0.45) h);
     --sf-ambient-2: oklch(from var(--sf-brand-src) 0.34 calc(c * 0.4) calc(h + 30));
     --sf-ambient-3: oklch(from var(--sf-brand-src) 0.32 calc(c * 0.35) calc(h - 25));
@@ -543,7 +576,7 @@
       var(--sf-brand-600) calc(var(--glass-tint) * 34%),
       color-mix(in srgb, var(--sf-glass-lift) calc(var(--sf-g) * 100%), var(--sf-background-100))
     )
-    calc((1 - var(--sf-g) * 0.7) * 100%),
+    calc((1 - var(--sf-g) * 0.7 * var(--sf-glass-clear, 1)) * 100%),
     transparent
   );
   background-image: linear-gradient(
@@ -553,10 +586,12 @@
     transparent 72%,
     rgb(255 255 255 / calc(var(--sf-glass-glow) * var(--sf-g) * 0.45)) 100%
   );
+  /* Los dos con su valor por defecto escrito: un navegador sin `@property` no tiene de dónde
+     sacar el inicial, y un `var()` vacío invalida la declaración entera. */
   -webkit-backdrop-filter: blur(calc(var(--sf-g) * var(--sf-glass-k, 1) * 16px)) saturate(calc(1 + var(--sf-g) * 0.8))
-    brightness(calc(1 + var(--sf-g) * 0.06));
+    brightness(calc(1 + var(--sf-g) * var(--sf-glass-backdrop, 0.06)));
   backdrop-filter: blur(calc(var(--sf-g) * var(--sf-glass-k, 1) * 16px)) saturate(calc(1 + var(--sf-g) * 0.8))
-    brightness(calc(1 + var(--sf-g) * 0.06));
+    brightness(calc(1 + var(--sf-g) * var(--sf-glass-backdrop, 0.06)));
   box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
 }
 
@@ -567,6 +602,22 @@
 
 @utility glass-thick {
   --sf-glass-k: 1.5;
+}
+
+/**
+ * El vidrio de las listas de texto: un menú, un select, un combobox. Va al lado de `glass`.
+ *
+ * Una barra o una tarjeta son cromo: si detrás pasa una foto, se ve la foto y no pasa nada.
+ * Un menú se LEE, y flota encima de lo que haya —fotos incluidas—. Con el vidrio pleno, sobre
+ * una foto clara en tema oscuro el texto quedaba en 1,64:1. Este lleva más fill y, en oscuro,
+ * apaga lo que tiene detrás: el texto principal pasa 4,5:1 contra cualquier fondo en los dos
+ * temas, y el secundario también (`test/glass-contrast.test.ts`).
+ *
+ * Sigue a `--glass`: con 0 es sólido, igual que el resto.
+ */
+@utility glass-dense {
+  --sf-glass-clear: calc((1 - var(--sf-glass-dense-fill)) / 0.7);
+  --sf-glass-backdrop: var(--sf-glass-dense-backdrop);
 }
 
 /**

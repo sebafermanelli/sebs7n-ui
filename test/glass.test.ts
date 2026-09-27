@@ -33,7 +33,7 @@ describe("glass: un solo parámetro", () => {
 
   it("fill, blur y saturación salen de la intensidad", () => {
     const glass = utility("glass")
-    expect(glass).toContain("calc((1 - var(--sf-g) * 0.7) * 100%)")
+    expect(glass).toContain("calc((1 - var(--sf-g) * 0.7 * var(--sf-glass-clear, 1)) * 100%)")
     expect(glass).toContain("blur(calc(var(--sf-g) * var(--sf-glass-k, 1) * 16px))")
     expect(glass).toContain("saturate(calc(1 + var(--sf-g) * 0.8))")
     expect(glass).toContain("-webkit-backdrop-filter")
@@ -72,6 +72,31 @@ describe("luz ambiente: un solo parámetro", () => {
     const [claro, oscuro] = [...css.matchAll(/--sf-ambient-gain:\s*([\d.]+);/g)].map(([, n]) => Number(n))
     expect(claro).toBe(1)
     expect(oscuro).toBeLessThan(claro!)
+  })
+})
+
+describe("glass-dense: el vidrio de las listas de texto", () => {
+  it("cambia el fill y el brillo de lo de atrás, y no se hereda", () => {
+    const dense = utility("glass-dense")
+    expect(dense).toContain("--sf-glass-clear: calc((1 - var(--sf-glass-dense-fill)) / 0.7);")
+    expect(dense).toContain("--sf-glass-backdrop: var(--sf-glass-dense-backdrop);")
+    // Heredadas, un vidrio adentro de un menú saldría denso sin haberlo pedido.
+    for (const nombre of ["--sf-glass-clear", "--sf-glass-backdrop"]) {
+      const registro = css.slice(css.indexOf(`@property ${nombre} {`), css.indexOf("}", css.indexOf(`@property ${nombre} {`)))
+      expect(registro, nombre).toContain("inherits: false;")
+    }
+  })
+
+  it("sin glass-dense el vidrio es el de siempre: los valores iniciales son los del default", () => {
+    expect(css).toMatch(/@property --sf-glass-clear \{[^}]*initial-value: 1;/)
+    expect(css).toMatch(/@property --sf-glass-backdrop \{[^}]*initial-value: 0\.06;/)
+  })
+
+  it("lo llevan los menús, y nada más", async () => {
+    const { menuPopupClassName } = await import("../src/variants/menu")
+    const { floatingPopupClassName } = await import("../src/variants/overlay")
+    expect(menuPopupClassName).toContain("glass-dense")
+    expect(floatingPopupClassName).not.toContain("glass-dense")
   })
 })
 

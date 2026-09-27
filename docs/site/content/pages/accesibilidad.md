@@ -45,9 +45,12 @@ Sobre una superficie sólida el contraste es un número. Sobre un vidrio depende
 |---|---|
 | Texto principal y secundario a 4,5:1 sobre **la página y la luz ambiente** | `--glass: 1` (el default) |
 | Texto principal a 4,5:1 contra **cualquier fondo** | `--glass: 0.5` |
+| Texto principal y secundario a 4,5:1 contra **cualquier fondo**, en un menú | `--glass: 1` (el default) |
 | Todo igual que sobre `background-100` | `--glass: 0` |
 
 **Lo que no se promete, con el número:** con el default, un vidrio que flota encima de contenido arbitrario. Negro detrás de un vidrio claro deja el texto principal en 2,12:1; blanco detrás de uno oscuro, en 1,64:1. Es el costo de un material que deja ver el fondo, y es una decisión, no un descuido.
+
+**Los menús son la excepción.** Un Select, un Combobox o un DropdownMenu son listas que se leen y flotan sobre lo que haya, fotos incluidas. Llevan un vidrio más denso (`glass-dense`): más fill y, en el tema oscuro, lo de atrás apagado. Ahí el texto pasa contra cualquier fondo con el default.
 
 Qué hacer:
 

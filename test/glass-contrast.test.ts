@@ -131,6 +131,29 @@ describe("Texto principal sobre vidrio, contra cualquier fondo (WCAG 1.4.3)", ()
   }
 })
 
+describe("Un menú se lee contra cualquier fondo: glass-dense (WCAG 1.4.3)", () => {
+  for (const tema of ["light", "dark"] as const) {
+    const t = tokens(tema)
+    const css = bloque(theme, tema)
+    const dense = {
+      fill: Number(/--sf-glass-dense-fill: ([\d.]+);/.exec(css)?.[1]),
+      backdrop: Number(/--sf-glass-dense-backdrop: (-?[\d.]+);/.exec(css)?.[1]),
+    }
+    const fondo = glassSurface(GLASS, t, t.peor, dense)
+    for (const [rol, fg] of [["principal", t.principal], ["secundario", t.secundario]] as const) {
+      it(`${tema} · --glass ${GLASS} · ${rol}: ${fg} sobre ${fondo} (${t.peor} detrás) llega a 4.5:1`, () => {
+        expect(Number.isNaN(dense.fill) || Number.isNaN(dense.backdrop)).toBe(false)
+        expect(ratio(fg, fondo)).toBeGreaterThanOrEqual(4.5)
+      })
+    }
+    it(`${tema} · sobre la página sigue siendo legible`, () => {
+      const pagina = glassSurface(GLASS, t, t.page, dense)
+      expect(ratio(t.principal, pagina)).toBeGreaterThanOrEqual(4.5)
+      expect(ratio(t.secundario, pagina)).toBeGreaterThanOrEqual(4.5)
+    })
+  }
+})
+
 // No es un test de que algo ande: es el límite, escrito donde no se puede desactualizar. Si
 // alguien sube el fill y esto empieza a pasar de 4,5, el comentario de arriba y la página de
 // Accesibilidad están prometiendo de menos y hay que corregirlos.

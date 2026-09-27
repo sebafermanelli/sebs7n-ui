@@ -9,6 +9,22 @@ major.
 
 ## [Unreleased]
 
+## [1.8.0] - 2026-09-27
+
+### Changed
+
+- **Los menús llevan un vidrio más denso** (`glass-dense`): DropdownMenu, ContextMenu,
+  Menubar, Select, Combobox y Autocomplete. Un menú se lee, y flota sobre lo que haya: sobre
+  una foto clara en tema oscuro el texto quedaba en 1,64:1. Ahora el fill es de 65 % en
+  oscuro y 80 % en claro, y en oscuro lo de atrás baja al 40 % de su brillo. El texto
+  principal y el secundario pasan 4,5:1 contra cualquier fondo en los dos temas. Las barras,
+  tarjetas, paneles y diálogos no cambian.
+
+### Added
+
+- La utilidad `glass-dense` y sus dos tokens por tema, `--sf-glass-dense-fill` y
+  `--sf-glass-dense-backdrop`, para darle el mismo material a una lista propia.
+
 ## [1.7.0] - 2026-09-27
 
 ### Added
