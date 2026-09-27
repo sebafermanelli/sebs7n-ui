@@ -1524,7 +1524,10 @@ export const COMPONENTS = {
       "Grupos de 3 a 7 ítems con `SidebarGroupLabel`. Si hay más de ~20 ítems en total, hace falta una paleta de comandos.",
     ],
     props: {
-      Sidebar: { collapsed: "Solo íconos, 64px. El ancho cambia sin animación: animarlo hace saltar todo el contenido." },
+      Sidebar: {
+        collapsed: "Solo íconos, 64px. El ancho cambia sin animación: animarlo hace saltar todo el contenido.",
+        variant: "`floating` (default) es una píldora de vidrio despegada del borde · `bar` va a ras de la ventana con un borde derecho.",
+      },
       SidebarSearch: { shortcut: "Solo muestra el `Kbd` y lo anuncia. Escuchar la tecla es trabajo de la app." },
       SidebarItem: { icon: "El ícono de la izquierda, que es lo único que queda visible con el sidebar colapsado." },
       SidebarGroupLabel: {
@@ -1559,6 +1562,7 @@ export const COMPONENTS = {
         pathname: "La ruta actual. Cuando cambia, el Sheet mobile se cierra.",
         mobileBar: "Contenido de la barra de 56px a la derecha de la hamburguesa.",
         mainId: "`id` del `<main>`; es a donde apunta el skip link.",
+        variant: "`floating` (default): en el teléfono la barra es el `Navbar` flotante, transparente arriba y píldora al scrollear · `bar`: a ras, como antes de 1.10.",
       },
     },
     related: ["sidebar", "app-shell-content", "user-menu", "sheet"],

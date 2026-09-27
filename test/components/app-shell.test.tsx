@@ -84,8 +84,11 @@ describe("AppShell", () => {
 
   it("barra mobile h-14 con hamburguesa que abre el sidebar en un Sheet izquierdo; navegar lo cierra", async () => {
     render(<Example />)
+    // Flotante por defecto: el Navbar del paquete, con la fila de 56px adentro.
     const bar = document.querySelector("[data-slot=app-shell-mobile-bar]")!
-    expect(bar).toHaveClass("h-14", "lg:hidden")
+    expect(bar).toHaveClass("lg:hidden", "pt-3")
+    expect(bar).toHaveAttribute("data-variant", "floating")
+    expect(bar.querySelector(".h-14")).not.toBeNull()
     expect(bar).toHaveTextContent("Acme")
     await userEvent.click(screen.getByRole("button", { name: "Abrir menú" }))
     const sheet = await screen.findByRole("dialog")

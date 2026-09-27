@@ -15,12 +15,18 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip.js"
 type SidebarProps = React.ComponentProps<"aside"> & {
   /** Solo íconos (64px). El ancho cambia sin animación: el spec prohíbe animar width. */
   collapsed?: boolean
+  /**
+   * `floating` (el default): una píldora de vidrio despegada del borde, con margen, radio de
+   * panel, sombra y el canto especular. Es el sidebar de macOS y de iPadOS desde Liquid Glass.
+   *
+   * `bar`: a ras de la ventana, a todo el alto y con un borde a la derecha. El de antes de 1.10.
+   */
+  variant?: "floating" | "bar"
 }
 
-// A ras de la ventana (no card flotante): vidrio grueso + borde derecho, columna a todo el alto.
-// Adentro del Sheet mobile va transparente: el vidrio ya lo pone la hoja, y dos apilados se comen
-// el contraste sin mostrar nada (el segundo solo desenfoca lo que pintó el primero).
-function Sidebar({ className, collapsed: collapsedProp = false, ...props }: SidebarProps) {
+// Adentro del Sheet mobile va transparente y a ras: el vidrio ya lo pone la hoja, y dos apilados
+// se comen el contraste sin mostrar nada (el segundo solo desenfoca lo que pintó el primero).
+function Sidebar({ className, collapsed: collapsedProp = false, variant = "floating", ...props }: SidebarProps) {
   const inSheet = React.useContext(SidebarInSheetContext)
   const collapsed = inSheet ? false : collapsedProp
   const value = React.useMemo(() => ({ collapsed }), [collapsed])
@@ -29,9 +35,15 @@ function Sidebar({ className, collapsed: collapsedProp = false, ...props }: Side
       <aside
         data-slot="sidebar"
         data-collapsed={collapsed ? "" : undefined}
+        data-variant={inSheet ? undefined : variant}
         className={cn(
-          "group/sidebar flex h-full w-60 shrink-0 flex-col border-r border-gray-alpha-400 glass glass-thick text-gray-1000 data-collapsed:w-16",
-          inSheet && "w-full border-r-0 bg-transparent shadow-none backdrop-filter-none",
+          "group/sidebar relative flex h-full w-60 shrink-0 flex-col glass glass-thick text-gray-1000 data-collapsed:w-16",
+          // Flotante: 12px de aire alrededor —a la derecha no, ahí empieza el contenido con su
+          // propio margen— y la forma del cromo. El alto descuenta el margen para no desbordar
+          // la columna sticky del AppShell.
+          variant === "floating" && "m-3 mr-0 h-[calc(100%-1.5rem)] overflow-hidden rounded-panel border border-gray-alpha-400 shadow-menu glass-rim",
+          variant === "bar" && "border-r border-gray-alpha-400",
+          inSheet && "m-0 h-full w-full rounded-none border-0 bg-transparent shadow-none backdrop-filter-none after:hidden",
           className
         )}
         {...props}

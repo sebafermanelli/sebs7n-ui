@@ -17,10 +17,18 @@ import {
 import { TooltipProvider } from "../../src/components/tooltip"
 import { sidebarItemVariants } from "../../src/variants/sidebar"
 
-function Example({ collapsed = false, onSearch = () => {} }: { collapsed?: boolean; onSearch?: () => void }) {
+function Example({
+  collapsed = false,
+  onSearch = () => {},
+  variant,
+}: {
+  collapsed?: boolean
+  onSearch?: () => void
+  variant?: "floating" | "bar"
+}) {
   return (
     <TooltipProvider delay={0}>
-      <Sidebar collapsed={collapsed}>
+      <Sidebar collapsed={collapsed} variant={variant}>
         <SidebarHeader>
           <SidebarSearch onClick={onSearch} shortcut="⌘K" />
         </SidebarHeader>
@@ -43,14 +51,22 @@ function Example({ collapsed = false, onSearch = () => {} }: { collapsed?: boole
 }
 
 describe("Sidebar", () => {
-  it("aside a ras: w-60, vidrio grueso, borde derecho; colapsado w-16 sin animar el ancho", () => {
-    const { rerender } = render(<Example />)
+  it("flotante por defecto: una píldora de vidrio despegada del borde, con el canto del cromo", () => {
+    render(<Example />)
+    const aside = screen.getByRole("complementary")
+    expect(aside).toHaveAttribute("data-variant", "floating")
+    expect(aside).toHaveClass("m-3", "mr-0", "h-[calc(100%-1.5rem)]", "rounded-panel", "border", "shadow-menu", "glass", "glass-thick", "glass-rim")
+    expect(aside).not.toHaveClass("border-r")
+  })
+
+  it("variant=bar: a ras, w-60, vidrio grueso, borde derecho; colapsado w-16 sin animar el ancho", () => {
+    const { rerender } = render(<Example variant="bar" />)
     const aside = screen.getByRole("complementary")
     expect(aside).toHaveAttribute("data-slot", "sidebar")
     expect(aside).toHaveClass("w-60", "data-collapsed:w-16", "glass", "glass-thick", "border-r", "border-gray-alpha-400", "flex-col", "h-full")
     expect(aside).not.toHaveAttribute("data-collapsed")
     expect(aside.className).not.toMatch(/transition(-all|-\[width)|duration/)
-    rerender(<Example collapsed />)
+    rerender(<Example collapsed variant="bar" />)
     expect(aside).toHaveAttribute("data-collapsed")
     expect(screen.getByText("pie").closest("[data-slot=sidebar-footer]")).toHaveClass("border-t", "border-gray-alpha-400")
   })

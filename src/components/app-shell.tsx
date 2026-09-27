@@ -7,6 +7,7 @@ import { AppShellContext, SidebarInSheetContext, type AppShellContextValue } fro
 import { useLabels, type Labels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
 import { Button } from "./button.js"
+import { Navbar } from "./navbar.js"
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "./sheet.js"
 
 /**
@@ -32,6 +33,13 @@ type AppShellProps = Omit<React.ComponentProps<"div">, "children"> & {
    * fondo de la app entera, y esa decisión es de la app.
    */
   ambient?: boolean
+  /**
+   * `floating` (el default): la barra del teléfono es el `Navbar` flotante —transparente arriba,
+   * una píldora de vidrio al scrollear— y el `Sidebar` va despegado, en su propia píldora.
+   * `bar`: las dos a ras de la ventana, como antes de 1.10. El `Sidebar` se elige con su propia
+   * prop `variant`; esta decide la barra.
+   */
+  variant?: "floating" | "bar"
   labels?: Partial<AppShellLabels>
   children?: React.ReactNode
 }
@@ -43,7 +51,7 @@ type AppShellProps = Omit<React.ComponentProps<"div">, "children"> & {
 // Mismo corte que lg de Tailwind (64rem): desde ahí el sidebar está fijo y el Sheet sobra.
 const DESKTOP_QUERY = "(min-width: 64rem)"
 
-function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido", ambient = false, labels: labelsProp, children, ...props }: AppShellProps) {
+function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido", ambient = false, variant = "floating", labels: labelsProp, children, ...props }: AppShellProps) {
   // El provider gana sobre el español; la prop `labels` gana sobre el provider, porque es la
   // excepción puntual de una pantalla y no una traducción.
   const labels = { ...useLabels().appShell, ...labelsProp }
@@ -77,6 +85,42 @@ function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido
 
   const value = React.useMemo<AppShellContextValue>(() => ({ mobileOpen, setMobileOpen, closeMobile }), [mobileOpen, closeMobile])
 
+  // Lo de la barra del teléfono: la hamburguesa con su Sheet y lo que pase la app. Lo mismo
+  // en las dos variantes; cambia la superficie que lo contiene.
+  const barContent = (
+    <>
+      <Sheet
+        open={mobileOpen}
+        onOpenChange={(open) => {
+          if (open) focusMainOnClose.current = false
+          setMobileOpen(open)
+        }}
+      >
+        <SheetTrigger render={<Button variant="ghost" size="icon-sm" aria-label={labels.openMenu} className="-ml-2" />}>
+          <MenuIcon aria-hidden="true" />
+        </SheetTrigger>
+        <SheetContent
+          side="left"
+          // Cierre por navegación: el foco va al <main> mismo (no a su primer control, que es lo que
+          // hace Base UI si le devolvemos el elemento). El flag se limpia al abrir: finalFocus puede
+          // evaluarse más de una vez.
+          finalFocus={() => {
+            if (!focusMainOnClose.current) return true
+            requestAnimationFrame(() => mainRef.current?.focus({ preventScroll: true }))
+            return false
+          }}
+          className="gap-0 overflow-hidden overscroll-contain p-0 [&_[data-slot=sidebar-header]>:first-child]:pr-10"
+        >
+          <SheetTitle className="sr-only">{labels.navigation}</SheetTitle>
+          <SidebarInSheetContext.Provider value={true}>{sidebar}</SidebarInSheetContext.Provider>
+        </SheetContent>
+      </Sheet>
+      <div data-slot="app-shell-mobile-bar-content" className="flex min-w-0 flex-1 items-center gap-2">
+        {mobileBar}
+      </div>
+    </>
+  )
+
   return (
     <AppShellContext.Provider value={value}>
       <div
@@ -102,40 +146,27 @@ function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido
           {sidebar}
         </div>
         <div data-slot="app-shell-column" className="flex min-w-0 flex-col">
-          <header
-            data-slot="app-shell-mobile-bar"
-            className="sticky top-0 z-40 flex h-14 shrink-0 items-center gap-2 border-b border-gray-alpha-400 glass px-4 shadow-card lg:hidden"
-          >
-            <Sheet
-              open={mobileOpen}
-              onOpenChange={(open) => {
-                if (open) focusMainOnClose.current = false
-                setMobileOpen(open)
-              }}
+          {variant === "floating" ? (
+            // El `Navbar` flotante del paquete: arriba es transparente y al scrollear se vuelve
+            // una píldora. El aire de arriba y de los costados es fijo, no solo al scrollear:
+            // la barra es sticky y ocupa su alto, y si el margen apareciera con el scroll el
+            // contenido saltaría 12px.
+            <Navbar
+              data-slot="app-shell-mobile-bar"
+              variant="floating"
+              className="z-40 px-3 pt-3 lg:hidden"
+              surfaceClassName="max-w-none rounded-full"
             >
-              <SheetTrigger render={<Button variant="ghost" size="icon-sm" aria-label={labels.openMenu} className="-ml-2" />}>
-                <MenuIcon aria-hidden="true" />
-              </SheetTrigger>
-              <SheetContent
-                side="left"
-                // Cierre por navegación: el foco va al <main> mismo (no a su primer control, que es lo que
-                // hace Base UI si le devolvemos el elemento). El flag se limpia al abrir: finalFocus puede
-                // evaluarse más de una vez.
-                finalFocus={() => {
-                  if (!focusMainOnClose.current) return true
-                  requestAnimationFrame(() => mainRef.current?.focus({ preventScroll: true }))
-                  return false
-                }}
-                className="gap-0 overflow-hidden overscroll-contain p-0 [&_[data-slot=sidebar-header]>:first-child]:pr-10"
-              >
-                <SheetTitle className="sr-only">{labels.navigation}</SheetTitle>
-                <SidebarInSheetContext.Provider value={true}>{sidebar}</SidebarInSheetContext.Provider>
-              </SheetContent>
-            </Sheet>
-            <div data-slot="app-shell-mobile-bar-content" className="flex min-w-0 flex-1 items-center gap-2">
-              {mobileBar}
-            </div>
-          </header>
+              <div className="flex h-14 items-center gap-2 px-4">{barContent}</div>
+            </Navbar>
+          ) : (
+            <header
+              data-slot="app-shell-mobile-bar"
+              className="sticky top-0 z-40 flex h-14 shrink-0 items-center gap-2 border-b border-gray-alpha-400 glass px-4 shadow-card lg:hidden"
+            >
+              {barContent}
+            </header>
+          )}
           <main ref={mainRef} id={mainId} data-slot="app-shell-main" tabIndex={-1} className="min-w-0 flex-1 outline-none">
             {children}
           </main>

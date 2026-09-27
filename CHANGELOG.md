@@ -9,6 +9,20 @@ major.
 
 ## [Unreleased]
 
+## [1.10.0] - 2026-09-27
+
+### Changed
+
+- **El `Sidebar` flota por defecto** (`variant="floating"`): una píldora de vidrio despegada
+  12px del borde, con radio de panel, sombra y el canto especular, como el sidebar de macOS
+  con Liquid Glass. `variant="bar"` vuelve al de antes, a ras de la ventana.
+- **La barra del teléfono del `AppShell` es el `Navbar` flotante** (`variant="floating"`):
+  transparente arriba de todo y una píldora de vidrio al scrollear. `variant="bar"` vuelve a
+  la barra a ras.
+
+Es un cambio de aspecto, no de API: nada deja de compilar. Quien quiera el estilo anterior
+pasa `variant="bar"` a los dos.
+
 ## [1.9.1] - 2026-09-27
 
 ### Fixed
