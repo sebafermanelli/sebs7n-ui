@@ -37,6 +37,8 @@ Lo que sigue sale como **1.0.0**.
 - **`ThemeSwitcher` y `ThemeMenuRadio` son la pista segmentada de `Tabs`**, con íconos: la opción
   elegida ya no se pinta (`data-checked:bg-*`), la marca una pastilla que se desliza.
 - **`Tooltip` ya no tiene flecha.**
+- **La franja de color de `Alert`** es una píldora adentro de la superficie, a 8px del borde, y
+  el padding izquierdo pasa de 16 a 20px. Pegada al borde no entraba en el radio de 20px.
 - **Bordes y fondos internos pasan a alfa**: `border-gray-400` → `border-gray-alpha-400`,
   `bg-gray-100/200/300` → `bg-gray-alpha-*`, `bg-background-200` → `bg-gray-alpha-100`. El
   hover de una fila de `Table` es `gray-alpha-100` y la elegida, `bg-highlight`. Un

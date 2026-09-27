@@ -86,4 +86,14 @@ describe("Alert", () => {
     expect(alert).toHaveClass("glass", "border-gray-alpha-400", "rounded-surface", "shadow-card", "before:bg-amber-700", "*:[svg]:text-amber-900")
     expect(screen.getByText("Cargalo antes de facturar.")).toHaveClass("text-gray-900")
   })
+
+  it("la franja es una píldora adentro de la superficie, no pegada al borde", () => {
+    render(<Alert variant="error">x</Alert>)
+    const alert = screen.getByRole("alert")
+    expect(alert).toHaveClass("before:left-2", "before:inset-y-3", "before:w-1", "before:rounded-full", "before:bg-red-700")
+    // Pegada al borde, con el radio de 20px las puntas quedaban afuera del contorno.
+    expect(alert.className).not.toMatch(/before:left-0|before:rounded-r-full/)
+    // El texto deja lugar: 20px de padding contra los 12 donde termina la franja.
+    expect(alert).toHaveClass("pl-5")
+  })
 })
