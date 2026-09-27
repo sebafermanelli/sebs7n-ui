@@ -10,7 +10,26 @@
  * Este `@theme` va sin `inline` a propósito: lo que se declara acá sale como variable en
  * `:root`, y la app lo puede pisar igual que pisa `--brand-base`.
  */
+/**
+ * El ángulo del borde de la IA. Registrado con `@property` para que se pueda animar: una
+ * custom property sin tipo no se interpola, salta de 0 a 360 de un cuadro al otro.
+ */
+@property --sf-ai-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
 @theme {
+  /* El borde de la IA mientras trabaja: una vuelta cada cuatro segundos. */
+  --animate-ai-glow: ai-glow 4s linear infinite;
+
+  @keyframes ai-glow {
+    to {
+      --sf-ai-angle: 360deg;
+    }
+  }
+
   /* El brillo del placeholder de IA: una franja que cruza de derecha a izquierda. */
   --animate-ai-shimmer: ai-shimmer 1.6s ease-in-out infinite;
 
@@ -612,6 +631,74 @@
   &:focus-visible::after,
   &[data-popup-open]::after {
     opacity: 1;
+  }
+
+  /* Mientras la IA trabaja, el canto deja de ser un degradé quieto y gira. */
+  &[data-ai-active]::after {
+    background: conic-gradient(from var(--sf-ai-angle), var(--sf-ai), var(--sf-ai-2), var(--sf-amber-600), var(--sf-blue-600), var(--sf-ai));
+    opacity: 1;
+    animation: var(--animate-ai-glow);
+  }
+}
+
+/**
+ * El borde de la IA mientras trabaja: el contorno encendido que recorre la pantalla del
+ * iPhone cuando se activa Siri.
+ *
+ * **Es una señal de estado, no un adorno.** Solo se ve con `data-ai-active`, que es «la IA
+ * está respondiendo»: reemplaza a un spinner. Encendido siempre cansa, gasta batería y deja de
+ * significar algo.
+ *
+ * Son dos capas del mismo degradé cónico: el `::after` es el filo de 1,5px, nítido, y el
+ * `::before` es el mismo filo desenfocado, que es el halo. Gira el ángulo del degradé
+ * (`--sf-ai-angle`), no el elemento: rotar una caja que no es cuadrada la saca de su lugar.
+ *
+ * El elemento tiene que estar posicionado, igual que con `glass-rim`. El radio se hereda, así
+ * que sigue la curva de quien lo lleve.
+ *
+ * Con `prefers-reduced-motion` el borde se enciende pero no gira: lo corta el reset de base.css.
+ */
+@utility ai-glow {
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    padding: 1.5px;
+    border-radius: inherit;
+    pointer-events: none;
+    background: conic-gradient(
+      from var(--sf-ai-angle),
+      var(--sf-ai),
+      var(--sf-ai-2),
+      var(--sf-amber-600),
+      var(--sf-blue-600),
+      var(--sf-ai)
+    );
+    opacity: 0;
+    transition: opacity 400ms ease;
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  }
+
+  &::before {
+    padding: 3px;
+    filter: blur(8px);
+  }
+
+  &[data-ai-active]::before,
+  &[data-ai-active]::after {
+    animation: var(--animate-ai-glow);
+  }
+
+  &[data-ai-active]::after {
+    opacity: 1;
+  }
+
+  &[data-ai-active]::before {
+    opacity: 0.75;
   }
 }
 

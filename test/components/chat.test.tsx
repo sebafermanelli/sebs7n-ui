@@ -278,3 +278,46 @@ describe("Chat: lo que rodea a los mensajes", () => {
     expect(screen.queryByRole("button")).toBeNull()
   })
 })
+
+// El borde de la IA es una señal de estado: solo se enciende con una respuesta en curso.
+describe("Chat: el borde de la IA", () => {
+  it("en reposo no está encendido", () => {
+    render(<Chat data-testid="chat">x</Chat>)
+    const chat = screen.getByTestId("chat")
+    expect(chat).toHaveClass("ai-glow", "relative", "rounded-[inherit]")
+    expect(chat).not.toHaveAttribute("data-ai-active")
+  })
+
+  it("busy lo enciende", () => {
+    render(<Chat busy data-testid="chat">x</Chat>)
+    expect(screen.getByTestId("chat")).toHaveAttribute("data-ai-active")
+  })
+
+  it("busy en el Chat les llega a la lista y al campo", () => {
+    render(
+      <Chat busy>
+        <ChatMessages>x</ChatMessages>
+        <ChatInput onStop={() => {}} />
+      </Chat>
+    )
+    expect(screen.getByRole("log")).toHaveAttribute("aria-busy", "true")
+    expect(screen.getByRole("button", { name: "Detener respuesta" })).toBeEnabled()
+    expect(screen.queryByRole("button", { name: "Enviar" })).toBeNull()
+  })
+
+  it("el busy propio de una pieza le gana al del Chat", () => {
+    render(
+      <Chat busy>
+        <ChatMessages busy={false}>x</ChatMessages>
+        <ChatInput busy={false} />
+      </Chat>
+    )
+    expect(screen.getByRole("log")).toHaveAttribute("aria-busy", "false")
+    expect(screen.getByRole("button", { name: "Enviar" })).toBeInTheDocument()
+  })
+
+  it("las piezas siguen andando sueltas, sin un Chat arriba", () => {
+    render(<ChatMessages busy>x</ChatMessages>)
+    expect(screen.getByRole("log")).toHaveAttribute("aria-busy", "true")
+  })
+})

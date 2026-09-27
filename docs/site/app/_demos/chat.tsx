@@ -1,7 +1,7 @@
 "use client"
 
 import { HistoryIcon, PlusIcon, ThumbsDownIcon, ThumbsUpIcon, XIcon } from "lucide-react"
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { AiIcon, AiLauncher } from "sebs7n-ui/ai-button"
 import { Button } from "sebs7n-ui/button"
 import { Card } from "sebs7n-ui/card"
@@ -60,10 +60,14 @@ function useConversacion() {
   return { mensajes, respondiendo, enviar, cortar, nueva }
 }
 
-function Conversacion({ onClose }: { onClose?: () => void }) {
+function Conversacion({ onClose, onBusyChange }: { onClose?: () => void; onBusyChange?: (busy: boolean) => void }) {
   const { mensajes, respondiendo, enviar, cortar, nueva } = useConversacion()
+  // El lanzador vive afuera del panel: para que su canto gire mientras hay una respuesta en
+  // camino, alguien le tiene que avisar.
+  useEffect(() => onBusyChange?.(respondiendo), [respondiendo, onBusyChange])
   return (
-    <Chat className="h-full">
+    // `busy` en el `Chat` enciende el borde de la IA y les avisa a la lista y al campo.
+    <Chat busy={respondiendo} className="h-full">
       <ChatHeader>
         <ChatTitle>
           <AiIcon className="size-5" />
@@ -83,7 +87,7 @@ function Conversacion({ onClose }: { onClose?: () => void }) {
           )}
         </ChatActions>
       </ChatHeader>
-      <ChatMessages busy={respondiendo}>
+      <ChatMessages>
         {mensajes.length === 0 && (
           <ChatEmpty>
             <p>Hola, Karina. ¿En qué te ayudo?</p>
@@ -114,7 +118,7 @@ function Conversacion({ onClose }: { onClose?: () => void }) {
         {respondiendo && <ChatTyping />}
       </ChatMessages>
       <ChatFooter>
-        <ChatInput busy={respondiendo} maxLength={2000} onSend={enviar} onStop={cortar} />
+        <ChatInput maxLength={2000} onSend={enviar} onStop={cortar} />
         <ChatDisclaimer>Ante cualquier duda, confirmá la información con tu asesor.</ChatDisclaimer>
       </ChatFooter>
     </Chat>
@@ -123,14 +127,15 @@ function Conversacion({ onClose }: { onClose?: () => void }) {
 
 /**
  * El asistente entero
- * El lanzador abre un panel de vidrio con la conversación. Apretá una sugerencia, o escribí y mandá con Enter.
+ * El lanzador abre un panel de vidrio con la conversación. Apretá una sugerencia: mientras responde, el borde del panel se enciende y el canto del lanzador gira.
  */
 export function Asistente() {
   const [abierto, setAbierto] = useState(false)
+  const [respondiendo, setRespondiendo] = useState(false)
   return (
     <div className="flex h-24 w-full items-center justify-end pr-4">
       <Popover onOpenChange={setAbierto} open={abierto}>
-        <PopoverTrigger render={<AiLauncher label={abierto ? "Cerrar asistente" : "Asistente"} />}>
+        <PopoverTrigger render={<AiLauncher active={respondiendo} label={abierto ? "Cerrar asistente" : "Asistente"} />}>
           {abierto ? <XIcon /> : undefined}
         </PopoverTrigger>
         <PopoverContent
@@ -142,7 +147,7 @@ export function Asistente() {
           side="top"
           sideOffset={12}
         >
-          <Conversacion onClose={() => setAbierto(false)} />
+          <Conversacion onBusyChange={setRespondiendo} onClose={() => setAbierto(false)} />
         </PopoverContent>
       </Popover>
     </div>
@@ -163,12 +168,12 @@ export function EnTarjeta() {
 
 /**
  * Estados
- * Escribiendo, y el error con su reintento.
+ * Una respuesta en curso: el borde encendido, «escribiendo» y el botón de detener. Y el error con su reintento.
  */
 export function Estados() {
   return (
     <Card className="w-full max-w-md gap-0 overflow-hidden py-0">
-      <Chat>
+      <Chat busy>
         <ChatMessages className="max-h-80">
           <ChatMessage from="user">¿Me pasás el voucher del hotel?</ChatMessage>
           <ChatTyping />
@@ -176,7 +181,7 @@ export function Estados() {
           <ChatError onRetry={() => {}}>No pude responder ahora. Probá de nuevo en un rato.</ChatError>
         </ChatMessages>
         <ChatFooter>
-          <ChatInput busy onStop={() => {}} />
+          <ChatInput onStop={() => {}} />
         </ChatFooter>
       </Chat>
     </Card>

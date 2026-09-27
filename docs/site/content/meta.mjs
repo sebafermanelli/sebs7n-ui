@@ -1633,6 +1633,7 @@ export const COMPONENTS = {
       "`AiLauncher` no se posiciona solo: `className=\"fixed right-6 bottom-6\"`. Depende de qué más flote ahí.",
       "Como trigger de un `Popover` o un `Sheet`: `render={<AiLauncher />}`.",
       "`AiShimmer` va donde iría un `Skeleton`, en un flujo de IA: dice «alguien lo está escribiendo», no «esto está cargando».",
+      "`active` en el lanzador hace girar el canto. Es una señal de estado —hay una respuesta en camino—, no un adorno: encendido siempre, deja de significar algo.",
     ],
     props: {
       AiButton: {
@@ -1661,13 +1662,15 @@ export const COMPONENTS = {
       "`ChatTyping` es un `role=\"status\"` con nombre; `ChatError`, un `role=\"alert\"`.",
       "El campo tiene su `<label>`, oculto a la vista. El botón de enviar y el de detener, su `aria-label`.",
       "En táctil el campo mide 44px y la letra 16px: con menos, iOS hace zoom al enfocar.",
+      "El borde de la IA es decoración: lo que anuncia la espera es el `aria-busy` de la lista. Con `prefers-reduced-motion` se enciende pero no gira.",
       "Mientras se arma una palabra con un IME (japonés, coreano), Enter la confirma y no envía.",
     ],
     usage: [
       "No dibuja superficie: va adentro de un `Popover`, un `Sheet` o una `Card`.",
       "El texto de un mensaje va como `children`. Si la respuesta trae formato, convertila a elementos de React. **Nunca la inyectes como HTML**: lo que escribe un modelo es texto de un tercero.",
       "`ChatMessages` sigue al último mensaje mientras el usuario esté abajo. Si subió a leer, no lo arrastra.",
-      "Con una respuesta en curso, `busy` convierte el botón de enviar en el de detener, en el mismo lugar.",
+      "`busy` va en el `Chat`: enciende el borde de la IA alrededor de la conversación y les avisa a la lista y al campo. Es el borde que recorre la pantalla del iPhone cuando se activa Siri, y acá hace de spinner.",
+      "Con una respuesta en curso, el botón de enviar pasa a ser el de detener, en el mismo lugar.",
       "Sin controlar, `ChatInput` se vacía solo al enviar. Controlado (`value`), vaciarlo es de la app, que es quien sabe si el envío salió.",
       "La letra chica (`ChatDisclaimer`) va debajo del campo, no en la cabecera: ahí es donde se mira antes de enviar.",
     ],

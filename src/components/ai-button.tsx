@@ -66,6 +66,11 @@ type AiLauncherProps = Omit<React.ComponentProps<"button">, "children"> & {
   labelVisible?: boolean
   /** De qué lado del botón va la etiqueta. Por defecto a la izquierda: el lanzador vive abajo a la derecha. */
   labelSide?: "left" | "right"
+  /**
+   * La IA está trabajando: el canto gira. Es lo que avisa, con el panel cerrado, que hay una
+   * respuesta en camino. En reposo el canto está quieto.
+   */
+  active?: boolean
   /** El ícono. Por defecto, los destellos; una `X` cuando el panel está abierto. */
   children?: React.ReactNode
   labels?: Partial<AiLabels>
@@ -83,12 +88,13 @@ type AiLauncherProps = Omit<React.ComponentProps<"button">, "children"> & {
  *
  * Como trigger de un `Popover` o un `Sheet`: `render={<AiLauncher />}`.
  */
-function AiLauncher({ className, label, labelVisible = false, labelSide = "left", labels: labelsProp, children, ...props }: AiLauncherProps) {
+function AiLauncher({ className, label, labelVisible = false, labelSide = "left", active = false, labels: labelsProp, children, ...props }: AiLauncherProps) {
   const labels = { ...useLabels().ai, ...labelsProp }
   const nombre = label ?? labels.launcher
   return (
     <button
       aria-label={nombre}
+      data-ai-active={active ? "" : undefined}
       data-slot="ai-launcher"
       type="button"
       className={cn(

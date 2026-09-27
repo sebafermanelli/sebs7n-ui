@@ -38,12 +38,14 @@ export function Basico() {
 
 /**
  * El lanzador
- * El botón redondo que abre el asistente. Acá va adentro de una caja para que se vea en la página; en una app flota con `className="fixed right-6 bottom-6"`.
+ * El botón redondo que abre el asistente. Con `active`, el canto gira: hay una respuesta en camino. Acá va adentro de una caja para que se vea en la página; en una app flota con `className="fixed right-6 bottom-6"`.
  */
 export function Lanzador() {
   return (
     <div className="relative flex h-40 w-full max-w-md items-end justify-end gap-6 p-4">
       <AiLauncher labelVisible />
+      {/* Con una respuesta en camino, el canto gira. */}
+      <AiLauncher active label="Respondiendo" labelSide="right" />
     </div>
   )
 }

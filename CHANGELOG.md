@@ -9,6 +9,18 @@ major.
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-09-27
+
+### Added
+
+- **El borde de la IA mientras trabaja** (`ai-glow`): el contorno encendido que recorre la
+  pantalla del iPhone cuando se activa Siri. Es una señal de estado, no un adorno: solo se ve
+  con una respuesta en curso, y reemplaza a un spinner. Con `prefers-reduced-motion` se
+  enciende pero no gira.
+- `Chat` acepta `busy`: enciende el borde alrededor de la conversación y les avisa a
+  `ChatMessages` y a `ChatInput`, que ya no necesitan su propio `busy` (lo siguen aceptando).
+- `AiLauncher` acepta `active`: el canto gira mientras hay una respuesta en camino.
+
 ## [1.1.0] - 2026-09-27
 
 ### Added

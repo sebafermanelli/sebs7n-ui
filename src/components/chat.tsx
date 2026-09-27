@@ -24,24 +24,52 @@ type ChatLabels = Labels["chat"]
  * lo pone quien lo contiene.
  *
  * ```tsx
- * <Chat>
+ * <Chat busy={respondiendo}>
  *   <ChatHeader>
  *     <ChatTitle>Asistente</ChatTitle>
  *   </ChatHeader>
- *   <ChatMessages busy={respondiendo}>
+ *   <ChatMessages>
  *     <ChatMessage from="user">¿Cuándo es mi próximo viaje?</ChatMessage>
  *     <ChatMessage from="assistant">El 12 de octubre, a Bariloche.</ChatMessage>
  *     {respondiendo && <ChatTyping />}
  *   </ChatMessages>
  *   <ChatFooter>
- *     <ChatInput busy={respondiendo} onSend={enviar} onStop={cortar} />
+ *     <ChatInput onSend={enviar} onStop={cortar} />
  *     <ChatDisclaimer>Confirmá la información con tu asesor.</ChatDisclaimer>
  *   </ChatFooter>
  * </Chat>
  * ```
  */
-function Chat({ className, ...props }: React.ComponentProps<"div">) {
-  return <div data-slot="chat" className={cn("flex min-h-0 flex-col text-copy-14 text-gray-1000", className)} {...props} />
+type ChatProps = React.ComponentProps<"div"> & {
+  /**
+   * Hay una respuesta en curso. Enciende el borde de la IA alrededor de la conversación, y le
+   * avisa a `ChatMessages` y a `ChatInput`, que ya no necesitan su propio `busy`.
+   */
+  busy?: boolean
+}
+
+const ChatContext = React.createContext<{ busy: boolean } | null>(null)
+
+function Chat({ className, busy = false, ...props }: ChatProps) {
+  const value = React.useMemo(() => ({ busy }), [busy])
+  return (
+    <ChatContext.Provider value={value}>
+      <div
+        data-ai-active={busy ? "" : undefined}
+        data-slot="chat"
+        // `rounded-[inherit]`: el borde de la IA sigue la curva de quien contiene al chat, que
+        // es quien tiene el radio. `relative` es lo que ancla ese borde.
+        className={cn("relative flex min-h-0 flex-col rounded-[inherit] text-copy-14 text-gray-1000 ai-glow", className)}
+        {...props}
+      />
+    </ChatContext.Provider>
+  )
+}
+
+/** El `busy` que vale: el propio si se pasó, y si no el del `Chat` de arriba. */
+function useBusy(propio: boolean | undefined) {
+  const contexto = React.useContext(ChatContext)
+  return propio ?? contexto?.busy ?? false
 }
 
 function ChatHeader({ className, ...props }: React.ComponentProps<"div">) {
@@ -71,7 +99,7 @@ function ChatActions({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 type ChatMessagesProps = React.ComponentProps<"div"> & {
-  /** Hay una respuesta en curso. Lo anuncia con `aria-busy` y no hace falta decirlo en otro lado. */
+  /** Hay una respuesta en curso: lo anuncia con `aria-busy`. Si no se pasa, toma el del `Chat`. */
   busy?: boolean
   labels?: Partial<ChatLabels>
 }
@@ -87,7 +115,8 @@ const UMBRAL = 48
  *
  * Es un `role="log"`: un lector de pantalla anuncia lo que se agrega, sin que el foco se mueva.
  */
-function ChatMessages({ className, busy = false, labels: labelsProp, onScroll, children, ...props }: ChatMessagesProps) {
+function ChatMessages({ className, busy: busyProp, labels: labelsProp, onScroll, children, ...props }: ChatMessagesProps) {
+  const busy = useBusy(busyProp)
   const labels = { ...useLabels().chat, ...labelsProp }
   const lista = React.useRef<HTMLDivElement>(null)
   const abajo = React.useRef(true)
@@ -256,7 +285,7 @@ type ChatInputProps = Omit<React.ComponentProps<"form">, "onSubmit" | "children"
   onValueChange?: (value: string) => void
   /** Manda el mensaje, ya sin espacios a los costados. Sin controlar, el campo se vacía solo. */
   onSend?: (message: string) => void
-  /** Hay una respuesta en curso: el botón de enviar pasa a ser el de detener. */
+  /** Hay una respuesta en curso: el botón de enviar pasa a ser el de detener. Si no se pasa, toma el del `Chat`. */
   busy?: boolean
   /** Corta la respuesta en curso. Sin esto, mientras `busy` el botón queda apagado. */
   onStop?: () => void
@@ -289,7 +318,7 @@ function ChatInput({
   defaultValue = "",
   onValueChange,
   onSend,
-  busy = false,
+  busy: busyProp,
   onStop,
   disabled = false,
   maxLength,
@@ -298,6 +327,7 @@ function ChatInput({
   ...props
 }: ChatInputProps) {
   useModality()
+  const busy = useBusy(busyProp)
   const labels = { ...useLabels().chat, ...labelsProp }
   const id = React.useId()
   const [interno, setInterno] = React.useState(defaultValue)
@@ -408,6 +438,7 @@ export {
   ChatTitle,
   ChatTyping,
   type ChatErrorProps,
+  type ChatProps,
   type ChatInputProps,
   type ChatLabels,
   type ChatMessageProps,

@@ -145,3 +145,38 @@ describe("El color de la IA (WCAG 1.4.3)", () => {
     expect(contrastRatio(luminanceOfOklch(claro), luminanceOfHex("#ffffff"))).toBeLessThan(4.5)
   })
 })
+
+describe("AiLauncher: el canto gira mientras la IA trabaja", () => {
+  it("en reposo está quieto; con active, gira", () => {
+    const { rerender } = render(<AiLauncher />)
+    expect(screen.getByRole("button")).not.toHaveAttribute("data-ai-active")
+    rerender(<AiLauncher active />)
+    expect(screen.getByRole("button")).toHaveAttribute("data-ai-active")
+  })
+})
+
+describe("ai-glow: una señal de estado, no un adorno", () => {
+  const inicio = css.indexOf("@utility ai-glow {")
+  const utilidad = css.slice(inicio, css.indexOf("\n}", inicio))
+
+  it("apagado por defecto: solo se ve y gira con data-ai-active", () => {
+    const [reposo, activo] = [utilidad.slice(0, utilidad.indexOf("&[data-ai-active]")), utilidad.slice(utilidad.indexOf("&[data-ai-active]"))]
+    expect(reposo).toContain("opacity: 0;")
+    expect(reposo).not.toContain("animation:")
+    expect(activo).toContain("animation: var(--animate-ai-glow);")
+    expect(activo).toContain("opacity: 1;")
+  })
+
+  it("gira el ángulo del degradé, no el elemento", () => {
+    expect(utilidad).toContain("conic-gradient(")
+    expect(utilidad).toContain("from var(--sf-ai-angle)")
+    expect(utilidad).not.toMatch(/rotate|transform/)
+    // Sin `@property` el ángulo no se interpola: salta de 0 a 360.
+    expect(css).toMatch(/@property --sf-ai-angle \{\s*syntax: "<angle>";/)
+  })
+
+  it("no tapa los clics y sigue la curva de quien lo lleva", () => {
+    expect(utilidad).toContain("pointer-events: none;")
+    expect(utilidad).toContain("border-radius: inherit;")
+  })
+})

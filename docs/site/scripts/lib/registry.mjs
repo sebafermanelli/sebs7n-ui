@@ -219,6 +219,12 @@ function buildTheme({ root, site, author }) {
   const media = theme.match(/@media \(prefers-reduced-transparency: reduce\), \(prefers-contrast: more\)/)
   if (media) css[media[0]] = { ":root": declarations(block(block(theme, media[0]), ":root")) }
 
+  // `@property` registra el tipo de una custom property, que es lo que deja animarla. Sin
+  // esto el borde de la IA llega al proyecto destino quieto.
+  for (const [, name] of theme.matchAll(/@property (--[a-z-]+)\s*\{/g)) {
+    css[`@property ${name}`] = rules(block(theme, `@property ${name}`))
+  }
+
   for (const [, name] of theme.matchAll(/@keyframes ([a-z-]+)\s*\{/g)) {
     const body = block(theme, `@keyframes ${name}`)
     const steps = {}
