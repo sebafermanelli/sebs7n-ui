@@ -33,7 +33,7 @@ describe("glass: un solo parámetro", () => {
 
   it("fill, blur y saturación salen de la intensidad", () => {
     const glass = utility("glass")
-    expect(glass).toContain("calc((1 - var(--sf-g) * 0.7 * var(--sf-glass-clear, 1)) * 100%)")
+    expect(glass).toContain("calc((1 - var(--sf-g) * 0.35 * var(--sf-glass-clear, 1)) * 100%)")
     expect(glass).toContain("blur(calc(var(--sf-g) * var(--sf-glass-k, 1) * 16px))")
     expect(glass).toContain("saturate(calc(1 + var(--sf-g) * 0.8))")
     expect(glass).toContain("-webkit-backdrop-filter")
@@ -78,7 +78,7 @@ describe("luz ambiente: un solo parámetro", () => {
 describe("glass-dense: el vidrio de las listas de texto", () => {
   it("cambia el fill y el brillo de lo de atrás, y no se hereda", () => {
     const dense = utility("glass-dense")
-    expect(dense).toContain("--sf-glass-clear: calc((1 - var(--sf-glass-dense-fill)) / 0.7);")
+    expect(dense).toContain("--sf-glass-clear: calc((1 - var(--sf-glass-dense-fill)) / 0.35);")
     expect(dense).toContain("--sf-glass-backdrop: var(--sf-glass-dense-backdrop);")
     // Heredadas, un vidrio adentro de un menú saldría denso sin haberlo pedido.
     for (const nombre of ["--sf-glass-clear", "--sf-glass-backdrop"]) {
@@ -97,30 +97,6 @@ describe("glass-dense: el vidrio de las listas de texto", () => {
     const { floatingPopupClassName } = await import("../src/variants/overlay")
     expect(menuPopupClassName).toContain("glass-dense")
     expect(floatingPopupClassName).not.toContain("glass-dense")
-  })
-})
-
-describe("glass-halo: el texto de las barras sobre lo que pase por debajo", () => {
-  it("es del color de la página y escala con --glass: con 0 no hay halo", () => {
-    const halo = utility("glass-halo")
-    expect(halo).toContain("var(--sf-background) calc(var(--glass) * var(--sf-glass-on) * 85%)")
-    expect(halo).toContain("text-shadow")
-    // Los íconos son SVG: `text-shadow` no los toca.
-    expect(halo).toContain("drop-shadow")
-    // El velo detrás de cada control, sin tocar el `background-color` del hover.
-    expect(halo).toContain("& :where(a, button):not(.no-halo)")
-    expect(halo).toContain("background-image: radial-gradient(")
-  })
-
-  it("lo llevan el Navbar con vidrio y el Toolbar de vidrio; los botones sólidos lo apagan", async () => {
-    const { buttonVariants } = await import("../src/variants/button")
-    for (const variant of ["default", "accent", "destructive"] as const) {
-      expect(buttonVariants({ variant }), variant).toContain("no-halo")
-    }
-    for (const variant of ["ghost", "outline", "secondary"] as const) {
-      expect(buttonVariants({ variant }), variant).not.toContain("no-halo")
-    }
-    expect(utility("no-halo")).toContain("text-shadow: none")
   })
 })
 

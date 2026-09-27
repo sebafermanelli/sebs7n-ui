@@ -546,16 +546,17 @@
  * punto de brillo para que el color de atrás no salga lavado, y el canto especular en dos
  * esquinas opuestas.
  *
- *   fill      1 − 0,7·g        100 % sólido en 0, 30 % en 1
+ *   fill      1 − 0,35·g       100 % sólido en 0, 65 % en 1
  *   blur      g · k · 16px     k es el grosor: 0,6 lámina, 1, 1,5 placa
  *   saturate  1 + 0,8·g
  *   brillo    1 + 0,06·g
  *
- * **El costo está medido y no es chico.** Con `--glass: 1` el texto llega a 4,5:1 sobre la
- * página y sobre la luz ambiente, que son los fondos que pone el sistema; contra contenido
- * arbitrario que pase por debajo, no. El texto principal pasa contra cualquier fondo hasta
- * `--glass: 0.5`. Los números están en `test/glass-contrast.test.ts` y la regla en la página
- * de Accesibilidad del sitio.
+ * **65 % de fill con `--glass: 1`, no 30 %.** Es el mínimo con el que el texto principal pasa
+ * 4,5:1 contra cualquier cosa que pase por debajo —una foto clara bajo una barra oscura, una
+ * negra bajo una clara—. Con 30 % el fondo se veía más, pero los links de una barra se perdían
+ * sobre una portada, y la otra salida (un halo detrás de cada letra) se veía peor que perder
+ * transparencia. El texto secundario pasa sobre la página y la luz ambiente; contra contenido
+ * arbitrario, no. Los números están en `test/glass-contrast.test.ts`.
  *
  * El canto va por `--tw-inset-shadow` y no por `box-shadow` directo: así se compone con el
  * `shadow-menu` o el `shadow-card` que el componente ya tiene, en vez de pisarlo. Y va en
@@ -576,7 +577,7 @@
       var(--sf-brand-600) calc(var(--glass-tint) * 34%),
       color-mix(in srgb, var(--sf-glass-lift) calc(var(--sf-g) * 100%), var(--sf-background-100))
     )
-    calc((1 - var(--sf-g) * 0.7 * var(--sf-glass-clear, 1)) * 100%),
+    calc((1 - var(--sf-g) * 0.35 * var(--sf-glass-clear, 1)) * 100%),
     transparent
   );
   background-image: linear-gradient(
@@ -616,7 +617,7 @@
  * Sigue a `--glass`: con 0 es sólido, igual que el resto.
  */
 @utility glass-dense {
-  --sf-glass-clear: calc((1 - var(--sf-glass-dense-fill)) / 0.7);
+  --sf-glass-clear: calc((1 - var(--sf-glass-dense-fill)) / 0.35);
   --sf-glass-backdrop: var(--sf-glass-dense-backdrop);
 }
 
@@ -631,58 +632,6 @@
 @utility glass-control {
   --sf-g: calc(var(--glass) * var(--sf-glass-on));
   background-color: color-mix(in srgb, var(--sf-background-100) calc((1 - var(--sf-g) * 0.45) * 100%), transparent);
-}
-
-/**
- * El halo del texto en una barra de vidrio: Navbar, Toolbar.
- *
- * Una barra es cromo y flota sobre lo que haya: con el vidrio pleno, una foto clara que pasa
- * por debajo en tema oscuro dejaba los links casi invisibles. Es lo que hace Apple sobre
- * fondos que cambian: un halo del color de la página detrás de cada letra y cada ícono.
- * Sobre la página no se ve —es del mismo color que el fondo—; aparece solo cuando pasa algo
- * que compite con el texto.
- *
- * Escala con `--glass`: con 0 la barra es sólida y el halo desaparece. Se hereda, así que lo
- * pone la barra y lo toma todo lo que tiene adentro. Los botones sólidos lo apagan: su texto
- * ya está sobre su propio color.
- */
-@utility glass-halo {
-  --sf-halo: color-mix(
-    in srgb,
-    var(--sf-background) calc(var(--glass) * var(--sf-glass-on) * 85%),
-    transparent
-  );
-  /* Cuatro capas: las dos chicas separan el trazo, las dos grandes le dan cuerpo. Con una
-     sola de 6px, un gris de link sobre una ilustración clara seguía perdiéndose. */
-  text-shadow:
-    0 0 1px var(--sf-halo),
-    0 0 3px var(--sf-halo),
-    0 0 8px var(--sf-halo),
-    0 0 16px var(--sf-halo);
-
-  & svg {
-    filter: drop-shadow(0 0 1px var(--sf-halo)) drop-shadow(0 0 4px var(--sf-halo));
-  }
-
-  /* El velo: una sombra difusa detrás de cada control, más ancha que el halo. Es lo que hace
-     legible un link gris —no solo uno blanco— cuando pasa algo claro por debajo. En
-     `background-image`, para no pisar el `background-color` del hover. */
-  & :where(a, button):not(.no-halo) {
-    background-image: radial-gradient(
-      closest-side,
-      color-mix(in srgb, var(--sf-background) calc(var(--glass) * var(--sf-glass-on) * 55%), transparent),
-      transparent
-    );
-  }
-}
-
-/* Apaga el halo heredado: un botón sólido ya tiene su propio fondo detrás del texto. */
-@utility no-halo {
-  text-shadow: none;
-
-  & svg {
-    filter: none;
-  }
 }
 
 /**

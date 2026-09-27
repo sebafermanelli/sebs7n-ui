@@ -11,7 +11,7 @@ const buttonVariantsBase = cva(
         // se hunden un pixel al apretar. Deshabilitados vuelven a ser planos. `default`
         // es gray-1000 (blanco en oscuro): lleva la variante invertida, con filo gris.
         default:
-          "bg-gray-1000 text-background-100 shadow-button-inverted hover:bg-button-primary-hover active:translate-y-px active:shadow-none data-disabled:shadow-none no-halo",
+          "bg-gray-1000 text-background-100 shadow-button-inverted hover:bg-button-primary-hover active:translate-y-px active:shadow-none data-disabled:shadow-none",
         // `outline` es el botón de vidrio: alfa sin blur, porque casi siempre vive adentro de una
         // superficie que ya lo tiene.
         outline:
@@ -22,9 +22,9 @@ const buttonVariantsBase = cva(
           "bg-gray-alpha-200 text-gray-1000 shadow-card hover:bg-gray-alpha-300 active:translate-y-px active:bg-gray-alpha-500 active:shadow-none data-disabled:shadow-none",
         ghost: "text-gray-1000 hover:bg-gray-alpha-200 active:bg-gray-alpha-300",
         accent:
-          "bg-brand-700 text-brand-contrast sheen shadow-button-accent hover:bg-brand-800 active:translate-y-px active:bg-brand-800 active:shadow-none data-disabled:shadow-none no-halo",
+          "bg-brand-700 text-brand-contrast sheen shadow-button-accent hover:bg-brand-800 active:translate-y-px active:bg-brand-800 active:shadow-none data-disabled:shadow-none",
         destructive:
-          "bg-red-800 text-button-error-fg sheen shadow-button hover:bg-button-error-hover active:translate-y-px active:bg-button-error-active active:shadow-none data-disabled:shadow-none no-halo",
+          "bg-red-800 text-button-error-fg sheen shadow-button hover:bg-button-error-hover active:translate-y-px active:bg-button-error-active active:shadow-none data-disabled:shadow-none",
         link: "h-auto! rounded-sm border-0 px-0! text-brand-900 underline-offset-4 hover:text-brand-1000 hover:underline data-disabled:bg-transparent",
       },
       size: {

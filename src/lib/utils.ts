@@ -11,7 +11,7 @@ export const TYPE_SCALE = [
   "copy-14-mono", "copy-13-mono",
 ] as const
 
-const twMerge = extendTailwindMerge<"text-halo">({
+const twMerge = extendTailwindMerge({
   extend: {
     theme: {
       text: [...TYPE_SCALE],
@@ -22,8 +22,6 @@ const twMerge = extendTailwindMerge<"text-halo">({
       // `glass` y `glass-control` pintan el fondo. Sin esto, un `bg-*` que pase el llamador
       // convive con el vidrio y gana el que Tailwind haya emitido último, que no se elige.
       "bg-color": ["glass", "glass-control", "bg-ambient"],
-      // Prender y apagar el halo son la misma decisión: el que llega último gana.
-      "text-halo": ["glass-halo", "no-halo"],
     },
   },
 })

@@ -54,7 +54,7 @@ const hex = (css: string, tema: "light" | "dark", token: string) => {
 
 const GLASS = Number(theme.match(/--glass:\s*([\d.]+);/)![1])
 /** La intensidad más alta con la que el texto principal pasa contra cualquier fondo. */
-const GLASS_SEGURO = 0.5
+const GLASS_SEGURO = 1
 
 const tokens = (tema: "light" | "dark") => ({
   surface: hex(colors, tema, "--sf-background-100"),
@@ -90,9 +90,9 @@ const ratio = (fg: string, bg: string) => contrastRatio(luminanceOfHex(fg), lumi
 const marcas = brands as Record<string, Record<string, { base: number[] }>>
 
 describe("el modelo", () => {
-  it("el default del paquete es 1 y su alfa es 0,3", () => {
+  it("el default del paquete es 1 y su alfa es 0,65", () => {
     expect(GLASS).toBe(1)
-    expect(glassAlpha(GLASS)).toBeCloseTo(0.3, 10)
+    expect(glassAlpha(GLASS)).toBeCloseTo(0.65, 10)
   })
 
   it("con --glass: 0 la superficie es background-100, pase lo que pase por debajo", () => {
@@ -160,8 +160,8 @@ describe("Un menú se lee contra cualquier fondo: glass-dense (WCAG 1.4.3)", () 
 describe("El límite conocido del default", () => {
   for (const tema of ["light", "dark"] as const) {
     const t = tokens(tema)
-    it(`${tema} · --glass ${GLASS}: el texto principal contra el peor fondo NO llega a 4.5:1`, () => {
-      expect(ratio(t.principal, glassSurface(GLASS, t, t.peor))).toBeLessThan(4.5)
+    it(`${tema} · --glass ${GLASS}: el texto SECUNDARIO contra el peor fondo NO llega a 4.5:1`, () => {
+      expect(ratio(t.secundario, glassSurface(GLASS, t, t.peor))).toBeLessThan(4.5)
     })
   }
 })

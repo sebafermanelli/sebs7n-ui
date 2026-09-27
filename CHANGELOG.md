@@ -9,6 +9,20 @@ major.
 
 ## [Unreleased]
 
+## [1.11.0] - 2026-09-27
+
+### Changed
+
+- **El vidrio lleva 65 % de fill con `--glass: 1`**, no 30 %. Es el mínimo con el que el
+  texto principal pasa 4,5:1 contra cualquier cosa que pase por debajo: los links de una
+  barra ya no se pierden sobre una foto clara. El blur, la saturación y el canto no cambian.
+  Con `--glass: 0.5` el fill es 82 %.
+
+### Removed
+
+- **`glass-halo` y `no-halo`**, de 1.9. El halo detrás de cada letra resolvía la legibilidad
+  pero se veía mal; la solución es más fill en todo el material.
+
 ## [1.10.0] - 2026-09-27
 
 ### Changed

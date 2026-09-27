@@ -44,17 +44,16 @@ Sobre una superficie sólida el contraste es un número. Sobre un vidrio depende
 | Garantía | Hasta |
 |---|---|
 | Texto principal y secundario a 4,5:1 sobre **la página y la luz ambiente** | `--glass: 1` (el default) |
-| Texto principal a 4,5:1 contra **cualquier fondo** | `--glass: 0.5` |
+| Texto principal a 4,5:1 contra **cualquier fondo** | `--glass: 1` (el default) |
 | Texto principal y secundario a 4,5:1 contra **cualquier fondo**, en un menú | `--glass: 1` (el default) |
 | Todo igual que sobre `background-100` | `--glass: 0` |
 
-**Lo que no se promete, con el número:** con el default, un vidrio que flota encima de contenido arbitrario. Negro detrás de un vidrio claro deja el texto principal en 2,12:1; blanco detrás de uno oscuro, en 1,64:1. Es el costo de un material que deja ver el fondo, y es una decisión, no un descuido.
+**Lo que no se promete, con el número:** el texto **secundario** sobre contenido arbitrario. Blanco detrás de un vidrio oscuro deja el gris secundario en 2,02:1. El principal sí pasa contra cualquier fondo: el vidrio lleva 65 % de fill para eso.
 
 **Los menús son la excepción.** Un Select, un Combobox o un DropdownMenu son listas que se leen y flotan sobre lo que haya, fotos incluidas. Llevan un vidrio más denso (`glass-dense`): más fill y, en el tema oscuro, lo de atrás apagado. Ahí el texto pasa contra cualquier fondo con el default.
 
 Qué hacer:
 
-- **Un vidrio que flota sobre fotos, video o un color sólido:** `--glass: 0.5` en ese subárbol.
 - **Texto secundario sobre contenido saturado:** usá el principal (`text-gray-1000`).
 - **Nada, para quien lo pidió:** con `prefers-reduced-transparency: reduce` o `prefers-contrast: more` el paquete apaga el material y todo se ve sólido. No hay que escribir el media query en la app.
 

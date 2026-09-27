@@ -71,8 +71,8 @@ El material de todo lo que flota —Card, Popover, menús, Dialog, Sidebar, Navb
 | `--glass` | Fill | Blur | Se ve |
 |---|---|---|---|
 | `0` | 100 % | 0 | Sólido: el Geist de 0.8.0. |
-| `0.5` | 65 % | 8px | Esmerilado. El texto principal llega a 4,5:1 contra cualquier fondo. |
-| `1` | 30 % | 16px | Liquid Glass: el fondo se reconoce a través del material. |
+| `0.5` | 82 % | 8px | Esmerilado. |
+| `1` | 65 % | 16px | El default: el fondo se reconoce desenfocado y el texto principal llega a 4,5:1 contra cualquier cosa que pase por debajo. |
 
 De ese número salen también la saturación, el punto de brillo y el canto especular. No hay una variable por capa a propósito: cinco perillas sueltas dan un vidrio que nadie calibró.
 
@@ -111,7 +111,6 @@ En el tema oscuro la luz ya viene más baja que en el claro —menos croma, meno
 | `glass-thin` · `glass-thick` | El grosor: lámina (Tooltip, chip) o placa (Dialog, Sidebar). Van al lado de `glass`. |
 | `glass-dense` | El vidrio de una lista de texto: más fill y, en oscuro, lo de atrás apagado. Va al lado de `glass`. Los menús ya lo traen. |
 | `glass-control` | Un control **adentro** de un vidrio: alfa, sin blur. |
-| `glass-halo` | El halo del texto de una barra: se lee aunque pase una foto por debajo. Lo traen `Navbar` y `Toolbar`; `no-halo` lo apaga. |
 | `glass-rim` | El canto especular del cromo. El elemento tiene que estar posicionado. |
 | `sheen` | El brillo de arriba de un botón de color. |
 | `bg-ambient` | La luz ambiente. |

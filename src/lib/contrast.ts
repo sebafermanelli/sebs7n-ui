@@ -97,12 +97,12 @@ export function composite(fg: string, alpha: number, bg: string): string {
 }
 
 /**
- * El alfa del fill de la utilidad `glass` para una intensidad `--glass`: 1 − 0,7·g.
+ * El alfa del fill de la utilidad `glass` para una intensidad `--glass`: 1 − 0,35·g.
  *
  * `clear` es cuánta de esa transparencia queda: 1 en el vidrio común, menos en uno denso
  * (`glass-dense`), que con `--glass: 1` lleva el fill de `--sf-glass-dense-fill`.
  */
-export const glassAlpha = (glass: number, clear = 1) => 1 - 0.7 * glass * clear
+export const glassAlpha = (glass: number, clear = 1) => 1 - 0.35 * glass * clear
 
 /**
  * El color que termina viéndose debajo del texto de una superficie `glass`.
@@ -131,7 +131,7 @@ export function glassSurface(
       .toString(16)
       .padStart(2, "0")
   )
-  return composite(superficie, glassAlpha(glass, (1 - dense.fill) / 0.7), detras)
+  return composite(superficie, glassAlpha(glass, (1 - dense.fill) / 0.35), detras)
 }
 
 /**
