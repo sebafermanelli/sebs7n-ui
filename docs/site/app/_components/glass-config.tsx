@@ -25,9 +25,11 @@ export type GlassConfig = {
   brandDark: Oklch | null
   radios: Radios
   ambient: boolean
+  /** Los últimos colores de marca probados. No van al CSS: son la memoria del selector. */
+  recientes: Oklch[]
 }
 
-export const DEFAULTS: GlassConfig = { glass: 1, tint: 0, brand: null, brandDark: null, radios: "apple", ambient: true }
+export const DEFAULTS: GlassConfig = { glass: 1, tint: 0, brand: null, brandDark: null, radios: "apple", ambient: true, recientes: [] }
 
 export const RADIOS: Record<Radios, { control: string; surface: string; panel: string }> = {
   apple: { control: "10px", surface: "20px", panel: "26px" },

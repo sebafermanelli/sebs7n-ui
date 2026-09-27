@@ -269,7 +269,7 @@ function DrawerHeader({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 function DrawerFooter({ className, ...props }: React.ComponentProps<"div">) {
-  return <div data-slot="drawer-footer" className={cn("mt-auto flex flex-col gap-2 border-t border-gray-400 p-6", className)} {...props} />
+  return <div data-slot="drawer-footer" className={cn("mt-auto flex flex-col gap-2 border-t border-gray-alpha-400 p-6", className)} {...props} />
 }
 
 type DrawerTitleProps = WithClassName<DrawerPrimitive.Title.Props>

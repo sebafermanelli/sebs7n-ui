@@ -38,6 +38,7 @@ export default [
     // 0.7.0: 36,52 KB. Entraron `icon` y `chart` (Recharts queda afuera: es peer).
     // 1.0.0: 39,24 KB. Entraron `calendar`, `date-picker` y `lib/dates` (+2,9 KB); el vidrio
     // casi no pesa, porque vive en el CSS. El botón por subpath no se movió: 11,87 KB.
-    limit: "40.5 kB",
+    // Con `color-picker` y `lib/color` sube otro escalón: ver la medición en el CHANGELOG.
+    limit: "43 kB",
   },
 ]

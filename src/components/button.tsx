@@ -69,6 +69,9 @@ function Button<S extends ButtonSize = ButtonSize>({
   return (
     <ButtonPrimitive
       data-slot="button"
+      // Igual que Input y Select: un botón usado como campo —el trigger de un selector propio—
+      // necesita poder estilar por tamaño con `data-[size=…]`.
+      data-size={size ?? "md"}
       data-loading={loading ? "" : undefined}
       aria-busy={loading || undefined}
       aria-disabled={loading || undefined}

@@ -33,7 +33,7 @@ function Switch({ className, size = "md", variant = "default", ...props }: Switc
         "data-checked:bg-brand-700 data-checked:hover:bg-brand-800",
         "data-[variant=neutral]:data-checked:bg-gray-1000 data-[variant=neutral]:data-checked:hover:bg-button-primary-hover",
         "aria-invalid:ring-1 aria-invalid:ring-red-800 data-invalid:ring-1 data-invalid:ring-red-800",
-        "data-disabled:cursor-not-allowed data-disabled:bg-gray-100 data-disabled:shadow-none data-disabled:hover:bg-gray-100",
+        "data-disabled:cursor-not-allowed data-disabled:bg-gray-alpha-100 data-disabled:shadow-none data-disabled:hover:bg-gray-alpha-100",
         className
       )}
       {...props}

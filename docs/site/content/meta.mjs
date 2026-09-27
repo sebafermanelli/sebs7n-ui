@@ -699,6 +699,36 @@ export const COMPONENTS = {
     },
     related: ["calendar", "input", "select", "popover"],
   },
+  "color-picker": {
+    title: "ColorPicker",
+    group: "formularios",
+    description: "Un campo que abre un selector de color, con paleta, espectro, valores y los últimos colores usados. Trabaja en OKLCH.",
+    keyboard: [
+      ["Enter · Espacio", "Abre el panel."],
+      ["Escape", "Cierra y devuelve el foco al campo."],
+      ["Tab", "Recorre las pestañas, las muestras y los controles."],
+      ["← → ↑ ↓", "En el espectro, croma y luminosidad. Con Shift, de a pasos más grandes."],
+    ],
+    a11y: [
+      "El campo es un botón: necesita `aria-label`, `aria-labelledby` o un `<Label htmlFor>` apuntando a su `id`.",
+      "Cada muestra se llama por su hexadecimal y anuncia si es la elegida con `aria-pressed`.",
+      "El espectro es un `role=\"slider\"` de dos ejes que se maneja con las flechas; la tira de matices es un `<input type=\"range\">` de verdad.",
+      "**El componente no opina sobre el contraste del color elegido.** Si el color va a llevar texto encima, medilo con `sebs7n-ui/lib/contrast` y mostralo en `footer`.",
+    ],
+    usage: [
+      "Para elegir un color libre: una etiqueta, una categoría, el color de marca. Si las opciones son cinco y fijas, es un `RadioGroup` o un `ToggleGroup`.",
+      "`recent` muestra los últimos colores usados. El componente no los guarda: la app decide qué cuenta como «usado» y dónde vive la lista. Lo más común es sumar el color al cerrar, con `onOpenChange`.",
+      "El valor es OKLCH (`[0.573, 0.214, 258]`). Para guardar o mostrar un hexadecimal están `hexOfOklch` y `oklchOfHex`; con `name`, el formulario lo recibe ya como `#0070f3`.",
+      "Reemplaza a `<input type=\"color\">`, cuyo panel es del sistema operativo.",
+    ],
+    props: {
+      ColorPicker: {
+        className: PROP_DESCRIPTIONS.className,
+        disabled: PROP_DESCRIPTIONS.disabled,
+      },
+    },
+    related: ["date-picker", "popover", "slider", "tabs"],
+  },
   checkbox: {
     title: "Checkbox",
     group: "formularios",

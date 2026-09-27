@@ -16,9 +16,9 @@ describe("Button", () => {
     render(<Button>Deploy</Button>)
     expect(screen.getByRole("button")).toHaveClass(
       "focus-visible:focus-ring",
-      "data-disabled:bg-gray-100",
+      "data-disabled:bg-gray-alpha-100",
       "data-disabled:text-gray-700",
-      "data-disabled:border-gray-400",
+      "data-disabled:border-gray-alpha-400",
       "data-disabled:cursor-not-allowed"
     )
   })

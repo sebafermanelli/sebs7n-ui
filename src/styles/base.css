@@ -2,7 +2,9 @@
   *,
   ::before,
   ::after {
-    border-color: var(--color-gray-400);
+    /* En alfa: un `border-t` sin color adentro de un vidrio, con el gris opaco, era una raya
+       clara que no tomaba el tono de lo que tenía debajo. */
+    border-color: var(--color-gray-alpha-400);
   }
 
   html {

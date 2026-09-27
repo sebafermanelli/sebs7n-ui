@@ -24,7 +24,7 @@ function Accordion({ className, ...props }: AccordionProps) {
   return (
     <AccordionPrimitive.Root
       data-slot="accordion"
-      className={cn("flex w-full flex-col border-b border-gray-400", className)}
+      className={cn("flex w-full flex-col border-b border-gray-alpha-400", className)}
       {...props}
     />
   )
@@ -33,7 +33,7 @@ function Accordion({ className, ...props }: AccordionProps) {
 type AccordionItemProps = WithClassName<AccordionPrimitive.Item.Props>
 
 function AccordionItem({ className, ...props }: AccordionItemProps) {
-  return <AccordionPrimitive.Item data-slot="accordion-item" className={cn("border-t border-gray-400", className)} {...props} />
+  return <AccordionPrimitive.Item data-slot="accordion-item" className={cn("border-t border-gray-alpha-400", className)} {...props} />
 }
 
 type AccordionTriggerProps = WithClassName<AccordionPrimitive.Trigger.Props> & {

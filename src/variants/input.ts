@@ -25,10 +25,14 @@ export const inputControlClassName =
 export const inputMultilineRadiusClassName = "rounded-[min(var(--radius-field),--spacing(5))]"
 
 /**
- * El aire a los costados de un campo de una línea. Sube con el alto: en una cápsula el
- * texto que empieza a 12px del borde queda metido en la curva.
+ * El aire a los costados de un campo de una línea, por tamaño. Sube con el alto: en una
+ * cápsula el texto que empieza a 12px del borde queda metido en la curva.
+ *
+ * Es una clase plana por tamaño y no `data-[size=sm]:px-3.5`. Con la variante, un `pl-9` del
+ * llamador —el lugar para una lupa— perdía: la variante tiene más especificidad, y
+ * tailwind-merge no las ve como un conflicto porque no comparten modificador.
  */
-export const inputPaddingClassName = "px-4 data-[size=sm]:px-3.5 data-[size=lg]:px-5"
+export const inputPaddingClassName = { sm: "px-3.5", md: "px-4", lg: "px-5" } as const
 
 /** Los tres altos del sistema, por `data-size`. El `lg` sube también la tipografía. */
 export const inputSizeClassName = "data-[size=sm]:h-8 data-[size=md]:h-10 data-[size=lg]:h-12 data-[size=lg]:text-copy-16"
@@ -38,7 +42,7 @@ export const inputSizeClassName = "data-[size=sm]:h-8 data-[size=md]:h-10 data-[
  * deshabilitado sobre sus hijos—. El `disabled:` nativo lo agrega aparte el que lo necesite.
  */
 export const inputDisabledClassName =
-  "data-disabled:cursor-not-allowed data-disabled:border-gray-400 data-disabled:bg-gray-100 data-disabled:text-gray-700 data-disabled:shadow-none"
+  "data-disabled:cursor-not-allowed data-disabled:border-gray-alpha-400 data-disabled:bg-gray-alpha-100 data-disabled:text-gray-700 data-disabled:shadow-none"
 
 /**
  * Inválido: borde rojo y, al enfocar, el halo rojo.

@@ -153,7 +153,7 @@ describe("OTPField", () => {
 
     for (const casilla of casillas()) {
       expect(casilla).toHaveAttribute("data-disabled")
-      expect(casilla).toHaveClass("data-disabled:bg-gray-100", "data-disabled:text-gray-700")
+      expect(casilla).toHaveClass("data-disabled:bg-gray-alpha-100", "data-disabled:text-gray-700")
     }
   })
 

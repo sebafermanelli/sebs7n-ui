@@ -25,7 +25,7 @@ function Checkbox({ className, ...props }: CheckboxProps) {
         "data-checked:border-brand-800 data-checked:bg-brand-700 data-checked:shadow-button data-checked:hover:bg-brand-800",
         "data-indeterminate:border-brand-800 data-indeterminate:bg-brand-700 data-indeterminate:shadow-button",
         "aria-invalid:border-red-800 data-invalid:border-red-800",
-        "data-disabled:cursor-not-allowed data-disabled:border-gray-400 data-disabled:bg-gray-100 data-disabled:text-gray-700 data-disabled:shadow-none",
+        "data-disabled:cursor-not-allowed data-disabled:border-gray-alpha-400 data-disabled:bg-gray-alpha-100 data-disabled:text-gray-700 data-disabled:shadow-none",
         className
       )}
       {...props}

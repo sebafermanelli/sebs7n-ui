@@ -117,7 +117,7 @@ function Slider<Value extends number | readonly number[] = number | readonly num
                 "data-dragging:scale-x-135 data-dragging:scale-y-150 data-dragging:thumb-lens",
                 // El foco vive en el <input type="range"> de adentro: el anillo va en el thumb.
                 "has-[input:focus-visible]:focus-ring",
-                "data-disabled:cursor-not-allowed data-disabled:border-gray-400 data-disabled:bg-gray-100 data-disabled:shadow-none data-disabled:scale-100"
+                "data-disabled:cursor-not-allowed data-disabled:border-gray-alpha-400 data-disabled:bg-gray-alpha-100 data-disabled:shadow-none data-disabled:scale-100"
               )}
               data-slot="slider-thumb"
               index={index}

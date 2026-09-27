@@ -35,7 +35,7 @@ function Textarea({ className, ...props }: TextareaProps) {
         "peer field-sizing-content min-h-20 w-full min-w-0 px-4 py-3 placeholder:text-gray-900 focus:focus-border",
         // Además del `data-disabled:` de arriba —que es el que pone un `Fieldset`—, el
         // `<textarea>` puede venir deshabilitado por el atributo nativo. Los dos pasan.
-        "disabled:cursor-not-allowed disabled:border-gray-400 disabled:bg-gray-100 disabled:text-gray-700",
+        "disabled:cursor-not-allowed disabled:border-gray-alpha-400 disabled:bg-gray-alpha-100 disabled:text-gray-700",
         className
       )}
       // `Field.Control` tipa sus props contra un `<input>`, así que no conoce

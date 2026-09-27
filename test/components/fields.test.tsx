@@ -16,10 +16,22 @@ describe("Input", () => {
       "hover:border-gray-alpha-500",
       "focus:focus-border",
       "rounded-field",
-      "px-4",
-      "data-[size=sm]:px-3.5",
-      "data-[size=lg]:px-5"
+      "px-4"
     )
+  })
+
+  it("el padding es una clase plana por tamaño: un pl-* del llamador le gana", () => {
+    render(
+      <>
+        <Input placeholder="chico" size="sm" />
+        <Input className="pl-9" placeholder="con lupa" size="sm" />
+      </>
+    )
+    expect(screen.getByPlaceholderText("chico")).toHaveClass("px-3.5")
+    const conLupa = screen.getByPlaceholderText("con lupa")
+    expect(conLupa).toHaveClass("pl-9")
+    // Ni una variante por tamaño que le gane por especificidad.
+    expect(conLupa.className).not.toMatch(/data-\[size=(sm|lg)\]:p[xl]-/)
   })
 
   it("Textarea no es una cápsula: su radio se frena en 20px", () => {
@@ -42,7 +54,7 @@ describe("Input", () => {
     render(<Input disabled placeholder="X" />)
     const input = screen.getByPlaceholderText("X")
     expect(input).toHaveAttribute("data-disabled")
-    expect(input).toHaveClass("data-disabled:bg-gray-100", "data-disabled:text-gray-700")
+    expect(input).toHaveClass("data-disabled:bg-gray-alpha-100", "data-disabled:text-gray-700")
   })
 
   it.each([
@@ -69,7 +81,7 @@ describe("Textarea", () => {
       "border-gray-alpha-400",
       "hover:border-gray-alpha-500",
       "focus:focus-border",
-      "disabled:bg-gray-100",
+      "disabled:bg-gray-alpha-100",
       "aria-invalid:border-red-800"
     )
   })

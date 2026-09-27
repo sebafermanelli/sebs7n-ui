@@ -187,6 +187,7 @@ describe("LabelsProvider", () => {
       "appShell",
       "autocomplete",
       "calendar",
+      "colorPicker",
       "combobox",
       "datePicker",
       "dialog",

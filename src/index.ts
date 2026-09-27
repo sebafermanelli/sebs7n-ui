@@ -10,6 +10,7 @@ export {
   luminanceOfOklch,
   type Oklch,
 } from "./lib/contrast.js"
+export { cssOfOklch, isSameColor, oklchOfHex } from "./lib/color.js"
 export {
   addDays,
   addMonths,
@@ -86,6 +87,7 @@ export * from "./components/card.js"
 export * from "./components/checkbox-group.js"
 export * from "./components/checkbox.js"
 export * from "./components/collapsible.js"
+export * from "./components/color-picker.js"
 export * from "./components/combobox.js"
 export * from "./components/context-menu.js"
 export * from "./components/date-picker.js"

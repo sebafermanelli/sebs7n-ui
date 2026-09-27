@@ -26,7 +26,7 @@ describe("Checkbox", () => {
       "glass-control",
       "data-checked:bg-brand-700",
       "data-checked:hover:bg-brand-800",
-      "data-disabled:bg-gray-100",
+      "data-disabled:bg-gray-alpha-100",
       "aria-invalid:border-red-800"
     )
   })

@@ -10,6 +10,7 @@ import { Badge } from "sebs7n-ui/badge"
 import { Button } from "sebs7n-ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "sebs7n-ui/card"
 import { Checkbox } from "sebs7n-ui/checkbox"
+import { ColorPicker } from "sebs7n-ui/color-picker"
 import {
   Dialog,
   DialogClose,
@@ -46,9 +47,9 @@ import { ToggleGroup, ToggleGroupItem } from "sebs7n-ui/toggle-group"
 import { Toolbar, ToolbarButton, ToolbarSeparator } from "sebs7n-ui/toolbar"
 import { Tooltip, TooltipContent, TooltipTrigger } from "sebs7n-ui/tooltip"
 
-import { cssOfOklch, oklchOfHex, type Oklch } from "../_lib/color"
+import { cssOfOklch, hexOfOklch, oklchOfHex, type Oklch } from "../_lib/color"
 import { CodeBlock } from "./code-block"
-import { ColorPicker } from "./color-picker"
+import { Veredicto } from "./color-picker"
 import { variables, useGlassConfig, type Radios } from "./glass-config"
 
 /** El brand del sitio, que es el del paquete. Es de donde arranca el selector. */
@@ -110,9 +111,16 @@ export function Playground() {
           <div className="flex flex-col gap-2">
             <span className="text-label-14 text-gray-1000">Color de marca · tema {oscuro ? "oscuro" : "claro"}</span>
             <ColorPicker
-              label={`Color de marca (tema ${oscuro ? "oscuro" : "claro"})`}
-              onChange={(color) => set(oscuro ? { brandDark: color } : { brand: color })}
-              superficie={oscuro ? "#0a0a0a" : "#ffffff"}
+              aria-label={`Color de marca (tema ${oscuro ? "oscuro" : "claro"})`}
+              className="w-40"
+              footer={(color) => <Veredicto color={color} superficie={oscuro ? "#0a0a0a" : "#ffffff"} />}
+              onOpenChange={(abierto) => {
+                if (abierto) return
+                // Lo que se probó y se dejó queda a mano para volver: el más nuevo adelante.
+                set({ recientes: [brand, ...config.recientes.filter((otro) => hexOfOklch(otro) !== hexOfOklch(brand))].slice(0, 10) })
+              }}
+              onValueChange={(color) => set(oscuro ? { brandDark: color } : { brand: color })}
+              recent={config.recientes}
               value={brand}
             />
           </div>

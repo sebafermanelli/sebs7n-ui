@@ -23,7 +23,7 @@ function SelectTrigger({ className, size = "md", children, ...props }: SelectTri
         inputControlClassName,
         inputSizeClassName,
         inputDisabledClassName,
-        inputPaddingClassName,
+        inputPaddingClassName[size],
         "flex w-full min-w-0 cursor-pointer items-center justify-between gap-2 whitespace-nowrap select-none",
         // El foco va por `focus-visible` y no por `focus`, que es lo que hacen los demás: el
         // trigger es un botón y con `focus:` el borde aparecía también al hacer click. Por eso

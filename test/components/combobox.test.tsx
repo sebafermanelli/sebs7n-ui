@@ -71,7 +71,7 @@ describe("Combobox", () => {
       "rounded-field", "border", "border-gray-alpha-400", "glass-control", "transition-control",
       "data-[size=sm]:h-8", "data-[size=md]:h-10", "data-[size=lg]:h-12",
       "hover:border-gray-alpha-500", "has-[input:focus]:focus-border",
-      "has-[input[aria-invalid=true]]:border-red-800", "data-disabled:bg-gray-100"
+      "has-[input[aria-invalid=true]]:border-red-800", "data-disabled:bg-gray-alpha-100"
     )
     expect(group(md)).toHaveClass("text-copy-14", "data-[size=lg]:text-copy-16")
     expect(md).toHaveClass("placeholder:text-gray-900", "bg-transparent", "outline-none")

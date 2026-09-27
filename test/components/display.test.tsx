@@ -105,7 +105,7 @@ describe("Card", () => {
     expect(card.className).not.toMatch(/shadow-(menu|modal|tooltip)/)
     expect(screen.getByText("Ingresos")).toHaveClass("text-heading-20")
     expect(screen.getByText("Últimos 30 días")).toHaveClass("text-copy-14", "text-gray-900")
-    expect(screen.getByText("pie")).toHaveClass("border-t", "border-gray-400")
+    expect(screen.getByText("pie")).toHaveClass("border-t", "border-gray-alpha-400")
   })
 
   it("interactiva y seleccionada", () => {

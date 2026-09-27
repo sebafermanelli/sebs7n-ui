@@ -53,6 +53,9 @@ El material pasa a ser vidrio. La guía para migrar el código de una app está 
   `solid` suma el brillo de los botones de color.
 - **El pie de `Table`** (`TableCaption`) tiene aire arriba y abajo: quedaba apoyado en el borde
   inferior del contorno.
+- **El borde por defecto es alfa.** El `border-color` de base pasa de `gray-400` a
+  `gray-alpha-400`, y los estados apagados (`data-disabled:`) de todos los controles, de
+  `gray-400` / `gray-100` a sus pares en alfa. `Accordion`, `Sheet`, `Drawer` y `Card` también.
 - **`Alert` es alfa sin blur** (`glass-control`): su lugar más común es adentro de una `Card`, y
   como vidrio era vidrio sobre vidrio.
 - **`Tooltip` ya no tiene flecha.**
@@ -87,10 +90,18 @@ El material pasa a ser vidrio. La guía para migrar el código de una app está 
   ni el idioma de la app. Grilla de fechas de WAI-ARIA, con `min`, `max`, `isDateDisabled`,
   `locale` y `weekStartsOn`. **`DatePicker` no valida**: no tiene `required` ni se registra en
   un `Field`.
+- **`ColorPicker`** (`sebs7n-ui/color-picker`): un campo que abre un selector de color con tres
+  pestañas —paleta, espectro y valores— y los últimos colores usados (`recent`). Trabaja en
+  OKLCH; con `name`, el formulario lo recibe como hexadecimal. **No guarda los recientes:** los
+  muestra, y la app decide dónde vive la lista. `footer` recibe el color actual, para una vista
+  previa o un aviso de contraste. Reemplaza a `<input type="color">`.
+- `sebs7n-ui/lib/color`: `oklchOfHex`, `cssOfOklch` e `isSameColor`.
+- `Labels` suma el grupo `colorPicker`.
 - `sebs7n-ui/lib/dates`: aritmética de fechas de calendario, sin dependencias.
 - `Labels` suma los grupos `calendar` y `datePicker`.
 - `sebs7n-ui/variants/segmented`: `segmentedTrackClassName` y `segmentedThumbClassName`, la
   pista y la pastilla que comparten `Tabs` y `ThemeSwitcher`.
+- `Button` expone `data-size`, como `Input` y `Select`.
 - `bg-highlight` y `bg-highlight-active`, `shadow-button-accent`.
 - `sebs7n-ui/lib/contrast`: `glassAlpha`, `glassSurface`, `composite` y `hexOfOklch`, para
   que una app mida el contraste de su texto sobre su vidrio.

@@ -81,6 +81,25 @@ export type Labels = {
     /** Nombre del botón que va al mes siguiente. */
     nextMonth: string
   }
+  colorPicker: {
+    /** Nombre del panel que se abre, para quien no lo ve. */
+    popup: string
+    /** Nombre del grupo de pestañas. */
+    tabs: string
+    palette: string
+    spectrum: string
+    values: string
+    /** Título de los últimos colores usados. */
+    recent: string
+    /** Título de la grilla de colores. */
+    swatches: string
+    /** Nombre del campo de dos ejes de la pestaña Espectro. */
+    area: string
+    hue: string
+    lightness: string
+    chroma: string
+    hex: string
+  }
   combobox: {
     clear: string
     trigger: string
@@ -154,6 +173,20 @@ export const defaultLabels: Labels = {
   calendar: {
     previousMonth: "Mes anterior",
     nextMonth: "Mes siguiente",
+  },
+  colorPicker: {
+    popup: "Selector de color",
+    tabs: "Cómo elegir el color",
+    palette: "Paleta",
+    spectrum: "Espectro",
+    values: "Valores",
+    recent: "Recientes",
+    swatches: "Todos los matices",
+    area: "Croma y luminosidad",
+    hue: "Matiz",
+    lightness: "Luminosidad",
+    chroma: "Croma",
+    hex: "Hexadecimal",
   },
   combobox: {
     clear: "Limpiar",

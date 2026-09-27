@@ -24,7 +24,7 @@ function RadioGroupItem({ className, ...props }: RadioGroupItemProps) {
         "hover:border-gray-800 focus-visible:focus-ring",
         "data-checked:border-brand-800 data-checked:bg-brand-700 data-checked:shadow-button data-checked:hover:bg-brand-800",
         "aria-invalid:border-red-800 data-invalid:border-red-800",
-        "data-disabled:cursor-not-allowed data-disabled:border-gray-400 data-disabled:bg-gray-100 data-disabled:shadow-none",
+        "data-disabled:cursor-not-allowed data-disabled:border-gray-alpha-400 data-disabled:bg-gray-alpha-100 data-disabled:shadow-none",
         className
       )}
       {...props}
