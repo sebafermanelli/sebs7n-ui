@@ -9,6 +9,22 @@ major.
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-09-27
+
+### Added
+
+- **`--ambient`**: cuánta luz ambiente, de 0 a 1 (default 1). Un solo número, como `--glass`.
+  `bg-ambient` lo lee en el elemento, así que se puede pisar en `:root`, en `.dark` o donde
+  esté la utilidad. El Playground suma el control.
+
+### Changed
+
+- **La luz ambiente del tema oscuro es más tenue.** Sobre negro, un color saturado compite
+  con el contenido: los focos bajan de croma (de 0,95–0,75 a 0,6–0,45 del brand), de
+  luminosidad y de alfa (×0,7), y se acercan al matiz de la marca (30° y −25°, antes 55° y
+  −45°), para que detrás del vidrio haya un color y no tres. El vidrio no cambia: `--glass`
+  sigue en 1. El tema claro queda igual.
+
 ## [1.3.0] - 2026-09-27
 
 ### Added

@@ -93,6 +93,16 @@ Sobre una página blanca o negra lisa el vidrio no tiene nada que desenfocar y s
 
 Sin `AppShell`, la misma utilidad en el `<body>`: `className="bg-ambient"`. Es opt-in porque cambia el fondo de la app entera.
 
+Cuánta luz, con un número:
+
+```css
+:root {
+  --ambient: 1;   /* 0 = página lisa · 1 = el default */
+}
+```
+
+En el tema oscuro la luz ya viene más baja que en el claro —menos croma, menos alfa y los tres focos más cerca del matiz de la marca—, porque sobre negro un color saturado compite con el contenido. `--ambient` baja los dos temas por igual; para tocar uno solo, va adentro de `.dark`. El vidrio no cambia: `--glass` sigue en lo que esté.
+
 ### Las utilidades
 
 | Utilidad | Para qué |

@@ -214,6 +214,7 @@
      *
      *   --glass       0 = sólido (el Geist de 0.8.0) · 1 = vidrio pleno, que es el default
      *   --glass-tint  cuánto brand entra al fill del vidrio
+     *   --ambient     cuánta luz ambiente (`bg-ambient`) · 0 = página lisa · 1 = el default
      *
      * De `--glass` salen el alfa del fill, el radio del blur, la saturación y el filo claro.
      * Las fórmulas viven en la utilidad `glass`, más abajo, y no acá: una custom property con
@@ -222,6 +223,7 @@
      */
     --glass: 1;
     --glass-tint: 0;
+    --ambient: 1;
     /* El interruptor de accesibilidad. La app no lo toca: lo apagan los media queries de abajo. */
     --sf-glass-on: 1;
     /* La intensidad efectiva, para los tokens que sí se calculan en `:root` (sombras). */
@@ -254,7 +256,11 @@
      * La luz ambiente (`bg-ambient`): tres focos que salen del brand, uno en su matiz y dos
      * corridos 55° y −45°. La luminosidad es fija por tema —igual que en la escala de brand—
      * para que un brand oscuro no deje la página en penumbra ni uno claro la queme.
+     *
+     * `--sf-ambient-gain` es cuánto de esa luz llega a la página en este tema; la app regula
+     * el total con `--ambient`.
      */
+    --sf-ambient-gain: 1;
     --sf-ambient-1: oklch(from var(--sf-brand-src) 0.8 calc(c * 0.75) h);
     --sf-ambient-2: oklch(from var(--sf-brand-src) 0.84 calc(c * 0.6) calc(h + 55));
     --sf-ambient-3: oklch(from var(--sf-brand-src) 0.86 calc(c * 0.55) calc(h - 45));
@@ -429,9 +435,13 @@
     --sf-glass-lens: 0.6;
     --sf-glass-rim: 0.4;
 
-    --sf-ambient-1: oklch(from var(--sf-brand-src) 0.5 calc(c * 0.95) h);
-    --sf-ambient-2: oklch(from var(--sf-brand-src) 0.45 calc(c * 0.8) calc(h + 55));
-    --sf-ambient-3: oklch(from var(--sf-brand-src) 0.42 calc(c * 0.75) calc(h - 45));
+    /* Sobre negro un color saturado se ve mucho más que sobre blanco: acá la luz es una
+       penumbra. Menos croma, menos alfa y los focos más cerca del matiz del brand —30° y −25°,
+       no 55° y −45°—, para que detrás del vidrio haya un color y no tres. */
+    --sf-ambient-gain: 0.7;
+    --sf-ambient-1: oklch(from var(--sf-brand-src) 0.4 calc(c * 0.6) h);
+    --sf-ambient-2: oklch(from var(--sf-brand-src) 0.36 calc(c * 0.5) calc(h + 30));
+    --sf-ambient-3: oklch(from var(--sf-brand-src) 0.34 calc(c * 0.45) calc(h - 25));
 
     --sf-background: #000000;
 
@@ -733,13 +743,16 @@
  * Son tres `radial-gradient` y no tres `div` con `filter: blur()`: el degradé lo resuelve el
  * rasterizador una vez, y un blur de 90px sobre media pantalla se repinta en cada scroll.
  * `fixed` para que la luz quede quieta y sea el contenido el que pasa por delante.
+ *
+ * El alfa se calcula acá, en el elemento, y no en los tokens de `:root`: por lo mismo que en
+ * `glass`, así `--ambient` responde donde la app lo pise.
  */
 @utility bg-ambient {
   background-color: var(--color-background);
   background-image:
-    radial-gradient(60vmax 60vmax at 0% 0%, color-mix(in oklch, var(--sf-ambient-1) 55%, transparent), transparent 70%),
-    radial-gradient(50vmax 50vmax at 100% 30%, color-mix(in oklch, var(--sf-ambient-2) 50%, transparent), transparent 70%),
-    radial-gradient(55vmax 55vmax at 40% 110%, color-mix(in oklch, var(--sf-ambient-3) 50%, transparent), transparent 70%);
+    radial-gradient(60vmax 60vmax at 0% 0%, oklch(from var(--sf-ambient-1) l c h / calc(0.55 * var(--ambient) * var(--sf-ambient-gain))), transparent 70%),
+    radial-gradient(50vmax 50vmax at 100% 30%, oklch(from var(--sf-ambient-2) l c h / calc(0.5 * var(--ambient) * var(--sf-ambient-gain))), transparent 70%),
+    radial-gradient(55vmax 55vmax at 40% 110%, oklch(from var(--sf-ambient-3) l c h / calc(0.5 * var(--ambient) * var(--sf-ambient-gain))), transparent 70%);
   background-attachment: fixed;
 }
 

@@ -83,7 +83,7 @@ export function Playground() {
         aria-label="Configuración"
         className="sticky top-16 z-30 flex flex-col gap-5 rounded-panel border border-gray-alpha-400 glass glass-thick p-5 shadow-menu lg:top-4"
       >
-        <div className="grid gap-x-8 gap-y-5 md:grid-cols-2">
+        <div className="grid gap-x-8 gap-y-5 md:grid-cols-3">
           <Slider
             format={{ maximumFractionDigits: 2, minimumFractionDigits: 2 }}
             label="Glass"
@@ -105,6 +105,18 @@ export function Playground() {
             showValue
             step={0.05}
             value={config.tint}
+          />
+          <Slider
+            disabled={!config.ambient}
+            format={{ maximumFractionDigits: 2, minimumFractionDigits: 2 }}
+            label="Intensidad de la luz"
+            locale="es-AR"
+            max={1}
+            min={0}
+            onValueChange={(valor) => set({ luz: Number((valor as number).toFixed(2)) })}
+            showValue
+            step={0.05}
+            value={config.luz}
           />
         </div>
         <div className="flex flex-wrap items-end gap-x-8 gap-y-4">
@@ -164,7 +176,8 @@ export function Playground() {
           </p>
         </div>
         <CodeBlock code={cssDe(pisadas)} label="Copiar la configuración" />
-        {/* La luz ambiente no es una variable: es una prop del AppShell (o `bg-ambient` en el body). */}
+        {/* Prender la luz ambiente no es una variable: es una prop del AppShell (o `bg-ambient` en el
+            body). Cuánta, sí: `--ambient`, que sale arriba con el resto. */}
         {config.ambient && <CodeBlock code={`<AppShell ambient sidebar={…}>`} label="Copiar la prop de la luz ambiente" />}
       </section>
 

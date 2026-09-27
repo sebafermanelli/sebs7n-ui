@@ -25,11 +25,13 @@ export type GlassConfig = {
   brandDark: Oklch | null
   radios: Radios
   ambient: boolean
+  /** `--ambient`: cuánta luz ambiente, de 0 a 1. */
+  luz: number
   /** Los últimos colores de marca probados. No van al CSS: son la memoria del selector. */
   recientes: Oklch[]
 }
 
-export const DEFAULTS: GlassConfig = { glass: 1, tint: 0, brand: null, brandDark: null, radios: "apple", ambient: true, recientes: [] }
+export const DEFAULTS: GlassConfig = { glass: 1, tint: 0, brand: null, brandDark: null, radios: "apple", ambient: true, luz: 1, recientes: [] }
 
 export const RADIOS: Record<Radios, { control: string; surface: string; panel: string }> = {
   apple: { control: "10px", surface: "20px", panel: "26px" },
@@ -64,6 +66,7 @@ export function variables(config: GlassConfig): Record<string, string> {
   }
   if (config.glass !== DEFAULTS.glass) salida["--glass"] = String(config.glass)
   if (config.tint !== DEFAULTS.tint) salida["--glass-tint"] = String(config.tint)
+  if (config.ambient && config.luz !== DEFAULTS.luz) salida["--ambient"] = String(config.luz)
   if (config.radios !== DEFAULTS.radios) {
     const radios = RADIOS[config.radios]
     salida["--radius-control"] = radios.control
@@ -80,6 +83,7 @@ const TODAS = [
   "--brand-contrast-dark",
   "--glass",
   "--glass-tint",
+  "--ambient",
   "--radius-control",
   "--radius-surface",
   "--radius-panel",

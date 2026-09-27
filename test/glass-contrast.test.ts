@@ -68,9 +68,16 @@ const tokens = (tema: "light" | "dark") => ({
 /** Los tres focos de la luz ambiente de una marca, ya compuestos sobre la página. */
 function ambiente(tema: "light" | "dark", base: number[], page: string): string[] {
   const css = bloque(theme, tema)
+  // El peor caso es `--ambient: 1`, el default: con menos luz el fondo se acerca a la página.
+  const ganancia = Number(/--sf-ambient-gain: ([\d.]+)/.exec(css)?.[1])
+  expect(ganancia, `--sf-ambient-gain en ${tema}`).toBeGreaterThan(0)
   const mezcla = Object.fromEntries(
-    [...theme.matchAll(/var\(--sf-ambient-(\d)\) (\d+)%/g)].map(([, n, pct]) => [n, Number(pct) / 100])
+    [...theme.matchAll(/from var\(--sf-ambient-(\d)\) l c h \/ calc\(([\d.]+) \* var\(--ambient\) \* var\(--sf-ambient-gain\)\)/g)].map(([, n, alfa]) => [
+      n,
+      Number(alfa) * ganancia,
+    ])
   )
+  expect(Object.keys(mezcla), "focos en bg-ambient").toHaveLength(3)
   const focos = [...css.matchAll(/--sf-ambient-(\d): oklch\(from var\(--sf-brand-src\) ([\d.]+) calc\(c \* ([\d.]+)\) (?:h|calc\(h ([+-]) (\d+)\))\)/g)]
   expect(focos, `focos de luz ambiente en ${tema}`).toHaveLength(3)
   return focos.map(([, n, l, k, signo, grados]) => {

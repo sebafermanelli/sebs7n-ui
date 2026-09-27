@@ -62,6 +62,19 @@ describe("glass: un solo parámetro", () => {
   })
 })
 
+describe("luz ambiente: un solo parámetro", () => {
+  it("la app la regula con --ambient, y la utilidad lo lee en el elemento", () => {
+    expect(css).toMatch(/--ambient:\s*1;/)
+    expect(utility("bg-ambient").match(/var\(--ambient\)/g)).toHaveLength(3)
+  })
+
+  it("en oscuro llega menos luz que en claro: sobre negro el color se ve más", () => {
+    const [claro, oscuro] = [...css.matchAll(/--sf-ambient-gain:\s*([\d.]+);/g)].map(([, n]) => Number(n))
+    expect(claro).toBe(1)
+    expect(oscuro).toBeLessThan(claro!)
+  })
+})
+
 describe("glass: accesibilidad", () => {
   it("sin transparencia o con más contraste, el material se apaga", () => {
     expect(css).toMatch(/--sf-glass-on:\s*1;/)
