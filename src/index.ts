@@ -43,6 +43,7 @@ export { badgeDotColor, badgeVariants, BADGE_COLORS, type BadgeColor } from "./v
 export { buttonVariants, type ButtonIconSize, type ButtonShape, type ButtonSize, type ButtonTextSize, type ButtonVariantProps } from "./variants/button.js"
 export { cardVariants } from "./variants/card.js"
 export { linkVariants } from "./variants/link.js"
+export { segmentedThumbClassName, segmentedTrackClassName } from "./variants/segmented.js"
 export {
   inputControlClassName,
   inputDisabledClassName,

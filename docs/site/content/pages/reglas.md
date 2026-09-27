@@ -53,7 +53,7 @@ Traen `rounded-sm`, `transition-control`, `focus-visible:focus-ring` y `underlin
 
 ## Menús y navegación
 
-**`Tabs` es una pista segmentada.** La pestaña activa es una pastilla que se desliza. `<TabsList variant="line">` es la de Geist —a todo el ancho, con la línea abajo— para la navegación de una página entera, donde una cápsula de 800px de ancho no es un control.
+**`Tabs` es una pista segmentada.** La pestaña activa es una pastilla que se desliza. `ThemeSwitcher` es el mismo control con íconos: los dos salen de `sebs7n-ui/variants/segmented`, que también sirve para armar uno propio. `<TabsList variant="line">` es la de Geist —a todo el ancho, con la línea abajo— para la navegación de una página entera, donde una cápsula de 800px de ancho no es un control.
 
 **`NavigationMenu` si los ítems navegan, `DropdownMenu` si ejecutan algo.** No es cosmético: `DropdownMenu` emite `role="menu"` / `role="menuitem"`, atrapa el foco y se recorre con las flechas, así que un lector anuncia «menú, 3 elementos» en vez de una lista de links, y el modo de navegación por links no los ve. El menú de idioma y el de usuario siguen siendo `DropdownMenu` (cambian el estado, no la página).
 
@@ -108,7 +108,7 @@ La regla: si el elemento **es** la página, `bg-background`; si flota **sobre** 
 
 No llevan `"use client"` y se pueden usar desde un Server Component:
 
-- **Los diez módulos de `sebs7n-ui/variants/*`**, sin excepción: `badge`, `button`, `card`, `input`, `link`, `menu`, `overlay`, `sidebar`, `tag` y `toggle`. Ninguno lleva `"use client"`, y todos salen también por el barrel.
+- **Los once módulos de `sebs7n-ui/variants/*`**, sin excepción: `badge`, `button`, `card`, `input`, `link`, `menu`, `overlay`, `segmented`, `sidebar`, `tag` y `toggle`. Ninguno lleva `"use client"`, y todos salen también por el barrel.
 - **Los dieciséis componentes sin estado**: `Alert`, `AppShellContent`, `Badge`, `Breadcrumb`, `Card`, `EmptyState`, `Kbd`, `Label`, `PageHeader`, `Pagination`, `Separator`, `Skeleton`, `Spinner`, `Stat`, `Table` y `Tag`. Los otros 42 son `"use client"`, que es lo que corresponde: un `DropdownMenu` necesita estado.
 
 `PageHeader` está en esa lista aunque el `<nav>` de sus migas lea el `LabelsProvider`: ese `<nav>` es un subcomponente de cliente interno, y un Server Component puede renderizar uno de cliente. Lo que no puede es llamar un hook, y `PageHeader` no llama ninguno. Es la forma de que un texto salga traducido sin que el llamador tenga que acordarse de pasarlo.

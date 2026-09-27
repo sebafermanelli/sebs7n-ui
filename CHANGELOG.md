@@ -34,6 +34,8 @@ Lo que sigue sale como **1.0.0**.
   color al 22 % (30 % en oscuro).
 - **`Tabs` es una pista segmentada por defecto.** `<TabsList variant="line">` es la de antes.
   `TabsList` ya no mide `w-full`: mide lo que miden sus pestañas.
+- **`ThemeSwitcher` y `ThemeMenuRadio` son la pista segmentada de `Tabs`**, con íconos: la opción
+  elegida ya no se pinta (`data-checked:bg-*`), la marca una pastilla que se desliza.
 - **`Tooltip` ya no tiene flecha.**
 - **Bordes y fondos internos pasan a alfa**: `border-gray-400` → `border-gray-alpha-400`,
   `bg-gray-100/200/300` → `bg-gray-alpha-*`, `bg-background-200` → `bg-gray-alpha-100`. El
@@ -66,6 +68,8 @@ Lo que sigue sale como **1.0.0**.
   un `Field`.
 - `sebs7n-ui/lib/dates`: aritmética de fechas de calendario, sin dependencias.
 - `Labels` suma los grupos `calendar` y `datePicker`.
+- `sebs7n-ui/variants/segmented`: `segmentedTrackClassName` y `segmentedThumbClassName`, la
+  pista y la pastilla que comparten `Tabs` y `ThemeSwitcher`.
 - `bg-highlight` y `bg-highlight-active`, `shadow-button-accent`.
 - `sebs7n-ui/lib/contrast`: `glassAlpha`, `glassSurface`, `composite` y `hexOfOklch`, para
   que una app mida el contraste de su texto sobre su vidrio.

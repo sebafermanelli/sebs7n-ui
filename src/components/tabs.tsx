@@ -3,6 +3,7 @@
 import { Tabs as TabsPrimitive } from "@base-ui/react/tabs"
 
 import { cn, type WithClassName } from "../lib/utils.js"
+import { segmentedThumbClassName, segmentedTrackClassName } from "../variants/segmented.js"
 
 type TabsProps = WithClassName<TabsPrimitive.Root.Props>
 
@@ -27,11 +28,8 @@ function TabsList({ className, variant = "segmented", children, ...props }: Tabs
       data-slot="tabs-list"
       data-variant={variant}
       className={cn(
-        "group/tabs-list relative flex items-center",
-        variant === "line" && "w-full border-b border-gray-alpha-400",
-        // `isolate` para que la pastilla, que va en `-z-10`, quede detrás del texto de las
-        // pestañas pero adelante del fondo de la pista.
-        variant === "segmented" && "isolate w-fit max-w-full gap-0.5 rounded-full bg-gray-alpha-200 p-0.5 shadow-track",
+        "group/tabs-list",
+        variant === "line" ? "relative flex w-full items-center border-b border-gray-alpha-400" : segmentedTrackClassName,
         className
       )}
       {...props}
@@ -42,7 +40,7 @@ function TabsList({ className, variant = "segmented", children, ...props }: Tabs
         // `left` y `width` es lo que hace que la pastilla se deslice en vez de saltar.
         <TabsPrimitive.Indicator
           data-slot="tabs-indicator"
-          className="absolute top-(--active-tab-top) left-(--active-tab-left) -z-10 h-(--active-tab-height) w-(--active-tab-width) rounded-full glass-control shadow-card transition-[left,width] duration-300 ease-[cubic-bezier(0.3,1.25,0.4,1)] motion-reduce:transition-none"
+          className={cn(segmentedThumbClassName, "top-(--active-tab-top) left-(--active-tab-left) h-(--active-tab-height) w-(--active-tab-width)")}
         />
       )}
     </TabsPrimitive.List>

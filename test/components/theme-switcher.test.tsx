@@ -34,7 +34,7 @@ describe("ThemeSwitcher", () => {
   it("es un radiogroup con nombres en español y cambia el tema", async () => {
     render(withTheme(<ThemeSwitcher />))
     const group = screen.getByRole("radiogroup", { name: "Tema" })
-    expect(group).toHaveClass("rounded-full", "border-gray-alpha-400", "glass-control", "p-0.5")
+    expect(group).toHaveClass("rounded-full", "bg-gray-alpha-200", "shadow-track", "p-0.5")
     const system = await screen.findByRole("radio", { name: "Tema del sistema" })
     await waitFor(() => expect(system).toHaveAttribute("aria-checked", "true"))
     const dark = screen.getByRole("radio", { name: "Tema oscuro" })
@@ -51,7 +51,6 @@ describe("ThemeSwitcher", () => {
       "rounded-full",
       "text-gray-900",
       "hover:text-gray-1000",
-      "data-checked:bg-gray-alpha-300",
       "data-checked:text-gray-1000",
       "focus-visible:focus-ring"
     )
@@ -130,5 +129,67 @@ describe("ThemeSwitcher", () => {
     await userEvent.keyboard("{ArrowRight}")
     expect(screen.getByRole("radio", { name: "Tema del sistema" })).toHaveFocus()
     expect(screen.getByRole("menu")).toBeInTheDocument()
+  })
+})
+
+// El ThemeSwitcher es el control segmentado de Tabs con íconos: la opción elegida no se pinta,
+// la marca una pastilla que se desliza.
+describe("ThemeSwitcher: la pastilla", () => {
+  const pastilla = () => document.querySelector<HTMLElement>("[data-slot=theme-switcher-indicator]")
+
+  it("es la misma pista y la misma pastilla que Tabs", async () => {
+    const { segmentedThumbClassName, segmentedTrackClassName } = await import("../../src/variants/segmented")
+    render(withTheme(<ThemeSwitcher />))
+    const grupo = screen.getByRole("radiogroup", { name: "Tema" })
+    for (const clase of segmentedTrackClassName.split(" ")) if (clase !== "flex") expect(grupo).toHaveClass(clase)
+    await waitFor(() => expect(pastilla()).not.toBeNull())
+    for (const clase of segmentedThumbClassName.split(" ")) expect(pastilla()).toHaveClass(clase)
+  })
+
+  it("en oscuro es más clara que la pista, no un hueco", async () => {
+    render(withTheme(<ThemeSwitcher />))
+    await waitFor(() => expect(pastilla()).not.toBeNull())
+    expect(pastilla()).toHaveClass("glass-control", "dark:bg-gray-alpha-400")
+  })
+
+  it("se corre al índice de la opción elegida, sin medir nada", async () => {
+    render(withTheme(<ThemeSwitcher />))
+    // Claro 0, Oscuro 1, Sistema 2. Arranca en Sistema.
+    await waitFor(() => expect(pastilla()?.style.getPropertyValue("--index")).toBe("2"))
+    await userEvent.click(screen.getByRole("radio", { name: "Tema oscuro" }))
+    await waitFor(() => expect(pastilla()?.style.getPropertyValue("--index")).toBe("1"))
+    await userEvent.click(screen.getByRole("radio", { name: "Tema claro" }))
+    await waitFor(() => expect(pastilla()?.style.getPropertyValue("--index")).toBe("0"))
+    expect(pastilla()).toHaveClass("size-7", "translate-x-[calc(var(--index)*--spacing(7.5))]")
+  })
+
+  it("no es parte del grupo para un lector de pantalla, ni recibe clics", async () => {
+    render(withTheme(<ThemeSwitcher />))
+    await waitFor(() => expect(pastilla()).not.toBeNull())
+    expect(pastilla()).toHaveAttribute("aria-hidden", "true")
+    expect(pastilla()).toHaveClass("pointer-events-none")
+    expect(screen.getAllByRole("radio")).toHaveLength(3)
+  })
+
+  it("en el servidor no se dibuja: no sabe cuál es el tema, y no tiene que viajar al hidratar", () => {
+    const html = renderToString(
+      <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+        <ThemeSwitcher />
+      </ThemeProvider>
+    )
+    expect(html).not.toContain("theme-switcher-indicator")
+  })
+
+  it("adentro de un menú lleva la misma pastilla", async () => {
+    render(
+      withTheme(
+        <DropdownMenu open>
+          <DropdownMenuContent>
+            <ThemeMenuRadio />
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )
+    )
+    await waitFor(() => expect(pastilla()?.style.getPropertyValue("--index")).toBe("2"))
   })
 })

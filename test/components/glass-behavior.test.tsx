@@ -92,7 +92,7 @@ describe("Tabs: pista segmentada", () => {
     expect(list).toHaveClass("rounded-full", "bg-gray-alpha-200", "shadow-track", "w-fit")
     expect(list).not.toHaveClass("border-b")
     const pastilla = list.querySelector("[data-slot=tabs-indicator]")!
-    expect(pastilla).toHaveClass("glass-control", "rounded-full", "transition-[left,width]", "motion-reduce:transition-none")
+    expect(pastilla).toHaveClass("glass-control", "rounded-full", "transition-[left,width,translate]", "motion-reduce:transition-none")
     // Alfa y no vidrio: la pista ya vive adentro de una superficie.
     expect(pastilla.className).not.toMatch(/(^|\s)glass(\s|$)/)
   })

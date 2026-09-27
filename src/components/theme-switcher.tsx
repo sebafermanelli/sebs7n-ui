@@ -10,6 +10,7 @@ import { useTheme } from "next-themes"
 
 import { useLabels, type Labels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
+import { segmentedThumbClassName, segmentedTrackClassName } from "../variants/segmented.js"
 
 /**
  * Los textos viven una sola vez, en `sebs7n-ui/labels`. Acá queda el alias para
@@ -27,16 +28,44 @@ const OPTIONS = [
   { value: "system", Icon: MonitorIcon },
 ] as const
 
-const groupClassName = "inline-flex items-center gap-0.5 rounded-full border border-gray-alpha-400 glass-control p-0.5 shadow-card"
+// La misma pista que `Tabs`, con íconos en vez de texto.
+const groupClassName = cn(segmentedTrackClassName, "inline-flex")
+// La opción elegida no se pinta: la marca la pastilla, que llega deslizándose. Lo único que
+// cambia en el ítem es el color del ícono.
 const itemClassName =
-  "inline-flex size-7 cursor-pointer items-center justify-center rounded-full text-gray-900 outline-none transition-control hover:text-gray-1000 focus-visible:focus-ring data-checked:bg-gray-alpha-300 data-checked:text-gray-1000 data-checked:shadow-card [&_svg]:pointer-events-none [&_svg]:size-4"
+  "inline-flex size-7 cursor-pointer items-center justify-center rounded-full text-gray-900 outline-none transition-control hover:text-gray-1000 focus-visible:focus-ring data-checked:text-gray-1000 [&_svg]:pointer-events-none [&_svg]:size-4"
+
+/**
+ * La pastilla que se desliza hasta el tema elegido.
+ *
+ * Las opciones miden todas lo mismo —28px, con 2px entre una y otra—, así que la posición es
+ * el índice por 30px y no hay que medir nada: un `translate` por CSS, sin efecto ni
+ * `ResizeObserver`.
+ *
+ * No se dibuja hasta conocer el tema. En el servidor no se sabe cuál es, y si la pastilla
+ * naciera en la primera opción, al hidratar se la vería viajar hasta la correcta: un
+ * movimiento que nadie pidió, en cada carga de página. Como nace ya en su lugar, la primera
+ * vez aparece y recién después se desliza.
+ */
+function Pastilla({ index }: { index: number }) {
+  if (index < 0) return null
+  return (
+    <span
+      aria-hidden="true"
+      data-slot="theme-switcher-indicator"
+      className={cn(segmentedThumbClassName, "top-0.5 left-0.5 size-7 translate-x-[calc(var(--index)*--spacing(7.5))]")}
+      style={{ "--index": index } as React.CSSProperties}
+    />
+  )
+}
 
 // Sin enableSystem en el ThemeProvider, next-themes no incluye "system" en themes: no se ofrece.
 function useThemeOptions() {
   const { theme, setTheme, themes } = useTheme()
   const hasSystem = themes.includes("system")
   const options = hasSystem ? OPTIONS : OPTIONS.filter((option) => option.value !== "system")
-  return { theme: theme ?? (hasSystem ? "system" : ""), setTheme, options }
+  const actual = theme ?? (hasSystem ? "system" : "")
+  return { theme: actual, setTheme, options, index: options.findIndex((option) => option.value === actual) }
 }
 
 const noopSubscribe = () => () => {}
@@ -56,7 +85,7 @@ function stopMenuKeys(event: React.KeyboardEvent) {
 // Control segmentado Claro/Oscuro/Sistema (como el de Vercel), para usar fuera de un menú.
 // Dentro de un DropdownMenuContent usá <ThemeMenuRadio> (lo hace UserMenu).
 function ThemeSwitcher({ className, labels: labelsProp, onKeyDown, ...props }: ThemeSwitcherProps) {
-  const { theme, setTheme, options } = useThemeOptions()
+  const { theme, setTheme, options, index } = useThemeOptions()
   const mounted = useMounted()
   const labels = { ...useLabels().themeSwitcher, ...labelsProp }
 
@@ -91,6 +120,7 @@ function ThemeSwitcher({ className, labels: labelsProp, onKeyDown, ...props }: T
             <Icon aria-hidden="true" />
           </RadioPrimitive.Root>
         ))}
+        <Pastilla index={mounted ? index : -1} />
       </RadioGroupPrimitive>
     </div>
   )
@@ -104,7 +134,7 @@ type ThemeMenuRadioProps = Omit<MenuPrimitive.RadioGroup.Props, "className" | "v
 // El mismo control segmentado, pero hecho de Menu.RadioItem para vivir dentro de un DropdownMenuContent:
 // las flechas lo recorren como al resto de los ítems (menuitemradio, ARIA válido) y elegir no cierra el menú.
 function ThemeMenuRadio({ className, labels: labelsProp, ...props }: ThemeMenuRadioProps) {
-  const { theme, setTheme, options } = useThemeOptions()
+  const { theme, setTheme, options, index } = useThemeOptions()
   const mounted = useMounted()
   const labels = { ...useLabels().themeSwitcher, ...labelsProp }
 
@@ -130,6 +160,7 @@ function ThemeMenuRadio({ className, labels: labelsProp, ...props }: ThemeMenuRa
           <Icon aria-hidden="true" />
         </MenuPrimitive.RadioItem>
       ))}
+      <Pastilla index={mounted ? index : -1} />
     </MenuPrimitive.RadioGroup>
   )
 }

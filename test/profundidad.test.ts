@@ -22,7 +22,6 @@ describe("profundidad", () => {
     for (const file of [
       "components/kbd.tsx",
       "components/toolbar.tsx",
-      "components/theme-switcher.tsx",
       "components/alert.tsx",
       "components/table.tsx",
       "components/app-shell.tsx",
