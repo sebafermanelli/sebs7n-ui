@@ -24,6 +24,14 @@ type AppShellProps = Omit<React.ComponentProps<"div">, "children"> & {
   pathname?: string
   /** id del <main> (destino del skip link). */
   mainId?: string
+  /**
+   * La luz ambiente: tres focos de color que salen del brand, fijos detrás de todo.
+   *
+   * Sobre una página lisa el vidrio no tiene nada que desenfocar y se ve como un gris plano;
+   * con esto el Sidebar, las Cards y los menús muestran el material. Es opt-in porque cambia el
+   * fondo de la app entera, y esa decisión es de la app.
+   */
+  ambient?: boolean
   labels?: Partial<AppShellLabels>
   children?: React.ReactNode
 }
@@ -35,7 +43,7 @@ type AppShellProps = Omit<React.ComponentProps<"div">, "children"> & {
 // Mismo corte que lg de Tailwind (64rem): desde ahí el sidebar está fijo y el Sheet sobra.
 const DESKTOP_QUERY = "(min-width: 64rem)"
 
-function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido", labels: labelsProp, children, ...props }: AppShellProps) {
+function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido", ambient = false, labels: labelsProp, children, ...props }: AppShellProps) {
   // El provider gana sobre el español; la prop `labels` gana sobre el provider, porque es la
   // excepción puntual de una pantalla y no una traducción.
   const labels = { ...useLabels().appShell, ...labelsProp }
@@ -73,17 +81,20 @@ function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido
     <AppShellContext.Provider value={value}>
       <div
         data-slot="app-shell"
+        data-ambient={ambient ? "" : undefined}
         className={cn(
           // La raíz pinta el fondo de página (el shell suele ocupar todo el viewport),
           // así que va con `bg-background`, no con la superficie `bg-background-100`.
           "grid min-h-(--app-shell-height) grid-cols-1 bg-background [--app-shell-height:100dvh] lg:grid-cols-[auto_minmax(0,1fr)]",
+          // `bg-ambient` pinta el mismo color de página y le suma los focos encima.
+          ambient && "bg-ambient",
           className
         )}
         {...props}
       >
         <a
           href={`#${mainId}`}
-          className="sr-only z-50 rounded-md bg-background-100 px-3 py-2 text-button-14 text-gray-1000 shadow-menu focus-visible:not-sr-only focus-visible:fixed focus-visible:top-2 focus-visible:left-2 focus-visible:focus-ring"
+          className="sr-only z-50 rounded-control bg-background-100 px-3 py-2 text-button-14 text-gray-1000 shadow-menu focus-visible:not-sr-only focus-visible:fixed focus-visible:top-2 focus-visible:left-2 focus-visible:focus-ring"
         >
           {labels.skipToContent}
         </a>
@@ -93,7 +104,7 @@ function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido
         <div data-slot="app-shell-column" className="flex min-w-0 flex-col">
           <header
             data-slot="app-shell-mobile-bar"
-            className="sticky top-0 z-40 flex h-14 shrink-0 items-center gap-2 border-b border-gray-400 bg-background-100/80 px-4 shadow-card backdrop-blur-md backdrop-saturate-150 lg:hidden"
+            className="sticky top-0 z-40 flex h-14 shrink-0 items-center gap-2 border-b border-gray-alpha-400 glass px-4 shadow-card lg:hidden"
           >
             <Sheet
               open={mobileOpen}

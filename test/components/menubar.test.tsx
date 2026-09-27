@@ -164,12 +164,12 @@ describe("Menubar", () => {
 
   it("el título abierto se marca con fondo y comparte la pastilla del sistema", async () => {
     render(<Editor />)
-    expect(titulo("Archivo")).toHaveClass("h-8", "rounded-md", "data-popup-open:bg-gray-200")
+    expect(titulo("Archivo")).toHaveClass("h-8", "rounded-control", "data-popup-open:bg-gray-alpha-300")
 
     await userEvent.click(titulo("Archivo"))
 
     const panel = await screen.findByRole("menu")
-    expect(panel).toHaveClass("shadow-menu", "rounded-xl", "bg-background-100")
+    expect(panel).toHaveClass("shadow-menu", "rounded-[calc(var(--radius-control)+--spacing(1))]", "glass")
     expect(titulo("Archivo")).toHaveAttribute("data-popup-open")
   })
 })

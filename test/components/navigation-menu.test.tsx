@@ -137,7 +137,7 @@ describe("NavigationMenu", () => {
     // una tarjeta del panel: si `NavigationMenuLink` trajera el padding y el
     // hover de la tarjeta, habría que pelearlos desde afuera.
     const plain = screen.getByRole("link", { name: "Blog" })
-    expect(plain).toHaveClass("rounded-md", "focus-visible:focus-ring")
+    expect(plain).toHaveClass("rounded-control", "focus-visible:focus-ring")
     expect(plain.className).not.toMatch(/\bp-2\b|hover:bg-/)
 
     await userEvent.click(trigger())
@@ -151,7 +151,7 @@ describe("NavigationMenu", () => {
     await screen.findByRole("link", { name: /Sistemas/ })
 
     const popup = document.querySelector("[data-slot=navigation-menu-popup]")!
-    expect(popup).toHaveClass("shadow-menu", "rounded-xl", "bg-background-100")
+    expect(popup).toHaveClass("shadow-menu", "rounded-surface", "glass")
     // `shadow-menu` ya trae el hairline de 1px.
     expect(popup.className).not.toMatch(/\bborder\b/)
   })

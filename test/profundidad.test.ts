@@ -32,11 +32,13 @@ describe("profundidad", () => {
     }
   })
 
-  it("checkbox y radio: vacíos flotan como un input, marcados se aprietan como un botón", () => {
+  it("checkbox y radio: vacíos flotan como un input, marcados se aprietan como un botón de color", () => {
     for (const file of ["components/checkbox.tsx", "components/radio-group.tsx"]) {
       const code = src(file)
       expect(code, file).toContain("shadow-card")
-      expect(code, file).toContain("data-checked:shadow-button-inverted")
+      // Marcados llevan el brand, que es oscuro en los dos temas: les va el filo claro de
+      // `shadow-button`, no el invertido que era para el `gray-1000` de antes.
+      expect(code, file).toContain("data-checked:shadow-button ")
       expect(code, file).toContain("data-disabled:shadow-none")
     }
   })
@@ -55,6 +57,6 @@ describe("profundidad", () => {
       expect(css.match(new RegExp(`--sf-shadow-${name}:`, "g"))?.length, name).toBe(2)
       expect(css, name).toContain(`--shadow-${name}: var(--sf-shadow-${name})`)
     }
-    expect(src("lib/utils.ts")).toContain('"card", "card-hover", "button", "button-inverted", "track"')
+    expect(src("lib/utils.ts")).toContain('"card", "card-hover", "button", "button-inverted", "button-accent", "track"')
   })
 })

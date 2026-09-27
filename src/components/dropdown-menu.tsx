@@ -124,7 +124,7 @@ function DropdownMenuSubTrigger({ className, inset, children, ...props }: Dropdo
     <MenuPrimitive.SubmenuTrigger
       data-slot="dropdown-menu-sub-trigger"
       data-inset={inset ? "" : undefined}
-      className={cn(menuItemClassName, "data-inset:pl-8 data-popup-open:bg-gray-200", className)}
+      className={cn(menuItemClassName, "data-inset:pl-8 data-popup-open:bg-highlight", className)}
       {...props}
     >
       {children}

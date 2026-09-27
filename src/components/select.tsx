@@ -70,11 +70,11 @@ function SelectContent({
         className="isolate z-50"
       >
         <SelectPrimitive.Popup data-slot="select-content" className={cn(menuPopupClassName, "min-w-(--anchor-width)", className)} {...props}>
-          <SelectPrimitive.ScrollUpArrow className="flex w-full cursor-default items-center justify-center bg-background-100 py-1 text-gray-900">
+          <SelectPrimitive.ScrollUpArrow className="flex w-full cursor-default items-center justify-center glass-control py-1 text-gray-900">
             <ChevronUpIcon className="size-4" />
           </SelectPrimitive.ScrollUpArrow>
           <SelectPrimitive.List>{children}</SelectPrimitive.List>
-          <SelectPrimitive.ScrollDownArrow className="flex w-full cursor-default items-center justify-center bg-background-100 py-1 text-gray-900">
+          <SelectPrimitive.ScrollDownArrow className="flex w-full cursor-default items-center justify-center glass-control py-1 text-gray-900">
             <ChevronDownIcon className="size-4" />
           </SelectPrimitive.ScrollDownArrow>
         </SelectPrimitive.Popup>

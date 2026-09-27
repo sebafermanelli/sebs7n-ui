@@ -23,7 +23,7 @@ export const backdropClassName =
  * La entrada sube 8px mientras aparece: es la señal de que algo entró, no decoración.
  */
 export const modalPopupClassName =
-  "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-background-100 p-6 text-copy-14 text-gray-1000 shadow-modal outline-none " +
+  "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-panel glass glass-thick p-6 text-copy-14 text-gray-1000 shadow-modal outline-none " +
   "transition-[opacity,translate] duration-150 data-ending-style:opacity-0 data-starting-style:translate-y-[calc(-50%+8px)] data-starting-style:opacity-0"
 
 /**
@@ -33,7 +33,7 @@ export const modalPopupClassName =
  * `flex-col-reverse` en mobile pone la acción principal arriba, que es donde cae el pulgar.
  */
 export const modalFooterClassName =
-  "-mx-6 mt-2 flex flex-col-reverse gap-2 border-t border-gray-400 px-6 pt-4 sm:flex-row sm:justify-end"
+  "-mx-6 mt-2 flex flex-col-reverse gap-2 border-t border-gray-alpha-400 px-6 pt-4 sm:flex-row sm:justify-end"
 
 /**
  * Dónde va la X de cerrar: Dialog, Sheet y Drawer.
@@ -50,12 +50,12 @@ export const overlayCloseClassName = "absolute top-4 right-4"
  * `focus-visible:focus-ring` no es opcional: si adentro no hay nada tabulable, Base UI enfoca
  * el popup mismo, y con `outline-none` sin reemplazo eso era foco invisible (WCAG 2.4.7).
  *
- * `NavigationMenu` comparte la superficie —`rounded-xl bg-background-100 shadow-menu
+ * `NavigationMenu` comparte la superficie —`rounded-surface glass shadow-menu
  * outline-none focus-visible:focus-ring`— pero no el resto: su panel mide lo que mide su
  * contenido (`--popup-width`/`--popup-height`), lleva `p-1` en vez de `p-4` y anima también
  * la escala y el tamaño. No usa esta constante a propósito: forzarla pediría deshacer la
  * mitad con overrides, que es peor que repetir.
  */
 export const floatingPopupClassName =
-  "flex w-72 origin-(--transform-origin) flex-col gap-3 rounded-xl bg-background-100 p-4 text-copy-14 text-gray-1000 shadow-menu outline-none " +
+  "flex w-72 origin-(--transform-origin) flex-col gap-3 rounded-surface glass p-4 text-copy-14 text-gray-1000 shadow-menu outline-none " +
   "focus-visible:focus-ring transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0"

@@ -9,7 +9,7 @@ function Table({ className, density = "default", ...props }: TableProps) {
     <div
       data-slot="table-container"
       data-density={density}
-      className="group/table relative w-full overflow-x-auto rounded-xl border border-gray-400 shadow-card"
+      className="group/table relative w-full overflow-x-auto rounded-surface border border-gray-alpha-400 glass shadow-card"
     >
       <table data-slot="table" className={cn("w-full caption-bottom border-collapse text-copy-13", className)} {...props} />
     </div>
@@ -20,7 +20,7 @@ function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
   return (
     <thead
       data-slot="table-header"
-      className={cn("bg-background-200 [&_tr]:h-10 [&_tr]:hover:bg-transparent", className)}
+      className={cn("bg-gray-alpha-100 [&_tr]:h-10 [&_tr]:hover:bg-transparent", className)}
       {...props}
     />
   )
@@ -34,7 +34,7 @@ function TableFooter({ className, ...props }: React.ComponentProps<"tfoot">) {
   return (
     <tfoot
       data-slot="table-footer"
-      className={cn("border-t border-gray-400 bg-background-200 text-label-13 [&>tr]:last:border-b-0", className)}
+      className={cn("border-t border-gray-alpha-400 bg-gray-alpha-100 text-label-13 [&>tr]:last:border-b-0", className)}
       {...props}
     />
   )

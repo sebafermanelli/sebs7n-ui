@@ -14,7 +14,7 @@ describe("Toggle (chip)", () => {
     render(<Toggle>Activos</Toggle>)
     const chip = screen.getByRole("button", { name: "Activos" })
     expect(chip).toHaveClass("rounded-full", "border-dashed", "border-gray-700", "text-gray-900", "hover:border-gray-800")
-    expect(chip).toHaveClass("data-pressed:border-solid", "data-pressed:border-gray-900", "data-pressed:bg-gray-100")
+    expect(chip).toHaveClass("data-pressed:border-solid", "data-pressed:border-gray-900", "data-pressed:bg-gray-alpha-200")
     expect(chip.className).not.toMatch(/brand/)
     await userEvent.click(chip)
     expect(chip).toHaveAttribute("aria-pressed", "true")
@@ -77,7 +77,7 @@ describe("Badge", () => {
 })
 
 describe("Card", () => {
-  it("superficie Geist: borde gray-400, radio 12, la sombra de 1px de reposo, padding 24", () => {
+  it("superficie de vidrio: borde alfa, radio de superficie, la sombra de 1px de reposo, padding 24", () => {
     render(
       <Card>
         <CardHeader>
@@ -89,7 +89,7 @@ describe("Card", () => {
       </Card>
     )
     const card = screen.getByText("Ingresos").closest("[data-slot=card]")!
-    expect(card).toHaveClass("border-gray-400", "bg-background-100", "rounded-xl", "[--card-spacing:--spacing(6)]")
+    expect(card).toHaveClass("border-gray-alpha-400", "glass", "rounded-surface", "[--card-spacing:--spacing(6)]")
     // `shadow-card` es 1px que la despega de la página; la de menú/modal no va en una card.
     expect(card).toHaveClass("shadow-card")
     expect(card.className).not.toMatch(/shadow-(menu|modal|tooltip)/)
@@ -101,8 +101,8 @@ describe("Card", () => {
   it("interactiva y seleccionada", () => {
     const interactive = cardVariants({ interactive: true })
     // Sube un pixel con la sombra grande; al apretar vuelve a su lugar y a la sombra de reposo.
-    expect(interactive).toContain("hover:-translate-y-px hover:border-gray-500 hover:shadow-card-hover")
-    expect(interactive).toContain("active:translate-y-0 active:bg-gray-100 active:shadow-card focus-visible:focus-ring")
+    expect(interactive).toContain("hover:-translate-y-px hover:border-gray-alpha-500 hover:shadow-card-hover")
+    expect(interactive).toContain("active:translate-y-0 active:bg-gray-alpha-200 active:shadow-card focus-visible:focus-ring")
     // `translate` no está en `transition-control`: la interactiva usa la transición que sí lo incluye.
     expect(interactive).toContain("transition-surface")
     render(<Card selected>sel</Card>)
@@ -113,7 +113,7 @@ describe("Card", () => {
 })
 
 describe("Table", () => {
-  it("una sola superficie, header 40px en background-200, filas 48px con hover", () => {
+  it("una sola superficie, header 40px hundido, filas 48px con hover", () => {
     render(
       <Table>
         <TableHeader>
@@ -131,8 +131,8 @@ describe("Table", () => {
       </Table>
     )
     const container = screen.getByRole("table").parentElement!
-    expect(container).toHaveClass("rounded-xl", "border", "border-gray-400", "overflow-x-auto")
-    expect(screen.getByRole("table").querySelector("thead")).toHaveClass("bg-background-200", "[&_tr]:h-10")
+    expect(container).toHaveClass("rounded-surface", "border", "border-gray-alpha-400", "glass", "overflow-x-auto")
+    expect(screen.getByRole("table").querySelector("thead")).toHaveClass("bg-gray-alpha-100", "[&_tr]:h-10")
     expect(screen.getByText("Cliente")).toHaveClass("text-label-12", "text-gray-900")
     expect(screen.getByText("Ana").closest("tr")).toHaveClass("h-12", "hover:bg-gray-100", "data-[state=selected]:bg-brand-100")
     expect(screen.getByText("$1.200")).toHaveClass("text-right", "tabular-nums")

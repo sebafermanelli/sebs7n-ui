@@ -25,12 +25,12 @@ describe("Navbar", () => {
     expect(surface(container).className).not.toMatch(/backdrop-blur/)
   })
 
-  it("bar: al pasar el umbral se vuelve translúcida con blur y borde abajo", () => {
+  it("bar: al pasar el umbral se vuelve de vidrio, con borde abajo", () => {
     const { container } = render(<Navbar>x</Navbar>)
     scrollTo(40)
     expect(header(container)).toHaveAttribute("data-scrolled")
-    expect(surface(container)).toHaveClass("bg-background-100/80", "backdrop-blur-md", "border-b-gray-400")
-    expect(surface(container)).not.toHaveClass("rounded-2xl")
+    expect(surface(container)).toHaveClass("glass", "glass-thick", "border-b-gray-alpha-400")
+    expect(surface(container)).not.toHaveClass("rounded-panel")
     expect(header(container)).toHaveClass("pt-0")
   })
 
@@ -40,7 +40,7 @@ describe("Navbar", () => {
     expect(surface(container)).toHaveClass("rounded-none")
     scrollTo(40)
     expect(header(container)).toHaveClass("px-3", "pt-3")
-    expect(surface(container)).toHaveClass("rounded-2xl", "border-gray-400", "shadow-menu", "backdrop-blur-md")
+    expect(surface(container)).toHaveClass("rounded-panel", "border-gray-alpha-400", "shadow-menu", "glass", "glass-rim")
     scrollTo(0)
     expect(surface(container)).toHaveClass("rounded-none")
   })

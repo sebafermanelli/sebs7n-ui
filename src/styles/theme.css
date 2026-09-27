@@ -93,6 +93,8 @@
   --color-button-error-hover: var(--sf-button-error-hover);
   --color-button-error-active: var(--sf-button-error-active);
   --color-backdrop: var(--sf-backdrop);
+  --color-highlight: var(--sf-highlight);
+  --color-highlight-active: var(--sf-highlight-active);
 
   --shadow-tooltip: var(--sf-shadow-tooltip);
   --shadow-menu: var(--sf-shadow-menu);
@@ -131,7 +133,7 @@
     /**
      * El material. Un solo parámetro, como el ajuste de transparencia de macOS:
      *
-     *   --glass       0 = sólido (el Geist de 0.8.0) · 1 = vidrio pleno
+     *   --glass       0 = sólido (el Geist de 0.8.0) · 1 = vidrio pleno, que es el default
      *   --glass-tint  cuánto brand entra al fill del vidrio
      *
      * De `--glass` salen el alfa del fill, el radio del blur, la saturación y el filo claro.
@@ -139,7 +141,7 @@
      * `var()` se resuelve en el elemento que la declara, así que calculadas en `:root` no
      * responderían cuando una app pisa `--glass` en un subárbol.
      */
-    --glass: 0.6;
+    --glass: 1;
     --glass-tint: 0;
     /* El interruptor de accesibilidad. La app no lo toca: lo apagan los media queries de abajo. */
     --sf-glass-on: 1;
@@ -151,9 +153,18 @@
      * de la página, y el vidrio necesita un tono más alto para leerse como material.
      */
     --sf-glass-lift: #ffffff;
-    /* El filo de luz de arriba: opacidad = min + g · gain. */
+    /**
+     * El canto: la luz pegando en el filo del material. Opacidad = min + g · gain en la
+     * esquina de arriba a la izquierda, y `--sf-glass-edge-back` de eso en la opuesta, que es
+     * la luz que atravesó el vidrio y sale por el otro lado. `--sf-glass-glow` es el brillo
+     * interno, el que hace que el borde se lea con espesor.
+     */
     --sf-glass-edge-min: 0.25;
     --sf-glass-edge-gain: 0.6;
+    --sf-glass-edge-back: 0.35;
+    --sf-glass-glow: 0.3;
+    /* El canto del pulgar hecho lente (`thumb-lens`). */
+    --sf-glass-lens: 0.9;
     /* El canto especular del cromo (`glass-rim`), a vidrio pleno. */
     --sf-glass-rim: 1;
 
@@ -220,6 +231,16 @@
     --sf-button-error-active: #7c1316;
     --sf-backdrop: #00000033;
     /**
+     * La selección: el ítem de menú bajo el puntero, el ítem activo del Sidebar.
+     *
+     * Es el brand en tinte y no sólido, como lo hace macOS, por una razón concreta: adentro de
+     * un ítem vive contenido que no es del paquete —un email en `gray-900`, un atajo, un
+     * Badge—, y sobre brand sólido ese texto queda ilegible sin que la app haya tocado nada.
+     * Sobre el tinte, `gray-900` da 7:1 en claro y 5:1 en oscuro con las cuatro marcas.
+     */
+    --sf-highlight: color-mix(in srgb, var(--sf-brand-700) 14%, transparent);
+    --sf-highlight-active: color-mix(in srgb, var(--sf-brand-700) 22%, transparent);
+    /**
      * El borde del campo enfocado (`focus-border`).
      *
      * En claro era `gray-alpha-600` (#0000003d): compuesto sobre la superficie
@@ -235,8 +256,8 @@
      * El halo de 4px (`--sf-focus-halo`) no se toca: es énfasis, no es el
      * indicador. Quien tiene que llegar al 3:1 es el borde, y llega.
      */
-    --sf-focus-border: var(--sf-gray-alpha-800);
-    --sf-focus-halo: #00000029;
+    --sf-focus-border: var(--sf-brand-700);
+    --sf-focus-halo: color-mix(in srgb, var(--sf-brand-700) 22%, transparent);
 
     --sf-shadow-border-base: 0 0 0 1px #00000014;
     /**
@@ -301,7 +322,10 @@
     --sf-glass-lift: #1c1c1e;
     /* Sobre una superficie oscura el mismo filo blanco quema: va a la cuarta parte. */
     --sf-glass-edge-min: 0.04;
-    --sf-glass-edge-gain: 0.16;
+    --sf-glass-edge-gain: 0.34;
+    --sf-glass-edge-back: 0.3;
+    --sf-glass-glow: 0.07;
+    --sf-glass-lens: 0.6;
     --sf-glass-rim: 0.4;
 
     --sf-ambient-1: oklch(from var(--sf-brand-src) 0.5 calc(c * 0.95) h);
@@ -323,8 +347,12 @@
 
     --sf-button-primary-hover: #cccccc;
     --sf-backdrop: #00000080;
-    --sf-focus-border: var(--sf-gray-alpha-600);
-    --sf-focus-halo: #ffffff3d;
+    /* Sobre una superficie oscura el mismo 14 % no se ve: sube a 22. El apretado se queda en
+       26 y no en 30: con el emerald del paquete, que en oscuro es un verde claro, al 30 %
+       `gray-900` daba 4,27:1. */
+    --sf-highlight: color-mix(in srgb, var(--sf-brand-700) 22%, transparent);
+    --sf-highlight-active: color-mix(in srgb, var(--sf-brand-700) 26%, transparent);
+    --sf-focus-halo: color-mix(in srgb, var(--sf-brand-700) 30%, transparent);
 
     --sf-shadow-border-base: 0 0 0 1px #ffffff25;
     --sf-shadow-background-border: 0 0 0 1px var(--sf-background);
@@ -363,20 +391,34 @@
 /**
  * La superficie de vidrio: Card, Popover, menús, Dialog, Sidebar, Navbar.
  *
- * Reemplaza a `bg-background-100` en todo lo que flota. Son cuatro capas: el fill traslúcido,
- * el blur del fondo, la saturación —que devuelve el color que el blur lava— y el filo claro
- * de arriba, que es la luz pegando en el borde del material.
+ * Reemplaza a `bg-background-100` en todo lo que flota. Es el Liquid Glass de Apple llevado
+ * a CSS: poco fill, un blur moderado —el fondo se reconoce, no se borra—, saturación y un
+ * punto de brillo para que el color de atrás no salga lavado, y el canto especular en dos
+ * esquinas opuestas.
  *
- * El 0,6 del fill no es estético. Con `--glass: 0.6` el alfa queda en 0,64, que es el mínimo
- * con el que `gray-1000` llega a 4,5:1 contra cualquier cosa que pase por debajo: negro detrás
- * de un vidrio claro, blanco detrás de uno oscuro. Lo fija `test/glass-contrast.test.ts`.
+ *   fill      1 − 0,7·g        100 % sólido en 0, 30 % en 1
+ *   blur      g · k · 16px     k es el grosor: 0,6 lámina, 1, 1,5 placa
+ *   saturate  1 + 0,8·g
+ *   brillo    1 + 0,06·g
  *
- * El filo va por `--tw-inset-shadow` y no por `box-shadow` directo: así se compone con el
- * `shadow-menu` o el `shadow-card` que el componente ya tiene, en vez de pisarlo.
+ * **El costo está medido y no es chico.** Con `--glass: 1` el texto llega a 4,5:1 sobre la
+ * página y sobre la luz ambiente, que son los fondos que pone el sistema; contra contenido
+ * arbitrario que pase por debajo, no. El texto principal pasa contra cualquier fondo hasta
+ * `--glass: 0.5`. Los números están en `test/glass-contrast.test.ts` y la regla en la página
+ * de Accesibilidad del sitio.
+ *
+ * El canto va por `--tw-inset-shadow` y no por `box-shadow` directo: así se compone con el
+ * `shadow-menu` o el `shadow-card` que el componente ya tiene, en vez de pisarlo. Y va en
+ * sombras interiores y no en un `::after` porque una Card no está posicionada: un
+ * pseudo-elemento absoluto se iría a anclar a cualquier ancestro.
  */
 @utility glass {
   --sf-g: calc(var(--glass) * var(--sf-glass-on));
-  --tw-inset-shadow: inset 0 1px 0 rgb(255 255 255 / calc(var(--sf-glass-edge-min) + var(--sf-g) * var(--sf-glass-edge-gain)));
+  --sf-edge: calc(var(--sf-glass-edge-min) + var(--sf-g) * var(--sf-glass-edge-gain));
+  --tw-inset-shadow:
+    inset 1px 1px 0 rgb(255 255 255 / var(--sf-edge)),
+    inset -1px -1px 0 rgb(255 255 255 / calc(var(--sf-edge) * var(--sf-glass-edge-back) * var(--sf-g))),
+    inset 0 0 14px rgb(255 255 255 / calc(var(--sf-glass-glow) * var(--sf-g)));
   background-color: color-mix(
     in srgb,
     color-mix(
@@ -384,11 +426,20 @@
       var(--sf-brand-600) calc(var(--glass-tint) * 34%),
       color-mix(in srgb, var(--sf-glass-lift) calc(var(--sf-g) * 100%), var(--sf-background-100))
     )
-    calc((1 - var(--sf-g) * 0.6) * 100%),
+    calc((1 - var(--sf-g) * 0.7) * 100%),
     transparent
   );
-  -webkit-backdrop-filter: blur(calc(var(--sf-g) * var(--sf-glass-k, 1) * 40px)) saturate(calc(1 + var(--sf-g) * 1.3));
-  backdrop-filter: blur(calc(var(--sf-g) * var(--sf-glass-k, 1) * 40px)) saturate(calc(1 + var(--sf-g) * 1.3));
+  background-image: linear-gradient(
+    160deg,
+    rgb(255 255 255 / calc(var(--sf-glass-glow) * var(--sf-g) * 1.2)) 0%,
+    transparent 32%,
+    transparent 72%,
+    rgb(255 255 255 / calc(var(--sf-glass-glow) * var(--sf-g) * 0.45)) 100%
+  );
+  -webkit-backdrop-filter: blur(calc(var(--sf-g) * var(--sf-glass-k, 1) * 16px)) saturate(calc(1 + var(--sf-g) * 0.8))
+    brightness(calc(1 + var(--sf-g) * 0.06));
+  backdrop-filter: blur(calc(var(--sf-g) * var(--sf-glass-k, 1) * 16px)) saturate(calc(1 + var(--sf-g) * 0.8))
+    brightness(calc(1 + var(--sf-g) * 0.06));
   box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
 }
 
@@ -525,17 +576,61 @@
   box-shadow: 0 0 0 2px var(--color-background-100), 0 0 0 4px var(--color-brand-700);
 }
 
-/* Foco de inputs de Geist (--ds-focus-border), con el borde por tema: ver --sf-focus-border. */
+/**
+ * Foco de los campos: el borde toma el brand y, si se llegó con el teclado, suma el halo.
+ *
+ * El borde es el indicador de foco y está siempre. El halo de 4px es énfasis: se reserva para
+ * quien navega con Tab, que es quien necesita encontrar el campo en la pantalla; quien hizo
+ * clic ya sabe dónde está. Ver `src/internal/modality.ts` por qué hace falta un atributo y no
+ * alcanza con `:focus-visible`.
+ */
 @utility focus-border {
   outline: none;
   border-color: var(--sf-focus-border);
-  box-shadow: 0 0 0 4px var(--sf-focus-halo);
+
+  :root:not([data-sf-modality="pointer"]) & {
+    box-shadow: 0 0 0 4px var(--sf-focus-halo);
+  }
 }
 
 @utility focus-border-error {
   outline: none;
   border-color: var(--color-red-800);
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-red-800) 24%, transparent);
+
+  :root:not([data-sf-modality="pointer"]) & {
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-red-800) 24%, transparent);
+  }
+}
+
+/**
+ * El pulgar mientras se lo arrastra: deja de ser un objeto y pasa a ser un lente.
+ *
+ * Es lo que hace el Slider de iOS 26: en reposo el pulgar es una pastilla blanca y sólida; al
+ * agarrarlo se vuelve transparente, crece, y la pista se ve a través con un punto más de
+ * brillo. Acá el blur es de 1,5px a propósito —un lente no esmerila— y lo que lo dibuja es
+ * el canto.
+ *
+ * Todo escala con `--glass`: con el material apagado el pulgar sigue siendo blanco y solo crece.
+ */
+@utility thumb-lens {
+  --sf-g: calc(var(--glass) * var(--sf-glass-on));
+  border-color: transparent;
+  background-color: color-mix(in srgb, #ffffff calc((1 - var(--sf-g) * 0.95) * 100%), transparent);
+  -webkit-backdrop-filter: blur(calc(var(--sf-g) * 1.5px)) saturate(calc(1 + var(--sf-g) * 0.6)) brightness(calc(1 + var(--sf-g) * 0.12));
+  backdrop-filter: blur(calc(var(--sf-g) * 1.5px)) saturate(calc(1 + var(--sf-g) * 0.6)) brightness(calc(1 + var(--sf-g) * 0.12));
+  box-shadow:
+    inset 1px 1px 0 rgb(255 255 255 / calc(var(--sf-glass-lens) * var(--sf-g))),
+    inset -1px -1px 0 rgb(255 255 255 / calc(var(--sf-glass-lens) * var(--sf-g) * 0.5)),
+    inset 0 0 6px rgb(255 255 255 / calc(var(--sf-glass-lens) * var(--sf-g) * 0.4)),
+    0 4px 14px rgb(0 0 0 / 0.22),
+    0 0 0 0.5px rgb(0 0 0 / 0.1);
+}
+
+/* Lo que anima el pulgar: `scale` para crecer, y el fondo y la sombra para volverse lente. */
+@utility transition-thumb {
+  transition-property: scale, translate, transform, background-color, border-color, box-shadow, backdrop-filter;
+  transition-timing-function: cubic-bezier(0.3, 1.4, 0.4, 1);
+  transition-duration: 280ms;
 }
 
 /* Escala tipográfica de Geist (vercel.com/geist/typography). */

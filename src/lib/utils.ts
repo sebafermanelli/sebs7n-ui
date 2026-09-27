@@ -21,7 +21,7 @@ const twMerge = extendTailwindMerge({
     classGroups: {
       // `glass` y `glass-control` pintan el fondo. Sin esto, un `bg-*` que pase el llamador
       // convive con el vidrio y gana el que Tailwind haya emitido último, que no se elige.
-      "bg-color": ["glass", "glass-control"],
+      "bg-color": ["glass", "glass-control", "bg-ambient"],
     },
   },
 })

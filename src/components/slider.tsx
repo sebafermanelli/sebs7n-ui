@@ -84,14 +84,14 @@ function Slider<Value extends number | readonly number[] = number | readonly num
         <SliderPrimitive.Track
           data-slot="slider-track"
           className={cn(
-            "w-full rounded-full bg-gray-300 shadow-track",
+            "w-full rounded-full bg-gray-alpha-400 shadow-track",
             "group-data-[size=sm]/slider:h-1 group-data-[size=md]/slider:h-1.5",
             "data-disabled:bg-gray-200 data-disabled:shadow-none"
           )}
         >
           <SliderPrimitive.Indicator
             data-slot="slider-indicator"
-            className="h-full rounded-full bg-gray-1000 data-disabled:bg-gray-400"
+            className="h-full rounded-full bg-brand-700 data-disabled:bg-gray-400"
           />
 
           {marks?.map((mark) => (
@@ -110,12 +110,14 @@ function Slider<Value extends number | readonly number[] = number | readonly num
               // Con `label` lo pone Base UI solo (`aria-labelledby`), así que no se pisa.
               aria-label={label == null ? ariaLabel : undefined}
               className={cn(
-                "rounded-full border border-gray-alpha-400 bg-background-100 shadow-tooltip outline-none transition-control",
+                "rounded-full border border-gray-alpha-400 bg-white shadow-tooltip outline-none transition-thumb",
                 "group-data-[size=sm]/slider:size-4 group-data-[size=md]/slider:size-5",
-                "hover:border-gray-600 data-dragging:border-gray-600",
+                "hover:border-gray-600",
+                // Mientras se arrastra, el pulgar se vuelve lente y la pista se ve a través.
+                "data-dragging:scale-x-135 data-dragging:scale-y-150 data-dragging:thumb-lens",
                 // El foco vive en el <input type="range"> de adentro: el anillo va en el thumb.
                 "has-[input:focus-visible]:focus-ring",
-                "data-disabled:cursor-not-allowed data-disabled:border-gray-400 data-disabled:bg-gray-100 data-disabled:shadow-none"
+                "data-disabled:cursor-not-allowed data-disabled:border-gray-400 data-disabled:bg-gray-100 data-disabled:shadow-none data-disabled:scale-100"
               )}
               data-slot="slider-thumb"
               index={index}

@@ -69,7 +69,7 @@ function Progress({ className, size = "md", label, showValue = false, trackClass
       <ProgressPrimitive.Track
         data-slot="progress-track"
         className={cn(
-          "w-full overflow-hidden rounded-full bg-gray-300 shadow-track",
+          "w-full overflow-hidden rounded-full bg-gray-alpha-400 shadow-track",
           "group-data-[size=sm]/progress:h-1 group-data-[size=md]/progress:h-1.5",
           trackClassName
         )}
@@ -79,7 +79,7 @@ function Progress({ className, size = "md", label, showValue = false, trackClass
           className={cn(
             // Determinada: Base UI pone el ancho en un estilo inline, así que lo único
             // que hace falta acá es animarlo.
-            "h-full rounded-full bg-gray-1000 transition-[width] duration-300 ease-out motion-reduce:transition-none",
+            "h-full rounded-full bg-brand-700 transition-[width] duration-300 ease-out motion-reduce:transition-none",
             // Indeterminada: sin ancho inline, la pinta una franja corta que recorre la pista.
             "data-indeterminate:w-2/5 data-indeterminate:animate-progress-indeterminate",
             // Con movimiento reducido no queda una franja congelada a mitad de camino:

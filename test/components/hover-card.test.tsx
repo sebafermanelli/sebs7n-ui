@@ -68,11 +68,11 @@ describe("HoverCard", () => {
     await waitFor(() => expect(panel()).not.toBeNull(), { timeout: 2000 })
   })
 
-  it("es una superficie flotante del sistema: background-100, shadow-menu y sin borde", async () => {
+  it("es una superficie flotante del sistema: vidrio, shadow-menu y sin borde", async () => {
     render(<Ficha closeDelay={0} delay={0} />)
     await userEvent.hover(screen.getByRole("link", { name: "Acme S.A." }))
     await waitFor(() => expect(panel()).not.toBeNull())
-    expect(panel()).toHaveClass("bg-background-100", "shadow-menu", "rounded-xl", "text-copy-14")
+    expect(panel()).toHaveClass("glass", "shadow-menu", "rounded-surface", "text-copy-14")
     expect(panel()!.className).not.toMatch(/\bborder\b/)
     expect(panel()).toHaveClass("data-starting-style:opacity-0", "data-ending-style:opacity-0", "motion-reduce:transition-none")
   })

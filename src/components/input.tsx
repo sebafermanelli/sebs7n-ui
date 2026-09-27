@@ -2,6 +2,7 @@
 
 import { Input as InputPrimitive } from "@base-ui/react/input"
 
+import { useModality } from "../internal/modality.js"
 import { cn } from "../lib/utils.js"
 import { inputControlClassName, inputDisabledClassName, inputInvalidClassName, inputSizeClassName } from "../variants/input.js"
 
@@ -11,6 +12,7 @@ type InputProps = Omit<InputPrimitive.Props, "className" | "size"> & {
 }
 
 function Input({ className, size = "md", ...props }: InputProps) {
+  useModality()
   return (
     <InputPrimitive
       data-slot="input"

@@ -137,11 +137,11 @@ describe("ContextMenu", () => {
     abrirConClickDerecho()
 
     const menu = await screen.findByRole("menu")
-    expect(menu).toHaveClass("shadow-menu", "rounded-xl", "bg-background-100")
+    expect(menu).toHaveClass("shadow-menu", "rounded-[calc(var(--radius-control)+--spacing(1))]", "glass")
     expect(menu.className).not.toMatch(/\bborder\b/)
 
     const item = screen.getByRole("menuitem", { name: /Renombrar/ })
-    expect(item).toHaveClass("h-8", "rounded-md", "data-highlighted:bg-gray-200")
+    expect(item).toHaveClass("h-8", "rounded-control", "data-highlighted:bg-highlight")
 
     const borrar = screen.getByRole("menuitem", { name: "Mover a la papelera" })
     expect(borrar).toHaveAttribute("data-variant", "destructive")

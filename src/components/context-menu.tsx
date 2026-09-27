@@ -79,7 +79,7 @@ function ContextMenuTrigger({ className, focusable = true, onKeyDown, tabIndex, 
         event.preventDefault()
         openFromKeyboard(event.currentTarget)
       }}
-      className={cn("rounded-md outline-none focus-visible:focus-ring", className)}
+      className={cn("rounded-control outline-none focus-visible:focus-ring", className)}
       {...props}
     />
   )
@@ -214,7 +214,7 @@ function ContextMenuSubTrigger({ className, inset, children, ...props }: Context
     <ContextMenuPrimitive.SubmenuTrigger
       data-slot="context-menu-sub-trigger"
       data-inset={inset ? "" : undefined}
-      className={cn(menuItemClassName, "data-inset:pl-8 data-popup-open:bg-gray-200", className)}
+      className={cn(menuItemClassName, "data-inset:pl-8 data-popup-open:bg-highlight", className)}
       {...props}
     >
       {children}

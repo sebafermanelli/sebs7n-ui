@@ -4,6 +4,7 @@ import { NumberField as NumberFieldPrimitive } from "@base-ui/react/number-field
 import { MinusIcon, PlusIcon } from "lucide-react"
 
 import { useLabels } from "../lib/labels.js"
+import { useModality } from "../internal/modality.js"
 import { cn, type WithClassName } from "../lib/utils.js"
 import { inputShellButtonClassName, inputShellClassName, inputShellInputClassName } from "../variants/input.js"
 
@@ -53,6 +54,7 @@ function NumberField({
   size = "md",
   ...props
 }: NumberFieldProps) {
+  useModality()
   // El provider gana sobre el español; la prop `labels` gana sobre el provider, porque es la
   // excepción de una pantalla y no una traducción.
   const l = useLabels().numberField

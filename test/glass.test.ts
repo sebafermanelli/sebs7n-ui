@@ -19,7 +19,7 @@ const utility = (name: string) => {
 
 describe("glass: un solo parámetro", () => {
   it("la app regula el material con --glass y --glass-tint", () => {
-    expect(css).toMatch(/--glass:\s*0\.6;/)
+    expect(css).toMatch(/--glass:\s*1;/)
     expect(css).toMatch(/--glass-tint:\s*0;/)
   })
 
@@ -33,10 +33,19 @@ describe("glass: un solo parámetro", () => {
 
   it("fill, blur y saturación salen de la intensidad", () => {
     const glass = utility("glass")
-    expect(glass).toContain("calc((1 - var(--sf-g) * 0.6) * 100%)")
-    expect(glass).toContain("blur(calc(var(--sf-g) * var(--sf-glass-k, 1) * 40px))")
-    expect(glass).toContain("saturate(calc(1 + var(--sf-g) * 1.3))")
+    expect(glass).toContain("calc((1 - var(--sf-g) * 0.7) * 100%)")
+    expect(glass).toContain("blur(calc(var(--sf-g) * var(--sf-glass-k, 1) * 16px))")
+    expect(glass).toContain("saturate(calc(1 + var(--sf-g) * 0.8))")
     expect(glass).toContain("-webkit-backdrop-filter")
+  })
+
+  it("el canto es especular: dos esquinas opuestas y el brillo interno", () => {
+    const glass = utility("glass")
+    expect(glass).toContain("inset 1px 1px 0")
+    expect(glass).toContain("inset -1px -1px 0")
+    expect(glass).toContain("inset 0 0 14px")
+    // Con --glass: 0 la esquina de atrás y el brillo desaparecen: los dos multiplican por g.
+    expect(glass.match(/\* var\(--sf-g\)\)\)/g)?.length).toBeGreaterThanOrEqual(2)
   })
 
   it("un control adentro de un vidrio no lleva blur: nunca vidrio sobre vidrio", () => {

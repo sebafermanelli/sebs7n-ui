@@ -102,7 +102,7 @@ describe("Drawer", () => {
     // Por defecto es la hoja de abajo: se descarta hacia abajo.
     expect(await screen.findByRole("dialog")).toHaveAttribute("data-swipe-direction", "down")
     // Redondeada arriba (borde de adentro) y recta abajo (borde de la pantalla).
-    expect(popup().className).toContain("data-[swipe-direction=down]:rounded-t-xl")
+    expect(popup().className).toContain("data-[swipe-direction=down]:rounded-t-panel")
     expect(popup().className).not.toMatch(/swipe-direction=down\]:rounded-b/)
     unmount()
 

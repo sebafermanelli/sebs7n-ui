@@ -97,9 +97,9 @@ describe("Slider", () => {
 
   it("usa los tokens del sistema", () => {
     render(<Slider aria-label="x" defaultValue={10} />)
-    expect(track()).toHaveClass("bg-gray-300", "rounded-full")
-    expect(document.querySelector("[data-slot=slider-indicator]")).toHaveClass("bg-gray-1000")
-    expect(thumbs()[0]).toHaveClass("bg-background-100", "border-gray-alpha-400", "shadow-tooltip", "transition-control")
+    expect(track()).toHaveClass("bg-gray-alpha-400", "rounded-full")
+    expect(document.querySelector("[data-slot=slider-indicator]")).toHaveClass("bg-brand-700")
+    expect(thumbs()[0]).toHaveClass("bg-white", "border-gray-alpha-400", "shadow-tooltip", "transition-thumb", "data-dragging:thumb-lens")
   })
 
   it("disabled: no se mueve y queda marcado", async () => {

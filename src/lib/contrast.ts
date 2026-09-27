@@ -96,17 +96,17 @@ export function composite(fg: string, alpha: number, bg: string): string {
   return `#${[0, 2, 4].map((i) => canal(i).toString(16).padStart(2, "0")).join("")}`
 }
 
-/** El alfa del fill de la utilidad `glass` para una intensidad `--glass`: 1 − 0,6·g. */
-export const glassAlpha = (glass: number) => 1 - 0.6 * glass
+/** El alfa del fill de la utilidad `glass` para una intensidad `--glass`: 1 − 0,7·g. */
+export const glassAlpha = (glass: number) => 1 - 0.7 * glass
 
 /**
  * El color que termina viéndose debajo del texto de una superficie `glass`.
  *
  * Reproduce la utilidad: la superficie se corre hacia `lift` en proporción a la intensidad y
- * se compone con su alfa sobre lo que haya detrás. **No modela el `saturate()` ni el blur**
- * del `backdrop-filter`: el blur promedia el fondo sin cambiarle la luminancia media, y la
- * saturación la mueve poco, pero no es cero. Sirve para fijar un piso, no para prometer el
- * decimal.
+ * se compone con su alfa sobre lo que haya detrás. **No modela el `backdrop-filter`** —blur,
+ * `saturate()`, `brightness()`— **ni el brillo del canto**: el blur promedia el fondo sin
+ * cambiarle la luminancia media, y los otros la mueven poco, pero no es cero. Sirve para
+ * fijar un piso, no para prometer el decimal.
  */
 export function glassSurface(glass: number, tokens: { surface: string; lift: string }, backdrop: string): string {
   return composite(composite(tokens.lift, glass, tokens.surface), glassAlpha(glass), backdrop)

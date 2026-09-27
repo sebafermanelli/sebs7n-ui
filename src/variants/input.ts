@@ -13,7 +13,7 @@
  * el contenido, una casilla de OTP es cuadrada y un input de barra de herramientas mide 32px—.
  */
 export const inputControlClassName =
-  "rounded-md border border-gray-400 bg-background-100 text-copy-14 text-gray-1000 shadow-card outline-none transition-control hover:border-gray-500"
+  "rounded-control border border-gray-alpha-400 glass-control text-copy-14 text-gray-1000 shadow-card outline-none transition-control hover:border-gray-alpha-500"
 
 /** Los tres altos del sistema, por `data-size`. El `lg` sube también la tipografía. */
 export const inputSizeClassName = "data-[size=sm]:h-8 data-[size=md]:h-10 data-[size=lg]:h-12 data-[size=lg]:text-copy-16"

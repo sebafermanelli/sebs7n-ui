@@ -69,7 +69,7 @@ function Meter({ className, label, showValue = false, size = "md", trackClassNam
       <MeterPrimitive.Track
         data-slot="meter-track"
         className={cn(
-          "w-full overflow-hidden rounded-full bg-gray-300 shadow-track",
+          "w-full overflow-hidden rounded-full bg-gray-alpha-400 shadow-track",
           "group-data-[size=sm]/meter:h-1 group-data-[size=md]/meter:h-1.5",
           trackClassName
         )}
@@ -79,7 +79,7 @@ function Meter({ className, label, showValue = false, size = "md", trackClassNam
             golpe se lee peor que uno que se estira. */}
         <MeterPrimitive.Indicator
           data-slot="meter-indicator"
-          className="rounded-full bg-gray-1000 transition-[width] duration-300 ease-out motion-reduce:transition-none"
+          className="rounded-full bg-brand-700 transition-[width] duration-300 ease-out motion-reduce:transition-none"
         />
       </MeterPrimitive.Track>
     </MeterPrimitive.Root>

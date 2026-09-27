@@ -49,35 +49,30 @@ describe("variantes exportadas pasan por cn()", () => {
   })
 
   /**
-   * `shape` es una variante opcional y no puede mover nada de lo que ya existía:
-   * son cuatro apps llamando a `buttonVariants` sin pasarlo, y una clase de más
-   * o de menos les cambia el botón en todas las pantallas. La cadena entera,
-   * copiada acá a mano: si el default cambia, este test lo dice con el diff, no
-   * con una captura que alguien mire tres semanas después.
+   * La cadena entera del botón por defecto, copiada acá a mano. Son cuatro apps llamando a
+   * `buttonVariants` sin argumentos: una clase de más o de menos les cambia el botón en
+   * todas las pantallas, y este test lo dice con el diff, no con una captura que alguien
+   * mire tres semanas después. En 1.0 cambió una sola: `rounded-md` pasó a `rounded-full`.
    */
   const SIN_SHAPE = {
     "default/md":
-      "relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-md border border-transparent whitespace-nowrap outline-none select-none transition-surface focus-visible:focus-ring data-disabled:cursor-not-allowed data-disabled:border-gray-400 data-disabled:bg-gray-100 data-disabled:text-gray-700 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 bg-gray-1000 text-background-100 shadow-button-inverted hover:bg-button-primary-hover active:translate-y-px active:shadow-none data-disabled:shadow-none h-10 px-4 text-button-14",
+      "relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full border border-transparent whitespace-nowrap outline-none select-none transition-surface focus-visible:focus-ring data-disabled:cursor-not-allowed data-disabled:border-gray-400 data-disabled:bg-gray-100 data-disabled:text-gray-700 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 bg-gray-1000 text-background-100 shadow-button-inverted hover:bg-button-primary-hover active:translate-y-px active:shadow-none data-disabled:shadow-none h-10 px-4 text-button-14",
   } as const
 
-  it("sin shape, buttonVariants emite exactamente la misma cadena que antes de que existiera", () => {
+  it("sin shape, buttonVariants emite la cadena fijada", () => {
     expect(buttonVariants()).toBe(SIN_SHAPE["default/md"])
     expect(buttonVariants({ variant: "default", size: "md" })).toBe(SIN_SHAPE["default/md"])
     expect(buttonVariants({ shape: "default" })).toBe(SIN_SHAPE["default/md"])
-    // Y el radio sigue siendo el del sistema en todos los tamaños.
-    for (const size of ["sm", "md", "lg"] as const) {
-      expect(classes(buttonVariants({ size })), size).toContain("rounded-md")
+    // Y el botón es una cápsula en todos los tamaños, los de ícono incluidos.
+    for (const size of ["sm", "md", "lg", "icon-sm", "icon-md", "icon-lg"] as const) {
+      expect(classes(buttonVariants({ size })), size).toContain("rounded-full")
     }
   })
 
-  it("shape pill pisa el radio de la base y suma aire horizontal", () => {
+  it("shape pill suma aire horizontal y no toca el radio", () => {
     for (const size of ["sm", "md", "lg"] as const) {
       const out = classes(buttonVariants({ size, shape: "pill" }))
-      expect(out, size).toContain("rounded-full")
-      // tailwind-merge tiene que haber resuelto el radio: si sobrevive el de la
-      // base, cuál gana depende del orden en la hoja compilada.
-      expect(out, size).not.toContain("rounded-md")
-      expect(out.filter((c) => c.startsWith("rounded-")), size).toHaveLength(1)
+      expect(out.filter((c) => c.startsWith("rounded-")), size).toEqual(["rounded-full"])
     }
     // Un escalón más de padding por tamaño, y uno solo.
     const padding = (size: "sm" | "md" | "lg") =>
@@ -87,18 +82,14 @@ describe("variantes exportadas pasan por cn()", () => {
     expect(padding("lg")).toEqual(["px-7"])
   })
 
-  it("pill funciona con todas las variantes y se ignora en los de ícono", () => {
+  it("shape rect devuelve el rectángulo, con el radio de los controles", () => {
     for (const variant of ["default", "outline", "secondary", "ghost", "accent", "destructive"] as const) {
-      const out = classes(buttonVariants({ variant, shape: "pill" }))
-      expect(out, variant).toContain("rounded-full")
+      const out = classes(buttonVariants({ variant, shape: "rect" }))
+      // tailwind-merge tiene que haber resuelto el radio: si sobrevive el de la base, cuál
+      // gana depende del orden en la hoja compilada.
+      expect(out.filter((c) => c.startsWith("rounded-")), variant).toEqual(["rounded-control"])
       // La variante sigue poniendo su color: `shape` es ortogonal.
       expect(out.length, variant).toBeGreaterThan(20)
-    }
-    // Un botón de ícono ya es cuadrado con su propio radio.
-    for (const size of ["icon-sm", "icon-md", "icon-lg"] as const) {
-      const out = classes(buttonVariants({ size, shape: "pill" }))
-      expect(out, size).toContain("rounded-md")
-      expect(out, size).not.toContain("rounded-full")
     }
   })
 

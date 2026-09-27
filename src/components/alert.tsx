@@ -8,7 +8,7 @@ const alertVariants = cva(
   // La franja de color de las variantes es un pseudo-elemento (una píldora de 3px pegada al
   // borde izquierdo) y no un `box-shadow: inset`, que era lo que había: la sombra es una sola
   // propiedad, y con la franja adentro no quedaba lugar para `shadow-card`.
-  "group/alert relative grid w-full gap-0.5 rounded-xl border border-gray-400 bg-background-100 px-4 py-3 text-left text-copy-14 shadow-card has-[>svg]:grid-cols-[auto_1fr] has-[>svg]:gap-x-3 *:[svg]:row-span-2 *:[svg]:mt-0.5 *:[svg:not([class*='size-'])]:size-4 before:pointer-events-none before:absolute before:inset-y-2.5 before:left-0 before:w-0.75 before:rounded-r-full before:bg-transparent",
+  "group/alert relative grid w-full gap-0.5 rounded-surface border border-gray-alpha-400 glass px-4 py-3 text-left text-copy-14 shadow-card has-[>svg]:grid-cols-[auto_1fr] has-[>svg]:gap-x-3 *:[svg]:row-span-2 *:[svg]:mt-0.5 *:[svg:not([class*='size-'])]:size-4 before:pointer-events-none before:absolute before:inset-y-2.5 before:left-0 before:w-0.75 before:rounded-r-full before:bg-transparent",
   {
     variants: {
       variant: {

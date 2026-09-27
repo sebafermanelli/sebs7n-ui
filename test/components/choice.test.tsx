@@ -23,8 +23,9 @@ describe("Checkbox", () => {
       "border-gray-700",
       "hover:border-gray-800",
       "focus-visible:focus-ring",
-      "data-checked:bg-gray-1000",
-      "data-checked:hover:bg-button-primary-hover",
+      "glass-control",
+      "data-checked:bg-brand-700",
+      "data-checked:hover:bg-brand-800",
       "data-disabled:bg-gray-100",
       "aria-invalid:border-red-800"
     )
@@ -51,11 +52,11 @@ describe("RadioGroup", () => {
 })
 
 describe("Switch", () => {
-  it("prende con click; default neutro, accent con la marca", async () => {
+  it("prende con click y con la marca; neutral es la salida al gris", async () => {
     render(<Switch aria-label="Avisos" variant="accent" />)
     const sw = screen.getByRole("switch", { name: "Avisos" })
     expect(sw).toHaveAttribute("data-variant", "accent")
-    expect(sw).toHaveClass("bg-gray-700", "data-checked:bg-gray-1000", "data-[variant=accent]:data-checked:bg-brand-700")
+    expect(sw).toHaveClass("bg-gray-700", "data-checked:bg-brand-700", "data-[variant=neutral]:data-checked:bg-gray-1000")
     await userEvent.click(sw)
     expect(sw).toHaveAttribute("data-checked")
   })

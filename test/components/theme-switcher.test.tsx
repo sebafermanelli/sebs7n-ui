@@ -34,7 +34,7 @@ describe("ThemeSwitcher", () => {
   it("es un radiogroup con nombres en español y cambia el tema", async () => {
     render(withTheme(<ThemeSwitcher />))
     const group = screen.getByRole("radiogroup", { name: "Tema" })
-    expect(group).toHaveClass("rounded-full", "border-gray-alpha-400", "bg-background-100", "p-0.5")
+    expect(group).toHaveClass("rounded-full", "border-gray-alpha-400", "glass-control", "p-0.5")
     const system = await screen.findByRole("radio", { name: "Tema del sistema" })
     await waitFor(() => expect(system).toHaveAttribute("aria-checked", "true"))
     const dark = screen.getByRole("radio", { name: "Tema oscuro" })
@@ -51,7 +51,7 @@ describe("ThemeSwitcher", () => {
       "rounded-full",
       "text-gray-900",
       "hover:text-gray-1000",
-      "data-checked:bg-gray-200",
+      "data-checked:bg-gray-alpha-300",
       "data-checked:text-gray-1000",
       "focus-visible:focus-ring"
     )

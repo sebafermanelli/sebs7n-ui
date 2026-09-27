@@ -21,21 +21,22 @@ import {
  * vidrio depende de lo que pase por debajo, y eso no lo decide el paquete. Lo que sí decide es
  * cuánto del fondo deja pasar, y de ahí sale lo que se puede prometer:
  *
- * 1. **Texto principal (`gray-1000`), hasta `--glass: 0.6`: 4,5:1 contra cualquier fondo.**
- *    El peor caso es negro detrás de un vidrio claro y blanco detrás de uno oscuro. Es de
- *    donde sale el 0,6 del fill: con un coeficiente más alto, en oscuro no llega.
- * 2. **Texto secundario (`gray-900`), a cualquier intensidad: 4,5:1 sobre la página y sobre la
- *    luz ambiente**, que son los dos fondos que pone el sistema.
+ * 1. **Con el default (`--glass: 1`), texto principal y secundario: 4,5:1 sobre la página y
+ *    sobre la luz ambiente**, que son los dos fondos que pone el sistema.
+ * 2. **Hasta `--glass: 0.5`, texto principal: 4,5:1 contra cualquier fondo.** El peor caso es
+ *    negro detrás de un vidrio claro y blanco detrás de uno oscuro.
  * 3. **Con `--glass: 0` todo vale lo mismo que en 0.8.0.**
  *
- * Lo que NO se promete, y está medido: texto secundario sobre un vidrio que flota encima de
- * un color sólido y brillante. En oscuro, con `--glass: 0.6` y el `brand-700` de emerald
- * detrás, `gray-900` da 3,28:1. La regla está en la página de Accesibilidad del sitio: sobre
- * contenido saturado, texto principal o `--glass` más bajo en ese subárbol.
+ * Lo que NO se promete, y está medido acá abajo para que no sea una opinión: con el default,
+ * el texto sobre un vidrio que flota encima de contenido arbitrario. Negro detrás de un
+ * vidrio claro deja `gray-1000` en 2,12:1; blanco detrás de uno oscuro, en 1,64:1. Es el costo
+ * del Liquid Glass, y fue una decisión (2026-09-27), no un descuido. La salida está en la
+ * página de Accesibilidad del sitio: `--glass: 0.5` en el subárbol que flota sobre fotos o
+ * video, y `prefers-reduced-transparency` / `prefers-contrast` vuelven todo sólido.
  *
- * El modelo no incluye el `saturate()` del `backdrop-filter` (ver `glassSurface`). Por eso los
- * umbrales son los de WCAG y no un decimal por encima: el margen ya está en los números
- * (7,11 y 4,68 para el caso 1).
+ * El modelo no incluye el `backdrop-filter` ni el brillo del canto (ver `glassSurface`). Por
+ * eso los umbrales son los de WCAG y no un decimal por encima: el margen ya está en los
+ * números (5,07 el más justo del caso 1; 4,90 el del caso 2).
  */
 const root = join(import.meta.dirname, "..")
 const theme = readFileSync(join(root, "src/styles/theme.css"), "utf8")
@@ -52,6 +53,8 @@ const hex = (css: string, tema: "light" | "dark", token: string) => {
 }
 
 const GLASS = Number(theme.match(/--glass:\s*([\d.]+);/)![1])
+/** La intensidad más alta con la que el texto principal pasa contra cualquier fondo. */
+const GLASS_SEGURO = 0.5
 
 const tokens = (tema: "light" | "dark") => ({
   surface: hex(colors, tema, "--sf-background-100"),
@@ -80,9 +83,9 @@ const ratio = (fg: string, bg: string) => contrastRatio(luminanceOfHex(fg), lumi
 const marcas = brands as Record<string, Record<string, { base: number[] }>>
 
 describe("el modelo", () => {
-  it("el default del paquete es 0,6 y su alfa es 0,64", () => {
-    expect(GLASS).toBe(0.6)
-    expect(glassAlpha(GLASS)).toBeCloseTo(0.64, 10)
+  it("el default del paquete es 1 y su alfa es 0,3", () => {
+    expect(GLASS).toBe(1)
+    expect(glassAlpha(GLASS)).toBeCloseTo(0.3, 10)
   })
 
   it("con --glass: 0 la superficie es background-100, pase lo que pase por debajo", () => {
@@ -93,30 +96,42 @@ describe("el modelo", () => {
   })
 })
 
+describe("Texto sobre vidrio, sobre los fondos del sistema (WCAG 1.4.3)", () => {
+  for (const tema of ["light", "dark"] as const) {
+    const t = tokens(tema)
+    for (const [rol, fg] of [["principal", t.principal], ["secundario", t.secundario]] as const) {
+      it(`${tema} · --glass ${GLASS} · ${rol} sobre la página: llega a 4.5:1`, () => {
+        expect(ratio(fg, glassSurface(GLASS, t, t.page))).toBeGreaterThanOrEqual(4.5)
+      })
+      for (const [marca, temas] of Object.entries(marcas)) {
+        it(`${tema} · --glass ${GLASS} · ${rol} sobre la luz ambiente de ${marca}: llega a 4.5:1`, () => {
+          for (const foco of ambiente(tema, temas[tema]!.base, t.page)) {
+            expect(ratio(fg, glassSurface(GLASS, t, foco)), foco).toBeGreaterThanOrEqual(4.5)
+          }
+        })
+      }
+    }
+  }
+})
+
 describe("Texto principal sobre vidrio, contra cualquier fondo (WCAG 1.4.3)", () => {
   for (const tema of ["light", "dark"] as const) {
     const t = tokens(tema)
-    const fondo = glassSurface(GLASS, t, t.peor)
-    it(`${tema} · --glass ${GLASS}: ${t.principal} sobre ${fondo} (${t.peor} detrás) llega a 4.5:1`, () => {
+    const fondo = glassSurface(GLASS_SEGURO, t, t.peor)
+    it(`${tema} · --glass ${GLASS_SEGURO}: ${t.principal} sobre ${fondo} (${t.peor} detrás) llega a 4.5:1`, () => {
       expect(ratio(t.principal, fondo)).toBeGreaterThanOrEqual(4.5)
     })
   }
 })
 
-describe("Texto secundario sobre vidrio, sobre los fondos del sistema (WCAG 1.4.3)", () => {
+// No es un test de que algo ande: es el límite, escrito donde no se puede desactualizar. Si
+// alguien sube el fill y esto empieza a pasar de 4,5, el comentario de arriba y la página de
+// Accesibilidad están prometiendo de menos y hay que corregirlos.
+describe("El límite conocido del default", () => {
   for (const tema of ["light", "dark"] as const) {
     const t = tokens(tema)
-    for (const g of [GLASS, 1]) {
-      it(`${tema} · --glass ${g} · página: llega a 4.5:1`, () => {
-        expect(ratio(t.secundario, glassSurface(g, t, t.page))).toBeGreaterThanOrEqual(4.5)
-      })
-      for (const [marca, temas] of Object.entries(marcas)) {
-        it(`${tema} · --glass ${g} · luz ambiente de ${marca}: llega a 4.5:1`, () => {
-          for (const foco of ambiente(tema, temas[tema]!.base, t.page)) {
-            expect(ratio(t.secundario, glassSurface(g, t, foco)), foco).toBeGreaterThanOrEqual(4.5)
-          }
-        })
-      }
-    }
+    it(`${tema} · --glass ${GLASS}: el texto principal contra el peor fondo NO llega a 4.5:1`, () => {
+      expect(ratio(t.principal, glassSurface(GLASS, t, t.peor))).toBeLessThan(4.5)
+    })
   }
 })

@@ -43,16 +43,16 @@ function Example({ collapsed = false, onSearch = () => {} }: { collapsed?: boole
 }
 
 describe("Sidebar", () => {
-  it("aside a ras: w-60, background-200, borde derecho; colapsado w-16 sin animar el ancho", () => {
+  it("aside a ras: w-60, vidrio grueso, borde derecho; colapsado w-16 sin animar el ancho", () => {
     const { rerender } = render(<Example />)
     const aside = screen.getByRole("complementary")
     expect(aside).toHaveAttribute("data-slot", "sidebar")
-    expect(aside).toHaveClass("w-60", "data-collapsed:w-16", "bg-background-200", "border-r", "border-gray-400", "flex-col", "h-full")
+    expect(aside).toHaveClass("w-60", "data-collapsed:w-16", "glass", "glass-thick", "border-r", "border-gray-alpha-400", "flex-col", "h-full")
     expect(aside).not.toHaveAttribute("data-collapsed")
     expect(aside.className).not.toMatch(/transition(-all|-\[width)|duration/)
     rerender(<Example collapsed />)
     expect(aside).toHaveAttribute("data-collapsed")
-    expect(screen.getByText("pie").closest("[data-slot=sidebar-footer]")).toHaveClass("border-t", "border-gray-400")
+    expect(screen.getByText("pie").closest("[data-slot=sidebar-footer]")).toHaveClass("border-t", "border-gray-alpha-400")
   })
 
   it("items: links con el activo marcado por aria-current y data-active, y badge tabular", () => {
@@ -65,18 +65,21 @@ describe("Sidebar", () => {
     expect(clients).not.toHaveAttribute("aria-current")
     expect(clients).toHaveClass(
       "h-8",
-      "rounded-md",
+      "rounded-control",
       "px-2",
       "gap-2",
       "text-copy-14",
       "text-gray-900",
       "hover:bg-gray-alpha-100",
       "hover:text-gray-1000",
-      "data-active:bg-gray-alpha-200",
-      "aria-[current=page]:bg-gray-alpha-200",
+      "data-active:bg-highlight",
+      "aria-[current=page]:bg-highlight",
       "focus-visible:focus-ring"
     )
-    expect(clients.className).not.toMatch(/brand/)
+    // El brand va en el fondo y en el ícono del activo. En el texto no: `brand-900` sobre el
+    // tinte da 4,35:1 con el blue del paquete.
+    expect(clients).toHaveClass("data-active:[&_svg]:text-brand-900")
+    expect(clients.className).not.toMatch(/(^|\s)(data-active:|aria-\[current=page\]:)?text-brand/)
     expect(screen.getByText("3")).toHaveClass("ml-auto", "text-label-12", "tabular-nums", "text-gray-900")
   })
 
@@ -103,7 +106,7 @@ describe("Sidebar", () => {
     const onSearch = vi.fn()
     render(<Example onSearch={onSearch} />)
     const search = screen.getByRole("button", { name: "Buscar…" })
-    expect(search).toHaveClass("h-8", "border", "border-gray-400", "bg-background-100", "rounded-md", "hover:border-gray-500", "focus-visible:focus-ring")
+    expect(search).toHaveClass("h-8", "border", "border-gray-alpha-400", "glass-control", "rounded-control", "hover:border-gray-alpha-500", "focus-visible:focus-ring")
     expect(search).toHaveAttribute("aria-keyshortcuts", "Meta+K")
     expect(search.querySelector("kbd")).toHaveTextContent("⌘K")
     await userEvent.click(search)
@@ -202,7 +205,7 @@ describe("Sidebar", () => {
     expect(link).toHaveAttribute("href", "/admin/viajes")
     expect(link).toHaveAttribute("aria-current", "page")
     expect(link).toHaveAttribute("data-active")
-    expect(link).toHaveClass("extra", "h-8", "aria-[current=page]:bg-gray-alpha-200")
+    expect(link).toHaveClass("extra", "h-8", "aria-[current=page]:bg-highlight")
   })
 
   it("sidebarItemVariants sirve para un Link propio", () => {

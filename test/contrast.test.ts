@@ -4,7 +4,7 @@ import { join } from "node:path"
 import { describe, expect, it } from "vitest"
 
 import brands from "../tokens/brands.json"
-import { contrastRatio, flattenAlpha, luminanceOfHex, luminanceOfOklch, type Oklch } from "../src/lib/contrast.js"
+import { composite, contrastRatio, hexOfOklch, luminanceOfHex, luminanceOfOklch, type Oklch } from "../src/lib/contrast.js"
 
 /**
  * La tabla de contraste del sistema.
@@ -177,34 +177,53 @@ describe("Button variant=\"destructive\" (WCAG 1.4.3, texto normal)", () => {
 
 // Los atajos de DropdownMenu, ContextMenu y Menubar son contenido informativo,
 // no decoración: enseñan el otro camino a la misma acción. En `gray-700` daban
-// 3,23:1 sobre la superficie del popup y 2,71:1 sobre el ítem resaltado.
+// 3,23:1 sobre la superficie del popup. Sobre el ítem resaltado lo mide el
+// bloque de «Texto sobre la selección», más abajo.
 describe("Atajo de menú sobre el popup (WCAG 1.4.3)", () => {
   for (const theme of ["light", "dark"] as const) {
     const fg = paleta[theme]["--sf-gray-900"]!
-    const fondos = {
-      popup: paleta[theme]["--sf-background-100"]!,
-      "ítem resaltado": paleta[theme]["--sf-gray-200"]!,
-      "ítem apretado": paleta[theme]["--sf-gray-300"]!,
-    }
-    for (const [fondo, bg] of Object.entries(fondos)) {
-      it(`${theme} · ${fondo}: ${fg} sobre ${bg} llega a 4.5:1`, () => {
-        expect(ratio(fg, bg)).toBeGreaterThanOrEqual(4.5)
-      })
-    }
+    const bg = paleta[theme]["--sf-background-100"]!
+    it(`${theme} · popup: ${fg} sobre ${bg} llega a 4.5:1`, () => {
+      expect(ratio(fg, bg)).toBeGreaterThanOrEqual(4.5)
+    })
   }
 })
 
 // El borde del campo enfocado es el indicador de foco de los campos: es lo
 // único que dice dónde estás parado al tabular por un formulario. WCAG 2.4.11
-// (AA en 2.2) le pide 3:1 contra el fondo. Los `gray-alpha-*` son alfa, así que
-// el ratio que se ve es el del color YA compuesto contra la superficie.
+// (AA en 2.2) le pide 3:1 contra el fondo. Desde 1.0 ese borde es `brand-700`,
+// el mismo color del anillo de foco, así que el número es el de arriba: lo que
+// se verifica acá es que el token siga apuntando ahí en los dos temas, que es
+// lo que hace que ese número valga también para los campos. El halo de 4px no
+// se mide: es énfasis, y con puntero ni siquiera aparece.
 describe("Borde de foco de los campos (WCAG 2.4.11)", () => {
+  const css = read("theme.css")
+  it("es brand-700, el color que ya verifica el anillo de foco", () => {
+    expect(css.match(/--sf-focus-border:\s*var\(--sf-brand-700\);/g)).toHaveLength(1)
+    // Una sola declaración, en `:root`: `.dark` la hereda, y `--sf-brand-700` ya cambia por tema.
+    expect(css).not.toMatch(/--sf-focus-border:\s*var\(--sf-gray/)
+  })
+})
+
+// El resaltado de un ítem de menú y el activo del Sidebar son el brand en tinte,
+// compuesto sobre la superficie. El texto de adentro es `gray-1000` y el
+// secundario —atajos, emails— `gray-900`.
+describe("Texto sobre la selección, en las cuatro marcas (WCAG 1.4.3)", () => {
+  const css = read("theme.css")
+  const marcas = brands as Record<string, Record<string, { base: number[] }>>
   for (const theme of ["light", "dark"] as const) {
-    const bg = paleta[theme]["--sf-background-100"]!
-    const fg = flattenAlpha(paleta[theme]["--sf-focus-border"]!, bg)
-    it(`${theme}: ${fg} sobre ${bg} llega a 3:1`, () => {
-      expect(ratio(fg, bg)).toBeGreaterThanOrEqual(3)
-    })
+    const inicio = css.indexOf(theme === "light" ? ":root {" : ".dark {")
+    const cuerpo = css.slice(inicio, css.indexOf("\n  }", inicio))
+    const tinte = (token: string) =>
+      Number(cuerpo.match(new RegExp(`${token}: color-mix\\(in srgb, var\\(--sf-brand-700\\) (\\d+)%`))![1]) / 100
+    for (const [estado, token] of [["resaltado", "--sf-highlight"], ["apretado", "--sf-highlight-active"]] as const) {
+      for (const [marca, temas] of Object.entries(marcas)) {
+        const fondo = composite(hexOfOklch(temas[theme]!.base as unknown as Oklch), tinte(token), paleta[theme]["--sf-background-100"]!)
+        it(`${theme} · ${marca} · ${estado}: gray-900 sobre ${fondo} llega a 4.5:1`, () => {
+          expect(ratio(paleta[theme]["--sf-gray-900"]!, fondo)).toBeGreaterThanOrEqual(4.5)
+        })
+      }
+    }
   }
 })
 

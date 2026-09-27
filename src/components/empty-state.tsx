@@ -13,7 +13,7 @@ type EmptyStateProps = Omit<React.ComponentProps<"div">, "title"> & {
   action?: React.ReactNode
 }
 
-// Zona hundida (Card variant="subtle"): fondo background-200, sin borde ni sombra.
+// Zona hundida (Card variant="subtle"): fondo gray-alpha-100, sin borde ni blur.
 function EmptyState({ className, icon, title, titleAs: Title = "h2", description, action, children, ...props }: EmptyStateProps) {
   return (
     <div
@@ -25,7 +25,7 @@ function EmptyState({ className, icon, title, titleAs: Title = "h2", description
         <div
           data-slot="empty-state-icon"
           aria-hidden="true"
-          className="flex size-10 items-center justify-center rounded-md border border-gray-400 bg-background-100 text-gray-900 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-5"
+          className="flex size-10 items-center justify-center rounded-control border border-gray-alpha-400 glass-control text-gray-900 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-5"
         >
           {icon}
         </div>

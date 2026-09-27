@@ -2,6 +2,7 @@
 
 import { OTPField as OTPFieldPrimitive } from "@base-ui/react/otp-field"
 
+import { useModality } from "../internal/modality.js"
 import { cn } from "../lib/utils.js"
 import { inputControlClassName, inputDisabledClassName, inputInvalidClassName } from "../variants/input.js"
 
@@ -57,6 +58,7 @@ type OTPFieldProps = Omit<OTPFieldPrimitive.Root.Props, "children" | "className"
 }
 
 function OTPField({ className, inputClassName, length = 6, size = "md", ...props }: OTPFieldProps) {
+  useModality()
   return (
     <OTPFieldPrimitive.Root
       data-slot="otp-field"

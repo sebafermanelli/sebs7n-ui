@@ -31,7 +31,7 @@ describe("Tooltip", () => {
     )
     await userEvent.tab()
     const tip = await screen.findByText("Copiar al portapapeles")
-    expect(tip.closest("[data-slot=tooltip-content]")).toHaveClass("bg-gray-1000", "text-background-100", "shadow-tooltip", "rounded-md")
+    expect(tip.closest("[data-slot=tooltip-content]")).toHaveClass("bg-gray-1000", "text-background-100", "shadow-tooltip", "rounded-control")
   })
 })
 
@@ -45,7 +45,7 @@ describe("Popover", () => {
     )
     await userEvent.click(screen.getByRole("button", { name: "Filtros" }))
     const panel = (await screen.findByText("contenido")).closest("[data-slot=popover-content]")!
-    expect(panel).toHaveClass("shadow-menu", "rounded-xl", "bg-background-100")
+    expect(panel).toHaveClass("shadow-menu", "rounded-surface", "glass")
     expect(panel.className).not.toMatch(/\bborder\b/)
   })
 
@@ -67,7 +67,7 @@ describe("Popover", () => {
 })
 
 describe("DropdownMenu", () => {
-  it("ítems de 32px con highlight gray-200; destructivo en rojo", async () => {
+  it("ítems de 32px con el resaltado del brand en tinte; destructivo en rojo", async () => {
     const onClick = vi.fn()
     render(
       <DropdownMenu>
@@ -80,7 +80,7 @@ describe("DropdownMenu", () => {
     )
     await userEvent.click(screen.getByRole("button", { name: "Acciones" }))
     const edit = await screen.findByRole("menuitem", { name: "Editar" })
-    expect(edit).toHaveClass("h-8", "rounded-md", "data-highlighted:bg-gray-200", "active:bg-gray-300", "data-disabled:text-gray-700")
+    expect(edit).toHaveClass("h-8", "rounded-control", "data-highlighted:bg-highlight", "active:bg-highlight-active", "data-disabled:text-gray-700")
     expect(screen.getByRole("menuitem", { name: "Eliminar" })).toHaveAttribute("data-variant", "destructive")
     await userEvent.click(edit)
     expect(onClick).toHaveBeenCalled()
@@ -117,7 +117,7 @@ describe("Select", () => {
       </Select>
     )
     const trigger = screen.getByRole("combobox", { name: "Moneda" })
-    expect(trigger).toHaveClass("border-gray-400", "hover:border-gray-500", "focus-visible:focus-border", "data-placeholder:text-gray-900", "data-[size=md]:h-10")
+    expect(trigger).toHaveClass("border-gray-alpha-400", "hover:border-gray-alpha-500", "focus-visible:focus-border", "data-placeholder:text-gray-900", "data-[size=md]:h-10")
     await userEvent.click(trigger)
     await userEvent.click(await screen.findByRole("option", { name: "USD" }))
     expect(onValueChange).toHaveBeenCalledWith("usd", expect.anything())
@@ -137,7 +137,7 @@ describe("Dialog", () => {
     )
     await userEvent.click(screen.getByRole("button", { name: "Nuevo viaje" }))
     const dialog = await screen.findByRole("dialog")
-    expect(dialog).toHaveClass("shadow-modal", "rounded-xl", "p-6")
+    expect(dialog).toHaveClass("shadow-modal", "rounded-panel", "p-6", "glass")
     expect(screen.getByText("Cargá los datos.")).toHaveClass("text-gray-900")
     await userEvent.click(screen.getByRole("button", { name: "Cerrar" }))
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull())

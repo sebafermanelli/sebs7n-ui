@@ -160,11 +160,11 @@ describe("OTPField", () => {
   it("comparte el borde, el radio y el foco de Input", () => {
     render(<OTPField aria-label="Código" />)
     expect(casillas()[0]).toHaveClass(
-      "border-gray-400",
-      "bg-background-100",
-      "hover:border-gray-500",
+      "border-gray-alpha-400",
+      "glass-control",
+      "hover:border-gray-alpha-500",
       "focus:focus-border",
-      "rounded-md"
+      "rounded-control"
     )
   })
 

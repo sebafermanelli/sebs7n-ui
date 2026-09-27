@@ -182,13 +182,13 @@ function DrawerContent({ className, children, showCloseButton = true, showHandle
           data-slot="drawer-content"
           ref={ref}
           className={cn(
-            "group/drawer absolute flex bg-background-100 text-copy-14 text-gray-1000 shadow-modal outline-none",
+            "group/drawer absolute flex glass glass-thick text-copy-14 text-gray-1000 shadow-modal outline-none",
             // Redondeado solo del lado de adentro. Contra el borde de la
             // pantalla no hay radio: ahí el radio deja ver una franja de fondo.
-            "data-[swipe-direction=down]:inset-x-0 data-[swipe-direction=down]:bottom-0 data-[swipe-direction=down]:max-h-[calc(100%-3rem)] data-[swipe-direction=down]:flex-col data-[swipe-direction=down]:rounded-t-xl",
-            "data-[swipe-direction=up]:inset-x-0 data-[swipe-direction=up]:top-0 data-[swipe-direction=up]:max-h-[calc(100%-3rem)] data-[swipe-direction=up]:flex-col data-[swipe-direction=up]:rounded-b-xl",
-            "data-[swipe-direction=left]:inset-y-0 data-[swipe-direction=left]:left-0 data-[swipe-direction=left]:w-3/4 data-[swipe-direction=left]:flex-row data-[swipe-direction=left]:rounded-r-xl data-[swipe-direction=left]:sm:max-w-sm",
-            "data-[swipe-direction=right]:inset-y-0 data-[swipe-direction=right]:right-0 data-[swipe-direction=right]:w-3/4 data-[swipe-direction=right]:flex-row data-[swipe-direction=right]:rounded-l-xl data-[swipe-direction=right]:sm:max-w-sm",
+            "data-[swipe-direction=down]:inset-x-0 data-[swipe-direction=down]:bottom-0 data-[swipe-direction=down]:max-h-[calc(100%-3rem)] data-[swipe-direction=down]:flex-col data-[swipe-direction=down]:rounded-t-panel",
+            "data-[swipe-direction=up]:inset-x-0 data-[swipe-direction=up]:top-0 data-[swipe-direction=up]:max-h-[calc(100%-3rem)] data-[swipe-direction=up]:flex-col data-[swipe-direction=up]:rounded-b-panel",
+            "data-[swipe-direction=left]:inset-y-0 data-[swipe-direction=left]:left-0 data-[swipe-direction=left]:w-3/4 data-[swipe-direction=left]:flex-row data-[swipe-direction=left]:rounded-r-panel data-[swipe-direction=left]:sm:max-w-sm",
+            "data-[swipe-direction=right]:inset-y-0 data-[swipe-direction=right]:right-0 data-[swipe-direction=right]:w-3/4 data-[swipe-direction=right]:flex-row data-[swipe-direction=right]:rounded-l-panel data-[swipe-direction=right]:sm:max-w-sm",
             // `transform` a mano y no `translate-*` de Tailwind: mientras se
             // arrastra, Base UI escribe un `transform` inline que tiene que
             // pisar a este. Si el movimiento viviera en la propiedad

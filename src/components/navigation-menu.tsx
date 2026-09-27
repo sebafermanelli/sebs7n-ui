@@ -68,7 +68,7 @@ function NavigationMenuTrigger({ className, active, chevron = true, children, ..
         // Mismo cuerpo que un link del nav: sin fondo en ningún estado, el
         // padding existe solo para que el área clickeable llegue a 32px y el
         // anillo de foco no apriete el texto.
-        "inline-flex cursor-pointer items-center gap-1 rounded-md bg-transparent px-2 py-1.5 text-copy-14 text-gray-900 select-none",
+        "inline-flex cursor-pointer items-center gap-1 rounded-control bg-transparent px-2 py-1.5 text-copy-14 text-gray-900 select-none",
         "outline-none transition-control hover:text-gray-1000 focus-visible:focus-ring",
         "data-popup-open:text-gray-1000 data-active:text-gray-1000",
         "data-disabled:cursor-not-allowed data-disabled:text-gray-700 data-disabled:hover:text-gray-700",
@@ -155,7 +155,7 @@ type NavigationMenuLinkProps = Omit<NavigationMenuPrimitive.Link.Props, "classNa
 }
 
 /** Lo que comparten los dos modos: radio, foco y sin subrayado. */
-const linkBaseClassName = "rounded-md no-underline outline-none transition-control focus-visible:focus-ring"
+const linkBaseClassName = "rounded-control no-underline outline-none transition-control focus-visible:focus-ring"
 
 function NavigationMenuLink({ className, title, description, icon, children, ...props }: NavigationMenuLinkProps) {
   if (title === undefined) {
@@ -259,7 +259,7 @@ function NavigationMenuPopup({ className, ...props }: NavigationMenuPopupProps) 
         "relative h-(--popup-height) w-(--popup-width) origin-(--transform-origin) overflow-hidden",
         // El `focus-visible:focus-ring` es por el mismo motivo que en Popover y HoverCard: si el
         // panel no tiene links adentro, Base UI lo enfoca a él y con `outline-none` no se veía nada.
-        "rounded-xl bg-background-100 p-1 text-gray-1000 shadow-menu outline-none focus-visible:focus-ring",
+        "rounded-surface glass p-1 text-gray-1000 shadow-menu outline-none focus-visible:focus-ring",
         "transition-[opacity,transform,width,height] duration-200 ease-out motion-reduce:transition-none",
         "data-starting-style:scale-[0.98] data-starting-style:opacity-0",
         "data-ending-style:scale-[0.98] data-ending-style:opacity-0",

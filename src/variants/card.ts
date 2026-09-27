@@ -3,12 +3,14 @@ import { cva } from "class-variance-authority"
 import { cn } from "../lib/utils.js"
 
 const cardVariantsBase = cva(
-  "group/card flex flex-col gap-(--card-spacing) rounded-xl py-(--card-spacing) text-copy-14 text-gray-1000",
+  "group/card flex flex-col gap-(--card-spacing) rounded-surface py-(--card-spacing) text-copy-14 text-gray-1000",
   {
     variants: {
       variant: {
-        default: "border border-gray-400 bg-background-100 shadow-card",
-        subtle: "bg-background-200 shadow-track",
+        default: "border border-gray-alpha-400 glass shadow-card",
+        // Hundida y sin blur: es la que va ADENTRO de otra superficie, y ahí un segundo vidrio
+        // no tiene nada que desenfocar.
+        subtle: "bg-gray-alpha-100 shadow-track",
       },
       size: {
         sm: "[--card-spacing:--spacing(4)]",
@@ -17,7 +19,7 @@ const cardVariantsBase = cva(
       interactive: {
         // Sube un pixel y la sombra crece: la profundidad se nota al tocar, no de lejos.
         // Al apretar vuelve a su lugar, que es el gesto de «hundir».
-        true: "cursor-pointer outline-none transition-surface hover:-translate-y-px hover:border-gray-500 hover:shadow-card-hover active:translate-y-0 active:bg-gray-100 active:shadow-card focus-visible:focus-ring",
+        true: "cursor-pointer outline-none transition-surface hover:-translate-y-px hover:border-gray-alpha-500 hover:shadow-card-hover active:translate-y-0 active:bg-gray-alpha-200 active:shadow-card focus-visible:focus-ring",
         false: "",
       },
       selected: {

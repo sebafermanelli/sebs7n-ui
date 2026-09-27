@@ -14,7 +14,7 @@ describe("Kbd", () => {
     render(<Kbd>⌘K</Kbd>)
     const kbd = screen.getByText("⌘K")
     expect(kbd.tagName).toBe("KBD")
-    expect(kbd).toHaveClass("text-label-12-mono", "bg-gray-100", "border", "border-gray-400", "rounded-xs", "px-1", "h-5", "text-gray-900")
+    expect(kbd).toHaveClass("text-label-12-mono", "bg-gray-alpha-100", "border", "border-gray-alpha-400", "rounded-xs", "px-1", "h-5", "text-gray-900")
   })
 })
 
@@ -114,7 +114,7 @@ describe("EmptyState", () => {
     expect(title).toHaveClass("text-heading-16", "text-gray-1000")
     expect(screen.getByText("Creá el primero para empezar a cargar pasajeros.")).toHaveClass("text-copy-14", "text-gray-900")
     const root = title.closest("[data-slot=empty-state]")!
-    expect(root).toHaveClass("bg-background-200", "rounded-xl", "items-center", "text-center", "py-12")
+    expect(root).toHaveClass("bg-gray-alpha-100", "rounded-surface", "items-center", "text-center", "py-12")
     // Zona hundida: sin borde y sin sombra que la levante. La única sombra válida es la interior de la pista.
     expect(root.className).not.toMatch(/\bborder\b|shadow-(card|button|menu|modal|tooltip)/)
     expect(root).toHaveClass("shadow-track")

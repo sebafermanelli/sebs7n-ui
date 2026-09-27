@@ -17,7 +17,9 @@ type SidebarProps = React.ComponentProps<"aside"> & {
   collapsed?: boolean
 }
 
-// A ras de la ventana (no card flotante): background-200 + borde derecho, columna a todo el alto.
+// A ras de la ventana (no card flotante): vidrio grueso + borde derecho, columna a todo el alto.
+// Adentro del Sheet mobile va transparente: el vidrio ya lo pone la hoja, y dos apilados se comen
+// el contraste sin mostrar nada (el segundo solo desenfoca lo que pintó el primero).
 function Sidebar({ className, collapsed: collapsedProp = false, ...props }: SidebarProps) {
   const inSheet = React.useContext(SidebarInSheetContext)
   const collapsed = inSheet ? false : collapsedProp
@@ -28,8 +30,8 @@ function Sidebar({ className, collapsed: collapsedProp = false, ...props }: Side
         data-slot="sidebar"
         data-collapsed={collapsed ? "" : undefined}
         className={cn(
-          "group/sidebar flex h-full w-60 shrink-0 flex-col border-r border-gray-400 bg-background-200 text-gray-1000 data-collapsed:w-16",
-          inSheet && "w-full border-r-0",
+          "group/sidebar flex h-full w-60 shrink-0 flex-col border-r border-gray-alpha-400 glass glass-thick text-gray-1000 data-collapsed:w-16",
+          inSheet && "w-full border-r-0 bg-transparent shadow-none backdrop-filter-none",
           className
         )}
         {...props}
@@ -70,7 +72,7 @@ function SidebarFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="sidebar-footer"
-      className={cn("flex shrink-0 flex-col gap-1 border-t border-gray-400 p-2 group-data-collapsed/sidebar:items-center", className)}
+      className={cn("flex shrink-0 flex-col gap-1 border-t border-gray-alpha-400 p-2 group-data-collapsed/sidebar:items-center", className)}
       {...props}
     />
   )
@@ -274,7 +276,7 @@ function SidebarSearch({
       data-slot="sidebar-search"
       aria-keyshortcuts={keyshortcuts}
       className={cn(
-        "flex h-8 w-full min-w-0 cursor-pointer items-center gap-2 rounded-md border border-gray-400 bg-background-100 px-2 text-left text-copy-14 text-gray-900 shadow-card outline-none transition-control hover:border-gray-500 hover:text-gray-1000 focus-visible:focus-ring [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+        "flex h-8 w-full min-w-0 cursor-pointer items-center gap-2 rounded-control border border-gray-alpha-400 glass-control px-2 text-left text-copy-14 text-gray-900 shadow-card outline-none transition-control hover:border-gray-alpha-500 hover:text-gray-1000 focus-visible:focus-ring [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
         "group-data-collapsed/sidebar:w-8 group-data-collapsed/sidebar:justify-center group-data-collapsed/sidebar:px-0",
         className
       )}

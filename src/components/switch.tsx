@@ -6,7 +6,12 @@ import { cn, type WithClassName } from "../lib/utils.js"
 
 type SwitchProps = WithClassName<SwitchPrimitive.Root.Props> & {
   size?: "sm" | "md"
-  variant?: "default" | "accent"
+  /**
+   * `default` y `accent` prenden con el brand: desde 1.0 son lo mismo, y `accent` queda para
+   * no romper a quien ya lo escribía. `neutral` prende en `gray-1000`, para una pantalla donde
+   * el brand ya está en la acción principal y un interruptor más de color compite con ella.
+   */
+  variant?: "default" | "accent" | "neutral"
 }
 
 function Switch({ className, size = "md", variant = "default", ...props }: SwitchProps) {
@@ -25,8 +30,8 @@ function Switch({ className, size = "md", variant = "default", ...props }: Switc
         // dos temas) es el punto medio que pasa por los dos lados: 3,23:1 contra el blanco en
         // claro, 6,12:1 contra el negro en oscuro, y 3,23:1 contra el pulgar en los dos.
         "bg-gray-700 shadow-track hover:bg-gray-800 focus-visible:focus-ring",
-        "data-checked:bg-gray-1000 data-checked:hover:bg-button-primary-hover",
-        "data-[variant=accent]:data-checked:bg-brand-700 data-[variant=accent]:data-checked:hover:bg-brand-800",
+        "data-checked:bg-brand-700 data-checked:hover:bg-brand-800",
+        "data-[variant=neutral]:data-checked:bg-gray-1000 data-[variant=neutral]:data-checked:hover:bg-button-primary-hover",
         "aria-invalid:ring-1 aria-invalid:ring-red-800 data-invalid:ring-1 data-invalid:ring-red-800",
         "data-disabled:cursor-not-allowed data-disabled:bg-gray-100 data-disabled:shadow-none data-disabled:hover:bg-gray-100",
         className
@@ -36,11 +41,13 @@ function Switch({ className, size = "md", variant = "default", ...props }: Switc
       <SwitchPrimitive.Thumb
         data-slot="switch-thumb"
         className={cn(
-          "pointer-events-none block rounded-full bg-white shadow-tooltip transition-transform duration-150",
+          "pointer-events-none block rounded-full bg-white shadow-tooltip transition-thumb",
+          // Apretado, el pulgar se vuelve lente: ver `thumb-lens` en theme.css.
+          "group-active/switch:scale-x-125 group-active/switch:scale-y-110 group-active/switch:thumb-lens",
           "group-data-[size=md]/switch:size-4 group-data-[size=sm]/switch:size-3",
-          "data-checked:bg-background-100 group-data-[variant=accent]/switch:data-checked:bg-brand-contrast",
+          "data-checked:bg-brand-contrast group-data-[variant=neutral]/switch:data-checked:bg-background-100",
           "group-data-[size=md]/switch:data-checked:translate-x-4 group-data-[size=sm]/switch:data-checked:translate-x-3",
-          "data-disabled:bg-gray-400 data-disabled:shadow-none"
+          "data-disabled:bg-gray-400 data-disabled:shadow-none group-data-disabled/switch:scale-100"
         )}
       />
     </SwitchPrimitive.Root>

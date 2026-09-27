@@ -23,7 +23,7 @@ describe("Avatar", () => {
 })
 
 describe("Tabs", () => {
-  it("cambia de panel y marca data-active; subrayado gris, no de marca", async () => {
+  it("cambia de panel y marca data-active; la activa no usa la marca", async () => {
     render(
       <Tabs defaultValue="a">
         <TabsList>
@@ -35,7 +35,7 @@ describe("Tabs", () => {
       </Tabs>
     )
     const pagos = screen.getByRole("tab", { name: "Pagos" })
-    expect(pagos).toHaveClass("text-gray-900", "hover:text-gray-1000", "after:bg-gray-1000", "data-active:after:opacity-100")
+    expect(pagos).toHaveClass("text-gray-900", "hover:text-gray-1000", "after:bg-gray-1000", "group-data-[variant=line]/tabs-list:data-active:after:opacity-100")
     // En hover solo cambia el texto: una pestaña no se pinta como botón.
     expect(pagos.className).not.toMatch(/hover:before:bg-/)
     expect(pagos.className).not.toMatch(/brand/)
@@ -69,7 +69,7 @@ describe("Separator / Skeleton", () => {
 
   it("skeleton con el pulso de Geist", () => {
     render(<Skeleton data-testid="sk" />)
-    expect(screen.getByTestId("sk")).toHaveClass("animate-skeleton", "bg-gray-100", "rounded-md")
+    expect(screen.getByTestId("sk")).toHaveClass("animate-skeleton", "bg-gray-alpha-200", "rounded-control")
   })
 })
 
@@ -83,7 +83,7 @@ describe("Alert", () => {
       </Alert>
     )
     const alert = screen.getByRole("alert")
-    expect(alert).toHaveClass("bg-background-100", "border-gray-400", "rounded-xl", "shadow-card", "before:bg-amber-700", "*:[svg]:text-amber-900")
+    expect(alert).toHaveClass("glass", "border-gray-alpha-400", "rounded-surface", "shadow-card", "before:bg-amber-700", "*:[svg]:text-amber-900")
     expect(screen.getByText("Cargalo antes de facturar.")).toHaveClass("text-gray-900")
   })
 })

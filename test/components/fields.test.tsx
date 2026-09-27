@@ -7,15 +7,15 @@ import { Label } from "../../src/components/label"
 import { Textarea } from "../../src/components/textarea"
 
 describe("Input", () => {
-  it("tiene los estados de Geist: borde gray-400, hover gray-500, foco focus-border", () => {
+  it("tiene los estados del sistema: borde alfa, hover más marcado, foco focus-border", () => {
     render(<Input placeholder="Nombre" />)
     expect(screen.getByPlaceholderText("Nombre")).toHaveClass(
-      "border-gray-400",
-      "bg-background-100",
+      "border-gray-alpha-400",
+      "glass-control",
       "placeholder:text-gray-900",
-      "hover:border-gray-500",
+      "hover:border-gray-alpha-500",
       "focus:focus-border",
-      "rounded-md"
+      "rounded-control"
     )
   })
 
@@ -54,8 +54,8 @@ describe("Textarea", () => {
   it("comparte los estados del Input", () => {
     render(<Textarea placeholder="Notas" />)
     expect(screen.getByPlaceholderText("Notas")).toHaveClass(
-      "border-gray-400",
-      "hover:border-gray-500",
+      "border-gray-alpha-400",
+      "hover:border-gray-alpha-500",
       "focus:focus-border",
       "disabled:bg-gray-100",
       "aria-invalid:border-red-800"

@@ -96,8 +96,8 @@ describe("Meter", () => {
 
   it("usa los tokens del sistema y anima el ancho con transición propia", () => {
     render(<Meter aria-label="x" value={10} />)
-    expect(track()).toHaveClass("bg-gray-300", "rounded-full", "overflow-hidden")
-    expect(indicator()).toHaveClass("bg-gray-1000", "transition-[width]", "motion-reduce:transition-none")
+    expect(track()).toHaveClass("bg-gray-alpha-400", "rounded-full", "overflow-hidden")
+    expect(indicator()).toHaveClass("bg-brand-700", "transition-[width]", "motion-reduce:transition-none")
   })
 
   it("el className del llamador le gana a la clase base", () => {

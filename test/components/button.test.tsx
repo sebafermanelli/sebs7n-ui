@@ -50,12 +50,12 @@ describe("Button", () => {
   })
 
   it("accent usa la marca con su color de contraste", () => {
-    expect(buttonVariants({ variant: "accent" })).toContain("bg-brand-700 text-brand-contrast shadow-button hover:bg-brand-800")
+    expect(buttonVariants({ variant: "accent" })).toContain("bg-brand-700 text-brand-contrast sheen shadow-button-accent hover:bg-brand-800")
   })
 
   it("destructive usa los valores de error de Vercel", () => {
     expect(buttonVariants({ variant: "destructive" })).toContain(
-      "bg-red-800 text-button-error-fg shadow-button hover:bg-button-error-hover active:translate-y-px active:bg-button-error-active"
+      "bg-red-800 text-button-error-fg sheen shadow-button hover:bg-button-error-hover active:translate-y-px active:bg-button-error-active"
     )
   })
 

@@ -186,7 +186,7 @@ function ChartTooltipContent({
     <div
       data-slot="chart-tooltip"
       className={cn(
-        "grid min-w-32 gap-1.5 rounded-md border border-gray-400 bg-background-100 px-2.5 py-1.5 text-copy-13 shadow-menu",
+        "grid min-w-32 gap-1.5 rounded-control border border-gray-alpha-400 glass px-2.5 py-1.5 text-copy-13 shadow-menu",
         className
       )}
     >

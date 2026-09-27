@@ -2,6 +2,7 @@
 
 import { Toolbar as ToolbarPrimitive } from "@base-ui/react/toolbar"
 
+import { useModality } from "../internal/modality.js"
 import { cn, type WithClassName } from "../lib/utils.js"
 import { inputControlClassName, inputDisabledClassName } from "../variants/input.js"
 import { Button } from "./button.js"
@@ -58,7 +59,10 @@ function Toolbar({ className, onKeyDown, ...props }: ToolbarProps) {
         target.focus()
       }}
       className={cn(
-        "flex items-center gap-1 rounded-lg bg-background-100 p-1 text-gray-1000 shadow-card",
+        // Una cápsula de vidrio con el canto especular: es la barra de Safari. `relative` es lo
+        // que ancla el `::after` del canto.
+        "relative flex items-center gap-1 rounded-full glass glass-rim p-1 text-gray-1000 shadow-card",
+        "data-[orientation=vertical]:rounded-surface",
         "data-[orientation=vertical]:w-fit data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-stretch",
         className
       )}
@@ -168,7 +172,7 @@ function ToolbarLink({ className, ...props }: ToolbarLinkProps) {
     <ToolbarPrimitive.Link
       data-slot="toolbar-link"
       className={cn(
-        "inline-flex h-8 items-center rounded-md px-2 text-copy-14 text-gray-900 no-underline outline-none",
+        "inline-flex h-8 items-center rounded-full px-2 text-copy-14 text-gray-900 no-underline outline-none",
         "transition-control hover:text-gray-1000 focus-visible:focus-ring",
         className
       )}
@@ -189,6 +193,7 @@ function ToolbarLink({ className, ...props }: ToolbarLinkProps) {
 type ToolbarInputProps = WithClassName<ToolbarPrimitive.Input.Props>
 
 function ToolbarInput({ className, ...props }: ToolbarInputProps) {
+  useModality()
   return (
     <ToolbarPrimitive.Input
       data-slot="toolbar-input"

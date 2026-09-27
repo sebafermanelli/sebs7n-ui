@@ -3,7 +3,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "../lib/utils.js"
 
 const buttonVariantsBase = cva(
-  "relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-md border border-transparent whitespace-nowrap outline-none select-none transition-surface focus-visible:focus-ring data-disabled:cursor-not-allowed data-disabled:border-gray-400 data-disabled:bg-gray-100 data-disabled:text-gray-700 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full border border-transparent whitespace-nowrap outline-none select-none transition-surface focus-visible:focus-ring data-disabled:cursor-not-allowed data-disabled:border-gray-400 data-disabled:bg-gray-100 data-disabled:text-gray-700 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
@@ -12,17 +12,19 @@ const buttonVariantsBase = cva(
         // es gray-1000 (blanco en oscuro): lleva la variante invertida, con filo gris.
         default:
           "bg-gray-1000 text-background-100 shadow-button-inverted hover:bg-button-primary-hover active:translate-y-px active:shadow-none data-disabled:shadow-none",
+        // `outline` es el botón de vidrio: alfa sin blur, porque casi siempre vive adentro de una
+        // superficie que ya lo tiene.
         outline:
-          "border-gray-alpha-400 bg-background-100 text-gray-1000 shadow-card hover:bg-gray-alpha-200 active:translate-y-px active:bg-gray-alpha-300 active:shadow-none data-disabled:shadow-none",
+          "border-gray-alpha-400 glass-control text-gray-1000 shadow-card hover:bg-gray-alpha-200 active:translate-y-px active:bg-gray-alpha-300 active:shadow-none data-disabled:shadow-none",
         // Misma sombra de 1px que `outline`: los dos son superficies que flotan sobre la página.
         // `ghost` no la lleva porque en reposo no tiene superficie, es texto.
         secondary:
-          "bg-gray-100 text-gray-1000 shadow-card hover:bg-gray-200 active:translate-y-px active:bg-gray-300 active:shadow-none data-disabled:shadow-none",
+          "bg-gray-alpha-200 text-gray-1000 shadow-card hover:bg-gray-alpha-300 active:translate-y-px active:bg-gray-alpha-500 active:shadow-none data-disabled:shadow-none",
         ghost: "text-gray-1000 hover:bg-gray-alpha-200 active:bg-gray-alpha-300",
         accent:
-          "bg-brand-700 text-brand-contrast shadow-button hover:bg-brand-800 active:translate-y-px active:bg-brand-800 active:shadow-none data-disabled:shadow-none",
+          "bg-brand-700 text-brand-contrast sheen shadow-button-accent hover:bg-brand-800 active:translate-y-px active:bg-brand-800 active:shadow-none data-disabled:shadow-none",
         destructive:
-          "bg-red-800 text-button-error-fg shadow-button hover:bg-button-error-hover active:translate-y-px active:bg-button-error-active active:shadow-none data-disabled:shadow-none",
+          "bg-red-800 text-button-error-fg sheen shadow-button hover:bg-button-error-hover active:translate-y-px active:bg-button-error-active active:shadow-none data-disabled:shadow-none",
         link: "h-auto! rounded-sm border-0 px-0! text-brand-900 underline-offset-4 hover:text-brand-1000 hover:underline data-disabled:bg-transparent",
       },
       size: {
@@ -36,19 +38,17 @@ const buttonVariantsBase = cva(
       /**
        * La forma del botón.
        *
-       * `pill` es `rounded-full` con un escalón más de padding horizontal: en
-       * una curva completa, el texto que empieza donde empezaba en un
-       * rectángulo queda pegado al borde.
+       * Desde 1.0 el botón es una cápsula: es la forma de los controles de vidrio, y con un
+       * radio de 6px el material se leía como un efecto pegado sobre un rectángulo de Geist.
        *
-       * **Solo para los CTA de un hero o de una sección de marketing.** Es la
-       * regla de vercel.com, donde los dos CTA del hero son píldoras y el
-       * resto del sitio no: mezclar las dos formas en la misma pantalla se ve
-       * descuidado, así que en el chrome de una app —nav, tablas, formularios,
-       * diálogos— no va nunca.
+       * `pill` suma un escalón de padding horizontal, para los CTA de un hero. `rect` devuelve
+       * el rectángulo (`rounded-control`) para donde una cápsula no entra: una celda de tabla
+       * densa, un botón a todo el ancho de un formulario angosto.
        */
       shape: {
         default: "",
-        pill: "rounded-full",
+        pill: "",
+        rect: "rounded-control",
       },
     },
     compoundVariants: [
@@ -57,11 +57,6 @@ const buttonVariantsBase = cva(
       { shape: "pill", size: "sm", className: "px-5" },
       { shape: "pill", size: "md", className: "px-6" },
       { shape: "pill", size: "lg", className: "px-7" },
-      // Un botón de ícono ya es cuadrado con su propio radio: `pill` no aplica
-      // y se ignora, en vez de convertirlo en un círculo que nadie pidió.
-      { shape: "pill", size: "icon-sm", className: "rounded-md" },
-      { shape: "pill", size: "icon-md", className: "rounded-md" },
-      { shape: "pill", size: "icon-lg", className: "rounded-md" },
     ],
     defaultVariants: { variant: "default", size: "md", shape: "default" },
   }
@@ -72,7 +67,7 @@ export const buttonVariants = (props?: Parameters<typeof buttonVariantsBase>[0])
 
 export type ButtonVariantProps = VariantProps<typeof buttonVariants>
 
-/** La forma del botón: rectángulo del sistema o píldora de marketing. */
+/** La forma del botón: cápsula del sistema, píldora de marketing o rectángulo. */
 export type ButtonShape = NonNullable<ButtonVariantProps["shape"]>
 
 export type ButtonSize = NonNullable<ButtonVariantProps["size"]>

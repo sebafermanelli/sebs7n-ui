@@ -22,8 +22,8 @@ function useScrolled(threshold: number) {
 
 type NavbarProps = React.ComponentProps<"header"> & {
   /**
-   * `bar`: a todo el ancho; transparente arriba y, al scrollear, translúcida con
-   * blur y un borde abajo.
+   * `bar`: a todo el ancho; transparente arriba y, al scrollear, de vidrio y con
+   * un borde abajo.
    *
    * `floating`: arranca igual que `bar`, pegada arriba y a todo el ancho, y al
    * scrollear se despega: margen a los costados y arriba, borde redondeado y la
@@ -69,12 +69,13 @@ function Navbar({ className, variant = "bar", position = "sticky", scrollThresho
       <div
         data-slot="navbar-surface"
         className={cn(
-          "border border-transparent transition-[background-color,border-color,border-radius,box-shadow,backdrop-filter] duration-300 ease-out",
+          "relative border border-transparent transition-[background-color,border-color,border-radius,box-shadow,backdrop-filter] duration-300 ease-out",
           !scrolled && "rounded-none bg-transparent",
-          // El 80 % deja ver lo que pasa por debajo; el blur lo vuelve una textura y no ruido.
-          scrolled && "bg-background-100/80 backdrop-blur-md backdrop-saturate-150",
-          scrolled && !floating && "rounded-none border-b-gray-400",
-          floating && "mx-auto max-w-6xl rounded-2xl border-gray-400 shadow-menu"
+          // Una barra es de lo más grande que flota en una pantalla: material grueso.
+          scrolled && "glass glass-thick",
+          scrolled && !floating && "rounded-none border-b-gray-alpha-400",
+          // Despegada es cromo, y el cromo lleva el canto especular de las cápsulas de Safari.
+          floating && "mx-auto max-w-6xl rounded-panel border-gray-alpha-400 shadow-menu glass-rim"
         )}
       >
         {children}

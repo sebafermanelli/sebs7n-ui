@@ -77,7 +77,7 @@ function UserMenu({ user, collapsed: collapsedProp, side, align, children, signO
     <DropdownMenuTrigger
       data-slot="user-menu-trigger"
       className={cn(
-        "flex h-12 w-full min-w-0 cursor-pointer items-center gap-2 rounded-md px-2 text-left outline-none transition-control hover:bg-gray-alpha-100 focus-visible:focus-ring data-popup-open:bg-gray-alpha-200",
+        "flex h-12 w-full min-w-0 cursor-pointer items-center gap-2 rounded-control px-2 text-left outline-none transition-control hover:bg-gray-alpha-100 focus-visible:focus-ring data-popup-open:bg-gray-alpha-200",
         className
       )}
     >

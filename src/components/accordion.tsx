@@ -54,7 +54,7 @@ function AccordionTrigger({ className, chevron = true, children, headerClassName
       <AccordionPrimitive.Trigger
         data-slot="accordion-trigger"
         className={cn(
-          "group/accordion-trigger flex flex-1 cursor-pointer items-center justify-between gap-3 rounded-md px-1 py-4 text-left text-heading-14 text-gray-1000 outline-none select-none transition-control",
+          "group/accordion-trigger flex flex-1 cursor-pointer items-center justify-between gap-3 rounded-control px-1 py-4 text-left text-heading-14 text-gray-1000 outline-none select-none transition-control",
           "hover:text-gray-900 focus-visible:focus-ring",
           "data-disabled:cursor-not-allowed data-disabled:text-gray-700 data-disabled:hover:text-gray-700",
           "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
