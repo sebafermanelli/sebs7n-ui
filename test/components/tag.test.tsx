@@ -75,8 +75,8 @@ describe("Tag", () => {
       </>
     )
     const tag = screen.getByText("Tag").closest("[data-slot=tag]")!
-    expect(tag).toHaveClass("bg-blue-100", "text-blue-900", "border-blue-400", "rounded-full", "h-6")
-    expect(screen.getByText("Badge")).toHaveClass("bg-blue-100", "text-blue-900", "border-blue-400", "rounded-full", "h-6")
+    expect(tag).toHaveClass("bg-blue-700/(--sf-tint-fill)", "text-blue-ink", "border-blue-700/(--sf-tint-border)", "rounded-full", "h-6")
+    expect(screen.getByText("Badge")).toHaveClass("bg-blue-700/(--sf-tint-fill)", "text-blue-ink", "border-blue-700/(--sf-tint-border)", "rounded-full", "h-6")
   })
 
   it("no recorta el anillo de foco del botón de quitar", () => {
@@ -116,6 +116,6 @@ describe("Tag", () => {
     const tag = screen.getByText("React").closest("[data-slot=tag]")!
     expect(tag).toHaveClass("h-8", "rounded-md")
     expect(tag).not.toHaveClass("h-6", "rounded-full")
-    expect(tagVariants({ className: "bg-gray-300" }).split(/\s+/)).not.toContain("bg-gray-100")
+    expect(tagVariants({ className: "bg-gray-300" }).split(/\s+/)).not.toContain("bg-gray-alpha-200")
   })
 })

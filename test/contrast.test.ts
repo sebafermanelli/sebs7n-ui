@@ -4,7 +4,7 @@ import { join } from "node:path"
 import { describe, expect, it } from "vitest"
 
 import brands from "../tokens/brands.json"
-import { composite, contrastRatio, hexOfOklch, luminanceOfHex, luminanceOfOklch, type Oklch } from "../src/lib/contrast.js"
+import { composite, contrastRatio, flattenAlpha, hexOfOklch, luminanceOfHex, luminanceOfOklch, type Oklch } from "../src/lib/contrast.js"
 
 /**
  * La tabla de contraste del sistema.
@@ -106,20 +106,57 @@ describe("Grises de texto sobre los tres fondos (WCAG 1.4.3)", () => {
   }
 })
 
-// El Badge `subtle` es el mismo cuerpo en las nueve paletas: texto `-900` sobre
-// fondo `-100`. Una paleta que se retoque de a un paso rompe acá antes de
-// llegar a una pantalla.
-describe("Badge subtle en las nueve paletas (WCAG 1.4.3)", () => {
-  for (const theme of ["light", "dark"] as const) {
+// El Badge `subtle` es el mismo cuerpo en las nueve paletas: la tinta de la paleta sobre su
+// propio `-700` en alfa, compuesto sobre lo que tenga debajo. Los tres números —cuánto de
+// `-900` lleva la tinta, cuánto tinte lleva el fondo en cada tema— se leen de theme.css: si
+// alguien sube el tinte para que «se note más», el contraste que pierde aparece acá.
+//
+// `-900` solo, que era el texto hasta 0.8, no aguanta un tinte visible: sobre el 12 % da
+// 4,23:1 con el rojo. Por eso existe la tinta.
+describe("Badge subtle: la tinta sobre su tinte (WCAG 1.4.3)", () => {
+  const css = read("theme.css")
+  const mezcla = Number(css.match(/--color-red-ink: color-mix\(in srgb, var\(--sf-red-900\) (\d+)%/)![1]) / 100
+  const marcas = brands as Record<string, Record<string, { base: number[] }>>
+  // Los mismos pasos de la escala de brand que declara theme.css: luminosidad fija y croma relativo.
+  const ESCALA = { light: { 900: [0.535, 0.945], 1000: [0.269, 0.433] }, dark: { 900: [0.717, 0.705], 1000: [0.968, 0.077] } } as const
+
+  it("la tinta de las ocho paletas de color sale de la misma mezcla", () => {
     for (const color of PALETAS) {
-      // `brand` se calcula en OKLCH desde la variable de la app: lo cubre brand-contrast.test.ts.
-      if (color === "brand") continue
-      const fg = paleta[theme][`--sf-${color}-900`]!
-      const bg = paleta[theme][`--sf-${color}-100`]!
-      it(`${theme} · ${color}: ${fg} sobre ${bg} llega a 4.5:1`, () => {
-        expect(ratio(fg, bg)).toBeGreaterThanOrEqual(4.5)
-      })
+      if (color === "gray") continue
+      expect(css, color).toContain(`--color-${color}-ink: color-mix(in srgb, var(--sf-${color}-900) ${mezcla * 100}%, var(--sf-${color}-1000));`)
     }
+  })
+
+  for (const theme of ["light", "dark"] as const) {
+    const inicio = css.indexOf(theme === "light" ? ":root {" : ".dark {")
+    const tinte = Number(css.slice(inicio, css.indexOf("\n  }", inicio)).match(/--sf-tint-fill: (\d+)%/)![1]) / 100
+    for (const [donde, token] of Object.entries(FONDOS)) {
+      const debajo = paleta[theme][token]!
+      for (const color of PALETAS) {
+        if (color === "gray" || color === "brand") continue
+        const tinta = composite(paleta[theme][`--sf-${color}-900`]!, mezcla, paleta[theme][`--sf-${color}-1000`]!)
+        const fondo = composite(paleta[theme][`--sf-${color}-700`]!, tinte, debajo)
+        it(`${theme} · ${color} sobre ${donde}: ${tinta} sobre ${fondo} llega a 4.5:1`, () => {
+          expect(ratio(tinta, fondo)).toBeGreaterThanOrEqual(4.5)
+        })
+      }
+      // `brand` no tenía test: «lo cubre brand-contrast.test.ts» decía el comentario, pero ese
+      // mide el texto sobre `brand-700` sólido, no el Badge. Con `-900` sobre `-100`, el verde
+      // de ejemplo estaba en 4,50:1 clavado.
+      for (const [marca, temas] of Object.entries(marcas)) {
+        const base = temas[theme]!.base
+        const paso = (n: 900 | 1000) => hexOfOklch([ESCALA[theme][n][0], base[1]! * ESCALA[theme][n][1], base[2]!] as unknown as Oklch)
+        const tinta = composite(paso(900), mezcla, paso(1000))
+        const fondo = composite(hexOfOklch(base as unknown as Oklch), tinte, debajo)
+        it(`${theme} · brand ${marca} sobre ${donde}: ${tinta} sobre ${fondo} llega a 4.5:1`, () => {
+          expect(ratio(tinta, fondo)).toBeGreaterThanOrEqual(4.5)
+        })
+      }
+    }
+    it(`${theme} · gray: gray-900 sobre gray-alpha-200 llega a 4.5:1`, () => {
+      const fondo = flattenAlpha(paleta[theme]["--sf-gray-alpha-200"]!, paleta[theme]["--sf-background-100"]!)
+      expect(ratio(paleta[theme]["--sf-gray-900"]!, fondo)).toBeGreaterThanOrEqual(4.5)
+    })
   }
 })
 

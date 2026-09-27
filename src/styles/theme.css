@@ -106,6 +106,26 @@
   --color-button-error-hover: var(--sf-button-error-hover);
   --color-button-error-active: var(--sf-button-error-active);
   --color-backdrop: var(--sf-backdrop);
+  /**
+   * La tinta: el texto de color que va sobre un tinte de su mismo color (Badge, Tag).
+   *
+   * Es el 60 % de `-900` y el 40 % de `-1000`. `-900` solo no alcanza: sobre su propio tinte al
+   * 12 % da 4,23:1 con el rojo, y 3,97 con un brand verde. Y `-1000` solo llega de sobra, pero
+   * es casi negro: se pierde el color, que es lo que un Badge tiene que decir de lejos. A mitad
+   * de camino el mínimo es 6,05:1 y el rojo sigue siendo rojo.
+   *
+   * En oscuro la misma mezcla también suma contraste: ahí `-1000` es el más claro de la escala.
+   * Se mezcla en sRGB y no en OKLab para que `test/contrast.test.ts` pueda rehacer la cuenta.
+   */
+  --color-brand-ink: color-mix(in srgb, var(--sf-brand-900) 60%, var(--sf-brand-1000));
+  --color-red-ink: color-mix(in srgb, var(--sf-red-900) 60%, var(--sf-red-1000));
+  --color-amber-ink: color-mix(in srgb, var(--sf-amber-900) 60%, var(--sf-amber-1000));
+  --color-green-ink: color-mix(in srgb, var(--sf-green-900) 60%, var(--sf-green-1000));
+  --color-blue-ink: color-mix(in srgb, var(--sf-blue-900) 60%, var(--sf-blue-1000));
+  --color-teal-ink: color-mix(in srgb, var(--sf-teal-900) 60%, var(--sf-teal-1000));
+  --color-purple-ink: color-mix(in srgb, var(--sf-purple-900) 60%, var(--sf-purple-1000));
+  --color-pink-ink: color-mix(in srgb, var(--sf-pink-900) 60%, var(--sf-pink-1000));
+
   --color-highlight: var(--sf-highlight);
   --color-highlight-active: var(--sf-highlight-active);
 
@@ -118,6 +138,7 @@
   --shadow-button-inverted: var(--sf-shadow-button-inverted);
   --shadow-button-accent: var(--sf-shadow-button-accent);
   --shadow-track: var(--sf-shadow-track);
+  --shadow-chip: var(--sf-shadow-chip);
 
   /**
    * Paleta categórica de los gráficos: cinco series, en este orden, siempre.
@@ -254,6 +275,15 @@
     --sf-highlight: color-mix(in srgb, var(--sf-brand-700) 14%, transparent);
     --sf-highlight-active: color-mix(in srgb, var(--sf-brand-700) 22%, transparent);
     /**
+     * El vidrio teñido de un Badge o un Tag: cuánto de su color lleva el fondo y cuánto el
+     * borde. Van como porcentaje suelto porque se usan de modificador de opacidad
+     * (`bg-red-700/(--sf-tint-fill)`), así las nueve paletas comparten los dos números.
+     */
+    --sf-tint-fill: 12%;
+    --sf-tint-border: 24%;
+    /* El filo de luz de un chip: lo que hace que el tinte se lea como material y no como relleno. */
+    --sf-shadow-chip: inset 0 1px 0 0 rgb(255 255 255 / calc(0.2 + var(--sf-g) * 0.4));
+    /**
      * El borde del campo enfocado (`focus-border`).
      *
      * En claro era `gray-alpha-600` (#0000003d): compuesto sobre la superficie
@@ -365,6 +395,9 @@
        `gray-900` daba 4,27:1. */
     --sf-highlight: color-mix(in srgb, var(--sf-brand-700) 22%, transparent);
     --sf-highlight-active: color-mix(in srgb, var(--sf-brand-700) 26%, transparent);
+    --sf-tint-fill: 22%;
+    --sf-tint-border: 34%;
+    --sf-shadow-chip: inset 0 1px 0 0 rgb(255 255 255 / calc(0.04 + var(--sf-g) * 0.1));
     --sf-focus-halo: color-mix(in srgb, var(--sf-brand-700) 30%, transparent);
 
     --sf-shadow-border-base: 0 0 0 1px #ffffff25;

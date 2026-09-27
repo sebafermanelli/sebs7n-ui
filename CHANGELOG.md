@@ -46,6 +46,13 @@ El material pasa a ser vidrio. La guía para migrar el código de una app está 
   elegida ya no se pinta (`data-checked:bg-*`), la marca una pastilla que se desliza.
 - **El panel de `NavigationMenu`** usa el radio concéntrico de los menús (el del link más su
   `p-1`) en vez del de superficie.
+- **`Badge` y `Tag` son vidrio teñido.** El fondo y el borde pasan de `-100` y `-400` opacos al
+  `-700` de la paleta en alfa (12 % y 24 % en claro; 22 % y 34 % en oscuro), con un filo de luz
+  (`shadow-chip`). El texto pasa de `-900` a la tinta de la paleta (`text-red-ink`), que es el
+  60 % de `-900` y el 40 % de `-1000`: `-900` sobre un tinte visible no llega a 4,5:1.
+  `solid` suma el brillo de los botones de color.
+- **El pie de `Table`** (`TableCaption`) tiene aire arriba y abajo: quedaba apoyado en el borde
+  inferior del contorno.
 - **`Alert` es alfa sin blur** (`glass-control`): su lugar más común es adentro de una `Card`, y
   como vidrio era vidrio sobre vidrio.
 - **`Tooltip` ya no tiene flecha.**

@@ -35,9 +35,17 @@ describe("Toggle (chip)", () => {
 })
 
 describe("Badge", () => {
-  it("subtle por color: fondo 100, texto 900, borde 400", () => {
+  it("subtle por color: vidrio teñido, con la tinta de la paleta y el filo de luz", () => {
     render(<Badge color="amber">Pendiente</Badge>)
-    expect(screen.getByText("Pendiente")).toHaveClass("bg-amber-100", "text-amber-900", "border-amber-400", "rounded-full", "text-label-12", "h-6")
+    expect(screen.getByText("Pendiente")).toHaveClass(
+      "bg-amber-700/(--sf-tint-fill)",
+      "border-amber-700/(--sf-tint-border)",
+      "text-amber-ink",
+      "shadow-chip",
+      "rounded-full",
+      "text-label-12",
+      "h-6"
+    )
   })
 
   it("solid gray y brand", () => {
@@ -47,8 +55,10 @@ describe("Badge", () => {
         <Badge variant="solid" color="brand">Pro</Badge>
       </>
     )
-    expect(screen.getByText("Nuevo")).toHaveClass("bg-gray-1000", "text-background-100")
-    expect(screen.getByText("Pro")).toHaveClass("bg-brand-700", "text-brand-contrast")
+    // Sólidos de verdad: el color va en capa sólida, con el brillo de los botones de color.
+    expect(screen.getByText("Nuevo")).toHaveClass("bg-gray-1000", "text-background-100", "sheen")
+    expect(screen.getByText("Pro")).toHaveClass("bg-brand-700", "text-brand-contrast", "sheen")
+    expect(screen.getByText("Pro").className).not.toMatch(/--sf-tint/)
   })
 
   it("dot agrega un punto 700 oculto al lector", () => {
@@ -71,7 +81,7 @@ describe("Badge", () => {
     expect(link).toHaveAttribute("href", "/planes")
     expect(link).toHaveAttribute("data-slot", "badge")
     expect(link).toHaveAttribute("data-color", "green")
-    expect(link).toHaveClass("bg-green-100", "underline")
+    expect(link).toHaveClass("bg-green-700/(--sf-tint-fill)", "underline")
     expect(link.querySelector("[data-slot=badge-dot]")).not.toBeNull()
   })
 })

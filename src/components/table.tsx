@@ -87,8 +87,11 @@ function TableCell({ className, numeric = false, ...props }: TableCellProps) {
   )
 }
 
+// Aire arriba y abajo, no solo arriba: el pie vive ADENTRO del contorno de la tabla. Con
+// `mt-4` a secas el texto quedaba apoyado en el borde de abajo, y con el radio de 20px la
+// esquina le pasaba por encima.
 function TableCaption({ className, ...props }: React.ComponentProps<"caption">) {
-  return <caption data-slot="table-caption" className={cn("mt-4 text-copy-13 text-gray-900", className)} {...props} />
+  return <caption data-slot="table-caption" className={cn("px-4 py-3 text-copy-13 text-gray-900", className)} {...props} />
 }
 
 export {

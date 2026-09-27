@@ -15,7 +15,7 @@ const twMerge = extendTailwindMerge({
   extend: {
     theme: {
       text: [...TYPE_SCALE],
-      shadow: ["tooltip", "menu", "modal", "card", "card-hover", "button", "button-inverted", "button-accent", "track"],
+      shadow: ["tooltip", "menu", "modal", "card", "card-hover", "button", "button-inverted", "button-accent", "track", "chip"],
       radius: ["control", "surface", "panel", "field"],
     },
     classGroups: {

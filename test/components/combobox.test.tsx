@@ -262,7 +262,7 @@ describe("Combobox", () => {
       </Combobox>
     )
     const chip = screen.getByText("Chile").closest<HTMLElement>("[data-slot=combobox-chip]")!
-    expect(chip).toHaveClass("rounded-full", "border-gray-400", "bg-gray-100", "text-gray-900", "text-label-12")
+    expect(chip).toHaveClass("rounded-full", "border-gray-alpha-400", "bg-gray-alpha-200", "text-gray-900", "text-label-12")
     await userEvent.click(screen.getByRole("combobox", { name: "Países" }))
     await userEvent.keyboard("uru{ArrowDown}{Enter}")
     expect(onValueChange).toHaveBeenLastCalledWith(["Chile", "Uruguay"], expect.anything())

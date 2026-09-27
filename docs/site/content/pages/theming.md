@@ -47,12 +47,13 @@ describe("la marca llega a AA", () => {
 | `brand-700` | `Button variant="accent"`, anillo de foco y borde del campo enfocado, borde de `Card selected`, franja de `Alert variant="brand"`, `Badge solid color="brand"`. Y **todo lo que está prendido**: `Checkbox` y `Radio` marcados, `Switch`, el relleno de `Slider`, `Progress` y `Meter`. |
 | `brand-700` en tinte | La selección: el ítem de menú bajo el puntero, el ítem activo del `Sidebar`, la fila elegida de `Table` y el rango de `Calendar` (14 % en claro, 22 % en oscuro). Es `bg-highlight`. |
 | `brand-800` | Hover del acento. |
-| `brand-900` | `Button variant="link"`, texto de `Badge subtle color="brand"`, ícono de `Alert variant="brand"`. |
+| `brand-900` | `Button variant="link"`, ícono de `Alert variant="brand"`, ícono del ítem activo del `Sidebar`. |
+| `brand-ink` | El texto de `Badge` y `Tag` de marca: a mitad de camino entre `brand-900` y `brand-1000`. |
 | `brand-1000` | Hover del `Button variant="link"`. |
-| `brand-100` · `brand-400` | Fondo y borde suaves de `Badge variant="subtle" color="brand"`. |
+| `brand-100` · `brand-400` | No los usa ningún componente desde 1.0: el fondo suave de `Badge` y `Tag` es `brand-700` en alfa. |
 | `brand-contrast` | El texto **encima** del acento. |
 
-`brand-200`, `brand-300`, `brand-500` y `brand-600` no los usa ningún componente: existen para la app, que también tiene la escala completa. Y `linkVariants` **no usa la marca**: los links de texto son grises (`gray-900` → `gray-1000`), para que un párrafo con tres links no se convierta en tres manchas de color.
+`brand-200`, `brand-300` y `brand-500` no los usa ningún componente: existen para la app, que también tiene la escala completa. Y `linkVariants` **no usa la marca**: los links de texto son grises (`gray-900` → `gray-1000`), para que un párrafo con tres links no se convierta en tres manchas de color.
 
 **Un solo acento sólido por pantalla.** El `Button variant="accent"` es la acción principal y va uno. Los estados prendidos no compiten con él: son chicos y dicen «esto está activo», no «apretá acá». Si en una pantalla igual molestan, `Switch variant="neutral"` prende en gris.
 

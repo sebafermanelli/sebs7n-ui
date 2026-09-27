@@ -53,6 +53,7 @@ Sin tocar nada más, la app compila y los componentes del paquete se ven de vidr
 | `Tabs` | La lista es una pista segmentada y ya no mide `w-full`. | `<TabsList variant="line">` para la navegación de una página entera. |
 | `Switch` | Prende con el brand. `variant="accent"` es igual al default. | `variant="neutral"` si el color molesta. |
 | `Checkbox` · `Radio` · `Slider` · `Progress` · `Meter` | Lo prendido usa el brand. | Nada. |
+| `Badge` · `Tag` | Vidrio teñido: fondo y borde en alfa, texto en la tinta de la paleta. | Nada. Si copiaste el cuerpo a mano (`bg-red-100 text-red-900 border-red-400`), pasalo a `badgeVariants({ color: "red" })`. |
 | `Tooltip` | Sin flecha. | Nada. |
 | `Alert` | Es alfa sin blur (`glass-control`), así que puede ir adentro de una `Card`. La franja es una píldora adentro; 20px de padding izquierdo. | Nada. |
 | `Table` | El contenedor es vidrio. | Adentro de una `Card`, `className="glass-control"` en la tabla para no apilar dos. |
