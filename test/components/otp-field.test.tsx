@@ -164,8 +164,10 @@ describe("OTPField", () => {
       "glass-control",
       "hover:border-gray-alpha-500",
       "focus:focus-border",
-      "rounded-control"
+      // Una casilla cuadrada en cápsula sería un círculo.
+      "rounded-[min(var(--radius-field),var(--radius-control))]"
     )
+    expect(casillas()[0]).not.toHaveClass("rounded-field")
   })
 
   it.each([

@@ -4,7 +4,7 @@ import { Select as SelectPrimitive } from "@base-ui/react/select"
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react"
 
 import { cn, type WithClassName } from "../lib/utils.js"
-import { inputControlClassName, inputDisabledClassName, inputSizeClassName } from "../variants/input.js"
+import { inputControlClassName, inputDisabledClassName, inputPaddingClassName, inputSizeClassName } from "../variants/input.js"
 import { menuItemClassName, menuLabelClassName, menuPopupClassName, menuSeparatorClassName } from "../variants/menu.js"
 
 const Select = SelectPrimitive.Root
@@ -23,7 +23,8 @@ function SelectTrigger({ className, size = "md", children, ...props }: SelectTri
         inputControlClassName,
         inputSizeClassName,
         inputDisabledClassName,
-        "flex w-full min-w-0 cursor-pointer items-center justify-between gap-2 px-3 whitespace-nowrap select-none",
+        inputPaddingClassName,
+        "flex w-full min-w-0 cursor-pointer items-center justify-between gap-2 whitespace-nowrap select-none",
         // El foco va por `focus-visible` y no por `focus`, que es lo que hacen los demás: el
         // trigger es un botón y con `focus:` el borde aparecía también al hacer click. Por eso
         // tampoco usa `inputInvalidClassName`, que trae el halo rojo en `focus:`.

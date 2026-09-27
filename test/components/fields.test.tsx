@@ -15,8 +15,20 @@ describe("Input", () => {
       "placeholder:text-gray-900",
       "hover:border-gray-alpha-500",
       "focus:focus-border",
-      "rounded-control"
+      "rounded-field",
+      "px-4",
+      "data-[size=sm]:px-3.5",
+      "data-[size=lg]:px-5"
     )
+  })
+
+  it("Textarea no es una cápsula: su radio se frena en 20px", () => {
+    render(<Textarea placeholder="Notas" />)
+    const notas = screen.getByPlaceholderText("Notas")
+    expect(notas).toHaveClass("rounded-[min(var(--radius-field),--spacing(5))]")
+    // tailwind-merge tiene que haber sacado el de la base: con los dos, gana el que Tailwind
+    // haya emitido último.
+    expect(notas).not.toHaveClass("rounded-field")
   })
 
   it("invalid: borde rojo y halo de error en foco", () => {

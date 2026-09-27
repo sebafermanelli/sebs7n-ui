@@ -5,7 +5,7 @@ import { Field as FieldPrimitive } from "@base-ui/react/field"
 
 import { useModality } from "../internal/modality.js"
 import { cn } from "../lib/utils.js"
-import { inputControlClassName, inputDisabledClassName, inputInvalidClassName } from "../variants/input.js"
+import { inputControlClassName, inputDisabledClassName, inputInvalidClassName, inputMultilineRadiusClassName } from "../variants/input.js"
 
 /**
  * Texto largo, con el mismo cuerpo y los mismos estados que `Input`.
@@ -31,7 +31,8 @@ function Textarea({ className, ...props }: TextareaProps) {
         inputDisabledClassName,
         inputInvalidClassName,
         // Sin alto del sistema: `field-sizing-content` lo hace crecer con el texto.
-        "peer field-sizing-content min-h-20 w-full min-w-0 px-3 py-2.5 placeholder:text-gray-900 focus:focus-border",
+        inputMultilineRadiusClassName,
+        "peer field-sizing-content min-h-20 w-full min-w-0 px-4 py-3 placeholder:text-gray-900 focus:focus-border",
         // Además del `data-disabled:` de arriba —que es el que pone un `Fieldset`—, el
         // `<textarea>` puede venir deshabilitado por el atributo nativo. Los dos pasan.
         "disabled:cursor-not-allowed disabled:border-gray-400 disabled:bg-gray-100 disabled:text-gray-700",

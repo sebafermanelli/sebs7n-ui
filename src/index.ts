@@ -48,6 +48,8 @@ export {
   inputControlClassName,
   inputDisabledClassName,
   inputInvalidClassName,
+  inputMultilineRadiusClassName,
+  inputPaddingClassName,
   inputShellButtonClassName,
   inputShellClassName,
   inputShellInputClassName,

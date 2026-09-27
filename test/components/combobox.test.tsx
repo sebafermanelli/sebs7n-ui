@@ -68,7 +68,7 @@ describe("Combobox", () => {
     const group = (input: HTMLElement) => input.closest<HTMLElement>("[data-slot=combobox-input-group]")!
     expect(group(md)).toHaveAttribute("data-size", "md")
     expect(group(md)).toHaveClass(
-      "rounded-control", "border", "border-gray-alpha-400", "glass-control", "transition-control",
+      "rounded-field", "border", "border-gray-alpha-400", "glass-control", "transition-control",
       "data-[size=sm]:h-8", "data-[size=md]:h-10", "data-[size=lg]:h-12",
       "hover:border-gray-alpha-500", "has-[input:focus]:focus-border",
       "has-[input[aria-invalid=true]]:border-red-800", "data-disabled:bg-gray-100"

@@ -15,7 +15,7 @@ describe("DatePicker", () => {
     const campo = screen.getByRole("button", { name: "Vencimiento" })
     expect(campo).toHaveTextContent("Elegí una fecha")
     expect(campo).toHaveAttribute("data-placeholder")
-    expect(campo).toHaveClass("rounded-control", "glass-control", "border-gray-alpha-400", "data-[size=md]:h-10", "focus-visible:focus-border")
+    expect(campo).toHaveClass("rounded-field", "glass-control", "border-gray-alpha-400", "data-[size=md]:h-10", "px-4", "focus-visible:focus-border")
   })
 
   it("muestra la fecha en el idioma de la app, no en el del navegador", () => {

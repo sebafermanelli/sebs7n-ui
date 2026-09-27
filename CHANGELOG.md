@@ -25,6 +25,11 @@ El material pasa a ser vidrio. La guía para migrar el código de una app está 
   (26px). Para volver a los de Geist: 6px, 12px y 16px. Quien pisaba `--radius-md` o
   `--radius-xl` en un `@theme` para cambiarle el radio a los componentes tiene que pisar los
   nuevos: la escala de Tailwind ya no los alcanza.
+- **Los campos son cápsulas**, como los botones: `Input`, `Select`, `Combobox`, `Autocomplete`,
+  `NumberField`, `DatePicker`, `ToolbarInput` y `SidebarSearch` usan el token nuevo
+  `--radius-field` (9999px), y el padding horizontal pasa de 12 a 16px. `Textarea` y un
+  `Combobox` con chips frenan el radio en 20px; las casillas de `OTPField`, en 10. Con
+  `--radius-field: 10px` vuelve el rectángulo.
 - **`Button` es una cápsula** (`rounded-full`), los de ícono incluidos. `shape="rect"` devuelve
   el rectángulo. `shape="pill"` sigue sumando padding, pero ya no cambia el radio.
 - **Los estados prendidos usan el brand.** `Checkbox` y `Radio` marcados, `Switch`, y el

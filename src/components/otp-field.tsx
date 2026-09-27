@@ -76,6 +76,9 @@ function OTPField({ className, inputClassName, length = 6, size = "md", ...props
             inputControlClassName,
             inputDisabledClassName,
             inputInvalidClassName,
+            // Una casilla cuadrada en cápsula sería un círculo: acá el radio se frena en el de los
+            // controles. Si la app pisa `--radius-field` con algo más chico, gana lo de la app.
+            "rounded-[min(var(--radius-field),var(--radius-control))]",
             // La casilla es cuadrada, así que no usa `inputSizeClassName`: el `size-*` fija
             // los dos ejes y el alto del sistema solo fijaría uno.
             "shrink-0 text-center tabular-nums focus:focus-border",

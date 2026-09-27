@@ -13,7 +13,22 @@
  * el contenido, una casilla de OTP es cuadrada y un input de barra de herramientas mide 32px—.
  */
 export const inputControlClassName =
-  "rounded-control border border-gray-alpha-400 glass-control text-copy-14 text-gray-1000 shadow-card outline-none transition-control hover:border-gray-alpha-500"
+  "rounded-field border border-gray-alpha-400 glass-control text-copy-14 text-gray-1000 shadow-card outline-none transition-control hover:border-gray-alpha-500"
+
+/**
+ * El radio de un campo de más de una línea: Textarea, Combobox con chips.
+ *
+ * Una cápsula de tres renglones no existe —sería un óvalo—, así que el radio se frena en
+ * 20px, que es la curva de un campo de 40px. Cuando la app pisa `--radius-field` con algo más
+ * chico, gana lo de la app.
+ */
+export const inputMultilineRadiusClassName = "rounded-[min(var(--radius-field),--spacing(5))]"
+
+/**
+ * El aire a los costados de un campo de una línea. Sube con el alto: en una cápsula el
+ * texto que empieza a 12px del borde queda metido en la curva.
+ */
+export const inputPaddingClassName = "px-4 data-[size=sm]:px-3.5 data-[size=lg]:px-5"
 
 /** Los tres altos del sistema, por `data-size`. El `lg` sube también la tipografía. */
 export const inputSizeClassName = "data-[size=sm]:h-8 data-[size=md]:h-10 data-[size=lg]:h-12 data-[size=lg]:text-copy-16"
@@ -57,10 +72,10 @@ export const inputShellClassName =
 // comunicar. Un solo tono para los dos temas: `gray-900` ya pasa en ambos, así que no hace falta
 // una variante por tema ni un token nuevo.
 export const inputShellInputClassName =
-  "h-full min-w-0 flex-1 bg-transparent px-3 text-inherit outline-none placeholder:text-gray-900 disabled:cursor-not-allowed"
+  "h-full min-w-0 flex-1 bg-transparent px-4 text-inherit outline-none placeholder:text-gray-900 disabled:cursor-not-allowed"
 
 // Botones chicos dentro de la superficie (limpiar, chevron, quitar chip).
 export const inputShellButtonClassName =
-  "inline-flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-sm text-gray-900 outline-none transition-control " +
+  "inline-flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-full text-gray-900 outline-none transition-control " +
   "hover:bg-gray-alpha-200 hover:text-gray-1000 active:bg-gray-alpha-300 focus-visible:focus-ring " +
   "disabled:pointer-events-none data-disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:size-4"

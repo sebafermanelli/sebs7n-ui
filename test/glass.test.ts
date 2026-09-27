@@ -75,12 +75,15 @@ describe("radios semánticos", () => {
     expect(css).toMatch(/--radius-control:\s*10px;/)
     expect(css).toMatch(/--radius-surface:\s*20px;/)
     expect(css).toMatch(/--radius-panel:\s*26px;/)
+    // Los campos son cápsulas, como los botones.
+    expect(css).toMatch(/--radius-field:\s*9999px;/)
   })
 
   it("tailwind-merge los conoce: el radio del llamador gana", () => {
     expect(cn("rounded-control", "rounded-full")).toBe("rounded-full")
     expect(cn("rounded-full", "rounded-surface")).toBe("rounded-surface")
     expect(cn("rounded-panel", "rounded-none")).toBe("rounded-none")
+    expect(cn("rounded-field", "rounded-[min(var(--radius-field),--spacing(5))]")).toBe("rounded-[min(var(--radius-field),--spacing(5))]")
   })
 })
 

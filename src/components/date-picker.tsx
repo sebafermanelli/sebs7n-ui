@@ -7,7 +7,13 @@ import { CalendarIcon } from "lucide-react"
 import { toISODate, type DateRange, type WeekStart } from "../lib/dates.js"
 import { useLabels, type Labels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
-import { inputControlClassName, inputDisabledClassName, inputInvalidClassName, inputSizeClassName } from "../variants/input.js"
+import {
+  inputControlClassName,
+  inputDisabledClassName,
+  inputInvalidClassName,
+  inputPaddingClassName,
+  inputSizeClassName,
+} from "../variants/input.js"
 import { floatingPopupClassName } from "../variants/overlay.js"
 import { Calendar } from "./calendar.js"
 
@@ -150,7 +156,8 @@ function DatePicker(props: DatePickerProps) {
           inputSizeClassName,
           inputDisabledClassName,
           inputInvalidClassName,
-          "flex w-full min-w-0 cursor-pointer items-center gap-2 px-3 text-left",
+          inputPaddingClassName,
+          "flex w-full min-w-0 cursor-pointer items-center gap-2 text-left",
           "focus-visible:focus-border data-popup-open:focus-border data-placeholder:text-gray-900",
           "[&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:text-gray-900",
           className

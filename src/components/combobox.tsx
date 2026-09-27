@@ -9,7 +9,7 @@ import { renderShellTrigger } from "../internal/shell-trigger.js"
 import { useLabels } from "../lib/labels.js"
 import { useModality } from "../internal/modality.js"
 import { cn, type WithClassName } from "../lib/utils.js"
-import { inputShellButtonClassName, inputShellClassName, inputShellInputClassName } from "../variants/input.js"
+import { inputMultilineRadiusClassName, inputShellButtonClassName, inputShellClassName, inputShellInputClassName } from "../variants/input.js"
 import { menuItemClassName, menuLabelClassName, menuPopupClassName, menuSeparatorClassName } from "../variants/menu.js"
 import { tagRemoveClassName, tagVariants } from "../variants/tag.js"
 
@@ -195,7 +195,9 @@ function ComboboxChips({ className, size = "md", showTrigger = true, showClear =
       data-disabled={disabled ? "" : undefined}
       className={cn(
         inputShellClassName,
-        "h-auto! data-[size=sm]:min-h-8 data-[size=md]:min-h-10 data-[size=lg]:min-h-12 items-start py-1 pr-1 pl-1",
+        // Los chips pueden ocupar varias filas.
+        inputMultilineRadiusClassName,
+        "h-auto! data-[size=sm]:min-h-8 data-[size=md]:min-h-10 data-[size=lg]:min-h-12 items-start py-1 pr-1 pl-1.5",
         className
       )}
     >

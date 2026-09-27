@@ -13,6 +13,7 @@ Sin tocar nada más, la app compila y los componentes del paquete se ven de vidr
 ```css
 :root {
   --glass: 0;
+  --radius-field: 6px;
   --radius-control: 6px;
   --radius-surface: 12px;
   --radius-panel: 16px;
@@ -32,7 +33,8 @@ Sin tocar nada más, la app compila y los componentes del paquete se ven de vidr
 | `bg-brand-100` | `bg-highlight` | Un estado con el color de marca: una zona de arrastre activa, una fila elegida. Opaco, adentro de un vidrio queda como un parche. |
 | `border-gray-400` | `border-gray-alpha-400` | Siempre. |
 | `hover:border-gray-500` | `hover:border-gray-alpha-500` | Siempre. |
-| `rounded-md` | `rounded-control` | Controles, ítems de lista. |
+| `rounded-md` | `rounded-field` | Un campo hecho a mano: un input, un select nativo, un buscador. Y `px-3` pasa a `px-4`. |
+| `rounded-md` | `rounded-control` | Ítems de lista, casillas, lo que no es un campo. |
 | `rounded-lg` · `rounded-xl` | `rounded-surface` | Tarjetas, paneles. |
 | `rounded-2xl` | `rounded-panel` | Lo más grande: un hero, un modal propio. |
 | `var(--radius-md)` · `var(--radius-xl)` | `var(--radius-control)` · `var(--radius-surface)` | En CSS escrito a mano. |
@@ -45,6 +47,8 @@ Sin tocar nada más, la app compila y los componentes del paquete se ven de vidr
 
 | Componente | Qué cambió | Qué hacer |
 |---|---|---|
+| `Input` · `Select` · `Combobox` · `DatePicker` · `NumberField` | Son cápsulas, con 16px de padding horizontal. | Nada. `--radius-field: 10px` los devuelve al rectángulo. |
+| `Textarea` | Radio de 20px. | Nada. |
 | `Button` | Es una cápsula. | Nada, o `shape="rect"` donde una cápsula no entra. |
 | `Tabs` | La lista es una pista segmentada y ya no mide `w-full`. | `<TabsList variant="line">` para la navegación de una página entera. |
 | `Switch` | Prende con el brand. `variant="accent"` es igual al default. | `variant="neutral"` si el color molesta. |

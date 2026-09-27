@@ -70,7 +70,7 @@ Cuándo usar cada familia:
 
 {{radios}}
 
-Los componentes usan los tres primeros. `rounded-control` (10px) es el de inputs e ítems de menú y de sidebar; `rounded-surface` (20px), el de lo que flota: Card, Alert, Table, Popover, Toast; `rounded-panel` (26px), el de lo más grande: Dialog, Drawer, la Navbar despegada. `rounded-full` es la forma de lo que es redondo por definición —avatares, puntos, pulgares, pistas— y de las cápsulas: `Button`, `Badge`, `Tag`, `Toggle`, `Toolbar`, `ThemeSwitcher` y la pista de `Tabs`.
+Los componentes usan los cuatro primeros. `rounded-field` (cápsula) es el de los campos; `rounded-control` (10px), el de ítems de menú y de sidebar; `rounded-surface` (20px), el de lo que flota: Card, Alert, Table, Popover, Toast; `rounded-panel` (26px), el de lo más grande: Dialog, Drawer, la Navbar despegada. `rounded-full` es la forma de lo que es redondo por definición —avatares, puntos, pulgares, pistas— y de las cápsulas: `Button`, `Badge`, `Tag`, `Toggle`, `Toolbar`, `ThemeSwitcher` y la pista de `Tabs`.
 
 El resto de la tabla es la escala de Tailwind con los valores de Geist. Ningún componente la usa: queda para el código de la app.
 

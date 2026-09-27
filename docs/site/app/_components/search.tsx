@@ -94,9 +94,10 @@ export function SearchProvider({ children }: { children: ReactNode }) {
               propios era una caja de 10px de radio a 8px del borde de otra de 26: dos curvas que
               no se acompañan. Sin caja no hay nada que alinear.
 
-              El indicador de foco es la línea de abajo, que toma el color de marca: un campo sin
-              borde no puede mostrar el suyo, y el cursor solo no alcanza. */}
-          <div className="flex items-center gap-3 border-b border-gray-alpha-400 px-5 transition-control has-[input:focus]:border-brand-700">
+              No lleva indicador de foco propio, y es a propósito: es el único campo de un
+              diálogo que se abre con el foco ya puesto ahí, así que el cursor es el indicador.
+              Una línea de color debajo marcaba un estado que no tiene alternativa. */}
+          <div className="flex items-center gap-3 border-b border-gray-alpha-400 px-5">
             <SearchIcon aria-hidden="true" className="size-4.5 shrink-0 text-gray-900" />
             <input
               aria-label="Buscar en la documentación"

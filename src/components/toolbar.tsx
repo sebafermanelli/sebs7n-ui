@@ -202,7 +202,7 @@ function ToolbarInput({ className, ...props }: ToolbarInputProps) {
         inputDisabledClassName,
         // Mismo cuerpo que `Input size="sm"`, sin el `w-full`: en una barra el
         // ancho lo pone quien lo usa (`className="w-20"`), no el componente.
-        "h-8 min-w-0 px-2 placeholder:text-gray-900 focus:focus-border",
+        "h-8 min-w-0 px-3 placeholder:text-gray-900 focus:focus-border",
         className
       )}
       {...props}

@@ -110,6 +110,7 @@ Las reglas de cuándo va cada una están en [Reglas de uso](/docs/reglas).
 ```css
 :root {
   --glass: 0;
+  --radius-field: 6px;
   --radius-control: 6px;
   --radius-surface: 12px;
   --radius-panel: 16px;
@@ -160,15 +161,18 @@ El paquete define `color-scheme` en `html` y `html.dark`, así que los scrollbar
 
 ## Radio
 
-Los componentes usan tres radios, y los tres se pisan desde la app:
+Los componentes usan cuatro radios, y los cuatro se pisan desde la app:
 
 ```css
 :root {
-  --radius-control: 10px;   /* inputs, ítems de menú y de sidebar */
+  --radius-field: 9999px;   /* campos: Input, Select, Combobox, DatePicker */
+  --radius-control: 10px;   /* ítems de menú y de sidebar, casillas de OTP */
   --radius-surface: 20px;   /* Card, Alert, Table, Popover, Toast */
   --radius-panel: 26px;     /* Dialog, Drawer, Navbar flotante */
 }
 ```
+
+**Los campos son cápsulas**, la misma forma que un `Button`: en un formulario, el campo y el botón de abajo tienen la misma curva. Lo que tiene más de una línea no puede serlo —una cápsula de tres renglones es un óvalo—, así que `Textarea` y un `Combobox` con varias filas de chips frenan su radio en 20px. Con `--radius-field: 10px` vuelven todos al rectángulo.
 
 Son nombres propios y no pasos de la escala de Tailwind: redefinir `--radius-md` le cambiaría el radio también al código de la app, que comparte el tema. La escala (`rounded-md`, `rounded-xl`) sigue existiendo y es de la app; ningún componente la usa.
 

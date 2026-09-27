@@ -106,7 +106,7 @@ describe("Sidebar", () => {
     const onSearch = vi.fn()
     render(<Example onSearch={onSearch} />)
     const search = screen.getByRole("button", { name: "Buscar…" })
-    expect(search).toHaveClass("h-8", "border", "border-gray-alpha-400", "glass-control", "rounded-control", "hover:border-gray-alpha-500", "focus-visible:focus-ring")
+    expect(search).toHaveClass("h-8", "border", "border-gray-alpha-400", "glass-control", "rounded-field", "hover:border-gray-alpha-500", "focus-visible:focus-ring")
     expect(search).toHaveAttribute("aria-keyshortcuts", "Meta+K")
     expect(search.querySelector("kbd")).toHaveTextContent("⌘K")
     await userEvent.click(search)
