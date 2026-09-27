@@ -1,7 +1,7 @@
 import { act, render } from "@testing-library/react"
 import { afterEach, describe, expect, it } from "vitest"
 
-import { Navbar, NavbarContent } from "../../src/components/navbar"
+import { Navbar, NavbarContent, useNavbar } from "../../src/components/navbar"
 
 function scrollTo(y: number) {
   act(() => {
@@ -74,5 +74,25 @@ describe("Navbar", () => {
     const { container } = render(<Navbar position="fixed">x</Navbar>)
     expect(header(container)).toHaveClass("fixed", "inset-x-0")
     expect(header(container)).not.toHaveClass("sticky")
+  })
+
+  it("useNavbar le avisa a un hijo si la barra ya tiene vidrio y si está despegada", () => {
+    const Hijo = () => {
+      const { scrolled, floating } = useNavbar()
+      return <span data-testid="hijo">{`${scrolled} ${floating}`}</span>
+    }
+    const { getByTestId, rerender } = render(<Navbar variant="floating"><Hijo /></Navbar>)
+    expect(getByTestId("hijo")).toHaveTextContent("false false")
+    scrollTo(40)
+    expect(getByTestId("hijo")).toHaveTextContent("true true")
+    // `bar` también tiene vidrio al scrollear, pero no se despega.
+    rerender(<Navbar><Hijo /></Navbar>)
+    expect(getByTestId("hijo")).toHaveTextContent("true false")
+  })
+
+  it("useNavbar afuera de un Navbar no rompe: todo en false", () => {
+    const Hijo = () => <span data-testid="suelto">{String(useNavbar().floating)}</span>
+    const { getByTestId } = render(<Hijo />)
+    expect(getByTestId("suelto")).toHaveTextContent("false")
   })
 })

@@ -20,6 +20,27 @@ function useScrolled(threshold: number) {
   )
 }
 
+type NavbarState = {
+  /** La ventana bajó más que el umbral: la barra ya tiene su vidrio. */
+  scrolled: boolean
+  /** Además de eso, es `floating`: está despegada. */
+  floating: boolean
+}
+
+const NavbarContext = React.createContext<NavbarState>({ scrolled: false, floating: false })
+
+/**
+ * El estado de la barra, para un hijo que tiene que cambiar con ella y no le alcanza con CSS
+ * (`group-data-scrolled/navbar:…`): una segunda fila que arriba es su propia cápsula de vidrio
+ * y, con la barra despegada, pasa a ser parte de ella —y entonces no puede llevar material,
+ * porque sería vidrio sobre vidrio—.
+ *
+ * Afuera de un `Navbar` devuelve todo en `false`.
+ */
+function useNavbar(): NavbarState {
+  return React.useContext(NavbarContext)
+}
+
 type NavbarProps = React.ComponentProps<"header"> & {
   /**
    * `bar`: a todo el ancho; transparente arriba y, al scrollear, de vidrio y con
@@ -61,6 +82,7 @@ type NavbarProps = React.ComponentProps<"header"> & {
 function Navbar({ className, surfaceClassName, variant = "bar", position = "sticky", scrollThreshold = 12, children, ...props }: NavbarProps) {
   const scrolled = useScrolled(scrollThreshold)
   const floating = variant === "floating" && scrolled
+  const state = React.useMemo(() => ({ scrolled, floating }), [scrolled, floating])
   return (
     <header
       data-slot="navbar"
@@ -87,7 +109,7 @@ function Navbar({ className, surfaceClassName, variant = "bar", position = "stic
           surfaceClassName
         )}
       >
-        {children}
+        <NavbarContext.Provider value={state}>{children}</NavbarContext.Provider>
       </div>
     </header>
   )
@@ -104,4 +126,4 @@ function NavbarContent({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
-export { Navbar, NavbarContent, type NavbarProps }
+export { Navbar, NavbarContent, useNavbar, type NavbarProps, type NavbarState }

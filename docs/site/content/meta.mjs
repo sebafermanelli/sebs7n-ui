@@ -1453,6 +1453,7 @@ export const COMPONENTS = {
     props: {
       Toolbar: {
         orientation: "`vertical` cambia las flechas a ↑ ↓ y da vuelta los separadores.",
+        variant: "`glass` (default) es la cápsula de vidrio · `plain` no lleva material, para una barra adentro de otra superficie.",
         loopFocus: "Si al pasar del último control se vuelve al primero.",
         onKeyDown: "Corre **antes** que el manejador propio de la barra. Si hacés `preventDefault()`, Home y End no mueven el foco.",
       },

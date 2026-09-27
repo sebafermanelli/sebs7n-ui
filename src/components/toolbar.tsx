@@ -24,7 +24,14 @@ import { Button } from "./button.js"
  *
  * `orientation="vertical"` cambia las flechas a ↑ ↓ y da vuelta los separadores.
  */
-type ToolbarProps = WithClassName<ToolbarPrimitive.Root.Props>
+type ToolbarProps = WithClassName<ToolbarPrimitive.Root.Props> & {
+  /**
+   * `glass`: la cápsula de vidrio, que flota sola sobre la página. `plain`: sin material, para
+   * una barra que vive ADENTRO de otra superficie —un `Navbar`, una `Card`, un `Dialog`—. Ahí
+   * el vidrio ya lo pone quien la contiene: nunca vidrio sobre vidrio.
+   */
+  variant?: "glass" | "plain"
+}
 
 /**
  * Los hijos que el primitivo metió en el recorrido.
@@ -41,10 +48,11 @@ function rovingItems(root: HTMLElement) {
   return Array.from(root.querySelectorAll<HTMLElement>("[tabindex]")).filter((item) => item.checkVisibility?.() !== false)
 }
 
-function Toolbar({ className, onKeyDown, ...props }: ToolbarProps) {
+function Toolbar({ className, onKeyDown, variant = "glass", ...props }: ToolbarProps) {
   return (
     <ToolbarPrimitive.Root
       data-slot="toolbar"
+      data-variant={variant}
       // Home y End no las trae Base UI: su composite las tiene detrás de un
       // `enableHomeAndEndKeys` que `Menubar` prende y `Toolbar` no. El patrón
       // toolbar de la WAI las pide, y en una barra larga son la diferencia entre
@@ -65,7 +73,8 @@ function Toolbar({ className, onKeyDown, ...props }: ToolbarProps) {
       className={cn(
         // Una cápsula de vidrio con el canto especular: es la barra de Safari. `relative` es lo
         // que ancla el `::after` del canto.
-        "relative flex items-center gap-1 rounded-full glass glass-rim p-1 text-gray-1000 shadow-card",
+        "relative flex items-center gap-1 rounded-full p-1 text-gray-1000",
+        variant === "glass" && "glass glass-rim shadow-card",
         "data-[orientation=vertical]:rounded-surface",
         "data-[orientation=vertical]:w-fit data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-stretch",
         className

@@ -9,6 +9,16 @@ major.
 
 ## [Unreleased]
 
+## [1.7.0] - 2026-09-27
+
+### Added
+
+- **`useNavbar()`**: el estado del `Navbar` (`scrolled`, `floating`) para un hijo que tiene
+  que cambiar con él y no le alcanza con CSS.
+- **`Toolbar variant="plain"`**: sin material, para una barra que vive adentro de otra
+  superficie. Las dos juntas permiten una segunda fila en el `Navbar` que arriba es su propia
+  cápsula y, con la barra despegada, pasa a ser parte de ella.
+
 ## [1.6.0] - 2026-09-27
 
 ### Added
