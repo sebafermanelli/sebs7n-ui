@@ -6,7 +6,7 @@
 // se instala antes de empacar, porque `npm pack` corre el `prepack` del paquete
 // (tsc + tailwind) y necesita las devDependencies de la raíz.
 import { execFileSync } from "node:child_process"
-import { existsSync, mkdirSync, readFileSync } from "node:fs"
+import { existsSync, mkdirSync, readFileSync, rmSync } from "node:fs"
 import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
 
@@ -48,4 +48,15 @@ execFileSync("npm", ["install", "--no-save", "--include=dev", "--no-audit", "--n
   stdio: "inherit",
   env: { ...process.env, NODE_ENV: "development" },
 })
+// Turbopack guarda en `.next/dev` lo que ya resolvió de `node_modules`, y no se entera de que
+// el paquete cambió si se reinstala en la misma ruta. El sitio quedaba sirviendo la versión
+// anterior: una prop nueva llegaba al DOM como atributo desconocido («Received `true` for a
+// non-boolean attribute `active`») y las utilidades nuevas de CSS no existían. Pasó con cada
+// reinstalación de la 1.0 a la 1.3.
+const cache = join(here, ".next", "dev")
+if (existsSync(cache)) {
+  rmSync(cache, { recursive: true, force: true })
+  console.log("[sync-ui] caché de desarrollo borrado: el servidor de dev hay que reiniciarlo")
+}
+
 console.log(`[sync-ui] sebs7n-ui instalado desde ${filename}`)
