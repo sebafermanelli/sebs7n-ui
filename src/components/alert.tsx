@@ -4,6 +4,10 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "../lib/utils.js"
 
 // Fondo neutro: la variante solo cambia la franja izquierda (700) y el ícono (900, para llegar a 3:1).
+//
+// Es `glass-control` y no `glass`: alfa, sin blur. Un Alert no flota —nada le pasa por debajo—
+// y su lugar más común es adentro de una Card, arriba de un formulario. Como vidrio, ahí era
+// vidrio sobre vidrio: el segundo solo desenfoca lo que pintó el primero.
 const alertVariants = cva(
   // La franja de color de las variantes es un pseudo-elemento y no un `box-shadow: inset`, que
   // era lo que había: la sombra es una sola propiedad, y con la franja adentro no quedaba lugar
@@ -14,7 +18,7 @@ const alertVariants = cva(
   // curva por debajo de la franja y sus puntas quedaban afuera del contorno. A 8px del borde y
   // 12 de arriba y de abajo entra en cualquier radio: con 20px la curva se mete 1,7px a esa
   // altura, y con 32 —el máximo que admite un alert de dos líneas—, 7.
-  "group/alert relative grid w-full gap-0.5 rounded-surface border border-gray-alpha-400 glass py-3 pr-4 pl-5 text-left text-copy-14 shadow-card has-[>svg]:grid-cols-[auto_1fr] has-[>svg]:gap-x-3 *:[svg]:row-span-2 *:[svg]:mt-0.5 *:[svg:not([class*='size-'])]:size-4 before:pointer-events-none before:absolute before:inset-y-3 before:left-2 before:w-1 before:rounded-full before:bg-transparent",
+  "group/alert relative grid w-full gap-0.5 rounded-surface border border-gray-alpha-400 glass-control py-3 pr-4 pl-5 text-left text-copy-14 shadow-card has-[>svg]:grid-cols-[auto_1fr] has-[>svg]:gap-x-3 *:[svg]:row-span-2 *:[svg]:mt-0.5 *:[svg:not([class*='size-'])]:size-4 before:pointer-events-none before:absolute before:inset-y-3 before:left-2 before:w-1 before:rounded-full before:bg-transparent",
   {
     variants: {
       variant: {

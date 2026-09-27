@@ -41,6 +41,8 @@ El material pasa a ser vidrio. La guía para migrar el código de una app está 
   elegida ya no se pinta (`data-checked:bg-*`), la marca una pastilla que se desliza.
 - **El panel de `NavigationMenu`** usa el radio concéntrico de los menús (el del link más su
   `p-1`) en vez del de superficie.
+- **`Alert` es alfa sin blur** (`glass-control`): su lugar más común es adentro de una `Card`, y
+  como vidrio era vidrio sobre vidrio.
 - **`Tooltip` ya no tiene flecha.**
 - **La franja de color de `Alert`** es una píldora adentro de la superficie, a 8px del borde, y
   el padding izquierdo pasa de 16 a 20px. Pegada al borde no entraba en el radio de 20px.

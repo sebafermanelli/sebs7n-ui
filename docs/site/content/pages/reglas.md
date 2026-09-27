@@ -14,10 +14,10 @@ Las decisiones que no se ven en una tabla de props. Cada una existe porque rompe
 
 | Es | Lleva |
 |---|---|
-| Una superficie que flota: Card, Popover, menú, Alert, Table | `glass` |
+| Una superficie que flota: Card, Popover, menú, Table | `glass` |
 | Lo más grande que flota: Dialog, Sheet, Drawer, Sidebar, Navbar | `glass glass-thick` |
 | Una lámina: un chip flotante | `glass glass-thin` |
-| Un control adentro de una superficie: Input, Button `outline`, Checkbox vacío | `glass-control` |
+| Lo que vive adentro de una superficie: Input, Button `outline`, Checkbox vacío, Alert | `glass-control` |
 | Cromo: Toolbar, Navbar despegada | `glass` + `glass-rim` |
 | Una zona hundida: `Card subtle`, `thead`, `EmptyState` | `bg-gray-alpha-100` |
 

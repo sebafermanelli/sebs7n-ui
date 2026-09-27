@@ -28,6 +28,8 @@ Sin tocar nada más, la app compila y los componentes del paquete se ven de vidr
 | `bg-background-100/80 backdrop-blur-*` | `glass glass-thick` | Una barra translúcida hecha a mano. |
 | `bg-background-200` | `bg-gray-alpha-100` | Una zona hundida: una banda, un `thead`, un bloque de código. |
 | `bg-gray-100` · `bg-gray-200` | `bg-gray-alpha-100` · `bg-gray-alpha-200` | Un hover o un relleno **sobre** una superficie. |
+| `bg-gray-200` · `bg-gray-300` | `bg-gray-alpha-400` | La pista de una barra de progreso hecha a mano: es la del `Progress` del paquete. |
+| `bg-brand-100` | `bg-highlight` | Un estado con el color de marca: una zona de arrastre activa, una fila elegida. Opaco, adentro de un vidrio queda como un parche. |
 | `border-gray-400` | `border-gray-alpha-400` | Siempre. |
 | `hover:border-gray-500` | `hover:border-gray-alpha-500` | Siempre. |
 | `rounded-md` | `rounded-control` | Controles, ítems de lista. |
@@ -48,7 +50,8 @@ Sin tocar nada más, la app compila y los componentes del paquete se ven de vidr
 | `Switch` | Prende con el brand. `variant="accent"` es igual al default. | `variant="neutral"` si el color molesta. |
 | `Checkbox` · `Radio` · `Slider` · `Progress` · `Meter` | Lo prendido usa el brand. | Nada. |
 | `Tooltip` | Sin flecha. | Nada. |
-| `Alert` | La franja es una píldora adentro; 20px de padding izquierdo. | Nada. |
+| `Alert` | Es alfa sin blur (`glass-control`), así que puede ir adentro de una `Card`. La franja es una píldora adentro; 20px de padding izquierdo. | Nada. |
+| `Table` | El contenedor es vidrio. | Adentro de una `Card`, `className="glass-control"` en la tabla para no apilar dos. |
 | `ThemeSwitcher` | Es la pista de `Tabs`, con una pastilla que se desliza. | Sacá cualquier `data-checked:bg-*` que le hayas pisado. |
 | `Input type="date"` | — | Pasalo a `DatePicker`. **No valida:** si la fecha es obligatoria, chequealo al enviar. |
 | `AppShell` | Prop nueva `ambient`. | Prendela para que el vidrio tenga qué desenfocar. |

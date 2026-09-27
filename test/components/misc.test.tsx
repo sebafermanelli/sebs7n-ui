@@ -83,8 +83,13 @@ describe("Alert", () => {
       </Alert>
     )
     const alert = screen.getByRole("alert")
-    expect(alert).toHaveClass("glass", "border-gray-alpha-400", "rounded-surface", "shadow-card", "before:bg-amber-700", "*:[svg]:text-amber-900")
+    expect(alert).toHaveClass("glass-control", "border-gray-alpha-400", "rounded-surface", "shadow-card", "before:bg-amber-700", "*:[svg]:text-amber-900")
     expect(screen.getByText("Cargalo antes de facturar.")).toHaveClass("text-gray-900")
+  })
+
+  it("es alfa y no vidrio: vive adentro de una Card sin apilar dos blur", () => {
+    render(<Alert>x</Alert>)
+    expect(screen.getByRole("alert").className).not.toMatch(/(^|\s)glass(\s|$)/)
   })
 
   it("la franja es una píldora adentro de la superficie, no pegada al borde", () => {

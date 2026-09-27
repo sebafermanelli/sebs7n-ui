@@ -45,11 +45,11 @@ describe("la marca llega a AA", () => {
 | Token | Dónde |
 |---|---|
 | `brand-700` | `Button variant="accent"`, anillo de foco y borde del campo enfocado, borde de `Card selected`, franja de `Alert variant="brand"`, `Badge solid color="brand"`. Y **todo lo que está prendido**: `Checkbox` y `Radio` marcados, `Switch`, el relleno de `Slider`, `Progress` y `Meter`. |
-| `brand-700` en tinte | La selección: el ítem de menú bajo el puntero y el ítem activo del `Sidebar` (14 % en claro, 22 % en oscuro). Es `bg-highlight`. |
+| `brand-700` en tinte | La selección: el ítem de menú bajo el puntero, el ítem activo del `Sidebar`, la fila elegida de `Table` y el rango de `Calendar` (14 % en claro, 22 % en oscuro). Es `bg-highlight`. |
 | `brand-800` | Hover del acento. |
 | `brand-900` | `Button variant="link"`, texto de `Badge subtle color="brand"`, ícono de `Alert variant="brand"`. |
 | `brand-1000` | Hover del `Button variant="link"`. |
-| `brand-100` · `brand-400` | Fondo y borde suaves: `Badge variant="subtle" color="brand"`, fila seleccionada de `Table`. |
+| `brand-100` · `brand-400` | Fondo y borde suaves de `Badge variant="subtle" color="brand"`. |
 | `brand-contrast` | El texto **encima** del acento. |
 
 `brand-200`, `brand-300`, `brand-500` y `brand-600` no los usa ningún componente: existen para la app, que también tiene la escala completa. Y `linkVariants` **no usa la marca**: los links de texto son grises (`gray-900` → `gray-1000`), para que un párrafo con tres links no se convierta en tres manchas de color.
