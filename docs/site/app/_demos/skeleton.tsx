@@ -11,13 +11,13 @@ export function Basico() {
   return (
     <Card className="w-full max-w-sm" aria-busy="true">
       <CardHeader>
-        <Skeleton className="h-5 w-32 rounded-md" />
-        <Skeleton className="h-4 w-48 rounded-md" />
+        <Skeleton className="h-5 w-32 rounded-control" />
+        <Skeleton className="h-4 w-48 rounded-control" />
       </CardHeader>
       <CardContent className="flex flex-col gap-2">
-        <Skeleton className="h-4 w-full rounded-md" />
-        <Skeleton className="h-4 w-full rounded-md" />
-        <Skeleton className="h-4 w-2/3 rounded-md" />
+        <Skeleton className="h-4 w-full rounded-control" />
+        <Skeleton className="h-4 w-full rounded-control" />
+        <Skeleton className="h-4 w-2/3 rounded-control" />
       </CardContent>
     </Card>
   )

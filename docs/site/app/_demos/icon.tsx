@@ -115,7 +115,7 @@ export function ConNombre() {
     ["Factura 0014", "Rechazada", XCircleIcon, "danger"],
   ] as const
   return (
-    <ul className="flex w-full max-w-sm flex-col divide-y divide-gray-400 rounded-xl border border-gray-400 bg-background-100">
+    <ul className="flex w-full max-w-sm flex-col divide-y divide-gray-400 rounded-surface border border-gray-alpha-400 glass">
       {filas.map(([nombre, estado, icon, tone]) => (
         <li className="flex items-center justify-between gap-3 px-4 py-3 text-copy-14" key={nombre}>
           <span className="text-gray-1000">{nombre}</span>

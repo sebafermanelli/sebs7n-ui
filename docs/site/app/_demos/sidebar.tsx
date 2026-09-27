@@ -30,11 +30,11 @@ export function Completo() {
         <Switch checked={colapsado} onCheckedChange={setColapsado} size="sm" />
         Colapsado
       </label>
-      <div className="h-[26rem] overflow-hidden rounded-xl border border-gray-400">
+      <div className="h-[26rem] overflow-hidden rounded-surface border border-gray-alpha-400">
         <Sidebar className="h-full" collapsed={colapsado}>
           <SidebarHeader>
             <div className="flex h-8 items-center gap-2 px-1">
-              <div className="size-6 shrink-0 rounded-md bg-gray-1000" />
+              <div className="size-6 shrink-0 rounded-control bg-gray-1000" />
               <span className="text-label-14 font-medium group-data-collapsed/sidebar:hidden">Acme</span>
               <Badge className="group-data-collapsed/sidebar:hidden" size="sm">
                 Admin

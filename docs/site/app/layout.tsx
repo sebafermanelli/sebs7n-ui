@@ -16,7 +16,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html className={`${GeistSans.variable} ${GeistMono.variable}`} lang="es" suppressHydrationWarning>
-      <body>
+      {/* La luz ambiente viene prendida: el sitio muestra el material, y sobre una página lisa
+          el vidrio no tiene nada que desenfocar. El Playground la puede apagar. */}
+      <body className="bg-ambient">
         {/* El header propio vive en el home; /docs usa el AppShell del paquete. */}
         <Providers>{children}</Providers>
       </body>

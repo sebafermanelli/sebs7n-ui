@@ -150,7 +150,7 @@ export default function Home() {
           </div>
         </section>
 
-        <footer className="border-t border-gray-400 pt-8 text-copy-14 text-gray-900">
+        <footer className="border-t border-gray-alpha-400 pt-8 text-copy-14 text-gray-900">
           MIT ·{" "}
           <a
             className="rounded-sm underline underline-offset-4 outline-none hover:text-gray-1000 focus-visible:focus-ring"

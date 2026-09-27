@@ -22,7 +22,7 @@ const MOVIMIENTOS = [
  */
 export function Basico() {
   return (
-    <ScrollArea className="h-56 w-full max-w-sm rounded-xl border border-gray-400 bg-background-100" contentClassName="p-3">
+    <ScrollArea className="h-56 w-full max-w-sm rounded-surface border border-gray-alpha-400 glass" contentClassName="p-3">
       <div className="flex flex-col">
         {MOVIMIENTOS.map((movimiento, indice) => (
           <div key={movimiento.detalle + movimiento.fecha}>
@@ -57,7 +57,7 @@ export function DosEjes() {
   ]
   return (
     <ScrollArea
-      className="h-48 w-full max-w-sm rounded-xl border border-gray-400 bg-background-100"
+      className="h-48 w-full max-w-sm rounded-surface border border-gray-alpha-400 glass"
       contentClassName="p-3"
       orientation="both"
     >
@@ -97,7 +97,7 @@ export function Horizontal() {
     <ScrollArea className="w-full max-w-sm" contentClassName="pb-3" orientation="horizontal">
       <div className="flex w-max gap-3">
         {meses.map((mes, indice) => (
-          <div className="flex w-40 flex-col gap-1 rounded-xl border border-gray-400 bg-background-100 p-4" key={mes}>
+          <div className="flex w-40 flex-col gap-1 rounded-surface border border-gray-alpha-400 glass p-4" key={mes}>
             <span className="text-label-12 text-gray-900">{mes}</span>
             <span className="text-heading-20 text-gray-1000">$ {(420 + indice * 37).toLocaleString("es-AR")}k</span>
           </div>

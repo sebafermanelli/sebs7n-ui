@@ -125,11 +125,37 @@ function declarations(body) {
   return out
 }
 
-/** `prop: value;` de un bloque plano → objeto, para el campo `css` de shadcn. */
+/**
+ * `prop: value;` de un bloque → objeto, para el campo `css` de shadcn.
+ *
+ * Los bloques anidados (`&::after { … }`, `:root:not(…) & { … }`) salen como una clave con
+ * su propio objeto. Mientras las utilidades eran planas alcanzaba con una expresión regular;
+ * desde `glass-rim` y `focus-border` no: aplanadas, el `position: absolute` del canto caía
+ * sobre el elemento y no sobre su `::after`, y el halo de foco dejaba de depender del teclado.
+ */
 function rules(body) {
+  const css = stripComments(body)
   const out = {}
-  for (const [, prop, value] of stripComments(body).matchAll(/([a-z-]+)\s*:\s*([^;{}]+);/g)) {
-    out[prop] = value.trim().replace(/\s+/g, " ")
+  let i = 0
+  while (i < css.length) {
+    const punto = css.indexOf(";", i)
+    const llave = css.indexOf("{", i)
+    if (llave !== -1 && (punto === -1 || llave < punto)) {
+      let depth = 0
+      let fin = llave
+      for (; fin < css.length; fin++) {
+        if (css[fin] === "{") depth++
+        else if (css[fin] === "}" && --depth === 0) break
+      }
+      out[css.slice(i, llave).trim().replace(/\s+/g, " ")] = rules(css.slice(llave + 1, fin))
+      i = fin + 1
+      continue
+    }
+    if (punto === -1) break
+    const declaracion = css.slice(i, punto)
+    const corte = declaracion.indexOf(":")
+    if (corte !== -1) out[declaracion.slice(0, corte).trim()] = declaracion.slice(corte + 1).trim().replace(/\s+/g, " ")
+    i = punto + 1
   }
   return out
 }
@@ -167,9 +193,12 @@ function buildTheme({ root, site, author }) {
     ...declarations(block(colors, "@theme inline")),
     ...declarations(block(theme, "@theme inline")),
     // Los `--animate-*` viven en el `@theme` (no inline) de theme.css, junto a
-    // sus `@keyframes`; las keyframes van aparte, como at-rule suelta.
+    // sus `@keyframes`; las keyframes van aparte, como at-rule suelta. En el
+    // mismo bloque están los tres radios semánticos (control, surface, panel).
     ...Object.fromEntries(
-      Object.entries(declarations(block(theme, "@theme {"))).filter(([name]) => name.startsWith("--animate-"))
+      Object.entries(declarations(block(theme, "@theme {"))).filter(
+        ([name]) => name.startsWith("--animate-") || name.startsWith("--radius-")
+      )
     ),
   }
   const cssVars = { theme: Object.fromEntries(Object.entries(themeVars).map(([name, value]) => [name.slice(2), value])) }
@@ -184,6 +213,12 @@ function buildTheme({ root, site, author }) {
       ...declarations(block(block(theme, "@layer base"), ".dark")),
     },
   }
+  // El interruptor de accesibilidad del vidrio vive en un `@layer base` aparte, adentro de un
+  // media query. Sin él, quien se lleva un componente por el registry se lleva un vidrio que
+  // ignora `prefers-reduced-transparency`.
+  const media = theme.match(/@media \(prefers-reduced-transparency: reduce\), \(prefers-contrast: more\)/)
+  if (media) css[media[0]] = { ":root": declarations(block(block(theme, media[0]), ":root")) }
+
   for (const [, name] of theme.matchAll(/@keyframes ([a-z-]+)\s*\{/g)) {
     const body = block(theme, `@keyframes ${name}`)
     const steps = {}

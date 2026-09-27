@@ -2,11 +2,32 @@ Las decisiones que no se ven en una tabla de props. Cada una existe porque rompe
 
 ## Jerarquía
 
-**Un solo acento por pantalla.** `Button variant="accent"` o `Switch variant="accent"` para la acción principal; el CTA por defecto es el negro (`variant="default"`). Dos acentos compitiendo no son dos acciones importantes: son ninguna.
+**Un solo acento sólido por pantalla.** `Button variant="accent"` para la acción principal; el CTA por defecto es el negro (`variant="default"`). Dos acentos compitiendo no son dos acciones importantes: son ninguna. Los estados prendidos —un `Checkbox` marcado, un `Switch`, el relleno de un `Slider`— llevan el brand y no cuentan: dicen «esto está activo», no «apretá acá».
 
-**`shape="pill"` solo en los CTA de un hero o de una sección de marketing.** Es `rounded-full` con un escalón más de padding horizontal (`sm` 20px, `md` 24px, `lg` 28px). **Nunca en el chrome de una app** —nav, tablas, formularios, diálogos—: dos formas de botón en la misma pantalla se leen como un descuido, no como una jerarquía. En `icon-*` se ignora, que ya es cuadrado con su propio radio.
+**El botón es una cápsula.** `shape="pill"` le suma un escalón de padding horizontal (`sm` 20px, `md` 24px, `lg` 28px) y es para los CTA de un hero. `shape="rect"` devuelve el rectángulo (`rounded-control`) para donde una cápsula no entra: una celda de tabla densa, un botón a todo el ancho de un formulario angosto. **Una sola forma por pantalla:** dos formas de botón juntas se leen como un descuido, no como una jerarquía.
 
 **`variant="destructive"` solo cuando la acción borra algo**, y siempre detrás de un `AlertDialog`.
+
+## Material
+
+**Nunca vidrio sobre vidrio.** Lo que flota lleva `glass`; lo que vive **adentro** de algo que flota lleva `glass-control`, que es alfa sin blur. No es solo estética: un elemento con `backdrop-filter` se vuelve la raíz del fondo de sus hijos, así que un segundo vidrio adentro desenfoca lo que pintó el primero y no la página. Cuesta lo mismo de pintar y no muestra nada.
+
+| Es | Lleva |
+|---|---|
+| Una superficie que flota: Card, Popover, menú, Alert, Table | `glass` |
+| Lo más grande que flota: Dialog, Sheet, Drawer, Sidebar, Navbar | `glass glass-thick` |
+| Una lámina: un chip flotante | `glass glass-thin` |
+| Un control adentro de una superficie: Input, Button `outline`, Checkbox vacío | `glass-control` |
+| Cromo: Toolbar, Navbar despegada | `glass` + `glass-rim` |
+| Una zona hundida: `Card subtle`, `thead`, `EmptyState` | `bg-gray-alpha-100` |
+
+**El grosor sigue al tamaño.** Una superficie grande con el blur de un tooltip se ve como un papel de calcar; un tooltip con el de un diálogo, como un bloque.
+
+**El color va en capa sólida.** Un botón de acción, un Badge `solid`, un Tooltip no son traslúcidos: el color que tiene que leerse igual en cualquier pantalla no puede depender de lo que pase por debajo.
+
+**Cápsulas, no botones sueltos.** En el cromo, las acciones hermanas comparten una cápsula (`Toolbar`) con un separador fino entre grupos, en vez de un borde por botón.
+
+**Blur solo en superficies.** Es lo caro de pintar. Unas pocas por pantalla; una grilla de 200 tarjetas de vidrio se nota al scrollear.
 
 ## Etiquetas
 
@@ -31,6 +52,8 @@ Traen `rounded-sm`, `transition-control`, `focus-visible:focus-ring` y `underlin
 **Un link que solo se revela en hover no existe en un celular.** Si es la acción principal de la sección, va `inline`.
 
 ## Menús y navegación
+
+**`Tabs` es una pista segmentada.** La pestaña activa es una pastilla que se desliza. `<TabsList variant="line">` es la de Geist —a todo el ancho, con la línea abajo— para la navegación de una página entera, donde una cápsula de 800px de ancho no es un control.
 
 **`NavigationMenu` si los ítems navegan, `DropdownMenu` si ejecutan algo.** No es cosmético: `DropdownMenu` emite `role="menu"` / `role="menuitem"`, atrapa el foco y se recorre con las flechas, así que un lector anuncia «menú, 3 elementos» en vez de una lista de links, y el modo de navegación por links no los ve. El menú de idioma y el de usuario siguen siendo `DropdownMenu` (cambian el estado, no la página).
 
@@ -75,11 +98,11 @@ Traen `rounded-sm`, `transition-control`, `focus-visible:focus-ring` y `underlin
 
 | Token | Rol |
 |---|---|
-| `bg-background` | **La página.** `body` y la raíz del `AppShell`. |
-| `bg-background-100` | **La superficie**: lo que flota sobre la página. |
-| `bg-background-200` | **El fondo sutil / banda**: Sidebar, `thead`, `Card subtle`, `EmptyState`. |
+| `bg-background` | **La página.** `body` y la raíz del `AppShell`. Con luz ambiente, `bg-ambient`. |
+| `glass` | **La superficie**: lo que flota sobre la página. |
+| `bg-gray-alpha-100` | **La zona hundida**: `thead`, `Card subtle`, `EmptyState`. |
 
-La regla: si el elemento **es** la página, `bg-background`; si flota **sobre** ella, `bg-background-100`.
+La regla: si el elemento **es** la página, `bg-background`; si flota **sobre** ella, `glass`. `bg-background-100` y `bg-background-200` siguen existiendo como tokens, pero ningún componente los escribe: un fondo opaco adentro de un vidrio es un parche.
 
 ## Server Components
 

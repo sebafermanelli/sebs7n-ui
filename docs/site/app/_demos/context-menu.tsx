@@ -35,8 +35,8 @@ export function Archivo() {
   return (
     <div className="relative w-64">
       <ContextMenu>
-        <ContextMenuTrigger className="block w-full rounded-lg border border-gray-400 bg-background-100 p-3 text-left">
-          <div className="h-24 rounded-md bg-gray-200" />
+        <ContextMenuTrigger className="block w-full rounded-control border border-gray-alpha-400 glass p-3 text-left">
+          <div className="h-24 rounded-control bg-gray-200" />
           <p className="mt-2 text-copy-14 text-gray-1000">portada-marzo.jpg</p>
           <p className="text-copy-13 text-gray-900">JPG · 2,4 MB</p>
         </ContextMenuTrigger>
@@ -110,7 +110,7 @@ export function Lienzo() {
   const [zoom, setZoom] = useState("100")
   return (
     <ContextMenu>
-      <ContextMenuTrigger className="flex h-40 w-full max-w-md items-center justify-center rounded-lg border border-dashed border-gray-400 bg-gray-100 text-copy-13 text-gray-900">
+      <ContextMenuTrigger className="flex h-40 w-full max-w-md items-center justify-center rounded-control border border-dashed border-gray-alpha-400 bg-gray-100 text-copy-13 text-gray-900">
         Click derecho sobre el lienzo
       </ContextMenuTrigger>
       <ContextMenuContent className="w-56">

@@ -1145,7 +1145,7 @@ export const COMPONENTS = {
     ],
     a11y: [
       "Sonner emite una región `aria-live` con `role=\"status\"`: el mensaje se anuncia sin robar el foco.",
-      "El `Toaster` de sebs7n-ui toma el tema de `next-themes` y las superficies del paquete (`bg-background-100`, `shadow-menu`).",
+      "El `Toaster` de sebs7n-ui toma el tema de `next-themes` y las superficies del paquete (`glass`, `shadow-menu`).",
       "Un toast con acción tiene que durar lo suficiente para leerlo y apretarla, o no llevarla.",
     ],
     usage: [
@@ -1548,7 +1548,7 @@ export const COMPONENTS = {
       "`density=\"compact\"` para más de ~20 filas visibles.",
       "En mobile una tabla de más de 3 columnas no entra: o hacés scroll horizontal con la primera columna fija, o cambiás a tarjetas.",
       "Las acciones de fila van en la última columna, en un `DropdownMenu`, no como tres botones sueltos.",
-      "El `thead` y el `tfoot` usan `bg-background-200`: es la banda, no la superficie.",
+      "El `thead` y el `tfoot` usan `bg-gray-alpha-100`: es la banda, no la superficie.",
       "**No virtualiza.** Renderiza las filas que le pasás, todas. Hasta ~500 anda bien; más que eso, paginá con `Pagination` o virtualizá vos y pasale la ventana.",
     ],
     props: {
@@ -1573,7 +1573,7 @@ export const COMPONENTS = {
       "`CardTitle` es un `<div>`: si la tarjeta encabeza una sección, poné el heading vos (`render` no aplica acá — usá tu propio `<h3>` adentro).",
     ],
     usage: [
-      "**`variant=\"default\"` es la superficie** (borde + `bg-background-100`); **`subtle` es la banda** (`bg-background-200`, sin borde) para una zona hundida.",
+      "**`variant=\"default\"` es la superficie** (borde + `glass`); **`subtle` es la banda** (`bg-gray-alpha-100`, sin borde) para una zona hundida.",
       "Una card dentro de otra card es una señal de que falta una tabla o una lista.",
       "`size=\"sm\"` en una grilla de 3 o más columnas; `md` suelta.",
       "`CardAction` se ubica sola arriba a la derecha si está dentro de `CardHeader`.",
@@ -1617,7 +1617,7 @@ export const COMPONENTS = {
     keyboard: [["Tab", "Llega a la acción."]],
     a11y: [
       "`titleAs` controla el nivel del heading: dentro de una página con `<h1>`, que sea `h2`.",
-      "Es una zona hundida (`bg-background-200`), sin borde ni sombra.",
+      "Es una zona hundida (`bg-gray-alpha-100`), sin borde ni sombra.",
       "Sin `\"use client\"`: sirve en un Server Component.",
     ],
     usage: [

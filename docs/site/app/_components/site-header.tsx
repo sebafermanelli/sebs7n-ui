@@ -18,13 +18,13 @@ const LINKS = [
 export function SiteHeader({ version }: { version: string }) {
   const pathname = usePathname()
   return (
-    <header className="sticky top-0 z-40 border-b border-gray-400 bg-background/85 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-gray-alpha-400 glass glass-thick">
       <div className="mx-auto flex h-14 w-full max-w-[90rem] items-center gap-4 px-4 md:px-6">
         <Link
           className="flex shrink-0 items-center gap-2 rounded-sm outline-none focus-visible:focus-ring"
           href="/"
         >
-          <span className="size-5 rounded-md bg-gray-1000" />
+          <span className="size-5 rounded-control bg-gray-1000" />
           <span className="text-heading-16 text-gray-1000">sebs7n-ui</span>
           <Badge size="sm">{version}</Badge>
         </Link>
@@ -33,7 +33,7 @@ export function SiteHeader({ version }: { version: string }) {
           {LINKS.map((link) => (
             <Link
               className={cn(
-                "rounded-md px-2 py-1 text-copy-14 outline-none transition-control hover:text-gray-1000 focus-visible:focus-ring",
+                "rounded-control px-2 py-1 text-copy-14 outline-none transition-control hover:text-gray-1000 focus-visible:focus-ring",
                 pathname.startsWith(link.href.split("/").slice(0, 3).join("/")) ? "text-gray-1000" : "text-gray-900"
               )}
               href={link.href}
@@ -47,7 +47,7 @@ export function SiteHeader({ version }: { version: string }) {
         <div className="ml-auto flex items-center gap-2">
           <SearchButton />
           <a
-            className="hidden rounded-md px-2 py-1 text-copy-14 text-gray-900 outline-none transition-control hover:text-gray-1000 focus-visible:focus-ring sm:inline"
+            className="hidden rounded-control px-2 py-1 text-copy-14 text-gray-900 outline-none transition-control hover:text-gray-1000 focus-visible:focus-ring sm:inline"
             href="https://github.com/sebafermanelli/sebs7n-ui"
             rel="noreferrer"
             target="_blank"

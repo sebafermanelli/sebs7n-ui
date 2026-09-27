@@ -15,6 +15,7 @@ import {
 import { ThemeSwitcher } from "sebs7n-ui/theme-switcher"
 
 import { DocsNav } from "./docs-nav"
+import { useGlassConfig } from "./glass-config"
 import { SearchButton, useSearch } from "./search"
 
 const REPO = "https://github.com/sebafermanelli/sebs7n-ui"
@@ -27,7 +28,7 @@ function Marca({ version }: { version: string }) {
       className="flex h-8 min-w-0 items-center gap-2 rounded-sm px-1 outline-none focus-visible:focus-ring"
       href="/"
     >
-      <span className="size-5 shrink-0 rounded-md bg-gray-1000" />
+      <span className="size-5 shrink-0 rounded-control bg-gray-1000" />
       <span className="truncate text-heading-16 text-gray-1000">sebs7n-ui</span>
       <Badge size="sm">{version}</Badge>
     </Link>
@@ -48,7 +49,7 @@ function DocsSidebar({ nav, version }: { nav: Grupo[]; version: string }) {
       </SidebarContent>
       <SidebarFooter className="flex-row items-center justify-between gap-2">
         <a
-          className="rounded-md px-2 py-1 text-copy-14 text-gray-900 outline-none transition-control hover:text-gray-1000 focus-visible:focus-ring"
+          className="rounded-control px-2 py-1 text-copy-14 text-gray-900 outline-none transition-control hover:text-gray-1000 focus-visible:focus-ring"
           href={REPO}
           rel="noreferrer"
           target="_blank"
@@ -67,8 +68,10 @@ function DocsSidebar({ nav, version }: { nav: Grupo[]; version: string }) {
  */
 export function DocsShell({ nav, version, children }: { nav: Grupo[]; version: string; children: ReactNode }) {
   const pathname = usePathname()
+  const { config } = useGlassConfig()
   return (
     <AppShell
+      ambient={config.ambient}
       mainId="contenido"
       mobileBar={
         <>

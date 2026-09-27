@@ -10,7 +10,7 @@ import { PageHeader, PageHeaderDescription, PageHeaderTitle } from "sebs7n-ui/pa
  */
 export function Basico() {
   return (
-    <div className="w-full rounded-xl border border-gray-400 bg-background">
+    <div className="w-full rounded-surface border border-gray-alpha-400 bg-background">
       <AppShellContent>
         <PageHeader>
           <PageHeaderTitle>Clientes</PageHeaderTitle>

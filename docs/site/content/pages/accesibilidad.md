@@ -14,7 +14,9 @@ Qué cubre esa tabla:
 |---|---|
 | `gray-900` y `gray-1000` como texto, sobre los tres fondos | 4,5:1 (1.4.3) |
 | Placeholder de los campos | 4,5:1 |
-| Atajos de menú, sobre el popup, sobre el ítem resaltado y sobre el apretado | 4,5:1 |
+| Atajos de menú sobre el popup | 4,5:1 |
+| Texto secundario sobre la selección (resaltado y apretado), en las cuatro marcas de ejemplo | 4,5:1 |
+| Texto principal y secundario sobre vidrio, sobre la página y sobre la luz ambiente | 4,5:1 |
 | `Button variant="destructive"`, en reposo, hover y active | 4,5:1 |
 | `Badge subtle` en las ocho paletas fijas, y `Badge solid` gris | 4,5:1 |
 | Contorno de Checkbox, Radio, Switch y Toggle sin marcar | 3:1 (1.4.11) |
@@ -32,7 +34,27 @@ Los grises que el paquete usa como **texto** son dos, y estos son los números s
 
 **Los deshabilitados están exentos** (1.4.3 y 1.4.11 eximen a los componentes inactivos), y es deliberado: un control apagado tiene que verse apagado, y subirlo a 4,5:1 lo volvería indistinguible de uno que anda.
 
-**El borde del `Input` se queda en `gray-400`** (1,20:1), y es la única excepción escrita del sistema. Lo que identifica a un campo de texto no es su contorno sino su superficie —`background-100` contra el fondo de página— más su etiqueta, que es obligatoria. Checkbox, Radio, Switch y Toggle sí subieron a `gray-700`, porque ahí el contorno es lo único que hay: sin él no hay control, hay un hueco.
+**El borde del `Input` se queda en `gray-alpha-400`** (1,20:1 sobre la superficie), y es la única excepción escrita del sistema. Lo que identifica a un campo de texto no es su contorno sino su superficie —más opaca que el vidrio que la contiene— más su etiqueta, que es obligatoria. Checkbox, Radio, Switch y Toggle sí subieron a `gray-700`, porque ahí el contorno es lo único que hay: sin él no hay control, hay un hueco.
+
+### Contraste sobre vidrio
+
+Sobre una superficie sólida el contraste es un número. Sobre un vidrio depende de lo que pase por debajo, y eso no lo decide el paquete. `test/glass-contrast.test.ts` fija lo que sí se puede prometer:
+
+| Garantía | Hasta |
+|---|---|
+| Texto principal y secundario a 4,5:1 sobre **la página y la luz ambiente** | `--glass: 1` (el default) |
+| Texto principal a 4,5:1 contra **cualquier fondo** | `--glass: 0.5` |
+| Todo igual que sobre `background-100` | `--glass: 0` |
+
+**Lo que no se promete, con el número:** con el default, un vidrio que flota encima de contenido arbitrario. Negro detrás de un vidrio claro deja el texto principal en 2,12:1; blanco detrás de uno oscuro, en 1,64:1. Es el costo de un material que deja ver el fondo, y es una decisión, no un descuido.
+
+Qué hacer:
+
+- **Un vidrio que flota sobre fotos, video o un color sólido:** `--glass: 0.5` en ese subárbol.
+- **Texto secundario sobre contenido saturado:** usá el principal (`text-gray-1000`).
+- **Nada, para quien lo pidió:** con `prefers-reduced-transparency: reduce` o `prefers-contrast: more` el paquete apaga el material y todo se ve sólido. No hay que escribir el media query en la app.
+
+El modelo compone el fill sobre el fondo; no incluye el `backdrop-filter` ni el brillo del canto, que mueven la luminancia poco pero no cero. Sirve para fijar un piso.
 
 ### Foco visible siempre
 
@@ -40,7 +62,7 @@ Ningún componente saca el anillo de foco sin reemplazarlo. `focus-visible:focus
 
 Los popups que pueden recibir el foco ellos mismos —Popover, HoverCard y NavigationMenu cuando no tienen nada tabulable adentro, y el panel de `Tabs`— también lo muestran. Es el caso que más fácil se cuela: el foco existe, el teclado funciona, y en la pantalla no se ve nada.
 
-El borde del campo enfocado llega a 3:1 en los dos temas. El halo de 4px que lo acompaña es énfasis, no el indicador.
+El borde del campo enfocado es `brand-700` y llega a 3:1 en los dos temas. El halo de 4px que lo acompaña es énfasis, no el indicador, y **aparece solo si se llegó con el teclado**. Un `<input>` de texto cumple `:focus-visible` también con el clic —el navegador asume que lo que sigue es tipear—, así que con CSS no se distingue: el paquete anota en `<html data-sf-modality>` si lo último fue Tab o el puntero. Sin JavaScript, o antes de hidratar, el atributo no existe y el halo se ve: el default es el accesible.
 
 ### Objetivos táctiles
 

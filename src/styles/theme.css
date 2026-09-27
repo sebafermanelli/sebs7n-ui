@@ -6,7 +6,23 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/**
+ * Este `@theme` va sin `inline` a propósito: lo que se declara acá sale como variable en
+ * `:root`, y la app lo puede pisar igual que pisa `--brand-base`.
+ */
 @theme {
+  /**
+   * Los tres radios del sistema.
+   *
+   * Son semánticos y no un paso de la escala de Tailwind (`rounded-md`, `rounded-xl`) porque
+   * redefinir esos pasos le cambiaría el radio también al código de la app, que comparte el
+   * tema. Con `--radius-control: 6px`, `--radius-surface: 12px` y `--radius-panel: 16px`
+   * vuelven los radios de Geist.
+   */
+  --radius-control: 10px;
+  --radius-surface: 20px;
+  --radius-panel: 26px;
+
   /* Progress indeterminada: una franja del 40% que recorre la pista. */
   --animate-progress-indeterminate: progress-indeterminate 1.4s ease-in-out infinite;
 
@@ -18,20 +34,6 @@
       transform: translateX(250%);
     }
   }
-}
-
-/**
- * Los tres radios del sistema. Van en `@theme` sin `inline` a propósito: así salen como
- * variables en `:root` y la app los pisa igual que pisa `--brand-base`.
- *
- * Son semánticos y no un paso de la escala de Tailwind (`rounded-md`, `rounded-xl`) porque
- * redefinir esos pasos le cambiaría el radio también al código de la app, que comparte el tema.
- * Con `--radius-control: 6px` y `--radius-surface: 12px` vuelven los radios de Geist.
- */
-@theme {
-  --radius-control: 10px;
-  --radius-surface: 20px;
-  --radius-panel: 26px;
 }
 
 @theme inline {
@@ -56,8 +58,7 @@
 
   /**
    * De acá abajo, alias de compatibilidad con shadcn. **Ningún componente del
-   * paquete los usa**: los 58 van a `bg-background-100`, `text-gray-900`,
-   * `border-gray-400`.
+   * paquete los usa**: van a `glass`, `text-gray-900`, `border-gray-alpha-400`.
    *
    * Están para el componente que alguien pega de shadcn.io —o que trae
    * `shadcn add`— en una app que ya usa este paquete: sin estos nombres ese

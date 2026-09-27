@@ -21,7 +21,7 @@
     @apply mt-4;
   }
   .prose h2 {
-    @apply mt-10 scroll-mt-24 border-t border-gray-400 pt-8 text-heading-24 text-gray-1000;
+    @apply mt-10 scroll-mt-24 border-t border-gray-alpha-400 pt-8 text-heading-24 text-gray-1000;
   }
   .prose h3 {
     @apply mt-8 scroll-mt-24 text-heading-20 text-gray-1000;
@@ -49,7 +49,7 @@
     @apply mt-2;
   }
   .prose blockquote {
-    @apply rounded-xl border border-gray-400 bg-background-200 px-4 py-3 text-copy-14 text-gray-900;
+    @apply rounded-surface border border-gray-alpha-400 bg-gray-alpha-100 px-4 py-3 text-copy-14 text-gray-900;
   }
   .prose blockquote p {
     @apply text-copy-14 text-gray-900;
@@ -58,7 +58,7 @@
     @apply rounded-sm bg-gray-100 px-1 py-0.5 text-copy-13-mono text-gray-1000;
   }
   .prose pre {
-    @apply overflow-x-auto rounded-xl border border-gray-400 bg-background-200 p-4;
+    @apply overflow-x-auto rounded-surface border border-gray-alpha-400 bg-gray-alpha-100 p-4;
   }
   .prose pre code {
     @apply bg-transparent p-0 text-copy-13-mono text-gray-1000;
@@ -67,19 +67,19 @@
     @apply w-full border-collapse text-left;
   }
   .prose thead {
-    @apply border-b border-gray-400 bg-background-200;
+    @apply border-b border-gray-alpha-400 bg-gray-alpha-100;
   }
   .prose th {
     @apply px-3 py-2 text-label-12 text-gray-900;
   }
   .prose td {
-    @apply border-b border-gray-400 px-3 py-2 align-top text-copy-14 text-gray-1000;
+    @apply border-b border-gray-alpha-400 px-3 py-2 align-top text-copy-14 text-gray-1000;
   }
   .prose hr {
-    @apply border-gray-400;
+    @apply border-gray-alpha-400;
   }
   .prose img {
-    @apply rounded-xl;
+    @apply rounded-surface;
   }
   /* Las tablas anchas (color, tipografía) no rompen el ancho de la página. */
   .prose .tabla {

@@ -1,4 +1,4 @@
-Una app define **cuatro variables** y nada más. No hay que tocar ningún archivo del paquete ni recompilar nada.
+Una app define **cuatro variables de marca** y, si quiere, **dos del material**. No hay que tocar ningún archivo del paquete ni recompilar nada. Para probarlas sin escribir CSS está el [Playground](/docs/playground).
 
 ## Color de marca
 
@@ -44,7 +44,8 @@ describe("la marca llega a AA", () => {
 
 | Token | Dónde |
 |---|---|
-| `brand-700` | `Button variant="accent"`, `Switch variant="accent"`, anillo de foco, borde de `Card selected`, franja de `Alert variant="brand"`, `Badge solid color="brand"`. |
+| `brand-700` | `Button variant="accent"`, anillo de foco y borde del campo enfocado, borde de `Card selected`, franja de `Alert variant="brand"`, `Badge solid color="brand"`. Y **todo lo que está prendido**: `Checkbox` y `Radio` marcados, `Switch`, el relleno de `Slider`, `Progress` y `Meter`. |
+| `brand-700` en tinte | La selección: el ítem de menú bajo el puntero y el ítem activo del `Sidebar` (14 % en claro, 22 % en oscuro). Es `bg-highlight`. |
 | `brand-800` | Hover del acento. |
 | `brand-900` | `Button variant="link"`, texto de `Badge subtle color="brand"`, ícono de `Alert variant="brand"`. |
 | `brand-1000` | Hover del `Button variant="link"`. |
@@ -53,7 +54,69 @@ describe("la marca llega a AA", () => {
 
 `brand-200`, `brand-300`, `brand-500` y `brand-600` no los usa ningún componente: existen para la app, que también tiene la escala completa. Y `linkVariants` **no usa la marca**: los links de texto son grises (`gray-900` → `gray-1000`), para que un párrafo con tres links no se convierta en tres manchas de color.
 
-**Un solo acento por pantalla.** Si el CTA principal es `accent`, el switch de al lado no.
+**Un solo acento sólido por pantalla.** El `Button variant="accent"` es la acción principal y va uno. Los estados prendidos no compiten con él: son chicos y dicen «esto está activo», no «apretá acá». Si en una pantalla igual molestan, `Switch variant="neutral"` prende en gris.
+
+## Glass
+
+El material de todo lo que flota —Card, Popover, menús, Dialog, Sidebar, Navbar— sale de **un solo número**, como el ajuste de transparencia de macOS:
+
+```css
+:root {
+  --glass: 1;        /* 0 = sólido · 1 = Liquid Glass, el default */
+  --glass-tint: 0;   /* cuánto brand entra al vidrio */
+}
+```
+
+| `--glass` | Fill | Blur | Se ve |
+|---|---|---|---|
+| `0` | 100 % | 0 | Sólido: el Geist de 0.8.0. |
+| `0.5` | 65 % | 8px | Esmerilado. El texto principal llega a 4,5:1 contra cualquier fondo. |
+| `1` | 30 % | 16px | Liquid Glass: el fondo se reconoce a través del material. |
+
+De ese número salen también la saturación, el punto de brillo y el canto especular. No hay una variable por capa a propósito: cinco perillas sueltas dan un vidrio que nadie calibró.
+
+**Se puede pisar en un subárbol.** Las utilidades calculan la intensidad en el elemento, no en `:root`:
+
+```tsx
+{/* Una galería de fotos: el vidrio que flota encima necesita más cuerpo. */}
+<section style={{ "--glass": 0.5 } as React.CSSProperties}>…</section>
+```
+
+### La luz ambiente
+
+Sobre una página blanca o negra lisa el vidrio no tiene nada que desenfocar y se ve como un gris plano. La luz ambiente son tres focos de color que salen de `--brand-base`, fijos detrás de todo:
+
+```tsx
+<AppShell ambient sidebar={…}>
+```
+
+Sin `AppShell`, la misma utilidad en el `<body>`: `className="bg-ambient"`. Es opt-in porque cambia el fondo de la app entera.
+
+### Las utilidades
+
+| Utilidad | Para qué |
+|---|---|
+| `glass` | Una superficie que flota. Reemplaza a `bg-background-100`. |
+| `glass-thin` · `glass-thick` | El grosor: lámina (Tooltip, chip) o placa (Dialog, Sidebar). Van al lado de `glass`. |
+| `glass-control` | Un control **adentro** de un vidrio: alfa, sin blur. |
+| `glass-rim` | El canto especular del cromo. El elemento tiene que estar posicionado. |
+| `sheen` | El brillo de arriba de un botón de color. |
+| `bg-ambient` | La luz ambiente. |
+
+Las reglas de cuándo va cada una están en [Reglas de uso](/docs/reglas).
+
+### Volver al sólido
+
+```css
+:root {
+  --glass: 0;
+  --radius-control: 6px;
+  --radius-surface: 12px;
+  --radius-panel: 16px;
+}
+```
+
+Con eso el material y los radios son los de 0.8.0. Lo que no vuelve es la forma del botón (`shape="rect"` lo devuelve uno por uno) ni el brand de los estados prendidos.
 
 ## Claro y oscuro
 
@@ -97,16 +160,21 @@ El paquete define `color-scheme` en `html` y `html.dark`, así que los scrollbar
 
 ## Radio
 
-Los radios son tokens de Tailwind v4, así que se redefinen desde la app:
+Los componentes usan tres radios, y los tres se pisan desde la app:
 
 ```css
-@theme {
-  --radius-md: 4px;   /* controles más cuadrados */
-  --radius-xl: 8px;   /* tarjetas menos redondeadas */
+:root {
+  --radius-control: 10px;   /* inputs, ítems de menú y de sidebar */
+  --radius-surface: 20px;   /* Card, Alert, Table, Popover, Toast */
+  --radius-panel: 26px;     /* Dialog, Drawer, Navbar flotante */
 }
 ```
 
-Cambiar `--radius-md` toca botones, inputs e ítems de menú a la vez: es el radio del sistema. No hay un token «por componente» a propósito.
+Son nombres propios y no pasos de la escala de Tailwind: redefinir `--radius-md` le cambiaría el radio también al código de la app, que comparte el tema. La escala (`rounded-md`, `rounded-xl`) sigue existiendo y es de la app; ningún componente la usa.
+
+El panel de un menú no tiene token: su radio es el del ítem más el `p-1` que los separa, así las dos curvas quedan concéntricas cualquiera sea el valor de `--radius-control`.
+
+El `Button` es una cápsula (`rounded-full`). No hay un token «por componente» a propósito.
 
 ## Densidad
 

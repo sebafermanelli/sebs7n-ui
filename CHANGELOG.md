@@ -9,6 +9,70 @@ major.
 
 ## [Unreleased]
 
+Lo que sigue sale como **1.0.0**.
+
+### Breaking
+
+- **El material por defecto es vidrio.** Todo lo que flota —Card, Alert, Table, Popover,
+  HoverCard, los tres menús, Select, Combobox, Dialog, AlertDialog, Sheet, Drawer, Sidebar,
+  Navbar, Toolbar, Toast— cambia `bg-background-100` por la utilidad `glass`. Para volver al
+  sólido de 0.8.0: `--glass: 0` en `:root`.
+- **Radios.** Los componentes dejan `rounded-md` / `rounded-xl` / `rounded-2xl` y usan tres
+  tokens propios: `--radius-control` (10px), `--radius-surface` (20px) y `--radius-panel`
+  (26px). Para volver a los de Geist: 6px, 12px y 16px. Quien pisaba `--radius-md` o
+  `--radius-xl` en un `@theme` para cambiarle el radio a los componentes tiene que pisar los
+  nuevos: la escala de Tailwind ya no los alcanza.
+- **`Button` es una cápsula** (`rounded-full`), los de ícono incluidos. `shape="rect"` devuelve
+  el rectángulo. `shape="pill"` sigue sumando padding, pero ya no cambia el radio.
+- **Los estados prendidos usan el brand.** `Checkbox` y `Radio` marcados, `Switch`, y el
+  relleno de `Slider`, `Progress` y `Meter` pasan de `gray-1000` a `brand-700`.
+  `Switch variant="accent"` queda igual que el default; `variant="neutral"` es el gris.
+- **La selección usa el brand en tinte.** El ítem de menú resaltado (`data-highlighted`) y el
+  ítem activo del `Sidebar` pasan de `gray-200` / `gray-alpha-200` a `bg-highlight`. En el
+  `Sidebar` el ícono del activo toma `brand-900`; el texto sigue en `gray-1000`.
+- **El foco de los campos usa el brand.** `--sf-focus-border` es `brand-700` y el halo, el mismo
+  color al 22 % (30 % en oscuro).
+- **`Tabs` es una pista segmentada por defecto.** `<TabsList variant="line">` es la de antes.
+  `TabsList` ya no mide `w-full`: mide lo que miden sus pestañas.
+- **Bordes y fondos internos pasan a alfa**: `border-gray-400` → `border-gray-alpha-400`,
+  `bg-gray-100/200/300` → `bg-gray-alpha-*`, `bg-background-200` → `bg-gray-alpha-100`. Un
+  test de la app que fije esas clases sobre un componente del paquete va a fallar.
+- **`Sidebar`** ya no pinta `background-200`: es vidrio grueso.
+
+### Added
+
+- **`--glass`** (0 a 1, default 1) y **`--glass-tint`** (0 a 1, default 0): las dos variables
+  del material. De `--glass` salen el alfa del fill, el blur, la saturación, el brillo y el
+  canto especular. Se pueden pisar en `:root` o en un subárbol.
+- Utilidades **`glass`**, **`glass-thin`**, **`glass-thick`**, **`glass-control`**,
+  **`glass-rim`**, **`sheen`** y **`bg-ambient`**. tailwind-merge las conoce: un `bg-*` del
+  llamador le gana a `glass`.
+- **`<AppShell ambient>`**: la luz ambiente, tres focos de color derivados de `--brand-base`.
+  Opt-in.
+- **Accesibilidad del material**: con `prefers-reduced-transparency: reduce` o
+  `prefers-contrast: more` el paquete apaga el vidrio y todo se ve sólido.
+- **El halo de foco de un campo aparece solo al navegar con teclado.** Con el puntero queda
+  el borde de color, que sigue siendo el indicador. El paquete anota la modalidad en
+  `<html data-sf-modality>`.
+- **El pulgar de `Slider` y `Switch` se vuelve lente mientras se lo arrastra**
+  (`thumb-lens`, `transition-thumb`).
+- `bg-highlight` y `bg-highlight-active`, `shadow-button-accent`.
+- `sebs7n-ui/lib/contrast`: `glassAlpha`, `glassSurface`, `composite` y `hexOfOklch`, para
+  que una app mida el contraste de su texto sobre su vidrio.
+- Sitio: **Playground** (`/docs/playground`), con el material, el tinte, el color de marca
+  —selector con paleta, espectro y valores en OKLCH—, los radios y la luz ambiente. Copia el
+  CSS y la configuración vale para todo el sitio.
+
+### Contraste sobre vidrio: lo que se garantiza y lo que no
+
+- Con el default (`--glass: 1`), texto principal y secundario a 4,5:1 **sobre la página y
+  sobre la luz ambiente**.
+- Hasta `--glass: 0.5`, texto principal a 4,5:1 **contra cualquier fondo**.
+- **No se garantiza**, con el default, el texto de un vidrio que flota sobre contenido
+  arbitrario: negro detrás de un vidrio claro deja `gray-1000` en 2,12:1; blanco detrás de uno
+  oscuro, en 1,64:1. La salida es `--glass: 0.5` en ese subárbol. Está medido en
+  `test/glass-contrast.test.ts` y explicado en la página de Accesibilidad.
+
 ## [0.8.0] - 2026-09-26
 
 ### Added

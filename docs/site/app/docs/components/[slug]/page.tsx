@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
 function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
   return (
-    <section aria-labelledby={id} className="flex flex-col gap-4 border-t border-gray-400 pt-8">
+    <section aria-labelledby={id} className="flex flex-col gap-4 border-t border-gray-alpha-400 pt-8">
       <h2 className="scroll-mt-24 text-heading-24 text-gray-1000" id={id}>
         {title}
       </h2>
@@ -68,7 +68,7 @@ export default async function ComponentPage({ params }: Params) {
           <div className="flex flex-wrap gap-2">
             <MdLink href={`/docs/components/${component.slug}`} />
             <a
-              className="rounded-md border border-gray-alpha-400 bg-background-100 px-3 py-1.5 text-button-14 text-gray-1000 outline-none transition-control hover:bg-gray-alpha-200 focus-visible:focus-ring"
+              className="rounded-control border border-gray-alpha-400 glass px-3 py-1.5 text-button-14 text-gray-1000 outline-none transition-control hover:bg-gray-alpha-200 focus-visible:focus-ring"
               href={`https://github.com/sebafermanelli/sebs7n-ui/blob/main/src/components/${component.slug}.tsx`}
               rel="noreferrer"
               target="_blank"
@@ -143,7 +143,7 @@ export default async function ComponentPage({ params }: Params) {
                 const destino = site.components.find((entry) => entry.slug === otro)
                 return (
                   <Link
-                    className="rounded-md border border-gray-400 px-3 py-1.5 text-copy-14 text-gray-1000 outline-none transition-control hover:bg-gray-100 focus-visible:focus-ring"
+                    className="rounded-control border border-gray-alpha-400 px-3 py-1.5 text-copy-14 text-gray-1000 outline-none transition-control hover:bg-gray-100 focus-visible:focus-ring"
                     href={`/docs/components/${otro}`}
                     key={otro}
                   >

@@ -33,7 +33,7 @@ export default function DocsIndex() {
               return (
                 <li key={item.href}>
                   <Link
-                    className="flex h-full flex-col gap-1 rounded-xl border border-gray-400 bg-background-100 p-4 outline-none transition-control hover:border-gray-500 hover:bg-gray-100 focus-visible:focus-ring"
+                    className="flex h-full flex-col gap-1 rounded-surface border border-gray-alpha-400 glass p-4 outline-none transition-control hover:border-gray-500 hover:bg-gray-100 focus-visible:focus-ring"
                     href={item.href}
                   >
                     <span className="text-label-14 text-gray-1000">{item.title}</span>

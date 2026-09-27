@@ -40,13 +40,13 @@ export function Variantes() {
       <Card size="sm">
         <CardHeader>
           <CardTitle>default</CardTitle>
-          <CardDescription>Borde y `bg-background-100`.</CardDescription>
+          <CardDescription>Borde y `glass`.</CardDescription>
         </CardHeader>
       </Card>
       <Card size="sm" variant="subtle">
         <CardHeader>
           <CardTitle>subtle</CardTitle>
-          <CardDescription>Sin borde, `bg-background-200`.</CardDescription>
+          <CardDescription>Sin borde, `bg-gray-alpha-100`.</CardDescription>
         </CardHeader>
       </Card>
     </div>

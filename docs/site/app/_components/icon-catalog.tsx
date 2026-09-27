@@ -80,7 +80,7 @@ export function IconCatalog() {
                   <TooltipTrigger
                     render={
                       <button
-                        className="flex aspect-square w-full cursor-pointer items-center justify-center rounded-xl border border-gray-400 bg-background-100 text-gray-1000 shadow-card outline-none transition-surface hover:-translate-y-px hover:border-gray-500 hover:shadow-card-hover active:translate-y-0 active:bg-gray-100 active:shadow-card focus-visible:focus-ring"
+                        className="flex aspect-square w-full cursor-pointer items-center justify-center rounded-surface border border-gray-alpha-400 glass text-gray-1000 shadow-card outline-none transition-surface hover:-translate-y-px hover:border-gray-500 hover:shadow-card-hover active:translate-y-0 active:bg-gray-100 active:shadow-card focus-visible:focus-ring"
                         onClick={async () => {
                           try {
                             await navigator.clipboard.writeText(importLine)

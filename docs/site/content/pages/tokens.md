@@ -10,7 +10,7 @@ Son tres roles distintos y cada uno tiene su token. Elegir mal se nota sobre tod
 
 {{fondos}}
 
-**La regla:** si el elemento **es** la página, `bg-background`; si flota **sobre** ella, `bg-background-100`.
+**La regla:** si el elemento **es** la página, `bg-background`; si flota **sobre** ella, `glass`. `bg-background-100` sigue siendo el color de la superficie —es de donde parte el vidrio, y lo que se ve con `--glass: 0`—, pero ya no es lo que escribe un componente que flota. Ver [Glass](/docs/theming#glass).
 
 Los valores de oscuro son los de vercel.com medidos con `getComputedStyle` (contact/sales, 2026-09-22): `--ds-background-100: hsla(0,0%,4%)` = `#0a0a0a` para las superficies y `--ds-background-200: hsla(0,0%,0%)` = `#000` para la página. `background-200` es siempre el tono que **no** es el de la página: en claro baja a `#fafafa`, en oscuro no puede bajar de `#000` y sube a `#0a0a0a`. Por eso en oscuro coincide con `background-100`: Geist tiene dos fondos por tema, no tres.
 
@@ -44,7 +44,7 @@ Diez pasos por familia, de `100` (el más claro en tema claro) a `1000`. La conv
 
 **Existen para que un componente pegado de shadcn se vea bien sin tocarlo**, que es el caso real: el registry (`shadcn add`) funciona y tarde o temprano alguien copia un bloque de shadcn.io a una app que ya usa este paquete. Sin los alias, ese bloque saldría sin color; con ellos sale en la paleta de Geist. Los pares resuelven a combinaciones que pasan AA: `primary` 17,9:1 claro y 16,9:1 oscuro, `muted-foreground` sobre `muted` 7,55 y 6,66, `destructive` 4,75 y 4,79.
 
-**No los uses en código nuevo.** Los 58 componentes del paquete no los tocan: usan `bg-background-100`, `text-gray-900`, `border-gray-400`. Dos vocabularios para lo mismo es exactamente lo que las [reglas](/docs/reglas) dicen que no queremos, así que el segundo es una compuerta de entrada, no una opción.
+**No los uses en código nuevo.** Los componentes del paquete no los tocan: usan `glass`, `text-gray-900`, `border-gray-alpha-400`. Dos vocabularios para lo mismo es exactamente lo que las [reglas](/docs/reglas) dicen que no queremos, así que el segundo es una compuerta de entrada, no una opción.
 
 ## Tipografía
 
@@ -70,7 +70,9 @@ Cuándo usar cada familia:
 
 {{radios}}
 
-`rounded-md` (6px) es el radio del sistema: botones, inputs, ítems de menú. `rounded-xl` (12px) es el de las tarjetas. `rounded-full` es la forma de lo que es redondo por definición —avatares, puntos, pulgares, pistas de `Slider`, `Progress` y `Meter`— y de lo que es una píldora: `Badge`, `Tag`, `Toggle`, `ThemeSwitcher` y `Button shape="pill"`. Fuera de esos dos casos, no.
+Los componentes usan los tres primeros. `rounded-control` (10px) es el de inputs e ítems de menú y de sidebar; `rounded-surface` (20px), el de lo que flota: Card, Alert, Table, Popover, Toast; `rounded-panel` (26px), el de lo más grande: Dialog, Drawer, la Navbar despegada. `rounded-full` es la forma de lo que es redondo por definición —avatares, puntos, pulgares, pistas— y de las cápsulas: `Button`, `Badge`, `Tag`, `Toggle`, `Toolbar`, `ThemeSwitcher` y la pista de `Tabs`.
+
+El resto de la tabla es la escala de Tailwind con los valores de Geist. Ningún componente la usa: queda para el código de la app.
 
 ## Sombras
 
@@ -83,9 +85,11 @@ Las tres terminan en un anillo de 1px que en oscuro reemplaza al borde. No hay s
 | Utilidad | Dónde |
 |---|---|
 | `focus-visible:focus-ring` | Controles: botones, ítems de menú, tabs, toggles. Anillo de 2px en `brand-700` con hueco. |
-| `focus:focus-border` | Campos: Input, Textarea, Select, Combobox. Tiñe el borde y agrega un halo. |
+| `focus:focus-border` | Campos: Input, Textarea, Select, Combobox. Tiñe el borde con `brand-700` y, si se llegó con el teclado, agrega un halo de 4px. |
 | `focus:focus-border-error` | Lo mismo, en rojo, cuando el campo tiene `aria-invalid`. |
 | `transition-control` | 150 ms, `ease`, solo color / fondo / borde / sombra / opacidad. |
+| `transition-thumb` | 280 ms con un rebote corto: el pulgar de `Slider` y `Switch`. |
+| `thumb-lens` | El pulgar mientras se lo arrastra: transparente, con el canto especular. |
 | `animate-skeleton` | El latido del `Skeleton`. |
 
 Todas las animaciones pasan por `motion-reduce`, además del reset global del paquete.

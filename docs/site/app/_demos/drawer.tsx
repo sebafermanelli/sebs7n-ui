@@ -125,7 +125,7 @@ export function ElegirDeUnaListaLarga() {
               {CHOFERES.map((nombre) => (
                 <li key={nombre}>
                   <DrawerClose
-                    className="flex h-11 w-full items-center rounded-md px-2 text-left text-copy-14 outline-none hover:bg-gray-200 focus-visible:focus-ring"
+                    className="flex h-11 w-full items-center rounded-control px-2 text-left text-copy-14 outline-none hover:bg-gray-200 focus-visible:focus-ring"
                     onClick={() => setChofer(nombre)}
                   >
                     {nombre}

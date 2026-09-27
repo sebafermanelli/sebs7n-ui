@@ -12,7 +12,7 @@ export function PageNav({ items }: { items: { text: string; id: string }[] }) {
         {items.map((item) => (
           <li key={item.id}>
             <Link
-              className="block rounded-md px-2 py-1 text-copy-13 text-gray-900 outline-none transition-control hover:text-gray-1000 focus-visible:focus-ring"
+              className="block rounded-control px-2 py-1 text-copy-13 text-gray-900 outline-none transition-control hover:text-gray-1000 focus-visible:focus-ring"
               href={`#${item.id}`}
             >
               {item.text}

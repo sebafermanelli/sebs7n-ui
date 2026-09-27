@@ -50,7 +50,7 @@ export function PermisosDelOperador() {
       <FieldLabel>Permisos del operador</FieldLabel>
       <CheckboxGroup allValues={permisos} onValueChange={setValor} value={valor}>
         <CheckboxGroupItem parent>Acceso total</CheckboxGroupItem>
-        <div className="flex flex-col gap-3 border-l border-gray-400 pl-4">
+        <div className="flex flex-col gap-3 border-l border-gray-alpha-400 pl-4">
           <CheckboxGroupItem value="reservas">Crear y editar reservas</CheckboxGroupItem>
           <CheckboxGroupItem value="pagos">Registrar pagos</CheckboxGroupItem>
           <CheckboxGroupItem value="clientes">Ver la ficha del cliente</CheckboxGroupItem>

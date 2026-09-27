@@ -35,7 +35,9 @@ export function readTypography(root) {
 }
 
 export function readRadii(root) {
-  const css = readFileSync(join(root, "src/styles/reset.css"), "utf8")
+  // Primero los tres semánticos de theme.css, que son los que usan los componentes; después
+  // la escala de reset.css, que queda para el código de la app.
+  const css = ["theme", "reset"].map((file) => readFileSync(join(root, `src/styles/${file}.css`), "utf8")).join("\n")
   return [...css.matchAll(/--radius-([a-z0-9]+):\s*([^;]+);/g)].map(([, name, value]) => ({ name, value: value.trim() }))
 }
 

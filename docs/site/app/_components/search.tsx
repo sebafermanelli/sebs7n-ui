@@ -87,7 +87,7 @@ export function SearchProvider({ children }: { children: ReactNode }) {
           <DialogDescription className="sr-only">
             Escribí el nombre de un componente o de una página. Enter para ir al primer resultado.
           </DialogDescription>
-          <div className="border-b border-gray-400 p-2">
+          <div className="border-b border-gray-alpha-400 p-2">
             {/* eslint-disable-next-line jsx-a11y/no-autofocus -- es un buscador modal: el foco va acá o no sirve */}
             <Input
               aria-label="Buscar en la documentación"
@@ -117,7 +117,7 @@ export function SearchProvider({ children }: { children: ReactNode }) {
               {resultados.map((resultado) => (
                 <li key={resultado.href}>
                   <Link
-                    className="flex flex-col gap-0.5 rounded-md px-2 py-2 outline-none transition-control hover:bg-gray-100 focus-visible:focus-ring"
+                    className="flex flex-col gap-0.5 rounded-control px-2 py-2 outline-none transition-control hover:bg-gray-100 focus-visible:focus-ring"
                     href={resultado.href}
                     onClick={() => setAbierto(false)}
                   >

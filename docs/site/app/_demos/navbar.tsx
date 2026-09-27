@@ -11,7 +11,7 @@ export function Variantes() {
   return (
     <div className="flex w-full flex-col gap-6">
       {(["bar", "floating"] as const).map((variant) => (
-        <div className="relative h-56 w-full overflow-y-auto rounded-xl border border-gray-400 bg-background" key={variant}>
+        <div className="relative h-56 w-full overflow-y-auto rounded-surface border border-gray-alpha-400 bg-background" key={variant}>
           <Navbar scrollThreshold={-1} variant={variant}>
             <NavbarContent>
               <span className="text-heading-16 text-gray-1000">Marca</span>
@@ -27,7 +27,7 @@ export function Variantes() {
           </Navbar>
           <div className="flex flex-col gap-3 p-6">
             {Array.from({ length: 8 }, (_, i) => (
-              <div className="h-10 rounded-md bg-gray-100" key={i} />
+              <div className="h-10 rounded-control bg-gray-100" key={i} />
             ))}
           </div>
         </div>

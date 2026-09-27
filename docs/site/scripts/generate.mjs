@@ -208,11 +208,24 @@ const pages = [
 // app/docs/iconos), pero cuelga del mismo grupo en la navegación y en el buscador.
 const ICONOS = { title: "Iconos", href: "/docs/iconos", description: "Los 1.800 íconos de lucide con búsqueda; un clic copia el import." }
 
+// El Playground tampoco: es una pantalla interactiva (app/docs/playground). Va primero en la
+// navegación porque es por donde conviene entrar: se elige el material y el color, y el resto
+// del sitio se recorre ya con esa configuración.
+const PLAYGROUND = {
+  title: "Playground",
+  href: "/docs/playground",
+  description: "Regulá el vidrio, el tinte, el color de marca y los radios, mirá los componentes cambiar y copiá el CSS.",
+}
+
 const nav = [
   {
     id: "sistema",
     title: "Sistema",
-    items: [...pages.map((page) => ({ title: page.title, href: `/docs/${page.slug}` })), { title: ICONOS.title, href: ICONOS.href }],
+    items: [
+      { title: PLAYGROUND.title, href: PLAYGROUND.href },
+      ...pages.map((page) => ({ title: page.title, href: `/docs/${page.slug}` })),
+      { title: ICONOS.title, href: ICONOS.href },
+    ],
   },
   ...GROUPS.map((group) => ({
     id: group.id,
@@ -224,6 +237,7 @@ const nav = [
 ]
 
 const search = [
+  { title: PLAYGROUND.title, href: PLAYGROUND.href, group: "Sistema", description: PLAYGROUND.description, keywords: "glass vidrio brand color picker theming configurar" },
   { title: ICONOS.title, href: ICONOS.href, group: "Sistema", description: ICONOS.description, keywords: "icon lucide svg" },
   ...pages.map((page) => ({
     title: page.title,

@@ -13,7 +13,7 @@ export function Basico() {
     <div className="flex w-full max-w-sm flex-col gap-6">
       <Slider label="Opacidad de la marca de agua" onValueChange={setOpacidad} showValue value={opacidad} />
       <div
-        className="h-16 rounded-lg bg-gray-1000"
+        className="h-16 rounded-control bg-gray-1000"
         style={{ opacity: opacidad / 100 }}
       />
     </div>
