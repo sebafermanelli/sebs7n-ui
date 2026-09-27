@@ -120,8 +120,10 @@ export function Playground() {
           />
         </div>
         <div className="flex flex-wrap items-end gap-x-8 gap-y-4">
-          <div className="flex flex-col gap-2">
-            <span className="text-label-14 text-gray-1000">Color de marca · tema {oscuro ? "oscuro" : "claro"}</span>
+          {/* Ancho fijo: el rótulo cambia con el tema («claro», «oscuro») y, midiendo lo que mide su
+              texto, la columna corría todo lo que tiene a la derecha al cambiar de tema. */}
+          <div className="flex w-52 flex-col gap-2">
+            <span className="text-label-14 whitespace-nowrap text-gray-1000">Color de marca · tema {oscuro ? "oscuro" : "claro"}</span>
             <ColorPicker
               aria-label={`Color de marca (tema ${oscuro ? "oscuro" : "claro"})`}
               className="w-40"
