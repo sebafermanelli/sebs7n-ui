@@ -634,6 +634,43 @@
 }
 
 /**
+ * El halo del texto en una barra de vidrio: Navbar, Toolbar.
+ *
+ * Una barra es cromo y flota sobre lo que haya: con el vidrio pleno, una foto clara que pasa
+ * por debajo en tema oscuro dejaba los links casi invisibles. Es lo que hace Apple sobre
+ * fondos que cambian: un halo del color de la página detrás de cada letra y cada ícono.
+ * Sobre la página no se ve —es del mismo color que el fondo—; aparece solo cuando pasa algo
+ * que compite con el texto.
+ *
+ * Escala con `--glass`: con 0 la barra es sólida y el halo desaparece. Se hereda, así que lo
+ * pone la barra y lo toma todo lo que tiene adentro. Los botones sólidos lo apagan: su texto
+ * ya está sobre su propio color.
+ */
+@utility glass-halo {
+  --sf-halo: color-mix(
+    in srgb,
+    var(--sf-background) calc(var(--glass) * var(--sf-glass-on) * 85%),
+    transparent
+  );
+  text-shadow:
+    0 0 1px var(--sf-halo),
+    0 0 6px var(--sf-halo);
+
+  & svg {
+    filter: drop-shadow(0 0 2px var(--sf-halo));
+  }
+}
+
+/* Apaga el halo heredado: un botón sólido ya tiene su propio fondo detrás del texto. */
+@utility no-halo {
+  text-shadow: none;
+
+  & svg {
+    filter: none;
+  }
+}
+
+/**
  * El canto especular del cromo: Toolbar, ThemeSwitcher, Navbar flotante.
  *
  * Un borde de 1px en degradé a 135°, brillante en la esquina de arriba a la izquierda y a

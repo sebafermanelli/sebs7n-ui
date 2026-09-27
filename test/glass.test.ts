@@ -100,6 +100,27 @@ describe("glass-dense: el vidrio de las listas de texto", () => {
   })
 })
 
+describe("glass-halo: el texto de las barras sobre lo que pase por debajo", () => {
+  it("es del color de la página y escala con --glass: con 0 no hay halo", () => {
+    const halo = utility("glass-halo")
+    expect(halo).toContain("var(--sf-background) calc(var(--glass) * var(--sf-glass-on) * 85%)")
+    expect(halo).toContain("text-shadow")
+    // Los íconos son SVG: `text-shadow` no los toca.
+    expect(halo).toContain("drop-shadow")
+  })
+
+  it("lo llevan el Navbar con vidrio y el Toolbar de vidrio; los botones sólidos lo apagan", async () => {
+    const { buttonVariants } = await import("../src/variants/button")
+    for (const variant of ["default", "accent", "destructive"] as const) {
+      expect(buttonVariants({ variant }), variant).toContain("no-halo")
+    }
+    for (const variant of ["ghost", "outline", "secondary"] as const) {
+      expect(buttonVariants({ variant }), variant).not.toContain("no-halo")
+    }
+    expect(utility("no-halo")).toContain("text-shadow: none")
+  })
+})
+
 describe("glass: accesibilidad", () => {
   it("sin transparencia o con más contraste, el material se apaga", () => {
     expect(css).toMatch(/--sf-glass-on:\s*1;/)

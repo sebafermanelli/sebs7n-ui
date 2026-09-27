@@ -9,6 +9,16 @@ major.
 
 ## [Unreleased]
 
+## [1.9.0] - 2026-09-27
+
+### Added
+
+- **`glass-halo`**: un halo del color de la página detrás del texto y los íconos de una
+  barra de vidrio, como hace Apple sobre fondos que cambian. Sobre la página no se ve; cuando
+  pasa una foto clara por debajo en tema oscuro, los links se siguen leyendo con el vidrio en
+  1. Escala con `--glass`. Lo traen `Navbar` (con vidrio) y `Toolbar variant="glass"`; los
+  botones sólidos lo apagan con `no-halo`.
+
 ## [1.8.0] - 2026-09-27
 
 ### Changed

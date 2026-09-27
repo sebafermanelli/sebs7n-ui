@@ -55,7 +55,7 @@ describe("Navbar", () => {
     expect(surface(container)).toHaveClass("rounded-none")
     scrollTo(40)
     expect(header(container)).toHaveClass("px-3", "pt-3")
-    expect(surface(container)).toHaveClass("rounded-panel", "border-gray-alpha-400", "shadow-menu", "glass", "glass-rim")
+    expect(surface(container)).toHaveClass("rounded-panel", "border-gray-alpha-400", "shadow-menu", "glass", "glass-rim", "glass-halo")
     scrollTo(0)
     expect(surface(container)).toHaveClass("rounded-none")
   })
