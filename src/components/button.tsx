@@ -90,7 +90,9 @@ function Button<S extends ButtonSize = ButtonSize>({
           className="absolute inset-0 m-auto"
         />
       )}
-      <span className={cn("inline-flex items-center justify-center gap-2", loading && "opacity-0")}>{children}</span>
+      {/* `min-w-0`: sin esto el contenido nunca mide menos que su texto, y un hijo con `truncate`
+          adentro de un botón angosto se corta contra el borde en vez de terminar en «…». */}
+      <span className={cn("inline-flex min-w-0 items-center justify-center gap-2", loading && "opacity-0")}>{children}</span>
     </ButtonPrimitive>
   )
 }

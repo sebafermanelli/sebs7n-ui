@@ -9,6 +9,14 @@ major.
 
 ## [Unreleased]
 
+## [1.5.2] - 2026-09-27
+
+### Fixed
+
+- **`Button`: un texto con `truncate` adentro ahora se recorta con «…».** El envoltorio del
+  contenido no podía medir menos que su texto, así que en un botón angosto el texto se cortaba
+  contra el borde.
+
 ## [1.5.1] - 2026-09-27
 
 ### Fixed

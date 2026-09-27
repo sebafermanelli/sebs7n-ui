@@ -99,4 +99,15 @@ describe("Button", () => {
     render(<a href="/docs" className={buttonVariants({ variant: "outline" })}>Docs</a>)
     expect(screen.getByRole("link", { name: "Docs" })).toHaveClass("border-gray-alpha-400")
   })
+
+  it("el contenido se puede encoger: un hijo con `truncate` termina en puntos suspensivos", () => {
+    render(
+      <Button className="w-24 shrink">
+        <span className="truncate">Un nombre más largo que el botón</span>
+      </Button>
+    )
+    // Un ítem flex no mide menos que su contenido salvo que se lo permitan. El envoltorio es
+    // el ítem: sin `min-w-0` en él, el `truncate` del hijo no tiene contra qué recortarse.
+    expect(screen.getByText("Un nombre más largo que el botón").parentElement).toHaveClass("min-w-0")
+  })
 })
