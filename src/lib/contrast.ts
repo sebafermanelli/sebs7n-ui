@@ -78,6 +78,40 @@ export function flattenAlpha(hex: string, background: string): string {
   return `#${[0, 2, 4].map((i) => canal(i).toString(16).padStart(2, "0")).join("")}`
 }
 
+/** Un color OKLCH como `#rrggbb`, recortado a sRGB: lo que el navegador termina pintando. */
+export function hexOfOklch(color: Oklch): string {
+  return `#${oklchToLinearRgb(color)
+    .map((v) => Math.round(clamp(toGamma(v)) * 255).toString(16).padStart(2, "0"))
+    .join("")}`
+}
+
+/**
+ * Compone un color opaco con un alfa sobre otro, en sRGB, que es como lo hace el navegador.
+ * `flattenAlpha` hace lo mismo cuando el alfa viene adentro del hexadecimal (`#rrggbbaa`);
+ * esta es para cuando el alfa se calcula, como el del fill de un vidrio.
+ */
+export function composite(fg: string, alpha: number, bg: string): string {
+  const canal = (i: number) =>
+    Math.round(parseInt(fg.slice(1 + i, 3 + i), 16) * alpha + parseInt(bg.slice(1 + i, 3 + i), 16) * (1 - alpha))
+  return `#${[0, 2, 4].map((i) => canal(i).toString(16).padStart(2, "0")).join("")}`
+}
+
+/** El alfa del fill de la utilidad `glass` para una intensidad `--glass`: 1 − 0,6·g. */
+export const glassAlpha = (glass: number) => 1 - 0.6 * glass
+
+/**
+ * El color que termina viéndose debajo del texto de una superficie `glass`.
+ *
+ * Reproduce la utilidad: la superficie se corre hacia `lift` en proporción a la intensidad y
+ * se compone con su alfa sobre lo que haya detrás. **No modela el `saturate()` ni el blur**
+ * del `backdrop-filter`: el blur promedia el fondo sin cambiarle la luminancia media, y la
+ * saturación la mueve poco, pero no es cero. Sirve para fijar un piso, no para prometer el
+ * decimal.
+ */
+export function glassSurface(glass: number, tokens: { surface: string; lift: string }, backdrop: string): string {
+  return composite(composite(tokens.lift, glass, tokens.surface), glassAlpha(glass), backdrop)
+}
+
 /**
  * El ratio de contraste entre dos luminancias, de 1:1 a 21:1. El orden no
  * importa. AA pide 4,5 para texto normal, 3 para texto grande y para los
