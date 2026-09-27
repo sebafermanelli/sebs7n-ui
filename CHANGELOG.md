@@ -9,6 +9,14 @@ major.
 
 ## [Unreleased]
 
+## [1.5.1] - 2026-09-27
+
+### Fixed
+
+- **`Toolbar`: Inicio y Fin ignoran los controles escondidos.** Un control oculto por CSS —el
+  que una barra muestra en el teléfono y no en escritorio— sigue en el DOM pero no puede
+  recibir el foco: si quedaba primero, Inicio le apuntaba a él y el foco no se movía.
+
 ## [1.5.0] - 2026-09-27
 
 ### Added

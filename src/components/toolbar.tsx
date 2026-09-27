@@ -34,7 +34,11 @@ type ToolbarProps = WithClassName<ToolbarPrimitive.Root.Props>
  * el filtro sale gratis y no depende de adivinar qué componente rindió cada uno.
  */
 function rovingItems(root: HTMLElement) {
-  return Array.from(root.querySelectorAll<HTMLElement>("[tabindex]"))
+  // Solo los que se ven: un ítem escondido por CSS —el que una barra muestra en el teléfono y
+  // no en escritorio— sigue en el DOM con su `tabindex`, pero no puede recibir el foco. Si
+  // quedaba primero, Inicio le apuntaba a él y no pasaba nada. Donde `checkVisibility` no
+  // existe, se asume visible.
+  return Array.from(root.querySelectorAll<HTMLElement>("[tabindex]")).filter((item) => item.checkVisibility?.() !== false)
 }
 
 function Toolbar({ className, onKeyDown, ...props }: ToolbarProps) {

@@ -111,6 +111,24 @@ describe("Toolbar", () => {
     expect(onEnlace).toHaveBeenCalledTimes(1)
   })
 
+  it("Home y End saltean un control escondido: no puede recibir el foco", async () => {
+    render(
+      <Toolbar aria-label="Búsqueda">
+        <ToolbarButton aria-label="Solo en el teléfono" data-testid="oculto" />
+        <ToolbarButton aria-label="Primero" />
+        <ToolbarButton aria-label="Último" />
+        <ToolbarButton aria-label="Tampoco" data-testid="oculto" />
+      </Toolbar>
+    )
+    // jsdom no calcula layout: se le dice a mano qué está escondido, como lo diría `hidden sm:flex`.
+    for (const oculto of screen.getAllByTestId("oculto")) oculto.checkVisibility = () => false
+    screen.getByRole("button", { name: "Último" }).focus()
+    await userEvent.keyboard("{Home}")
+    expect(screen.getByRole("button", { name: "Primero" })).toHaveFocus()
+    await userEvent.keyboard("{End}")
+    expect(screen.getByRole("button", { name: "Último" })).toHaveFocus()
+  })
+
   it("dentro de un ToolbarInput las flechas y Home mueven el cursor, no de control", async () => {
     render(<Formato />)
     const zoom = screen.getByRole("textbox", { name: "Zoom" }) as HTMLInputElement
