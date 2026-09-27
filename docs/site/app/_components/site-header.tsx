@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Badge } from "sebs7n-ui/badge"
+import { Navbar } from "sebs7n-ui/navbar"
 import { ThemeSwitcher } from "sebs7n-ui/theme-switcher"
 import { cn } from "sebs7n-ui/lib/utils"
 
@@ -18,8 +19,15 @@ const LINKS = [
 export function SiteHeader({ version }: { version: string }) {
   const pathname = usePathname()
   return (
-    <header className="sticky top-0 z-40 border-b border-gray-alpha-400 glass glass-thick">
-      <div className="mx-auto flex h-14 w-full max-w-[90rem] items-center gap-4 px-4 md:px-6">
+    // El `Navbar` flotante del paquete: transparente arriba y una píldora de vidrio al
+    // scrollear. El ancho es el de la página desde el principio y el aire de arriba es fijo:
+    // al aparecer la píldora no se corre nada, ni de costado ni para abajo.
+    <Navbar
+      className="mx-auto max-w-[90rem] px-3 pt-3 md:px-4"
+      surfaceClassName="max-w-none rounded-full"
+      variant="floating"
+    >
+      <div className="flex h-14 w-full items-center gap-4 px-4">
         <Link
           className="flex shrink-0 items-center gap-2 rounded-sm outline-none focus-visible:focus-ring"
           href="/"
@@ -57,6 +65,6 @@ export function SiteHeader({ version }: { version: string }) {
           <ThemeSwitcher />
         </div>
       </div>
-    </header>
+    </Navbar>
   )
 }
