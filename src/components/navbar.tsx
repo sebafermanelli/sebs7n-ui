@@ -38,6 +38,14 @@ type NavbarProps = React.ComponentProps<"header"> & {
   position?: "sticky" | "fixed"
   /** Cuántos px de scroll la despegan. Por defecto, 12. */
   scrollThreshold?: number
+  /**
+   * Clases de la superficie —la caja de vidrio—, que es la que tiene el ancho y el radio de
+   * la barra despegada. `className` va al `<header>`, que es la franja entera.
+   *
+   * Para que `floating` sea una cápsula del ancho del contenido de la app:
+   * `surfaceClassName="max-w-none rounded-full"`, y el ancho se le da al `<header>`.
+   */
+  surfaceClassName?: string
 }
 
 /**
@@ -50,7 +58,7 @@ type NavbarProps = React.ComponentProps<"header"> & {
  * Con `prefers-reduced-motion` la barra cambia igual, pero sin transición: lo
  * corta el reset de `base.css`.
  */
-function Navbar({ className, variant = "bar", position = "sticky", scrollThreshold = 12, children, ...props }: NavbarProps) {
+function Navbar({ className, surfaceClassName, variant = "bar", position = "sticky", scrollThreshold = 12, children, ...props }: NavbarProps) {
   const scrolled = useScrolled(scrollThreshold)
   const floating = variant === "floating" && scrolled
   return (
@@ -75,7 +83,8 @@ function Navbar({ className, variant = "bar", position = "sticky", scrollThresho
           scrolled && "glass glass-thick",
           scrolled && !floating && "rounded-none border-b-gray-alpha-400",
           // Despegada es cromo, y el cromo lleva el canto especular de las cápsulas de Safari.
-          floating && "mx-auto max-w-6xl rounded-panel border-gray-alpha-400 shadow-menu glass-rim"
+          floating && "mx-auto max-w-6xl rounded-panel border-gray-alpha-400 shadow-menu glass-rim",
+          surfaceClassName
         )}
       >
         {children}

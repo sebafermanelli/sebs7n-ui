@@ -1338,6 +1338,7 @@ export const COMPONENTS = {
         variant: "`bar` (default) · `floating`.",
         position: "`sticky` (default) ocupa su alto; `fixed` se superpone al contenido.",
         scrollThreshold: "Cuántos px de scroll cambian el estado. Por defecto, 12.",
+        surfaceClassName: "Clases de la caja de vidrio, que es la que tiene el ancho y el radio de la barra despegada.",
         className: PROP_DESCRIPTIONS.className,
       },
       NavbarContent: {

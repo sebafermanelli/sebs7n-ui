@@ -9,6 +9,14 @@ major.
 
 ## [Unreleased]
 
+## [1.6.0] - 2026-09-27
+
+### Added
+
+- **`Navbar`: `surfaceClassName`.** Las clases de la caja de vidrio, que es la que tiene el
+  ancho y el radio de la barra despegada (`className` va al `<header>`). Para que `floating`
+  sea una cápsula del ancho del contenido de la app y no un panel de `max-w-6xl`.
+
 ## [1.5.2] - 2026-09-27
 
 ### Fixed

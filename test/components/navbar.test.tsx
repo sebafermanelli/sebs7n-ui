@@ -34,6 +34,21 @@ describe("Navbar", () => {
     expect(header(container)).toHaveClass("pt-0")
   })
 
+  it("surfaceClassName llega a la superficie y le gana a la forma de `floating`", () => {
+    const { container } = render(
+      <Navbar surfaceClassName="max-w-none rounded-full" variant="floating">
+        x
+      </Navbar>
+    )
+    scrollTo(40)
+    const surface = container.querySelector("[data-slot=navbar-surface]")!
+    expect(surface).toHaveClass("max-w-none", "rounded-full", "glass-rim")
+    expect(surface).not.toHaveClass("max-w-6xl")
+    expect(surface).not.toHaveClass("rounded-panel")
+    // Al `<header>` no le llega: su `className` es otro.
+    expect(container.querySelector("[data-slot=navbar]")).not.toHaveClass("rounded-full")
+  })
+
   it("floating: arriba ocupa todo el ancho; al scrollear se despega con margen, radio y sombra", () => {
     const { container } = render(<Navbar variant="floating">x</Navbar>)
     expect(header(container)).toHaveClass("px-0", "pt-0")
