@@ -10,6 +10,23 @@ export {
   luminanceOfOklch,
   type Oklch,
 } from "./lib/contrast.js"
+export {
+  addDays,
+  addMonths,
+  clampDay,
+  compareDays,
+  fromISODate,
+  isSameDay,
+  isSameMonth,
+  isWithin,
+  startOfDay,
+  startOfMonth,
+  startOfWeek,
+  toISODate,
+  weeksOfMonth,
+  type DateRange,
+  type WeekStart,
+} from "./lib/dates.js"
 export { paginationRange, type PaginationRangeOptions, type PaginationSlot } from "./lib/pagination.js"
 export { defaultLabels, LabelsProvider, useLabels, type Labels, type PartialLabels } from "./lib/labels.js"
 export { renderElement, type RenderElement } from "./lib/render.js"
@@ -57,6 +74,7 @@ export * from "./components/avatar.js"
 export * from "./components/badge.js"
 export * from "./components/breadcrumb.js"
 export * from "./components/button.js"
+export * from "./components/calendar.js"
 export * from "./components/card.js"
 // `chart` NO va en el barrel: importa `recharts`, que es un peer opcional. Con el
 // `export *` acá, toda app que hiciera `from "sebs7n-ui"` sin tener recharts
@@ -67,6 +85,7 @@ export * from "./components/checkbox.js"
 export * from "./components/collapsible.js"
 export * from "./components/combobox.js"
 export * from "./components/context-menu.js"
+export * from "./components/date-picker.js"
 export * from "./components/dialog.js"
 export * from "./components/drawer.js"
 export * from "./components/dropdown-menu.js"

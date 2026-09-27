@@ -2,6 +2,7 @@
 
 import { ChevronDownIcon } from "lucide-react"
 import { useId, useState } from "react"
+import { DatePicker } from "sebs7n-ui/date-picker"
 import { Button } from "sebs7n-ui/button"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "sebs7n-ui/collapsible"
 import { Input } from "sebs7n-ui/input"
@@ -45,11 +46,11 @@ export function Controlado() {
         <CollapsibleContent className="flex flex-col gap-3 pt-1">
           <div className="flex flex-col gap-1.5">
             <Label htmlFor={desde}>Desde</Label>
-            <Input id={desde} size="sm" type="date" />
+            <DatePicker id={desde} size="sm" />
           </div>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor={hasta}>Hasta</Label>
-            <Input id={hasta} size="sm" type="date" />
+            <DatePicker id={hasta} size="sm" />
           </div>
         </CollapsibleContent>
       </Collapsible>

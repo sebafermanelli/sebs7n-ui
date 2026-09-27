@@ -45,8 +45,11 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
     <tr
       data-slot="table-row"
       className={cn(
-        "h-12 border-b border-gray-400 transition-control group-data-[density=compact]/table:h-10",
-        "hover:bg-gray-100 data-[state=selected]:bg-brand-100",
+        "h-12 border-b border-gray-alpha-400 transition-control group-data-[density=compact]/table:h-10",
+        // El hover es un velo, no un fondo: `gray-alpha-100` es un 5 % de negro en claro y un 7 %
+        // de blanco en oscuro. Un gris opaco tapaba el vidrio de la tabla y la fila parecía
+        // recortada y pegada encima. La elegida usa la selección del sistema.
+        "hover:bg-gray-alpha-100 data-[state=selected]:bg-highlight",
         "[&[tabindex]]:cursor-pointer focus-visible:shadow-[inset_0_0_0_2px_var(--color-brand-700)] focus-visible:outline-none",
         className
       )}

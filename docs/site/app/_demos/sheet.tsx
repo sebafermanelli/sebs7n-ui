@@ -1,5 +1,6 @@
 "use client"
 
+import { DatePicker } from "sebs7n-ui/date-picker"
 import { Button } from "sebs7n-ui/button"
 import { Input } from "sebs7n-ui/input"
 import { Label } from "sebs7n-ui/label"
@@ -23,7 +24,7 @@ export function Basico() {
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="sheet-desde">Desde</Label>
-              <Input id="sheet-desde" type="date" />
+              <DatePicker id="sheet-desde" />
             </div>
           </div>
           <SheetFooter>

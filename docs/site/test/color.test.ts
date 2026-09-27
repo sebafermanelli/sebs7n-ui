@@ -10,10 +10,10 @@ describe("oklchOfHex", () => {
   it("ida y vuelta: un hexadecimal vuelve a ser el mismo hexadecimal", () => {
     for (const hex of ["#0070f3", "#e70022", "#28a948", "#ffb200", "#171717", "#ffffff", "#9f00f4"]) {
       const color = oklchOfHex(hex)!
-      // Un paso de tolerancia por canal: OKLCH se redondea a tres decimales para escribirlo en CSS.
+      // Un paso de tolerancia por canal: OKLCH se redondea a cuatro decimales para escribirlo en CSS.
       const vuelta = hexOfOklch(color)
       for (const i of [1, 3, 5]) {
-        expect(Math.abs(parseInt(vuelta.slice(i, i + 2), 16) - parseInt(hex.slice(i, i + 2), 16)), `${hex} → ${vuelta}`).toBeLessThanOrEqual(2)
+        expect(Math.abs(parseInt(vuelta.slice(i, i + 2), 16) - parseInt(hex.slice(i, i + 2), 16)), `${hex} → ${vuelta}`).toBeLessThanOrEqual(1)
       }
     }
   })

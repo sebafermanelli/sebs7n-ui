@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "sebs7n-ui/button"
-import { Input } from "sebs7n-ui/input"
+import { DatePicker } from "sebs7n-ui/date-picker"
 import { Label } from "sebs7n-ui/label"
 import { Popover, PopoverContent, PopoverDescription, PopoverHeader, PopoverTitle, PopoverTrigger } from "sebs7n-ui/popover"
 
@@ -18,11 +18,11 @@ export function Basico() {
         <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="pop-desde">Desde</Label>
-            <Input id="pop-desde" size="sm" type="date" />
+            <DatePicker id="pop-desde" size="sm" />
           </div>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="pop-hasta">Hasta</Label>
-            <Input id="pop-hasta" size="sm" type="date" />
+            <DatePicker id="pop-hasta" size="sm" />
           </div>
         </div>
       </PopoverContent>

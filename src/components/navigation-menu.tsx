@@ -175,7 +175,7 @@ function NavigationMenuLink({ className, title, description, icon, children, ...
       data-slot="navigation-menu-link"
       className={cn(
         linkBaseClassName,
-        "block p-2 text-copy-14 text-gray-1000 hover:bg-gray-100 data-[active]:bg-gray-100",
+        "block p-2 text-copy-14 text-gray-1000 hover:bg-gray-alpha-100 data-[active]:bg-highlight",
         className
       )}
       {...props}

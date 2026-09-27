@@ -20,15 +20,15 @@ export function oklchOfHex(hex: string): Oklch | null {
   const c = Math.hypot(A, B)
   // Un gris no tiene matiz: `atan2(0, 0)` da 0, y conviene que sea estable y no un -0 o un NaN.
   const h = c < 1e-4 ? 0 : ((Math.atan2(B, A) * 180) / Math.PI + 360) % 360
-  // El matiz con un decimal: redondeado a grados enteros, un ámbar pegado al borde del gamut
-  // (#ffb200) volvía como #ffb205.
-  return [redondear(L, 3), redondear(c, 3), redondear(h, 1)]
+  // Cuatro decimales y el matiz con uno. Con tres y grados enteros, un ámbar pegado al borde del
+  // gamut (#ffb200) volvía como #ffb205: ahí el canal azul se mueve mucho con muy poco croma.
+  return [redondear(L, 4), redondear(c, 4), redondear(h, 1)]
 }
 
 const redondear = (valor: number, decimales: number) => Number(valor.toFixed(decimales))
 
 /** Como se escribe en CSS: `oklch(0.573 0.214 258)`. */
-export const cssOfOklch = ([l, c, h]: Oklch) => `oklch(${redondear(l, 3)} ${redondear(c, 3)} ${redondear(h, 1)})`
+export const cssOfOklch = ([l, c, h]: Oklch) => `oklch(${redondear(l, 4)} ${redondear(c, 4)} ${redondear(h, 1)})`
 
 /**
  * El texto que va encima del brand: blanco si llega a 4,5:1, y si no, negro.

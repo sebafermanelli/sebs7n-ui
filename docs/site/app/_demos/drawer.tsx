@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { DatePicker } from "sebs7n-ui/date-picker"
 import { Badge } from "sebs7n-ui/badge"
 import { Button } from "sebs7n-ui/button"
 import {
@@ -37,7 +38,7 @@ export function FiltrosEnMobile() {
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="drawer-desde">Desde</Label>
-            <Input id="drawer-desde" type="date" />
+            <DatePicker id="drawer-desde" />
           </div>
         </DrawerBody>
         <DrawerFooter>

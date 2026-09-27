@@ -142,7 +142,7 @@ describe("NavigationMenu", () => {
 
     await userEvent.click(trigger())
     const card = await screen.findByRole("link", { name: /Sistemas/ })
-    expect(card).toHaveClass("p-2", "hover:bg-gray-100")
+    expect(card).toHaveClass("p-2", "hover:bg-gray-alpha-100")
   })
 
   it("el panel usa los tokens del menú del sistema y no duplica el borde", async () => {

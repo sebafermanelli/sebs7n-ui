@@ -34,8 +34,10 @@ Lo que sigue sale como **1.0.0**.
   color al 22 % (30 % en oscuro).
 - **`Tabs` es una pista segmentada por defecto.** `<TabsList variant="line">` es la de antes.
   `TabsList` ya no mide `w-full`: mide lo que miden sus pestañas.
+- **`Tooltip` ya no tiene flecha.**
 - **Bordes y fondos internos pasan a alfa**: `border-gray-400` → `border-gray-alpha-400`,
-  `bg-gray-100/200/300` → `bg-gray-alpha-*`, `bg-background-200` → `bg-gray-alpha-100`. Un
+  `bg-gray-100/200/300` → `bg-gray-alpha-*`, `bg-background-200` → `bg-gray-alpha-100`. El
+  hover de una fila de `Table` es `gray-alpha-100` y la elegida, `bg-highlight`. Un
   test de la app que fije esas clases sobre un componente del paquete va a fallar.
 - **`Sidebar`** ya no pinta `background-200`: es vidrio grueso.
 
@@ -56,6 +58,14 @@ Lo que sigue sale como **1.0.0**.
   `<html data-sf-modality>`.
 - **El pulgar de `Slider` y `Switch` se vuelve lente mientras se lo arrastra**
   (`thumb-lens`, `transition-thumb`).
+- **`Calendar`** (`sebs7n-ui/calendar`) y **`DatePicker`** (`sebs7n-ui/date-picker`): un mes en
+  una grilla y un campo que lo abre, para una fecha o un rango (`mode="range"`). Reemplazan a
+  `<input type="date">`, cuyo calendario es del navegador y no toma el material, la tipografía
+  ni el idioma de la app. Grilla de fechas de WAI-ARIA, con `min`, `max`, `isDateDisabled`,
+  `locale` y `weekStartsOn`. **`DatePicker` no valida**: no tiene `required` ni se registra en
+  un `Field`.
+- `sebs7n-ui/lib/dates`: aritmética de fechas de calendario, sin dependencias.
+- `Labels` suma los grupos `calendar` y `datePicker`.
 - `bg-highlight` y `bg-highlight-active`, `shadow-button-accent`.
 - `sebs7n-ui/lib/contrast`: `glassAlpha`, `glassSurface`, `composite` y `hexOfOklch`, para
   que una app mida el contraste de su texto sobre su vidrio.

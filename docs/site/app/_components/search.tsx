@@ -117,7 +117,7 @@ export function SearchProvider({ children }: { children: ReactNode }) {
               {resultados.map((resultado) => (
                 <li key={resultado.href}>
                   <Link
-                    className="flex flex-col gap-0.5 rounded-control px-2 py-2 outline-none transition-control hover:bg-gray-100 focus-visible:focus-ring"
+                    className="flex flex-col gap-0.5 rounded-control px-2 py-2 outline-none transition-control hover:bg-gray-alpha-100 focus-visible:focus-ring"
                     href={resultado.href}
                     onClick={() => setAbierto(false)}
                   >

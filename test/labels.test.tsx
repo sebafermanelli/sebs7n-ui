@@ -186,7 +186,9 @@ describe("LabelsProvider", () => {
     expect(Object.keys(defaultLabels).sort()).toEqual([
       "appShell",
       "autocomplete",
+      "calendar",
       "combobox",
+      "datePicker",
       "dialog",
       "drawer",
       "numberField",

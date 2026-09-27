@@ -75,6 +75,12 @@ export type Labels = {
     /** Nombre del botón que abre la lista. */
     trigger: string
   }
+  calendar: {
+    /** Nombre del botón que va al mes anterior. */
+    previousMonth: string
+    /** Nombre del botón que va al mes siguiente. */
+    nextMonth: string
+  }
   combobox: {
     clear: string
     trigger: string
@@ -91,6 +97,14 @@ export type Labels = {
      * por identidad, porque comparar funciones por contenido no existe.
      */
     remove: string | ((name: string) => string)
+  }
+  datePicker: {
+    /** Lo que dice el campo cuando no hay fecha elegida. */
+    placeholder: string
+    /** Lo mismo, cuando lo que se elige es un rango. */
+    rangePlaceholder: string
+    /** Nombre del panel que se abre, para quien no lo ve. */
+    calendar: string
   }
   dialog: {
     /** Nombre del botón X. */
@@ -137,12 +151,21 @@ export const defaultLabels: Labels = {
     clear: "Limpiar",
     trigger: "Ver sugerencias",
   },
+  calendar: {
+    previousMonth: "Mes anterior",
+    nextMonth: "Mes siguiente",
+  },
   combobox: {
     clear: "Limpiar",
     trigger: "Abrir lista",
     loading: "Buscando…",
     empty: "Sin resultados",
     remove: "Quitar",
+  },
+  datePicker: {
+    placeholder: "Elegí una fecha",
+    rangePlaceholder: "Elegí un rango",
+    calendar: "Calendario",
   },
   dialog: { close: "Cerrar" },
   drawer: { close: "Cerrar" },

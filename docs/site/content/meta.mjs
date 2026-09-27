@@ -641,6 +641,64 @@ export const COMPONENTS = {
     },
     related: ["combobox", "input"],
   },
+  calendar: {
+    title: "Calendar",
+    group: "formularios",
+    description: "Un mes en una grilla, para elegir una fecha o un rango. Es el calendario de `DatePicker`, suelto.",
+    keyboard: [
+      ["← → ↑ ↓", "Un día o una semana. Al salir del mes, el mes cambia."],
+      ["Inicio · Fin", "Primer y último día de la semana."],
+      ["Re Pág · Av Pág", "Un mes atrás o adelante. Con Shift, un año."],
+      ["Enter · Espacio", "Elige el día enfocado."],
+      ["Tab", "Entra a la grilla y sale: adentro es una sola parada."],
+    ],
+    a11y: [
+      "Sigue el patrón de grilla de fechas de WAI-ARIA: `role=\"grid\"`, una sola parada de tabulación y flechas adentro.",
+      "Cada día se llama por su fecha entera —«domingo, 27 de septiembre de 2026»— y los encabezados de columna llevan el nombre del día en `abbr`.",
+      "Hoy lleva `aria-current=\"date\"`; el título del mes, `aria-live`, así cambiar de mes con los botones se anuncia.",
+      "Una fecha apagada usa `aria-disabled` y no `disabled`: sigue siendo enfocable, que es lo que deja pasar por arriba con las flechas.",
+      "Los días de los meses vecinos completan las semanas pero están fuera del árbol de accesibilidad.",
+    ],
+    usage: [
+      "No dibuja superficie: va adentro de un `Popover`, de una `Card` o suelto. El vidrio lo pone quien lo contiene.",
+      "Para un campo de formulario, usá `DatePicker`, que ya lo trae adentro.",
+      "Siempre son seis semanas, aunque el mes entre en cinco: con un alto fijo, lo que está debajo no se mueve al cambiar de mes.",
+    ],
+    props: {
+      Calendar: {
+        className: PROP_DESCRIPTIONS.className,
+      },
+    },
+    related: ["date-picker", "popover", "input"],
+  },
+  "date-picker": {
+    title: "DatePicker",
+    group: "formularios",
+    description: "Un campo que abre un calendario. Reemplaza a `<input type=\"date\">`, cuyo calendario es del navegador y no se puede estilar.",
+    keyboard: [
+      ["Enter · Espacio", "Abre el calendario, con el foco en la fecha elegida."],
+      ["Escape", "Cierra y devuelve el foco al campo."],
+      ["← → ↑ ↓", "Se mueve por los días. Ver `Calendar`."],
+    ],
+    a11y: [
+      "El campo es un botón: necesita `aria-label`, `aria-labelledby` o un `<Label htmlFor>` apuntando a su `id`.",
+      "La fecha se escribe con `Intl` en el idioma que se le pasa (`locale`), no en el del navegador.",
+      "**No valida.** No tiene `required` y no se registra en un `Field`: si la fecha es obligatoria, lo chequea la app al enviar.",
+    ],
+    usage: [
+      "Para fechas que se eligen mirando un calendario: un turno, un vencimiento cercano, un período.",
+      "Para una fecha que se tipea —un nacimiento, un vencimiento que se copia de un papel— va un `Input`: recorrer cuarenta años de a un mes es peor que escribir ocho números.",
+      "`mode=\"range\"` elige desde y hasta en el mismo calendario, y se cierra recién con el segundo clic.",
+      "Con `name`, la fecha viaja en el formulario como `2026-09-27`. En rango salen dos campos: `nombre-desde` y `nombre-hasta`.",
+    ],
+    props: {
+      DatePicker: {
+        className: PROP_DESCRIPTIONS.className,
+        disabled: PROP_DESCRIPTIONS.disabled,
+      },
+    },
+    related: ["calendar", "input", "select", "popover"],
+  },
   checkbox: {
     title: "Checkbox",
     group: "formularios",

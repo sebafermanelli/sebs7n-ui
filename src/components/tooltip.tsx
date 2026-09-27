@@ -19,7 +19,12 @@ function TooltipTrigger(props: TooltipPrimitive.Trigger.Props) {
 type TooltipContentProps = WithClassName<TooltipPrimitive.Popup.Props> &
   Pick<TooltipPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset">
 
-// Invertido, como en Vercel: fondo gray-1000, texto background-100.
+// Invertido: fondo gray-1000, texto background-100. Es de lo poco que no es vidrio, y es a
+// propósito: es una línea de texto chica que aparece encima de cualquier cosa, y tiene que
+// leerse igual sobre una foto que sobre una tabla.
+//
+// Sin flecha desde 1.0. La cercanía al control ya dice de quién habla —son 6px—, y la flecha
+// era un rombo de 8px que en una cápsula redondeada quedaba colgando de la curva.
 function TooltipContent({ className, side = "top", sideOffset = 6, align = "center", alignOffset = 0, children, ...props }: TooltipContentProps) {
   return (
     <TooltipPrimitive.Portal>
@@ -34,10 +39,6 @@ function TooltipContent({ className, side = "top", sideOffset = 6, align = "cent
           {...props}
         >
           {children}
-          <TooltipPrimitive.Arrow
-            data-slot="tooltip-arrow"
-            className="size-2 rotate-45 rounded-[1px] bg-gray-1000 data-[side=bottom]:-top-1 data-[side=left]:-right-1 data-[side=right]:-left-1 data-[side=top]:-bottom-1"
-          />
         </TooltipPrimitive.Popup>
       </TooltipPrimitive.Positioner>
     </TooltipPrimitive.Portal>
