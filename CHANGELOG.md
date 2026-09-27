@@ -9,6 +9,14 @@ major.
 
 ## [Unreleased]
 
+## [1.4.1] - 2026-09-27
+
+### Changed
+
+- **La luz ambiente del tema oscuro, un paso más abajo.** La de 1.4.0 todavía teñía la página.
+  Baja el alfa (la ganancia pasa de 0,7 a 0,5) y el croma (de 0,6–0,45 a 0,45–0,35 del
+  brand): el color se intuye detrás del vidrio, no tiñe. `--glass` y el tema claro no cambian.
+
 ## [1.4.0] - 2026-09-27
 
 ### Added

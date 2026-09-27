@@ -438,10 +438,10 @@
     /* Sobre negro un color saturado se ve mucho más que sobre blanco: acá la luz es una
        penumbra. Menos croma, menos alfa y los focos más cerca del matiz del brand —30° y −25°,
        no 55° y −45°—, para que detrás del vidrio haya un color y no tres. */
-    --sf-ambient-gain: 0.7;
-    --sf-ambient-1: oklch(from var(--sf-brand-src) 0.4 calc(c * 0.6) h);
-    --sf-ambient-2: oklch(from var(--sf-brand-src) 0.36 calc(c * 0.5) calc(h + 30));
-    --sf-ambient-3: oklch(from var(--sf-brand-src) 0.34 calc(c * 0.45) calc(h - 25));
+    --sf-ambient-gain: 0.5;
+    --sf-ambient-1: oklch(from var(--sf-brand-src) 0.38 calc(c * 0.45) h);
+    --sf-ambient-2: oklch(from var(--sf-brand-src) 0.34 calc(c * 0.4) calc(h + 30));
+    --sf-ambient-3: oklch(from var(--sf-brand-src) 0.32 calc(c * 0.35) calc(h - 25));
 
     --sf-background: #000000;
 
