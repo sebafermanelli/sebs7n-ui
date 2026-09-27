@@ -15,7 +15,13 @@ const twMerge = extendTailwindMerge({
   extend: {
     theme: {
       text: [...TYPE_SCALE],
-      shadow: ["tooltip", "menu", "modal", "card", "card-hover", "button", "button-inverted", "track"],
+      shadow: ["tooltip", "menu", "modal", "card", "card-hover", "button", "button-inverted", "button-accent", "track"],
+      radius: ["control", "surface", "panel"],
+    },
+    classGroups: {
+      // `glass` y `glass-control` pintan el fondo. Sin esto, un `bg-*` que pase el llamador
+      // convive con el vidrio y gana el que Tailwind haya emitido último, que no se elige.
+      "bg-color": ["glass", "glass-control"],
     },
   },
 })

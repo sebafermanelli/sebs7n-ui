@@ -20,6 +20,20 @@
   }
 }
 
+/**
+ * Los tres radios del sistema. Van en `@theme` sin `inline` a propósito: así salen como
+ * variables en `:root` y la app los pisa igual que pisa `--brand-base`.
+ *
+ * Son semánticos y no un paso de la escala de Tailwind (`rounded-md`, `rounded-xl`) porque
+ * redefinir esos pasos le cambiaría el radio también al código de la app, que comparte el tema.
+ * Con `--radius-control: 6px` y `--radius-surface: 12px` vuelven los radios de Geist.
+ */
+@theme {
+  --radius-control: 10px;
+  --radius-surface: 20px;
+  --radius-panel: 26px;
+}
+
 @theme inline {
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
@@ -87,6 +101,7 @@
   --shadow-card-hover: var(--sf-shadow-card-hover);
   --shadow-button: var(--sf-shadow-button);
   --shadow-button-inverted: var(--sf-shadow-button-inverted);
+  --shadow-button-accent: var(--sf-shadow-button-accent);
   --shadow-track: var(--sf-shadow-track);
 
   /**
@@ -113,8 +128,46 @@
     --brand-contrast: #fff;
     --brand-contrast-dark: var(--brand-contrast);
 
+    /**
+     * El material. Un solo parámetro, como el ajuste de transparencia de macOS:
+     *
+     *   --glass       0 = sólido (el Geist de 0.8.0) · 1 = vidrio pleno
+     *   --glass-tint  cuánto brand entra al fill del vidrio
+     *
+     * De `--glass` salen el alfa del fill, el radio del blur, la saturación y el filo claro.
+     * Las fórmulas viven en la utilidad `glass`, más abajo, y no acá: una custom property con
+     * `var()` se resuelve en el elemento que la declara, así que calculadas en `:root` no
+     * responderían cuando una app pisa `--glass` en un subárbol.
+     */
+    --glass: 0.6;
+    --glass-tint: 0;
+    /* El interruptor de accesibilidad. La app no lo toca: lo apagan los media queries de abajo. */
+    --sf-glass-on: 1;
+    /* La intensidad efectiva, para los tokens que sí se calculan en `:root` (sombras). */
+    --sf-g: calc(var(--glass) * var(--sf-glass-on));
+    /**
+     * Hacia dónde se aclara la superficie cuando se vuelve vidrio. En claro no cambia nada
+     * (la superficie ya es blanca); en oscuro #0a0a0a traslúcido sobre negro no se distingue
+     * de la página, y el vidrio necesita un tono más alto para leerse como material.
+     */
+    --sf-glass-lift: #ffffff;
+    /* El filo de luz de arriba: opacidad = min + g · gain. */
+    --sf-glass-edge-min: 0.25;
+    --sf-glass-edge-gain: 0.6;
+    /* El canto especular del cromo (`glass-rim`), a vidrio pleno. */
+    --sf-glass-rim: 1;
+
     --sf-brand-src: var(--brand-base);
     --sf-brand-fg: var(--brand-contrast);
+
+    /**
+     * La luz ambiente (`bg-ambient`): tres focos que salen del brand, uno en su matiz y dos
+     * corridos 55° y −45°. La luminosidad es fija por tema —igual que en la escala de brand—
+     * para que un brand oscuro no deje la página en penumbra ni uno claro la queme.
+     */
+    --sf-ambient-1: oklch(from var(--sf-brand-src) 0.8 calc(c * 0.75) h);
+    --sf-ambient-2: oklch(from var(--sf-brand-src) 0.84 calc(c * 0.6) calc(h + 55));
+    --sf-ambient-3: oklch(from var(--sf-brand-src) 0.86 calc(c * 0.55) calc(h - 45));
 
     /**
      * Fondo de página. No es un primitivo de Geist (por eso vive acá y no en
@@ -217,6 +270,12 @@
       0px 12px 20px -8px #0000000f;
     --sf-shadow-button: inset 0 1px 0 0 #ffffff1f, 0px 1px 2px #0000001a;
     /**
+     * El botón de marca suma un halo de su propio color debajo: es la luz que atraviesa un
+     * vidrio teñido. Escala con `--sf-g`, así que con `--glass: 0` es `shadow-button` a secas.
+     */
+    --sf-shadow-button-accent: var(--sf-shadow-button),
+      0 8px 18px -8px color-mix(in srgb, var(--sf-brand-700) calc(var(--sf-g) * 75%), transparent);
+    /**
      * La versión para lo que se pinta con `gray-1000`: el Button `default`, el
      * Checkbox y el Radio marcados. En claro es negro y le sirve el mismo filo
      * blanco que a los de color; en oscuro es BLANCO, y un filo blanco sobre
@@ -238,6 +297,16 @@
   .dark {
     --sf-brand-src: var(--brand-base-dark);
     --sf-brand-fg: var(--brand-contrast-dark);
+
+    --sf-glass-lift: #1c1c1e;
+    /* Sobre una superficie oscura el mismo filo blanco quema: va a la cuarta parte. */
+    --sf-glass-edge-min: 0.04;
+    --sf-glass-edge-gain: 0.16;
+    --sf-glass-rim: 0.4;
+
+    --sf-ambient-1: oklch(from var(--sf-brand-src) 0.5 calc(c * 0.95) h);
+    --sf-ambient-2: oklch(from var(--sf-brand-src) 0.45 calc(c * 0.8) calc(h + 55));
+    --sf-ambient-3: oklch(from var(--sf-brand-src) 0.42 calc(c * 0.75) calc(h - 45));
 
     --sf-background: #000000;
 
@@ -274,6 +343,128 @@
     --sf-chart-4: var(--sf-purple-700);
     --sf-chart-5: var(--sf-green-700);
   }
+}
+
+/**
+ * Quien pidió menos transparencia o más contraste ve el sistema sólido.
+ *
+ * Se apaga `--sf-glass-on` y no `--glass`: la app pisa `--glass` fuera de toda capa, y una
+ * declaración sin capa le gana a cualquiera de `@layer base`, media query incluido. El
+ * interruptor es una variable que la app no toca, así que acá siempre gana el usuario.
+ */
+@layer base {
+  @media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+    :root {
+      --sf-glass-on: 0;
+    }
+  }
+}
+
+/**
+ * La superficie de vidrio: Card, Popover, menús, Dialog, Sidebar, Navbar.
+ *
+ * Reemplaza a `bg-background-100` en todo lo que flota. Son cuatro capas: el fill traslúcido,
+ * el blur del fondo, la saturación —que devuelve el color que el blur lava— y el filo claro
+ * de arriba, que es la luz pegando en el borde del material.
+ *
+ * El 0,6 del fill no es estético. Con `--glass: 0.6` el alfa queda en 0,64, que es el mínimo
+ * con el que `gray-1000` llega a 4,5:1 contra cualquier cosa que pase por debajo: negro detrás
+ * de un vidrio claro, blanco detrás de uno oscuro. Lo fija `test/glass-contrast.test.ts`.
+ *
+ * El filo va por `--tw-inset-shadow` y no por `box-shadow` directo: así se compone con el
+ * `shadow-menu` o el `shadow-card` que el componente ya tiene, en vez de pisarlo.
+ */
+@utility glass {
+  --sf-g: calc(var(--glass) * var(--sf-glass-on));
+  --tw-inset-shadow: inset 0 1px 0 rgb(255 255 255 / calc(var(--sf-glass-edge-min) + var(--sf-g) * var(--sf-glass-edge-gain)));
+  background-color: color-mix(
+    in srgb,
+    color-mix(
+      in srgb,
+      var(--sf-brand-600) calc(var(--glass-tint) * 34%),
+      color-mix(in srgb, var(--sf-glass-lift) calc(var(--sf-g) * 100%), var(--sf-background-100))
+    )
+    calc((1 - var(--sf-g) * 0.6) * 100%),
+    transparent
+  );
+  -webkit-backdrop-filter: blur(calc(var(--sf-g) * var(--sf-glass-k, 1) * 40px)) saturate(calc(1 + var(--sf-g) * 1.3));
+  backdrop-filter: blur(calc(var(--sf-g) * var(--sf-glass-k, 1) * 40px)) saturate(calc(1 + var(--sf-g) * 1.3));
+  box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+}
+
+/* El grosor sigue al tamaño: un Tooltip es una lámina, un Dialog es una placa. */
+@utility glass-thin {
+  --sf-glass-k: 0.6;
+}
+
+@utility glass-thick {
+  --sf-glass-k: 1.5;
+}
+
+/**
+ * Lo que vive ADENTRO de un vidrio: Input, Button `outline`, Checkbox vacío, Toggle.
+ *
+ * Alfa, sin blur. Un elemento con `backdrop-filter` se vuelve la raíz del fondo de sus hijos:
+ * un hijo con blur solo desenfoca lo que pintó el padre, no la página, así que el segundo
+ * vidrio cuesta lo mismo de pintar y no muestra nada. Y dos traslúcidos apilados se comen el
+ * contraste del texto.
+ */
+@utility glass-control {
+  --sf-g: calc(var(--glass) * var(--sf-glass-on));
+  background-color: color-mix(in srgb, var(--sf-background-100) calc((1 - var(--sf-g) * 0.45) * 100%), transparent);
+}
+
+/**
+ * El canto especular del cromo: Toolbar, ThemeSwitcher, Navbar flotante.
+ *
+ * Un borde de 1px en degradé a 135°, brillante en la esquina de arriba a la izquierda y a
+ * media luz en la opuesta, que es como Safari dibuja sus cápsulas. Va en un `::after`
+ * enmascarado y no en `border-image`, que no respeta `border-radius`.
+ *
+ * El elemento tiene que estar posicionado (`relative`, `sticky`, `fixed`): la utilidad no lo
+ * fuerza, porque pisaría el `fixed` o el `sticky` de quien la use.
+ */
+@utility glass-rim {
+  &::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    padding: 1px;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(
+      135deg,
+      rgb(255 255 255 / calc(var(--glass) * var(--sf-glass-on) * var(--sf-glass-rim))),
+      transparent 35%,
+      transparent 65%,
+      rgb(255 255 255 / calc(var(--glass) * var(--sf-glass-on) * var(--sf-glass-rim) * 0.6))
+    );
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  }
+}
+
+/* El brillo de arriba de un botón de color: la mitad superior más clara, como una gota. */
+@utility sheen {
+  background-image: linear-gradient(180deg, rgb(255 255 255 / calc(var(--glass) * var(--sf-glass-on) * 0.26)), transparent 60%);
+}
+
+/**
+ * La luz ambiente. Sobre una página blanca o negra lisa el vidrio no tiene nada que
+ * desenfocar y se ve como un gris plano: esto le pone color detrás.
+ *
+ * Son tres `radial-gradient` y no tres `div` con `filter: blur()`: el degradé lo resuelve el
+ * rasterizador una vez, y un blur de 90px sobre media pantalla se repinta en cada scroll.
+ * `fixed` para que la luz quede quieta y sea el contenido el que pasa por delante.
+ */
+@utility bg-ambient {
+  background-color: var(--color-background);
+  background-image:
+    radial-gradient(60vmax 60vmax at 0% 0%, color-mix(in oklch, var(--sf-ambient-1) 55%, transparent), transparent 70%),
+    radial-gradient(50vmax 50vmax at 100% 30%, color-mix(in oklch, var(--sf-ambient-2) 50%, transparent), transparent 70%),
+    radial-gradient(55vmax 55vmax at 40% 110%, color-mix(in oklch, var(--sf-ambient-3) 50%, transparent), transparent 70%);
+  background-attachment: fixed;
 }
 
 /* El pulso del Skeleton.
