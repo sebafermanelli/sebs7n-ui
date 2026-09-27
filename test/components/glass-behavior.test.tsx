@@ -104,3 +104,15 @@ describe("Tabs: pista segmentada", () => {
     expect(list.querySelector("[data-slot=tabs-indicator]")).toBeNull()
   })
 })
+
+// El clic que abre un diálogo pasa antes de que exista el campo de adentro. Si la modalidad se
+// instalara recién al montar el primer campo, ese clic no lo anotaría nadie y el campo se
+// abriría con el halo de teclado para alguien que acaba de usar el mouse.
+describe("la modalidad se anota aunque no haya ningún campo montado", () => {
+  it("un clic en una página sin campos ya cuenta", () => {
+    render(<button type="button">Buscar</button>)
+    expect(document.querySelector("input")).toBeNull()
+    fireEvent.pointerDown(screen.getByRole("button", { name: "Buscar" }))
+    expect(document.documentElement).toHaveAttribute("data-sf-modality", "pointer")
+  })
+})

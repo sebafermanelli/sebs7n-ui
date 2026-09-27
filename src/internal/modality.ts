@@ -35,7 +35,21 @@ function installModality() {
   document.addEventListener("pointerdown", () => (root.dataset.sfModality = "pointer"), true)
 }
 
-/** Lo llama cada campo del paquete. Instala los dos listeners una sola vez por documento. */
+/**
+ * Se instala al cargar el módulo, no al montar el primer campo.
+ *
+ * Montando era tarde: en una página sin ningún campo a la vista —un home con un botón de
+ * buscar—, el clic que abre el diálogo pasa ANTES de que exista un `Input`, así que nadie lo
+ * anotaba. El campo se abría enfocado, el atributo no estaba, y aparecía el halo de teclado
+ * para alguien que acababa de usar el mouse. El módulo se carga con el bundle de la página,
+ * que es antes de cualquier clic.
+ */
+installModality()
+
+/**
+ * Lo llama cada campo del paquete. Es la red de seguridad de lo de arriba: si el módulo se
+ * evaluó en el servidor y el bundler lo reusó, acá se instala en el primer montaje.
+ */
 function useModality() {
   React.useEffect(installModality, [])
 }

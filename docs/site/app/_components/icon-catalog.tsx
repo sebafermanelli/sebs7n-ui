@@ -53,7 +53,8 @@ export function IconCatalog() {
               setLimite(PAGINA)
             }}
             placeholder="Buscar: arrow, user, file…"
-            type="search"
+            enterKeyHint="search"
+            type="text"
             value={consulta}
           />
         </div>

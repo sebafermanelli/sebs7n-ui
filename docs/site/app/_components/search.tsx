@@ -2,10 +2,9 @@
 
 import { SearchIcon } from "lucide-react"
 import Link from "next/link"
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react"
+import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import { Button } from "sebs7n-ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "sebs7n-ui/dialog"
-import { Input } from "sebs7n-ui/input"
 import { Kbd } from "sebs7n-ui/kbd"
 import { cn } from "sebs7n-ui/lib/utils"
 
@@ -60,6 +59,7 @@ export function SearchProvider({ children }: { children: ReactNode }) {
   const [abierto, setAbierto] = useState(false)
   const [consulta, setConsulta] = useState("")
   const resultados = useMemo(() => buscar(consulta), [consulta])
+  const campo = useRef<HTMLInputElement>(null)
 
   // El atajo lo registra la app, no el paquete: SidebarSearch solo muestra el Kbd.
   useEffect(() => {
@@ -82,16 +82,27 @@ export function SearchProvider({ children }: { children: ReactNode }) {
     <SearchContext.Provider value={valor}>
       {children}
       <Dialog onOpenChange={setAbierto} open={abierto}>
-        <DialogContent className="top-24 max-w-xl translate-y-0 gap-0 p-0" showCloseButton={false}>
+        {/* `initialFocus` y no `autoFocus`: el foco lo decide el diálogo, que es quien lo atrapa.
+            Con el atributo, quién llega primero —el `focus()` de React o el del diálogo— depende
+            del navegador. */}
+        <DialogContent className="top-24 max-w-xl translate-y-0 gap-0 overflow-hidden p-0" initialFocus={campo} showCloseButton={false}>
           <DialogTitle className="sr-only">Buscar en la documentación</DialogTitle>
           <DialogDescription className="sr-only">
             Escribí el nombre de un componente o de una página. Enter para ir al primer resultado.
           </DialogDescription>
-          <div className="border-b border-gray-alpha-400 p-2">
-            {/* eslint-disable-next-line jsx-a11y/no-autofocus -- es un buscador modal: el foco va acá o no sirve */}
-            <Input
+          {/* El campo ES la cabecera del diálogo, no un Input apoyado adentro. Con borde y fondo
+              propios era una caja de 10px de radio a 8px del borde de otra de 26: dos curvas que
+              no se acompañan. Sin caja no hay nada que alinear.
+
+              El indicador de foco es la línea de abajo, que toma el color de marca: un campo sin
+              borde no puede mostrar el suyo, y el cursor solo no alcanza. */}
+          <div className="flex items-center gap-3 border-b border-gray-alpha-400 px-5 transition-control has-[input:focus]:border-brand-700">
+            <SearchIcon aria-hidden="true" className="size-4.5 shrink-0 text-gray-900" />
+            <input
               aria-label="Buscar en la documentación"
-              autoFocus
+              autoCapitalize="off"
+              autoComplete="off"
+              className="h-14 min-w-0 flex-1 bg-transparent text-copy-16 text-gray-1000 outline-none placeholder:text-gray-900"
               onChange={(event) => setConsulta(event.target.value)}
               onKeyDown={(event) => {
                 if (event.key === "Enter" && resultados[0]) {
@@ -101,8 +112,16 @@ export function SearchProvider({ children }: { children: ReactNode }) {
                 }
               }}
               placeholder="Button, tokens, aria-invalid…"
+              ref={campo}
+              spellCheck={false}
+              // `text` y no `search`: con `search` el navegador dibuja su propia × de limpiar,
+              // que no se puede estilar. `enterKeyHint` conserva lo útil, la tecla «Buscar» del
+              // teclado en pantalla.
+              enterKeyHint="search"
+              type="text"
               value={consulta}
             />
+            <Kbd>Esc</Kbd>
           </div>
           <div aria-live="polite" className="max-h-80 overflow-y-auto p-2">
             {consulta && !resultados.length && (
@@ -117,7 +136,8 @@ export function SearchProvider({ children }: { children: ReactNode }) {
               {resultados.map((resultado) => (
                 <li key={resultado.href}>
                   <Link
-                    className="flex flex-col gap-0.5 rounded-control px-2 py-2 outline-none transition-control hover:bg-gray-alpha-100 focus-visible:focus-ring"
+                    // Concéntrico con el diálogo: su radio menos los 8px que los separan.
+                    className="flex flex-col gap-0.5 rounded-[calc(var(--radius-panel)-(--spacing(2)))] px-3 py-2 outline-none transition-control hover:bg-gray-alpha-100 focus-visible:focus-ring"
                     href={resultado.href}
                     onClick={() => setAbierto(false)}
                   >

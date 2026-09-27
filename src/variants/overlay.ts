@@ -50,7 +50,7 @@ export const overlayCloseClassName = "absolute top-4 right-4"
  * `focus-visible:focus-ring` no es opcional: si adentro no hay nada tabulable, Base UI enfoca
  * el popup mismo, y con `outline-none` sin reemplazo eso era foco invisible (WCAG 2.4.7).
  *
- * `NavigationMenu` comparte la superficie —`rounded-surface glass shadow-menu
+ * `NavigationMenu` comparte la superficie —`glass shadow-menu
  * outline-none focus-visible:focus-ring`— pero no el resto: su panel mide lo que mide su
  * contenido (`--popup-width`/`--popup-height`), lleva `p-1` en vez de `p-4` y anima también
  * la escala y el tamaño. No usa esta constante a propósito: forzarla pediría deshacer la

@@ -259,7 +259,9 @@ function NavigationMenuPopup({ className, ...props }: NavigationMenuPopupProps) 
         "relative h-(--popup-height) w-(--popup-width) origin-(--transform-origin) overflow-hidden",
         // El `focus-visible:focus-ring` es por el mismo motivo que en Popover y HoverCard: si el
         // panel no tiene links adentro, Base UI lo enfoca a él y con `outline-none` no se veía nada.
-        "rounded-surface glass p-1 text-gray-1000 shadow-menu outline-none focus-visible:focus-ring",
+        // El radio es el de los links más el `p-1` que los separa, igual que en los menús: con el
+        // radio de superficie (20px) a 4px de un link de 10, las dos curvas no eran paralelas.
+        "rounded-[calc(var(--radius-control)+--spacing(1))] glass p-1 text-gray-1000 shadow-menu outline-none focus-visible:focus-ring",
         "transition-[opacity,transform,width,height] duration-200 ease-out motion-reduce:transition-none",
         "data-starting-style:scale-[0.98] data-starting-style:opacity-0",
         "data-ending-style:scale-[0.98] data-ending-style:opacity-0",

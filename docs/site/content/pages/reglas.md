@@ -21,6 +21,8 @@ Las decisiones que no se ven en una tabla de props. Cada una existe porque rompe
 | Cromo: Toolbar, Navbar despegada | `glass` + `glass-rim` |
 | Una zona hundida: `Card subtle`, `thead`, `EmptyState` | `bg-gray-alpha-100` |
 
+**Las curvas son concéntricas.** Cuando algo redondeado vive cerca del borde de otra cosa redondeada, su radio es el de afuera menos la distancia que los separa. Un diálogo de 26px con un ítem a 8px del borde pide un ítem de 18px: con uno de 10 se ve una caja cuadrada metida en una redondeada. Los menús ya lo hacen solos (el panel mide el radio del ítem más su `p-1`). Importa cuando el padding es menor que el radio; con un padding de 24px en un diálogo de 26, no.
+
 **El grosor sigue al tamaño.** Una superficie grande con el blur de un tooltip se ve como un papel de calcar; un tooltip con el de un diálogo, como un bloque.
 
 **El color va en capa sólida.** Un botón de acción, un Badge `solid`, un Tooltip no son traslúcidos: el color que tiene que leerse igual en cualquier pantalla no puede depender de lo que pase por debajo.

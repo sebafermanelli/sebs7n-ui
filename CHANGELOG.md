@@ -36,6 +36,8 @@ Lo que sigue sale como **1.0.0**.
   `TabsList` ya no mide `w-full`: mide lo que miden sus pestañas.
 - **`ThemeSwitcher` y `ThemeMenuRadio` son la pista segmentada de `Tabs`**, con íconos: la opción
   elegida ya no se pinta (`data-checked:bg-*`), la marca una pastilla que se desliza.
+- **El panel de `NavigationMenu`** usa el radio concéntrico de los menús (el del link más su
+  `p-1`) en vez del de superficie.
 - **`Tooltip` ya no tiene flecha.**
 - **La franja de color de `Alert`** es una píldora adentro de la superficie, a 8px del borde, y
   el padding izquierdo pasa de 16 a 20px. Pegada al borde no entraba en el radio de 20px.
