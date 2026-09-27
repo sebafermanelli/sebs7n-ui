@@ -42,7 +42,7 @@ describe("Chat: estructura", () => {
           <ChatTitle>Asistente</ChatTitle>
         </ChatHeader>
         <ChatFooter>
-          <ChatDisclaimer>Confirmá con tu asesor.</ChatDisclaimer>
+          <ChatDisclaimer>Revisá los datos importantes.</ChatDisclaimer>
         </ChatFooter>
       </Chat>
     )
@@ -50,7 +50,7 @@ describe("Chat: estructura", () => {
     expect(chat).toHaveClass("flex", "min-h-0", "flex-col")
     expect(chat.className).not.toMatch(/glass|bg-|shadow|border/)
     expect(screen.getByText("Asistente").closest("[data-slot=chat-header]")).toHaveClass("border-b", "border-gray-alpha-400")
-    expect(screen.getByText("Confirmá con tu asesor.")).toHaveClass("text-center", "text-label-12", "text-gray-900")
+    expect(screen.getByText("Revisá los datos importantes.")).toHaveClass("text-center", "text-label-12", "text-gray-900")
   })
 
   it("la lista es un log que se anuncia solo y se puede recorrer con el teclado", () => {
@@ -69,14 +69,14 @@ describe("ChatMessage", () => {
   it("el usuario va a la derecha en un globo con el tinte de marca; el asistente, a la izquierda y sin globo", () => {
     render(
       <>
-        <ChatMessage from="user">¿Cuándo viajo?</ChatMessage>
-        <ChatMessage from="assistant">El 12 de octubre.</ChatMessage>
+        <ChatMessage from="user">¿Cuánto facturé?</ChatMessage>
+        <ChatMessage from="assistant">$ 1.284.000.</ChatMessage>
       </>
     )
-    const usuario = screen.getByText("¿Cuándo viajo?")
+    const usuario = screen.getByText("¿Cuánto facturé?")
     expect(usuario).toHaveAttribute("data-from", "user")
     expect(usuario).toHaveClass("data-[from=user]:self-end", "data-[from=user]:bg-highlight", "data-[from=user]:rounded-br-control")
-    const asistente = screen.getByText("El 12 de octubre.")
+    const asistente = screen.getByText("$ 1.284.000.")
     expect(asistente).toHaveAttribute("data-from", "assistant")
     expect(asistente).toHaveClass("data-[from=assistant]:self-start")
     // Una palabra larga o una URL no rompen el ancho del panel.
@@ -247,11 +247,11 @@ describe("Chat: lo que rodea a los mensajes", () => {
       <ChatEmpty>
         <p>Hola. ¿En qué te ayudo?</p>
         <ChatSuggestions>
-          <ChatSuggestion onClick={onClick}>¿Cuándo es mi próximo viaje?</ChatSuggestion>
+          <ChatSuggestion onClick={onClick}>¿Cuánto facturé este mes?</ChatSuggestion>
         </ChatSuggestions>
       </ChatEmpty>
     )
-    const sugerencia = screen.getByRole("button", { name: "¿Cuándo es mi próximo viaje?" })
+    const sugerencia = screen.getByRole("button", { name: "¿Cuánto facturé este mes?" })
     expect(sugerencia).toHaveAttribute("type", "button")
     expect(sugerencia).toHaveClass("glass-control", "w-full", "text-left", "min-h-10", "rounded-[min(var(--radius-field),--spacing(5))]")
     expect(sugerencia).not.toHaveClass("h-10")
@@ -319,5 +319,26 @@ describe("Chat: el borde de la IA", () => {
   it("las piezas siguen andando sueltas, sin un Chat arriba", () => {
     render(<ChatMessages busy>x</ChatMessages>)
     expect(screen.getByRole("log")).toHaveAttribute("aria-busy", "true")
+  })
+})
+
+describe("Chat: refs de afuera", () => {
+  it("un ref en ChatMessages no rompe el seguimiento del último mensaje", () => {
+    const ref = { current: null as HTMLDivElement | null }
+    const { rerender } = render(<ChatMessages ref={ref}>uno</ChatMessages>)
+    const lista = screen.getByRole("log")
+    expect(ref.current).toBe(lista)
+    Object.defineProperty(lista, "scrollHeight", { configurable: true, value: 900 })
+    Object.defineProperty(lista, "clientHeight", { configurable: true, value: 300 })
+    rerender(<ChatMessages ref={ref}>uno dos</ChatMessages>)
+    expect(lista.scrollTop).toBe(900)
+  })
+
+  it("inputRef entrega el textarea, para enfocarlo al abrir el panel", () => {
+    const ref = { current: null as HTMLTextAreaElement | null }
+    render(<ChatInput inputRef={ref} />)
+    expect(ref.current).toBe(screen.getByRole("textbox", { name: "Mensaje" }))
+    ref.current!.focus()
+    expect(ref.current).toHaveFocus()
   })
 })

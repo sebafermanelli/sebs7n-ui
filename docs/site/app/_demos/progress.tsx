@@ -27,7 +27,7 @@ export function Subida() {
 
   return (
     <div className="flex w-full max-w-sm flex-col gap-4">
-      <Progress label="contratos-2026.zip" showValue value={valor} />
+      <Progress label="facturas-2026.zip" showValue value={valor} />
       <div className="flex gap-2">
         <Button
           onClick={() => {

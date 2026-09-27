@@ -24,9 +24,9 @@ export function ServiciosDelPaquete() {
       >
         <FieldLabel required>Servicios incluidos</FieldLabel>
         <CheckboxGroup>
-          <CheckboxGroupItem value="vuelo">Vuelo</CheckboxGroupItem>
-          <CheckboxGroupItem value="hotel">Hotel</CheckboxGroupItem>
-          <CheckboxGroupItem value="traslado">Traslado desde el aeropuerto</CheckboxGroupItem>
+          <CheckboxGroupItem value="soporte">Soporte</CheckboxGroupItem>
+          <CheckboxGroupItem value="capacitacion">Capacitación</CheckboxGroupItem>
+          <CheckboxGroupItem value="migracion">Migración de los datos anteriores</CheckboxGroupItem>
         </CheckboxGroup>
         <FieldDescription>Se cotizan por separado.</FieldDescription>
         <FieldError />

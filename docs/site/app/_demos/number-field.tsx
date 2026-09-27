@@ -5,26 +5,26 @@ import { Field, FieldDescription, FieldLabel } from "sebs7n-ui/field"
 import { NumberField } from "sebs7n-ui/number-field"
 
 /**
- * Cantidad de pasajeros
+ * Cantidad de usuarios
  * `min` y `max` son topes de verdad: el botón se apaga al llegar y las flechas tampoco lo pasan. Inicio y Fin saltan a 1 y a 9. Adentro de un `Field` la etiqueta nombra al input sin que nadie escriba un `id`.
  */
-export function Pasajeros() {
-  const [pasajeros, setPasajeros] = useState<number | null>(2)
+export function Usuarios() {
+  const [usuarios, setUsuarios] = useState<number | null>(2)
   return (
     <div className="flex w-full max-w-sm flex-col gap-3">
-      <Field name="pasajeros">
-        <FieldLabel>Pasajeros</FieldLabel>
+      <Field name="usuarios">
+        <FieldLabel>Usuarios</FieldLabel>
         <NumberField
           className="w-32"
           max={9}
           min={1}
-          onValueChange={setPasajeros}
-          value={pasajeros}
+          onValueChange={setUsuarios}
+          value={usuarios}
         />
-        <FieldDescription>Hasta 9 por reserva. Los menores de 2 años viajan aparte.</FieldDescription>
+        <FieldDescription>Hasta 9 por cuenta. Los de solo lectura no cuentan.</FieldDescription>
       </Field>
       <p className="text-copy-13 text-gray-900">
-        {pasajeros === 1 ? "1 pasajero" : `${pasajeros ?? 0} pasajeros`}
+        {usuarios === 1 ? "1 usuario" : `${usuarios ?? 0} usuarios`}
       </p>
     </div>
   )

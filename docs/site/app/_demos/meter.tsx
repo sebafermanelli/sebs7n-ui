@@ -57,28 +57,28 @@ export function CupoFacturado() {
  * Tamaños y uso en una lista
  * `sm` (4px) cuando la barra acompaña una fila y el texto de al lado ya dice el número; `md` (6px) suelta. Sin etiqueta visible va `aria-label`: una barra sin nombre no dice qué está midiendo.
  */
-export function OcupacionPorSucursal() {
-  const sucursales = [
-    { nombre: "Centro", camas: 48, ocupadas: 41 },
-    { nombre: "Costanera", camas: 30, ocupadas: 12 },
-    { nombre: "Aeropuerto", camas: 22, ocupadas: 22 },
+export function LicenciasPorEquipo() {
+  const equipos = [
+    { nombre: "Ventas", licencias: 48, usadas: 41 },
+    { nombre: "Soporte", licencias: 30, usadas: 12 },
+    { nombre: "Administración", licencias: 22, usadas: 22 },
   ]
 
   return (
     <div className="flex w-full max-w-sm flex-col gap-4">
-      {sucursales.map((sucursal) => (
-        <div className="flex flex-col gap-1.5" key={sucursal.nombre}>
+      {equipos.map((equipo) => (
+        <div className="flex flex-col gap-1.5" key={equipo.nombre}>
           <div className="flex items-baseline justify-between">
-            <span className="text-label-14 text-gray-1000">{sucursal.nombre}</span>
+            <span className="text-label-14 text-gray-1000">{equipo.nombre}</span>
             <span className="text-copy-13 text-gray-900">
-              {sucursal.ocupadas} de {sucursal.camas} plazas
+              {equipo.usadas} de {equipo.licencias} licencias
             </span>
           </div>
           <Meter
-            aria-label={`Ocupación de ${sucursal.nombre}`}
-            max={sucursal.camas}
+            aria-label={`Licencias usadas de ${equipo.nombre}`}
+            max={equipo.licencias}
             size="sm"
-            value={sucursal.ocupadas}
+            value={equipo.usadas}
           />
         </div>
       ))}

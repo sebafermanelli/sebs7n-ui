@@ -57,9 +57,9 @@ export function ErrorDelGrupo() {
         >
           <FieldLabel required>Archivos que adjuntás</FieldLabel>
           <CheckboxGroup>
-            <CheckboxGroupItem value="dni">DNI</CheckboxGroupItem>
-            <CheckboxGroupItem value="pasaporte">Pasaporte</CheckboxGroupItem>
-            <CheckboxGroupItem value="seguro">Póliza del seguro</CheckboxGroupItem>
+            <CheckboxGroupItem value="factura">Factura</CheckboxGroupItem>
+            <CheckboxGroupItem value="remito">Remito</CheckboxGroupItem>
+            <CheckboxGroupItem value="comprobante">Comprobante de pago</CheckboxGroupItem>
           </CheckboxGroup>
           <FieldError />
         </Field>

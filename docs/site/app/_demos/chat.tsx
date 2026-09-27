@@ -26,11 +26,11 @@ import { Popover, PopoverContent, PopoverTrigger } from "sebs7n-ui/popover"
 
 type Mensaje = { id: number; from: "user" | "assistant"; texto: string }
 
-const SUGERENCIAS = ["¿Cuándo es mi próximo viaje?", "¿Cuánto me falta pagar?", "¿Qué documentación tengo?"]
+const SUGERENCIAS = ["¿Cuánto facturé este mes?", "¿Qué facturas están vencidas?", "Resumime la semana"]
 const RESPUESTAS: Record<string, string> = {
-  "¿Cuándo es mi próximo viaje?": "Tu próximo viaje es a Bariloche, del 12 al 19 de octubre. Salís de Rosario a las 8:40.",
-  "¿Cuánto me falta pagar?": "Te quedan $ 184.000 de un total de $ 612.500. La próxima cuota vence el 5 de octubre.",
-  "¿Qué documentación tengo?": "Tengo cargado tu DNI, vigente hasta 2031. Para este viaje no hace falta pasaporte.",
+  "¿Cuánto facturé este mes?": "Facturaste $ 1.284.000 en 14 comprobantes. Es un 12 % más que el mes pasado.",
+  "¿Qué facturas están vencidas?": "Hay 3 vencidas por $ 142.900. La más vieja es la 0009, de hace 18 días.",
+  "Resumime la semana": "Emitiste 6 facturas, cobraste 4 y quedó una pendiente de aprobación.",
 }
 
 /** Una conversación de mentira: responde después de un rato, y se puede cortar. */
@@ -44,7 +44,7 @@ function useConversacion() {
     setMensajes((lista) => [...lista, { id: proximo.current++, from: "user", texto }])
     setRespondiendo(true)
     espera.current = setTimeout(() => {
-      const respuesta = RESPUESTAS[texto] ?? "Eso no lo tengo a mano. Consultalo con tu asesor."
+      const respuesta = RESPUESTAS[texto] ?? "Eso no lo tengo a mano todavía."
       setMensajes((lista) => [...lista, { id: proximo.current++, from: "assistant", texto: respuesta }])
       setRespondiendo(false)
     }, 1400)
@@ -90,7 +90,7 @@ function Conversacion({ onClose, onBusyChange }: { onClose?: () => void; onBusyC
       <ChatMessages>
         {mensajes.length === 0 && (
           <ChatEmpty>
-            <p>Hola, Karina. ¿En qué te ayudo?</p>
+            <p>Hola. ¿En qué te ayudo?</p>
             <ChatSuggestions>
               {SUGERENCIAS.map((sugerencia) => (
                 <ChatSuggestion key={sugerencia} onClick={() => enviar(sugerencia)}>
@@ -119,7 +119,7 @@ function Conversacion({ onClose, onBusyChange }: { onClose?: () => void; onBusyC
       </ChatMessages>
       <ChatFooter>
         <ChatInput maxLength={2000} onSend={enviar} onStop={cortar} />
-        <ChatDisclaimer>Ante cualquier duda, confirmá la información con tu asesor.</ChatDisclaimer>
+        <ChatDisclaimer>La IA puede equivocarse. Revisá los datos importantes.</ChatDisclaimer>
       </ChatFooter>
     </Chat>
   )
@@ -175,9 +175,9 @@ export function Estados() {
     <Card className="w-full max-w-md gap-0 overflow-hidden py-0">
       <Chat busy>
         <ChatMessages className="max-h-80">
-          <ChatMessage from="user">¿Me pasás el voucher del hotel?</ChatMessage>
+          <ChatMessage from="user">¿Cuál fue el cliente que más compró?</ChatMessage>
           <ChatTyping />
-          <ChatMessage from="user">¿Y el seguro de viaje?</ChatMessage>
+          <ChatMessage from="user">¿Y el mes pasado?</ChatMessage>
           <ChatError onRetry={() => {}}>No pude responder ahora. Probá de nuevo en un rato.</ChatError>
         </ChatMessages>
         <ChatFooter>

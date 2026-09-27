@@ -28,7 +28,7 @@ export function FiltrosEnMobile() {
       <DrawerTrigger render={<Button variant="outline" />}>Filtros</DrawerTrigger>
       <DrawerContent>
         <DrawerHeader>
-          <DrawerTitle>Filtrar viajes</DrawerTitle>
+          <DrawerTitle>Filtrar facturas</DrawerTitle>
           <DrawerDescription>Se aplican al listado sin recargar la página.</DrawerDescription>
         </DrawerHeader>
         <DrawerBody className="flex flex-col gap-4 pb-6">
@@ -56,34 +56,34 @@ export function FiltrosEnMobile() {
 export function DetalleAMediaHoja() {
   return (
     <Drawer defaultSnapPoint={0.45} snapPoints={[0.45, 1]}>
-      <DrawerTrigger render={<Button variant="outline" />}>Ver el viaje #1042</DrawerTrigger>
+      <DrawerTrigger render={<Button variant="outline" />}>Ver la factura 0012</DrawerTrigger>
       <DrawerContent>
         <DrawerHeader>
-          <DrawerTitle>Viaje #1042</DrawerTitle>
-          <DrawerDescription>Rosario → Córdoba, 14 de marzo.</DrawerDescription>
+          <DrawerTitle>Factura 0012</DrawerTitle>
+          <DrawerDescription>Acme S.A., emitida el 14 de marzo.</DrawerDescription>
         </DrawerHeader>
         <DrawerBody className="flex flex-col gap-4 pb-6">
           <div className="flex items-center gap-2">
-            <Badge color="green">Confirmado</Badge>
-            <Badge color="gray">3 pasajeros</Badge>
+            <Badge color="green">Pagada</Badge>
+            <Badge color="gray">3 ítems</Badge>
           </div>
           <dl className="flex flex-col gap-3 text-copy-14">
             <div className="flex justify-between">
-              <dt className="text-gray-900">Salida</dt>
-              <dd className="tabular-nums">07:30</dd>
+              <dt className="text-gray-900">Vencimiento</dt>
+              <dd className="tabular-nums">13/04</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-gray-900">Llegada estimada</dt>
-              <dd className="tabular-nums">12:10</dd>
+              <dt className="text-gray-900">Importe</dt>
+              <dd className="tabular-nums">$ 128.400</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-gray-900">Unidad</dt>
-              <dd>Sprinter · AB 123 CD</dd>
+              <dt className="text-gray-900">Condición</dt>
+              <dd>A 30 días</dd>
             </div>
           </dl>
         </DrawerBody>
         <DrawerFooter>
-          <Button variant="accent">Abrir la hoja de ruta</Button>
+          <Button variant="accent">Descargar el PDF</Button>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>

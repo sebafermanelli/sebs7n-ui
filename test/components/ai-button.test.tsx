@@ -180,3 +180,23 @@ describe("ai-glow: una señal de estado, no un adorno", () => {
     expect(utilidad).toContain("border-radius: inherit;")
   })
 })
+
+describe("AiGlow: el borde de la IA en cualquier contenedor", () => {
+  it("apagado por defecto, encendido con active", async () => {
+    const { AiGlow } = await import("../../src/components/ai-button")
+    const { container, rerender } = render(<AiGlow />)
+    const borde = container.querySelector("[data-slot=ai-glow]")!
+    expect(borde).not.toHaveAttribute("data-ai-active")
+    rerender(<AiGlow active />)
+    expect(borde).toHaveAttribute("data-ai-active")
+  })
+
+  it("ocupa el contorno del contenedor, hereda su radio y no tapa los clics", async () => {
+    const { AiGlow } = await import("../../src/components/ai-button")
+    const { container } = render(<AiGlow active />)
+    const borde = container.querySelector("[data-slot=ai-glow]")!
+    expect(borde).toHaveClass("absolute", "inset-0", "rounded-[inherit]", "pointer-events-none", "ai-glow")
+    // Decoración: la espera la anuncia el contenedor con aria-busy.
+    expect(borde).toHaveAttribute("aria-hidden", "true")
+  })
+})

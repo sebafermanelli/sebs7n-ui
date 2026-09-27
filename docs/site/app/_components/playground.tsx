@@ -173,24 +173,24 @@ export function Playground() {
   )
 }
 
-const CONTRATOS = [
-  { id: "0012", propiedad: "Pellegrini 1420, 3° B", inquilino: "M. Ferreyra", estado: "Pagado", color: "green", monto: "$ 480.000" },
-  { id: "0013", propiedad: "Oroño 905, PB", inquilino: "L. Giménez", estado: "Activo", color: "brand", monto: "$ 612.500" },
-  { id: "0014", propiedad: "San Martín 2210, 7° A", inquilino: "R. Acosta", estado: "Mora", color: "amber", monto: "$ 395.000" },
+const FACTURAS = [
+  { id: "0012", cliente: "Acme S.A.", concepto: "Licencias anuales", estado: "Pagada", color: "green", monto: "$ 480.000" },
+  { id: "0013", cliente: "Nube Digital", concepto: "Soporte mensual", estado: "Enviada", color: "brand", monto: "$ 612.500" },
+  { id: "0014", cliente: "Estudio Ruiz", concepto: "Consultoría", estado: "Vencida", color: "amber", monto: "$ 395.000" },
 ] as const
 
-const TIPOS = { tradicional: "Alquiler tradicional", temporario: "Temporario", comercial: "Comercial" }
+const CONDICIONES = { contado: "Contado", treinta: "A 30 días", sesenta: "A 60 días" }
 
 /** Una pantalla de una app cualquiera, armada solo con componentes del paquete. */
 function Muestra() {
-  const nombre = useId()
-  const tipo = useId()
-  const amoblado = useId()
-  const cochera = useId()
-  const mensual = useId()
-  const anual = useId()
+  const cliente = useId()
+  const condicion = useId()
+  const copia = useId()
+  const recordatorio = useId()
+  const pesos = useId()
+  const dolares = useId()
   const avisar = useId()
-  const [ajuste, setAjuste] = useState(60)
+  const [descuento, setDescuento] = useState(10)
 
   return (
     <section aria-labelledby="pg-muestra" className="flex flex-col gap-4">
@@ -223,7 +223,7 @@ function Muestra() {
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56">
             <DropdownMenuGroup>
-              <DropdownMenuLabel>Contrato 0013</DropdownMenuLabel>
+              <DropdownMenuLabel>Factura 0013</DropdownMenuLabel>
               <DropdownMenuItem>
                 Editar
                 <DropdownMenuShortcut>⌘E</DropdownMenuShortcut>
@@ -233,7 +233,7 @@ function Muestra() {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem variant="destructive">Rescindir</DropdownMenuItem>
+              <DropdownMenuItem variant="destructive">Anular</DropdownMenuItem>
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -242,18 +242,18 @@ function Muestra() {
       <div className="grid gap-4 sm:grid-cols-3">
         <Card size="sm">
           <CardContent>
-            <Stat delta="+12,4 %" hint="vs. mes anterior" label="Cobrado" trend="up" value="$ 4.820.300" />
+            <Stat delta="+12,4 %" hint="vs. mes anterior" label="Facturado" trend="up" value="$ 4.820.300" />
           </CardContent>
         </Card>
         <Card size="sm">
           <CardContent className="flex flex-col gap-3">
-            <Stat hint="Meta 95 %" label="Ocupación" value="91,6 %" />
-            <Progress aria-label="Ocupación" value={91.6} />
+            <Stat hint="Meta 95 %" label="Cobrado" value="91,6 %" />
+            <Progress aria-label="Cobrado" value={91.6} />
           </CardContent>
         </Card>
         <Card size="sm">
           <CardContent>
-            <Stat delta="+2" hint="contratos" label="Vencen este mes" trend="down" value="7" />
+            <Stat delta="+2" hint="facturas" label="Vencen esta semana" trend="down" value="7" />
           </CardContent>
         </Card>
       </div>
@@ -261,22 +261,22 @@ function Muestra() {
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Propiedad</CardTitle>
+            <CardTitle>Factura nueva</CardTitle>
             <CardDescription>Los controles viven adentro del vidrio: alfa, sin blur.</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-5">
             <div className="flex flex-col gap-2">
-              <Label htmlFor={nombre}>Nombre</Label>
-              <Input defaultValue="Depto. Pellegrini 1420" id={nombre} />
+              <Label htmlFor={cliente}>Cliente</Label>
+              <Input defaultValue="Acme S.A." id={cliente} />
             </div>
             <div className="flex flex-col gap-2">
-              <Label htmlFor={tipo}>Tipo</Label>
-              <Select defaultValue="tradicional" items={TIPOS}>
-                <SelectTrigger id={tipo}>
+              <Label htmlFor={condicion}>Condición de pago</Label>
+              <Select defaultValue="treinta" items={CONDICIONES}>
+                <SelectTrigger id={condicion}>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {Object.entries(TIPOS).map(([value, label]) => (
+                  {Object.entries(CONDICIONES).map(([value, label]) => (
                     <SelectItem key={value} value={value}>
                       {label}
                     </SelectItem>
@@ -286,27 +286,27 @@ function Muestra() {
             </div>
             <div className="flex flex-wrap gap-x-6 gap-y-3">
               <div className="flex items-center gap-2">
-                <Checkbox defaultChecked id={amoblado} />
-                <Label htmlFor={amoblado}>Amoblado</Label>
+                <Checkbox defaultChecked id={copia} />
+                <Label htmlFor={copia}>Enviar copia por email</Label>
               </div>
               <div className="flex items-center gap-2">
-                <Checkbox id={cochera} />
-                <Label htmlFor={cochera}>Cochera</Label>
+                <Checkbox id={recordatorio} />
+                <Label htmlFor={recordatorio}>Recordar el vencimiento</Label>
               </div>
             </div>
-            <RadioGroup aria-label="Frecuencia del ajuste" className="flex flex-wrap gap-x-6 gap-y-3" defaultValue="mensual">
+            <RadioGroup aria-label="Moneda" className="flex flex-wrap gap-x-6 gap-y-3" defaultValue="pesos">
               <div className="flex items-center gap-2">
-                <RadioGroupItem id={mensual} value="mensual" />
-                <Label htmlFor={mensual}>Mensual</Label>
+                <RadioGroupItem id={pesos} value="pesos" />
+                <Label htmlFor={pesos}>Pesos</Label>
               </div>
               <div className="flex items-center gap-2">
-                <RadioGroupItem id={anual} value="anual" />
-                <Label htmlFor={anual}>Anual</Label>
+                <RadioGroupItem id={dolares} value="dolares" />
+                <Label htmlFor={dolares}>Dólares</Label>
               </div>
             </RadioGroup>
-            <Slider label="Ajuste" onValueChange={(valor) => setAjuste(valor as number)} showValue value={ajuste} />
+            <Slider label="Descuento" max={50} onValueChange={(valor) => setDescuento(valor as number)} showValue value={descuento} />
             <div className="flex items-center justify-between gap-3">
-              <Label htmlFor={avisar}>Avisar al inquilino</Label>
+              <Label htmlFor={avisar}>Avisar al cliente</Label>
               <Switch defaultChecked id={avisar} />
             </div>
           </CardContent>
@@ -322,7 +322,7 @@ function Muestra() {
               <div className="flex flex-wrap gap-2">
                 <Button variant="accent">
                   <PlusIcon />
-                  Nuevo contrato
+                  Nueva factura
                 </Button>
                 <Button>Guardar</Button>
                 <Button variant="outline">Exportar</Button>
@@ -334,22 +334,22 @@ function Muestra() {
                   <DialogTrigger render={<Button variant="outline" />}>Abrir un diálogo</DialogTrigger>
                   <DialogContent>
                     <DialogHeader>
-                      <DialogTitle>¿Rescindir el contrato?</DialogTitle>
+                      <DialogTitle>¿Anular la factura?</DialogTitle>
                       <DialogDescription>
-                        Se da de baja Oroño 905 y se avisa al inquilino. El diálogo es el material más grueso del sistema.
+                        Se anula la 0013 y se avisa al cliente. El diálogo es el material más grueso del sistema.
                       </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
                       <DialogClose render={<Button variant="ghost" />}>Cancelar</DialogClose>
-                      <DialogClose render={<Button variant="destructive" />}>Rescindir</DialogClose>
+                      <DialogClose render={<Button variant="destructive" />}>Anular</DialogClose>
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
                 <Button
                   onClick={() =>
-                    toast("Contrato guardado", {
-                      description: "Se notificó al inquilino.",
-                      action: { label: "Deshacer", onClick: () => toast.success("Restaurado") },
+                    toast("Factura guardada", {
+                      description: "Se le avisó al cliente.",
+                      action: { label: "Deshacer", onClick: () => toast.success("Restaurada") },
                     })
                   }
                   variant="outline"
@@ -359,15 +359,15 @@ function Muestra() {
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 <Badge>Borrador</Badge>
-                <Badge color="brand">Activo</Badge>
+                <Badge color="brand">Enviada</Badge>
                 <Badge color="green" dot>
-                  Pagado
+                  Pagada
                 </Badge>
                 <Badge color="amber" dot>
-                  Mora
+                  Vencida
                 </Badge>
                 <Badge color="brand" variant="solid">
-                  Nuevo
+                  Nueva
                 </Badge>
                 <Avatar size="sm">
                   <AvatarFallback>SF</AvatarFallback>
@@ -378,7 +378,7 @@ function Muestra() {
 
           <Alert variant="brand">
             <BellIcon />
-            <AlertTitle>Vencen 7 contratos este mes</AlertTitle>
+            <AlertTitle>Vencen 7 facturas esta semana</AlertTitle>
             <AlertDescription>La franja y el ícono toman el color de marca.</AlertDescription>
           </Alert>
 
@@ -386,7 +386,7 @@ function Muestra() {
             <TabsList aria-label="Período">
               <TabsTrigger value="resumen">Resumen</TabsTrigger>
               <TabsTrigger value="cobros">Cobros</TabsTrigger>
-              <TabsTrigger value="contratos">Contratos</TabsTrigger>
+              <TabsTrigger value="clientes">Clientes</TabsTrigger>
             </TabsList>
             <TabsContent className="text-gray-900" value="resumen">
               La pastilla se desliza de una pestaña a otra.
@@ -394,8 +394,8 @@ function Muestra() {
             <TabsContent className="text-gray-900" value="cobros">
               4 cobros pendientes de conciliar.
             </TabsContent>
-            <TabsContent className="text-gray-900" value="contratos">
-              23 contratos vigentes.
+            <TabsContent className="text-gray-900" value="clientes">
+              23 clientes activos.
             </TabsContent>
           </Tabs>
         </div>
@@ -405,24 +405,24 @@ function Muestra() {
         <TableHeader>
           <TableRow>
             <TableHead>Nº</TableHead>
-            <TableHead>Propiedad</TableHead>
-            <TableHead>Inquilino</TableHead>
+            <TableHead>Cliente</TableHead>
+            <TableHead>Concepto</TableHead>
             <TableHead>Estado</TableHead>
             <TableHead numeric>Monto</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {CONTRATOS.map((contrato) => (
-            <TableRow key={contrato.id}>
-              <TableCell className="text-label-13-mono">{contrato.id}</TableCell>
-              <TableCell>{contrato.propiedad}</TableCell>
-              <TableCell>{contrato.inquilino}</TableCell>
+          {FACTURAS.map((factura) => (
+            <TableRow key={factura.id}>
+              <TableCell className="text-label-13-mono">{factura.id}</TableCell>
+              <TableCell>{factura.cliente}</TableCell>
+              <TableCell>{factura.concepto}</TableCell>
               <TableCell>
-                <Badge color={contrato.color} size="sm">
-                  {contrato.estado}
+                <Badge color={factura.color} size="sm">
+                  {factura.estado}
                 </Badge>
               </TableCell>
-              <TableCell numeric>{contrato.monto}</TableCell>
+              <TableCell numeric>{factura.monto}</TableCell>
             </TableRow>
           ))}
         </TableBody>

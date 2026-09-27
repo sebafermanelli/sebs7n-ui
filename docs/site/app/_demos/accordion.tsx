@@ -79,7 +79,7 @@ export function BuscableConElNavegador() {
       </AccordionItem>
       <AccordionItem value="domicilio">
         <AccordionTrigger>Domicilio</AccordionTrigger>
-        <AccordionContent hiddenUntilFound>Av. Pellegrini 1234, Rosario, Santa Fe.</AccordionContent>
+        <AccordionContent hiddenUntilFound>Av. Siempreviva 742, piso 3.</AccordionContent>
       </AccordionItem>
     </Accordion>
   )

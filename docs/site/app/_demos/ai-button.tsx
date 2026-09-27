@@ -1,7 +1,8 @@
 "use client"
 
 import { Card, CardContent } from "sebs7n-ui/card"
-import { AiButton, AiIcon, AiLauncher, AiShimmer } from "sebs7n-ui/ai-button"
+import { useState } from "react"
+import { AiButton, AiGlow, AiIcon, AiLauncher, AiShimmer } from "sebs7n-ui/ai-button"
 
 /**
  * El botón
@@ -52,15 +53,35 @@ export function Lanzador() {
 
 /**
  * La IA está trabajando
- * Va donde iría un `Skeleton`, en un flujo de IA. El contenedor es quien anuncia la espera.
+ * El borde se enciende en cualquier contenedor mientras la IA trabaja, y el placeholder ocupa el lugar de lo que está escribiendo. Apretá el botón: dura tres segundos.
  */
 export function Trabajando() {
+  const [leyendo, setLeyendo] = useState(false)
   return (
-    <Card aria-busy="true" className="w-full max-w-sm" size="sm">
-      <CardContent className="flex flex-col gap-2">
-        <AiShimmer className="w-2/3" />
-        <AiShimmer />
-        <AiShimmer className="w-1/2" />
+    // `relative` es lo que ancla el borde a la tarjeta; `aria-busy` es lo que anuncia la espera.
+    <Card aria-busy={leyendo} className="relative w-full max-w-sm" size="sm">
+      <AiGlow active={leyendo} />
+      <CardContent className="flex flex-col gap-4">
+        {leyendo ? (
+          <div className="flex flex-col gap-2">
+            <AiShimmer className="w-2/3" />
+            <AiShimmer />
+            <AiShimmer className="w-1/2" />
+          </div>
+        ) : (
+          <p className="text-copy-14 text-gray-900">Subí el comprobante y la IA completa los datos de la factura.</p>
+        )}
+        <AiButton
+          disabled={leyendo}
+          onClick={() => {
+            setLeyendo(true)
+            setTimeout(() => setLeyendo(false), 3000)
+          }}
+          variant="solid"
+        >
+          <AiIcon />
+          {leyendo ? "Leyendo el comprobante…" : "Leer el comprobante"}
+        </AiButton>
       </CardContent>
     </Card>
   )

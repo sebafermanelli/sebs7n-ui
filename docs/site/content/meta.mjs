@@ -1619,7 +1619,7 @@ export const COMPONENTS = {
   "ai-button": {
     title: "AiButton",
     group: "contenido",
-    description: "Lo que hace la IA: el botón, el ícono, el lanzador flotante del asistente y el placeholder de «está trabajando». Con su propio color, que no es el de marca.",
+    description: "Lo que hace la IA: el botón, el ícono, el lanzador flotante del asistente, el borde que se enciende mientras trabaja y el placeholder. Con su propio color, que no es el de marca.",
     keyboard: [["Enter · Espacio", "Activa el botón."], ["Tab", "El lanzador es una parada de tabulación más; al enfocarlo muestra su etiqueta."]],
     a11y: [
       "`AiButton` es el `Button` del sistema: mismo foco, mismo apagado, misma espera (`aria-busy`).",
@@ -1633,6 +1633,7 @@ export const COMPONENTS = {
       "`AiLauncher` no se posiciona solo: `className=\"fixed right-6 bottom-6\"`. Depende de qué más flote ahí.",
       "Como trigger de un `Popover` o un `Sheet`: `render={<AiLauncher />}`.",
       "`AiShimmer` va donde iría un `Skeleton`, en un flujo de IA: dice «alguien lo está escribiendo», no «esto está cargando».",
+      "`AiGlow` es el borde de la IA para cualquier contenedor: se suelta adentro de un `Dialog`, un `Popover` o una `Card` con `relative`, y se enciende con `active`. **Siempre que la IA esté trabajando, y solo entonces**: es lo que hace que signifique algo. El contenedor anuncia la espera con `aria-busy`.",
       "`active` en el lanzador hace girar el canto. Es una señal de estado —hay una respuesta en camino—, no un adorno: encendido siempre, deja de significar algo.",
     ],
     props: {
@@ -1643,6 +1644,7 @@ export const COMPONENTS = {
         size: "Los mismos seis tamaños de `Button`. Con uno de ícono (`icon-sm`, `icon-md`, `icon-lg`) el tipo exige `aria-label`.",
       },
       AiLauncher: { className: PROP_DESCRIPTIONS.className },
+      AiGlow: { className: PROP_DESCRIPTIONS.className },
     },
     related: ["chat", "button", "skeleton", "popover"],
   },

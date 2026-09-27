@@ -128,6 +128,43 @@ function AiLauncher({ className, label, labelVisible = false, labelSide = "left"
   )
 }
 
+type AiGlowProps = Omit<React.ComponentProps<"div">, "children"> & {
+  /** La IA está trabajando. Sin esto el borde está apagado. */
+  active?: boolean
+}
+
+/**
+ * El borde de la IA, para cualquier contenedor: un diálogo que está leyendo un documento, una
+ * tarjeta que se está completando sola, un panel que espera una respuesta.
+ *
+ * Se suelta ADENTRO del contenedor y toma su forma: ocupa todo su contorno y hereda su radio.
+ * El contenedor tiene que estar posicionado, que es lo que ya son un `Dialog`, un `Popover` o
+ * un `Sheet`; a una `Card` hay que sumarle `relative`.
+ *
+ * ```tsx
+ * <DialogContent>
+ *   <AiGlow active={leyendo} />
+ *   …
+ * </DialogContent>
+ * ```
+ *
+ * **Una sola regla: siempre que la IA esté trabajando, y solo entonces.** Es lo que hace que
+ * el borde signifique algo. `Chat` ya lo trae con su `busy`: ahí no hace falta.
+ *
+ * Es decoración. La espera la tiene que anunciar el contenedor con `aria-busy`.
+ */
+function AiGlow({ className, active = false, ...props }: AiGlowProps) {
+  return (
+    <div
+      aria-hidden="true"
+      data-ai-active={active ? "" : undefined}
+      data-slot="ai-glow"
+      className={cn("pointer-events-none absolute inset-0 z-10 rounded-[inherit] ai-glow", className)}
+      {...props}
+    />
+  )
+}
+
 /**
  * «La IA está trabajando». Va donde iría un `Skeleton`, en un flujo de IA.
  *
@@ -138,4 +175,4 @@ function AiShimmer({ className, ...props }: React.ComponentProps<"div">) {
   return <div aria-hidden="true" data-slot="ai-shimmer" className={cn("h-4 ai-shimmer", className)} {...props} />
 }
 
-export { AiButton, AiIcon, AiLauncher, AiShimmer, type AiButtonProps, type AiLabels, type AiLauncherProps }
+export { AiButton, AiGlow, AiIcon, AiLauncher, AiShimmer, type AiButtonProps, type AiGlowProps, type AiLabels, type AiLauncherProps }

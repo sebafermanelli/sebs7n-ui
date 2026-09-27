@@ -29,13 +29,13 @@ type ChatLabels = Labels["chat"]
  *     <ChatTitle>Asistente</ChatTitle>
  *   </ChatHeader>
  *   <ChatMessages>
- *     <ChatMessage from="user">¿Cuándo es mi próximo viaje?</ChatMessage>
- *     <ChatMessage from="assistant">El 12 de octubre, a Bariloche.</ChatMessage>
+ *     <ChatMessage from="user">¿Cuánto facturé este mes?</ChatMessage>
+ *     <ChatMessage from="assistant">$ 1.284.000, en 14 comprobantes.</ChatMessage>
  *     {respondiendo && <ChatTyping />}
  *   </ChatMessages>
  *   <ChatFooter>
  *     <ChatInput onSend={enviar} onStop={cortar} />
- *     <ChatDisclaimer>Confirmá la información con tu asesor.</ChatDisclaimer>
+ *     <ChatDisclaimer>La IA puede equivocarse. Revisá los datos importantes.</ChatDisclaimer>
  *   </ChatFooter>
  * </Chat>
  * ```
@@ -115,11 +115,21 @@ const UMBRAL = 48
  *
  * Es un `role="log"`: un lector de pantalla anuncia lo que se agrega, sin que el foco se mueva.
  */
-function ChatMessages({ className, busy: busyProp, labels: labelsProp, onScroll, children, ...props }: ChatMessagesProps) {
+function ChatMessages({ className, busy: busyProp, labels: labelsProp, onScroll, ref, children, ...props }: ChatMessagesProps) {
   const busy = useBusy(busyProp)
   const labels = { ...useLabels().chat, ...labelsProp }
   const lista = React.useRef<HTMLDivElement>(null)
   const abajo = React.useRef(true)
+  // El `ref` del llamador y el de adentro apuntan al mismo nodo. Sin esto, pasarle un `ref` al
+  // componente pisaba el interno y la lista dejaba de seguir al último mensaje, sin avisar.
+  const asignar = React.useCallback(
+    (nodo: HTMLDivElement | null) => {
+      lista.current = nodo
+      if (typeof ref === "function") ref(nodo)
+      else if (ref) ref.current = nodo
+    },
+    [ref]
+  )
 
   // Sin dependencias a propósito: corre después de cada render, que es cuando pudo haber
   // cambiado el alto —un mensaje nuevo, o el mismo que creció—. Medir es barato; decidir qué
@@ -135,7 +145,7 @@ function ChatMessages({ className, busy: busyProp, labels: labelsProp, onScroll,
       aria-label={labels.log}
       aria-live="polite"
       data-slot="chat-messages"
-      ref={lista}
+      ref={asignar}
       role="log"
       // Tabulable: una lista que scrollea y no tiene nada enfocable adentro no se puede
       // recorrer con el teclado.
@@ -298,6 +308,8 @@ type ChatInputProps = Omit<React.ComponentProps<"form">, "onSubmit" | "children"
    * una pantalla táctil, donde el teclado en pantalla no tiene otra forma de bajar de renglón.
    */
   enterKey?: "auto" | "send" | "newline"
+  /** El `<textarea>`, para enfocarlo desde afuera: al abrir el panel, después de una respuesta. */
+  inputRef?: React.Ref<HTMLTextAreaElement>
   labels?: Partial<ChatLabels>
 }
 
@@ -323,6 +335,7 @@ function ChatInput({
   disabled = false,
   maxLength,
   enterKey = "auto",
+  inputRef,
   labels: labelsProp,
   ...props
 }: ChatInputProps) {
@@ -365,6 +378,7 @@ function ChatInput({
         id={id}
         maxLength={maxLength}
         placeholder={labels.placeholder}
+        ref={inputRef}
         rows={1}
         value={texto}
         className={cn(

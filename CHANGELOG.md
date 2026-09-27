@@ -9,6 +9,27 @@ major.
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-09-27
+
+### Added
+
+- **`AiGlow`** (`sebs7n-ui/ai-button`): el borde de la IA para cualquier contenedor —un
+  diálogo que lee un documento, una tarjeta que se completa sola—. Se suelta adentro, toma la
+  forma del contenedor y se enciende con `active`. La regla es una sola: siempre que la IA
+  esté trabajando, y solo entonces.
+- `ChatInput` acepta `inputRef`, para enfocar el campo desde afuera.
+
+### Changed
+
+- Sitio: los ejemplos usan un solo vocabulario, genérico (facturas, clientes, equipos). Las
+  demos de `Chat`, `AiButton` y el Playground, y seis anteriores, tenían contenido de un
+  dominio puntual.
+
+### Fixed
+
+- **`ChatMessages` con un `ref` dejaba de seguir al último mensaje.** El `ref` del llamador
+  pisaba el interno, que es el que mide la lista. Ahora los dos apuntan al mismo nodo.
+
 ## [1.2.0] - 2026-09-27
 
 ### Added
