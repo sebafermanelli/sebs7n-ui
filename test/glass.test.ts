@@ -107,6 +107,9 @@ describe("glass-halo: el texto de las barras sobre lo que pase por debajo", () =
     expect(halo).toContain("text-shadow")
     // Los íconos son SVG: `text-shadow` no los toca.
     expect(halo).toContain("drop-shadow")
+    // El velo detrás de cada control, sin tocar el `background-color` del hover.
+    expect(halo).toContain("& :where(a, button):not(.no-halo)")
+    expect(halo).toContain("background-image: radial-gradient(")
   })
 
   it("lo llevan el Navbar con vidrio y el Toolbar de vidrio; los botones sólidos lo apagan", async () => {

@@ -9,6 +9,14 @@ major.
 
 ## [Unreleased]
 
+## [1.9.1] - 2026-09-27
+
+### Fixed
+
+- **`glass-halo` más fuerte.** Con una sola capa, un link gris sobre una ilustración clara en
+  tema oscuro seguía perdiéndose. Ahora son cuatro capas de halo y un velo difuso detrás de
+  cada link y botón (en `background-image`, así el hover sigue igual).
+
 ## [1.9.0] - 2026-09-27
 
 ### Added

@@ -652,12 +652,27 @@
     var(--sf-background) calc(var(--glass) * var(--sf-glass-on) * 85%),
     transparent
   );
+  /* Cuatro capas: las dos chicas separan el trazo, las dos grandes le dan cuerpo. Con una
+     sola de 6px, un gris de link sobre una ilustración clara seguía perdiéndose. */
   text-shadow:
     0 0 1px var(--sf-halo),
-    0 0 6px var(--sf-halo);
+    0 0 3px var(--sf-halo),
+    0 0 8px var(--sf-halo),
+    0 0 16px var(--sf-halo);
 
   & svg {
-    filter: drop-shadow(0 0 2px var(--sf-halo));
+    filter: drop-shadow(0 0 1px var(--sf-halo)) drop-shadow(0 0 4px var(--sf-halo));
+  }
+
+  /* El velo: una sombra difusa detrás de cada control, más ancha que el halo. Es lo que hace
+     legible un link gris —no solo uno blanco— cuando pasa algo claro por debajo. En
+     `background-image`, para no pisar el `background-color` del hover. */
+  & :where(a, button):not(.no-halo) {
+    background-image: radial-gradient(
+      closest-side,
+      color-mix(in srgb, var(--sf-background) calc(var(--glass) * var(--sf-glass-on) * 55%), transparent),
+      transparent
+    );
   }
 }
 
