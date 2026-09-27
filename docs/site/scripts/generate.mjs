@@ -196,6 +196,12 @@ const pages = [
     body: loadPage("reglas"),
   },
   {
+    slug: "migracion",
+    title: "Migrar a 1.0",
+    description: "Qué cambia en el código de la app al pasar de 0.8 a 1.0, clase por clase.",
+    body: loadPage("migracion"),
+  },
+  {
     slug: "changelog",
     title: "Changelog",
     description: `Todas las versiones, hasta la ${pkg.version}.`,

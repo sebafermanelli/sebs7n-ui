@@ -9,7 +9,10 @@ major.
 
 ## [Unreleased]
 
-Lo que sigue sale como **1.0.0**.
+## [1.0.0] - 2026-09-27
+
+El material pasa a ser vidrio. La guía para migrar el código de una app está en
+[Migrar a 1.0](https://ui.sebastianfermanelli.com/docs/migracion).
 
 ### Breaking
 
