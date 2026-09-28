@@ -248,11 +248,21 @@ describe("registry", () => {
     expect(button.registryDependencies).toContain("https://ui.sebastianfermanelli.com/r/utils.json")
   })
 
-  it("un import() dinámico también se reescribe y cuenta como dependencia (sidebar → tooltip)", () => {
-    const sidebar = registry.items.find((item: { name: string }) => item.name === "sidebar")
-    expect(sidebar.files[0].content).toContain('import("@/components/ui/tooltip")')
-    expect(sidebar.files[0].content).not.toMatch(/import\("\.\//)
-    expect(sidebar.registryDependencies).toContain("https://ui.sebastianfermanelli.com/r/tooltip.json")
+  it("un import() dinámico también se reescribe y cuenta como dependencia (1.13.1)", () => {
+    const item = (name: string) => registry.items.find((otro: { name: string }) => otro.name === name)
+    const r = (name: string) => `https://ui.sebastianfermanelli.com/r/${name}.json`
+    // AppShell pide el Sheet al tocar la hamburguesa: `import("./sheet.js")`.
+    const appShell = item("app-shell")
+    expect(appShell.files[0].content).toContain('import("@/components/ui/sheet")')
+    expect(appShell.files[0].content).not.toMatch(/import\("\.\.?\//)
+    expect(appShell.registryDependencies).toContain(r("sheet"))
+    // Sidebar y UserMenu pasan por `internal/tooltip-lateral`, que pide el Tooltip desde `internal/`.
+    expect(item("sidebar").registryDependencies).toContain(r("lib-tooltip-lateral"))
+    expect(item("user-menu").registryDependencies).toContain(r("lib-tooltip-lateral"))
+    const lateral = item("lib-tooltip-lateral")
+    expect(lateral.files[0].content).toContain('import("@/components/ui/tooltip")')
+    expect(lateral.files[0].content).not.toMatch(/import\("\.\.?\//)
+    expect(lateral.registryDependencies).toContain(r("tooltip"))
   })
 })
 

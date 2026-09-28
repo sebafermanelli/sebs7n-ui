@@ -96,10 +96,16 @@ describe.each([false, true])("SSR del shell (colapsado: %s)", (collapsed) => {
     })
     expect(recoverable).not.toHaveBeenCalled()
     expect(errors.mock.calls.filter(([message]) => /hydrat|did not match/i.test(String(message)))).toEqual([])
-    const ids = (html: string) => [...html.matchAll(/\s(?:id|aria-labelledby)="([^"]+)"/g)].map((m) => m[1])
-    // Colapsado, el Tooltip de cada ítem se carga después de hidratar (1.13.1) y su trigger suma
-    // un id propio. Lo que importa es que los ids del server sigan ahí, en el mismo orden.
-    const delServer = new Set(ids(before))
-    expect(ids(container.innerHTML).filter((id) => delServer.has(id))).toEqual(ids(before))
+    // Colapsado, los triggers con tooltip (ítems, buscador, UserMenu) cargan el Tooltip después
+    // de hidratar (1.13.1): React los monta de nuevo y el id que les da Base UI cambia, junto con
+    // lo que apunta a él. El resto de los ids del server tiene que quedar igual y en el mismo orden.
+    const conTooltip = "[data-slot=sidebar-item], [data-slot=sidebar-search], [data-slot=user-menu-trigger]"
+    const ids = (html: string) => {
+      const raiz = document.createElement("div")
+      raiz.innerHTML = html
+      if (collapsed) for (const el of raiz.querySelectorAll(conTooltip)) el.removeAttribute("id")
+      return [...raiz.innerHTML.matchAll(/\s(?:id|aria-labelledby)="([^"]+)"/g)].map((m) => m[1])
+    }
+    expect(ids(container.innerHTML)).toEqual(ids(before))
   })
 })

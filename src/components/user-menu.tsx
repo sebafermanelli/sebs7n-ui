@@ -10,8 +10,8 @@ import { AppShellContext, useSidebarContext } from "../internal/shell-context.js
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar.js"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuSeparator, DropdownMenuTrigger } from "./dropdown-menu.js"
 import { ThemeMenuRadio } from "../internal/theme-menu-radio.js"
+import { TooltipLateral } from "../internal/tooltip-lateral.js"
 import type { ThemeSwitcherLabels } from "./theme-switcher.js"
-import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip.js"
 
 type UserMenuUser = { name: string; email?: string; image?: string }
 
@@ -108,14 +108,10 @@ function UserMenu({ user, collapsed: collapsedProp, side, align, children, signO
         }
       }}
     >
-      {collapsed ? (
-        <Tooltip>
-          <TooltipTrigger render={trigger} />
-          <TooltipContent side="right">{identity}</TooltipContent>
-        </Tooltip>
-      ) : (
-        trigger
-      )}
+      {/* Colapsado, el tooltip con el nombre. El Tooltip se carga recién ahí: ver `tooltip-lateral.tsx`. */}
+      <TooltipLateral activo={collapsed} tip={identity}>
+        {trigger}
+      </TooltipLateral>
       <DropdownMenuContent
         finalFocus={() => !closingSheet.current}
         side={menuSide}

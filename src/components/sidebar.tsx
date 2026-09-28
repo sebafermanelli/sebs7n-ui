@@ -8,6 +8,7 @@ import { SearchIcon } from "lucide-react"
 import { useLabels } from "../lib/labels.js"
 import { cn, type WithClassName } from "../lib/utils.js"
 import { AppShellContext, SidebarContext, SidebarInSheetContext, useSidebarContext } from "../internal/shell-context.js"
+import { TooltipLateral } from "../internal/tooltip-lateral.js"
 import { sidebarItemVariants } from "../variants/sidebar.js"
 import { Kbd } from "./kbd.js"
 
@@ -187,48 +188,6 @@ function flattenFragments(children: React.ReactNode): React.ReactNode[] {
 function textOf(nodes: React.ReactNode[]): string | undefined {
   const parts = nodes.filter((n) => typeof n === "string" || typeof n === "number")
   return parts.length === nodes.length && parts.length > 0 ? parts.join("").trim() : undefined
-}
-
-type TooltipModule = typeof import("./tooltip.js")
-
-// El Tooltip se carga recién cuando el Sidebar se colapsa. Solo colapsado hay tooltips —el
-// label está a la vista—, y el import estático metía el Tooltip de Base UI con todo su
-// posicionamiento (floating-ui) en el arranque de cada página con Sidebar, ~40 KB gzip medidos
-// en el sitio de docs, que nunca lo colapsa. Una sola carga para todos los ítems: la promesa y
-// el módulo quedan acá.
-let tooltipCargado: TooltipModule | null = null
-let tooltipPromesa: Promise<TooltipModule> | null = null
-const cargarTooltip = () => (tooltipPromesa ??= import("./tooltip.js").then((mod) => (tooltipCargado = mod)))
-
-/**
- * El trigger tal cual y, colapsado, envuelto en un Tooltip a la derecha.
- *
- * Mientras el módulo no llegó se muestra el trigger sin tooltip: se ve igual y su nombre
- * accesible no depende del tooltip (el label queda `sr-only`). El estado arranca en lo que ya
- * esté cargado, así un Sidebar que se monta colapsado después del primero —otra página, el
- * Sheet— lo tiene desde el primer render. Al hidratar siempre arranca en `null`, igual que el
- * servidor: antes de hidratar no corrió ningún efecto que lo cargue.
- */
-function TooltipLateral({ activo, tip, children }: { activo: boolean; tip: React.ReactNode; children: React.ReactElement }) {
-  const [mod, setMod] = React.useState<TooltipModule | null>(() => tooltipCargado)
-  React.useEffect(() => {
-    if (!activo || mod) return
-    let vigente = true
-    void cargarTooltip().then((cargado) => {
-      if (vigente) setMod(cargado)
-    })
-    return () => {
-      vigente = false
-    }
-  }, [activo, mod])
-  if (!activo || !mod) return children
-  const { Tooltip, TooltipContent, TooltipTrigger } = mod
-  return (
-    <Tooltip>
-      <TooltipTrigger render={children} />
-      <TooltipContent side="right">{tip}</TooltipContent>
-    </Tooltip>
-  )
 }
 
 type SidebarItemProps = WithClassName<useRender.ComponentProps<"a">> & {

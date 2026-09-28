@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react"
+import { act, render, screen, waitFor } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { HomeIcon, UsersIcon } from "lucide-react"
 import { describe, expect, it, vi } from "vitest"
@@ -161,6 +161,35 @@ describe("Sidebar", () => {
     } finally {
       vi.doUnmock("../../src/components/tooltip")
     }
+  })
+
+  it("colapsar con el foco en un ítem: cuando llega el Tooltip, el foco sigue en el ítem", async () => {
+    // Módulos de cero: el Tooltip todavía no está en memoria, como en la primera carga.
+    vi.resetModules()
+    const fresco = await import("../../src/components/sidebar")
+    const { TooltipProvider: Proveedor } = await import("../../src/components/tooltip")
+    const Lateral = ({ collapsed }: { collapsed: boolean }) => (
+      <Proveedor delay={0}>
+        <fresco.Sidebar collapsed={collapsed}>
+          <fresco.SidebarItem href="/a" icon={<HomeIcon />}>
+            Inicio
+          </fresco.SidebarItem>
+        </fresco.Sidebar>
+      </Proveedor>
+    )
+    const { rerender } = render(<Lateral collapsed={false} />)
+    act(() => screen.getByRole("link", { name: "Inicio" }).focus())
+    rerender(<Lateral collapsed />)
+    await waitFor(() => expect(screen.getByRole("link", { name: "Inicio" })).toHaveAttribute("data-base-ui-tooltip-trigger"))
+    expect(screen.getByRole("link", { name: "Inicio" })).toHaveFocus()
+
+    // Ya cargado, expandir y colapsar no vuelve a montar el ítem: mismo nodo, mismo foco.
+    const item = screen.getByRole("link", { name: "Inicio" })
+    rerender(<Lateral collapsed={false} />)
+    expect(screen.getByRole("link", { name: "Inicio" })).toBe(item)
+    rerender(<Lateral collapsed />)
+    expect(screen.getByRole("link", { name: "Inicio" })).toBe(item)
+    expect(item).toHaveFocus()
   })
 
   it("SidebarSearch: botón con look de Input, ⌘K y onClick", async () => {

@@ -106,10 +106,10 @@ describe("UserMenu", () => {
   it("colapsado: solo el avatar, con tooltip \"Nombre · email\"", async () => {
     render(<Example collapsed />)
     expect(screen.queryByText("ana@example.com")).toBeNull()
-    const trigger = screen.getByRole("button", { name: "Ana Pérez · ana@example.com" })
     await userEvent.tab()
-    expect(trigger).toHaveFocus()
     expect(await screen.findByText("Ana Pérez · ana@example.com", { selector: "[data-slot=tooltip-content]" })).toBeInTheDocument()
+    // Buscado de nuevo: al llegar el Tooltip (1.13.1) el trigger es otro nodo, y el foco lo sigue.
+    expect(screen.getByRole("button", { name: "Ana Pérez · ana@example.com" })).toHaveFocus()
   })
 
   describe("separadores solo entre grupos no vacíos", () => {
