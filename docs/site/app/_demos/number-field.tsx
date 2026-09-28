@@ -40,7 +40,6 @@ export function Precio() {
       <Field name="precio">
         <FieldLabel>Precio de lista</FieldLabel>
         <NumberField
-          className="w-44"
           format={{ style: "currency", currency: "ARS", maximumFractionDigits: 0 }}
           largeStep={1_000}
           locale="es-AR"
