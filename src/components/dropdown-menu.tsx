@@ -5,7 +5,7 @@ import { Menu as MenuPrimitive } from "@base-ui/react/menu"
 import { CheckIcon, ChevronRightIcon } from "lucide-react"
 
 import { cn, type WithClassName } from "../lib/utils.js"
-import { menuItemClassName, menuLabelClassName, menuPopupClassName, menuSeparatorClassName, type MenuInsetProps } from "../variants/menu.js"
+import { menuItemClassName, menuItemSecondaryClassName, menuLabelClassName, menuPopupClassName, menuSeparatorClassName, type MenuInsetProps } from "../variants/menu.js"
 
 function DropdownMenu(props: MenuPrimitive.Root.Props) {
   return <MenuPrimitive.Root {...props} />
@@ -56,7 +56,9 @@ function DropdownMenuItem({ className, inset, variant = "default", ...props }: D
       data-variant={variant}
       className={cn(
         menuItemClassName,
-        "data-inset:pl-8 data-[variant=destructive]:text-red-900 data-[variant=destructive]:data-highlighted:bg-red-100",
+        // El destructivo resaltado va en rojo sólido con su texto de contraste: el mismo par que
+        // el botón `destructive`. Sobre el acento, el rojo del texto no se leería.
+        "data-inset:pl-8 data-[variant=destructive]:text-red-900 data-[variant=destructive]:data-highlighted:not-data-disabled:bg-red-800 data-[variant=destructive]:data-highlighted:not-data-disabled:text-button-error-fg data-[variant=destructive]:data-highlighted:not-data-disabled:[&_svg]:text-button-error-fg",
         className
       )}
       {...props}
@@ -106,7 +108,7 @@ function DropdownMenuSeparator({ className, ...props }: DropdownMenuSeparatorPro
 // `SidebarItemBadge`, por el mismo motivo.
 function DropdownMenuShortcut({ className, children, ...props }: React.ComponentProps<"span">) {
   return (
-    <span data-slot="dropdown-menu-shortcut" className={cn("ml-auto text-mono-callout text-gray-900", className)} {...props}>
+    <span data-slot="dropdown-menu-shortcut" className={cn("ml-auto text-mono-callout", menuItemSecondaryClassName, className)} {...props}>
       <span className="sr-only">,</span>{" "}
       {children}
     </span>
@@ -124,7 +126,7 @@ function DropdownMenuSubTrigger({ className, inset, children, ...props }: Dropdo
     <MenuPrimitive.SubmenuTrigger
       data-slot="dropdown-menu-sub-trigger"
       data-inset={inset ? "" : undefined}
-      className={cn(menuItemClassName, "data-inset:pl-8 data-popup-open:bg-highlight", className)}
+      className={cn(menuItemClassName, "data-inset:pl-8 data-popup-open:bg-selection data-popup-open:text-on-selection data-popup-open:[&_svg]:text-on-selection", className)}
       {...props}
     >
       {children}

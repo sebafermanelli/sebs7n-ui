@@ -144,7 +144,7 @@ describe("Table", () => {
     expect(container).toHaveClass("rounded-surface", "border", "border-gray-alpha-400", "glass", "overflow-x-auto")
     expect(screen.getByRole("table").querySelector("thead")).toHaveClass("bg-gray-alpha-100", "[&_tr]:h-10")
     expect(screen.getByText("Cliente")).toHaveClass("text-callout", "text-gray-900")
-    expect(screen.getByText("Ana").closest("tr")).toHaveClass("h-12", "hover:bg-gray-alpha-100", "data-[state=selected]:bg-highlight")
+    expect(screen.getByText("Ana").closest("tr")).toHaveClass("h-12", "hover:bg-gray-alpha-100", "data-[state=selected]:bg-selection", "data-[state=selected]:text-on-selection")
     expect(screen.getByText("$1.200")).toHaveClass("text-right", "tabular-nums")
   })
 

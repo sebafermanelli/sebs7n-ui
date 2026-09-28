@@ -153,7 +153,7 @@ function SidebarItemBadge({ className, label, children, ...props }: SidebarItemB
   return (
     <span
       data-slot="sidebar-item-badge"
-      className={cn("ml-auto shrink-0 text-callout text-gray-900 tabular-nums group-data-collapsed/sidebar:sr-only", className)}
+      className={cn("ml-auto shrink-0 text-callout text-gray-900 tabular-nums group-data-active/sidebar-item:text-on-selection group-aria-[current=page]/sidebar-item:text-on-selection group-data-collapsed/sidebar:sr-only", className)}
       {...props}
     >
       {/* La coma es solo para el lector; el espacio queda al inicio de línea y CSS lo colapsa. */}
@@ -233,7 +233,7 @@ function SidebarItem({ className, icon, active = false, tooltip, render, childre
               <span
                 data-slot="sidebar-item-dot"
                 aria-hidden="true"
-                className="absolute top-1 right-1 hidden size-1.5 rounded-full bg-gray-900 group-data-collapsed/sidebar:block"
+                className="absolute top-1 right-1 hidden size-1.5 rounded-full bg-gray-900 group-data-active/sidebar-item:bg-on-selection group-aria-[current=page]/sidebar-item:bg-on-selection group-data-collapsed/sidebar:block"
               />
             )}
           </>

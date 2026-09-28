@@ -211,6 +211,8 @@
 
   --color-highlight: var(--sf-highlight);
   --color-highlight-active: var(--sf-highlight-active);
+  --color-selection: var(--sf-selection);
+  --color-on-selection: var(--sf-on-selection);
 
   --shadow-tooltip: var(--sf-shadow-tooltip);
   --shadow-menu: var(--sf-shadow-menu);
@@ -366,15 +368,26 @@
     --sf-button-error-active: #7c1316;
     --sf-backdrop: #00000033;
     /**
-     * La selección: el ítem de menú bajo el puntero, el ítem activo del Sidebar.
-     *
-     * Es el brand en tinte y no sólido, como lo hace macOS, por una razón concreta: adentro de
-     * un ítem vive contenido que no es del paquete —un email en `gray-900`, un atajo, un
-     * Badge—, y sobre brand sólido ese texto queda ilegible sin que la app haya tocado nada.
-     * Sobre el tinte, `gray-900` da 7:1 en claro y 5:1 en oscuro con las cuatro marcas.
+     * El brand en tinte: hasta 1.x era la selección; desde 2.0 queda para lo que se marca sin
+     * ser la selección —el tramo del medio de un rango en Calendar, la burbuja del usuario en
+     * Chat—, donde adentro vive texto en `gray-900` que no cambia de color. Sobre el tinte,
+     * `gray-900` da 7:1 en claro y 5:1 en oscuro con las cuatro marcas.
      */
     --sf-highlight: color-mix(in srgb, var(--sf-brand-700) 14%, transparent);
     --sf-highlight-active: color-mix(in srgb, var(--sf-brand-700) 22%, transparent);
+    /**
+     * La selección de 2.0: el ítem de menú resaltado (con el puntero o con las flechas), el ítem
+     * activo del Sidebar, la opción marcada de un Select o un Combobox. Es el acento sólido con
+     * texto e íconos de contraste, como en macOS (Finder, Ajustes, cualquier menú), porque ahí
+     * la selección se lee de un vistazo y el tinte de 1.x se confundía con el hover.
+     *
+     * Es el mismo par que el botón `accent` —`brand-700` con `brand-contrast`—, que cada app ya
+     * tiene que llevar a 4,5:1 (`test/brand-contrast.test.ts`). Lo que vive adentro de un ítem
+     * y tiene color propio (el atajo, el ícono, el contador del Sidebar) pasa a
+     * `on-selection` desde el componente; `--sf-highlight` queda para lo que no es selección.
+     */
+    --sf-selection: var(--sf-brand-700);
+    --sf-on-selection: var(--sf-brand-fg);
     /**
      * El vidrio teñido de un Badge o un Tag: cuánto de su color lleva el fondo y cuánto el
      * borde. Van como porcentaje suelto porque se usan de modificador de opacidad
@@ -518,6 +531,11 @@
        `gray-900` daba 4,27:1. */
     --sf-highlight: color-mix(in srgb, var(--sf-brand-700) 22%, transparent);
     --sf-highlight-active: color-mix(in srgb, var(--sf-brand-700) 26%, transparent);
+    /* En oscuro el botón `accent` también es `brand-700` con `brand-contrast-dark`: el par
+       sigue siendo el mismo, y la variable se declara otra vez porque `var()` se resuelve en
+       el elemento que la declara. */
+    --sf-selection: var(--sf-brand-700);
+    --sf-on-selection: var(--sf-brand-fg);
     --sf-tint-fill: 22%;
     --sf-tint-border: 34%;
 

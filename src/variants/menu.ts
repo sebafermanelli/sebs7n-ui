@@ -14,9 +14,25 @@ export type MenuInsetProps = { inset?: boolean }
  * 24 px, el alto de un ítem de menú de macOS. Con el dedo sube a 44 de verdad y no con
  * `touch-target`: los ítems están pegados, y un `::after` de 44 taparía la mitad del de al lado
  * (el que va después en el DOM se pinta encima y se queda con el toque).
+ *
+ * El resaltado es la selección de macOS (2.0): acento sólido con texto e íconos de contraste.
+ * Base UI pone `data-highlighted` tanto con el puntero como con las flechas, igual que macOS. Un
+ * ítem deshabilitado no lo toma aunque quede resaltado: se queda transparente y en `gray-700`.
+ * `group/menu-item` es para lo que adentro tiene color propio (el atajo): ver
+ * `menuItemSecondaryClassName`.
  */
 export const menuItemClassName =
-  "relative flex h-6 pointer-coarse:h-11 cursor-pointer items-center gap-2 rounded-control px-2 text-body text-gray-1000 outline-none select-none transition-control data-highlighted:bg-highlight active:bg-highlight-active data-disabled:cursor-not-allowed data-disabled:text-gray-700 data-disabled:data-highlighted:bg-transparent [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+  "group/menu-item relative flex h-6 pointer-coarse:h-11 cursor-pointer items-center gap-2 rounded-control px-2 text-body text-gray-1000 outline-none select-none transition-control data-highlighted:bg-selection data-highlighted:text-on-selection data-highlighted:[&_svg]:text-on-selection active:bg-selection data-disabled:cursor-not-allowed data-disabled:text-gray-700 data-disabled:active:bg-transparent data-disabled:data-highlighted:bg-transparent data-disabled:data-highlighted:text-gray-700 data-disabled:data-highlighted:[&_svg]:text-gray-700 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+
+/**
+ * El texto secundario de un ítem —el atajo de teclado—. En reposo es `gray-900`; con el ítem
+ * resaltado pasa al color de contraste pleno. macOS lo baja a ~80 %, pero sobre el blue del
+ * paquete eso da 3,4:1 y el atajo es texto: queda abajo del 4,5 de WCAG 1.4.3. El
+ * `group-not-data-disabled` hace falta porque las dos variantes de grupo pesan lo mismo
+ * (`:where()`), y sin él el orden del CSS decidiría si un deshabilitado se pone blanco.
+ */
+export const menuItemSecondaryClassName =
+  "text-gray-900 group-data-highlighted/menu-item:group-not-data-disabled/menu-item:text-on-selection"
 
 /**
  * El radio del panel es el del ítem más el `p-1` que los separa: así las dos curvas son

@@ -93,16 +93,19 @@ export default function SearchDialog({ open, onOpenChange }: { open: boolean; on
             {resultados.map((resultado) => (
               <li key={resultado.href}>
                 <Link
-                  // Concéntrico con el diálogo: su radio menos los 8px que los separan.
-                  className="flex flex-col gap-0.5 rounded-[calc(var(--radius-panel)-(--spacing(2)))] px-3 py-2 outline-none transition-control hover:bg-gray-alpha-100 focus-visible:focus-ring"
+                  // Concéntrico con el diálogo: su radio menos los 8px que los separan. El
+                  // resultado con el foco del teclado es la selección, como en Spotlight: acento
+                  // sólido y todo el texto en el color de contraste. El hover se queda en velo: el
+                  // puntero no mueve el foco, y con los dos en acento había dos «elegidos» a la vez.
+                  className="group/result flex flex-col gap-0.5 rounded-[calc(var(--radius-panel)-(--spacing(2)))] px-3 py-2 outline-none transition-control hover:bg-gray-alpha-100 focus-visible:bg-selection focus-visible:focus-ring"
                   href={resultado.href}
                   onClick={() => onOpenChange(false)}
                 >
                   <span className="flex items-baseline gap-2">
-                    <span className="text-label-14 text-gray-1000">{resultado.title}</span>
-                    <span className="text-label-12 text-gray-700">{resultado.group}</span>
+                    <span className="text-label-14 text-gray-1000 group-focus-visible/result:text-on-selection">{resultado.title}</span>
+                    <span className="text-label-12 text-gray-700 group-focus-visible/result:text-on-selection">{resultado.group}</span>
                   </span>
-                  <span className="line-clamp-1 text-copy-13 text-gray-900">
+                  <span className="line-clamp-1 text-copy-13 text-gray-900 group-focus-visible/result:text-on-selection">
                     <Inline text={resultado.description} />
                   </span>
                 </Link>

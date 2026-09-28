@@ -45,12 +45,15 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
     <tr
       data-slot="table-row"
       className={cn(
-        "h-12 border-b border-gray-alpha-400 transition-control group-data-[density=compact]/table:h-10",
+        "group/table-row h-12 border-b border-gray-alpha-400 transition-control group-data-[density=compact]/table:h-10",
         // El hover es un velo, no un fondo: `gray-alpha-100` es un 5 % de negro en claro y un 7 %
         // de blanco en oscuro. Un gris opaco tapaba el vidrio de la tabla y la fila parecía
-        // recortada y pegada encima. La elegida usa la selección del sistema.
-        "hover:bg-gray-alpha-100 data-[state=selected]:bg-highlight",
-        "[&[tabindex]]:cursor-pointer focus-visible:shadow-[inset_0_0_0_2px_var(--color-brand-700)] focus-visible:outline-none",
+        // recortada y pegada encima. La elegida es la selección de macOS (2.0), como una fila de
+        // Finder: acento sólido, y las celdas e íconos pasan al color de contraste (`TableCell`
+        // cuelga de `group/table-row`). El anillo de foco sobre el acento no se vería en brand:
+        // en la fila elegida va en el color de contraste.
+        "hover:bg-gray-alpha-100 data-[state=selected]:bg-selection data-[state=selected]:text-on-selection data-[state=selected]:[&_svg]:text-on-selection",
+        "[&[tabindex]]:cursor-pointer focus-visible:shadow-[inset_0_0_0_2px_var(--color-brand-700)] focus-visible:outline-none data-[state=selected]:focus-visible:shadow-[inset_0_0_0_2px_var(--color-on-selection)]",
         className
       )}
       {...props}
@@ -81,7 +84,7 @@ function TableCell({ className, numeric = false, ...props }: TableCellProps) {
   return (
     <td
       data-slot="table-cell"
-      className={cn("px-4 align-middle whitespace-nowrap text-gray-1000", numeric && "text-right tabular-nums", className)}
+      className={cn("px-4 align-middle whitespace-nowrap text-gray-1000 group-data-[state=selected]/table-row:text-on-selection", numeric && "text-right tabular-nums", className)}
       {...props}
     />
   )

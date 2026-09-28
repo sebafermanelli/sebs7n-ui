@@ -6,7 +6,7 @@ import { Menubar as MenubarPrimitive } from "@base-ui/react/menubar"
 import { CheckIcon, ChevronRightIcon } from "lucide-react"
 
 import { cn, type WithClassName } from "../lib/utils.js"
-import { menuItemClassName, menuLabelClassName, menuPopupClassName, menuSeparatorClassName, type MenuInsetProps } from "../variants/menu.js"
+import { menuItemClassName, menuItemSecondaryClassName, menuLabelClassName, menuPopupClassName, menuSeparatorClassName, type MenuInsetProps } from "../variants/menu.js"
 
 /**
  * La barra de menús de una aplicación: Archivo, Editar, Ver.
@@ -103,7 +103,9 @@ function MenubarItem({ className, inset, variant = "default", ...props }: Menuba
       data-variant={variant}
       className={cn(
         menuItemClassName,
-        "data-inset:pl-8 data-[variant=destructive]:text-red-900 data-[variant=destructive]:data-highlighted:bg-red-100",
+        // El destructivo resaltado va en rojo sólido con su texto de contraste: el mismo par que
+        // el botón `destructive`. Sobre el acento, el rojo del texto no se leería.
+        "data-inset:pl-8 data-[variant=destructive]:text-red-900 data-[variant=destructive]:data-highlighted:not-data-disabled:bg-red-800 data-[variant=destructive]:data-highlighted:not-data-disabled:text-button-error-fg data-[variant=destructive]:data-highlighted:not-data-disabled:[&_svg]:text-button-error-fg",
         className
       )}
       {...props}
@@ -166,7 +168,7 @@ function MenubarSeparator({ className, ...props }: MenubarSeparatorProps) {
 // `SidebarItemBadge`, por el mismo motivo.
 function MenubarShortcut({ className, children, ...props }: React.ComponentProps<"span">) {
   return (
-    <span data-slot="menubar-shortcut" className={cn("ml-auto pl-6 text-mono-callout text-gray-900", className)} {...props}>
+    <span data-slot="menubar-shortcut" className={cn("ml-auto pl-6 text-mono-callout", menuItemSecondaryClassName, className)} {...props}>
       <span className="sr-only">,</span>{" "}
       {children}
     </span>
@@ -184,7 +186,7 @@ function MenubarSubTrigger({ className, inset, children, ...props }: MenubarSubT
     <MenuPrimitive.SubmenuTrigger
       data-slot="menubar-sub-trigger"
       data-inset={inset ? "" : undefined}
-      className={cn(menuItemClassName, "data-inset:pl-8 data-popup-open:bg-highlight", className)}
+      className={cn(menuItemClassName, "data-inset:pl-8 data-popup-open:bg-selection data-popup-open:text-on-selection data-popup-open:[&_svg]:text-on-selection", className)}
       {...props}
     >
       {children}

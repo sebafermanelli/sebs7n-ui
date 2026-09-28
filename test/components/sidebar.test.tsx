@@ -89,15 +89,17 @@ describe("Sidebar", () => {
       "text-gray-900",
       "hover:bg-gray-alpha-100",
       "hover:text-gray-1000",
-      "data-active:bg-highlight",
-      "aria-[current=page]:bg-highlight",
+      "data-active:bg-selection",
+      "aria-[current=page]:bg-selection",
       "focus-visible:focus-ring"
     )
-    // El brand va en el fondo y en el ícono del activo. En el texto no: `brand-900` sobre el
-    // tinte da 4,35:1 con el blue del paquete.
-    expect(clients).toHaveClass("data-active:[&_svg]:text-brand-900")
+    // 2.0: el activo es la selección de macOS. Acento sólido, y texto e ícono en el color de
+    // contraste; nada de `brand-*` en el texto.
+    expect(clients).toHaveClass("data-active:text-on-selection", "data-active:[&_svg]:text-on-selection", "aria-[current=page]:text-on-selection")
     expect(clients.className).not.toMatch(/(^|\s)(data-active:|aria-\[current=page\]:)?text-brand/)
     expect(screen.getByText("3")).toHaveClass("ml-auto", "text-callout", "tabular-nums", "text-gray-900")
+    // Adentro del activo, el contador también pasa al color de contraste.
+    expect(screen.getByText("3")).toHaveClass("group-data-active/sidebar-item:text-on-selection", "group-aria-[current=page]/sidebar-item:text-on-selection")
   })
 
   it("label de grupo en callout gris sin uppercase; se oculta colapsado y nombra al grupo", () => {
@@ -327,7 +329,7 @@ describe("Sidebar", () => {
     expect(link).toHaveAttribute("href", "/admin/viajes")
     expect(link).toHaveAttribute("aria-current", "page")
     expect(link).toHaveAttribute("data-active")
-    expect(link).toHaveClass("extra", "h-7", "aria-[current=page]:bg-highlight")
+    expect(link).toHaveClass("extra", "h-7", "aria-[current=page]:bg-selection")
   })
 
   it("sidebarItemVariants sirve para un Link propio", () => {

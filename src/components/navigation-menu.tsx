@@ -176,7 +176,9 @@ function NavigationMenuLink({ className, title, description, icon, children, ...
       data-slot="navigation-menu-link"
       className={cn(
         linkBaseClassName,
-        "block p-2 text-body text-gray-1000 hover:bg-gray-alpha-100 data-[active]:bg-highlight",
+        // La página actual es la selección (2.0), igual que el ítem activo del Sidebar: acento
+        // sólido, y el título, la descripción y el ícono pasan al color de contraste.
+        "group/nav-link block p-2 text-body text-gray-1000 hover:bg-gray-alpha-100 data-[active]:bg-selection data-[active]:text-on-selection",
         className
       )}
       {...props}
@@ -186,17 +188,17 @@ function NavigationMenuLink({ className, title, description, icon, children, ...
           <span
             aria-hidden="true"
             data-slot="navigation-menu-link-icon"
-            className="mt-px flex shrink-0 text-gray-900 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4"
+            className="mt-px flex shrink-0 text-gray-900 group-data-[active]/nav-link:text-on-selection [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4"
           >
             {icon}
           </span>
         )}
         <span className="flex min-w-0 flex-col gap-0.5">
-          <span data-slot="navigation-menu-link-title" className="text-body text-gray-1000">
+          <span data-slot="navigation-menu-link-title" className="text-body text-gray-1000 group-data-[active]/nav-link:text-on-selection">
             {title}
           </span>
           {description && (
-            <span data-slot="navigation-menu-link-description" className="truncate text-body text-gray-900">
+            <span data-slot="navigation-menu-link-description" className="truncate text-body text-gray-900 group-data-[active]/nav-link:text-on-selection">
               {description}
             </span>
           )}

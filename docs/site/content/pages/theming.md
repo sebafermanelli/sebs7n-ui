@@ -45,13 +45,14 @@ describe("la marca llega a AA", () => {
 | Token | Dónde |
 |---|---|
 | `brand-700` | `Button variant="accent"`, anillo de foco y borde del campo enfocado, borde de `Card selected`, franja de `Alert variant="brand"`, `Badge solid color="brand"`. Y **todo lo que está prendido**: `Checkbox` y `Radio` marcados, `Switch`, el relleno de `Slider`, `Progress` y `Meter`. |
-| `brand-700` en tinte | La selección: el ítem de menú bajo el puntero, el ítem activo del `Sidebar`, la fila elegida de `Table` y el rango de `Calendar` (14 % en claro, 22 % en oscuro). Es `bg-highlight`. |
+| `brand-700` como selección | Desde 2.0, la selección es el acento sólido, como en macOS: el ítem de menú resaltado (puntero o flechas) de `DropdownMenu`, `ContextMenu`, `Menubar`, `Select`, `Combobox` y `Autocomplete`, el ítem activo del `Sidebar`, la fila elegida de `Table`, la página actual de `NavigationMenu`. Es `bg-selection`, con texto e íconos en `text-on-selection` (`brand-contrast`). |
+| `brand-700` en tinte | Lo que se marca sin ser la selección: el tramo del medio de un rango en `Calendar`, la burbuja del usuario en `Chat` (14 % en claro, 22 % en oscuro). Es `bg-highlight`. |
 | `brand-800` | Hover del acento. |
-| `brand-900` | `Button variant="link"`, ícono de `Alert variant="brand"`, ícono del ítem activo del `Sidebar`. |
+| `brand-900` | `Button variant="link"`, ícono de `Alert variant="brand"`. |
 | `brand-ink` | El texto de `Badge` y `Tag` de marca: a mitad de camino entre `brand-900` y `brand-1000`. |
 | `brand-1000` | Hover del `Button variant="link"`. |
 | `brand-100` · `brand-400` | No los usa ningún componente desde 1.0: el fondo suave de `Badge` y `Tag` es `brand-700` en alfa. |
-| `brand-contrast` | El texto **encima** del acento. |
+| `brand-contrast` | El texto **encima** del acento, también el de la selección (`on-selection`). |
 
 `brand-200`, `brand-300` y `brand-500` no los usa ningún componente: existen para la app, que también tiene la escala completa. Y `linkVariants` **no usa la marca**: los links de texto son grises (`gray-900` → `gray-1000`), para que un párrafo con tres links no se convierta en tres manchas de color.
 
