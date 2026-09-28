@@ -5,15 +5,15 @@ Una dependencia, un `@import` y cuatro variables de marca. No hay `tailwind.conf
 El paquete está publicado en npm como [`sebs7n-ui`](https://www.npmjs.com/package/sebs7n-ui): público y MIT.
 
 ```bash
-pnpm add sebs7n-ui @base-ui/react next-themes sonner geist
+pnpm add sebs7n-ui @base-ui/react next-themes sonner
 ```
 
 ```bash
-npm install sebs7n-ui @base-ui/react next-themes sonner geist
+npm install sebs7n-ui @base-ui/react next-themes sonner
 ```
 
 ```bash
-bun add sebs7n-ui @base-ui/react next-themes sonner geist
+bun add sebs7n-ui @base-ui/react next-themes sonner
 ```
 
 Todo lo que va después de `sebs7n-ui` lo instala la app, no el paquete.
@@ -27,7 +27,7 @@ Las `peerDependencies` van así para que haya **una sola copia** de React y de B
 | `next-themes` | `^0.4.6` |
 | `sonner` | `^2.0.7` |
 
-`geist` está declarado como peer **opcional**, así que npm no se queja si no lo instalás, pero va en el mismo comando: los tokens de tipografía leen `--font-geist-sans` y `--font-geist-mono`, que define la app en el layout raíz. Si tu proyecto no es Next, cargá Geist variable por tu cuenta y definí esas dos variables.
+La fuente es **Inter**, y la carga la app: el paquete no la trae ni la declara como peer. `--font-sans` lee `--font-inter`, que define el layout raíz (ver abajo); sin ella todo cae en `system-ui`. La mono es la del sistema (SF Mono, Consolas): no hay nada que cargar.
 
 El resto —`clsx`, `tailwind-merge`, `class-variance-authority`, `lucide-react`— viaja como dependencia normal del paquete: no las instalás vos.
 
@@ -86,11 +86,10 @@ Hasta 0.4.0 el paquete publicaba además `sebs7n-ui/styles.css`, una hoja precom
 
 ## 2. Layout raíz
 
-`GeistSans.variable` y `GeistMono.variable` en `<html>`, el `ThemeProvider` de `next-themes` con `attribute="class"`, y `TooltipProvider` + `<Toaster />` de `sebs7n-ui`.
+Inter con `next/font/google` y su `.variable` en `<html>`, el `ThemeProvider` de `next-themes` con `attribute="class"`, y `TooltipProvider` + `<Toaster />` de `sebs7n-ui`.
 
 ```tsx
-import { GeistMono } from "geist/font/mono"
-import { GeistSans } from "geist/font/sans"
+import { Inter } from "next/font/google"
 import { ThemeProvider } from "next-themes"
 // Por subpath, no por el barrel: el layout raíz envuelve TODAS las páginas, así
 // que un `from "sebs7n-ui"` acá le suma los 58 componentes a cada una.
@@ -98,9 +97,12 @@ import { Toaster } from "sebs7n-ui/sonner"
 import { TooltipProvider } from "sebs7n-ui/tooltip"
 import "./globals.css"
 
+// La variable tiene que llamarse `--font-inter`: es la que lee `--font-sans`.
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es" className={`${GeistSans.variable} ${GeistMono.variable}`} suppressHydrationWarning>
+    <html lang="es" className={inter.variable} suppressHydrationWarning>
       <body>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <TooltipProvider>
@@ -114,37 +116,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 }
 ```
 
-`geist/font/*` define `--font-geist-sans` y `--font-geist-mono` en la clase que devuelve `.variable`; los tokens `--font-sans` y `--font-mono` del paquete las leen de ahí. Sin esas clases en `<html>`, todo cae al `ui-sans-serif` del sistema.
+`next/font/google` define `--font-inter` en la clase que devuelve `.variable`, y el token `--font-sans` del paquete la lee de ahí. Sin esa clase en `<html>`, todo cae en `system-ui`.
 
 `suppressHydrationWarning` en `<html>` no es opcional: `next-themes` escribe la clase `dark` antes de hidratar y sin eso React avisa en cada carga.
 
-Geist tiene que ser la **fuente variable** (rango `100 900`): la corrección óptica de los títulos usa pesos intermedios (450, 500, 550) que con una estática se redondean.
+Inter tiene que ser la **fuente variable**: los roles tipográficos usan pesos intermedios que con una estática se redondean. `next/font/google` ya la sirve variable.
 
-### Si el mono es marginal, no lo precargues
+### Fuera de Next
 
-`geist/font/mono` precarga `GeistMono-Variable.woff2` en **cada ruta**: son **71,4 KB** que compiten con el JS crítico por el ancho de banda de la primera pantalla. Vale la pena si la app muestra código o tablas de números; si el mono aparece en dos o tres etiquetas —un `#1a2b3c`, una fecha, un `404`—, no.
+`@fontsource-variable/inter`: se importa una vez y la fuente queda registrada como `"Inter Variable"`, que `--font-sans` ya tiene en la lista, así que no hace falta definir `--font-inter`.
 
-En ese caso, en vez de `geist/font/mono` declaralo con `next/font/local` y `preload: false`. La fuente se descarga cuando el navegador encuentra el primer elemento que la usa, no antes:
-
-```tsx
-import localFont from "next/font/local"
-
-const geistMono = localFont({
-  src: "../node_modules/geist/dist/fonts/geist-mono/GeistMono-Variable.woff2",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-  display: "swap",
-  // 71,4 KB en la primera pantalla por dos etiquetas no se pagan.
-  preload: false,
-  // `geist/font/mono` lo trae en `false`, así que el fallback no tiene `size-adjust`
-  // y el swap salta. Next solo ofrece Arial y Times New Roman como base de métricas:
-  // ninguna es monoespaciada, pero Arial acerca más que nada.
-  adjustFontFallback: "Arial",
-  fallback: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
-})
+```bash
+npm install @fontsource-variable/inter
 ```
 
-Y en `<html>`, `geistMono.variable` en lugar de `GeistMono.variable`. `GeistSans` no necesita nada: `geist/font/sans` no desactiva `adjustFontFallback`, así que Next ya le calcula el `size-adjust` del fallback.
+```ts
+// En el entry de la app (main.tsx, _app.tsx), una sola vez.
+import "@fontsource-variable/inter"
+```
 
 ## 3. Usar
 

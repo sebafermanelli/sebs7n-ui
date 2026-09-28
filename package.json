@@ -1,7 +1,7 @@
 {
   "name": "sebs7n-ui",
   "version": "1.13.1",
-  "description": "Design system para React: Geist (Vercel) sobre las primitivas de shadcn/ui base-nova (Base UI).",
+  "description": "Design system para React con el estilo de macOS sobre las primitivas de shadcn/ui base-nova (Base UI).",
   "keywords": [
     "design-system",
     "react",
@@ -9,7 +9,7 @@
     "tailwind-v4",
     "base-ui",
     "shadcn-ui",
-    "geist",
+    "macos",
     "components",
     "ui",
     "nextjs",

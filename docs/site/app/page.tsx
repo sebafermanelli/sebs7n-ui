@@ -36,7 +36,7 @@ const RAZONES = [
   },
 ]
 
-const INSTALL = `pnpm add sebs7n-ui @base-ui/react next-themes sonner geist`
+const INSTALL = `pnpm add sebs7n-ui @base-ui/react next-themes sonner`
 
 export default function Home() {
   const destacados = site.components.filter((component) => component.detallado).slice(0, 6)
@@ -52,7 +52,7 @@ export default function Home() {
             El design system de una sola dependencia.
           </h1>
           <p className="max-w-2xl text-copy-18 text-gray-900">
-            Geist —el lenguaje visual de Vercel— sobre las primitivas de shadcn/ui <code>base-nova</code> (Base UI).{" "}
+            El estilo de macOS sobre las primitivas de shadcn/ui <code>base-nova</code> (Base UI).{" "}
             {site.components.length} componentes accesibles, tokens de color, tipografía, radios y sombras, y cuatro
             variables para el color de marca.
           </p>

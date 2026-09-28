@@ -4,7 +4,7 @@
 [![CI](https://github.com/sebafermanelli/sebs7n-ui/actions/workflows/ci.yml/badge.svg)](https://github.com/sebafermanelli/sebs7n-ui/actions/workflows/ci.yml)
 [![licencia MIT](https://img.shields.io/npm/l/sebs7n-ui?color=0a0a0a)](./LICENSE)
 
-Design system para React: **Geist** —el lenguaje visual de Vercel— sobre las
+Design system para React con el estilo de macOS (Golden Gate) sobre las
 primitivas de **shadcn/ui `base-nova`** (Base UI), empaquetado como una sola
 dependencia.
 
@@ -47,11 +47,11 @@ Está publicado en npm como [`sebs7n-ui`](https://www.npmjs.com/package/sebs7n-u
 público y MIT.
 
 ```bash
-pnpm add sebs7n-ui @base-ui/react next-themes sonner geist
+pnpm add sebs7n-ui @base-ui/react next-themes sonner
 ```
 
 ```bash
-npm install sebs7n-ui @base-ui/react next-themes sonner geist
+npm install sebs7n-ui @base-ui/react next-themes sonner
 ```
 
 Las `peerDependencies` las instala la app, para que haya **una sola copia** de
@@ -65,9 +65,10 @@ React y de Base UI:
 | `sonner` | `^2.0.7` |
 | `recharts` (opcional) | `^3.10.0` |
 
-`geist` está declarado como peer **opcional** —npm no se queja si no lo
-instalás—, pero va en el mismo comando: los tokens de tipografía leen
-`--font-geist-sans` y `--font-geist-mono`, que define la app en el layout raíz.
+La fuente es **Inter**, y la carga la app: el paquete no la trae ni la declara
+como peer. `--font-sans` lee `--font-inter`, que define el layout raíz (ver
+abajo); sin ella todo cae en `system-ui`. La mono es la del sistema (SF Mono,
+Consolas): no hay nada que cargar.
 
 `recharts` también es peer **opcional**, pero al revés: solo lo instala la app que
 usa `sebs7n-ui/chart`. Ningún otro subpath del paquete lo importa, y `Chart` **no
@@ -105,13 +106,12 @@ Los caros son `combobox`, `autocomplete`, los tres menús, `drawer` y `user-menu
 
 ### 2. Layout raíz
 
-`GeistSans.variable` y `GeistMono.variable` (de `geist/font/*`) en `<html>`, el
-`ThemeProvider` de `next-themes` con `attribute="class"`, y `TooltipProvider` +
-`<Toaster />` de `sebs7n-ui`.
+Inter con `next/font/google` y su `.variable` en `<html>`, el `ThemeProvider` de
+`next-themes` con `attribute="class"`, y `TooltipProvider` + `<Toaster />` de
+`sebs7n-ui`.
 
 ```tsx
-import { GeistMono } from "geist/font/mono"
-import { GeistSans } from "geist/font/sans"
+import { Inter } from "next/font/google"
 import { ThemeProvider } from "next-themes"
 // Por subpath, no por el barrel: el layout raíz envuelve TODAS las páginas, así
 // que un `from "sebs7n-ui"` acá le suma los 60 componentes a cada una.
@@ -119,9 +119,12 @@ import { Toaster } from "sebs7n-ui/sonner"
 import { TooltipProvider } from "sebs7n-ui/tooltip"
 import "./globals.css"
 
+// La variable tiene que llamarse `--font-inter`: es la que lee `--font-sans`.
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es" className={`${GeistSans.variable} ${GeistMono.variable}`} suppressHydrationWarning>
+    <html lang="es" className={inter.variable} suppressHydrationWarning>
       <body>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <TooltipProvider>
@@ -135,29 +138,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 }
 ```
 
-`geist/font/mono` precarga `GeistMono-Variable.woff2` en **cada ruta**: **71,4 KB**
-que compiten por el ancho de banda de la primera pantalla. Vale la pena si la app
-muestra código o tablas de números; si el mono aparece en dos o tres etiquetas
-—un id, una fecha, un `404`—, declaralo con `next/font/local` y `preload: false`,
-así se descarga recién cuando aparece el primer elemento que lo usa:
+Fuera de Next, o si preferís servirla vos, `@fontsource-variable/inter`: se
+importa una vez y la fuente queda registrada como `"Inter Variable"`, que
+`--font-sans` ya tiene en la lista, así que no hace falta definir `--font-inter`.
 
-```tsx
-const geistMono = localFont({
-  src: "../node_modules/geist/dist/fonts/geist-mono/GeistMono-Variable.woff2",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-  display: "swap",
-  preload: false,
-  // `geist/font/mono` lo trae en `false`, así el fallback queda sin `size-adjust`
-  // y el swap salta. Next solo ofrece Arial y Times New Roman como base: ninguna
-  // es monoespaciada, pero Arial acerca más que nada.
-  adjustFontFallback: "Arial",
-  fallback: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
-})
+```bash
+npm install @fontsource-variable/inter
 ```
 
-`GeistSans` no necesita nada: `geist/font/sans` no desactiva `adjustFontFallback`,
-así que Next ya le calcula el `size-adjust` del fallback.
+```ts
+// En el entry de la app (main.tsx, _app.tsx), una sola vez.
+import "@fontsource-variable/inter"
+```
 
 ### 3. Usar
 
@@ -265,7 +257,7 @@ La paleta, los radios y las sombras por defecto de Tailwind están **reseteados*
 | Grupo | Tokens |
 |---|---|
 | Color | `gray`, `gray-alpha`, `brand`, `blue`, `red`, `amber`, `green`, `teal`, `purple`, `pink` en pasos 100–1000, más `background`, `background-100`, `background-200` y `brand-contrast` |
-| Tipografía | Utilidades de Geist: `text-heading-{72…14}`, `text-copy-{24…13}`, `text-label-{20…12}`, `text-button-{16,14,12}` y las variantes `-mono` |
+| Tipografía | Roles de macOS: `text-large-title`, `text-title-{1,2,3}`, `text-headline`, `text-body`, `text-callout`, `text-subheadline`, `text-footnote`, `text-caption`, `text-mono-{body,callout}`. Los de Geist (`text-heading-*`, `text-copy-*`, `text-label-*`, `text-button-*`) siguen andando pero están obsoletos desde 2.0 |
 | Sombras | `shadow-tooltip`, `shadow-menu`, `shadow-modal` |
 | Foco | `focus-visible:focus-ring`, `focus:focus-border` |
 | Movimiento | `transition-control`, `animate-skeleton` |
@@ -297,14 +289,11 @@ en oscuro coincide con `background-100`: Geist tiene dos fondos por tema, no
 tres, y el tercero —la página— es `--sf-background`, que vive en
 `src/styles/theme.css` porque no es un primitivo de Geist.
 
-**Tipografía.** `cn()` entiende las utilidades de Geist como tamaño de fuente,
-así que conviven con `text-gray-900`. Los `heading` llevan el peso **corregido
-ópticamente**, no 600 fijo: un mismo peso no se ve igual a 14px que a 64px, y 600
-a 64px sale plomizo. Los números son los medidos en vercel.com: 72/64 → 400, 56/48/40 → 450, 32/24 →
-500, 20 → 550, 16/14 → 600. No lo pises con `font-semibold`: para eso está el
-paso de arriba de la escala. Necesita Geist como **fuente variable** (rango
-`100 900`); con una estática los pesos intermedios se redondean y la corrección
-se pierde.
+**Tipografía.** Los roles de macOS: el texto normal es `text-body` (13 px, como en
+AppKit), los títulos llevan el peso en el rol (`text-title-2` es 600, `text-large-title`
+700) y no se pisan con `font-*`: para otro peso está otro rol. `cn()` los entiende como
+tamaño de fuente, así que conviven con `text-gray-900`. Inter tiene que ser la **fuente
+variable**; con una estática los pesos intermedios se redondean.
 
 ## Theming
 
