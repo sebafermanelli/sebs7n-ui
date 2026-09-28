@@ -97,6 +97,9 @@ describe.each([false, true])("SSR del shell (colapsado: %s)", (collapsed) => {
     expect(recoverable).not.toHaveBeenCalled()
     expect(errors.mock.calls.filter(([message]) => /hydrat|did not match/i.test(String(message)))).toEqual([])
     const ids = (html: string) => [...html.matchAll(/\s(?:id|aria-labelledby)="([^"]+)"/g)].map((m) => m[1])
-    expect(ids(container.innerHTML)).toEqual(ids(before))
+    // Colapsado, el Tooltip de cada ítem se carga después de hidratar (1.13.1) y su trigger suma
+    // un id propio. Lo que importa es que los ids del server sigan ahí, en el mismo orden.
+    const delServer = new Set(ids(before))
+    expect(ids(container.innerHTML).filter((id) => delServer.has(id))).toEqual(ids(before))
   })
 })

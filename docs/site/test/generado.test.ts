@@ -247,6 +247,13 @@ describe("registry", () => {
     expect(button.files[0].content).toMatch(/^import \{ cn(, [^}]*)? \} from "@\/lib\/utils"$/m)
     expect(button.registryDependencies).toContain("https://ui.sebastianfermanelli.com/r/utils.json")
   })
+
+  it("un import() dinámico también se reescribe y cuenta como dependencia (sidebar → tooltip)", () => {
+    const sidebar = registry.items.find((item: { name: string }) => item.name === "sidebar")
+    expect(sidebar.files[0].content).toContain('import("@/components/ui/tooltip")')
+    expect(sidebar.files[0].content).not.toMatch(/import\("\.\//)
+    expect(sidebar.registryDependencies).toContain("https://ui.sebastianfermanelli.com/r/tooltip.json")
+  })
 })
 
 describe("despersonalización del sitio", () => {

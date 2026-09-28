@@ -118,6 +118,51 @@ describe("Sidebar", () => {
     expect(tip).toBeInTheDocument()
   })
 
+  // 1.13.1: el Tooltip se carga recién al colapsar. Estos tres cubren que se sigue viendo igual
+  // que antes —con mouse, en el buscador— y que expandido ni siquiera se pide el módulo.
+  it("colapsado: el tooltip también aparece con el mouse", async () => {
+    render(<Example collapsed />)
+    await userEvent.hover(screen.getByRole("link", { name: /Clientes/ }))
+    expect(await screen.findByText("Clientes", { selector: "[data-slot=tooltip-content]" })).toBeInTheDocument()
+  })
+
+  it("colapsado: el buscador muestra su tooltip al enfocarlo", async () => {
+    render(
+      <TooltipProvider delay={0}>
+        <Sidebar collapsed>
+          <SidebarSearch placeholder="Buscar clientes" />
+        </Sidebar>
+      </TooltipProvider>
+    )
+    await userEvent.tab()
+    expect(screen.getByRole("button", { name: "Buscar clientes" })).toHaveFocus()
+    expect(await screen.findByText("Buscar clientes", { selector: "[data-slot=tooltip-content]" })).toBeInTheDocument()
+  })
+
+  it("expandido no carga el módulo del Tooltip", async () => {
+    vi.resetModules()
+    const cargado = vi.fn()
+    vi.doMock("../../src/components/tooltip", async (original) => {
+      cargado()
+      return await original()
+    })
+    try {
+      const fresco = await import("../../src/components/sidebar")
+      render(
+        <fresco.Sidebar>
+          <fresco.SidebarItem href="/a" icon={<HomeIcon />}>
+            A
+          </fresco.SidebarItem>
+        </fresco.Sidebar>
+      )
+      await new Promise((resolver) => setTimeout(resolver, 50))
+      expect(screen.getByRole("link", { name: "A" })).toBeInTheDocument()
+      expect(cargado).not.toHaveBeenCalled()
+    } finally {
+      vi.doUnmock("../../src/components/tooltip")
+    }
+  })
+
   it("SidebarSearch: botón con look de Input, ⌘K y onClick", async () => {
     const onSearch = vi.fn()
     render(<Example onSearch={onSearch} />)

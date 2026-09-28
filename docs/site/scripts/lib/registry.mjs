@@ -41,6 +41,8 @@ export function rewriteImports(source) {
     .replace(/from "\.\.\/(?:lib|internal)\/([a-z0-9-]+)\.js"/g, (_, name) => `from "@/lib/sebs7n-ui/${libFile(name)}"`)
     .replace(/from "\.\.\/variants\/([a-z0-9-]+)\.js"/g, (_, name) => `from "@/lib/sebs7n-ui/${variantsFile(name)}"`)
     .replace(/from "\.\/([a-z0-9-]+)\.js"/g, 'from "@/components/ui/$1"')
+    // `import()` dinámico: el Sidebar carga el Tooltip recién al colapsarse (1.13.1).
+    .replace(/import\("\.\/([a-z0-9-]+)\.js"\)/g, 'import("@/components/ui/$1")')
 }
 
 /** Dependencias npm: el paquete raíz de cada import externo. */
@@ -66,7 +68,7 @@ function registryDependencies(source, site) {
     if (name !== "utils") deps.add(`${site}/r/lib-${name}.json`)
   }
   for (const [, name] of source.matchAll(/from "\.\.\/variants\/([a-z0-9-]+)\.js"/g)) deps.add(`${site}/r/variants-${name}.json`)
-  for (const [, name] of source.matchAll(/from "\.\/([a-z0-9-]+)\.js"/g)) deps.add(`${site}/r/${name}.json`)
+  for (const [, name] of source.matchAll(/(?:from "|import\(")\.\/([a-z0-9-]+)\.js"/g)) deps.add(`${site}/r/${name}.json`)
   return [...deps].sort()
 }
 
