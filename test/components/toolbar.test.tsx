@@ -116,8 +116,9 @@ describe("Toolbar", () => {
     expect(screen.getByRole("toolbar")).toHaveClass("material-bar", "glass-rim", "shadow-card")
     rerender(<Toolbar aria-label="Búsqueda" variant="plain" />)
     const barra = screen.getByRole("toolbar")
-    expect(barra).not.toHaveClass("material-bar")
-    expect(barra).not.toHaveClass("glass-rim")
+    // Ningún material, no solo el de hoy: un `glass` o un `material-*` cualquiera que se cuele
+    // es vidrio sobre la superficie que la contiene.
+    expect(barra.className).not.toMatch(/\b(glass|material-)/)
     expect(barra).not.toHaveClass("shadow-card")
     expect(barra).toHaveAttribute("data-variant", "plain")
   })
