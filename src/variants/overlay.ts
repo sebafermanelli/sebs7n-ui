@@ -48,9 +48,13 @@ export const alertPopupClassName =
  * `whitespace-nowrap`, así que «Descartar cambios» se salía del botón. Acá el texto puede bajar
  * de renglón (centrado) y el botón crece en alto desde sus 32. Para etiquetas que se sabe que
  * son largas está `AlertDialogFooter stacked`, que se ve mejor que dos renglones.
+ *
+ * Apilados, la separación sube de 8 a 12: con el dedo cada botón de 32 crece a 44
+ * (`touch-target`), y con 8 las áreas se pisaban 4 px y ganaba el de abajo, que suele ser el
+ * destructivo. 32 + 12 = 44. Lado a lado no hace falta: el área crece en alto, no en ancho.
  */
 export const alertFooterClassName =
-  "grid auto-cols-fr grid-flow-col gap-2 pt-1 has-[>:nth-child(3)]:grid-flow-row max-[360px]:grid-flow-row [&>*]:w-full " +
+  "grid auto-cols-fr grid-flow-col gap-2 pt-1 has-[>:nth-child(3)]:grid-flow-row has-[>:nth-child(3)]:gap-3 max-[360px]:grid-flow-row max-[360px]:gap-3 [&>*]:w-full " +
   "[&>*]:h-auto [&>*]:min-h-8 [&>*]:py-1.5 [&>*]:text-center [&>*]:whitespace-normal"
 
 /**

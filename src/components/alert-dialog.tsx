@@ -90,7 +90,7 @@ function AlertDialogFooter({ className, stacked = false, ...props }: AlertDialog
     <div
       data-slot="alert-dialog-footer"
       data-stacked={stacked ? "" : undefined}
-      className={cn(alertFooterClassName, stacked && "grid-flow-row", className)}
+      className={cn(alertFooterClassName, stacked && "grid-flow-row gap-3", className)}
       {...props}
     />
   )

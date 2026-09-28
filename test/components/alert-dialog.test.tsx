@@ -259,3 +259,38 @@ describe("etiquetas largas (revisión fase 2)", () => {
     expect(pie).not.toHaveAttribute("data-stacked")
   })
 })
+
+// Con el dedo cada botón de 32 crece a 44 (`touch-target`). Apilados con 8 px de separación, las
+// áreas se pisan 4 px y gana el de abajo, que suele ser el destructivo. Con 12, 32 + 12 = 44.
+describe("apilados, las áreas táctiles no se pisan (revisión fase 2)", () => {
+  it("con tres botones o sin espacio, el gap sube a 12", async () => {
+    render(
+      <AlertDialog defaultOpen>
+        <AlertDialogContent>
+          <AlertDialogTitle>¿Guardar?</AlertDialogTitle>
+          <AlertDialogFooter>
+            <AlertDialogCancel />
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    )
+    const pie = (await screen.findByRole("alertdialog")).querySelector('[data-slot="alert-dialog-footer"]')!
+    expect(pie).toHaveClass("gap-2", "has-[>:nth-child(3)]:gap-3", "max-[360px]:gap-3")
+  })
+
+  it("con `stacked`, gap-3 y no gap-2", async () => {
+    render(
+      <AlertDialog defaultOpen>
+        <AlertDialogContent>
+          <AlertDialogTitle>¿Guardar?</AlertDialogTitle>
+          <AlertDialogFooter stacked>
+            <AlertDialogCancel />
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    )
+    const pie = (await screen.findByRole("alertdialog")).querySelector('[data-slot="alert-dialog-footer"]')!
+    expect(pie).toHaveClass("gap-3")
+    expect(pie).not.toHaveClass("gap-2")
+  })
+})
