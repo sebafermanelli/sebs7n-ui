@@ -137,6 +137,14 @@ export type Labels = {
      */
     remove: string | ((name: string) => string)
   }
+  command: {
+    /** Lo que dice el campo vacío, y su nombre para el lector si no trae otro. */
+    placeholder: string
+    /** Lo que dice la lista cuando no hay resultados. */
+    empty: string
+    /** Nombre del diálogo de `CommandDialog`, para quien no lo ve. */
+    dialog: string
+  }
   datePicker: {
     /** Lo que dice el campo cuando no hay fecha elegida. */
     placeholder: string
@@ -226,6 +234,11 @@ export const defaultLabels: Labels = {
     loading: "Buscando…",
     empty: "Sin resultados",
     remove: "Quitar",
+  },
+  command: {
+    placeholder: "Buscar",
+    empty: "Sin resultados",
+    dialog: "Buscar",
   },
   datePicker: {
     placeholder: "Elegí una fecha",

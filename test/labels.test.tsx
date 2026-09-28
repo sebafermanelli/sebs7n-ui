@@ -191,6 +191,7 @@ describe("LabelsProvider", () => {
       "chat",
       "colorPicker",
       "combobox",
+      "command",
       "datePicker",
       "dialog",
       "drawer",
