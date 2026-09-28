@@ -66,7 +66,9 @@ function NumberField({
         data-slot="number-field-group"
         data-size={size}
         // px-1 en vez del px-3 del Input: el aire de los costados lo ponen los botones.
-        className={cn(inputShellClassName, "px-1", className)}
+        // `w-fit` y no el `w-full` del Input: el grupo abraza al número y a los botones. A todo
+        // el ancho, un «1» quedaba con − y + en las puntas y un hueco en el medio.
+        className={cn(inputShellClassName, "w-fit max-w-full px-1", className)}
       >
         {/* Base UI nombra los steppers "Increase"/"Decrease" en inglés. */}
         <NumberFieldPrimitive.Decrement
@@ -84,7 +86,17 @@ function NumberField({
           aria-roledescription={labels?.roleDescription ?? l.roleDescription}
           // Centrado y con cifras de ancho fijo: al pulsar −/+ repetido el número
           // crece y se achica sin que el resto de la fila se mueva.
-          className={cn(inputShellInputClassName, "px-2 text-center tabular-nums", inputClassName)}
+          //
+          // El ancho es el del número (`field-sizing: content`), con un mínimo de 3 cifras, y crece
+          // si el valor es largo. `flex-initial` y no `flex-1`: no se estira, pero se achica si el
+          // llamador le pone un ancho al grupo. Donde no hay `field-sizing` (Firefox) queda en 5
+          // cifras fijas: el `w-auto` que lo libera va detrás de `@supports`, porque un `width`
+          // explícito le gana al tamaño por contenido.
+          className={cn(
+            inputShellInputClassName,
+            "flex-initial w-[calc(5ch+1rem)] min-w-[calc(3ch+1rem)] field-sizing-content supports-[field-sizing:content]:w-auto px-2 text-center tabular-nums",
+            inputClassName
+          )}
           data-slot="number-field-input"
           placeholder={placeholder}
         />

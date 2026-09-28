@@ -185,10 +185,27 @@ describe("NumberField", () => {
     expect(group()).toHaveAttribute("data-size", "lg")
   })
 
+  // Con el campo a todo el ancho y el input en `flex-1`, un «1» quedaba con los botones en las
+  // puntas y un hueco en el medio. El input mide lo que el número (`field-sizing: content`), con
+  // un mínimo de 3 cifras, y el grupo abraza a los tres. Sin `field-sizing` (Firefox), 5 cifras fijas.
+  it("el campo se ajusta al número: − y + quedan pegados a él", () => {
+    render(<NumberField aria-label="x" defaultValue={1} />)
+    expect(group()).toHaveClass("w-fit", "max-w-full")
+    expect(group().className).not.toMatch(/(^|\s)w-full(\s|$)/)
+    expect(input()).toHaveClass(
+      "field-sizing-content",
+      "w-[calc(5ch+1rem)]",
+      "supports-[field-sizing:content]:w-auto",
+      "min-w-[calc(3ch+1rem)]",
+      "flex-initial"
+    )
+    expect(input().className).not.toMatch(/\bflex-1\b/)
+  })
+
   it("el className del llamador le gana a la clase base", () => {
     render(<NumberField aria-label="x" className="w-24" defaultValue={1} inputClassName="text-left" />)
     expect(group()).toHaveClass("w-24")
-    expect(group().className).not.toMatch(/\bw-full\b/)
+    expect(group().className).not.toMatch(/(^|\s)w-full(\s|$)/)
     expect(input()).toHaveClass("text-left")
     expect(input().className).not.toMatch(/\btext-center\b/)
   })
