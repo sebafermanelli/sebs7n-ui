@@ -144,6 +144,8 @@ export type Labels = {
     rangePlaceholder: string
     /** Nombre del panel que se abre, para quien no lo ve. */
     calendar: string
+    /** El botón que vacía la fecha, con `clearable`. */
+    clear: string
   }
   dialog: {
     /** Nombre del botón X. */
@@ -229,6 +231,7 @@ export const defaultLabels: Labels = {
     placeholder: "Elegí una fecha",
     rangePlaceholder: "Elegí un rango",
     calendar: "Calendario",
+    clear: "Limpiar",
   },
   dialog: { close: "Cerrar" },
   drawer: { close: "Cerrar" },

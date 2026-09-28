@@ -693,6 +693,7 @@ export const COMPONENTS = {
       "Para una fecha que se tipea —un nacimiento, un vencimiento que se copia de un papel— va un `Input`: recorrer cuarenta años de a un mes es peor que escribir ocho números.",
       "`mode=\"range\"` elige desde y hasta en el mismo calendario, y se cierra recién con el segundo clic.",
       "Con `name`, la fecha viaja en el formulario como `2026-09-27`. En rango salen dos campos: `nombre-desde` y `nombre-hasta`.",
+      "Con `clearable`, el pie del calendario ofrece «Limpiar» cuando hay fecha: para filtros y campos opcionales.",
     ],
     props: {
       DatePicker: {

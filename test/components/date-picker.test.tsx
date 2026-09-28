@@ -46,6 +46,16 @@ describe("DatePicker", () => {
     expect(new FormData(container.querySelector("form")!).get("vence")).toBe("2026-09-27")
   })
 
+  it("el panel se apila como capa propia en z-50: adentro de un Sheet o un Drawer queda encima", async () => {
+    render(<DatePicker aria-label="Vencimiento" />)
+    await userEvent.click(screen.getByRole("button", { name: "Vencimiento" }))
+    const panel = await screen.findByRole("dialog", { name: "Calendario" })
+    // El z-index va en el Positioner, que es lo que el portal posiciona. En el Popup no sirve:
+    // el Positioner lleva un transform, arma su propio contexto de apilamiento en z auto y el
+    // velo del Drawer (z-50) le queda encima.
+    expect(panel.parentElement).toHaveClass("isolate", "z-50")
+  })
+
   it("deshabilitado no abre", async () => {
     render(<DatePicker aria-label="Vencimiento" disabled />)
     const campo = screen.getByRole("button", { name: "Vencimiento" })
@@ -58,6 +68,36 @@ describe("DatePicker", () => {
     // @ts-expect-error `required` no existe en el tipo, a propósito.
     render(<DatePicker aria-label="Vencimiento" required />)
     expect(screen.getByRole("button", { name: "Vencimiento" })).toBeInTheDocument()
+  })
+
+  it("sin clearable no hay forma de vaciarlo", async () => {
+    render(<DatePicker aria-label="Vencimiento" defaultValue={d("2026-09-27")} />)
+    await userEvent.click(screen.getByRole("button", { name: "Vencimiento" }))
+    await screen.findByRole("dialog")
+    expect(screen.queryByRole("button", { name: "Limpiar" })).toBeNull()
+  })
+
+  it("clearable: vacío no ofrece Limpiar, porque no hay nada que sacar", async () => {
+    render(<DatePicker aria-label="Vencimiento" clearable />)
+    await userEvent.click(screen.getByRole("button", { name: "Vencimiento" }))
+    await screen.findByRole("dialog")
+    expect(screen.queryByRole("button", { name: "Limpiar" })).toBeNull()
+  })
+
+  it("clearable: Limpiar vacía la fecha, el formulario y cierra el calendario", async () => {
+    const onValueChange = vi.fn()
+    const { container } = render(
+      <form>
+        <DatePicker aria-label="Vencimiento" clearable defaultValue={d("2026-09-27")} name="vence" onValueChange={onValueChange} />
+      </form>
+    )
+    await userEvent.click(screen.getByRole("button", { name: "Vencimiento" }))
+    await screen.findByRole("dialog")
+    await userEvent.click(screen.getByRole("button", { name: "Limpiar" }))
+    expect(onValueChange).toHaveBeenCalledWith(null)
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull())
+    expect(screen.getByRole("button", { name: "Vencimiento" })).toHaveTextContent("Elegí una fecha")
+    expect(new FormData(container.querySelector("form")!).get("vence")).toBe("")
   })
 
   it("los textos salen del LabelsProvider", () => {
@@ -87,6 +127,30 @@ describe("DatePicker mode=range", () => {
     const rango = onValueChange.mock.calls.at(-1)![0] as DateRange
     expect([toISODate(rango.from!), toISODate(rango.to!)]).toEqual([iso(10), iso(14)])
     expect(campo.textContent).toContain(" – ")
+  })
+
+  it("clearable: Limpiar vacía el desde y el hasta", async () => {
+    const onValueChange = vi.fn()
+    const { container } = render(
+      <form>
+        <DatePicker
+          aria-label="Período"
+          clearable
+          defaultValue={{ from: d("2026-09-10"), to: d("2026-09-14") }}
+          labels={{ clear: "Borrar" }}
+          mode="range"
+          name="periodo"
+          onValueChange={onValueChange}
+        />
+      </form>
+    )
+    await userEvent.click(screen.getByRole("button", { name: "Período" }))
+    await screen.findByRole("dialog")
+    await userEvent.click(screen.getByRole("button", { name: "Borrar" }))
+    expect(onValueChange).toHaveBeenCalledWith({ from: null, to: null })
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull())
+    const datos = new FormData(container.querySelector("form")!)
+    expect([datos.get("periodo-desde"), datos.get("periodo-hasta")]).toEqual(["", ""])
   })
 
   it("con name salen dos campos: desde y hasta", () => {

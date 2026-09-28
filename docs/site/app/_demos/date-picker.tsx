@@ -35,6 +35,21 @@ export function Rango() {
 }
 
 /**
+ * Con Limpiar
+ * `clearable` suma un pie para vaciar la fecha: un filtro o un campo opcional no puede ser un
+ * camino sin vuelta.
+ */
+export function ConLimpiar() {
+  const id = useId()
+  return (
+    <div className="flex w-full max-w-xs flex-col gap-2">
+      <Label htmlFor={id}>Facturas desde</Label>
+      <DatePicker clearable defaultValue={new Date(2026, 8, 1)} id={id} name="desde" />
+    </div>
+  )
+}
+
+/**
  * Tamaños, formato y límites
  * Las mismas tres alturas que `Input`. `format` es el de `Intl.DateTimeFormat`.
  */

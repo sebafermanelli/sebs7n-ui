@@ -15,6 +15,7 @@ import {
   inputSizeClassName,
 } from "../variants/input.js"
 import { floatingPopupClassName } from "../variants/overlay.js"
+import { Button } from "./button.js"
 import { Calendar } from "./calendar.js"
 
 type DatePickerLabels = Labels["datePicker"]
@@ -49,6 +50,11 @@ type DatePickerBaseProps = Omit<React.ComponentProps<"button">, "value" | "defau
   labels?: Partial<DatePickerLabels & Labels["calendar"]>
   /** Clases del panel del calendario. */
   popupClassName?: string
+  /**
+   * Suma un «Limpiar» al pie del calendario cuando hay fecha elegida: para un filtro o un campo
+   * opcional, donde elegir una fecha no puede ser un camino sin vuelta.
+   */
+  clearable?: boolean
 }
 
 type DatePickerSingleProps = DatePickerBaseProps & {
@@ -92,6 +98,7 @@ function DatePicker(props: DatePickerProps) {
   const {
     className,
     popupClassName,
+    clearable = false,
     mode = "single",
     size = "md",
     name,
@@ -145,6 +152,16 @@ function DatePicker(props: DatePickerProps) {
     if (completo) abrir(false)
   }
 
+  // Limpiar no pasa por `cambiar`: un rango vacío ahí es «falta el hasta» y dejaría el
+  // calendario abierto.
+  const limpiar = () => {
+    const nada = mode === "range" ? SIN_RANGO : null
+    if (valueProp === undefined) setInterno(nada)
+    ;(onValueChange as ((value: Date | null | DateRange) => void) | undefined)?.(nada)
+    abrir(false)
+  }
+  const vacio = mode === "single" ? fecha == null : rango.from == null && rango.to == null
+
   const calendario = { min, max, isDateDisabled, locale, weekStartsOn, numberOfMonths, labels: labelsProp }
 
   return (
@@ -188,6 +205,15 @@ function DatePicker(props: DatePickerProps) {
               <Calendar {...calendario} mode="range" onValueChange={cambiar} value={rango} />
             ) : (
               <Calendar {...calendario} onValueChange={cambiar} value={fecha} />
+            )}
+            {clearable && !vacio && (
+              // El pie se va con la fecha: vacío no hay nada que sacar, y un botón que no hace
+              // nada es ruido.
+              <div className="-mx-3 mt-3 -mb-1 border-t border-gray-alpha-400 px-3 pt-2" data-slot="date-picker-footer">
+                <Button onClick={limpiar} size="sm" type="button" variant="ghost">
+                  {labels.clear}
+                </Button>
+              </div>
             )}
           </PopoverPrimitive.Popup>
         </PopoverPrimitive.Positioner>

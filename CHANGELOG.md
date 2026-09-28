@@ -9,6 +9,15 @@ major.
 
 ## [Unreleased]
 
+## [1.13.0] - 2026-09-28
+
+### Added
+
+- **`DatePicker clearable`.** Suma un «Limpiar» al pie del calendario cuando hay fecha elegida,
+  para filtros y campos opcionales: sin él, una fecha elegida no se podía sacar. Vacía también
+  el campo del formulario (en rango, los dos) y cierra el calendario. El texto sale de
+  `labels.datePicker.clear`.
+
 ## [1.12.1] - 2026-09-27
 
 ### Fixed
