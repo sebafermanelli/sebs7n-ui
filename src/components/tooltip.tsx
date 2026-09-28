@@ -32,7 +32,7 @@ function TooltipContent({ className, side = "top", sideOffset = 6, align = "cent
         <TooltipPrimitive.Popup
           data-slot="tooltip-content"
           className={cn(
-            "relative w-fit max-w-xs origin-(--transform-origin) rounded-control bg-gray-1000 px-2 py-1 text-copy-13 text-background-100 shadow-tooltip",
+            "relative w-fit max-w-xs origin-(--transform-origin) rounded-control bg-gray-1000 px-2 py-1 text-body text-background-100 shadow-tooltip",
             "transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0",
             className
           )}

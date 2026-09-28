@@ -50,7 +50,7 @@ function SheetContent({ className, children, side = "right", showCloseButton = t
         className={cn(
           // Sin esquinas redondeadas: la hoja va de punta a punta contra el borde de la pantalla, y un
         // radio contra ese borde se ve como un error de recorte.
-        "fixed z-50 flex flex-col gap-4 glass glass-thick text-copy-14 text-gray-1000 shadow-modal outline-none transition-[translate] duration-200 ease-out",
+        "fixed z-50 flex flex-col gap-4 glass glass-thick text-body text-gray-1000 shadow-modal outline-none transition-[translate] duration-200 ease-out",
           "data-[side=right]:inset-y-0 data-[side=right]:right-0 data-[side=right]:w-3/4 data-[side=right]:sm:max-w-sm data-[side=right]:data-ending-style:translate-x-full data-[side=right]:data-starting-style:translate-x-full",
           "data-[side=left]:inset-y-0 data-[side=left]:left-0 data-[side=left]:w-3/4 data-[side=left]:sm:max-w-sm data-[side=left]:data-ending-style:-translate-x-full data-[side=left]:data-starting-style:-translate-x-full",
           "data-[side=top]:inset-x-0 data-[side=top]:top-0 data-[side=top]:data-ending-style:-translate-y-full data-[side=top]:data-starting-style:-translate-y-full",
@@ -85,13 +85,13 @@ function SheetFooter({ className, ...props }: React.ComponentProps<"div">) {
 type SheetTitleProps = WithClassName<SheetPrimitive.Title.Props>
 
 function SheetTitle({ className, ...props }: SheetTitleProps) {
-  return <SheetPrimitive.Title data-slot="sheet-title" className={cn("text-heading-20 text-gray-1000", className)} {...props} />
+  return <SheetPrimitive.Title data-slot="sheet-title" className={cn("text-title-2 text-gray-1000", className)} {...props} />
 }
 
 type SheetDescriptionProps = WithClassName<SheetPrimitive.Description.Props>
 
 function SheetDescription({ className, ...props }: SheetDescriptionProps) {
-  return <SheetPrimitive.Description data-slot="sheet-description" className={cn("text-copy-14 text-gray-900", className)} {...props} />
+  return <SheetPrimitive.Description data-slot="sheet-description" className={cn("text-body text-gray-900", className)} {...props} />
 }
 
 export {

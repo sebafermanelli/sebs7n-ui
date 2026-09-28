@@ -84,11 +84,11 @@ function UserMenu({ user, collapsed: collapsedProp, side, align, children, signO
     >
       {avatar}
       <span className="flex min-w-0 flex-1 flex-col">
-        <span data-slot="user-menu-name" className="truncate text-label-14 text-gray-1000">
+        <span data-slot="user-menu-name" className="truncate text-body text-gray-1000">
           {user.name}
         </span>
         {user.email && (
-          <span data-slot="user-menu-email" className="truncate text-label-12 text-gray-900">
+          <span data-slot="user-menu-email" className="truncate text-callout text-gray-900">
             {user.email}
           </span>
         )}
@@ -124,15 +124,15 @@ function UserMenu({ user, collapsed: collapsedProp, side, align, children, signO
             [
               "header",
               <div data-slot="user-menu-header" className="flex min-w-0 flex-col px-2 py-1.5">
-                <span className="truncate text-label-14 text-gray-1000">{user.name}</span>
-                {user.email && <span className="truncate text-label-12 text-gray-900">{user.email}</span>}
+                <span className="truncate text-body text-gray-1000">{user.name}</span>
+                {user.email && <span className="truncate text-callout text-gray-900">{user.email}</span>}
               </div>,
             ],
             ["children", Children.toArray(children).length > 0 && children],
             [
               "theme",
               showTheme && (
-                <div data-slot="user-menu-theme" className="flex h-10 items-center justify-between gap-2 pr-1 pl-2 text-copy-14 text-gray-1000">
+                <div data-slot="user-menu-theme" className="flex h-10 items-center justify-between gap-2 pr-1 pl-2 text-body text-gray-1000">
                   <span aria-hidden="true">{tema}</span>
                   <ThemeMenuRadio labels={{ group: tema, ...labels?.switcher }} />
                 </div>

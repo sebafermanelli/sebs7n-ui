@@ -17,7 +17,7 @@ describe("Avatar", () => {
       </Avatar>
     )
     const fallback = screen.getByText("sf")
-    expect(fallback).toHaveClass("bg-gray-200", "text-gray-900", "text-label-12", "uppercase")
+    expect(fallback).toHaveClass("bg-gray-200", "text-gray-900", "text-callout", "uppercase")
     expect(fallback.closest("[data-slot=avatar]")).toHaveAttribute("data-size", "lg")
   })
 })

@@ -56,7 +56,7 @@ describe("variantes exportadas pasan por cn()", () => {
    */
   const SIN_SHAPE = {
     "default/md":
-      "relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full border border-transparent whitespace-nowrap outline-none select-none transition-surface focus-visible:focus-ring data-disabled:cursor-not-allowed data-disabled:border-gray-alpha-400 data-disabled:bg-gray-alpha-100 data-disabled:text-gray-700 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 bg-gray-1000 text-background-100 shadow-button-inverted hover:bg-button-primary-hover active:translate-y-px active:shadow-none data-disabled:shadow-none h-10 px-4 text-button-14",
+      "relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full border border-transparent whitespace-nowrap outline-none select-none transition-surface focus-visible:focus-ring data-disabled:cursor-not-allowed data-disabled:border-gray-alpha-400 data-disabled:bg-gray-alpha-100 data-disabled:text-gray-700 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 bg-gray-1000 text-background-100 shadow-button-inverted hover:bg-button-primary-hover active:translate-y-px active:shadow-none data-disabled:shadow-none h-10 px-4 text-body",
   } as const
 
   it("sin shape, buttonVariants emite la cadena fijada", () => {

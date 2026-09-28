@@ -35,14 +35,14 @@ function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-title"
-      className={cn("text-heading-20 text-gray-1000 group-data-[size=sm]/card:text-heading-16", className)}
+      className={cn("text-title-2 text-gray-1000 group-data-[size=sm]/card:text-title-3", className)}
       {...props}
     />
   )
 }
 
 function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
-  return <div data-slot="card-description" className={cn("text-copy-14 text-gray-900", className)} {...props} />
+  return <div data-slot="card-description" className={cn("text-body text-gray-900", className)} {...props} />
 }
 
 function CardAction({ className, ...props }: React.ComponentProps<"div">) {

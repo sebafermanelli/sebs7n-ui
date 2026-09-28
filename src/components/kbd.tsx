@@ -8,7 +8,7 @@ function Kbd({ className, ...props }: React.ComponentProps<"kbd">) {
     <kbd
       data-slot="kbd"
       className={cn(
-        "inline-flex h-5 min-w-5 shrink-0 items-center justify-center gap-0.5 rounded-xs border border-gray-alpha-400 bg-gray-alpha-100 px-1 text-label-12-mono text-gray-900 shadow-card select-none",
+        "inline-flex h-5 min-w-5 shrink-0 items-center justify-center gap-0.5 rounded-xs border border-gray-alpha-400 bg-gray-alpha-100 px-1 text-mono-callout text-gray-900 shadow-card select-none",
         className
       )}
       {...props}

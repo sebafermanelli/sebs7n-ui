@@ -43,8 +43,8 @@ describe("AlertDialog", () => {
     const dialog = await screen.findByRole("alertdialog")
     expect(dialog).toHaveClass("shadow-modal", "rounded-panel", "p-6", "glass", "glass-thick")
     expect(dialog.className).not.toMatch(/\bborder\b/)
-    expect(screen.getByText("¿Eliminar el viaje?")).toHaveClass("text-heading-20", "text-gray-1000")
-    expect(screen.getByText("Se borran también los pasajeros cargados.")).toHaveClass("text-copy-14", "text-gray-900")
+    expect(screen.getByText("¿Eliminar el viaje?")).toHaveClass("text-title-2", "text-gray-1000")
+    expect(screen.getByText("Se borran también los pasajeros cargados.")).toHaveClass("text-body", "text-gray-900")
     expect(document.querySelector("[data-slot=alert-dialog-overlay]")).toHaveClass("bg-backdrop")
     // Sin botón X: un alert dialog exige respuesta.
     expect(screen.queryByRole("button", { name: "Cerrar" })).toBeNull()

@@ -185,7 +185,7 @@ function ToolbarLink({ className, ...props }: ToolbarLinkProps) {
     <ToolbarPrimitive.Link
       data-slot="toolbar-link"
       className={cn(
-        "inline-flex h-8 items-center rounded-full px-2 text-copy-14 text-gray-900 no-underline outline-none",
+        "inline-flex h-8 items-center rounded-full px-2 text-body text-gray-900 no-underline outline-none",
         "transition-control hover:text-gray-1000 focus-visible:focus-ring",
         className
       )}

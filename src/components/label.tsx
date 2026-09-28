@@ -9,7 +9,7 @@ function Label({ className, required = false, children, ...props }: LabelProps) 
     <label
       data-slot="label"
       className={cn(
-        "inline-flex items-center gap-1 text-label-12 text-gray-1000 select-none",
+        "inline-flex items-center gap-1 text-callout text-gray-1000 select-none",
         "peer-disabled:cursor-not-allowed peer-disabled:text-gray-700",
         className
       )}

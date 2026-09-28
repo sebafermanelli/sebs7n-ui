@@ -89,7 +89,7 @@ describe("NavigationMenu", () => {
     render(<Nav />)
     // Sin fondo en ningún estado: en una barra de navegación el único control
     // con fondo es el CTA.
-    expect(trigger()).toHaveClass("text-copy-14", "text-gray-900", "bg-transparent", "hover:text-gray-1000")
+    expect(trigger()).toHaveClass("text-body", "text-gray-900", "bg-transparent", "hover:text-gray-1000")
     expect(trigger().className).not.toMatch(/\bhover:bg-/)
 
     const icon = document.querySelector("[data-slot=navigation-menu-icon]")!

@@ -19,21 +19,21 @@ const trendClassName = { up: "text-green-900", down: "text-red-900", neutral: "t
 function Stat({ className, label, value, delta, trend = "neutral", hint, ...props }: StatProps) {
   return (
     <div data-slot="stat" data-trend={delta != null ? trend : undefined} className={cn("flex min-w-0 flex-col gap-1", className)} {...props}>
-      <div data-slot="stat-label" className="truncate text-label-13 text-gray-900">
+      <div data-slot="stat-label" className="truncate text-body text-gray-900">
         {label}
       </div>
-      <div data-slot="stat-value" className="text-heading-24 text-gray-1000 tabular-nums">
+      <div data-slot="stat-value" className="text-title-1 text-gray-1000 tabular-nums">
         {value}
       </div>
       {(delta != null || hint != null) && (
         <div className="flex flex-wrap items-baseline gap-x-1.5">
           {delta != null && (
-            <span data-slot="stat-delta" className={cn("text-label-12 tabular-nums", trendClassName[trend])}>
+            <span data-slot="stat-delta" className={cn("text-callout tabular-nums", trendClassName[trend])}>
               {delta}
             </span>
           )}
           {hint != null && (
-            <span data-slot="stat-hint" className="text-label-12 text-gray-900">
+            <span data-slot="stat-hint" className="text-callout text-gray-900">
               {hint}
             </span>
           )}

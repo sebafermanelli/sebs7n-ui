@@ -196,7 +196,7 @@ function ContextMenuSeparator({ className, ...props }: ContextMenuSeparatorProps
 // `SidebarItemBadge`, por el mismo motivo.
 function ContextMenuShortcut({ className, children, ...props }: React.ComponentProps<"span">) {
   return (
-    <span data-slot="context-menu-shortcut" className={cn("ml-auto text-label-12-mono text-gray-900", className)} {...props}>
+    <span data-slot="context-menu-shortcut" className={cn("ml-auto text-mono-callout text-gray-900", className)} {...props}>
       <span className="sr-only">,</span>{" "}
       {children}
     </span>

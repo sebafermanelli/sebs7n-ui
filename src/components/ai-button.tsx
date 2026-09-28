@@ -116,7 +116,7 @@ function AiLauncher({ className, label, labelVisible = false, labelSide = "left"
         data-slot="ai-launcher-label"
         data-visible={labelVisible ? "" : undefined}
         className={cn(
-          "pointer-events-none absolute top-1/2 -translate-y-1/2 rounded-full bg-gray-1000 px-3 py-1.5 text-label-14 whitespace-nowrap text-background-100 shadow-tooltip",
+          "pointer-events-none absolute top-1/2 -translate-y-1/2 rounded-full bg-gray-1000 px-3 py-1.5 text-body whitespace-nowrap text-background-100 shadow-tooltip",
           labelSide === "left" ? "right-full mr-3" : "left-full ml-3",
           "opacity-0 transition-opacity duration-150 data-visible:opacity-100",
           "group-hover/ai-launcher:opacity-100 group-focus-visible/ai-launcher:opacity-100"

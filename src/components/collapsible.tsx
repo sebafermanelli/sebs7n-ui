@@ -54,7 +54,7 @@ function CollapsibleContent({ className, children, panelClassName, ...props }: C
       )}
       {...props}
     >
-      <div data-slot="collapsible-content-inner" className={cn("pt-2 text-copy-14 text-gray-900", className)}>
+      <div data-slot="collapsible-content-inner" className={cn("pt-2 text-body text-gray-900", className)}>
         {children}
       </div>
     </CollapsiblePrimitive.Panel>

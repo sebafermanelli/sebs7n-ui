@@ -38,13 +38,13 @@ function PopoverHeader({ className, ...props }: React.ComponentProps<"div">) {
 type PopoverTitleProps = WithClassName<PopoverPrimitive.Title.Props>
 
 function PopoverTitle({ className, ...props }: PopoverTitleProps) {
-  return <PopoverPrimitive.Title data-slot="popover-title" className={cn("text-heading-14 text-gray-1000", className)} {...props} />
+  return <PopoverPrimitive.Title data-slot="popover-title" className={cn("text-headline text-gray-1000", className)} {...props} />
 }
 
 type PopoverDescriptionProps = WithClassName<PopoverPrimitive.Description.Props>
 
 function PopoverDescription({ className, ...props }: PopoverDescriptionProps) {
-  return <PopoverPrimitive.Description data-slot="popover-description" className={cn("text-copy-14 text-gray-900", className)} {...props} />
+  return <PopoverPrimitive.Description data-slot="popover-description" className={cn("text-body text-gray-900", className)} {...props} />
 }
 
 export {

@@ -77,7 +77,7 @@ function Pagination({
       "aria-current": options.active ? ("page" as const) : undefined,
       className: cn(
         buttonVariants({ variant: options.active ? "secondary" : "ghost", size: iconSize }),
-        "text-button-14 tabular-nums",
+        "text-body tabular-nums",
         !options.active && "text-gray-900 hover:text-gray-1000",
         off && "text-gray-700 pointer-events-none"
       ),

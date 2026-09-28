@@ -13,7 +13,7 @@
  * el contenido, una casilla de OTP es cuadrada y un input de barra de herramientas mide 32px—.
  */
 export const inputControlClassName =
-  "rounded-field border border-gray-alpha-400 glass-control text-copy-14 text-gray-1000 shadow-card outline-none transition-control hover:border-gray-alpha-500"
+  "rounded-field border border-gray-alpha-400 glass-control text-body text-gray-1000 shadow-card outline-none transition-control hover:border-gray-alpha-500"
 
 /**
  * El radio de un campo de más de una línea: Textarea, Combobox con chips.
@@ -35,7 +35,7 @@ export const inputMultilineRadiusClassName = "rounded-[min(var(--radius-field),-
 export const inputPaddingClassName = { sm: "px-3.5", md: "px-4", lg: "px-5" } as const
 
 /** Los tres altos del sistema, por `data-size`. El `lg` sube también la tipografía. */
-export const inputSizeClassName = "data-[size=sm]:h-8 data-[size=md]:h-10 data-[size=lg]:h-12 data-[size=lg]:text-copy-16"
+export const inputSizeClassName = "data-[size=sm]:h-8 data-[size=md]:h-10 data-[size=lg]:h-12 data-[size=lg]:text-title-3 data-[size=lg]:font-normal"
 
 /**
  * Deshabilitado por `data-disabled`, que es el que pone Base UI —y también un `Fieldset`

@@ -135,7 +135,7 @@ function ColorPicker({
         {...props}
       >
         <Muestra className="size-6" color={color} />
-        <span className="min-w-0 flex-1 truncate text-label-13-mono uppercase">{hex}</span>
+        <span className="min-w-0 flex-1 truncate text-mono-body uppercase">{hex}</span>
       </PopoverPrimitive.Trigger>
       {name && <input name={name} type="hidden" value={hex} />}
       <PopoverPrimitive.Portal>
@@ -204,7 +204,7 @@ function Grilla({
   const id = React.useId()
   return (
     <div className="flex flex-col gap-2" data-slot={`color-picker-${slot}`}>
-      <span className="text-label-12 text-gray-900" id={id}>
+      <span className="text-callout text-gray-900" id={id}>
         {titulo}
       </span>
       <div aria-labelledby={id} className="grid grid-cols-10 gap-1.5" role="group">
@@ -411,7 +411,7 @@ function Valores({
         <Input
           autoCapitalize="off"
           autoComplete="off"
-          className="text-copy-13-mono uppercase"
+          className="text-mono-body uppercase"
           data-slot="color-picker-hex"
           id={hexId}
           onBlur={() => setTexto(null)}

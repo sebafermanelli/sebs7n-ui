@@ -43,7 +43,7 @@ describe("Badge", () => {
       "text-amber-ink",
       "shadow-chip",
       "rounded-full",
-      "text-label-12",
+      "text-callout",
       "h-6"
     )
   })
@@ -103,8 +103,8 @@ describe("Card", () => {
     // `shadow-card` es 1px que la despega de la página; la de menú/modal no va en una card.
     expect(card).toHaveClass("shadow-card")
     expect(card.className).not.toMatch(/shadow-(menu|modal|tooltip)/)
-    expect(screen.getByText("Ingresos")).toHaveClass("text-heading-20")
-    expect(screen.getByText("Últimos 30 días")).toHaveClass("text-copy-14", "text-gray-900")
+    expect(screen.getByText("Ingresos")).toHaveClass("text-title-2")
+    expect(screen.getByText("Últimos 30 días")).toHaveClass("text-body", "text-gray-900")
     expect(screen.getByText("pie")).toHaveClass("border-t", "border-gray-alpha-400")
   })
 
@@ -143,7 +143,7 @@ describe("Table", () => {
     const container = screen.getByRole("table").parentElement!
     expect(container).toHaveClass("rounded-surface", "border", "border-gray-alpha-400", "glass", "overflow-x-auto")
     expect(screen.getByRole("table").querySelector("thead")).toHaveClass("bg-gray-alpha-100", "[&_tr]:h-10")
-    expect(screen.getByText("Cliente")).toHaveClass("text-label-12", "text-gray-900")
+    expect(screen.getByText("Cliente")).toHaveClass("text-callout", "text-gray-900")
     expect(screen.getByText("Ana").closest("tr")).toHaveClass("h-12", "hover:bg-gray-alpha-100", "data-[state=selected]:bg-highlight")
     expect(screen.getByText("$1.200")).toHaveClass("text-right", "tabular-nums")
   })

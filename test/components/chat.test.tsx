@@ -50,7 +50,7 @@ describe("Chat: estructura", () => {
     expect(chat).toHaveClass("flex", "min-h-0", "flex-col")
     expect(chat.className).not.toMatch(/glass|bg-|shadow|border/)
     expect(screen.getByText("Asistente").closest("[data-slot=chat-header]")).toHaveClass("border-b", "border-gray-alpha-400")
-    expect(screen.getByText("Revisá los datos importantes.")).toHaveClass("text-center", "text-label-12", "text-gray-900")
+    expect(screen.getByText("Revisá los datos importantes.")).toHaveClass("text-center", "text-callout", "text-gray-900")
   })
 
   it("la lista es un log que se anuncia solo y se puede recorrer con el teclado", () => {

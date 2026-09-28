@@ -73,7 +73,7 @@ describe("Combobox", () => {
       "hover:border-gray-alpha-500", "has-[input:focus]:focus-border",
       "has-[input[aria-invalid=true]]:border-red-800", "data-disabled:bg-gray-alpha-100"
     )
-    expect(group(md)).toHaveClass("text-copy-14", "data-[size=lg]:text-copy-16")
+    expect(group(md)).toHaveClass("text-body", "data-[size=lg]:text-title-3")
     expect(md).toHaveClass("placeholder:text-gray-900", "bg-transparent", "outline-none")
     expect(group(sm)).toHaveAttribute("data-size", "sm")
     expect(sm).toHaveAttribute("aria-invalid", "true")
@@ -173,7 +173,7 @@ describe("Combobox", () => {
     await userEvent.click(screen.getByRole("button", { name: "Abrir lista" }))
     const europa = await screen.findByRole("group", { name: "Europa" })
     expect(within(europa).getAllByRole("option").map((o) => o.textContent)).toEqual(["España", "Italia"])
-    expect(screen.getByText("Europa")).toHaveClass("text-label-12", "text-gray-900")
+    expect(screen.getByText("Europa")).toHaveClass("text-callout", "text-gray-900")
   })
 
   it("búsqueda async: fila de carga con spinner, después resultados o vacío", async () => {
@@ -262,7 +262,7 @@ describe("Combobox", () => {
       </Combobox>
     )
     const chip = screen.getByText("Chile").closest<HTMLElement>("[data-slot=combobox-chip]")!
-    expect(chip).toHaveClass("rounded-full", "border-gray-alpha-400", "bg-gray-alpha-200", "text-gray-900", "text-label-12")
+    expect(chip).toHaveClass("rounded-full", "border-gray-alpha-400", "bg-gray-alpha-200", "text-gray-900", "text-callout")
     await userEvent.click(screen.getByRole("combobox", { name: "Países" }))
     await userEvent.keyboard("uru{ArrowDown}{Enter}")
     expect(onValueChange).toHaveBeenLastCalledWith(["Chile", "Uruguay"], expect.anything())

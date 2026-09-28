@@ -125,10 +125,10 @@ describe("Textarea", () => {
 })
 
 describe("Label", () => {
-  it("usa label-12 y marca los requeridos con * rojo oculto al lector", () => {
+  it("usa el rol callout y marca los requeridos con * rojo oculto al lector", () => {
     render(<Label htmlFor="n" required>Nombre</Label>)
     const label = screen.getByText("Nombre")
-    expect(label).toHaveClass("text-label-12", "text-gray-1000")
+    expect(label).toHaveClass("text-callout", "text-gray-1000")
     const star = label.querySelector("span")
     expect(star).toHaveTextContent("*")
     expect(star).toHaveAttribute("aria-hidden", "true")

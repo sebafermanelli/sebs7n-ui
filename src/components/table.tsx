@@ -11,7 +11,7 @@ function Table({ className, density = "default", ...props }: TableProps) {
       data-density={density}
       className="group/table relative w-full overflow-x-auto rounded-surface border border-gray-alpha-400 glass shadow-card"
     >
-      <table data-slot="table" className={cn("w-full caption-bottom border-collapse text-copy-13", className)} {...props} />
+      <table data-slot="table" className={cn("w-full caption-bottom border-collapse text-body", className)} {...props} />
     </div>
   )
 }
@@ -34,7 +34,7 @@ function TableFooter({ className, ...props }: React.ComponentProps<"tfoot">) {
   return (
     <tfoot
       data-slot="table-footer"
-      className={cn("border-t border-gray-alpha-400 bg-gray-alpha-100 text-label-13 [&>tr]:last:border-b-0", className)}
+      className={cn("border-t border-gray-alpha-400 bg-gray-alpha-100 text-body [&>tr]:last:border-b-0", className)}
       {...props}
     />
   )
@@ -66,7 +66,7 @@ function TableHead({ className, numeric = false, ...props }: TableHeadProps) {
     <th
       data-slot="table-head"
       className={cn(
-        "px-4 text-left align-middle text-label-12 whitespace-nowrap text-gray-900",
+        "px-4 text-left align-middle text-callout whitespace-nowrap text-gray-900",
         numeric && "text-right tabular-nums",
         className
       )}
@@ -91,7 +91,7 @@ function TableCell({ className, numeric = false, ...props }: TableCellProps) {
 // `mt-4` a secas el texto quedaba apoyado en el borde de abajo, y con el radio de 20px la
 // esquina le pasaba por encima.
 function TableCaption({ className, ...props }: React.ComponentProps<"caption">) {
-  return <caption data-slot="table-caption" className={cn("px-4 py-3 text-copy-13 text-gray-900", className)} {...props} />
+  return <caption data-slot="table-caption" className={cn("px-4 py-3 text-body text-gray-900", className)} {...props} />
 }
 
 export {

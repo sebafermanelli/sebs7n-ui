@@ -136,7 +136,7 @@ function SidebarGroupLabel({ className, id, ...props }: React.ComponentProps<"di
     <div
       data-slot="sidebar-group-label"
       id={id ?? groupId ?? undefined}
-      className={cn("flex h-8 shrink-0 items-center px-2 text-label-12 text-gray-900 group-data-collapsed/sidebar:hidden", className)}
+      className={cn("flex h-8 shrink-0 items-center px-2 text-callout text-gray-900 group-data-collapsed/sidebar:hidden", className)}
       {...props}
     />
   )
@@ -153,7 +153,7 @@ function SidebarItemBadge({ className, label, children, ...props }: SidebarItemB
   return (
     <span
       data-slot="sidebar-item-badge"
-      className={cn("ml-auto shrink-0 text-label-12 text-gray-900 tabular-nums group-data-collapsed/sidebar:sr-only", className)}
+      className={cn("ml-auto shrink-0 text-callout text-gray-900 tabular-nums group-data-collapsed/sidebar:sr-only", className)}
       {...props}
     >
       {/* La coma es solo para el lector; el espacio queda al inicio de línea y CSS lo colapsa. */}
@@ -286,7 +286,7 @@ function SidebarSearch({
       data-slot="sidebar-search"
       aria-keyshortcuts={keyshortcuts}
       className={cn(
-        "flex h-8 w-full min-w-0 cursor-pointer items-center gap-2 rounded-field border border-gray-alpha-400 glass-control px-3 text-left text-copy-14 text-gray-900 shadow-card outline-none transition-control hover:border-gray-alpha-500 hover:text-gray-1000 focus-visible:focus-ring [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+        "flex h-8 w-full min-w-0 cursor-pointer items-center gap-2 rounded-field border border-gray-alpha-400 glass-control px-3 text-left text-body text-gray-900 shadow-card outline-none transition-control hover:border-gray-alpha-500 hover:text-gray-1000 focus-visible:focus-ring [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
         "group-data-collapsed/sidebar:w-8 group-data-collapsed/sidebar:justify-center group-data-collapsed/sidebar:px-0",
         className
       )}

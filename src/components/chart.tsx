@@ -95,7 +95,7 @@ function ChartContainer({ config, className, children, style, ...props }: ChartC
         data-slot="chart"
         data-chart={id}
         className={cn(
-          "flex aspect-video w-full justify-center text-label-12 text-gray-900 [&_.recharts-responsive-container]:size-full [&_.recharts-wrapper]:size-full",
+          "flex aspect-video w-full justify-center text-callout text-gray-900 [&_.recharts-responsive-container]:size-full [&_.recharts-wrapper]:size-full",
           // Ejes y grilla: recesivos. Una línea de grilla es de un paso sobre la superficie, sólida.
           "[&_.recharts-cartesian-axis-tick_text]:fill-gray-900 [&_.recharts-cartesian-axis-line]:stroke-gray-400 [&_.recharts-cartesian-grid_line]:stroke-gray-400",
           "[&_.recharts-polar-grid_[stroke='#ccc']]:stroke-gray-400 [&_.recharts-radial-bar-background-sector]:fill-gray-200 [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-gray-alpha-100 [&_.recharts-curve.recharts-tooltip-cursor]:stroke-gray-500",
@@ -186,12 +186,12 @@ function ChartTooltipContent({
     <div
       data-slot="chart-tooltip"
       className={cn(
-        "grid min-w-32 gap-1.5 rounded-control border border-gray-alpha-400 glass px-2.5 py-1.5 text-copy-13 shadow-menu",
+        "grid min-w-32 gap-1.5 rounded-control border border-gray-alpha-400 glass px-2.5 py-1.5 text-body shadow-menu",
         className
       )}
     >
       {title != null && title !== "" && (
-        <div data-slot="chart-tooltip-label" className="text-label-12 text-gray-900">
+        <div data-slot="chart-tooltip-label" className="text-callout text-gray-900">
           {title}
         </div>
       )}
@@ -217,7 +217,7 @@ function ChartTooltipContent({
               )}
               <span className="flex-1 text-gray-900">{name}</span>
               {entry.value != null && (
-                <span className="text-copy-13-mono tabular-nums text-gray-1000">
+                <span className="text-mono-body tabular-nums text-gray-1000">
                   {formatter
                     ? formatter(entry.value as number | string, String(name), entry)
                     : typeof entry.value === "number"
@@ -263,7 +263,7 @@ function ChartLegendContent({ className, payload, verticalAlign = "bottom", name
         const item = config[key]
         const IconComponent = item?.icon
         return (
-          <div key={`${key}-${index}`} data-slot="chart-legend-item" className="flex items-center gap-1.5 text-label-12 text-gray-900">
+          <div key={`${key}-${index}`} data-slot="chart-legend-item" className="flex items-center gap-1.5 text-callout text-gray-900">
             {IconComponent && !hideIcon ? (
               <IconComponent />
             ) : (

@@ -90,13 +90,13 @@ function DialogFooter({ className, ...props }: React.ComponentProps<"div">) {
 type DialogTitleProps = WithClassName<DialogPrimitive.Title.Props>
 
 function DialogTitle({ className, ...props }: DialogTitleProps) {
-  return <DialogPrimitive.Title data-slot="dialog-title" className={cn("text-heading-20 text-gray-1000", className)} {...props} />
+  return <DialogPrimitive.Title data-slot="dialog-title" className={cn("text-title-2 text-gray-1000", className)} {...props} />
 }
 
 type DialogDescriptionProps = WithClassName<DialogPrimitive.Description.Props>
 
 function DialogDescription({ className, ...props }: DialogDescriptionProps) {
-  return <DialogPrimitive.Description data-slot="dialog-description" className={cn("text-copy-14 text-gray-900", className)} {...props} />
+  return <DialogPrimitive.Description data-slot="dialog-description" className={cn("text-body text-gray-900", className)} {...props} />
 }
 
 export {

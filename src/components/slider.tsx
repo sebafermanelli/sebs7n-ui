@@ -62,12 +62,12 @@ function Slider<Value extends number | readonly number[] = number | readonly num
       {(label != null || showValue) && (
         <div className={cn("flex items-baseline gap-3", label != null ? "justify-between" : "justify-end")}>
           {label != null && (
-            <SliderPrimitive.Label data-slot="slider-label" className="text-label-14 text-gray-1000">
+            <SliderPrimitive.Label data-slot="slider-label" className="text-body text-gray-1000">
               {label}
             </SliderPrimitive.Label>
           )}
           {showValue && (
-            <SliderPrimitive.Value data-slot="slider-value" className="text-copy-13-mono tabular-nums text-gray-900" />
+            <SliderPrimitive.Value data-slot="slider-value" className="text-mono-body tabular-nums text-gray-900" />
           )}
         </div>
       )}

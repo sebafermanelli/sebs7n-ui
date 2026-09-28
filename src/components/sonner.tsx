@@ -26,11 +26,11 @@ function Toaster(props: ToasterProps) {
       }}
       toastOptions={{
         classNames: {
-          toast: "rounded-surface! border-0! glass! text-copy-14! text-gray-1000! shadow-modal!",
-          title: "text-label-14! font-medium! text-gray-1000!",
-          description: "text-copy-13! text-gray-900!",
-          actionButton: "rounded-full! bg-gray-1000! text-button-12! text-background-100!",
-          cancelButton: "rounded-full! bg-gray-alpha-200! text-button-12! text-gray-1000!",
+          toast: "rounded-surface! border-0! glass! text-body! text-gray-1000! shadow-modal!",
+          title: "text-body! font-medium! text-gray-1000!",
+          description: "text-body! text-gray-900!",
+          actionButton: "rounded-full! bg-gray-1000! text-callout! text-background-100!",
+          cancelButton: "rounded-full! bg-gray-alpha-200! text-callout! text-gray-1000!",
         },
       }}
       {...props}

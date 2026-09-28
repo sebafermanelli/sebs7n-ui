@@ -3,7 +3,7 @@ import { cva } from "class-variance-authority"
 import { cn } from "../lib/utils.js"
 
 const cardVariantsBase = cva(
-  "group/card flex flex-col gap-(--card-spacing) rounded-surface py-(--card-spacing) text-copy-14 text-gray-1000",
+  "group/card flex flex-col gap-(--card-spacing) rounded-surface py-(--card-spacing) text-body text-gray-1000",
   {
     variants: {
       variant: {

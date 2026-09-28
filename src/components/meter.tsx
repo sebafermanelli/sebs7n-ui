@@ -57,12 +57,12 @@ function Meter({ className, label, showValue = false, size = "md", trackClassNam
       {(label != null || showValue) && (
         <div className={cn("flex items-baseline gap-3", label != null ? "justify-between" : "justify-end")}>
           {label != null && (
-            <MeterPrimitive.Label data-slot="meter-label" className="text-label-14 text-gray-1000">
+            <MeterPrimitive.Label data-slot="meter-label" className="text-body text-gray-1000">
               {label}
             </MeterPrimitive.Label>
           )}
           {showValue && (
-            <MeterPrimitive.Value data-slot="meter-value" className="text-copy-13-mono tabular-nums text-gray-900" />
+            <MeterPrimitive.Value data-slot="meter-value" className="text-mono-body tabular-nums text-gray-900" />
           )}
         </div>
       )}

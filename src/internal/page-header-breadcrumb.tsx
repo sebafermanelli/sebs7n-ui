@@ -66,7 +66,7 @@ export function PageHeaderBreadcrumb({
       data-slot="page-header-breadcrumb"
       ref={avisarSiHayNavAnidado}
       aria-label={label ?? textos.breadcrumb}
-      className={cn("text-label-13 text-gray-900", className)}
+      className={cn("text-body text-gray-900", className)}
     >
       {children}
     </nav>

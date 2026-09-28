@@ -98,7 +98,7 @@ describe("DropdownMenu", () => {
       </DropdownMenu>
     )
     await userEvent.click(screen.getByRole("button", { name: "Más" }))
-    expect(await screen.findByText("Viaje")).toHaveClass("text-label-12", "text-gray-900")
+    expect(await screen.findByText("Viaje")).toHaveClass("text-callout", "text-gray-900")
   })
 })
 

@@ -54,7 +54,7 @@ function TabsTrigger({ className, ...props }: TabsTriggerProps) {
     <TabsPrimitive.Tab
       data-slot="tabs-trigger"
       className={cn(
-        "relative isolate inline-flex cursor-pointer items-center justify-center gap-1.5 px-3 text-copy-14 whitespace-nowrap text-gray-900 outline-none select-none transition-control",
+        "relative isolate inline-flex cursor-pointer items-center justify-center gap-1.5 px-3 text-body whitespace-nowrap text-gray-900 outline-none select-none transition-control",
         "group-data-[variant=line]/tabs-list:h-10 group-data-[variant=segmented]/tabs-list:h-8 group-data-[variant=segmented]/tabs-list:rounded-full",
         // El `before` existe solo para el anillo de foco: una pestaña no es un botón, así que en
         // hover no se pinta ninguna pastilla. Lo único que cambia es el color del texto, y el
@@ -87,7 +87,7 @@ function TabsContent({ className, ...props }: TabsContentProps) {
   return (
     <TabsPrimitive.Panel
       data-slot="tabs-content"
-      className={cn("text-copy-14 rounded-control outline-none focus-visible:focus-ring", className)}
+      className={cn("text-body rounded-control outline-none focus-visible:focus-ring", className)}
       {...props}
     />
   )

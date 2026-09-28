@@ -28,9 +28,9 @@ const buttonVariantsBase = cva(
         link: "h-auto! rounded-sm border-0 px-0! text-brand-900 underline-offset-4 hover:text-brand-1000 hover:underline data-disabled:bg-transparent",
       },
       size: {
-        sm: "h-8 px-3 text-button-14",
-        md: "h-10 px-4 text-button-14",
-        lg: "h-12 px-5 text-button-16 [&_svg:not([class*='size-'])]:size-5",
+        sm: "h-8 px-3 text-body",
+        md: "h-10 px-4 text-body",
+        lg: "h-12 px-5 text-title-3 font-normal [&_svg:not([class*='size-'])]:size-5",
         "icon-sm": "size-8",
         "icon-md": "size-10",
         "icon-lg": "size-12 [&_svg:not([class*='size-'])]:size-5",

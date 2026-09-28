@@ -56,8 +56,8 @@ describe("UserMenu", () => {
     render(<Example />)
     const trigger = screen.getByRole("button", { name: /Ana Pérez/ })
     expect(screen.getByText("AP")).toHaveClass("bg-gray-200", "text-gray-900")
-    expect(screen.getByText("Ana Pérez", { selector: "[data-slot=user-menu-name]" })).toHaveClass("text-label-14", "text-gray-1000", "truncate")
-    expect(screen.getByText("ana@example.com", { selector: "[data-slot=user-menu-email]" })).toHaveClass("text-label-12", "text-gray-900", "truncate")
+    expect(screen.getByText("Ana Pérez", { selector: "[data-slot=user-menu-name]" })).toHaveClass("text-body", "text-gray-1000", "truncate")
+    expect(screen.getByText("ana@example.com", { selector: "[data-slot=user-menu-email]" })).toHaveClass("text-callout", "text-gray-900", "truncate")
     expect(trigger).toHaveClass("hover:bg-gray-alpha-100", "focus-visible:focus-ring", "data-popup-open:bg-gray-alpha-200")
   })
 

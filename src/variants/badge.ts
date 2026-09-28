@@ -20,7 +20,7 @@ export type BadgeColor = (typeof BADGE_COLORS)[number]
  * de lo que pase por debajo— y suma el brillo de los botones de color.
  */
 const badgeVariantsBase = cva(
-  "inline-flex w-fit shrink-0 items-center justify-center gap-1.5 overflow-hidden rounded-full border text-label-12 whitespace-nowrap [&>svg]:pointer-events-none [&>svg]:size-3",
+  "inline-flex w-fit shrink-0 items-center justify-center gap-1.5 overflow-hidden rounded-full border text-callout whitespace-nowrap [&>svg]:pointer-events-none [&>svg]:size-3",
   {
     variants: {
       variant: { subtle: "shadow-chip", solid: "border-transparent sheen shadow-button" },

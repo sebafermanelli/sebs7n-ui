@@ -192,7 +192,7 @@ function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido
       >
         <a
           href={`#${mainId}`}
-          className="sr-only z-50 rounded-control bg-background-100 px-3 py-2 text-button-14 text-gray-1000 shadow-menu focus-visible:not-sr-only focus-visible:fixed focus-visible:top-2 focus-visible:left-2 focus-visible:focus-ring"
+          className="sr-only z-50 rounded-control bg-background-100 px-3 py-2 text-body text-gray-1000 shadow-menu focus-visible:not-sr-only focus-visible:fixed focus-visible:top-2 focus-visible:left-2 focus-visible:focus-ring"
         >
           {labels.skipToContent}
         </a>

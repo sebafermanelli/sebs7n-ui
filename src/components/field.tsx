@@ -54,7 +54,7 @@ function FieldLabel({ className, required = false, children, ...props }: FieldLa
     <FieldPrimitive.Label
       data-slot="field-label"
       className={cn(
-        "inline-flex items-center gap-1 text-label-12 text-gray-1000 select-none",
+        "inline-flex items-center gap-1 text-callout text-gray-1000 select-none",
         "data-disabled:cursor-not-allowed data-disabled:text-gray-700",
         className
       )}
@@ -81,7 +81,7 @@ function FieldDescription({ className, ...props }: FieldDescriptionProps) {
   return (
     <FieldPrimitive.Description
       data-slot="field-description"
-      className={cn("text-copy-13 text-gray-900", className)}
+      className={cn("text-body text-gray-900", className)}
       {...props}
     />
   )
@@ -130,7 +130,7 @@ function FieldError({ className, alert = false, ...props }: FieldErrorProps) {
       data-slot="field-error"
       role={alert ? "alert" : undefined}
       className={cn(
-        "text-copy-13 text-red-900",
+        "text-body text-red-900",
         // Con más de un mensaje, Base UI los mete en un `<ul>` sin estilo, que
         // el reset de Tailwind deja como un párrafo pegado. Con viñeta y
         // sangría se lee que son dos problemas distintos y no una frase larga.

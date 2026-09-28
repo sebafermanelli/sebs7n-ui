@@ -59,7 +59,7 @@ function Chat({ className, busy = false, ...props }: ChatProps) {
         data-slot="chat"
         // `rounded-[inherit]`: el borde de la IA sigue la curva de quien contiene al chat, que
         // es quien tiene el radio. `relative` es lo que ancla ese borde.
-        className={cn("relative flex min-h-0 flex-col rounded-[inherit] text-copy-14 text-gray-1000 ai-glow", className)}
+        className={cn("relative flex min-h-0 flex-col rounded-[inherit] text-body text-gray-1000 ai-glow", className)}
         {...props}
       />
     </ChatContext.Provider>
@@ -87,7 +87,7 @@ function ChatTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="chat-title"
-      className={cn("flex min-w-0 flex-1 items-center gap-2 truncate text-heading-16 [&_svg]:shrink-0", className)}
+      className={cn("flex min-w-0 flex-1 items-center gap-2 truncate text-title-3 [&_svg]:shrink-0", className)}
       {...props}
     />
   )
@@ -388,7 +388,7 @@ function ChatInput({
           // 40px como el botón de al lado. En táctil, 44px y 16px de letra: con menos, iOS hace
           // zoom al enfocar. Sin `field-sizing` (un Safari viejo) queda en una línea con scroll.
           "field-sizing-content max-h-36 min-h-10 min-w-0 flex-1 resize-none overflow-y-auto px-4 py-2.25 placeholder:text-gray-900 focus:focus-border",
-          "pointer-coarse:min-h-11 pointer-coarse:py-2.5 pointer-coarse:text-copy-16",
+          "pointer-coarse:min-h-11 pointer-coarse:py-2.5 pointer-coarse:text-title-3 pointer-coarse:font-normal",
           "disabled:cursor-not-allowed disabled:border-gray-alpha-400 disabled:bg-gray-alpha-100 disabled:text-gray-700 disabled:shadow-none"
         )}
         onChange={(evento) => cambiar(evento.target.value)}
@@ -432,7 +432,7 @@ function ChatInput({
 
 /** La letra chica: que lo que dice el asistente se confirme. Va debajo del campo. */
 function ChatDisclaimer({ className, ...props }: React.ComponentProps<"p">) {
-  return <p data-slot="chat-disclaimer" className={cn("text-center text-label-12 text-gray-900", className)} {...props} />
+  return <p data-slot="chat-disclaimer" className={cn("text-center text-callout text-gray-900", className)} {...props} />
 }
 
 export {

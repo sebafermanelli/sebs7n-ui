@@ -85,7 +85,7 @@ describe("Sidebar", () => {
       "rounded-control",
       "px-2",
       "gap-2",
-      "text-copy-14",
+      "text-body",
       "text-gray-900",
       "hover:bg-gray-alpha-100",
       "hover:text-gray-1000",
@@ -97,13 +97,13 @@ describe("Sidebar", () => {
     // tinte da 4,35:1 con el blue del paquete.
     expect(clients).toHaveClass("data-active:[&_svg]:text-brand-900")
     expect(clients.className).not.toMatch(/(^|\s)(data-active:|aria-\[current=page\]:)?text-brand/)
-    expect(screen.getByText("3")).toHaveClass("ml-auto", "text-label-12", "tabular-nums", "text-gray-900")
+    expect(screen.getByText("3")).toHaveClass("ml-auto", "text-callout", "tabular-nums", "text-gray-900")
   })
 
-  it("label de grupo label-12 gris sin uppercase; se oculta colapsado y nombra al grupo", () => {
+  it("label de grupo en callout gris sin uppercase; se oculta colapsado y nombra al grupo", () => {
     render(<Example />)
     const label = screen.getByText("Operación")
-    expect(label).toHaveClass("text-label-12", "text-gray-900", "group-data-collapsed/sidebar:hidden")
+    expect(label).toHaveClass("text-callout", "text-gray-900", "group-data-collapsed/sidebar:hidden")
     expect(label.className).not.toMatch(/uppercase/)
     expect(screen.getByRole("group", { name: "Operación" })).toBeInTheDocument()
   })

@@ -14,12 +14,12 @@ describe("Kbd", () => {
     render(<Kbd>⌘K</Kbd>)
     const kbd = screen.getByText("⌘K")
     expect(kbd.tagName).toBe("KBD")
-    expect(kbd).toHaveClass("text-label-12-mono", "bg-gray-alpha-100", "border", "border-gray-alpha-400", "rounded-xs", "px-1", "h-5", "text-gray-900")
+    expect(kbd).toHaveClass("text-mono-callout", "bg-gray-alpha-100", "border", "border-gray-alpha-400", "rounded-xs", "px-1", "h-5", "text-gray-900")
   })
 })
 
 describe("PageHeader", () => {
-  it("título h1 heading-32, descripción gris, acciones y breadcrumb", () => {
+  it("título h1 large-title, descripción gris, acciones y breadcrumb", () => {
     render(
       <PageHeader breadcrumb={<a href="/viajes">Viajes</a>}>
         <PageHeaderTitle>Viajes</PageHeaderTitle>
@@ -31,8 +31,8 @@ describe("PageHeader", () => {
       </PageHeader>
     )
     const title = screen.getByRole("heading", { level: 1, name: "Viajes" })
-    expect(title).toHaveClass("text-heading-32", "text-gray-1000")
-    expect(screen.getByText("12 activos · 3 salen esta semana")).toHaveClass("text-copy-14", "text-gray-900")
+    expect(title).toHaveClass("text-large-title", "text-gray-1000")
+    expect(screen.getByText("12 activos · 3 salen esta semana")).toHaveClass("text-body", "text-gray-900")
     const actions = screen.getByRole("button", { name: "Nuevo viaje" }).parentElement!
     expect(actions).toHaveAttribute("data-slot", "page-header-actions")
     expect(actions).toHaveClass("flex-wrap", "sm:col-start-2", "sm:row-start-1")
@@ -111,8 +111,8 @@ describe("EmptyState", () => {
       />
     )
     const title = screen.getByRole("heading", { level: 2, name: "Todavía no hay viajes" })
-    expect(title).toHaveClass("text-heading-16", "text-gray-1000")
-    expect(screen.getByText("Creá el primero para empezar a cargar pasajeros.")).toHaveClass("text-copy-14", "text-gray-900")
+    expect(title).toHaveClass("text-title-3", "text-gray-1000")
+    expect(screen.getByText("Creá el primero para empezar a cargar pasajeros.")).toHaveClass("text-body", "text-gray-900")
     const root = title.closest("[data-slot=empty-state]")!
     expect(root).toHaveClass("bg-gray-alpha-100", "rounded-surface", "items-center", "text-center", "py-12")
     // Zona hundida: sin borde y sin sombra que la levante. La única sombra válida es la interior de la pista.
@@ -131,12 +131,12 @@ describe("EmptyState titleAs", () => {
 })
 
 describe("Stat", () => {
-  it("label gris, valor heading-24 tabular, delta con color semántico; sin card", () => {
+  it("label gris, valor title-1 tabular, delta con color semántico; sin card", () => {
     render(<Stat label="Ingresos" value="$48.200" delta="+12%" trend="up" hint="vs. mes anterior" />)
-    expect(screen.getByText("Ingresos")).toHaveClass("text-label-13", "text-gray-900")
-    expect(screen.getByText("$48.200")).toHaveClass("text-heading-24", "tabular-nums", "text-gray-1000")
-    expect(screen.getByText("+12%")).toHaveClass("text-label-12", "text-green-900", "tabular-nums")
-    expect(screen.getByText("vs. mes anterior")).toHaveClass("text-label-12", "text-gray-900")
+    expect(screen.getByText("Ingresos")).toHaveClass("text-body", "text-gray-900")
+    expect(screen.getByText("$48.200")).toHaveClass("text-title-1", "tabular-nums", "text-gray-1000")
+    expect(screen.getByText("+12%")).toHaveClass("text-callout", "text-green-900", "tabular-nums")
+    expect(screen.getByText("vs. mes anterior")).toHaveClass("text-callout", "text-gray-900")
     const root = screen.getByText("Ingresos").closest("[data-slot=stat]")!
     expect(root.className).not.toMatch(/\bborder\b|bg-/)
   })

@@ -31,11 +31,11 @@ function EmptyState({ className, icon, title, titleAs: Title = "h2", description
         </div>
       )}
       <div className="flex max-w-sm flex-col gap-1">
-        <Title data-slot="empty-state-title" className="text-heading-16 text-balance text-gray-1000">
+        <Title data-slot="empty-state-title" className="text-title-3 text-balance text-gray-1000">
           {title}
         </Title>
         {description && (
-          <p data-slot="empty-state-description" className="text-copy-14 text-pretty text-gray-900">
+          <p data-slot="empty-state-description" className="text-body text-pretty text-gray-900">
             {description}
           </p>
         )}

@@ -68,7 +68,7 @@ function NavigationMenuTrigger({ className, active, chevron = true, children, ..
         // Mismo cuerpo que un link del nav: sin fondo en ningún estado, el
         // padding existe solo para que el área clickeable llegue a 32px y el
         // anillo de foco no apriete el texto.
-        "inline-flex cursor-pointer items-center gap-1 rounded-control bg-transparent px-2 py-1.5 text-copy-14 text-gray-900 select-none",
+        "inline-flex cursor-pointer items-center gap-1 rounded-control bg-transparent px-2 py-1.5 text-body text-gray-900 select-none",
         "outline-none transition-control hover:text-gray-1000 focus-visible:focus-ring",
         "data-popup-open:text-gray-1000 data-active:text-gray-1000",
         "data-disabled:cursor-not-allowed data-disabled:text-gray-700 data-disabled:hover:text-gray-700",
@@ -175,7 +175,7 @@ function NavigationMenuLink({ className, title, description, icon, children, ...
       data-slot="navigation-menu-link"
       className={cn(
         linkBaseClassName,
-        "block p-2 text-copy-14 text-gray-1000 hover:bg-gray-alpha-100 data-[active]:bg-highlight",
+        "block p-2 text-body text-gray-1000 hover:bg-gray-alpha-100 data-[active]:bg-highlight",
         className
       )}
       {...props}
@@ -191,11 +191,11 @@ function NavigationMenuLink({ className, title, description, icon, children, ...
           </span>
         )}
         <span className="flex min-w-0 flex-col gap-0.5">
-          <span data-slot="navigation-menu-link-title" className="text-copy-14 text-gray-1000">
+          <span data-slot="navigation-menu-link-title" className="text-body text-gray-1000">
             {title}
           </span>
           {description && (
-            <span data-slot="navigation-menu-link-description" className="truncate text-copy-13 text-gray-900">
+            <span data-slot="navigation-menu-link-description" className="truncate text-body text-gray-900">
               {description}
             </span>
           )}
