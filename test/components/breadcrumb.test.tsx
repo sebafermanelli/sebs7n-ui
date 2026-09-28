@@ -1,3 +1,4 @@
+import * as React from "react"
 import { render, screen, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { describe, expect, it } from "vitest"
@@ -8,6 +9,7 @@ import {
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
+  BreadcrumbSeparator,
 } from "../../src/components/breadcrumb"
 import { linkVariants } from "../../src/variants/link"
 
@@ -127,5 +129,24 @@ describe("Breadcrumb", () => {
     expect(screen.getByRole("link", { name: "Facturas" })).toHaveFocus()
     await userEvent.tab()
     expect(screen.getByText("0012")).not.toHaveFocus()
+  })
+
+  it("un separador escrito a mano no duplica la flecha, ni suelto ni adentro de un fragment", () => {
+    const niveles = ["Tienda", "Cupones", "Crear cupón"]
+    render(
+      <BreadcrumbList>
+        {niveles.map((nivel, i) => (
+          <React.Fragment key={nivel}>
+            {i > 0 && <BreadcrumbSeparator />}
+            <BreadcrumbItem>
+              <BreadcrumbPage>{nivel}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </React.Fragment>
+        ))}
+      </BreadcrumbList>
+    )
+    // Tres niveles, dos separadores: los que pone la lista.
+    expect(document.querySelectorAll("[data-slot=breadcrumb-item]")).toHaveLength(3)
+    expect(document.querySelectorAll("[data-slot=breadcrumb-separator]")).toHaveLength(2)
   })
 })

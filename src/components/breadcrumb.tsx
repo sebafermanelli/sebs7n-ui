@@ -36,8 +36,25 @@ type BreadcrumbListProps = Omit<React.ComponentProps<"ol">, "children"> & {
 }
 
 /**
- * El `<ol>`. Pone los separadores entre los ítems —el llamador no los escribe—
- * y, con `maxItems`, colapsa el medio en un «…».
+ * Los ítems de la lista, planos: abre los fragments —un `map` que devuelve `<>…</>` por
+ * nivel— y descarta los `BreadcrumbSeparator` escritos a mano.
+ *
+ * Los separadores los pone la lista. Antes un fragment contaba como un ítem, y si traía su
+ * propio separador adentro salían dos flechas seguidas: `Tienda › › Cupones`.
+ */
+function flatItems(children: React.ReactNode): React.ReactElement[] {
+  const out: React.ReactElement[] = []
+  for (const child of React.Children.toArray(children)) {
+    if (!React.isValidElement<{ children?: React.ReactNode }>(child)) continue
+    if (child.type === React.Fragment) out.push(...flatItems(child.props.children))
+    else if (child.type !== BreadcrumbSeparator) out.push(child)
+  }
+  return out
+}
+
+/**
+ * El `<ol>`. Pone los separadores entre los ítems —el llamador no los escribe, y si los
+ * escribe se ignoran— y, con `maxItems`, colapsa el medio en un «…».
  */
 function BreadcrumbList({
   className,
@@ -49,7 +66,7 @@ function BreadcrumbList({
   ellipsisLabel = "Rutas intermedias",
   ...props
 }: BreadcrumbListProps) {
-  const items = React.Children.toArray(children).filter(React.isValidElement)
+  const items = flatItems(children)
   // Se colapsa solo si el «…» reemplaza dos o más ítems: por uno, no vale la pena esconderlo.
   const collapse = maxItems !== undefined && items.length > maxItems && items.length > itemsBefore + itemsAfter + 1
   const visible: (React.ReactElement | typeof ELLIPSIS)[] = collapse

@@ -9,6 +9,15 @@ major.
 
 ## [Unreleased]
 
+## [1.12.1] - 2026-09-27
+
+### Fixed
+
+- **`BreadcrumbList` ya no duplica los separadores.** Un `map` que devolvía un fragment por
+  nivel con su propio `BreadcrumbSeparator` adentro dibujaba dos flechas seguidas: la lista
+  contaba el fragment como un ítem y le sumaba la suya. Ahora abre los fragments e ignora los
+  separadores escritos a mano; los pone siempre la lista.
+
 ## [1.12.0] - 2026-09-27
 
 ### Added
