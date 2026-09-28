@@ -30,9 +30,11 @@ export const modalPopupClassName =
  * La alerta de macOS: compacta, con el ícono arriba y los botones iguales a lo ancho. Es otro
  * objeto que la hoja (`Dialog`): una alerta interrumpe para una sola pregunta, así que es chica
  * y no tiene un pie separado por una línea. 20 px de padding y 12 entre ícono, textos y botones.
+ * El ancho es `min(300px, 100% − 2rem)` sin breakpoint: con `sm:` una pantalla de 400 a 639 px
+ * (un celular acostado, una ventana angosta) la estiraba a todo el ancho.
  */
 export const alertPopupClassName =
-  "fixed top-1/2 left-1/2 z-50 flex w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 flex-col gap-3 rounded-panel material-modal p-5 text-body text-gray-1000 shadow-modal outline-none sm:max-w-[300px] " +
+  "fixed top-1/2 left-1/2 z-50 flex w-full max-w-[min(300px,calc(100%-2rem))] -translate-x-1/2 -translate-y-1/2 flex-col gap-3 rounded-panel material-modal p-5 text-body text-gray-1000 shadow-modal outline-none " +
   "transition-[opacity,translate] duration-150 data-ending-style:opacity-0 data-starting-style:translate-y-[calc(-50%+8px)] data-starting-style:opacity-0"
 
 /**

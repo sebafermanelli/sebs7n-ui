@@ -137,8 +137,9 @@ describe("alerta de macOS (2.0)", () => {
   it("es compacta: 300 px como máximo", async () => {
     render(<Alerta />)
     const alerta = await screen.findByRole("alertdialog")
-    expect(alerta).toHaveClass("sm:max-w-[300px]")
-    expect(alerta).not.toHaveClass("sm:max-w-md")
+    // Sin breakpoint: en una tablet (≥ 640 px) también mide 300, y en un celular el ancho menos 2rem.
+    expect(alerta).toHaveClass("max-w-[min(300px,calc(100%-2rem))]")
+    expect(alerta.className).not.toMatch(/sm:max-w|max-w-\[calc/)
   })
 
   it("el ícono va arriba, mide 48 y es decorativo", async () => {
