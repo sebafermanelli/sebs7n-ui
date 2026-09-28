@@ -151,7 +151,11 @@ describe("NavigationMenu", () => {
     await screen.findByRole("link", { name: /Sistemas/ })
 
     const popup = document.querySelector("[data-slot=navigation-menu-popup]")!
-    expect(popup).toHaveClass("shadow-menu", "rounded-[calc(var(--radius-control)+--spacing(1))]", "material-popover")
+    expect(popup).toHaveClass("shadow-menu", "rounded-[calc(var(--radius-control)+--spacing(1.5))]", "material-popover")
+    // El aire entre el vidrio y los links es el de los menús (`p-1.5`), y lo pone uno solo: con
+    // `p-1` en el panel y otro `p-1` en el contenido eran 8 px contra un radio calculado para 4.
+    expect(popup.className).not.toMatch(/(^|\s)p-\d/)
+    expect(document.querySelector("[data-slot=navigation-menu-content]")).toHaveClass("p-1.5")
     // `shadow-menu` ya trae el hairline de 1px.
     expect(popup.className).not.toMatch(/\bborder\b/)
   })

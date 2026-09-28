@@ -115,7 +115,7 @@ function NavigationMenuContent({ className, ...props }: NavigationMenuContentPro
     <NavigationMenuPrimitive.Content
       data-slot="navigation-menu-content"
       className={cn(
-        "h-full w-[calc(100vw-2.5rem)] p-1 sm:w-max sm:min-w-64",
+        "h-full w-[calc(100vw-2.5rem)] p-1.5 sm:w-max sm:min-w-64",
         // Entra y sale en la dirección desde la que venís, como en vercel.com:
         // pasar de un panel al de al lado se lee como un desplazamiento, no
         // como dos paneles distintos.
@@ -264,9 +264,12 @@ function NavigationMenuPopup({ className, ...props }: NavigationMenuPopupProps) 
         "relative h-(--popup-height) w-(--popup-width) origin-(--transform-origin) overflow-hidden",
         // El `focus-visible:focus-ring` es por el mismo motivo que en Popover y HoverCard: si el
         // panel no tiene links adentro, Base UI lo enfoca a él y con `outline-none` no se veía nada.
-        // El radio es el de los links más el `p-1` que los separa, igual que en los menús: con el
-        // radio de superficie (20px) a 4px de un link de 10, las dos curvas no eran paralelas.
-        "rounded-[calc(var(--radius-control)+--spacing(1))] material-popover p-1 text-gray-1000 shadow-menu outline-none focus-visible:focus-ring",
+        // El radio es el de los links más el `p-1.5` que los separa, igual que en los menús: con el
+        // radio de superficie (20px) a pocos px de un link de 10, las dos curvas no eran paralelas.
+        // El `p-1.5` lo pone el contenido y no el panel (2.0): con `p-1` en los dos eran 8 px de
+        // aire contra un radio calculado para 4. En el contenido, además, un panel que entra de
+        // costado se corta en el borde del vidrio y no 4 px antes.
+        "rounded-[calc(var(--radius-control)+--spacing(1.5))] material-popover text-gray-1000 shadow-menu outline-none focus-visible:focus-ring",
         "transition-[opacity,transform,width,height] duration-200 ease-out motion-reduce:transition-none",
         "data-starting-style:scale-[0.98] data-starting-style:opacity-0",
         "data-ending-style:scale-[0.98] data-ending-style:opacity-0",
