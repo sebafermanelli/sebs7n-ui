@@ -51,7 +51,7 @@ function MenubarTrigger({ className, ...props }: MenubarTriggerProps) {
     <MenuPrimitive.Trigger
       data-slot="menubar-trigger"
       className={cn(
-        "inline-flex h-8 cursor-pointer items-center gap-1 rounded-control bg-transparent px-2.5 text-body text-gray-1000 outline-none select-none",
+        "inline-flex h-6 pointer-coarse:h-11 cursor-pointer items-center gap-1 rounded-control bg-transparent px-2 text-body text-gray-1000 outline-none select-none",
         "transition-control hover:bg-gray-alpha-200 focus-visible:focus-ring",
         "data-popup-open:bg-gray-alpha-300 data-popup-open:hover:bg-gray-alpha-300",
         "data-disabled:cursor-not-allowed data-disabled:text-gray-700 data-disabled:hover:bg-transparent",

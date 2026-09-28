@@ -41,8 +41,11 @@ export const modalFooterClassName =
  * El botón en sí es un `Button variant="ghost" size="icon-sm"` —eso ya es una decisión con
  * nombre— y el nombre accesible lo pone cada uno desde sus `labels`. Lo único compartido, y
  * lo único que se puede desincronizar sin que nadie lo note, es la posición.
+ *
+ * `top-5 right-5` desde 2.0: el botón bajó de 32 a 24 y así su centro queda donde estaba, a
+ * 32 px de las dos esquinas, alineado con el título.
  */
-export const overlayCloseClassName = "absolute top-4 right-4"
+export const overlayCloseClassName = "absolute top-5 right-5"
 
 /**
  * El popup anclado a un disparador: Popover y HoverCard, que son el mismo objeto.

@@ -66,7 +66,8 @@ function NavigationMenuTrigger({ className, active, chevron = true, children, ..
       data-active={active ? "" : undefined}
       className={cn(
         // Mismo cuerpo que un link del nav: sin fondo en ningún estado, el
-        // padding existe solo para que el área clickeable llegue a 32px y el
+        // padding existe solo para que el área clickeable llegue a 28px (el alto de
+        // un ítem del sidebar) y el
         // anillo de foco no apriete el texto.
         "inline-flex cursor-pointer items-center gap-1 rounded-control bg-transparent px-2 py-1.5 text-body text-gray-900 select-none",
         "outline-none transition-control hover:text-gray-1000 focus-visible:focus-ring",

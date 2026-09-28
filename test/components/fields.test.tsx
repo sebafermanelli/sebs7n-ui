@@ -16,7 +16,7 @@ describe("Input", () => {
       "hover:border-gray-alpha-500",
       "focus:focus-border",
       "rounded-field",
-      "px-4"
+      "px-3"
     )
   })
 
@@ -27,17 +27,17 @@ describe("Input", () => {
         <Input className="pl-9" placeholder="con lupa" size="sm" />
       </>
     )
-    expect(screen.getByPlaceholderText("chico")).toHaveClass("px-3.5")
+    expect(screen.getByPlaceholderText("chico")).toHaveClass("px-2.5")
     const conLupa = screen.getByPlaceholderText("con lupa")
     expect(conLupa).toHaveClass("pl-9")
     // Ni una variante por tamaño que le gane por especificidad.
     expect(conLupa.className).not.toMatch(/data-\[size=(sm|lg)\]:p[xl]-/)
   })
 
-  it("Textarea no es una cápsula: su radio se frena en 20px", () => {
+  it("Textarea no es una cápsula: su radio se frena en 16px", () => {
     render(<Textarea placeholder="Notas" />)
     const notas = screen.getByPlaceholderText("Notas")
-    expect(notas).toHaveClass("rounded-[min(var(--radius-field),--spacing(5))]")
+    expect(notas).toHaveClass("rounded-[min(var(--radius-field),--spacing(4))]")
     // tailwind-merge tiene que haber sacado el de la base: con los dos, gana el que Tailwind
     // haya emitido último.
     expect(notas).not.toHaveClass("rounded-field")
@@ -58,9 +58,9 @@ describe("Input", () => {
   })
 
   it.each([
-    ["sm", "data-[size=sm]:h-8"],
-    ["md", "data-[size=md]:h-10"],
-    ["lg", "data-[size=lg]:h-12"],
+    ["sm", "data-[size=sm]:h-6"],
+    ["md", "data-[size=md]:h-8"],
+    ["lg", "data-[size=lg]:h-10"],
   ] as const)("size %s", (size, cls) => {
     render(<Input size={size} placeholder={size} />)
     const input = screen.getByPlaceholderText(size)

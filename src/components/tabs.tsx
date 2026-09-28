@@ -55,7 +55,9 @@ function TabsTrigger({ className, ...props }: TabsTriggerProps) {
       data-slot="tabs-trigger"
       className={cn(
         "relative isolate inline-flex cursor-pointer items-center justify-center gap-1.5 px-3 text-body whitespace-nowrap text-gray-900 outline-none select-none transition-control",
-        "group-data-[variant=line]/tabs-list:h-10 group-data-[variant=segmented]/tabs-list:h-8 group-data-[variant=segmented]/tabs-list:rounded-full",
+        // Segmentado: 28 + los 2 px de la pista de cada lado = 32, el alto de un botón `md` y el del
+        // ThemeSwitcher, que es el mismo objeto. Línea: 32, el alto de los controles.
+        "group-data-[variant=line]/tabs-list:h-8 group-data-[variant=segmented]/tabs-list:h-7 group-data-[variant=segmented]/tabs-list:rounded-full",
         // El `before` existe solo para el anillo de foco: una pestaña no es un botón, así que en
         // hover no se pinta ninguna pastilla. Lo único que cambia es el color del texto, y el
         // activo lo marca la línea de abajo (`after`) o la pastilla de la pista.

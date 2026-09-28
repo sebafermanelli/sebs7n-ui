@@ -81,7 +81,7 @@ describe("Sidebar", () => {
     const clients = screen.getByRole("link", { name: /Clientes/ })
     expect(clients).not.toHaveAttribute("aria-current")
     expect(clients).toHaveClass(
-      "h-8",
+      "h-7",
       "rounded-control",
       "px-2",
       "gap-2",
@@ -228,7 +228,7 @@ describe("Sidebar", () => {
     const onSearch = vi.fn()
     render(<Example onSearch={onSearch} />)
     const search = screen.getByRole("button", { name: "Buscar…" })
-    expect(search).toHaveClass("h-8", "border", "border-gray-alpha-400", "glass-control", "rounded-field", "hover:border-gray-alpha-500", "focus-visible:focus-ring")
+    expect(search).toHaveClass("h-7", "border", "border-gray-alpha-400", "glass-control", "rounded-field", "hover:border-gray-alpha-500", "focus-visible:focus-ring")
     expect(search).toHaveAttribute("aria-keyshortcuts", "Meta+K")
     expect(search.querySelector("kbd")).toHaveTextContent("⌘K")
     await userEvent.click(search)
@@ -327,7 +327,7 @@ describe("Sidebar", () => {
     expect(link).toHaveAttribute("href", "/admin/viajes")
     expect(link).toHaveAttribute("aria-current", "page")
     expect(link).toHaveAttribute("data-active")
-    expect(link).toHaveClass("extra", "h-8", "aria-[current=page]:bg-highlight")
+    expect(link).toHaveClass("extra", "h-7", "aria-[current=page]:bg-highlight")
   })
 
   it("sidebarItemVariants sirve para un Link propio", () => {

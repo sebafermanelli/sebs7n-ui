@@ -3,7 +3,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "../lib/utils.js"
 
 const buttonVariantsBase = cva(
-  "relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full border border-transparent whitespace-nowrap outline-none select-none transition-surface focus-visible:focus-ring data-disabled:cursor-not-allowed data-disabled:border-gray-alpha-400 data-disabled:bg-gray-alpha-100 data-disabled:text-gray-700 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "relative touch-target inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full border border-transparent whitespace-nowrap outline-none select-none transition-surface focus-visible:focus-ring data-disabled:cursor-not-allowed data-disabled:border-gray-alpha-400 data-disabled:bg-gray-alpha-100 data-disabled:text-gray-700 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
@@ -28,12 +28,17 @@ const buttonVariantsBase = cva(
         link: "h-auto! rounded-sm border-0 px-0! text-brand-900 underline-offset-4 hover:text-brand-1000 hover:underline data-disabled:bg-transparent",
       },
       size: {
-        sm: "h-8 px-3 text-body",
-        md: "h-10 px-4 text-body",
-        lg: "h-12 px-5 text-title-3 font-normal [&_svg:not([class*='size-'])]:size-5",
-        "icon-sm": "size-8",
-        "icon-md": "size-10",
-        "icon-lg": "size-12 [&_svg:not([class*='size-'])]:size-5",
+        // Densidad de macOS (2.0): 32 px es el botón normal, como el «Push Button» regular de
+        // AppKit. Con el dedo el área crece a 44 por `touch-target`, sin cambiar lo que se ve.
+        // En `sm` el ícono baja a 14 px: 16 en un botón de 24 se lee como un bloque.
+        sm: "h-6 px-2.5 text-body [&_svg:not([class*='size-'])]:size-3.5",
+        md: "h-8 px-3 text-body",
+        lg: "h-10 px-4 text-title-3 font-normal [&_svg:not([class*='size-'])]:size-5",
+        // El de ícono chico conserva el glifo de 16: es el botón de una barra de herramientas, y
+        // ahí el dibujo es todo lo que dice qué hace.
+        "icon-sm": "size-6",
+        "icon-md": "size-8",
+        "icon-lg": "size-10 [&_svg:not([class*='size-'])]:size-5",
       },
       /**
        * La forma del botón.
@@ -54,9 +59,9 @@ const buttonVariantsBase = cva(
     compoundVariants: [
       // Un escalón más de aire, por tamaño. `lg` ya es ancho, así que sube
       // menos: a 20px de padding la curva ya no toca el texto.
-      { shape: "pill", size: "sm", className: "px-5" },
-      { shape: "pill", size: "md", className: "px-6" },
-      { shape: "pill", size: "lg", className: "px-7" },
+      { shape: "pill", size: "sm", className: "px-4" },
+      { shape: "pill", size: "md", className: "px-5" },
+      { shape: "pill", size: "lg", className: "px-6" },
     ],
     defaultVariants: { variant: "default", size: "md", shape: "default" },
   }

@@ -57,7 +57,9 @@ function UserMenu({ user, collapsed: collapsedProp, side, align, children, signO
   const identity = user.email ? `${user.name} · ${user.email}` : user.name
 
   const avatar = (
-    <Avatar aria-hidden="true">
+    // Colapsado, el avatar baja a 24 adentro del botón de 32: del mismo tamaño que el botón, el
+    // hover no tenía dónde verse.
+    <Avatar aria-hidden="true" size={collapsed ? "sm" : "md"}>
       {user.image && <AvatarImage src={user.image} alt="" />}
       <AvatarFallback>{initials(user.name)}</AvatarFallback>
     </Avatar>
@@ -68,7 +70,7 @@ function UserMenu({ user, collapsed: collapsedProp, side, align, children, signO
       data-slot="user-menu-trigger"
       aria-label={identity}
       className={cn(
-        "inline-flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full outline-none transition-control hover:bg-gray-alpha-100 focus-visible:focus-ring data-popup-open:bg-gray-alpha-200",
+        "touch-target inline-flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full outline-none transition-control hover:bg-gray-alpha-100 focus-visible:focus-ring data-popup-open:bg-gray-alpha-200",
         className
       )}
     >
@@ -78,7 +80,7 @@ function UserMenu({ user, collapsed: collapsedProp, side, align, children, signO
     <DropdownMenuTrigger
       data-slot="user-menu-trigger"
       className={cn(
-        "flex h-12 w-full min-w-0 cursor-pointer items-center gap-2 rounded-control px-2 text-left outline-none transition-control hover:bg-gray-alpha-100 focus-visible:focus-ring data-popup-open:bg-gray-alpha-200",
+        "flex h-10 pointer-coarse:h-12 w-full min-w-0 cursor-pointer items-center gap-2 rounded-control px-2 text-left outline-none transition-control hover:bg-gray-alpha-100 focus-visible:focus-ring data-popup-open:bg-gray-alpha-200",
         className
       )}
     >

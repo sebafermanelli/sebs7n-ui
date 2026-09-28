@@ -164,7 +164,7 @@ describe("Menubar", () => {
 
   it("el título abierto se marca con fondo y comparte la pastilla del sistema", async () => {
     render(<Editor />)
-    expect(titulo("Archivo")).toHaveClass("h-8", "rounded-control", "data-popup-open:bg-gray-alpha-300")
+    expect(titulo("Archivo")).toHaveClass("h-6", "rounded-control", "data-popup-open:bg-gray-alpha-300")
 
     await userEvent.click(titulo("Archivo"))
 

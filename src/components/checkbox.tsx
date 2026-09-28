@@ -16,7 +16,7 @@ function Checkbox({ className, ...props }: CheckboxProps) {
         // Por eso cae bajo WCAG 1.4.11 (3:1 contra el fondo) y no bajo la licencia de "decoración".
         // `gray-500` —el tono de Geist— daba 1,66:1 en claro y 2,06:1 en oscuro. `gray-700` da
         // 3,23:1 y 6,12:1, y es el mismo #8f8f8f en los dos temas.
-        "group/checkbox peer relative inline-flex size-4 shrink-0 cursor-pointer items-center justify-center rounded-xs border border-gray-700 glass-control text-brand-contrast shadow-card outline-none transition-control after:absolute after:-inset-2",
+        "group/checkbox peer relative inline-flex size-4 shrink-0 cursor-pointer items-center justify-center rounded-xs border border-gray-700 glass-control text-brand-contrast shadow-card outline-none transition-control after:absolute after:-inset-2 pointer-coarse:after:-inset-3.5",
         // El hover oscurece en los dos temas (`gray-800` también es #7d7d7d en ambos): el gesto se
         // lee igual en claro y en oscuro, y no hay que acordarse de dos escalas.
         "hover:border-gray-800 focus-visible:focus-ring",

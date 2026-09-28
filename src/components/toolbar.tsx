@@ -185,7 +185,7 @@ function ToolbarLink({ className, ...props }: ToolbarLinkProps) {
     <ToolbarPrimitive.Link
       data-slot="toolbar-link"
       className={cn(
-        "inline-flex h-8 items-center rounded-full px-2 text-body text-gray-900 no-underline outline-none",
+        "inline-flex h-6 items-center rounded-full px-2 text-body text-gray-900 no-underline outline-none",
         "transition-control hover:text-gray-1000 focus-visible:focus-ring",
         className
       )}
@@ -215,7 +215,7 @@ function ToolbarInput({ className, ...props }: ToolbarInputProps) {
         inputDisabledClassName,
         // Mismo cuerpo que `Input size="sm"`, sin el `w-full`: en una barra el
         // ancho lo pone quien lo usa (`className="w-20"`), no el componente.
-        "h-8 min-w-0 px-3 placeholder:text-gray-900 focus:focus-border",
+        "h-6 min-w-0 px-2.5 placeholder:text-gray-900 focus:focus-border pointer-coarse:h-8",
         className
       )}
       {...props}

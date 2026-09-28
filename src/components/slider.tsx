@@ -16,7 +16,7 @@ import { cn, type WithClassName } from "../lib/utils.js"
  * los extremos con Inicio/Fin.
  */
 type SliderProps<Value extends number | readonly number[] = number | readonly number[]> = WithClassName<SliderPrimitive.Root.Props<Value>> & {
-  /** Alto del área que recibe el arrastre: `sm` 32px, `md` 40px, como el resto de los controles. */
+  /** Alto del área que recibe el arrastre: `sm` 24px, `md` 32px, como el resto de los controles. */
   size?: "sm" | "md"
   /** Etiqueta visible. Base UI la asocia sola con los thumbs; sin ella hace falta `aria-label`. */
   label?: React.ReactNode
@@ -76,7 +76,7 @@ function Slider<Value extends number | readonly number[] = number | readonly num
         data-slot="slider-control"
         className={cn(
           "flex w-full cursor-pointer touch-none items-center select-none",
-          "group-data-[size=sm]/slider:h-8 group-data-[size=md]/slider:h-10",
+          "group-data-[size=sm]/slider:h-6 group-data-[size=md]/slider:h-8",
           "data-disabled:cursor-not-allowed",
           controlClassName
         )}

@@ -10,8 +10,13 @@
  */
 export type MenuInsetProps = { inset?: boolean }
 
+/**
+ * 24 px, el alto de un ítem de menú de macOS. Con el dedo sube a 44 de verdad y no con
+ * `touch-target`: los ítems están pegados, y un `::after` de 44 taparía la mitad del de al lado
+ * (el que va después en el DOM se pinta encima y se queda con el toque).
+ */
 export const menuItemClassName =
-  "relative flex h-8 cursor-pointer items-center gap-2 rounded-control px-2 text-body text-gray-1000 outline-none select-none transition-control data-highlighted:bg-highlight active:bg-highlight-active data-disabled:cursor-not-allowed data-disabled:text-gray-700 data-disabled:data-highlighted:bg-transparent [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+  "relative flex h-6 pointer-coarse:h-11 cursor-pointer items-center gap-2 rounded-control px-2 text-body text-gray-1000 outline-none select-none transition-control data-highlighted:bg-highlight active:bg-highlight-active data-disabled:cursor-not-allowed data-disabled:text-gray-700 data-disabled:data-highlighted:bg-transparent [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
 
 /**
  * El radio del panel es el del ítem más el `p-1` que los separa: así las dos curvas son

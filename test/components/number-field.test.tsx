@@ -177,10 +177,10 @@ describe("NumberField", () => {
     expect(input()).not.toHaveFocus()
   })
 
-  it("tamaños: 32, 40 y 48px, los mismos de Input", () => {
+  it("tamaños: 24, 32 y 40px, los mismos de Input", () => {
     const { rerender } = render(<NumberField aria-label="x" defaultValue={1} />)
     expect(group()).toHaveAttribute("data-size", "md")
-    expect(group()).toHaveClass("data-[size=sm]:h-8", "data-[size=md]:h-10", "data-[size=lg]:h-12")
+    expect(group()).toHaveClass("data-[size=sm]:h-6", "data-[size=md]:h-8", "data-[size=lg]:h-10")
     rerender(<NumberField aria-label="x" defaultValue={1} size="lg" />)
     expect(group()).toHaveAttribute("data-size", "lg")
   })

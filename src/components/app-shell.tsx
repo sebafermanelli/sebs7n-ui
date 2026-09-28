@@ -125,7 +125,7 @@ function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido
     return () => cancelAnimationFrame(frame)
   }, [sheet, listo])
 
-  const triggerProps = { variant: "ghost", size: "icon-sm", "aria-label": labels.openMenu, className: "-ml-2" } as const
+  const triggerProps = { variant: "ghost", size: "icon-sm", "aria-label": labels.openMenu, className: "-ml-1" } as const
 
   const barContent = (
     <>

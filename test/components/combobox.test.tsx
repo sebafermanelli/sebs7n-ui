@@ -69,7 +69,7 @@ describe("Combobox", () => {
     expect(group(md)).toHaveAttribute("data-size", "md")
     expect(group(md)).toHaveClass(
       "rounded-field", "border", "border-gray-alpha-400", "glass-control", "transition-control",
-      "data-[size=sm]:h-8", "data-[size=md]:h-10", "data-[size=lg]:h-12",
+      "data-[size=sm]:h-6", "data-[size=md]:h-8", "data-[size=lg]:h-10",
       "hover:border-gray-alpha-500", "has-[input:focus]:focus-border",
       "has-[input[aria-invalid=true]]:border-red-800", "data-disabled:bg-gray-alpha-100"
     )
@@ -127,7 +127,7 @@ describe("Combobox", () => {
     await userEvent.keyboard("zzz")
     expect(await screen.findByText("Sin resultados")).toBeInTheDocument()
     // Del alto de un ítem, no de tres.
-    expect(screen.getByText("Sin resultados")).toHaveClass("h-8")
+    expect(screen.getByText("Sin resultados")).toHaveClass("h-6")
     expect(screen.queryAllByRole("option")).toHaveLength(0)
   })
 
@@ -301,7 +301,7 @@ describe("Autocomplete", () => {
     const onValueChange = vi.fn()
     render(<CityAutocomplete onValueChange={onValueChange} />)
     const input = screen.getByRole("combobox", { name: "Ciudad" })
-    expect(input.closest("[data-slot=autocomplete-input-group]")).toHaveClass("has-[input:focus]:focus-border", "data-[size=md]:h-10")
+    expect(input.closest("[data-slot=autocomplete-input-group]")).toHaveClass("has-[input:focus]:focus-border", "data-[size=md]:h-8")
     await userEvent.click(input)
     await userEvent.keyboard("ro")
     const listbox = await screen.findByRole("listbox")

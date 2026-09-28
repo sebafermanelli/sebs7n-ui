@@ -67,7 +67,7 @@ describe("Popover", () => {
 })
 
 describe("DropdownMenu", () => {
-  it("ítems de 32px con el resaltado del brand en tinte; destructivo en rojo", async () => {
+  it("ítems de 24px con el resaltado del brand en tinte; destructivo en rojo", async () => {
     const onClick = vi.fn()
     render(
       <DropdownMenu>
@@ -80,7 +80,7 @@ describe("DropdownMenu", () => {
     )
     await userEvent.click(screen.getByRole("button", { name: "Acciones" }))
     const edit = await screen.findByRole("menuitem", { name: "Editar" })
-    expect(edit).toHaveClass("h-8", "rounded-control", "data-highlighted:bg-highlight", "active:bg-highlight-active", "data-disabled:text-gray-700")
+    expect(edit).toHaveClass("h-6", "rounded-control", "data-highlighted:bg-highlight", "active:bg-highlight-active", "data-disabled:text-gray-700")
     expect(screen.getByRole("menuitem", { name: "Eliminar" })).toHaveAttribute("data-variant", "destructive")
     await userEvent.click(edit)
     expect(onClick).toHaveBeenCalled()
@@ -117,7 +117,7 @@ describe("Select", () => {
       </Select>
     )
     const trigger = screen.getByRole("combobox", { name: "Moneda" })
-    expect(trigger).toHaveClass("border-gray-alpha-400", "hover:border-gray-alpha-500", "focus-visible:focus-border", "data-placeholder:text-gray-900", "data-[size=md]:h-10")
+    expect(trigger).toHaveClass("border-gray-alpha-400", "hover:border-gray-alpha-500", "focus-visible:focus-border", "data-placeholder:text-gray-900", "data-[size=md]:h-8")
     await userEvent.click(trigger)
     await userEvent.click(await screen.findByRole("option", { name: "USD" }))
     expect(onValueChange).toHaveBeenCalledWith("usd", expect.anything())

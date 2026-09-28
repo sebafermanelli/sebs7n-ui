@@ -10,7 +10,7 @@
  * La superficie de un control: borde, fondo, texto, transición y hover.
  *
  * No trae alto ni padding: los pone cada control, porque no coinciden —un `<textarea>` crece con
- * el contenido, una casilla de OTP es cuadrada y un input de barra de herramientas mide 32px—.
+ * el contenido, una casilla de OTP es cuadrada y un input de barra de herramientas mide 24px—.
  */
 export const inputControlClassName =
   "rounded-field border border-gray-alpha-400 glass-control text-body text-gray-1000 shadow-card outline-none transition-control hover:border-gray-alpha-500"
@@ -19,10 +19,10 @@ export const inputControlClassName =
  * El radio de un campo de más de una línea: Textarea, Combobox con chips.
  *
  * Una cápsula de tres renglones no existe —sería un óvalo—, así que el radio se frena en
- * 20px, que es la curva de un campo de 40px. Cuando la app pisa `--radius-field` con algo más
- * chico, gana lo de la app.
+ * 16px, que es la curva de un campo de 32px (el `md` desde 2.0). Cuando la app pisa
+ * `--radius-field` con algo más chico, gana lo de la app.
  */
-export const inputMultilineRadiusClassName = "rounded-[min(var(--radius-field),--spacing(5))]"
+export const inputMultilineRadiusClassName = "rounded-[min(var(--radius-field),--spacing(4))]"
 
 /**
  * El aire a los costados de un campo de una línea, por tamaño. Sube con el alto: en una
@@ -32,10 +32,18 @@ export const inputMultilineRadiusClassName = "rounded-[min(var(--radius-field),-
  * llamador —el lugar para una lupa— perdía: la variante tiene más especificidad, y
  * tailwind-merge no las ve como un conflicto porque no comparten modificador.
  */
-export const inputPaddingClassName = { sm: "px-3.5", md: "px-4", lg: "px-5" } as const
+export const inputPaddingClassName = { sm: "px-2.5", md: "px-3", lg: "px-4" } as const
 
-/** Los tres altos del sistema, por `data-size`. El `lg` sube también la tipografía. */
-export const inputSizeClassName = "data-[size=sm]:h-8 data-[size=md]:h-10 data-[size=lg]:h-12 data-[size=lg]:text-title-3 data-[size=lg]:font-normal"
+/**
+ * Los tres altos del sistema, por `data-size`: 24, 32 y 40, los de macOS. El `lg` sube también la
+ * tipografía.
+ *
+ * Con el dedo (`pointer: coarse`) `sm` y `md` vuelven a 32 y 40. Un `<input>` no admite `::after`,
+ * así que `touch-target` no le sirve: el área de toque tiene que ser el campo mismo.
+ */
+export const inputSizeClassName =
+  "data-[size=sm]:h-6 data-[size=md]:h-8 data-[size=lg]:h-10 data-[size=lg]:text-title-3 data-[size=lg]:font-normal " +
+  "pointer-coarse:data-[size=sm]:h-8 pointer-coarse:data-[size=md]:h-10"
 
 /**
  * Deshabilitado por `data-disabled`, que es el que pone Base UI —y también un `Fieldset`
@@ -76,10 +84,11 @@ export const inputShellClassName =
 // comunicar. Un solo tono para los dos temas: `gray-900` ya pasa en ambos, así que no hace falta
 // una variante por tema ni un token nuevo.
 export const inputShellInputClassName =
-  "h-full min-w-0 flex-1 bg-transparent px-4 text-inherit outline-none placeholder:text-gray-900 disabled:cursor-not-allowed"
+  "h-full min-w-0 flex-1 bg-transparent px-3 text-inherit outline-none placeholder:text-gray-900 disabled:cursor-not-allowed"
 
-// Botones chicos dentro de la superficie (limpiar, chevron, quitar chip).
+// Botones chicos dentro de la superficie (limpiar, chevron, quitar chip). 20 px con el glifo de 14:
+// en un campo `sm` de 24 un botón de 24 lo llenaba de borde a borde.
 export const inputShellButtonClassName =
-  "inline-flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-full text-gray-900 outline-none transition-control " +
+  "inline-flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-full text-gray-900 outline-none transition-control " +
   "hover:bg-gray-alpha-200 hover:text-gray-1000 active:bg-gray-alpha-300 focus-visible:focus-ring " +
-  "disabled:pointer-events-none data-disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:size-4"
+  "disabled:pointer-events-none data-disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:size-3.5"

@@ -21,7 +21,7 @@ function Switch({ className, size = "md", variant = "default", ...props }: Switc
       data-size={size}
       data-variant={variant}
       className={cn(
-        "group/switch peer relative inline-flex shrink-0 cursor-pointer items-center rounded-full p-0.5 outline-none transition-control after:absolute after:-inset-2",
+        "group/switch peer relative inline-flex shrink-0 cursor-pointer items-center rounded-full p-0.5 outline-none transition-control after:absolute after:-inset-2 pointer-coarse:after:-inset-3.5",
         "data-[size=md]:h-5 data-[size=md]:w-9 data-[size=sm]:h-4 data-[size=sm]:w-7",
         // La pista apagada tiene que distinguirse del fondo (WCAG 1.4.11) Y del pulgar blanco que
         // lleva adentro: el lado donde está el pulgar es lo que dice si está prendido o apagado.

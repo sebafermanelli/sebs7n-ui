@@ -223,10 +223,10 @@ describe("ChatInput", () => {
 
   it("el campo tiene el cuerpo de un Textarea y el botón es el de IA sólido", () => {
     render(<ChatInput defaultValue="hola" maxLength={2000} />)
-    expect(campo()).toHaveClass("glass-control", "rounded-[min(var(--radius-field),--spacing(5))]", "field-sizing-content", "focus:focus-border", "resize-none")
+    expect(campo()).toHaveClass("glass-control", "rounded-[min(var(--radius-field),--spacing(4))]", "field-sizing-content", "focus:focus-border", "resize-none")
     expect(campo()).toHaveAttribute("maxlength", "2000")
     expect(campo()).toHaveAttribute("rows", "1")
-    expect(screen.getByRole("button", { name: "Enviar" })).toHaveClass("bg-ai-solid", "size-10", "rounded-full")
+    expect(screen.getByRole("button", { name: "Enviar" })).toHaveClass("bg-ai-solid", "size-8", "rounded-full")
   })
 
   it("los textos salen del LabelsProvider, y la prop le gana", () => {
@@ -253,7 +253,7 @@ describe("Chat: lo que rodea a los mensajes", () => {
     )
     const sugerencia = screen.getByRole("button", { name: "¿Cuánto facturé este mes?" })
     expect(sugerencia).toHaveAttribute("type", "button")
-    expect(sugerencia).toHaveClass("glass-control", "w-full", "text-left", "min-h-10", "rounded-[min(var(--radius-field),--spacing(5))]")
+    expect(sugerencia).toHaveClass("glass-control", "w-full", "text-left", "min-h-10", "rounded-[min(var(--radius-field),--spacing(4))]")
     expect(sugerencia).not.toHaveClass("h-10")
     await userEvent.click(sugerencia)
     expect(onClick).toHaveBeenCalled()

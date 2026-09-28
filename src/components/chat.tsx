@@ -385,9 +385,9 @@ function ChatInput({
           inputControlClassName,
           inputDisabledClassName,
           inputMultilineRadiusClassName,
-          // 40px como el botón de al lado. En táctil, 44px y 16px de letra: con menos, iOS hace
+          // 32px como el botón de al lado. En táctil, 44px y 16px de letra: con menos, iOS hace
           // zoom al enfocar. Sin `field-sizing` (un Safari viejo) queda en una línea con scroll.
-          "field-sizing-content max-h-36 min-h-10 min-w-0 flex-1 resize-none overflow-y-auto px-4 py-2.25 placeholder:text-gray-900 focus:focus-border",
+          "field-sizing-content max-h-36 min-h-8 min-w-0 flex-1 resize-none overflow-y-auto px-3 py-1.75 placeholder:text-gray-900 focus:focus-border",
           "pointer-coarse:min-h-11 pointer-coarse:py-2.5 pointer-coarse:text-title-3 pointer-coarse:font-normal",
           "disabled:cursor-not-allowed disabled:border-gray-alpha-400 disabled:bg-gray-alpha-100 disabled:text-gray-700 disabled:shadow-none"
         )}

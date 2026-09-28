@@ -21,7 +21,7 @@ describe("ColorPicker", () => {
     render(<ColorPicker aria-label="Color" defaultValue={AZUL} />)
     const campo = screen.getByRole("button", { name: "Color" })
     expect(campo).toHaveTextContent(hexOfOklch(AZUL))
-    expect(campo).toHaveClass("rounded-field", "glass-control", "data-[size=md]:h-10", "focus-visible:focus-border")
+    expect(campo).toHaveClass("rounded-field", "glass-control", "data-[size=md]:h-8", "focus-visible:focus-border")
     expect(campo.querySelector("[data-slot=color-picker-swatch]")).toHaveStyle({ backgroundColor: hexOfOklch(AZUL) })
   })
 

@@ -159,12 +159,12 @@ describe("Toolbar", () => {
     // Sin `render`: el Button del sistema en ghost.
     const suelto = control("Insertar enlace")
     expect(suelto).toHaveAttribute("data-slot", "toolbar-button")
-    expect(suelto).toHaveClass("size-8", "hover:bg-gray-alpha-200")
+    expect(suelto).toHaveClass("size-6", "hover:bg-gray-alpha-200")
 
     // Con `render={<ToggleGroupItem />}`: el chip de Toggle, sin nada del Button.
     const negrita = control("Negrita")
     expect(negrita).toHaveClass("rounded-full", "border-dashed")
-    expect(negrita.className).not.toMatch(/\bsize-8\b/)
+    expect(negrita.className).not.toMatch(/\bsize-6\b/)
     expect(negrita.className).not.toMatch(/hover:bg-gray-alpha-200/)
   })
 

@@ -253,7 +253,7 @@ function Calendar(props: CalendarProps) {
               ) : (
                 // Los botones en las puntas y cada título centrado sobre su mes: «anterior» y
                 // «siguiente» mueven la vista entera, no un mes solo.
-                <div className="grid h-8 grid-cols-[--spacing(8)_1fr_--spacing(8)] items-center justify-items-center gap-2">
+                <div className="grid h-7 grid-cols-[--spacing(7)_1fr_--spacing(7)] items-center justify-items-center gap-2">
                   {indice === 0 ? anterior : <span />}
                   {titulo}
                   {indice === cuantos - 1 ? siguiente : <span />}
@@ -271,7 +271,7 @@ function Calendar(props: CalendarProps) {
                 <thead>
                   <tr>
                     {weeksOfMonth(mes, weekStartsOn)[0]!.map((dia) => (
-                      <th abbr={formatos.largo.format(dia)} className="size-9 text-callout font-normal text-gray-900" key={dia.getDay()} scope="col">
+                      <th abbr={formatos.largo.format(dia)} className="size-7 pointer-coarse:size-11 text-callout font-normal text-gray-900" key={dia.getDay()} scope="col">
                         {formatos.corto.format(dia).replace(".", "").slice(0, 2)}
                       </th>
                     ))}
@@ -284,7 +284,7 @@ function Calendar(props: CalendarProps) {
                         const iso = toISODate(dia)
                         if (!isSameMonth(dia, mes)) {
                           return (
-                            <td aria-hidden="true" className="size-9 p-0 text-center text-body tabular-nums text-gray-700" data-outside="" key={iso}>
+                            <td aria-hidden="true" className="size-7 pointer-coarse:size-11 p-0 text-center text-body tabular-nums text-gray-700" data-outside="" key={iso}>
                               {cuantos === 1 ? dia.getDate() : null}
                             </td>
                           )
@@ -304,7 +304,10 @@ function Calendar(props: CalendarProps) {
                           <td
                             aria-selected={marcada || (enRango && mode === "range") || undefined}
                             className={cn(
-                              "size-9 p-0",
+                              // 28 px, la celda del selector de fecha de macOS. Con el dedo, 44 de verdad: el
+                              // botón ya usa `::after` para el punto de hoy y las celdas están pegadas, así que
+                              // `touch-target` no sirve acá.
+                              "size-7 pointer-coarse:size-11 p-0",
                               "data-[range=middle]:bg-highlight data-[range=middle]:first:rounded-l-full data-[range=middle]:last:rounded-r-full",
                               "data-[range=start]:bg-[linear-gradient(to_right,transparent_50%,var(--color-highlight)_50%)]",
                               "data-[range=end]:bg-[linear-gradient(to_left,transparent_50%,var(--color-highlight)_50%)]",
@@ -324,12 +327,12 @@ function Calendar(props: CalendarProps) {
                               aria-disabled={off || undefined}
                               aria-label={formatos.dia.format(dia)}
                               className={cn(
-                                "relative inline-flex size-9 cursor-pointer items-center justify-center rounded-full text-body tabular-nums outline-none select-none transition-surface",
+                                "relative inline-flex size-7 pointer-coarse:size-11 cursor-pointer items-center justify-center rounded-full text-body tabular-nums outline-none select-none transition-surface",
                                 "hover:bg-gray-alpha-200 focus-visible:focus-ring active:scale-95",
                                 // Hoy: el número en el color de marca y un punto debajo. El punto es lo que
                                 // lo distingue cuando además está elegido, que es cuando el color no alcanza.
                                 "aria-[current=date]:font-medium aria-[current=date]:text-brand-900",
-                                "aria-[current=date]:after:absolute aria-[current=date]:after:bottom-1 aria-[current=date]:after:size-1 aria-[current=date]:after:rounded-full aria-[current=date]:after:bg-brand-700",
+                                "aria-[current=date]:after:absolute aria-[current=date]:after:bottom-0.5 pointer-coarse:aria-[current=date]:after:bottom-1.5 aria-[current=date]:after:size-1 aria-[current=date]:after:rounded-full aria-[current=date]:after:bg-brand-700",
                                 "data-selected:bg-brand-700 data-selected:text-brand-contrast data-selected:sheen data-selected:shadow-button-accent data-selected:hover:bg-brand-800",
                                 "data-selected:aria-[current=date]:text-brand-contrast data-selected:aria-[current=date]:after:bg-brand-contrast",
                                 "aria-disabled:cursor-not-allowed aria-disabled:text-gray-700 aria-disabled:hover:bg-transparent aria-disabled:active:scale-100"

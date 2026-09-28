@@ -24,7 +24,7 @@ type PaginationProps = Omit<React.ComponentProps<"nav">, "children"> & {
   siblings?: number
   /** Cuántas páginas fijas en cada punta. */
   boundaries?: number
-  /** `sm` 32px · `md` 40px. */
+  /** `sm` 24px · `md` 32px. */
   size?: "sm" | "md"
   /** Modo botones: se llama con la página destino. */
   onPageChange?: (page: number) => void
@@ -108,7 +108,7 @@ function Pagination({
               // `gray-900` y no `gray-700`: los puntos son `aria-hidden`, pero
               // se ven, y en claro `gray-700` sobre la página da 3,23:1. Que al
               // lado haya un `sr-only` resuelve a quien escucha, no a quien mira.
-              className={cn("inline-flex items-center justify-center text-gray-900", size === "sm" ? "size-8" : "size-10")}
+              className={cn("inline-flex items-center justify-center text-gray-900", size === "sm" ? "size-6" : "size-8")}
               key={`ellipsis-${slot.side}`}
             >
               <span aria-hidden="true">…</span>

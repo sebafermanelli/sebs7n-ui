@@ -24,7 +24,7 @@ describe("AiButton", () => {
     const boton = screen.getByRole("button", { name: "Resumir" })
     expect(boton).toHaveAttribute("data-slot", "button")
     expect(boton).toHaveAttribute("data-ai", "outline")
-    expect(boton).toHaveClass("rounded-full", "h-10", "focus-visible:focus-ring", "glass-control", "text-ai", "border-ai/40")
+    expect(boton).toHaveClass("rounded-full", "h-8", "focus-visible:focus-ring", "glass-control", "text-ai", "border-ai/40")
     // No usa la marca: una acción de IA se reconoce igual en cualquier app.
     expect(boton.className).not.toMatch(/brand/)
   })

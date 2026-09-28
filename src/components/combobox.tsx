@@ -146,7 +146,7 @@ function ComboboxEmpty({ className, children, labels, ...props }: ComboboxEmptyP
     <ComboboxPrimitive.Empty data-slot="combobox-empty" {...props}>
       {/* Del alto de un ítem (h-8) y con su mismo padding: un popup con «Sin resultados» no
           es más alto que uno con una sola coincidencia. Antes era py-6 y ocupaba tres filas. */}
-      {content ? <div className={cn("flex h-8 items-center px-2 text-body text-gray-900", className)}>{content}</div> : null}
+      {content ? <div className={cn("flex h-6 items-center px-2 text-body text-gray-900", className)}>{content}</div> : null}
     </ComboboxPrimitive.Empty>
   )
 }
@@ -161,12 +161,12 @@ type ComboboxStatusProps = WithClassName<ComboboxPrimitive.Status.Props> & {
 function ComboboxStatus({ className, loading = false, labels, children, ...props }: ComboboxStatusProps) {
   const l = useLabels().combobox
   const content = loading ? (
-    <div data-slot="combobox-loading" className="flex h-8 items-center gap-2 px-2 text-body text-gray-900">
+    <div data-slot="combobox-loading" className="flex h-6 items-center gap-2 px-2 text-body text-gray-900">
       <Loader2Icon aria-hidden="true" className="size-4 shrink-0 animate-spin" />
       {labels?.loading ?? l.loading}
     </div>
   ) : children ? (
-    <div className="flex min-h-8 items-center px-2 text-body text-gray-900">{children}</div>
+    <div className="flex min-h-6 items-center px-2 text-body text-gray-900">{children}</div>
   ) : null
   return (
     <ComboboxPrimitive.Status data-slot="combobox-status" className={className} {...props}>
@@ -197,7 +197,8 @@ function ComboboxChips({ className, size = "md", showTrigger = true, showClear =
         inputShellClassName,
         // Los chips pueden ocupar varias filas.
         inputMultilineRadiusClassName,
-        "h-auto! data-[size=sm]:min-h-8 data-[size=md]:min-h-10 data-[size=lg]:min-h-12 items-start py-1 pr-1 pl-1.5",
+        // `py-0.5`: un chip mide 24 y el `md` 32; con `py-1` y el borde, el campo vacío ya crecía.
+        "h-auto! data-[size=sm]:min-h-6 data-[size=md]:min-h-8 data-[size=lg]:min-h-10 pointer-coarse:data-[size=sm]:min-h-8 pointer-coarse:data-[size=md]:min-h-10 items-start py-0.5 pr-1 pl-1",
         className
       )}
     >

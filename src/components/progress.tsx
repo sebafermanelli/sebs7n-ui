@@ -19,7 +19,7 @@ import { cn } from "../lib/utils.js"
 type ProgressBaseProps = Omit<ProgressPrimitive.Root.Props, "className" | "aria-label"> & {
   className?: string
   /**
-   * Alto de la pista: `sm` 4px, `md` 6px. No sigue la escala de 32/40px de los
+   * Alto de la pista: `sm` 4px, `md` 6px. No sigue la escala de 24/32px de los
    * controles a propósito: una barra no se toca ni recibe foco, así que no
    * tiene por qué reservar un área táctil.
    */

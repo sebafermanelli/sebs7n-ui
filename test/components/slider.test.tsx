@@ -80,10 +80,10 @@ describe("Slider", () => {
     expect(document.querySelector("[data-slot=slider-mark]")).toHaveStyle({ insetInlineStart: "50%" })
   })
 
-  it("tamaños: el área arrastrable es 32px en sm y 40px en md", () => {
+  it("tamaños: el área arrastrable es 24px en sm y 32px en md", () => {
     const { rerender } = render(<Slider aria-label="x" defaultValue={10} />)
     expect(document.querySelector("[data-slot=slider]")).toHaveAttribute("data-size", "md")
-    expect(control()).toHaveClass("group-data-[size=sm]/slider:h-8", "group-data-[size=md]/slider:h-10")
+    expect(control()).toHaveClass("group-data-[size=sm]/slider:h-6", "group-data-[size=md]/slider:h-8")
     rerender(<Slider aria-label="x" defaultValue={10} size="sm" />)
     expect(document.querySelector("[data-slot=slider]")).toHaveAttribute("data-size", "sm")
   })

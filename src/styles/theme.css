@@ -935,6 +935,32 @@
   transition-duration: 150ms;
 }
 
+/**
+ * El área de toque de un control chico. macOS mide 24–32 px porque se usa con mouse; con el dedo
+ * hacen falta 44 (HIG). En `pointer: coarse` un pseudo-elemento invisible agranda el área sin
+ * cambiar lo que se ve. Va en el control, que tiene que estar posicionado (lo pone la utilidad).
+ *
+ * Usa `::after`: si el control ya usa `::after` (Tabs, el día del Calendar, Checkbox, Radio,
+ * Switch, `glass-rim`, `ai-rim`), no se aplica ahí, porque las dos reglas pelearían por el mismo
+ * pseudo-elemento. Tampoco en ítems de lista pegados (menú, sidebar): el `::after` del que va
+ * después taparía al de antes; esos crecen de verdad con `pointer-coarse:h-11`.
+ */
+@utility touch-target {
+  @media (pointer: coarse) {
+    position: relative;
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: max(100%, 44px);
+      height: max(100%, 44px);
+      transform: translate(-50%, -50%);
+    }
+  }
+}
+
 /* Anillo de foco de Geist (--ds-focus-ring) con el color de marca. */
 @utility focus-ring {
   outline: none;

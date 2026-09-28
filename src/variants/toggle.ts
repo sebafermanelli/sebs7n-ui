@@ -12,9 +12,12 @@ import { cn } from "../lib/utils.js"
  * La escalera va apagado `gray-700` → hover `gray-800` → prendido `gray-900`: el prendido es el que
  * más contrasta en los dos temas, que es lo que el estado tiene que comunicar. Antes el prendido
  * (`gray-600`, 2,38:1 en claro) contrastaba MENOS que el apagado nuevo, y eso se lee al revés.
+ *
+ * 24 px desde 2.0, el alto de un botón `sm`: un chip es un control secundario y en macOS los
+ * filtros de ese tamaño (las etiquetas del Finder) son así de bajos. Con el dedo, `touch-target`.
  */
 const toggleVariantsBase = cva(
-  "inline-flex h-8 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-full border border-dashed border-gray-700 glass-control px-3 text-body whitespace-nowrap text-gray-900 shadow-card outline-none select-none transition-surface hover:border-gray-800 active:translate-y-px hover:text-gray-1000 focus-visible:focus-ring data-pressed:border-solid data-pressed:border-gray-900 data-pressed:bg-gray-alpha-200 data-pressed:text-gray-1000 data-pressed:hover:bg-gray-alpha-300 data-disabled:cursor-not-allowed data-disabled:border-gray-alpha-400 data-disabled:bg-gray-alpha-100 data-disabled:text-gray-700 data-disabled:shadow-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+  "touch-target inline-flex h-6 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-full border border-dashed border-gray-700 glass-control px-2.5 text-body whitespace-nowrap text-gray-900 shadow-card outline-none select-none transition-surface hover:border-gray-800 active:translate-y-px hover:text-gray-1000 focus-visible:focus-ring data-pressed:border-solid data-pressed:border-gray-900 data-pressed:bg-gray-alpha-200 data-pressed:text-gray-1000 data-pressed:hover:bg-gray-alpha-300 data-disabled:cursor-not-allowed data-disabled:border-gray-alpha-400 data-disabled:bg-gray-alpha-100 data-disabled:text-gray-700 data-disabled:shadow-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5"
 )
 
 // Pasa por cn() (tailwind-merge): usada sobre <a>/<Link>, la clase de la variante tiene que ganarle a la base.
