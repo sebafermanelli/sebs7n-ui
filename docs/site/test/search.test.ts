@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { normalize, search, type SearchEntry } from "../app/_lib/search"
+import { groupResults, normalize, plainText, search, type SearchEntry } from "../app/_lib/search"
 
 const entry = (title: string, extra: Partial<SearchEntry> = {}): SearchEntry => ({
   title,
@@ -36,5 +36,25 @@ describe("search", () => {
   it("corta en 12 resultados", () => {
     const muchos = Array.from({ length: 20 }, (_, i) => entry(`Item${i}`))
     expect(search(muchos, "item")).toHaveLength(12)
+  })
+})
+
+describe("groupResults (el buscador con Command)", () => {
+  it("agrupa sin perder el ranking: los grupos salen en el orden de su mejor resultado", () => {
+    const ranked = [entry("Tokens", { group: "Sistema" }), entry("Button"), entry("Theming", { group: "Sistema" }), entry("Badge")]
+    expect(groupResults(ranked).map(([group, entries]) => [group, entries.map((e) => e.title)])).toEqual([
+      ["Sistema", ["Tokens", "Theming"]],
+      ["Formularios", ["Button", "Badge"]],
+    ])
+  })
+
+  it("sin resultados no hay grupos", () => {
+    expect(groupResults([])).toEqual([])
+  })
+})
+
+describe("plainText", () => {
+  it("saca el markdown mínimo de Inline para la fila de una línea", () => {
+    expect(plainText("Usa `aria-invalid` y **nunca** color solo")).toBe("Usa aria-invalid y nunca color solo")
   })
 })

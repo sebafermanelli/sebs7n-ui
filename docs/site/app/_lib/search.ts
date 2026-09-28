@@ -27,3 +27,23 @@ export function search(index: SearchEntry[], query: string): SearchEntry[] {
     .slice(0, 12)
     .map((result) => result.entry)
 }
+
+/**
+ * Agrupa para `CommandGroup` sin perder el ranking: los grupos salen en el orden de su mejor
+ * resultado, y adentro de cada uno los resultados siguen el orden de `search()`. Así el primero de
+ * la lista sigue siendo el mejor, que es el que queda elegido y abre Enter.
+ */
+export function groupResults(results: SearchEntry[]): [group: string, entries: SearchEntry[]][] {
+  const groups = new Map<string, SearchEntry[]>()
+  for (const result of results) {
+    const group = groups.get(result.group)
+    if (group) group.push(result)
+    else groups.set(result.group, [result])
+  }
+  return [...groups]
+}
+
+/** Las descripciones traen el markdown mínimo de `Inline`; en una fila de una línea van planas. */
+export function plainText(text: string) {
+  return text.replace(/`([^`]+)`|\*\*([^*]+)\*\*/g, (_, code: string | undefined, bold: string | undefined) => code ?? bold ?? "")
+}
