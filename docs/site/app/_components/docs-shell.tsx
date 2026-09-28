@@ -12,7 +12,6 @@ import {
   SidebarHeader,
   SidebarSearch,
 } from "sebs7n-ui/sidebar"
-import { TooltipProvider } from "sebs7n-ui/tooltip"
 
 import { DocsNav } from "./docs-nav"
 import { useGlassConfig } from "./glass-config"
@@ -71,28 +70,21 @@ export function DocsShell({ nav, version, children }: { nav: Grupo[]; version: s
   const pathname = usePathname()
   const { config } = useGlassConfig()
   return (
-    // El `TooltipProvider` vive acá y no en `providers.tsx`: todos los tooltips del sitio están
-    // bajo /docs (demos, catálogo de íconos, Playground, el Sidebar colapsado). En el layout raíz
-    // metía el Tooltip entero de Base UI —con su posicionamiento de floating-ui— en el arranque
-    // del home, que no tiene ninguno. Envuelve el shell entero, Sidebar incluido: para las
-    // páginas de /docs no cambia nada.
-    <TooltipProvider>
-      <AppShell
-        ambient={config.ambient}
-        mainId="contenido"
-        mobileBar={
-          <>
-            <Marca version={version} />
-            <span className="ml-auto" />
-            <SearchButton compact />
-            <ThemeSwitcher />
-          </>
-        }
-        pathname={pathname}
-        sidebar={<DocsSidebar nav={nav} version={version} />}
-      >
-        {children}
-      </AppShell>
-    </TooltipProvider>
+    <AppShell
+      ambient={config.ambient}
+      mainId="contenido"
+      mobileBar={
+        <>
+          <Marca version={version} />
+          <span className="ml-auto" />
+          <SearchButton compact />
+          <ThemeSwitcher />
+        </>
+      }
+      pathname={pathname}
+      sidebar={<DocsSidebar nav={nav} version={version} />}
+    >
+      {children}
+    </AppShell>
   )
 }

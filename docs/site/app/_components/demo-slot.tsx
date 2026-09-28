@@ -1,6 +1,6 @@
 "use client"
 
-import { Suspense, useEffect, useRef, useState } from "react"
+import { lazy, Suspense, useEffect, useRef, useState } from "react"
 
 import { DEMOS } from "../_demos/registry"
 
@@ -26,6 +26,13 @@ import { DEMOS } from "../_demos/registry"
 // bastante más altas que el marco vacío (Sidebar ~416px, Chat 480px) — un hueco ahí es un salto
 // de layout visible apenas hidrata. Al resto, el margen de 400px les alcanza para montar antes
 // de que se vean.
+// Las demos con tooltip (Tooltip, Chart, Slider, Switch, el Sidebar colapsado…) necesitan el
+// `TooltipProvider`, que antes era global y metía el Tooltip de Base UI en el arranque de todas las
+// páginas. Acá va con `lazy` de React y no con `next/dynamic`: el de Next agrega un preload al HTML
+// y el chunk contaría igual. Comparte el Suspense de la demo, así que la primera, que viene
+// prerenderizada, se queda con su HTML mientras llegan los dos chunks.
+const TooltipProvider = lazy(() => import("sebs7n-ui/tooltip").then((mod) => ({ default: mod.TooltipProvider })))
+
 export function DemoSlot({ id, eager = false }: { id: string; eager?: boolean }) {
   const Demo = DEMOS[id]
   const marco = useRef<HTMLDivElement>(null)
@@ -56,7 +63,9 @@ export function DemoSlot({ id, eager = false }: { id: string; eager?: boolean })
         // Cada entrada del registry es un `next/dynamic`, o sea un `React.lazy`: sin este
         // Suspense el render se corta.
         <Suspense fallback={<span aria-hidden="true" className="block h-8" />}>
-          <Demo />
+          <TooltipProvider>
+            <Demo />
+          </TooltipProvider>
         </Suspense>
       )}
     </div>

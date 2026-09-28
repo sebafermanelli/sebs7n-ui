@@ -44,7 +44,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "sebs7n-ui/tabs"
 import { ThemeSwitcher } from "sebs7n-ui/theme-switcher"
 import { ToggleGroup, ToggleGroupItem } from "sebs7n-ui/toggle-group"
 import { Toolbar, ToolbarButton, ToolbarSeparator } from "sebs7n-ui/toolbar"
-import { Tooltip, TooltipContent, TooltipTrigger } from "sebs7n-ui/tooltip"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "sebs7n-ui/tooltip"
 
 import { cssOfOklch, hexOfOklch, oklchOfHex, type Oklch } from "../_lib/color"
 import { CodeBlock } from "./code-block"
@@ -207,244 +207,247 @@ function Muestra() {
   const [descuento, setDescuento] = useState(10)
 
   return (
-    <section aria-labelledby="pg-muestra" className="flex flex-col gap-4">
-      <div className="flex flex-col gap-1">
-        <h2 className="text-heading-24 text-gray-1000" id="pg-muestra">
-          Cómo se ve
-        </h2>
-        <p className="text-copy-14 text-gray-900">
-          Todo lo de abajo son los componentes del paquete, sin una clase de más. Abrí el menú y el diálogo, arrastrá el
-          slider, tabulá por el formulario.
-        </p>
-      </div>
+    // El `TooltipProvider` ya no es global (ver `demo-slot.tsx`): cada pantalla con tooltips pone el suyo.
+    <TooltipProvider>
+      <section aria-labelledby="pg-muestra" className="flex flex-col gap-4">
+        <div className="flex flex-col gap-1">
+          <h2 className="text-heading-24 text-gray-1000" id="pg-muestra">
+            Cómo se ve
+          </h2>
+          <p className="text-copy-14 text-gray-900">
+            Todo lo de abajo son los componentes del paquete, sin una clase de más. Abrí el menú y el diálogo, arrastrá el
+            slider, tabulá por el formulario.
+          </p>
+        </div>
 
-      <Toolbar aria-label="Acciones de la pantalla" className="w-fit max-w-full">
-        <Tooltip>
-          <TooltipTrigger render={<ToolbarButton aria-label="Buscar" />}>
-            <SearchIcon />
-          </TooltipTrigger>
-          <TooltipContent>
-            Buscar <Kbd>⌘K</Kbd>
-          </TooltipContent>
-        </Tooltip>
-        <ToolbarButton aria-label="Notificaciones">
-          <BellIcon />
-        </ToolbarButton>
-        <ToolbarSeparator />
-        <DropdownMenu>
-          <DropdownMenuTrigger render={<ToolbarButton aria-label="Más acciones" />}>
-            <MoreHorizontalIcon />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56">
-            <DropdownMenuGroup>
-              <DropdownMenuLabel>Factura 0013</DropdownMenuLabel>
-              <DropdownMenuItem>
-                Editar
-                <DropdownMenuShortcut>⌘E</DropdownMenuShortcut>
-              </DropdownMenuItem>
-              <DropdownMenuItem>Duplicar</DropdownMenuItem>
-              <DropdownMenuItem>Descargar PDF</DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem variant="destructive">Anular</DropdownMenuItem>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </Toolbar>
+        <Toolbar aria-label="Acciones de la pantalla" className="w-fit max-w-full">
+          <Tooltip>
+            <TooltipTrigger render={<ToolbarButton aria-label="Buscar" />}>
+              <SearchIcon />
+            </TooltipTrigger>
+            <TooltipContent>
+              Buscar <Kbd>⌘K</Kbd>
+            </TooltipContent>
+          </Tooltip>
+          <ToolbarButton aria-label="Notificaciones">
+            <BellIcon />
+          </ToolbarButton>
+          <ToolbarSeparator />
+          <DropdownMenu>
+            <DropdownMenuTrigger render={<ToolbarButton aria-label="Más acciones" />}>
+              <MoreHorizontalIcon />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56">
+              <DropdownMenuGroup>
+                <DropdownMenuLabel>Factura 0013</DropdownMenuLabel>
+                <DropdownMenuItem>
+                  Editar
+                  <DropdownMenuShortcut>⌘E</DropdownMenuShortcut>
+                </DropdownMenuItem>
+                <DropdownMenuItem>Duplicar</DropdownMenuItem>
+                <DropdownMenuItem>Descargar PDF</DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuItem variant="destructive">Anular</DropdownMenuItem>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </Toolbar>
 
-      <div className="grid gap-4 sm:grid-cols-3">
-        <Card size="sm">
-          <CardContent>
-            <Stat delta="+12,4 %" hint="vs. mes anterior" label="Facturado" trend="up" value="$ 4.820.300" />
-          </CardContent>
-        </Card>
-        <Card size="sm">
-          <CardContent className="flex flex-col gap-3">
-            <Stat hint="Meta 95 %" label="Cobrado" value="91,6 %" />
-            <Progress aria-label="Cobrado" value={91.6} />
-          </CardContent>
-        </Card>
-        <Card size="sm">
-          <CardContent>
-            <Stat delta="+2" hint="facturas" label="Vencen esta semana" trend="down" value="7" />
-          </CardContent>
-        </Card>
-      </div>
+        <div className="grid gap-4 sm:grid-cols-3">
+          <Card size="sm">
+            <CardContent>
+              <Stat delta="+12,4 %" hint="vs. mes anterior" label="Facturado" trend="up" value="$ 4.820.300" />
+            </CardContent>
+          </Card>
+          <Card size="sm">
+            <CardContent className="flex flex-col gap-3">
+              <Stat hint="Meta 95 %" label="Cobrado" value="91,6 %" />
+              <Progress aria-label="Cobrado" value={91.6} />
+            </CardContent>
+          </Card>
+          <Card size="sm">
+            <CardContent>
+              <Stat delta="+2" hint="facturas" label="Vencen esta semana" trend="down" value="7" />
+            </CardContent>
+          </Card>
+        </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Factura nueva</CardTitle>
-            <CardDescription>Los controles viven adentro del vidrio: alfa, sin blur.</CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-5">
-            <div className="flex flex-col gap-2">
-              <Label htmlFor={cliente}>Cliente</Label>
-              <Input defaultValue="Acme S.A." id={cliente} />
-            </div>
-            <div className="flex flex-col gap-2">
-              <Label htmlFor={condicion}>Condición de pago</Label>
-              <Select defaultValue="treinta" items={CONDICIONES}>
-                <SelectTrigger id={condicion}>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.entries(CONDICIONES).map(([value, label]) => (
-                    <SelectItem key={value} value={value}>
-                      {label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex flex-wrap gap-x-6 gap-y-3">
-              <div className="flex items-center gap-2">
-                <Checkbox defaultChecked id={copia} />
-                <Label htmlFor={copia}>Enviar copia por email</Label>
-              </div>
-              <div className="flex items-center gap-2">
-                <Checkbox id={recordatorio} />
-                <Label htmlFor={recordatorio}>Recordar el vencimiento</Label>
-              </div>
-            </div>
-            <RadioGroup aria-label="Moneda" className="flex flex-wrap gap-x-6 gap-y-3" defaultValue="pesos">
-              <div className="flex items-center gap-2">
-                <RadioGroupItem id={pesos} value="pesos" />
-                <Label htmlFor={pesos}>Pesos</Label>
-              </div>
-              <div className="flex items-center gap-2">
-                <RadioGroupItem id={dolares} value="dolares" />
-                <Label htmlFor={dolares}>Dólares</Label>
-              </div>
-            </RadioGroup>
-            <Slider label="Descuento" max={50} onValueChange={(valor) => setDescuento(valor as number)} showValue value={descuento} />
-            <div className="flex items-center justify-between gap-3">
-              <Label htmlFor={avisar}>Avisar al cliente</Label>
-              <Switch defaultChecked id={avisar} />
-            </div>
-          </CardContent>
-        </Card>
-
-        <div className="flex flex-col gap-4">
+        <div className="grid gap-4 lg:grid-cols-2">
           <Card>
             <CardHeader>
-              <CardTitle>Acciones</CardTitle>
-              <CardDescription>El acento sólido es uno por pantalla; el resto es vidrio.</CardDescription>
+              <CardTitle>Factura nueva</CardTitle>
+              <CardDescription>Los controles viven adentro del vidrio: alfa, sin blur.</CardDescription>
             </CardHeader>
-            <CardContent className="flex flex-col gap-4">
-              <div className="flex flex-wrap gap-2">
-                <Button variant="accent">
-                  <PlusIcon />
-                  Nueva factura
-                </Button>
-                <Button>Guardar</Button>
-                <Button variant="outline">Exportar</Button>
-                <Button variant="secondary">Filtrar</Button>
-                <Button variant="ghost">Cancelar</Button>
+            <CardContent className="flex flex-col gap-5">
+              <div className="flex flex-col gap-2">
+                <Label htmlFor={cliente}>Cliente</Label>
+                <Input defaultValue="Acme S.A." id={cliente} />
               </div>
-              <div className="flex flex-wrap gap-2">
-                <Dialog>
-                  <DialogTrigger render={<Button variant="outline" />}>Abrir un diálogo</DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>¿Anular la factura?</DialogTitle>
-                      <DialogDescription>
-                        Se anula la 0013 y se avisa al cliente. El diálogo es el material más grueso del sistema.
-                      </DialogDescription>
-                    </DialogHeader>
-                    <DialogFooter>
-                      <DialogClose render={<Button variant="ghost" />}>Cancelar</DialogClose>
-                      <DialogClose render={<Button variant="destructive" />}>Anular</DialogClose>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-                <Button
-                  onClick={async () => {
-                    // sonner se pide al primer clic, no en el arranque: el `Toaster` ya se carga
-                    // después de hidratar (ver `providers.tsx`).
-                    const { toast } = await import("sonner")
-                    toast("Factura guardada", {
-                      description: "Se le avisó al cliente.",
-                      action: { label: "Deshacer", onClick: () => toast.success("Restaurada") },
-                    })
-                  }}
-                  variant="outline"
-                >
-                  Mostrar un toast
-                </Button>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor={condicion}>Condición de pago</Label>
+                <Select defaultValue="treinta" items={CONDICIONES}>
+                  <SelectTrigger id={condicion}>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(CONDICIONES).map(([value, label]) => (
+                      <SelectItem key={value} value={value}>
+                        {label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-              <div className="flex flex-wrap items-center gap-2">
-                <Badge>Borrador</Badge>
-                <Badge color="brand">Enviada</Badge>
-                <Badge color="green" dot>
-                  Pagada
-                </Badge>
-                <Badge color="amber" dot>
-                  Vencida
-                </Badge>
-                <Badge color="brand" variant="solid">
-                  Nueva
-                </Badge>
-                <Avatar size="sm">
-                  <AvatarFallback>SF</AvatarFallback>
-                </Avatar>
+              <div className="flex flex-wrap gap-x-6 gap-y-3">
+                <div className="flex items-center gap-2">
+                  <Checkbox defaultChecked id={copia} />
+                  <Label htmlFor={copia}>Enviar copia por email</Label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Checkbox id={recordatorio} />
+                  <Label htmlFor={recordatorio}>Recordar el vencimiento</Label>
+                </div>
+              </div>
+              <RadioGroup aria-label="Moneda" className="flex flex-wrap gap-x-6 gap-y-3" defaultValue="pesos">
+                <div className="flex items-center gap-2">
+                  <RadioGroupItem id={pesos} value="pesos" />
+                  <Label htmlFor={pesos}>Pesos</Label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <RadioGroupItem id={dolares} value="dolares" />
+                  <Label htmlFor={dolares}>Dólares</Label>
+                </div>
+              </RadioGroup>
+              <Slider label="Descuento" max={50} onValueChange={(valor) => setDescuento(valor as number)} showValue value={descuento} />
+              <div className="flex items-center justify-between gap-3">
+                <Label htmlFor={avisar}>Avisar al cliente</Label>
+                <Switch defaultChecked id={avisar} />
               </div>
             </CardContent>
           </Card>
 
-          <Alert variant="brand">
-            <BellIcon />
-            <AlertTitle>Vencen 7 facturas esta semana</AlertTitle>
-            <AlertDescription>La franja y el ícono toman el color de marca.</AlertDescription>
-          </Alert>
+          <div className="flex flex-col gap-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Acciones</CardTitle>
+                <CardDescription>El acento sólido es uno por pantalla; el resto es vidrio.</CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-col gap-4">
+                <div className="flex flex-wrap gap-2">
+                  <Button variant="accent">
+                    <PlusIcon />
+                    Nueva factura
+                  </Button>
+                  <Button>Guardar</Button>
+                  <Button variant="outline">Exportar</Button>
+                  <Button variant="secondary">Filtrar</Button>
+                  <Button variant="ghost">Cancelar</Button>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <Dialog>
+                    <DialogTrigger render={<Button variant="outline" />}>Abrir un diálogo</DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>¿Anular la factura?</DialogTitle>
+                        <DialogDescription>
+                          Se anula la 0013 y se avisa al cliente. El diálogo es el material más grueso del sistema.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <DialogClose render={<Button variant="ghost" />}>Cancelar</DialogClose>
+                        <DialogClose render={<Button variant="destructive" />}>Anular</DialogClose>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                  <Button
+                    onClick={async () => {
+                      // sonner se pide al primer clic, no en el arranque: el `Toaster` ya se carga
+                      // después de hidratar (ver `providers.tsx`).
+                      const { toast } = await import("sonner")
+                      toast("Factura guardada", {
+                        description: "Se le avisó al cliente.",
+                        action: { label: "Deshacer", onClick: () => toast.success("Restaurada") },
+                      })
+                    }}
+                    variant="outline"
+                  >
+                    Mostrar un toast
+                  </Button>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge>Borrador</Badge>
+                  <Badge color="brand">Enviada</Badge>
+                  <Badge color="green" dot>
+                    Pagada
+                  </Badge>
+                  <Badge color="amber" dot>
+                    Vencida
+                  </Badge>
+                  <Badge color="brand" variant="solid">
+                    Nueva
+                  </Badge>
+                  <Avatar size="sm">
+                    <AvatarFallback>SF</AvatarFallback>
+                  </Avatar>
+                </div>
+              </CardContent>
+            </Card>
 
-          <Tabs defaultValue="resumen">
-            <TabsList aria-label="Período">
-              <TabsTrigger value="resumen">Resumen</TabsTrigger>
-              <TabsTrigger value="cobros">Cobros</TabsTrigger>
-              <TabsTrigger value="clientes">Clientes</TabsTrigger>
-            </TabsList>
-            <TabsContent className="text-gray-900" value="resumen">
-              La pastilla se desliza de una pestaña a otra.
-            </TabsContent>
-            <TabsContent className="text-gray-900" value="cobros">
-              4 cobros pendientes de conciliar.
-            </TabsContent>
-            <TabsContent className="text-gray-900" value="clientes">
-              23 clientes activos.
-            </TabsContent>
-          </Tabs>
+            <Alert variant="brand">
+              <BellIcon />
+              <AlertTitle>Vencen 7 facturas esta semana</AlertTitle>
+              <AlertDescription>La franja y el ícono toman el color de marca.</AlertDescription>
+            </Alert>
+
+            <Tabs defaultValue="resumen">
+              <TabsList aria-label="Período">
+                <TabsTrigger value="resumen">Resumen</TabsTrigger>
+                <TabsTrigger value="cobros">Cobros</TabsTrigger>
+                <TabsTrigger value="clientes">Clientes</TabsTrigger>
+              </TabsList>
+              <TabsContent className="text-gray-900" value="resumen">
+                La pastilla se desliza de una pestaña a otra.
+              </TabsContent>
+              <TabsContent className="text-gray-900" value="cobros">
+                4 cobros pendientes de conciliar.
+              </TabsContent>
+              <TabsContent className="text-gray-900" value="clientes">
+                23 clientes activos.
+              </TabsContent>
+            </Tabs>
+          </div>
         </div>
-      </div>
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Nº</TableHead>
-            <TableHead>Cliente</TableHead>
-            <TableHead>Concepto</TableHead>
-            <TableHead>Estado</TableHead>
-            <TableHead numeric>Monto</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {FACTURAS.map((factura) => (
-            <TableRow key={factura.id}>
-              <TableCell className="text-label-13-mono">{factura.id}</TableCell>
-              <TableCell>{factura.cliente}</TableCell>
-              <TableCell>{factura.concepto}</TableCell>
-              <TableCell>
-                <Badge color={factura.color} size="sm">
-                  {factura.estado}
-                </Badge>
-              </TableCell>
-              <TableCell numeric>{factura.monto}</TableCell>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Nº</TableHead>
+              <TableHead>Cliente</TableHead>
+              <TableHead>Concepto</TableHead>
+              <TableHead>Estado</TableHead>
+              <TableHead numeric>Monto</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </section>
+          </TableHeader>
+          <TableBody>
+            {FACTURAS.map((factura) => (
+              <TableRow key={factura.id}>
+                <TableCell className="text-label-13-mono">{factura.id}</TableCell>
+                <TableCell>{factura.cliente}</TableCell>
+                <TableCell>{factura.concepto}</TableCell>
+                <TableCell>
+                  <Badge color={factura.color} size="sm">
+                    {factura.estado}
+                  </Badge>
+                </TableCell>
+                <TableCell numeric>{factura.monto}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </section>
+    </TooltipProvider>
   )
 }
 
