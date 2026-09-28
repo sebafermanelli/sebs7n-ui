@@ -312,7 +312,6 @@ writeFileSync(join(demosDir, "registry.ts"), registryLines.join("\n"))
 
 // Markdown plano, uno por página.
 const publicDir = join(here, "public")
-mkdirSync(publicDir, { recursive: true })
 rmSync(join(publicDir, "docs"), { recursive: true, force: true })
 rmSync(join(publicDir, "r"), { recursive: true, force: true })
 mkdirSync(join(publicDir, "docs/components"), { recursive: true })
