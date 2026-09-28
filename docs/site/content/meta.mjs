@@ -182,6 +182,7 @@ export const COMPONENTS = {
       "`subtle` es el default y el que va en una tabla o en una lista. `solid` solo para destacar uno entre muchos.",
       "El color tiene que significar algo consistente en toda la app: `green` pagado, `amber` pendiente, `red` vencido. No lo elijas por estética.",
       "`size=\"sm\"` dentro de una fila de tabla; `md` suelto.",
+      "Adentro de un ítem seleccionado (fila de tabla, ítem de menú o del Sidebar) el `subtle` pasa solo a un contorno en el color de contraste, y el `solid` brand se invierte: sobre el acento sólido el tono en alfa no se lee.",
     ],
     props: {
       Badge: {
@@ -1182,6 +1183,7 @@ export const COMPONENTS = {
     usage: [
       "**`NavigationMenu` si los ítems navegan, `DropdownMenu` si ejecutan algo.** No es cosmético: el modo de navegación por links de un lector no ve los `menuitem`.",
       "**`DropdownMenuLabel` va dentro de `DropdownMenuGroup`.** Suelto, Base UI tira la página abajo.",
+      "**Color propio adentro de un ítem seleccionable → `selectionSecondaryClassName`.** La selección es acento sólido: una fecha en `text-gray-900` o un ícono en `text-green-900` desaparecen sobre el azul. `cn(\"text-gray-900\", selectionSecondaryClassName)` pasa a `text-on-selection` cuando el ítem está resaltado; para bordes o fondos, el variant `inside-selection:` directo. Un `Badge` adentro se adapta solo.",
       "El trigger usa `render={<Button … />}`.",
       "`variant=\"destructive\"` para el ítem que borra, y siempre al final, separado.",
       "Más de ~10 ítems: paleta de comandos o `Combobox`, no un menú.",
@@ -1374,6 +1376,7 @@ export const COMPONENTS = {
     usage: [
       "**Si los ítems navegan, `NavigationMenu`; si ejecutan algo, `DropdownMenu`.** El menú de idioma y el de usuario son `DropdownMenu`.",
       "`NavigationMenuViewport` va **una sola vez**, hermano de la lista: el panel es uno para todos los ítems.",
+      "**Color propio adentro de un ítem seleccionable → `selectionSecondaryClassName`.** La selección es acento sólido: una fecha en `text-gray-900` o un ícono en `text-green-900` desaparecen sobre el azul. `cn(\"text-gray-900\", selectionSecondaryClassName)` pasa a `text-on-selection` cuando el ítem está en la página actual (`active`); para bordes o fondos, el variant `inside-selection:` directo. Un `Badge` adentro se adapta solo.",
       "Adentro de un `<nav>` que ya existe, `render={<div />}` para no anidar dos landmarks.",
     ],
     props: {
@@ -1528,6 +1531,7 @@ export const COMPONENTS = {
     usage: [
       "**El paquete no guarda el estado de colapsado.** Guardalo en una cookie y pasá `defaultCollapsed` desde el layout: así el server ya renderiza el ancho correcto y no hay salto.",
       "`SidebarItem` es un `<a>`: con Next, `render={<Link href />}`.",
+      "**Color propio adentro de un ítem seleccionable → `selectionSecondaryClassName`.** La selección es acento sólido: una fecha en `text-gray-900` o un ícono en `text-green-900` desaparecen sobre el azul. `cn(\"text-gray-900\", selectionSecondaryClassName)` pasa a `text-on-selection` cuando el ítem está activo; para bordes o fondos, el variant `inside-selection:` directo. Un `Badge` adentro se adapta solo.",
       "Lo que sea texto del header se oculta con `group-data-collapsed/sidebar:hidden`.",
       "Grupos de 3 a 7 ítems con `SidebarGroupLabel`. Si hay más de ~20 ítems en total, hace falta una paleta de comandos.",
     ],
@@ -1731,6 +1735,7 @@ export const COMPONENTS = {
     usage: [
       "**Números a la derecha con `numeric`, texto a la izquierda.** Nunca centrado.",
       "`density=\"compact\"` para más de ~20 filas visibles.",
+      "**Color propio adentro de un ítem seleccionable → `selectionSecondaryClassName`.** La selección es acento sólido: una fecha en `text-gray-900` o un ícono en `text-green-900` desaparecen sobre el azul. `cn(\"text-gray-900\", selectionSecondaryClassName)` pasa a `text-on-selection` cuando el ítem está seleccionado (`data-state=\"selected\"` en la fila); para bordes o fondos, el variant `inside-selection:` directo. Un `Badge` adentro se adapta solo.",
       "En mobile una tabla de más de 3 columnas no entra: o hacés scroll horizontal con la primera columna fija, o cambiás a tarjetas.",
       "Las acciones de fila van en la última columna, en un `DropdownMenu`, no como tres botones sueltos.",
       "El `thead` y el `tfoot` usan `bg-gray-alpha-100`: es la banda, no la superficie.",

@@ -45,7 +45,7 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
     <tr
       data-slot="table-row"
       className={cn(
-        "group/table-row h-12 border-b border-gray-alpha-400 transition-control group-data-[density=compact]/table:h-10",
+        "group/table-row group/selectable h-12 border-b border-gray-alpha-400 transition-control group-data-[density=compact]/table:h-10",
         // El hover es un velo, no un fondo: `gray-alpha-100` es un 5 % de negro en claro y un 7 %
         // de blanco en oscuro. Un gris opaco tapaba el vidrio de la tabla y la fila parecía
         // recortada y pegada encima. La elegida es la selección de macOS (2.0), como una fila de

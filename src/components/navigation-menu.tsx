@@ -178,7 +178,9 @@ function NavigationMenuLink({ className, title, description, icon, children, ...
         linkBaseClassName,
         // La página actual es la selección (2.0), igual que el ítem activo del Sidebar: acento
         // sólido, y el título, la descripción y el ícono pasan al color de contraste.
-        "group/nav-link block p-2 text-body text-gray-1000 hover:bg-gray-alpha-100 data-[active]:bg-selection data-[active]:text-on-selection",
+        // `group/selectable` solo acá: el link de la barra no se pinta de acento, y lo de adentro
+        // no tiene que pasar a blanco.
+        "group/nav-link group/selectable block p-2 text-body text-gray-1000 hover:bg-gray-alpha-100 data-[active]:bg-selection data-[active]:text-on-selection",
         className
       )}
       {...props}

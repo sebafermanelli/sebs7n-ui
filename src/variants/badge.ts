@@ -23,7 +23,15 @@ const badgeVariantsBase = cva(
   "inline-flex w-fit shrink-0 items-center justify-center gap-1.5 overflow-hidden rounded-full border text-callout whitespace-nowrap [&>svg]:pointer-events-none [&>svg]:size-3",
   {
     variants: {
-      variant: { subtle: "shadow-chip", solid: "border-transparent sheen shadow-button" },
+      // Adentro de un ítem seleccionado (`inside-selection`, ver theme.css) el tono en alfa queda
+      // sin contraste sobre el acento: el subtle pasa a contorno en el color de contraste, como
+      // las etiquetas del Finder en una fila seleccionada. Es automático para que la app no tenga
+      // que acordarse en cada fila.
+      variant: {
+        subtle:
+          "shadow-chip inside-selection:border-on-selection/60 inside-selection:bg-transparent inside-selection:text-on-selection inside-selection:shadow-none",
+        solid: "border-transparent sheen shadow-button",
+      },
       color: {
         gray: "", brand: "", red: "", amber: "", green: "", blue: "", teal: "", purple: "", pink: "",
       },
@@ -40,7 +48,8 @@ const badgeVariantsBase = cva(
       { variant: "subtle", color: "purple", className: "border-purple-700/(--sf-tint-border) bg-purple-700/(--sf-tint-fill) text-purple-ink" },
       { variant: "subtle", color: "pink", className: "border-pink-700/(--sf-tint-border) bg-pink-700/(--sf-tint-fill) text-pink-ink" },
       { variant: "solid", color: "gray", className: "bg-gray-1000 text-background-100 shadow-button-inverted" },
-      { variant: "solid", color: "brand", className: "bg-brand-700 text-brand-contrast" },
+      // El brand sólido es el color de la selección: adentro de un ítem seleccionado desaparecía.
+      { variant: "solid", color: "brand", className: "bg-brand-700 text-brand-contrast inside-selection:bg-on-selection inside-selection:text-selection" },
     ],
     defaultVariants: { variant: "subtle", color: "gray", size: "md" },
   }

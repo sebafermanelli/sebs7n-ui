@@ -19,10 +19,11 @@ export type MenuInsetProps = { inset?: boolean }
  * Base UI pone `data-highlighted` tanto con el puntero como con las flechas, igual que macOS. Un
  * ítem deshabilitado no lo toma aunque quede resaltado: se queda transparente y en `gray-700`.
  * `group/menu-item` es para lo que adentro tiene color propio (el atajo): ver
- * `menuItemSecondaryClassName`.
+ * `menuItemSecondaryClassName`. `group/selectable` es el mismo gancho, compartido con los otros
+ * ítems seleccionables: ver `selectionSecondaryClassName`.
  */
 export const menuItemClassName =
-  "group/menu-item relative flex h-6 pointer-coarse:h-11 cursor-pointer items-center gap-2 rounded-control px-2 text-body text-gray-1000 outline-none select-none transition-control data-highlighted:bg-selection data-highlighted:text-on-selection data-highlighted:[&_svg]:text-on-selection active:bg-selection data-disabled:cursor-not-allowed data-disabled:text-gray-700 data-disabled:active:bg-transparent data-disabled:data-highlighted:bg-transparent data-disabled:data-highlighted:text-gray-700 data-disabled:data-highlighted:[&_svg]:text-gray-700 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+  "group/menu-item group/selectable relative flex h-6 pointer-coarse:h-11 cursor-pointer items-center gap-2 rounded-control px-2 text-body text-gray-1000 outline-none select-none transition-control data-highlighted:bg-selection data-highlighted:text-on-selection data-highlighted:[&_svg]:text-on-selection active:bg-selection data-disabled:cursor-not-allowed data-disabled:text-gray-700 data-disabled:active:bg-transparent data-disabled:data-highlighted:bg-transparent data-disabled:data-highlighted:text-gray-700 data-disabled:data-highlighted:[&_svg]:text-gray-700 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
 
 /**
  * El texto secundario de un ítem —el atajo de teclado—. En reposo es `gray-900`; con el ítem

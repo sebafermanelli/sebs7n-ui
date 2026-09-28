@@ -7,6 +7,19 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /**
+ * Adentro de un ítem seleccionado (2.0). La selección es acento sólido, y lo que adentro tiene
+ * color propio —una fecha en gris, un badge rojo— deja de leerse sobre el azul: en macOS todo lo
+ * de una fila seleccionada pasa a blanco. Los ítems seleccionables llevan `group/selectable`
+ * (MenuItem, SidebarItem, TableRow, NavigationMenuLink con `title`) y cada uno marca su estado a
+ * su manera; este variant junta los cuatro para que la app escriba una sola clase:
+ * `inside-selection:text-on-selection`, o `selectionSecondaryClassName`.
+ *
+ * Un ítem de menú deshabilitado conserva `data-highlighted` pero no se pinta: no cuenta.
+ * `:where()` deja la especificidad en la de la clase, igual que `dark:`.
+ */
+@custom-variant inside-selection (&:where(.group\/selectable[data-highlighted]:not([data-disabled]) *, .group\/selectable[data-active] *, .group\/selectable[aria-current="page"] *, .group\/selectable[data-state="selected"] *));
+
+/**
  * Este `@theme` va sin `inline` a propósito: lo que se declara acá sale como variable en
  * `:root`, y la app lo puede pisar igual que pisa `--brand-base`.
  */

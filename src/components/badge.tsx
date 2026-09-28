@@ -37,7 +37,7 @@ function Badge({ className, variant = "subtle", color = "gray", size = "md", dot
     className: cn(badgeVariants({ variant, color, size }), className),
     children: (
       <>
-        {dot && <span data-slot="badge-dot" aria-hidden="true" className={cn("size-1.5 rounded-full", badgeDotColor[color])} />}
+        {dot && <span data-slot="badge-dot" aria-hidden="true" className={cn("size-1.5 rounded-full inside-selection:bg-on-selection", badgeDotColor[color])} />}
         {children}
       </>
     ),
