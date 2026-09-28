@@ -174,7 +174,7 @@ describe("Toolbar", () => {
 
     // Con `render={<ToggleGroupItem />}`: el chip de Toggle, sin nada del Button.
     const negrita = control("Negrita")
-    expect(negrita).toHaveClass("rounded-full", "border-dashed")
+    expect(negrita).toHaveClass("rounded-full", "border-gray-700")
     expect(negrita.className).not.toMatch(/\bsize-6\b/)
     expect(negrita.className).not.toMatch(/hover:bg-gray-alpha-200/)
   })

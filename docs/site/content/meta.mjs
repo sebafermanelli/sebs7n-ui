@@ -842,11 +842,11 @@ export const COMPONENTS = {
   toggle: {
     title: "Toggle",
     group: "formularios",
-    description: "Un chip de filtro que queda apretado: apagado con borde punteado, prendido sólido y con fondo.",
+    description: "Un chip de filtro que queda apretado: borde lleno siempre; prendido suma fondo, borde más oscuro y texto pleno.",
     keyboard: [["Espacio · Enter", "Alterna."]],
     a11y: [
       "Emite `aria-pressed`. Sin texto (solo ícono) necesita `aria-label`.",
-      "El estado se ve por la forma del borde —punteado apagado, sólido prendido— además del fondo y de `data-pressed`: no depende del color, y por eso nunca usa la marca.",
+      "El estado se ve por el fondo, el borde más oscuro y el texto pleno, además de `data-pressed`: son tres señales de luminosidad, no de tono, y por eso nunca usa la marca. El borde apagado (`gray-700`) pasa el 3:1 de WCAG 1.4.11.",
     ],
     usage: [
       "Si la acción navega o abre algo, es un `Button`.",

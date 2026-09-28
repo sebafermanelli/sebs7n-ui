@@ -10,11 +10,15 @@ import { ToggleGroup, ToggleGroupItem } from "../../src/components/toggle-group"
 import { cardVariants } from "../../src/variants/card"
 
 describe("Toggle (chip)", () => {
-  it("apagado punteado, prendido sólido con fondo, sin color de marca", async () => {
+  // Borde lleno en los dos estados (el punteado se leía como un hueco para soltar algo, no como
+  // un control). Prendido se distingue sin depender del color: fondo, borde más oscuro y texto
+  // pleno.
+  it("borde lleno siempre; prendido con fondo, borde y texto más fuertes, sin color de marca", async () => {
     render(<Toggle>Activos</Toggle>)
     const chip = screen.getByRole("button", { name: "Activos" })
-    expect(chip).toHaveClass("rounded-full", "border-dashed", "border-gray-700", "text-gray-900", "hover:border-gray-800")
-    expect(chip).toHaveClass("data-pressed:border-solid", "data-pressed:border-gray-900", "data-pressed:bg-gray-alpha-200")
+    expect(chip).toHaveClass("rounded-full", "border", "border-gray-700", "text-gray-900", "hover:border-gray-800")
+    expect(chip.className).not.toMatch(/border-(dashed|dotted)/)
+    expect(chip).toHaveClass("data-pressed:border-gray-900", "data-pressed:bg-gray-alpha-200", "data-pressed:text-gray-1000")
     expect(chip.className).not.toMatch(/brand/)
     await userEvent.click(chip)
     expect(chip).toHaveAttribute("aria-pressed", "true")
