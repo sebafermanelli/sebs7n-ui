@@ -69,3 +69,13 @@ describe("escala tipográfica", () => {
     expect([...inCss].sort()).toEqual([...TYPE_SCALE].sort())
   })
 })
+
+describe("fuente", () => {
+  it("la sans es Inter en todos los sistemas, con system-ui solo como respaldo", () => {
+    expect(theme).toMatch(/--font-sans: var\(--font-inter\), "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;/)
+  })
+
+  it("la mono es la del sistema: 0 KB y en código la diferencia no molesta", () => {
+    expect(theme).toMatch(/--font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;/)
+  })
+})

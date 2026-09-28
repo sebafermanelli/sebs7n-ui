@@ -16,7 +16,6 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
-    "geist": "^1.7.2",
     "lucide-react": "^1.47.0",
     "marked": "^18.0.14",
     "next": "^16.2.7",

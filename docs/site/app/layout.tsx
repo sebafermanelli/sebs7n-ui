@@ -1,6 +1,5 @@
 import type { Metadata } from "next"
-import { GeistMono } from "geist/font/mono"
-import { GeistSans } from "geist/font/sans"
+import { Inter } from "next/font/google"
 
 import site from "@/.generated/site.json"
 import { Providers } from "./providers"
@@ -13,9 +12,12 @@ export const metadata: Metadata = {
   openGraph: { title: "sebs7n-ui", description: site.blurb, type: "website", locale: "es_AR" },
 }
 
+// Inter variable con la variable que lee `--font-sans` del paquete.
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" })
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html className={`${GeistSans.variable} ${GeistMono.variable}`} lang="es" suppressHydrationWarning>
+    <html className={inter.variable} lang="es" suppressHydrationWarning>
       {/* La luz ambiente viene prendida: el sitio muestra el material, y sobre una página lisa
           el vidrio no tiene nada que desenfocar. El Playground la puede apagar. */}
       <body className="bg-ambient">
