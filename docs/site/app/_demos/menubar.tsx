@@ -81,7 +81,7 @@ export function Editor() {
         <MenubarTrigger>Ver</MenubarTrigger>
         <MenubarContent>
           <MenubarGroup>
-            <MenubarLabel>Paneles</MenubarLabel>
+            <MenubarLabel inset>Paneles</MenubarLabel>
             <MenubarCheckboxItem defaultChecked>
               Barra lateral
               <MenubarShortcut>⌘B</MenubarShortcut>
@@ -90,7 +90,7 @@ export function Editor() {
           </MenubarGroup>
           <MenubarSeparator />
           <MenubarGroup>
-            <MenubarLabel>Tema</MenubarLabel>
+            <MenubarLabel inset>Tema</MenubarLabel>
             <MenubarRadioGroup onValueChange={setTema} value={tema}>
               <MenubarRadioItem value="claro">Claro</MenubarRadioItem>
               <MenubarRadioItem value="oscuro">Oscuro</MenubarRadioItem>

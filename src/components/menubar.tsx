@@ -6,7 +6,17 @@ import { Menubar as MenubarPrimitive } from "@base-ui/react/menubar"
 import { CheckIcon, ChevronRightIcon } from "lucide-react"
 
 import { cn, type WithClassName } from "../lib/utils.js"
-import { menuItemClassName, menuItemSecondaryClassName, menuLabelClassName, menuPopupClassName, menuSeparatorClassName, type MenuInsetProps } from "../variants/menu.js"
+import {
+  menuGutterClassName,
+  menuIndicatorClassName,
+  menuInsetClassName,
+  menuItemClassName,
+  menuItemSecondaryClassName,
+  menuLabelClassName,
+  menuPopupClassName,
+  menuSeparatorClassName,
+  type MenuInsetProps,
+} from "../variants/menu.js"
 
 /**
  * La barra de menús de una aplicación: Archivo, Editar, Ver.
@@ -69,7 +79,7 @@ function MenubarContent({ className, align = "start", alignOffset = 0, side = "b
   return (
     <MenuPrimitive.Portal>
       <MenuPrimitive.Positioner align={align} alignOffset={alignOffset} side={side} sideOffset={sideOffset} className="isolate z-50 outline-none">
-        <MenuPrimitive.Popup data-slot="menubar-content" className={cn(menuPopupClassName, "min-w-48", className)} {...props} />
+        <MenuPrimitive.Popup data-slot="menubar-content" className={cn(menuPopupClassName, className)} {...props} />
       </MenuPrimitive.Positioner>
     </MenuPrimitive.Portal>
   )
@@ -86,7 +96,7 @@ function MenubarLabel({ className, inset, ...props }: MenubarLabelProps) {
     <MenuPrimitive.GroupLabel
       data-slot="menubar-label"
       data-inset={inset ? "" : undefined}
-      className={cn(menuLabelClassName, "data-inset:pl-8", className)}
+      className={cn(menuLabelClassName, menuInsetClassName, className)}
       {...props}
     />
   )
@@ -105,7 +115,8 @@ function MenubarItem({ className, inset, variant = "default", ...props }: Menuba
         menuItemClassName,
         // El destructivo resaltado va en rojo sólido con su texto de contraste: el mismo par que
         // el botón `destructive`. Sobre el acento, el rojo del texto no se leería.
-        "data-inset:pl-8 data-[variant=destructive]:text-red-900 data-[variant=destructive]:data-highlighted:not-data-disabled:bg-red-800 data-[variant=destructive]:data-highlighted:not-data-disabled:text-button-error-fg data-[variant=destructive]:data-highlighted:not-data-disabled:[&_svg]:text-button-error-fg",
+        menuInsetClassName,
+        "data-[variant=destructive]:text-red-900 data-[variant=destructive]:data-highlighted:not-data-disabled:bg-red-800 data-[variant=destructive]:data-highlighted:not-data-disabled:text-button-error-fg data-[variant=destructive]:data-highlighted:not-data-disabled:[&_svg]:text-button-error-fg",
         className
       )}
       {...props}
@@ -114,18 +125,19 @@ function MenubarItem({ className, inset, variant = "default", ...props }: Menuba
 }
 
 /**
- * El tilde va a la **izquierda**, al revés que en `DropdownMenu`.
+ * El tilde va a la **izquierda**, en la canaleta de `menuGutterClassName`, igual que en
+ * `DropdownMenu` y `ContextMenu` desde 2.0.
  *
- * Es la convención de los menús de aplicación de macOS y Windows, y acá importa
- * porque la derecha ya está ocupada por el atajo (`MenubarShortcut`): un tilde
- * y un `⌘B` peleando por el mismo borde se leen como una sola columna de ruido.
+ * Es la convención de los menús de aplicación de macOS, y acá importa además porque la
+ * derecha ya está ocupada por el atajo (`MenubarShortcut`): un tilde y un `⌘B` peleando
+ * por el mismo borde se leen como una sola columna de ruido.
  */
 type MenubarCheckboxItemProps = WithClassName<MenuPrimitive.CheckboxItem.Props>
 
 function MenubarCheckboxItem({ className, children, ...props }: MenubarCheckboxItemProps) {
   return (
-    <MenuPrimitive.CheckboxItem data-slot="menubar-checkbox-item" className={cn(menuItemClassName, "pl-8", className)} {...props}>
-      <MenuPrimitive.CheckboxItemIndicator className="absolute left-2 flex items-center">
+    <MenuPrimitive.CheckboxItem data-slot="menubar-checkbox-item" className={cn(menuItemClassName, menuGutterClassName, className)} {...props}>
+      <MenuPrimitive.CheckboxItemIndicator data-slot="menubar-item-indicator" className={menuIndicatorClassName}>
         <CheckIcon />
       </MenuPrimitive.CheckboxItemIndicator>
       {children}
@@ -141,8 +153,8 @@ type MenubarRadioItemProps = WithClassName<MenuPrimitive.RadioItem.Props>
 
 function MenubarRadioItem({ className, children, ...props }: MenubarRadioItemProps) {
   return (
-    <MenuPrimitive.RadioItem data-slot="menubar-radio-item" className={cn(menuItemClassName, "pl-8", className)} {...props}>
-      <MenuPrimitive.RadioItemIndicator className="absolute left-2 flex items-center">
+    <MenuPrimitive.RadioItem data-slot="menubar-radio-item" className={cn(menuItemClassName, menuGutterClassName, className)} {...props}>
+      <MenuPrimitive.RadioItemIndicator data-slot="menubar-item-indicator" className={menuIndicatorClassName}>
         <CheckIcon />
       </MenuPrimitive.RadioItemIndicator>
       {children}
@@ -186,7 +198,7 @@ function MenubarSubTrigger({ className, inset, children, ...props }: MenubarSubT
     <MenuPrimitive.SubmenuTrigger
       data-slot="menubar-sub-trigger"
       data-inset={inset ? "" : undefined}
-      className={cn(menuItemClassName, "data-inset:pl-8 data-popup-open:bg-selection data-popup-open:text-on-selection data-popup-open:[&_svg]:text-on-selection", className)}
+      className={cn(menuItemClassName, menuInsetClassName, "data-popup-open:bg-selection data-popup-open:text-on-selection data-popup-open:[&_svg]:text-on-selection", className)}
       {...props}
     >
       {children}

@@ -9,15 +9,15 @@ import { useLabels } from "../lib/labels.js"
 import { useModality } from "../internal/modality.js"
 import { cn, type WithClassName } from "../lib/utils.js"
 import { inputShellButtonClassName, inputShellClassName, inputShellInputClassName } from "../variants/input.js"
-import { menuItemClassName, menuSeparatorClassName } from "../variants/menu.js"
+import { menuItemClassName, menuLabelClassName, menuSeparatorClassName } from "../variants/menu.js"
 import {
   ComboboxCollection,
   ComboboxContent,
   ComboboxEmpty,
   ComboboxGroup,
-  ComboboxLabel,
   ComboboxList,
   ComboboxStatus,
+  type ComboboxLabelProps,
 } from "./combobox.js"
 
 // Texto libre con sugerencias: el valor es el texto del input (value/onValueChange son strings).
@@ -27,7 +27,6 @@ const useAutocompleteFilter = AutocompletePrimitive.useFilter
 const AutocompleteContent = ComboboxContent
 const AutocompleteList = ComboboxList
 const AutocompleteGroup = ComboboxGroup
-const AutocompleteLabel = ComboboxLabel
 const AutocompleteCollection = ComboboxCollection
 const AutocompleteEmpty = ComboboxEmpty
 const AutocompleteStatus = ComboboxStatus
@@ -84,6 +83,12 @@ type AutocompleteItemProps = WithClassName<AutocompletePrimitive.Item.Props>
 // Sin check: una sugerencia no queda "elegida", completa el texto.
 function AutocompleteItem({ className, ...props }: AutocompleteItemProps) {
   return <AutocompletePrimitive.Item data-slot="autocomplete-item" className={cn(menuItemClassName, "w-full", className)} {...props} />
+}
+
+// Propio y no el de Combobox: las sugerencias no llevan tilde, así que no hay canaleta con la
+// que alinear y el título se queda en `px-2`, como ellas.
+function AutocompleteLabel({ className, ...props }: ComboboxLabelProps) {
+  return <AutocompletePrimitive.GroupLabel data-slot="autocomplete-label" className={cn(menuLabelClassName, className)} {...props} />
 }
 
 type AutocompleteSeparatorProps = WithClassName<AutocompletePrimitive.Separator.Props>

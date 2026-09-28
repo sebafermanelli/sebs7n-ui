@@ -5,7 +5,17 @@ import { ContextMenu as ContextMenuPrimitive } from "@base-ui/react/context-menu
 import { CheckIcon, ChevronRightIcon } from "lucide-react"
 
 import { cn, type WithClassName } from "../lib/utils.js"
-import { menuItemClassName, menuItemSecondaryClassName, menuLabelClassName, menuPopupClassName, menuSeparatorClassName, type MenuInsetProps } from "../variants/menu.js"
+import {
+  menuGutterClassName,
+  menuIndicatorClassName,
+  menuInsetClassName,
+  menuItemClassName,
+  menuItemSecondaryClassName,
+  menuLabelClassName,
+  menuPopupClassName,
+  menuSeparatorClassName,
+  type MenuInsetProps,
+} from "../variants/menu.js"
 
 /**
  * El menú del botón derecho: las mismas acciones, ancladas al puntero.
@@ -123,7 +133,7 @@ function ContextMenuLabel({ className, inset, ...props }: ContextMenuLabelProps)
     <ContextMenuPrimitive.GroupLabel
       data-slot="context-menu-label"
       data-inset={inset ? "" : undefined}
-      className={cn(menuLabelClassName, "data-inset:pl-8", className)}
+      className={cn(menuLabelClassName, menuInsetClassName, className)}
       {...props}
     />
   )
@@ -142,7 +152,8 @@ function ContextMenuItem({ className, inset, variant = "default", ...props }: Co
         menuItemClassName,
         // El destructivo resaltado va en rojo sólido con su texto de contraste: el mismo par que
         // el botón `destructive`. Sobre el acento, el rojo del texto no se leería.
-        "data-inset:pl-8 data-[variant=destructive]:text-red-900 data-[variant=destructive]:data-highlighted:not-data-disabled:bg-red-800 data-[variant=destructive]:data-highlighted:not-data-disabled:text-button-error-fg data-[variant=destructive]:data-highlighted:not-data-disabled:[&_svg]:text-button-error-fg",
+        menuInsetClassName,
+        "data-[variant=destructive]:text-red-900 data-[variant=destructive]:data-highlighted:not-data-disabled:bg-red-800 data-[variant=destructive]:data-highlighted:not-data-disabled:text-button-error-fg data-[variant=destructive]:data-highlighted:not-data-disabled:[&_svg]:text-button-error-fg",
         className
       )}
       {...props}
@@ -154,11 +165,11 @@ type ContextMenuCheckboxItemProps = WithClassName<ContextMenuPrimitive.CheckboxI
 
 function ContextMenuCheckboxItem({ className, children, ...props }: ContextMenuCheckboxItemProps) {
   return (
-    <ContextMenuPrimitive.CheckboxItem data-slot="context-menu-checkbox-item" className={cn(menuItemClassName, "pr-8", className)} {...props}>
-      {children}
-      <ContextMenuPrimitive.CheckboxItemIndicator className="absolute right-2 flex items-center">
+    <ContextMenuPrimitive.CheckboxItem data-slot="context-menu-checkbox-item" className={cn(menuItemClassName, menuGutterClassName, className)} {...props}>
+      <ContextMenuPrimitive.CheckboxItemIndicator data-slot="context-menu-item-indicator" className={menuIndicatorClassName}>
         <CheckIcon />
       </ContextMenuPrimitive.CheckboxItemIndicator>
+      {children}
     </ContextMenuPrimitive.CheckboxItem>
   )
 }
@@ -171,11 +182,11 @@ type ContextMenuRadioItemProps = WithClassName<ContextMenuPrimitive.RadioItem.Pr
 
 function ContextMenuRadioItem({ className, children, ...props }: ContextMenuRadioItemProps) {
   return (
-    <ContextMenuPrimitive.RadioItem data-slot="context-menu-radio-item" className={cn(menuItemClassName, "pr-8", className)} {...props}>
-      {children}
-      <ContextMenuPrimitive.RadioItemIndicator className="absolute right-2 flex items-center">
+    <ContextMenuPrimitive.RadioItem data-slot="context-menu-radio-item" className={cn(menuItemClassName, menuGutterClassName, className)} {...props}>
+      <ContextMenuPrimitive.RadioItemIndicator data-slot="context-menu-item-indicator" className={menuIndicatorClassName}>
         <CheckIcon />
       </ContextMenuPrimitive.RadioItemIndicator>
+      {children}
     </ContextMenuPrimitive.RadioItem>
   )
 }
@@ -216,7 +227,7 @@ function ContextMenuSubTrigger({ className, inset, children, ...props }: Context
     <ContextMenuPrimitive.SubmenuTrigger
       data-slot="context-menu-sub-trigger"
       data-inset={inset ? "" : undefined}
-      className={cn(menuItemClassName, "data-inset:pl-8 data-popup-open:bg-selection data-popup-open:text-on-selection data-popup-open:[&_svg]:text-on-selection", className)}
+      className={cn(menuItemClassName, menuInsetClassName, "data-popup-open:bg-selection data-popup-open:text-on-selection data-popup-open:[&_svg]:text-on-selection", className)}
       {...props}
     >
       {children}

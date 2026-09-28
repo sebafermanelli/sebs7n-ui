@@ -158,8 +158,9 @@ describe("Menubar", () => {
 
     const check = await screen.findByRole("menuitemcheckbox", { name: "Barra lateral" })
     expect(check).toHaveAttribute("aria-checked", "true")
-    expect(check).toHaveClass("pl-8")
+    expect(check).toHaveClass("pl-7")
     expect(check.className).not.toMatch(/\bpr-8\b/)
+    expect(check.querySelector("[data-slot=menubar-item-indicator]")).toHaveClass("left-2")
   })
 
   it("el título abierto se marca con fondo y comparte la pastilla del sistema", async () => {
@@ -169,7 +170,7 @@ describe("Menubar", () => {
     await userEvent.click(titulo("Archivo"))
 
     const panel = await screen.findByRole("menu")
-    expect(panel).toHaveClass("shadow-menu", "rounded-[calc(var(--radius-control)+--spacing(1))]", "material-popover")
+    expect(panel).toHaveClass("shadow-menu", "rounded-[calc(var(--radius-control)+--spacing(1.5))]", "material-popover", "p-1.5", "min-w-48")
     expect(titulo("Archivo")).toHaveAttribute("data-popup-open")
   })
 })

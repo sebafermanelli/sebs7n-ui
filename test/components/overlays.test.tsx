@@ -24,7 +24,7 @@ import {
   DropdownMenuTrigger,
 } from "../../src/components/dropdown-menu"
 import { Popover, PopoverContent, PopoverHeader, PopoverTitle, PopoverTrigger } from "../../src/components/popover"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../src/components/select"
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../../src/components/select"
 import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "../../src/components/sheet"
 import { Toaster } from "../../src/components/sonner"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../src/components/tooltip"
@@ -112,7 +112,7 @@ describe("DropdownMenu", () => {
       </DropdownMenu>
     )
     await userEvent.click(screen.getByRole("button", { name: "Más" }))
-    expect(await screen.findByText("Viaje")).toHaveClass("text-callout", "text-gray-900")
+    expect(await screen.findByText("Viaje")).toHaveClass("text-subheadline", "font-semibold", "text-gray-900")
   })
 })
 
@@ -135,6 +135,31 @@ describe("Select", () => {
     await userEvent.click(trigger)
     await userEvent.click(await screen.findByRole("option", { name: "USD" }))
     expect(onValueChange).toHaveBeenCalledWith("usd", expect.anything())
+  })
+
+  it("macOS (2.0): el tilde de la opción elegida va a la izquierda y todas reservan la canaleta", async () => {
+    render(
+      <Select defaultValue="ars" defaultOpen items={{ ars: "Pesos", usd: "Dólares" }}>
+        <SelectTrigger aria-label="Moneda">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectLabel>Monedas</SelectLabel>
+            <SelectItem value="ars">Pesos</SelectItem>
+            <SelectItem value="usd">Dólares</SelectItem>
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+    )
+    const elegida = await screen.findByRole("option", { name: "Pesos" })
+    const otra = screen.getByRole("option", { name: "Dólares" })
+    expect(elegida).toHaveClass("pl-7")
+    expect(otra).toHaveClass("pl-7")
+    expect(elegida.className).not.toMatch(/\bpr-8\b/)
+    expect(elegida.querySelector("[data-slot=select-item-indicator]")).toHaveClass("left-2")
+    // El título alinea con el texto de las opciones, no con el tilde.
+    expect(screen.getByText("Monedas")).toHaveClass("pl-7")
   })
 })
 

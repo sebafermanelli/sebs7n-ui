@@ -137,7 +137,7 @@ describe("ContextMenu", () => {
     abrirConClickDerecho()
 
     const menu = await screen.findByRole("menu")
-    expect(menu).toHaveClass("shadow-menu", "rounded-[calc(var(--radius-control)+--spacing(1))]", "material-popover")
+    expect(menu).toHaveClass("shadow-menu", "rounded-[calc(var(--radius-control)+--spacing(1.5))]", "material-popover")
     expect(menu.className).not.toMatch(/\bborder\b/)
 
     const item = screen.getByRole("menuitem", { name: /Renombrar/ })
@@ -158,5 +158,19 @@ describe("ContextMenu", () => {
     await userEvent.click(favorita)
     await waitFor(() => expect(screen.getByRole("menuitemcheckbox")).toHaveAttribute("aria-checked", "false"))
     expect(screen.getByRole("menu")).toBeInTheDocument()
+  })
+})
+
+describe("menú de macOS (2.0)", () => {
+  it("el tilde va a la izquierda y el texto alinea después de la canaleta", async () => {
+    render(<Archivo />)
+    abrirConClickDerecho()
+
+    const tildado = await screen.findByRole("menuitemcheckbox", { name: "Marcada como favorita" })
+    expect(tildado).toHaveClass("pl-7")
+    expect(tildado.className).not.toMatch(/\bpr-8\b/)
+    expect(tildado.querySelector("[data-slot=context-menu-item-indicator]")).toHaveClass("left-2")
+    expect(screen.getByRole("menuitem", { name: /Renombrar/ })).toHaveClass("data-inset:pl-7")
+    expect(screen.getByText("portada-marzo.jpg", { selector: "[data-slot=context-menu-label]" })).toHaveClass("data-inset:pl-7")
   })
 })

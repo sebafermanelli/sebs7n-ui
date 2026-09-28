@@ -10,7 +10,7 @@ import { useLabels } from "../lib/labels.js"
 import { useModality } from "../internal/modality.js"
 import { cn, type WithClassName } from "../lib/utils.js"
 import { inputMultilineRadiusClassName, inputShellButtonClassName, inputShellClassName, inputShellInputClassName } from "../variants/input.js"
-import { menuItemClassName, menuLabelClassName, menuPopupClassName, menuSeparatorClassName } from "../variants/menu.js"
+import { menuGutterClassName, menuIndicatorClassName, menuItemClassName, menuLabelClassName, menuPopupClassName, menuSeparatorClassName } from "../variants/menu.js"
 import { tagRemoveClassName, tagVariants, type TagSize } from "../variants/tag.js"
 
 type InputSize = "sm" | "md" | "lg"
@@ -103,14 +103,15 @@ function ComboboxList({ className, ...props }: ComboboxListProps) {
 
 type ComboboxItemProps = WithClassName<ComboboxPrimitive.Item.Props>
 
-// menuItemClassName + check a la derecha si está elegido.
+// menuItemClassName + tilde a la izquierda si está elegido. Todas las opciones reservan la
+// canaleta, como en Select: el texto no salta al elegir.
 function ComboboxItem({ className, children, ...props }: ComboboxItemProps) {
   return (
-    <ComboboxPrimitive.Item data-slot="combobox-item" className={cn(menuItemClassName, "w-full pr-8", className)} {...props}>
-      <span className="flex min-w-0 flex-1 items-center gap-2 truncate">{children}</span>
-      <ComboboxPrimitive.ItemIndicator data-slot="combobox-item-indicator" className="absolute right-2 flex items-center">
+    <ComboboxPrimitive.Item data-slot="combobox-item" className={cn(menuItemClassName, menuGutterClassName, "w-full", className)} {...props}>
+      <ComboboxPrimitive.ItemIndicator data-slot="combobox-item-indicator" className={menuIndicatorClassName}>
         <CheckIcon />
       </ComboboxPrimitive.ItemIndicator>
+      <span className="flex min-w-0 flex-1 items-center gap-2 truncate">{children}</span>
     </ComboboxPrimitive.Item>
   )
 }
@@ -124,7 +125,9 @@ function ComboboxGroup({ className, ...props }: ComboboxGroupProps) {
 type ComboboxLabelProps = WithClassName<ComboboxPrimitive.GroupLabel.Props>
 
 function ComboboxLabel({ className, ...props }: ComboboxLabelProps) {
-  return <ComboboxPrimitive.GroupLabel data-slot="combobox-label" className={cn(menuLabelClassName, className)} {...props} />
+  // Alinea con el texto de las opciones, después de la canaleta. Autocomplete tiene el suyo sin
+  // canaleta, porque sus sugerencias no llevan tilde.
+  return <ComboboxPrimitive.GroupLabel data-slot="combobox-label" className={cn(menuLabelClassName, menuGutterClassName, className)} {...props} />
 }
 
 type ComboboxSeparatorProps = WithClassName<ComboboxPrimitive.Separator.Props>

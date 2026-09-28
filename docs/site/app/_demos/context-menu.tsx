@@ -115,14 +115,14 @@ export function Lienzo() {
       </ContextMenuTrigger>
       <ContextMenuContent className="w-56">
         <ContextMenuGroup>
-          <ContextMenuLabel>Mostrar</ContextMenuLabel>
+          <ContextMenuLabel inset>Mostrar</ContextMenuLabel>
           <ContextMenuCheckboxItem defaultChecked>Grilla</ContextMenuCheckboxItem>
           <ContextMenuCheckboxItem defaultChecked>Guías</ContextMenuCheckboxItem>
           <ContextMenuCheckboxItem>Reglas</ContextMenuCheckboxItem>
         </ContextMenuGroup>
         <ContextMenuSeparator />
         <ContextMenuGroup>
-          <ContextMenuLabel>Zoom</ContextMenuLabel>
+          <ContextMenuLabel inset>Zoom</ContextMenuLabel>
           <ContextMenuRadioGroup onValueChange={setZoom} value={zoom}>
             <ContextMenuRadioItem value="50">50 %</ContextMenuRadioItem>
             <ContextMenuRadioItem value="100">100 %</ContextMenuRadioItem>
@@ -130,7 +130,7 @@ export function Lienzo() {
           </ContextMenuRadioGroup>
         </ContextMenuGroup>
         <ContextMenuSeparator />
-        <ContextMenuItem>
+        <ContextMenuItem inset>
           <CopyIcon />
           Duplicar selección
           <ContextMenuShortcut>⌘D</ContextMenuShortcut>

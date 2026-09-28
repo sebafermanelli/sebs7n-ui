@@ -43,7 +43,7 @@ export const PROP_DESCRIPTIONS = {
   container: "Dónde se monta el portal. Por defecto, el `<body>`.",
   "aria-label": "Nombre accesible del elemento.",
   "aria-keyshortcuts": "Atajo que se anuncia al lector de pantalla.",
-  inset: "Alinea el texto con los ítems que tienen ícono, sin poner ícono.",
+  inset: "Corre el texto a la canaleta del tilde (`pl-7`) para que alinee con los `CheckboxItem` y `RadioItem` del mismo menú. En un menú sin tildes no hace falta.",
   labels: "Textos de la interfaz, para traducir o ajustar el tono.",
 
   // ── Apertura y cierre ──────────────────────────────────────────────────────
@@ -1205,6 +1205,7 @@ export const COMPONENTS = {
       "El trigger usa `render={<Button … />}`.",
       "`variant=\"destructive\"` para el ítem que borra, y siempre al final, separado.",
       "Más de ~10 ítems: paleta de comandos o `Combobox`, no un menú.",
+      "**El tilde va a la izquierda**, en una canaleta de 24 px, como en macOS. Si el menú mezcla ítems con tilde y sin él, poné `inset` en los comunes y en los títulos para que todo el texto arranque en la misma columna. Un menú sin tildes no lleva `inset`.",
     ],
     props: {
       DropdownMenu: heredadas("open", "defaultOpen", "onOpenChange", "modal", "loopFocus", "orientation", "actionsRef", "disabled"),

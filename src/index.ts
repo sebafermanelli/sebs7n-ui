@@ -57,7 +57,17 @@ export {
   inputShellInputClassName,
   inputSizeClassName,
 } from "./variants/input.js"
-export { menuItemClassName, menuItemSecondaryClassName, menuLabelClassName, menuPopupClassName, menuSeparatorClassName, type MenuInsetProps } from "./variants/menu.js"
+export {
+  menuGutterClassName,
+  menuIndicatorClassName,
+  menuInsetClassName,
+  menuItemClassName,
+  menuItemSecondaryClassName,
+  menuLabelClassName,
+  menuPopupClassName,
+  menuSeparatorClassName,
+  type MenuInsetProps,
+} from "./variants/menu.js"
 export { selectionSecondaryClassName } from "./variants/selection.js"
 export {
   alertFooterClassName,

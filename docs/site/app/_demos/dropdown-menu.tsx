@@ -71,7 +71,7 @@ export function Acciones() {
 
 /**
  * Checks y radios
- * Ninguno de los dos cierra el menú: se recorren con las flechas.
+ * Ninguno de los dos cierra el menú: se recorren con las flechas. El tilde va a la izquierda, como en macOS, y los títulos llevan `inset` para alinear con el texto.
  */
 export function ChecksYRadios() {
   const [orden, setOrden] = useState("fecha")
@@ -80,14 +80,14 @@ export function ChecksYRadios() {
       <DropdownMenuTrigger render={<Button variant="outline" />}>Vista</DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         <DropdownMenuGroup>
-          <DropdownMenuLabel>Columnas</DropdownMenuLabel>
+          <DropdownMenuLabel inset>Columnas</DropdownMenuLabel>
           <DropdownMenuCheckboxItem defaultChecked>Cliente</DropdownMenuCheckboxItem>
           <DropdownMenuCheckboxItem defaultChecked>Importe</DropdownMenuCheckboxItem>
           <DropdownMenuCheckboxItem>CUIT</DropdownMenuCheckboxItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuLabel>Ordenar por</DropdownMenuLabel>
+          <DropdownMenuLabel inset>Ordenar por</DropdownMenuLabel>
           <DropdownMenuRadioGroup onValueChange={setOrden} value={orden}>
             <DropdownMenuRadioItem value="fecha">Fecha</DropdownMenuRadioItem>
             <DropdownMenuRadioItem value="importe">Importe</DropdownMenuRadioItem>

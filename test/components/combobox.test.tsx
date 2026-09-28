@@ -8,8 +8,10 @@ import {
   Autocomplete,
   AutocompleteContent,
   AutocompleteEmpty,
+  AutocompleteGroup,
   AutocompleteInput,
   AutocompleteItem,
+  AutocompleteLabel,
   AutocompleteList,
 } from "../../src/components/autocomplete"
 import {
@@ -173,7 +175,7 @@ describe("Combobox", () => {
     await userEvent.click(screen.getByRole("button", { name: "Abrir lista" }))
     const europa = await screen.findByRole("group", { name: "Europa" })
     expect(within(europa).getAllByRole("option").map((o) => o.textContent)).toEqual(["España", "Italia"])
-    expect(screen.getByText("Europa")).toHaveClass("text-callout", "text-gray-900")
+    expect(screen.getByText("Europa")).toHaveClass("text-subheadline", "font-semibold", "text-gray-900")
   })
 
   it("búsqueda async: fila de carga con spinner, después resultados o vacío", async () => {
@@ -344,6 +346,56 @@ describe("Autocomplete", () => {
     expect(input).toHaveValue("Villa Gobernador Gálvez")
     expect(onValueChange).toHaveBeenLastCalledWith("Villa Gobernador Gálvez", expect.anything())
     expect(await screen.findByText("Sin resultados")).toBeInTheDocument()
+  })
+})
+
+describe("menús de macOS (2.0)", () => {
+  it("Combobox: el tilde de la elegida va a la izquierda y todas las opciones reservan la canaleta", async () => {
+    render(
+      <Combobox items={COUNTRIES} defaultValue="Chile" defaultOpen>
+        <ComboboxInput aria-label="País" />
+        <ComboboxContent>
+          <ComboboxList>
+            <ComboboxGroup>
+              <ComboboxLabel>Sudamérica</ComboboxLabel>
+              <ComboboxCollection>
+                {(country: string) => (
+                  <ComboboxItem key={country} value={country}>
+                    {country}
+                  </ComboboxItem>
+                )}
+              </ComboboxCollection>
+            </ComboboxGroup>
+          </ComboboxList>
+        </ComboboxContent>
+      </Combobox>
+    )
+    const listbox = await screen.findByRole("listbox")
+    const elegida = within(listbox).getByRole("option", { name: "Chile" })
+    expect(elegida).toHaveClass("pl-7")
+    expect(elegida.className).not.toMatch(/\bpr-8\b/)
+    expect(elegida.querySelector("[data-slot=combobox-item-indicator]")).toHaveClass("left-2")
+    expect(within(listbox).getByRole("option", { name: "Argentina" })).toHaveClass("pl-7")
+    expect(screen.getByText("Sudamérica")).toHaveClass("pl-7")
+  })
+
+  it("Autocomplete: sin tilde no hay canaleta, ni en las sugerencias ni en el título", async () => {
+    render(
+      <Autocomplete items={["Rosario", "Rafaela"]} defaultOpen>
+        <AutocompleteInput aria-label="Ciudad" />
+        <AutocompleteContent>
+          <AutocompleteList>
+            <AutocompleteGroup>
+              <AutocompleteLabel>Santa Fe</AutocompleteLabel>
+              <AutocompleteItem value="Rosario">Rosario</AutocompleteItem>
+            </AutocompleteGroup>
+          </AutocompleteList>
+        </AutocompleteContent>
+      </Autocomplete>
+    )
+    const sugerencia = await screen.findByRole("option", { name: "Rosario" })
+    expect(sugerencia.className).not.toMatch(/(^|\s)pl-7\b/)
+    expect(screen.getByText("Santa Fe").className).not.toMatch(/(^|\s)pl-7\b/)
   })
 })
 

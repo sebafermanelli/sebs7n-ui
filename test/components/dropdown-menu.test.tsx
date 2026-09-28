@@ -20,6 +20,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "../../src/components/dropdown-menu"
+import { menuLabelClassName, menuPopupClassName, menuSeparatorClassName } from "../../src/variants/menu"
 
 // El menú de acciones de una fila, que es de lo que se usa: ítems con atajo, un
 // submenú, un grupo con su encabezado, casillas y un grupo de radios.
@@ -182,5 +183,61 @@ describe("DropdownMenu", () => {
 
     await waitFor(() => expect(screen.queryByRole("menuitem", { name: /Guardar/ })).not.toBeInTheDocument())
     await waitFor(() => expect(screen.getByRole("button", { name: "Acciones" })).toHaveFocus())
+  })
+})
+
+describe("menú de macOS (2.0)", () => {
+  it("el tilde va a la izquierda y el texto alinea después de la canaleta", async () => {
+    render(
+      <DropdownMenu defaultOpen>
+        <DropdownMenuTrigger>Ver</DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuCheckboxItem checked>Mostrar vencidas</DropdownMenuCheckboxItem>
+          <DropdownMenuRadioGroup value="mes">
+            <DropdownMenuRadioItem value="mes">Por mes</DropdownMenuRadioItem>
+          </DropdownMenuRadioGroup>
+          <DropdownMenuItem inset>Exportar</DropdownMenuItem>
+          <DropdownMenuItem>Imprimir</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    )
+    const tildado = await screen.findByRole("menuitemcheckbox", { name: "Mostrar vencidas" })
+    expect(tildado).toHaveClass("pl-7")
+    expect(tildado.className).not.toMatch(/\bpr-8\b/)
+    expect(tildado.querySelector("[data-slot=dropdown-menu-item-indicator]")).toHaveClass("left-2")
+    const radio = screen.getByRole("menuitemradio", { name: "Por mes" })
+    expect(radio).toHaveClass("pl-7")
+    expect(radio.querySelector("[data-slot=dropdown-menu-item-indicator]")).toHaveClass("left-2")
+    expect(screen.getByRole("menuitem", { name: "Exportar" })).toHaveClass("data-inset:pl-7")
+    // Un menú sin tildes no reserva la canaleta: el ítem común se queda en `px-2`.
+    expect(screen.getByRole("menuitem", { name: "Imprimir" }).className).not.toMatch(/(^|\s)pl-7\b/)
+  })
+
+  it("el título de grupo es chico, en negrita y gris; con inset alinea con la canaleta", async () => {
+    expect(menuLabelClassName).toMatch(/\btext-subheadline\b/)
+    expect(menuLabelClassName).toMatch(/\bfont-semibold\b/)
+    expect(menuLabelClassName).toMatch(/\btext-gray-900\b/)
+    render(
+      <DropdownMenu defaultOpen>
+        <DropdownMenuTrigger>Ver</DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuGroup>
+            <DropdownMenuLabel inset>Orden</DropdownMenuLabel>
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    )
+    expect(await screen.findByText("Orden")).toHaveClass("data-inset:pl-7")
+  })
+
+  it("el separador tiene aire a los costados", () => {
+    expect(menuSeparatorClassName).toMatch(/\bmx-2\b/)
+    expect(menuSeparatorClassName).not.toMatch(/-mx-1/)
+  })
+
+  it("el panel: p-1.5, radio concéntrico y 192 px de mínimo", () => {
+    expect(menuPopupClassName).toMatch(/(^|\s)p-1\.5(\s|$)/)
+    expect(menuPopupClassName).toContain("rounded-[calc(var(--radius-control)+--spacing(1.5))]")
+    expect(menuPopupClassName).toMatch(/(^|\s)min-w-48(\s|$)/)
   })
 })
