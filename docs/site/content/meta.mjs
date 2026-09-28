@@ -181,7 +181,7 @@ export const COMPONENTS = {
       "**Estado, no acción.** Si se puede hacer click, es un `Button` o un `Toggle`.",
       "`subtle` es el default y el que va en una tabla o en una lista. `solid` solo para destacar uno entre muchos.",
       "El color tiene que significar algo consistente en toda la app: `green` pagado, `amber` pendiente, `red` vencido. No lo elijas por estética.",
-      "`size=\"sm\"` dentro de una fila de tabla; `md` suelto.",
+      "`size=\"sm\"` dentro de una fila de tabla y **siempre dentro de un ítem de menú**: el `md` mide 24, lo mismo que el ítem, y lo llena de borde a borde. `md` suelto.",
       "Adentro de un ítem seleccionado (fila de tabla, ítem de menú o del Sidebar) el `subtle` pasa solo a un contorno en el color de contraste, y el `solid` brand se invierte: sobre el acento sólido el tono en alfa no se lee.",
     ],
     props: {
@@ -1183,6 +1183,7 @@ export const COMPONENTS = {
     usage: [
       "**`NavigationMenu` si los ítems navegan, `DropdownMenu` si ejecutan algo.** No es cosmético: el modo de navegación por links de un lector no ve los `menuitem`.",
       "**`DropdownMenuLabel` va dentro de `DropdownMenuGroup`.** Suelto, Base UI tira la página abajo.",
+      "Un `Badge` adentro de un ítem va en `size=\"sm\"` (20 px): el ítem mide 24 y el `md` también.",
       "**Color propio adentro de un ítem seleccionable → `selectionSecondaryClassName`.** La selección es acento sólido: una fecha en `text-gray-900` o un ícono en `text-green-900` desaparecen sobre el azul. `cn(\"text-gray-900\", selectionSecondaryClassName)` pasa a `text-on-selection` cuando el ítem está resaltado; para bordes o fondos, el variant `inside-selection:` directo. Un `Badge` adentro se adapta solo.",
       "El trigger usa `render={<Button … />}`.",
       "`variant=\"destructive\"` para el ítem que borra, y siempre al final, separado.",
