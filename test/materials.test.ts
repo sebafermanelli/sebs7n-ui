@@ -60,6 +60,14 @@ describe("material por rol (2.0)", () => {
     expect(menuPopupClassName).toMatch(/\bmaterial-popover\b/)
   })
 
+  // En macOS un aviso es un banner de notificación: flota sobre cualquier cosa, como un popover.
+  // Se mira el fuente porque el toast solo existe después de llamar a `toast()` en un navegador.
+  it("los toasts son popovers", () => {
+    const sonner = read("../src/components/sonner.tsx")
+    expect(sonner).toMatch(/\bmaterial-popover!/)
+    expect(sonner).not.toMatch(/\bglass!/)
+  })
+
   it("las cards son grupos", () => {
     expect(cardVariants()).toMatch(/\bmaterial-group\b/)
     expect(cardVariants()).not.toMatch(/(^|\s)glass(\s|$)/)

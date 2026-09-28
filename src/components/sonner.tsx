@@ -26,7 +26,9 @@ function Toaster(props: ToasterProps) {
       }}
       toastOptions={{
         classNames: {
-          toast: "rounded-surface! border-0! glass! text-body! text-gray-1000! shadow-modal!",
+          // `material-popover`: en macOS un aviso es un banner de notificación, que flota sobre
+          // cualquier cosa y se tiene que leer igual; el vidrio claro de `glass` dejaba pasar lo de atrás.
+          toast: "rounded-surface! border-0! material-popover!text-body! text-gray-1000! shadow-modal!",
           title: "text-body! font-medium! text-gray-1000!",
           description: "text-body! text-gray-900!",
           actionButton: "rounded-full! bg-gray-1000! text-callout! text-background-100!",
