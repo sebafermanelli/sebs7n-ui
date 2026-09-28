@@ -88,8 +88,51 @@ Fase 2 de 2.0: diálogos.
   popover con más contenido lo pide con `className`. El ColorPicker conserva `p-4`: es un panel de
   320 px con 16 entre bloques, y con 12 de borde quedaba más apretado por fuera que por dentro.
 
+Fase 3 de 2.0: menús y búsqueda.
+
+- **El tilde va a la izquierda.** En `DropdownMenu`, `ContextMenu`, `Menubar`, `Select` y
+  `Combobox` el tilde de `CheckboxItem`, `RadioItem` y de la opción elegida pasa del borde derecho
+  a una canaleta a la izquierda, y el texto de esos ítems arranca a 28 px (`pl-7`,
+  `menuGutterClassName`). `inset` pasa de `pl-8` a `pl-7` (`menuInsetClassName`) para alinear los
+  ítems comunes y los títulos con los que tienen tilde. En Select y Combobox todas las opciones y
+  los títulos reservan la canaleta; un menú sin tildes sigue en `px-2`.
+- **Títulos de grupo chicos, en negrita y gris**: `menuLabelClassName` pasa a
+  `px-2 pt-2 pb-1 text-subheadline font-semibold text-gray-900`.
+- **Separadores con aire a los costados**: `menuSeparatorClassName` pasa a `mx-2 my-1` (antes
+  `-mx-1`, de borde a borde).
+- **Panel de menú** `p-1.5`, radio concéntrico con `--spacing(1.5)` y `min-w-48`. El panel de
+  `NavigationMenu` también: el `p-1.5` lo pone `NavigationMenuContent` (el `NavigationMenuPopup` ya
+  no tiene padding; antes eran `p-1` y `p-1`) y el radio es `control + --spacing(1.5)`.
+- **Select es el pop-up button de macOS**: el disparador lleva ⌃⌄ (`ChevronsUpDownIcon`) y
+  `SelectContent` tiene `alignItemWithTrigger` en `true` por defecto, así que la lista se abre con
+  la opción elegida encima del disparador. Para el comportamiento de 1.x,
+  `alignItemWithTrigger={false}`. `Combobox` también lleva ⌃⌄ y ya no gira al abrir.
+- **El título abierto de `Menubar` es una pastilla gris** (`gray-alpha-200`, hover
+  `gray-alpha-100`), no el acento.
+
 ### Added (2.0)
 
+- **`Command`**, la paleta de comandos estilo Spotlight (`sebs7n-ui/command`): `Command`
+  (incrustado), `CommandDialog` (anclado arriba, `material-popover`, sin X ni velo, Escape cierra),
+  `CommandInput`, `CommandFilters`/`CommandFilter` (chips de una sola opción que exponen su valor),
+  `CommandList`, `CommandGroup` (título con `menuLabelClassName`), `CommandItem` (40 px, ícono de
+  32, título y detalle; `keywords`, `onSelect`) y `CommandEmpty`. Teclado y ARIA de Base UI
+  Autocomplete en modo `inline`; el filtrado es propio: título y `keywords`, sin mayúsculas ni
+  tildes.
+  - El elegido va en gris translúcido (`bg-gray-alpha-200`), no en el acento de los menús: como en
+    Spotlight, el primer resultado está elegido desde la primera tecla.
+  - La sugerencia en línea («Fact|ura 0012 — Acme S.A.») **sigue al elegido**, no solo al primer
+    resultado, y `Tab` o `→` al final la aceptan. La pista `tab` aparece solo cuando Tab completa
+    algo.
+  - El campo usa `text-body-large` (15 px regular): un rol de título no se pisa con `font-normal`.
+  - `CommandEmpty` va al lado de `CommandList`, no adentro: un listbox solo admite opciones y
+    grupos.
+  - `shouldFilter={false}` para ítems que la app ya filtró y ordenó (es lo que usa el buscador del
+    sitio de docs).
+- Labels `command: { placeholder, empty, dialog }` («Buscar», «Sin resultados», «Buscar»).
+- `commandDialogPopupClassName`, `commandItemClassName` y `commandItemIconClassName`
+  (`variants/command`, también en el barrel).
+- `menuGutterClassName`, `menuInsetClassName` y `menuIndicatorClassName` (`variants/menu`).
 - `touch-target` (área de 44 con el dedo, sin cambiar lo que se ve) y `touch-target-y` (solo en
   alto, para controles en fila que no se pueden separar; con `cn()` reemplaza al otro).
 - `menuItemSecondaryClassName` (el atajo de un ítem de menú) y `selectionSecondaryClassName`
