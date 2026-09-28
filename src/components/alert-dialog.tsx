@@ -76,11 +76,21 @@ function AlertDialogHeader({ className, ...props }: React.ComponentProps<"div">)
   return <div data-slot="alert-dialog-header" className={cn("flex flex-col gap-1", className)} {...props} />
 }
 
-function AlertDialogFooter({ className, ...props }: React.ComponentProps<"div">) {
+type AlertDialogFooterProps = React.ComponentProps<"div"> & {
+  /**
+   * Apila los botones aunque sean dos, en el orden en que se escribieron. Para etiquetas largas
+   * («Descartar cambios», «Eliminar definitivamente»), que lado a lado no entran en 300 px.
+   * Con tres o más botones, o en una pantalla angosta, el pie ya se apila solo.
+   */
+  stacked?: boolean
+}
+
+function AlertDialogFooter({ className, stacked = false, ...props }: AlertDialogFooterProps) {
   return (
     <div
       data-slot="alert-dialog-footer"
-      className={cn(alertFooterClassName, className)}
+      data-stacked={stacked ? "" : undefined}
+      className={cn(alertFooterClassName, stacked && "grid-flow-row", className)}
       {...props}
     />
   )
@@ -163,6 +173,7 @@ export {
   type AlertDialogCancelProps,
   type AlertDialogContentProps,
   type AlertDialogDescriptionProps,
+  type AlertDialogFooterProps,
   type AlertDialogOverlayProps,
   type AlertDialogTitleProps,
 }

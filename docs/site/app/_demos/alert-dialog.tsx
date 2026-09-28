@@ -65,3 +65,27 @@ export function AccionPorDefecto() {
     </AlertDialog>
   )
 }
+
+/**
+ * Etiqueta larga
+ * «Descartar cambios» no entra lado a lado en 300 px: con `stacked` el pie se apila. Sin `stacked`
+ * el texto bajaría de renglón adentro del botón, que es la red de seguridad, no el diseño.
+ * La acción va primero en el DOM para quedar arriba, como en macOS; Tab sigue el mismo orden.
+ */
+export function EtiquetaLarga() {
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger render={<Button variant="outline" />}>Salir sin guardar</AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>¿Salir sin guardar la factura?</AlertDialogTitle>
+          <AlertDialogDescription>Los cambios del borrador se pierden.</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter stacked>
+          <AlertDialogClose render={<AlertDialogAction variant="destructive" />}>Descartar cambios</AlertDialogClose>
+          <AlertDialogCancel>Seguir editando</AlertDialogCancel>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  )
+}

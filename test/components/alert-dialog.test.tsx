@@ -213,3 +213,49 @@ describe("alerta de macOS (2.0)", () => {
     await waitFor(() => expect(screen.queryByRole("alertdialog")).toBeNull())
   })
 })
+
+describe("etiquetas largas (revisión fase 2)", () => {
+  function Larga({ stacked }: { stacked?: boolean }) {
+    return (
+      <AlertDialog defaultOpen>
+        <AlertDialogContent>
+          <AlertDialogTitle>¿Salir sin guardar?</AlertDialogTitle>
+          <AlertDialogFooter stacked={stacked}>
+            <AlertDialogCancel />
+            <AlertDialogAction variant="destructive">Descartar cambios</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    )
+  }
+
+  // Cada celda mide ~126 px en 300: «Descartar cambios» con `whitespace-nowrap` se salía del botón.
+  // La red de seguridad deja que el texto baje de renglón y que el botón crezca en alto.
+  it("el pie deja que el texto de los botones baje de renglón, centrado", async () => {
+    render(<Larga />)
+    const pie = (await screen.findByRole("alertdialog")).querySelector('[data-slot="alert-dialog-footer"]')!
+    expect(pie).toHaveClass(
+      "[&>*]:whitespace-normal",
+      "[&>*]:h-auto",
+      "[&>*]:min-h-8",
+      "[&>*]:py-1.5",
+      "[&>*]:text-center"
+    )
+  })
+
+  it("`stacked` apila los botones aunque sean dos", async () => {
+    render(<Larga stacked />)
+    const pie = (await screen.findByRole("alertdialog")).querySelector('[data-slot="alert-dialog-footer"]')!
+    expect(pie).toHaveClass("grid-flow-row")
+    expect(pie).not.toHaveClass("grid-flow-col")
+    expect(pie).toHaveAttribute("data-stacked")
+    expect([...pie.children].map((b) => b.textContent)).toEqual(["Cancelar", "Descartar cambios"])
+  })
+
+  it("sin `stacked`, dos botones siguen lado a lado", async () => {
+    render(<Larga />)
+    const pie = (await screen.findByRole("alertdialog")).querySelector('[data-slot="alert-dialog-footer"]')!
+    expect(pie).toHaveClass("grid-flow-col")
+    expect(pie).not.toHaveAttribute("data-stacked")
+  })
+})

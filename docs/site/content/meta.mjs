@@ -1015,9 +1015,13 @@ export const COMPONENTS = {
       "**`AlertDialogIcon` cuando la alerta advierte algo** (el triángulo de advertencia en ámbar) o cuando la dispara la app y no una pantalla (el ícono de la app). Va primero adentro de `AlertDialogContent` y recibe un `<svg>` o una `<img>`, que sin tamaño propio se lleva a 48 px. Para una confirmación de rutina, sin ícono.",
       "**La acción destructiva va tintada** (`variant=\"destructive\"`: texto rojo sobre tinte rojo), no roja sólida: la alerta ya es la advertencia. La que no destruye nada va sin `variant` y es del acento.",
       "**Dos botones van lado a lado, iguales a lo ancho**: primero `AlertDialogCancel`, después la acción. Con tres o más —o en una pantalla angosta— se apilan en el orden en que los escribiste, que es también el orden de Tab. No se invierten: si querés la acción arriba, escribila primero.",
+      "**Una etiqueta larga** («Descartar cambios», «Eliminar definitivamente») no entra lado a lado en 300 px: `<AlertDialogFooter stacked>` apila los dos botones. Si te olvidás, el texto baja de renglón adentro del botón en vez de salirse, pero se ve peor.",
     ],
     props: {
       AlertDialog: heredadas("open", "defaultOpen", "onOpenChange", "actionsRef"),
+      AlertDialogFooter: {
+        stacked: "Apila los botones aunque sean dos, en el orden en que se escribieron. Para etiquetas largas. Con tres o más, o en pantallas angostas, se apila solo.",
+      },
       AlertDialogAction: {
         variant: "`default` (acento, el botón por defecto de macOS) o `destructive` (tintado: texto rojo sobre tinte rojo). Desde 2.0; hasta 1.x eran el negro y el rojo sólido.",
         loading: "El spinner del `Button` mientras corre la acción. Es el motivo por el que esta acción no cierra sola.",
