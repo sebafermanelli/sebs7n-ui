@@ -14,7 +14,13 @@ function Row({ request }: { request: Request }) {
           #{request.number} · {STATUS[request.status]}
         </span>
       </div>
-      <a className="shrink-0 rounded-sm text-label-13 text-gray-1000 underline underline-offset-4 outline-none focus-visible:focus-ring" href={request.url} rel="noopener" target="_blank">
+      <a
+        className="shrink-0 rounded-sm text-label-13 text-gray-1000 underline underline-offset-4 outline-none focus-visible:focus-ring"
+        aria-label={request.status === "released" ? `Ver en GitHub: ${request.title}` : `Votar en GitHub: ${request.title}`}
+        href={request.url}
+        rel="noreferrer"
+        target="_blank"
+      >
         {request.status === "released" ? "Ver en GitHub" : "👍 Votar en GitHub"}
       </a>
     </li>

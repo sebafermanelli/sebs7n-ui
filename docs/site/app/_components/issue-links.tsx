@@ -8,11 +8,11 @@ export function IssueLinks({ component, version }: { component: string; version:
   return (
     <footer className="flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-gray-alpha-400 pt-6 text-copy-14 text-gray-900">
       <span>¿Falta algo?</span>
-      <a className="rounded-sm text-gray-1000 underline underline-offset-4 outline-none focus-visible:focus-ring" href={enhancement!.href} rel="noopener" target="_blank">
+      <a className="rounded-sm text-gray-1000 underline underline-offset-4 outline-none focus-visible:focus-ring" href={enhancement.href} rel="noreferrer" target="_blank">
         {TEXT.enhancement}
       </a>
       <span aria-hidden="true">·</span>
-      <a className="rounded-sm text-gray-1000 underline underline-offset-4 outline-none focus-visible:focus-ring" href={bug!.href} rel="noopener" target="_blank">
+      <a className="rounded-sm text-gray-1000 underline underline-offset-4 outline-none focus-visible:focus-ring" href={bug.href} rel="noreferrer" target="_blank">
         {TEXT.bug}
       </a>
     </footer>

@@ -18,7 +18,10 @@ export function issueUrl(kind: IssueKind, params: { component?: string; version?
 }
 
 /** El pie de cada página de componente: la mejora primero, que es lo que más se pide. */
-export function issueLinks(component: string, version: string): { kind: IssueKind; href: string }[] {
+export function issueLinks(
+  component: string,
+  version: string
+): [{ kind: "enhancement"; href: string }, { kind: "bug"; href: string }] {
   return [
     { kind: "enhancement", href: issueUrl("enhancement", { component }) },
     { kind: "bug", href: issueUrl("bug", { component, version }) },
