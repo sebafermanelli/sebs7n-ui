@@ -9,6 +9,7 @@ app/_demos/registry.ts
 public/docs/
 public/r/
 public/llms.txt
+public/search-index.json
 public/llms-full.txt
 registry.json
 tsconfig.tsbuildinfo
