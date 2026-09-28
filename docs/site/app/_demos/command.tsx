@@ -79,18 +79,20 @@ function Resultados({ filtro, onSelect }: { filtro: string; onSelect: (value: st
 
 /**
  * Buscar en facturación
- * `CommandDialog` abierto por un botón o por ⌘K. Escribí «fact» y mirá la sugerencia en línea:
- * Tab la completa, Enter abre el elegido.
+ * `CommandDialog` abierto por un botón o por ⌘J. Escribí «fact» y mirá la sugerencia en línea:
+ * Tab la completa, Enter abre el elegido. En una app el atajo es ⌘K; acá ⌘K ya es el buscador del
+ * sitio, que también es un `CommandDialog`.
  */
 export function Basico() {
   const [abierto, setAbierto] = useState(false)
   const [filtro, setFiltro] = useState("todo")
   const [elegido, setElegido] = useState<string | null>(null)
 
-  // El atajo lo registra la app: el componente no escucha teclas globales.
+  // El atajo lo registra la app: el componente no escucha teclas globales. ⌘J y no ⌘K porque en
+  // este sitio ⌘K abre el buscador, y con los dos escuchando se abrirían dos paletas.
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key.toLowerCase() !== "k" || !(event.metaKey || event.ctrlKey)) return
+      if (event.key.toLowerCase() !== "j" || !(event.metaKey || event.ctrlKey)) return
       event.preventDefault()
       setAbierto((previo) => !previo)
     }
@@ -100,10 +102,10 @@ export function Basico() {
 
   return (
     <div className="flex flex-col items-center gap-3">
-      <Button aria-keyshortcuts="Meta+K" onClick={() => setAbierto(true)} variant="outline">
+      <Button aria-keyshortcuts="Meta+J" onClick={() => setAbierto(true)} variant="outline">
         <SearchIcon />
         Buscar en facturación
-        <Kbd size="sm">⌘K</Kbd>
+        <Kbd size="sm">⌘J</Kbd>
       </Button>
       {elegido && <p className="text-body text-gray-900">Elegiste: {elegido}</p>}
       <CommandDialog labels={{ dialog: "Buscar en facturación" }} onOpenChange={setAbierto} open={abierto}>
