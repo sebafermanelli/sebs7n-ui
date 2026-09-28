@@ -15,7 +15,6 @@ export function Usuarios() {
       <Field name="usuarios">
         <FieldLabel>Usuarios</FieldLabel>
         <NumberField
-          className="w-32"
           max={9}
           min={1}
           onValueChange={setUsuarios}
