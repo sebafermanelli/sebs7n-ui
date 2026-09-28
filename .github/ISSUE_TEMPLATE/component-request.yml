@@ -1,0 +1,27 @@
+name: Pedir un componente
+description: Un componente que no está y que te serviría.
+title: "[request] "
+labels: ["request"]
+body:
+  - type: markdown
+    attributes:
+      value: Los pedidos se ven en https://ui.sebastianfermanelli.com/docs/requests. Si ya está pedido, votalo con 👍 en vez de abrir otro.
+  - type: input
+    id: component
+    attributes:
+      label: Componente
+      description: Cómo lo llamarías.
+    validations:
+      required: true
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Para qué lo necesitás
+      description: La pantalla o el caso concreto. Ayuda más que una lista de props.
+    validations:
+      required: true
+  - type: textarea
+    id: references
+    attributes:
+      label: Referencias
+      description: Links a otras librerías o capturas de cómo lo imaginás.

@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Una pregunta
+    url: https://github.com/sebafermanelli/sebs7n-ui/discussions/categories/preguntas
+    about: Dudas de uso, instalación o theming. Los issues quedan para bugs y pedidos.

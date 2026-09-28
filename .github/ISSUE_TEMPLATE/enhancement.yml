@@ -1,0 +1,22 @@
+name: Pedir una mejora
+description: A un componente que ya existe le falta algo.
+title: "[enhancement] "
+labels: ["enhancement"]
+body:
+  - type: input
+    id: component
+    attributes:
+      label: Componente
+      description: El nombre como figura en la documentación, por ejemplo `date-picker`.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Qué le falta
+    validations:
+      required: true
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Para qué lo necesitás
