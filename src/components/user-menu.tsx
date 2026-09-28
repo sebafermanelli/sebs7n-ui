@@ -9,7 +9,8 @@ import { Children, Fragment, useContext, useRef } from "react"
 import { AppShellContext, useSidebarContext } from "../internal/shell-context.js"
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar.js"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuSeparator, DropdownMenuTrigger } from "./dropdown-menu.js"
-import { ThemeMenuRadio, type ThemeSwitcherLabels } from "./theme-switcher.js"
+import { ThemeMenuRadio } from "../internal/theme-menu-radio.js"
+import type { ThemeSwitcherLabels } from "./theme-switcher.js"
 import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip.js"
 
 type UserMenuUser = { name: string; email?: string; image?: string }

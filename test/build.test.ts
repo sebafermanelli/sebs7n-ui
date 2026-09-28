@@ -48,6 +48,16 @@ describe("build", () => {
     expect(read("dist/variants/input.js")).not.toContain("use client")
   })
 
+  // 1.13.1: el `Menu` de Base UI entraba en toda app con un `ThemeSwitcher`, porque
+  // `ThemeMenuRadio` vivía en el mismo módulo y el bundler no lo podaba. Si alguien lo vuelve a
+  // juntar, esto lo marca antes que el presupuesto de JS del sitio.
+  it("theme-switcher no importa el Menu de Base UI, y sigue exportando ThemeMenuRadio", () => {
+    const fuente = read("dist/components/theme-switcher.js")
+    expect(fuente).not.toContain("@base-ui/react/menu")
+    expect(fuente).toMatch(/export \{ ThemeMenuRadio \} from "\.\.\/internal\/theme-menu-radio\.js"/)
+    expect(read("dist/internal/theme-menu-radio.js").startsWith('"use client"')).toBe(true)
+  })
+
   // La hoja precompilada `dist/styles.css` se sacó en 0.5.0: ninguna app la usaba y,
   // cargada junto a la hoja de la app, le ganaba por orden de declaración (el `.hidden`
   // del paquete contra el `lg:block` de la app). Ver el CHANGELOG.
