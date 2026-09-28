@@ -151,7 +151,7 @@ function ChatMessages({ className, busy: busyProp, labels: labelsProp, onScroll,
       // recorrer con el teclado.
       tabIndex={0}
       className={cn(
-        "flex min-h-0 flex-auto flex-col gap-3 overflow-y-auto overscroll-contain px-4 py-3 outline-none focus-visible:focus-ring",
+        "flex min-h-0 flex-auto flex-col gap-3 overflow-y-auto overscroll-contain scroll-fade px-4 py-3 outline-none focus-visible:focus-ring",
         className
       )}
       onScroll={(evento) => {

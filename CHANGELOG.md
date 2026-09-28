@@ -9,6 +9,15 @@ major.
 
 ## [Unreleased]
 
+## [1.12.0] - 2026-09-27
+
+### Added
+
+- **`scroll-fade`**: el difuminado de un scroll interno. Arriba y abajo el contenido se
+  desvanece en vez de cortarse contra el borde, y solo del lado donde hay algo escondido. Lo
+  mueve el propio scroll (`animation-timeline`), sin JavaScript; donde el navegador no lo
+  soporta, se corta como antes. Lo traen `SidebarContent`, `ChatMessages` y `DrawerBody`.
+
 ## [1.11.0] - 2026-09-27
 
 ### Changed

@@ -100,6 +100,29 @@ describe("glass-dense: el vidrio de las listas de texto", () => {
   })
 })
 
+describe("scroll-fade: el difuminado de un scroll interno", () => {
+  it("sale del propio scroll, solo del lado donde hay contenido escondido", () => {
+    const fade = utility("scroll-fade")
+    expect(fade).toContain("@supports (animation-timeline: scroll())")
+    expect(fade).toContain("animation-timeline: scroll(self), scroll(self);")
+    // Arriba de todo, sin difuminado arriba; al final, sin difuminado abajo.
+    expect(css).toMatch(/@keyframes sf-fade-top \{\s*from \{\s*--sf-fade-top: 0px;/)
+    expect(css).toMatch(/@keyframes sf-fade-bottom \{\s*from \{\s*--sf-fade-bottom: 32px;[\s\S]*?to \{\s*--sf-fade-bottom: 0px;/)
+    // Una lista que entra entera no tiene timeline activo: los valores iniciales son 0.
+    for (const nombre of ["--sf-fade-top", "--sf-fade-bottom"]) {
+      expect(css).toMatch(new RegExp(`@property ${nombre} \\{[^}]*initial-value: 0px;`))
+    }
+  })
+
+  it("lo llevan los scrolls sin superficie propia; los menús no, porque la máscara les borraría el vidrio", async () => {
+    const { menuPopupClassName } = await import("../src/variants/menu")
+    expect(menuPopupClassName).not.toContain("scroll-fade")
+    for (const archivo of ["sidebar", "chat", "drawer"]) {
+      expect(readFileSync(new URL(`../src/components/${archivo}.tsx`, import.meta.url), "utf8"), archivo).toContain("scroll-fade")
+    }
+  })
+})
+
 describe("glass: accesibilidad", () => {
   it("sin transparencia o con más contraste, el material se apaga", () => {
     expect(css).toMatch(/--sf-glass-on:\s*1;/)

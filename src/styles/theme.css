@@ -37,6 +37,22 @@
   initial-value: 0.06;
 }
 
+/**
+ * Cuánto difuminado lleva cada borde de un `scroll-fade`. Registradas para que la animación
+ * las interpole; sin registro saltarían de 0 al máximo de un cuadro al otro.
+ */
+@property --sf-fade-top {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+@property --sf-fade-bottom {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
 @theme {
   /* El borde de la IA mientras trabaja: una vuelta cada cuatro segundos. */
   --animate-ai-glow: ai-glow 4s linear infinite;
@@ -632,6 +648,59 @@
 @utility glass-control {
   --sf-g: calc(var(--glass) * var(--sf-glass-on));
   background-color: color-mix(in srgb, var(--sf-background-100) calc((1 - var(--sf-g) * 0.45) * 100%), transparent);
+}
+
+/**
+ * El difuminado de un scroll interno: arriba y abajo el contenido se desvanece en vez de
+ * cortarse contra el borde.
+ *
+ * Sale solo del lado donde hay algo escondido: arriba de todo no hay difuminado arriba, al
+ * final no hay abajo, y una lista que entra entera no lleva ninguno. Lo mueve el propio
+ * scroll (`animation-timeline: scroll(self)`), sin JavaScript ni listeners. Donde el
+ * navegador no tiene timelines de scroll, no hay difuminado: se corta como siempre.
+ *
+ * Va en el elemento que scrollea, y ese elemento **no puede tener superficie propia**: la
+ * máscara también desvanece su fondo y su borde. En un panel de vidrio que scrollea, va en la
+ * lista de adentro, no en el panel.
+ */
+@utility scroll-fade {
+  @supports (animation-timeline: scroll()) {
+    mask-image: linear-gradient(
+      to bottom,
+      transparent,
+      #000 var(--sf-fade-top),
+      #000 calc(100% - var(--sf-fade-bottom)),
+      transparent
+    );
+    /* Dos tramos: el de arriba crece en los primeros 32px de scroll y el de abajo se va en
+       los últimos 32. En el medio los dos están enteros. En px y no en %, para que no dependa
+       de lo larga que sea la lista. */
+    animation:
+      sf-fade-top linear both,
+      sf-fade-bottom linear both;
+    animation-timeline: scroll(self), scroll(self);
+    animation-range:
+      0 32px,
+      calc(100% - 32px) 100%;
+  }
+}
+
+@keyframes sf-fade-top {
+  from {
+    --sf-fade-top: 0px;
+  }
+  to {
+    --sf-fade-top: 32px;
+  }
+}
+
+@keyframes sf-fade-bottom {
+  from {
+    --sf-fade-bottom: 32px;
+  }
+  to {
+    --sf-fade-bottom: 0px;
+  }
 }
 
 /**

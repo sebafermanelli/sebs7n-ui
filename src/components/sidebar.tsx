@@ -72,7 +72,7 @@ function SidebarContent({ className, "aria-label": ariaLabel, ...props }: Sideba
       data-slot="sidebar-content"
       aria-label={ariaLabel ?? l.nav}
       className={cn(
-        "flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto overscroll-contain p-2 group-data-collapsed/sidebar:items-center",
+        "flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto overscroll-contain scroll-fade p-2 group-data-collapsed/sidebar:items-center",
         className
       )}
       {...props}
