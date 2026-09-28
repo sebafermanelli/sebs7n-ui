@@ -9,6 +9,9 @@ export const TYPE_SCALE = [
   "label-14-mono", "label-13-mono", "label-12-mono",
   "copy-24", "copy-20", "copy-18", "copy-16", "copy-14", "copy-13",
   "copy-14-mono", "copy-13-mono",
+  // Roles tipográficos de macOS (2.0): ver theme.css.
+  "large-title", "title-1", "title-2", "title-3", "headline", "body", "callout",
+  "subheadline", "footnote", "caption", "mono-body", "mono-callout",
 ] as const
 
 const twMerge = extendTailwindMerge({

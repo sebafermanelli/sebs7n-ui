@@ -998,7 +998,26 @@
   transition-duration: 280ms;
 }
 
-/* Escala tipográfica de Geist (vercel.com/geist/typography). */
+/**
+ * Roles tipográficos de macOS (2.0). Los componentes usan SOLO estos. El texto normal de macOS es
+ * 13 px, no 14: todo se lee un punto más chico que en la web, y es parte de verse Mac. Los títulos
+ * van en negrita como en Ajustes («General», el nombre del equipo), no en el regular de la HIG:
+ * en pantalla, con Inter, el regular a 22 px se perdía.
+ */
+@utility text-large-title { font-family: var(--font-sans); font-size: 26px; line-height: 32px; font-weight: 700; letter-spacing: -0.02em; }
+@utility text-title-1 { font-family: var(--font-sans); font-size: 22px; line-height: 28px; font-weight: 700; letter-spacing: -0.02em; }
+@utility text-title-2 { font-family: var(--font-sans); font-size: 17px; line-height: 22px; font-weight: 600; letter-spacing: -0.01em; }
+@utility text-title-3 { font-family: var(--font-sans); font-size: 15px; line-height: 20px; font-weight: 600; letter-spacing: -0.01em; }
+@utility text-headline { font-family: var(--font-sans); font-size: 13px; line-height: 16px; font-weight: 600; }
+@utility text-body { font-family: var(--font-sans); font-size: 13px; line-height: 16px; font-weight: 400; }
+@utility text-callout { font-family: var(--font-sans); font-size: 12px; line-height: 15px; font-weight: 400; }
+@utility text-subheadline { font-family: var(--font-sans); font-size: 11px; line-height: 14px; font-weight: 400; }
+@utility text-footnote { font-family: var(--font-sans); font-size: 10px; line-height: 13px; font-weight: 400; }
+@utility text-caption { font-family: var(--font-sans); font-size: 10px; line-height: 13px; font-weight: 500; }
+@utility text-mono-body { font-family: var(--font-mono); font-size: 13px; line-height: 16px; font-weight: 400; }
+@utility text-mono-callout { font-family: var(--font-mono); font-size: 12px; line-height: 15px; font-weight: 400; }
+
+/* Escala de Geist: OBSOLETA desde 2.0. Queda con los mismos valores para que las apps migren a su ritmo (ver /docs/migrating-to-2); ningún componente del paquete la usa. Se borra en 3.0. */
 
 /**
  * Corrección óptica del peso de los títulos.
