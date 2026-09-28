@@ -1751,7 +1751,7 @@ export const COMPONENTS = {
       "`CardTitle` es un `<div>`: si la tarjeta encabeza una sección, poné el heading vos (`render` no aplica acá — usá tu propio `<h3>` adentro).",
     ],
     usage: [
-      "**`variant=\"default\"` es la superficie** (borde + `glass`); **`subtle` es la banda** (`bg-gray-alpha-100`, sin borde) para una zona hundida.",
+      "**`variant=\"default\"` es la superficie** (borde + `material-group`, sólido); **`subtle` es la banda** (`bg-gray-alpha-100`, sin borde) para una zona hundida.",
       "Una card dentro de otra card es una señal de que falta una tabla o una lista.",
       "`size=\"sm\"` en una grilla de 3 o más columnas; `md` suelta.",
       "`CardAction` se ubica sola arriba a la derecha si está dentro de `CardHeader`.",

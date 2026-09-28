@@ -216,7 +216,7 @@ function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido
           ) : (
             <header
               data-slot="app-shell-mobile-bar"
-              className="sticky top-0 z-40 flex h-14 shrink-0 items-center gap-2 border-b border-gray-alpha-400 glass px-4 shadow-card lg:hidden"
+              className="sticky top-0 z-40 flex h-14 shrink-0 items-center gap-2 border-b border-gray-alpha-400 material-bar px-4 shadow-card lg:hidden"
             >
               {barContent}
             </header>

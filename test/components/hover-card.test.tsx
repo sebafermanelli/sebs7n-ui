@@ -72,7 +72,7 @@ describe("HoverCard", () => {
     render(<Ficha closeDelay={0} delay={0} />)
     await userEvent.hover(screen.getByRole("link", { name: "Acme S.A." }))
     await waitFor(() => expect(panel()).not.toBeNull())
-    expect(panel()).toHaveClass("glass", "shadow-menu", "rounded-surface", "text-body")
+    expect(panel()).toHaveClass("material-popover", "shadow-menu", "rounded-surface", "text-body")
     expect(panel()!.className).not.toMatch(/\bborder\b/)
     expect(panel()).toHaveClass("data-starting-style:opacity-0", "data-ending-style:opacity-0", "motion-reduce:transition-none")
   })

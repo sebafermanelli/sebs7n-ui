@@ -13,12 +13,13 @@ type EmptyStateProps = Omit<React.ComponentProps<"div">, "title"> & {
   action?: React.ReactNode
 }
 
-// Zona hundida (Card variant="subtle"): fondo gray-alpha-100, sin borde ni blur.
+// Un grupo, como una Card (2.0): fondo sólido `material-group` con borde. Antes era la zona
+// hundida de `subtle`, que en oscuro sobre la página negra casi no se veía.
 function EmptyState({ className, icon, title, titleAs: Title = "h2", description, action, children, ...props }: EmptyStateProps) {
   return (
     <div
       data-slot="empty-state"
-      className={cn(cardVariants({ variant: "subtle" }), "items-center justify-center gap-4 px-6 py-12 text-center", className)}
+      className={cn(cardVariants(), "items-center justify-center gap-4 px-6 py-12 text-center", className)}
       {...props}
     >
       {icon && (

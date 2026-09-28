@@ -151,7 +151,7 @@ describe("NavigationMenu", () => {
     await screen.findByRole("link", { name: /Sistemas/ })
 
     const popup = document.querySelector("[data-slot=navigation-menu-popup]")!
-    expect(popup).toHaveClass("shadow-menu", "rounded-[calc(var(--radius-control)+--spacing(1))]", "glass")
+    expect(popup).toHaveClass("shadow-menu", "rounded-[calc(var(--radius-control)+--spacing(1))]", "material-popover")
     // `shadow-menu` ya trae el hairline de 1px.
     expect(popup.className).not.toMatch(/\bborder\b/)
   })

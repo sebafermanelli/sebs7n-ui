@@ -7,7 +7,7 @@ const cardVariantsBase = cva(
   {
     variants: {
       variant: {
-        default: "border border-gray-alpha-400 glass shadow-card",
+        default: "border border-gray-alpha-400 material-group shadow-card",
         // Hundida y sin blur: es la que va ADENTRO de otra superficie, y ahí un segundo vidrio
         // no tiene nada que desenfocar.
         subtle: "bg-gray-alpha-100 shadow-track",

@@ -56,7 +56,7 @@ describe("Sidebar", () => {
     render(<Example />)
     const aside = screen.getByRole("complementary")
     expect(aside).toHaveAttribute("data-variant", "floating")
-    expect(aside).toHaveClass("m-3", "mr-0", "h-[calc(100%-1.5rem)]", "rounded-panel", "border", "shadow-menu", "glass", "glass-thick", "glass-rim")
+    expect(aside).toHaveClass("m-3", "mr-0", "h-[calc(100%-1.5rem)]", "rounded-panel", "border", "shadow-menu", "material-bar", "glass-thick", "glass-rim")
     expect(aside).not.toHaveClass("border-r")
   })
 
@@ -64,7 +64,7 @@ describe("Sidebar", () => {
     const { rerender } = render(<Example variant="bar" />)
     const aside = screen.getByRole("complementary")
     expect(aside).toHaveAttribute("data-slot", "sidebar")
-    expect(aside).toHaveClass("w-60", "data-collapsed:w-16", "glass", "glass-thick", "border-r", "border-gray-alpha-400", "flex-col", "h-full")
+    expect(aside).toHaveClass("w-60", "data-collapsed:w-16", "material-bar", "glass-thick", "border-r", "border-gray-alpha-400", "flex-col", "h-full")
     expect(aside).not.toHaveAttribute("data-collapsed")
     expect(aside.className).not.toMatch(/transition(-all|-\[width)|duration/)
     rerender(<Example collapsed variant="bar" />)

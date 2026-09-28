@@ -182,7 +182,7 @@ function DrawerContent({ className, children, showCloseButton = true, showHandle
           data-slot="drawer-content"
           ref={ref}
           className={cn(
-            "group/drawer absolute flex glass glass-thick text-body text-gray-1000 shadow-modal outline-none",
+            "group/drawer absolute flex material-modal text-body text-gray-1000 shadow-modal outline-none",
             // Redondeado solo del lado de adentro. Contra el borde de la
             // pantalla no hay radio: ahí el radio deja ver una franja de fondo.
             "data-[swipe-direction=down]:inset-x-0 data-[swipe-direction=down]:bottom-0 data-[swipe-direction=down]:max-h-[calc(100%-3rem)] data-[swipe-direction=down]:flex-col data-[swipe-direction=down]:rounded-t-panel",

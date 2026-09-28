@@ -113,10 +113,10 @@ describe("Toolbar", () => {
 
   it("`plain` no lleva material: es la barra que vive adentro de otra superficie", () => {
     const { rerender } = render(<Toolbar aria-label="Búsqueda" />)
-    expect(screen.getByRole("toolbar")).toHaveClass("glass", "glass-rim", "shadow-card")
+    expect(screen.getByRole("toolbar")).toHaveClass("material-bar", "glass-rim", "shadow-card")
     rerender(<Toolbar aria-label="Búsqueda" variant="plain" />)
     const barra = screen.getByRole("toolbar")
-    expect(barra).not.toHaveClass("glass")
+    expect(barra).not.toHaveClass("material-bar")
     expect(barra).not.toHaveClass("glass-rim")
     expect(barra).not.toHaveClass("shadow-card")
     expect(barra).toHaveAttribute("data-variant", "plain")

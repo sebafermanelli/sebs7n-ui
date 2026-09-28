@@ -264,7 +264,7 @@ function NavigationMenuPopup({ className, ...props }: NavigationMenuPopupProps) 
         // panel no tiene links adentro, Base UI lo enfoca a él y con `outline-none` no se veía nada.
         // El radio es el de los links más el `p-1` que los separa, igual que en los menús: con el
         // radio de superficie (20px) a 4px de un link de 10, las dos curvas no eran paralelas.
-        "rounded-[calc(var(--radius-control)+--spacing(1))] glass p-1 text-gray-1000 shadow-menu outline-none focus-visible:focus-ring",
+        "rounded-[calc(var(--radius-control)+--spacing(1))] material-popover p-1 text-gray-1000 shadow-menu outline-none focus-visible:focus-ring",
         "transition-[opacity,transform,width,height] duration-200 ease-out motion-reduce:transition-none",
         "data-starting-style:scale-[0.98] data-starting-style:opacity-0",
         "data-ending-style:scale-[0.98] data-ending-style:opacity-0",

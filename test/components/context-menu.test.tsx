@@ -137,7 +137,7 @@ describe("ContextMenu", () => {
     abrirConClickDerecho()
 
     const menu = await screen.findByRole("menu")
-    expect(menu).toHaveClass("shadow-menu", "rounded-[calc(var(--radius-control)+--spacing(1))]", "glass")
+    expect(menu).toHaveClass("shadow-menu", "rounded-[calc(var(--radius-control)+--spacing(1))]", "material-popover")
     expect(menu.className).not.toMatch(/\bborder\b/)
 
     const item = screen.getByRole("menuitem", { name: /Renombrar/ })

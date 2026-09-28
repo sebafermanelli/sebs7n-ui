@@ -99,7 +99,7 @@ describe("Card", () => {
       </Card>
     )
     const card = screen.getByText("Ingresos").closest("[data-slot=card]")!
-    expect(card).toHaveClass("border-gray-alpha-400", "glass", "rounded-surface", "[--card-spacing:--spacing(6)]")
+    expect(card).toHaveClass("border-gray-alpha-400", "material-group", "rounded-surface", "[--card-spacing:--spacing(6)]")
     // `shadow-card` es 1px que la despega de la página; la de menú/modal no va en una card.
     expect(card).toHaveClass("shadow-card")
     expect(card.className).not.toMatch(/shadow-(menu|modal|tooltip)/)
@@ -141,7 +141,7 @@ describe("Table", () => {
       </Table>
     )
     const container = screen.getByRole("table").parentElement!
-    expect(container).toHaveClass("rounded-surface", "border", "border-gray-alpha-400", "glass", "overflow-x-auto")
+    expect(container).toHaveClass("rounded-surface", "border", "border-gray-alpha-400", "material-group", "overflow-x-auto")
     expect(screen.getByRole("table").querySelector("thead")).toHaveClass("bg-gray-alpha-100", "[&_tr]:h-10")
     expect(screen.getByText("Cliente")).toHaveClass("text-callout", "text-gray-900")
     expect(screen.getByText("Ana").closest("tr")).toHaveClass("h-12", "hover:bg-gray-alpha-100", "data-[state=selected]:bg-selection", "data-[state=selected]:text-on-selection")

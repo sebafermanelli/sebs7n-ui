@@ -12,13 +12,16 @@ Las decisiones que no se ven en una tabla de props. Cada una existe porque rompe
 
 **Nunca vidrio sobre vidrio.** Lo que flota lleva `glass`; lo que vive **adentro** de algo que flota lleva `glass-control`, que es alfa sin blur. No es solo estética: un elemento con `backdrop-filter` se vuelve la raíz del fondo de sus hijos, así que un segundo vidrio adentro desenfoca lo que pintó el primero y no la página. Cuesta lo mismo de pintar y no muestra nada.
 
+Desde 2.0 el material va **por rol**, como en macOS: no todo es el mismo vidrio.
+
 | Es | Lleva |
 |---|---|
-| Una superficie que flota: Card, Popover, menú, Table | `glass` |
-| Lo más grande que flota: Dialog, Sheet, Drawer, Sidebar, Navbar | `glass glass-thick` |
-| Una lámina: un chip flotante | `glass glass-thin` |
+| Una barra: Navbar, Toolbar, Sidebar, la barra mobile del AppShell | `material-bar` (= `glass`) |
+| Algo que se lee y flota: menú, Select, Combobox, Popover, HoverCard, Tooltip, el panel de DatePicker | `material-popover` (= `glass glass-dense`) |
+| Un diálogo: Dialog, AlertDialog, Sheet, Drawer | `material-modal`: casi opaco (91 % de fill), no se ve lo de atrás |
+| Un grupo apoyado en la ventana: Card, Table, EmptyState | `material-group`: sólido, sin blur |
 | Lo que vive adentro de una superficie: Input, Button `outline`, Checkbox vacío, Alert | `glass-control` |
-| Cromo: Toolbar, Navbar despegada | `glass` + `glass-rim` |
+| Cromo: Toolbar, Navbar despegada | `material-bar` + `glass-rim` |
 | Una zona hundida: `Card subtle`, `thead`, `EmptyState` | `bg-gray-alpha-100` |
 
 **Las curvas son concéntricas.** Cuando algo redondeado vive cerca del borde de otra cosa redondeada, su radio es el de afuera menos la distancia que los separa. Un diálogo de 26px con un ítem a 8px del borde pide un ítem de 18px: con uno de 10 se ve una caja cuadrada metida en una redondeada. Los menús ya lo hacen solos (el panel mide el radio del ítem más su `p-1`). Importa cuando el padding es menor que el radio; con un padding de 24px en un diálogo de 26, no.

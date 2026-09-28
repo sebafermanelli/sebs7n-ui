@@ -74,7 +74,7 @@ function Toolbar({ className, onKeyDown, variant = "glass", ...props }: ToolbarP
         // Una cápsula de vidrio con el canto especular: es la barra de Safari. `relative` es lo
         // que ancla el `::after` del canto.
         "relative flex items-center gap-1 rounded-full p-1 text-gray-1000",
-        variant === "glass" && "glass glass-rim shadow-card",
+        variant === "glass" && "material-bar glass-rim shadow-card",
         "data-[orientation=vertical]:rounded-surface",
         "data-[orientation=vertical]:w-fit data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-stretch",
         className

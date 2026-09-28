@@ -102,7 +102,7 @@ function Navbar({ className, surfaceClassName, variant = "bar", position = "stic
           "relative border border-transparent transition-[background-color,border-color,border-radius,box-shadow,backdrop-filter] duration-300 ease-out",
           !scrolled && "rounded-none bg-transparent",
           // Una barra es de lo más grande que flota en una pantalla: material grueso.
-          scrolled && "glass glass-thick",
+          scrolled && "material-bar glass-thick",
           scrolled && !floating && "rounded-none border-b-gray-alpha-400",
           // Despegada es cromo, y el cromo lleva el canto especular de las cápsulas de Safari.
           floating && "mx-auto max-w-6xl rounded-panel border-gray-alpha-400 shadow-menu glass-rim",

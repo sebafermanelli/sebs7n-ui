@@ -40,7 +40,7 @@ export function Variantes() {
       <Card size="sm">
         <CardHeader>
           <CardTitle>default</CardTitle>
-          <CardDescription>Borde y `glass`.</CardDescription>
+          <CardDescription>Borde y `material-group`.</CardDescription>
         </CardHeader>
       </Card>
       <Card size="sm" variant="subtle">

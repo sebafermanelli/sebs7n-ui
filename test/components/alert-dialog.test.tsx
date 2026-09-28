@@ -41,7 +41,7 @@ describe("AlertDialog", () => {
     render(<Example />)
     await userEvent.click(screen.getByRole("button", { name: "Eliminar viaje" }))
     const dialog = await screen.findByRole("alertdialog")
-    expect(dialog).toHaveClass("shadow-modal", "rounded-panel", "p-6", "glass", "glass-thick")
+    expect(dialog).toHaveClass("shadow-modal", "rounded-panel", "p-6", "material-modal")
     expect(dialog.className).not.toMatch(/\bborder\b/)
     expect(screen.getByText("¿Eliminar el viaje?")).toHaveClass("text-title-2", "text-gray-1000")
     expect(screen.getByText("Se borran también los pasajeros cargados.")).toHaveClass("text-body", "text-gray-900")

@@ -28,7 +28,7 @@ describe("ColorPicker", () => {
   it("abre un panel de vidrio con tres pestañas", async () => {
     render(<ColorPicker aria-label="Color" />)
     const panel = await abrir()
-    expect(panel).toHaveClass("glass", "rounded-surface", "shadow-menu")
+    expect(panel).toHaveClass("material-popover", "rounded-surface", "shadow-menu")
     expect(within(panel).getAllByRole("tab").map((t) => t.textContent)).toEqual(["Paleta", "Espectro", "Valores"])
   })
 

@@ -108,7 +108,8 @@ En el tema oscuro la luz ya viene más baja que en el claro —menos croma, meno
 
 | Utilidad | Para qué |
 |---|---|
-| `glass` | Una superficie que flota. Reemplaza a `bg-background-100`. |
+| `material-bar` · `material-popover` · `material-modal` · `material-group` | El material por rol (2.0): barra, popup que se lee, diálogo casi opaco y grupo sólido (`--sf-group`). Los componentes ya lo traen. |
+| `glass` | Una superficie que flota. Es lo mismo que `material-bar`, y sigue existiendo para las apps. |
 | `glass-thin` · `glass-thick` | El grosor: lámina (Tooltip, chip) o placa (Dialog, Sidebar). Van al lado de `glass`. |
 | `glass-dense` | El vidrio de una lista de texto: más fill y, en oscuro, lo de atrás apagado. Va al lado de `glass`. Los menús ya lo traen. |
 | `glass-control` | Un control **adentro** de un vidrio: alfa, sin blur. |

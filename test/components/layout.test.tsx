@@ -101,7 +101,7 @@ describe("PageHeader", () => {
 })
 
 describe("EmptyState", () => {
-  it("superficie subtle centrada con ícono, título, descripción y acción", () => {
+  it("un grupo centrado con ícono, título, descripción y acción", () => {
     render(
       <EmptyState
         icon={<InboxIcon />}
@@ -114,10 +114,10 @@ describe("EmptyState", () => {
     expect(title).toHaveClass("text-title-3", "text-gray-1000")
     expect(screen.getByText("Creá el primero para empezar a cargar pasajeros.")).toHaveClass("text-body", "text-gray-900")
     const root = title.closest("[data-slot=empty-state]")!
-    expect(root).toHaveClass("bg-gray-alpha-100", "rounded-surface", "items-center", "text-center", "py-12")
-    // Zona hundida: sin borde y sin sombra que la levante. La única sombra válida es la interior de la pista.
-    expect(root.className).not.toMatch(/\bborder\b|shadow-(card|button|menu|modal|tooltip)/)
-    expect(root).toHaveClass("shadow-track")
+    expect(root).toHaveClass("material-group", "border", "rounded-surface", "items-center", "text-center", "py-12")
+    // Desde 2.0 es un grupo, como una Card: fondo sólido y borde, sin la sombra hundida de `subtle`.
+    expect(root).not.toHaveClass("shadow-track")
+    expect(root).not.toHaveClass("bg-gray-alpha-100")
     expect(root.querySelector("[data-slot=empty-state-icon]")).toHaveAttribute("aria-hidden", "true")
     expect(screen.getByRole("button", { name: "Nuevo viaje" })).toBeInTheDocument()
   })

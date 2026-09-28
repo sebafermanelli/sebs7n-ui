@@ -37,7 +37,7 @@ function Sidebar({ className, collapsed: collapsedProp = false, variant = "float
         data-collapsed={collapsed ? "" : undefined}
         data-variant={inSheet ? undefined : variant}
         className={cn(
-          "group/sidebar relative flex h-full w-60 shrink-0 flex-col glass glass-thick text-gray-1000 data-collapsed:w-16",
+          "group/sidebar relative flex h-full w-60 shrink-0 flex-col material-bar glass-thick text-gray-1000 data-collapsed:w-16",
           // Flotante: 12px de aire alrededor —a la derecha no, ahí empieza el contenido con su
           // propio margen— y la forma del cromo. El alto descuenta el margen para no desbordar
           // la columna sticky del AppShell.

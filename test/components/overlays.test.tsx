@@ -20,7 +20,7 @@ import { Toaster } from "../../src/components/sonner"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../src/components/tooltip"
 
 describe("Tooltip", () => {
-  it("aparece al enfocar el trigger, invertido", async () => {
+  it("aparece al enfocar el trigger, de vidrio denso", async () => {
     render(
       <TooltipProvider delay={0}>
         <Tooltip>
@@ -31,7 +31,7 @@ describe("Tooltip", () => {
     )
     await userEvent.tab()
     const tip = await screen.findByText("Copiar al portapapeles")
-    expect(tip.closest("[data-slot=tooltip-content]")).toHaveClass("bg-gray-1000", "text-background-100", "shadow-tooltip", "rounded-control")
+    expect(tip.closest("[data-slot=tooltip-content]")).toHaveClass("material-popover", "text-gray-1000", "shadow-tooltip", "rounded-control")
   })
 })
 
@@ -45,7 +45,7 @@ describe("Popover", () => {
     )
     await userEvent.click(screen.getByRole("button", { name: "Filtros" }))
     const panel = (await screen.findByText("contenido")).closest("[data-slot=popover-content]")!
-    expect(panel).toHaveClass("shadow-menu", "rounded-surface", "glass")
+    expect(panel).toHaveClass("shadow-menu", "rounded-surface", "material-popover")
     expect(panel.className).not.toMatch(/\bborder\b/)
   })
 
@@ -138,7 +138,7 @@ describe("Dialog", () => {
     )
     await userEvent.click(screen.getByRole("button", { name: "Nuevo viaje" }))
     const dialog = await screen.findByRole("dialog")
-    expect(dialog).toHaveClass("shadow-modal", "rounded-panel", "p-6", "glass")
+    expect(dialog).toHaveClass("shadow-modal", "rounded-panel", "p-6", "material-modal")
     expect(screen.getByText("Cargá los datos.")).toHaveClass("text-gray-900")
     await userEvent.click(screen.getByRole("button", { name: "Cerrar" }))
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull())

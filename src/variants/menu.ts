@@ -40,10 +40,10 @@ export const menuItemSecondaryClassName =
  * abierta que la del panel, según cuál de los dos tokens haya pisado la app.
  */
 /**
- * `glass-dense`: un menú es una lista que se lee y flota sobre lo que haya. Ver la utilidad.
+ * `material-popover` (vidrio denso): un menú es una lista que se lee y flota sobre lo que haya.
  */
 export const menuPopupClassName =
-  "max-h-(--available-height) min-w-40 origin-(--transform-origin) overflow-y-auto rounded-[calc(var(--radius-control)+--spacing(1))] glass glass-dense p-1 text-gray-1000 shadow-menu outline-none transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0"
+  "max-h-(--available-height) min-w-40 origin-(--transform-origin) overflow-y-auto rounded-[calc(var(--radius-control)+--spacing(1))] material-popover p-1 text-gray-1000 shadow-menu outline-none transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0"
 
 /**
  * El encabezado de un grupo de ítems: DropdownMenu, ContextMenu, Menubar, Select y Combobox.

@@ -92,11 +92,12 @@ describe("glass-dense: el vidrio de las listas de texto", () => {
     expect(css).toMatch(/@property --sf-glass-backdrop \{[^}]*initial-value: 0\.06;/)
   })
 
-  it("lo llevan los menús, y nada más", async () => {
+  it("desde 2.0 lo lleva el rol popover (`material-popover`): menús y popups", async () => {
+    expect(utility("material-popover")).toContain("@apply glass glass-dense;")
     const { menuPopupClassName } = await import("../src/variants/menu")
     const { floatingPopupClassName } = await import("../src/variants/overlay")
-    expect(menuPopupClassName).toContain("glass-dense")
-    expect(floatingPopupClassName).not.toContain("glass-dense")
+    expect(menuPopupClassName).toContain("material-popover")
+    expect(floatingPopupClassName).toContain("material-popover")
   })
 })
 

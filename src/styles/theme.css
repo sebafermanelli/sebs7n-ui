@@ -335,6 +335,12 @@
      * inputs, popups y tarjetas no se despegaban del fondo.
      */
     --sf-background: #ffffff;
+    /**
+     * El fondo de un grupo (`material-group`): Card, Table, EmptyState. Es sólido, como el
+     * «grouped background» de macOS: un grupo no flota, está apoyado en la ventana, y el vidrio
+     * ahí solo costaba contraste. En claro es la superficie blanca; en oscuro, abajo.
+     */
+    --sf-group: var(--sf-background-100);
 
     /* L fija = la del paso equivalente de blue en Geist; k = croma relativo a blue-700. */
     --sf-brand-100: oklch(from var(--sf-brand-src) 0.973 calc(c * 0.059) h);
@@ -512,6 +518,10 @@
     --sf-ambient-3: oklch(from var(--sf-brand-src) 0.32 calc(c * 0.35) calc(h - 25));
 
     --sf-background: #000000;
+    /* Un paso más claro que la página negra: `gray-300` (#292929), el gris de un grupo en macOS
+       oscuro. `background-100` (#0a0a0a) no se despegaba del negro. Sobre él `gray-1000` da
+       12,43:1 y `gray-900` 5,56:1 (`test/materials.test.ts`). */
+    --sf-group: var(--sf-gray-300);
 
     --sf-brand-100: oklch(from var(--sf-brand-src) 0.22 calc(c * 0.317) h);
     --sf-brand-200: oklch(from var(--sf-brand-src) 0.255 calc(c * 0.369) h);
@@ -672,6 +682,36 @@
 @utility glass-control {
   --sf-g: calc(var(--glass) * var(--sf-glass-on));
   background-color: color-mix(in srgb, var(--sf-background-100) calc((1 - var(--sf-g) * 0.45) * 100%), transparent);
+}
+
+/**
+ * Material por rol (2.0), como macOS Golden Gate: no todo es el mismo vidrio. `--glass` sigue
+ * siendo la única perilla; cada rol decide cuánto de ella usa.
+ *
+ *   material-bar      barras, sidebar, toolbar: el vidrio de siempre
+ *   material-popover  menús, popovers, tooltips: vidrio denso, se leen sobre cualquier cosa
+ *   material-modal    diálogos, alertas, hojas: casi opacos; en macOS no se ve lo de atrás
+ *   material-group    cards, tablas: sólido sobre el fondo de la ventana, sin blur
+ *
+ * `glass`, `glass-dense` y `glass-thick` siguen existiendo para las apps.
+ */
+@utility material-bar {
+  @apply glass;
+}
+
+@utility material-popover {
+  @apply glass glass-dense;
+}
+
+/* Deja pasar la cuarta parte de lo que deja `glass`: 91 % de fill con `--glass: 1`. Antes, a
+   65 %, un botón rojo detrás de una confirmación se veía como una mancha rosa. */
+@utility material-modal {
+  @apply glass glass-thick;
+  --sf-glass-clear: 0.25;
+}
+
+@utility material-group {
+  background-color: var(--sf-group);
 }
 
 /**
