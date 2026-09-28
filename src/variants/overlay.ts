@@ -62,9 +62,14 @@ export const alertFooterClassName =
  * macOS («Done» en la esquina). Hasta 1.x llevaba un borde al ancho completo con márgenes
  * negativos; en macOS el aire alcanza para separar el contenido de las acciones.
  *
- * `flex-col-reverse` en mobile pone la acción principal arriba, que es donde cae el pulgar.
+ * En mobile se apilan **en el orden del DOM**. Hasta 2.0 era `flex-col-reverse` —la acción
+ * principal arriba—, pero invertir con CSS hace que Tab recorra al revés de como se ve (WCAG
+ * 1.3.2 y 2.4.3), el mismo argumento que en la alerta. Qué va arriba lo decide quien arma el
+ * pie: con «Cancelar» primero (lo habitual, así en desktop queda a la izquierda) el principal
+ * queda abajo en mobile, al alcance del pulgar. 12 px de separación: apilados, las áreas de 44
+ * de dos botones de 32 no se pisan.
  */
-export const modalFooterClassName = "flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end"
+export const modalFooterClassName = "flex flex-col gap-3 pt-2 sm:flex-row sm:justify-end"
 
 /**
  * Dónde va la X de cerrar: Dialog, Sheet y Drawer. Se queda en 2.0 aunque macOS no la ponga en

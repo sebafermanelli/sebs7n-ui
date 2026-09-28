@@ -270,8 +270,9 @@ function DrawerHeader({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 function DrawerFooter({ className, ...props }: React.ComponentProps<"div">) {
-  // Sin línea arriba, como el pie de una hoja de macOS (2.0).
-  return <div data-slot="drawer-footer" className={cn("mt-auto flex flex-col gap-2 p-5", className)} {...props} />
+  // Sin línea arriba, como el pie de una hoja de macOS (2.0). Siempre en columna: 12 px para que
+  // las áreas de 44 de dos botones de 32 no se pisen.
+  return <div data-slot="drawer-footer" className={cn("mt-auto flex flex-col gap-3 p-5", className)} {...props} />
 }
 
 type DrawerTitleProps = WithClassName<DrawerPrimitive.Title.Props>

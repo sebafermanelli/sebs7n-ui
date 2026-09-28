@@ -19,6 +19,8 @@ import { Label } from "sebs7n-ui/label"
  * La hoja de macOS
  * Título a la izquierda, el contenido agrupado en un bloque `material-group` y el principal
  * del acento abajo a la derecha. El pie no lleva línea: el aire alcanza.
+ * «Cancelar» va primero en el DOM: en desktop queda a la izquierda de «Listo», y en mobile, donde
+ * el pie se apila sin invertir, «Listo» queda abajo, al alcance del pulgar. Tab sigue ese orden.
  */
 export function Hoja() {
   return (

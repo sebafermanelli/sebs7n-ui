@@ -65,7 +65,8 @@ describe("Drawer al estilo macOS (2.0)", () => {
     expect(hoja.querySelector("[data-slot=drawer-header]")).toHaveClass("px-5")
     expect(hoja.querySelector("[data-slot=drawer-body]")).toHaveClass("px-5")
     const pie = hoja.querySelector("[data-slot=drawer-footer]")!
-    expect(pie).toHaveClass("p-5")
+    // Siempre en columna: 12 px para que las áreas de 44 de dos botones no se pisen.
+    expect(pie).toHaveClass("p-5", "gap-3")
     expect(pie).not.toHaveClass("border-t")
   })
 })

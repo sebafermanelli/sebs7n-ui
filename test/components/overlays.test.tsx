@@ -178,6 +178,26 @@ describe("hoja de macOS (2.0)", () => {
     expect(pie).toHaveClass("sm:justify-end")
   })
 
+  // Mismo argumento que la alerta: invertir con CSS hace que Tab recorra al revés de como se ve
+  // (WCAG 1.3.2 y 2.4.3). En mobile los botones se apilan en el orden del DOM, con 12 px para
+  // que las áreas de 44 no se pisen.
+  it("en mobile se apila en el orden del DOM, sin invertir, con gap-3", async () => {
+    render(
+      <Dialog defaultOpen>
+        <DialogContent>
+          <DialogTitle>Factura 0012</DialogTitle>
+          <DialogFooter>
+            <Button variant="secondary">Cancelar</Button>
+            <Button variant="accent">Listo</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    )
+    const pie = (await screen.findByRole("dialog")).querySelector('[data-slot="dialog-footer"]')!
+    expect(pie).toHaveClass("flex", "flex-col", "gap-3", "sm:flex-row")
+    expect(pie.className).not.toMatch(/reverse/)
+  })
+
   it("sigue teniendo la X, a la altura del título", async () => {
     render(
       <Dialog defaultOpen>
@@ -249,7 +269,7 @@ describe("Sheet, Popover al estilo macOS (2.0)", () => {
     expect(hoja.querySelector("[data-slot=sheet-header]")).toHaveClass("p-5")
     expect(screen.getByRole("heading", { name: "Filtrar facturas" })).toHaveClass("text-title-3")
     const pie = hoja.querySelector("[data-slot=sheet-footer]")!
-    expect(pie).toHaveClass("p-5")
+    expect(pie).toHaveClass("p-5", "gap-3")
     expect(pie).not.toHaveClass("border-t")
     // La X, en la línea del título: la misma posición que en Dialog.
     expect(screen.getByRole("button", { name: "Cerrar" })).toHaveClass("top-4.5", "right-4.5")
