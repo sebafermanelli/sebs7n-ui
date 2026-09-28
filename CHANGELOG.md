@@ -9,6 +9,30 @@ major.
 
 ## [Unreleased]
 
+## [1.13.1] - 2026-09-28
+
+### Fixed
+
+- **Peso: cuatro componentes dejan de cargar partes de Base UI que no usan al abrir.** Sin cambios
+  de API: los mismos subpaths y los mismos exports. Medido con Turbopack en el sitio de docs, en
+  KB gzip de JS inicial, con Base UI adentro; como se reparten floating-ui, en otra app los
+  números no se suman tal cual.
+  - **`ThemeSwitcher`, −52 KB.** Importaba el `Menu` entero de Base UI porque `ThemeMenuRadio`
+    vivía en el mismo módulo y ningún bundler lo descartaba (ni con `sideEffects`, ni sin
+    `"use client"`). `ThemeMenuRadio` se sigue importando de `sebs7n-ui/theme-switcher` y del
+    barrel; solo cambió de archivo.
+  - **`Sidebar`, −43 KB.** El `Tooltip` se pide recién cuando el Sidebar está colapsado, que es
+    el único caso en que muestra tooltips. La primera vez, el tooltip aparece cuando llega el
+    módulo; mientras tanto el ítem se ve y se anuncia igual, y si tenía el foco lo conserva.
+    Colapsar y expandir después ya no vuelve a montar los ítems.
+  - **`UserMenu`.** El mismo arreglo que el Sidebar: el tooltip del avatar colapsado carga el
+    `Tooltip` recién ahí. No tiene medición propia: el sitio de docs no lo usa.
+  - **`AppShell`, −13 KB.** El `Sheet` de la barra mobile se pide al tocar la hamburguesa. Hasta
+    entonces la hamburguesa es un botón con el mismo aspecto, que anuncia `aria-haspopup` y
+    `aria-expanded` como el trigger de Base UI. El primer toque no se pierde: el Sheet se abre
+    cuando llega, deslizándose como las demás veces, y al cerrarlo el foco vuelve a la
+    hamburguesa.
+
 ## [1.13.0] - 2026-09-28
 
 ### Added
