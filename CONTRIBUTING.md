@@ -1,5 +1,13 @@
 # Cómo contribuir
 
+## Pedidos y bugs
+
+Los issues entran por tres formularios (`.github/ISSUE_TEMPLATE/`): bug, pedido de componente y
+mejora. No hay issues en blanco; las preguntas van a Discussions. Un pedido que se empieza a
+construir lleva la etiqueta `in-progress`; al publicarse se cierra como *completed* y pasa a
+«Publicados» en `/docs/requests`. Si cambiás el `id` de un campo, `docs/site/test/issue-forms.test.ts`
+te lo marca: el sitio precarga esos campos por URL.
+
 ## Correr los tests
 
 ```bash

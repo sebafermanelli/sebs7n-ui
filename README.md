@@ -37,6 +37,7 @@ para agentes. Para levantarlo local, `cd docs/site && npm run dev`.
 - [Idioma](#idioma)
 - [Recetas](#recetas) — lo que resuelve la app, no el paquete
 - [Desarrollo](#desarrollo) · [Sitio de documentación](#sitio-de-documentación) · [Versionado](#versionado)
+- [Pedí un componente o reportá un bug](#pedí-un-componente-o-reportá-un-bug)
 
 ---
 
@@ -683,6 +684,15 @@ SemVer 2.0.0. Para este paquete:
 Cada versión está en [`CHANGELOG.md`](CHANGELOG.md) siguiendo
 [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y todo cambio
 incompatible se explica ahí.
+
+## Pedí un componente o reportá un bug
+
+- [Reportar un bug](https://github.com/sebafermanelli/sebs7n-ui/issues/new?template=bug.yml)
+- [Pedir un componente](https://github.com/sebafermanelli/sebs7n-ui/issues/new?template=component-request.yml) — los pedidos se votan con 👍 y se ven en [el tablero](https://ui.sebastianfermanelli.com/docs/requests)
+- [Pedir una mejora](https://github.com/sebafermanelli/sebs7n-ui/issues/new?template=enhancement.yml)
+- Preguntas y lo que armaste con esto: [Discussions](https://github.com/sebafermanelli/sebs7n-ui/discussions)
+
+Desde cada página de componente del sitio, «Pedí una mejora» y «Reportá un bug» abren el formulario con el componente y la versión ya cargados.
 
 ## Licencia
 
