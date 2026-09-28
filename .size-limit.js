@@ -50,6 +50,11 @@ export default [
     // por rol, la cápsula compartida de Slider/ColorPicker y `selectionSecondaryClassName`. Se subió
     // a 49 para las fases que siguen (Command, Tree, GroupedList…): cada una tiene que explicar su
     // salto en el PR.
-    limit: "49 kB",
+    //
+    // 2.0 (fase 3): 49,64 KB. Entró `Command` (+2,1 KB), la paleta estilo Spotlight. Se subió a 55
+    // para toda la 2.0: cubre Command y los componentes nuevos de las fases 4 y 5 (Tree,
+    // GroupedList, SectionHeader, ColorSwatches, ImageChoice). Cada salto se sigue explicando en el
+    // PR; el umbral del subpath no se mueve.
+    limit: "55 kB",
   },
 ]
