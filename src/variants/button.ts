@@ -25,6 +25,15 @@ const buttonVariantsBase = cva(
           "bg-brand-700 text-brand-contrast sheen shadow-button-accent hover:bg-brand-800 active:translate-y-px active:bg-brand-800 active:shadow-none data-disabled:shadow-none",
         destructive:
           "bg-red-800 text-button-error-fg sheen shadow-button hover:bg-button-error-hover active:translate-y-px active:bg-button-error-active active:shadow-none data-disabled:shadow-none",
+        // Lo que pide la acción peligrosa de una alerta de macOS: texto rojo sobre un vidrio con
+        // tinte rojo. No grita como el rojo sólido: la alerta ya es la advertencia, el botón solo
+        // nombra la acción. El texto es la tinta (`-ink`) y no `-900`: sobre el tinte, `-900` no
+        // llega a 4,5:1 en claro. El tinte es el mismo que el del Badge (`--sf-tint-*`).
+        "destructive-tinted":
+          "bg-red-700/(--sf-tint-fill) text-red-ink shadow-card hover:bg-red-700/(--sf-tint-hover) active:translate-y-px active:bg-red-700/(--sf-tint-active) active:shadow-none data-disabled:shadow-none",
+        // Lo mismo con el acento: una acción que importa sin ser la principal de la pantalla.
+        tinted:
+          "bg-brand-700/(--sf-tint-fill) text-brand-ink shadow-card hover:bg-brand-700/(--sf-tint-hover) active:translate-y-px active:bg-brand-700/(--sf-tint-active) active:shadow-none data-disabled:shadow-none",
         link: "h-auto! rounded-sm border-0 px-0! text-brand-900 underline-offset-4 hover:text-brand-1000 hover:underline data-disabled:bg-transparent",
       },
       size: {
@@ -60,7 +69,10 @@ const buttonVariantsBase = cva(
       // El área táctil de 44 va en todos menos en `link`: ese es texto adentro de un párrafo, y un
       // `::after` de 44 px taparía la línea de arriba y la de abajo. Va acá y no en la base porque
       // una clase de la base no se puede sacar desde una variante.
-      { variant: ["default", "outline", "secondary", "ghost", "accent", "destructive"], className: "touch-target" },
+      {
+        variant: ["default", "outline", "secondary", "ghost", "accent", "destructive", "tinted", "destructive-tinted"],
+        className: "touch-target",
+      },
       // Un escalón más de aire, por tamaño. `lg` ya es ancho, así que sube
       // menos: a 20px de padding la curva ya no toca el texto.
       { shape: "pill", size: "sm", className: "px-4" },

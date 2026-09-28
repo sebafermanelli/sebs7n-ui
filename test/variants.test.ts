@@ -88,7 +88,7 @@ describe("variantes exportadas pasan por cn()", () => {
   })
 
   it("shape rect devuelve el rectángulo, con el radio de los controles", () => {
-    for (const variant of ["default", "outline", "secondary", "ghost", "accent", "destructive"] as const) {
+    for (const variant of ["default", "outline", "secondary", "ghost", "accent", "destructive", "tinted", "destructive-tinted"] as const) {
       const out = classes(buttonVariants({ variant, shape: "rect" }))
       // tailwind-merge tiene que haber resuelto el radio: si sobrevive el de la base, cuál
       // gana depende del orden en la hoja compilada.
@@ -100,7 +100,17 @@ describe("variantes exportadas pasan por cn()", () => {
 
   it("VariantProps sigue funcionando", () => {
     expectTypeOf<VariantProps<typeof buttonVariants>["variant"]>().toEqualTypeOf<
-      "default" | "outline" | "secondary" | "ghost" | "accent" | "destructive" | "link" | null | undefined
+      | "default"
+      | "outline"
+      | "secondary"
+      | "ghost"
+      | "accent"
+      | "destructive"
+      | "tinted"
+      | "destructive-tinted"
+      | "link"
+      | null
+      | undefined
     >()
   })
 })
@@ -128,7 +138,7 @@ describe("densidad macOS (2.0)", () => {
   })
 
   it("área táctil: el botón agranda su área con el dedo y el campo sube de alto", () => {
-    for (const variant of ["default", "outline", "secondary", "ghost", "accent", "destructive"] as const) {
+    for (const variant of ["default", "outline", "secondary", "ghost", "accent", "destructive", "tinted", "destructive-tinted"] as const) {
       expect(classes(buttonVariants({ variant })), variant).toContain("touch-target")
     }
     expect(classes(toggleVariants())).toContain("touch-target")
@@ -152,5 +162,28 @@ describe("densidad macOS (2.0)", () => {
     const out = classes(cn(buttonVariants({ variant: "ghost", size: "icon-md" }), "touch-target-y"))
     expect(out).toContain("touch-target-y")
     expect(out).not.toContain("touch-target")
+  })
+})
+
+// El texto es la tinta (`-ink`) y no `-900`: sobre el tinte, `-900` no llega a 4,5:1 en claro
+// (el rojo da 4,23 sobre el 12 % y el teal de ejemplo 3,99). La cuenta está en contrast.test.ts.
+describe("variantes tintadas (2.0)", () => {
+  it("destructive-tinted: texto rojo sobre tinte rojo, sin relleno sólido", () => {
+    const c = classes(buttonVariants({ variant: "destructive-tinted" }))
+    expect(c).toContain("text-red-ink")
+    expect(c).toContain("bg-red-700/(--sf-tint-fill)")
+    expect(c).toContain("hover:bg-red-700/(--sf-tint-hover)")
+    expect(c).toContain("active:bg-red-700/(--sf-tint-active)")
+    expect(c).not.toContain("bg-red-800")
+    expect(c).toContain("touch-target")
+  })
+
+  it("tinted: texto de acento sobre tinte de acento", () => {
+    const c = classes(buttonVariants({ variant: "tinted" }))
+    expect(c).toContain("text-brand-ink")
+    expect(c).toContain("bg-brand-700/(--sf-tint-fill)")
+    expect(c).toContain("hover:bg-brand-700/(--sf-tint-hover)")
+    expect(c).toContain("active:bg-brand-700/(--sf-tint-active)")
+    expect(c).toContain("touch-target")
   })
 })

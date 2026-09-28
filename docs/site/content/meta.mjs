@@ -121,7 +121,8 @@ export const COMPONENTS = {
       "**Un solo acento por pantalla.** `variant=\"accent\"` para la acción principal; el CTA por defecto es el negro (`variant=\"default\"`).",
       "**`shape=\"pill\"` solo en los CTA de un hero o de una sección de marketing.** Nunca en el chrome de una app —nav, tablas, formularios, diálogos—: dos formas de botón en la misma pantalla se leen como un descuido.",
       "**Un link con forma de botón es un `<a>`**: `className={buttonVariants({ variant })}` sobre `<Link>`. No uses `render` para links: con el `nativeButton` que trae el `Button` por defecto, Base UI le pone `type=\"button\"` al `<a>` y avisa por consola en desarrollo.",
-      "`variant=\"destructive\"` solo cuando la acción borra algo, y siempre detrás de un `AlertDialog`.",
+      "`variant=\"destructive\"` solo cuando la acción borra algo, y siempre detrás de un `AlertDialog`. Adentro de la alerta el botón es `destructive-tinted`: la alerta ya advierte, el botón solo nombra la acción (es lo que pone `AlertDialogAction variant=\"destructive\"`).",
+      "`variant=\"tinted\"` para una acción que importa sin ser la principal: el acento sin gritar. No suma un segundo acento sólido a la pantalla.",
       "`loading` no reemplaza al `disabled` del formulario: deshabilitá también el submit si no querés dobles envíos.",
       "**Con el dedo el área es de 44 × 44** (`touch-target`), aunque el botón mida 24 o 32. Dos botones de ícono en fila necesitan `pointer-coarse:gap-5` (los de 24) o `pointer-coarse:gap-3` (los de 32) para que las áreas no se pisen; si no hay lugar para separarlos —un botón de ícono pegado a un `Input`, una fila de números—, `className=\"touch-target-y\"` crece solo en alto. `variant=\"link\"` no lleva área: es texto adentro de un párrafo.",
     ],
@@ -129,7 +130,7 @@ export const COMPONENTS = {
       Button: {
         loading: "Muestra el spinner encima del contenido y cancela el `onClick`. El ancho no cambia.",
         onClick: "Se ignora mientras `loading` está activo.",
-        variant: "`default` (negro) · `accent` (marca) · `outline` · `secondary` · `ghost` · `destructive` · `link`.",
+        variant: "`default` (negro) · `accent` (marca) · `outline` · `secondary` · `ghost` · `destructive` · `tinted` (texto de marca sobre tinte de marca) · `destructive-tinted` (texto rojo sobre tinte rojo) · `link`.",
         size: "`sm` 24px · `md` 32px · `lg` 40px, más los tres `icon-*` cuadrados. Con el dedo el área crece a 44 sin cambiar lo que se ve.",
       },
     },
