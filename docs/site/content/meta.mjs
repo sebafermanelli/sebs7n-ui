@@ -1807,16 +1807,18 @@ export const COMPONENTS = {
     keyboard: [["Tab", "Llega a la acción."]],
     a11y: [
       "`titleAs` controla el nivel del heading: dentro de una página con `<h1>`, que sea `h2`.",
-      "Es una zona hundida (`bg-gray-alpha-100`), sin borde ni sombra.",
+      "Por defecto es un grupo, como una Card: fondo sólido con borde.",
       "Sin `\"use client\"`: sirve en un Server Component.",
     ],
     usage: [
       "**Distinguí los tres vacíos**: todavía no hay nada (con acción), el filtro no encontró nada (con «limpiar filtros») y hubo un error (con «reintentar»). No son el mismo texto.",
       "El título dice qué falta, no «Sin resultados».",
       "Una sola acción.",
+      "Adentro de una `Card` o de una `Table`, `variant=\"plain\"` (o `subtle`): el grupo ya lo pone quien lo contiene, y un segundo borde con sombra es una caja adentro de otra.",
     ],
     props: {
       EmptyState: {
+        variant: "`default` (grupo con borde, suelto en la página) · `subtle` (zona hundida) · `plain` (sin superficie, adentro de una Card o Table).",
         icon: "El ícono de arriba, dentro de su cuadrito. Es decoración (`aria-hidden`): el título tiene que alcanzar solo.",
         title: "Qué falta, en una línea. Sale como el heading que diga `titleAs`.",
         description: "La línea que explica por qué no hay nada y qué se puede hacer.",

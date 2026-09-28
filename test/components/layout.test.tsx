@@ -132,6 +132,27 @@ describe("EmptyState", () => {
   })
 })
 
+// Adentro de una Card o de una Table el grupo ya está: un segundo borde con sombra es una caja
+// adentro de otra caja.
+describe("EmptyState variant", () => {
+  it("default es el grupo; subtle la zona hundida de la Card; plain, sin superficie", () => {
+    const { rerender } = render(<EmptyState title="Vacío" />)
+    const root = () => screen.getByRole("heading", { name: "Vacío" }).closest("[data-slot=empty-state]")!
+    expect(root()).toHaveAttribute("data-variant", "default")
+    expect(root()).toHaveClass("material-group", "border", "shadow-card")
+
+    rerender(<EmptyState title="Vacío" variant="subtle" />)
+    expect(root()).toHaveAttribute("data-variant", "subtle")
+    expect(root()).toHaveClass("bg-gray-alpha-100", "rounded-surface")
+    expect(root().className).not.toMatch(/\bmaterial-group\b|(^|\s)border(\s|$)|shadow-card/)
+
+    rerender(<EmptyState title="Vacío" variant="plain" />)
+    expect(root()).toHaveAttribute("data-variant", "plain")
+    expect(root().className).not.toMatch(/\bmaterial-group\b|(^|\s)border(\s|$)|shadow-|bg-/)
+    expect(root()).toHaveClass("items-center", "text-center", "py-12")
+  })
+})
+
 describe("EmptyState titleAs", () => {
   it("el nivel del heading se puede cambiar", () => {
     render(<EmptyState title="Sin reseñas" titleAs="h3" />)
