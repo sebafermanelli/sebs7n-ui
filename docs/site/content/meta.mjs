@@ -1039,6 +1039,7 @@ export const COMPONENTS = {
       "Un formulario largo o una lista de filtros sin perder la tabla de atrás.",
       "`side=\"left\"` es el del menú mobile —lo usa `AppShell`—; para contenido, `right`.",
       "En desktop, más de 640px de ancho es una página, no un panel.",
+      "El contenido entre `SheetHeader` y `SheetFooter` va con `px-5`, el mismo aire que el header: así el título, los campos y el pie quedan en una sola columna. El pie no lleva línea arriba.",
     ],
     props: {
       Sheet: {
@@ -1106,6 +1107,7 @@ export const COMPONENTS = {
     usage: [
       "Si el contenido es una lista de acciones, es un `DropdownMenu`. Si es solo texto de ayuda, un `Tooltip`.",
       "En mobile un popover ancho se sale de la pantalla: usá `Sheet`.",
+      "Mide 256 px (`w-64`) con 12 de aire, como un popover de macOS. Si el contenido pide más —un formulario con fechas—, `className=\"w-72\"` o lo que haga falta; no más de 320.",
     ],
     props: {
       Popover: {
@@ -1160,7 +1162,7 @@ export const COMPONENTS = {
       "**Un adelanto, nunca la información.** Si el contenido es el dato, va en la página.",
       "Si hace falta interactuar con algo, es un `Popover`: abre con click y se cierra con Escape en cualquier dispositivo.",
       "Si es una línea que aclara un control, es un `Tooltip`.",
-      "No la cargues: una ficha, no una pantalla.",
+      "No la cargues: una ficha, no una pantalla. Mide 256 px (`w-64`): si no entra, sobra algo.",
     ],
     props: {
       HoverCard: heredadas("open", "defaultOpen", "onOpenChange", "actionsRef"),

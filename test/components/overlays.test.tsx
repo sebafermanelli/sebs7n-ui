@@ -23,9 +23,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "../../src/components/dropdown-menu"
-import { Popover, PopoverContent, PopoverTrigger } from "../../src/components/popover"
+import { Popover, PopoverContent, PopoverHeader, PopoverTitle, PopoverTrigger } from "../../src/components/popover"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../src/components/select"
-import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "../../src/components/sheet"
+import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "../../src/components/sheet"
 import { Toaster } from "../../src/components/sonner"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../src/components/tooltip"
 
@@ -228,6 +228,48 @@ describe("Sheet", () => {
     )
     await userEvent.click(screen.getByRole("button", { name: "Abrir" }))
     expect((await screen.findByRole("dialog")).className).not.toMatch(/rounded-(t|b|l|r)-/)
+  })
+})
+
+describe("Sheet, Popover al estilo macOS (2.0)", () => {
+  it("Sheet: header con el padding de la hoja, título title-3 y pie sin línea", async () => {
+    render(
+      <Sheet defaultOpen>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>Filtrar facturas</SheetTitle>
+          </SheetHeader>
+          <SheetFooter>
+            <Button variant="accent">Aplicar</Button>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
+    )
+    const hoja = await screen.findByRole("dialog")
+    expect(hoja.querySelector("[data-slot=sheet-header]")).toHaveClass("p-5")
+    expect(screen.getByRole("heading", { name: "Filtrar facturas" })).toHaveClass("text-title-3")
+    const pie = hoja.querySelector("[data-slot=sheet-footer]")!
+    expect(pie).toHaveClass("p-5")
+    expect(pie).not.toHaveClass("border-t")
+    // La X, en la línea del título: la misma posición que en Dialog.
+    expect(screen.getByRole("button", { name: "Cerrar" })).toHaveClass("top-4.5", "right-4.5")
+  })
+
+  it("Popover: más angosto y con menos aire, como un popover de macOS; título headline", async () => {
+    render(
+      <Popover defaultOpen>
+        <PopoverTrigger render={<Button variant="outline" />}>Filtros</PopoverTrigger>
+        <PopoverContent>
+          <PopoverHeader>
+            <PopoverTitle>Rango</PopoverTitle>
+          </PopoverHeader>
+        </PopoverContent>
+      </Popover>
+    )
+    const panel = (await screen.findByText("Rango")).closest("[data-slot=popover-content]")!
+    expect(panel).toHaveClass("w-64", "p-3", "gap-2", "text-body")
+    expect(panel).not.toHaveClass("w-72", "p-4")
+    expect(screen.getByText("Rango")).toHaveClass("text-headline")
   })
 })
 

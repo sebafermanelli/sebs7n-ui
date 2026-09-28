@@ -31,7 +31,7 @@ export function FiltrosEnMobile() {
           <DrawerTitle>Filtrar facturas</DrawerTitle>
           <DrawerDescription>Se aplican al listado sin recargar la página.</DrawerDescription>
         </DrawerHeader>
-        <DrawerBody className="flex flex-col gap-4 pb-6">
+        <DrawerBody className="flex flex-col gap-4 pb-5">
           <div className="flex flex-col gap-2">
             <Label htmlFor="drawer-cliente">Cliente</Label>
             <Input id="drawer-cliente" placeholder="Acme S.A." />
@@ -62,7 +62,7 @@ export function DetalleAMediaHoja() {
           <DrawerTitle>Factura 0012</DrawerTitle>
           <DrawerDescription>Acme S.A., emitida el 14 de marzo.</DrawerDescription>
         </DrawerHeader>
-        <DrawerBody className="flex flex-col gap-4 pb-6">
+        <DrawerBody className="flex flex-col gap-4 pb-5">
           <div className="flex items-center gap-2">
             <Badge color="green">Pagada</Badge>
             <Badge color="gray">3 ítems</Badge>

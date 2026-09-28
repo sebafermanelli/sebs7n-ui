@@ -57,6 +57,19 @@ function DrawerDePrueba(props: React.ComponentProps<typeof Drawer>) {
   )
 }
 
+describe("Drawer al estilo macOS (2.0)", () => {
+  it("título title-3, padding de la hoja y pie sin línea", async () => {
+    render(<DrawerDePrueba defaultOpen />)
+    const hoja = await screen.findByRole("dialog")
+    expect(screen.getByRole("heading", { name: "Filtrar viajes" })).toHaveClass("text-title-3")
+    expect(hoja.querySelector("[data-slot=drawer-header]")).toHaveClass("px-5")
+    expect(hoja.querySelector("[data-slot=drawer-body]")).toHaveClass("px-5")
+    const pie = hoja.querySelector("[data-slot=drawer-footer]")!
+    expect(pie).toHaveClass("p-5")
+    expect(pie).not.toHaveClass("border-t")
+  })
+})
+
 describe("Drawer", () => {
   it("abre con el trigger y el título es el nombre accesible", async () => {
     render(<DrawerDePrueba />)

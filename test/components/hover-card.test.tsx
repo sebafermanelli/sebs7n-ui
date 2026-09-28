@@ -77,6 +77,14 @@ describe("HoverCard", () => {
     expect(panel()).toHaveClass("data-starting-style:opacity-0", "data-ending-style:opacity-0", "motion-reduce:transition-none")
   })
 
+  it("mide y respira como un popover de macOS: w-64 y p-3", async () => {
+    render(<Ficha closeDelay={0} delay={0} />)
+    await userEvent.hover(screen.getByRole("link", { name: "Acme S.A." }))
+    await waitFor(() => expect(panel()).not.toBeNull())
+    expect(panel()).toHaveClass("w-64", "p-3", "gap-2")
+    expect(panel()).not.toHaveClass("w-72", "p-4")
+  })
+
   it("el className del llamador le gana a la clase base", async () => {
     render(
       <HoverCard>
@@ -89,7 +97,7 @@ describe("HoverCard", () => {
     await userEvent.hover(screen.getByRole("link", { name: "Ver" }))
     await waitFor(() => expect(panel()).not.toBeNull())
     expect(panel()).toHaveClass("w-96", "rounded-md")
-    expect(panel()!.className).not.toMatch(/\bw-72\b/)
+    expect(panel()!.className).not.toMatch(/\bw-64\b/)
     expect(panel()!.className).not.toMatch(/\brounded-xl\b/)
   })
 })

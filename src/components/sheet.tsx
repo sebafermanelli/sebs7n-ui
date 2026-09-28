@@ -74,18 +74,20 @@ function SheetContent({ className, children, side = "right", showCloseButton = t
   )
 }
 
+// Mismo padding (20 px), título y pie que la hoja de Dialog (2.0): el pie va sin línea arriba,
+// como en macOS. `pr-12` deja lugar a la X, que queda en la línea del título.
 function SheetHeader({ className, ...props }: React.ComponentProps<"div">) {
-  return <div data-slot="sheet-header" className={cn("flex flex-col gap-1.5 p-6 pr-12", className)} {...props} />
+  return <div data-slot="sheet-header" className={cn("flex flex-col gap-1 p-5 pr-12", className)} {...props} />
 }
 
 function SheetFooter({ className, ...props }: React.ComponentProps<"div">) {
-  return <div data-slot="sheet-footer" className={cn("mt-auto flex flex-col gap-2 border-t border-gray-alpha-400 p-6", className)} {...props} />
+  return <div data-slot="sheet-footer" className={cn("mt-auto flex flex-col gap-2 p-5", className)} {...props} />
 }
 
 type SheetTitleProps = WithClassName<SheetPrimitive.Title.Props>
 
 function SheetTitle({ className, ...props }: SheetTitleProps) {
-  return <SheetPrimitive.Title data-slot="sheet-title" className={cn("text-title-2 text-gray-1000", className)} {...props} />
+  return <SheetPrimitive.Title data-slot="sheet-title" className={cn("text-title-3 text-gray-1000", className)} {...props} />
 }
 
 type SheetDescriptionProps = WithClassName<SheetPrimitive.Description.Props>

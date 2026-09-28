@@ -17,7 +17,7 @@ export function Basico() {
             <SheetTitle>Filtrar facturas</SheetTitle>
             <SheetDescription>Se aplican al listado sin recargar la página.</SheetDescription>
           </SheetHeader>
-          <div className="flex flex-col gap-4 px-4">
+          <div className="flex flex-col gap-4 px-5">
             <div className="flex flex-col gap-2">
               <Label htmlFor="sheet-cliente">Cliente</Label>
               <Input id="sheet-cliente" placeholder="Acme S.A." />

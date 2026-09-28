@@ -23,15 +23,15 @@ export function Basico() {
               <AvatarFallback>AC</AvatarFallback>
             </Avatar>
             <div className="flex min-w-0 flex-col">
-              <span className="text-heading-14 text-gray-1000">Acme S.A.</span>
-              <span className="text-copy-13 text-gray-900">CUIT 30-71234567-8</span>
+              <span className="text-headline text-gray-1000">Acme S.A.</span>
+              <span className="text-body text-gray-900">CUIT 30-71234567-8</span>
             </div>
           </HoverCardHeader>
           <div className="flex items-center gap-2">
             <Badge color="green" size="sm">
               Al día
             </Badge>
-            <span className="text-copy-13 text-gray-900">12 facturas · $ 1.284.000</span>
+            <span className="text-body text-gray-900">12 facturas · $ 1.284.000</span>
           </div>
         </HoverCardContent>
       </HoverCard>{" "}
@@ -47,8 +47,8 @@ export function Basico() {
 export function Retardos() {
   const ficha = (
     <HoverCardContent side="top">
-      <span className="text-heading-14 text-gray-1000">Plan Pro</span>
-      <span className="text-copy-13 text-gray-900">
+      <span className="text-headline text-gray-1000">Plan Pro</span>
+      <span className="text-body text-gray-900">
         Usuarios ilimitados, facturación electrónica y soporte en 24 h. $ 18.400 por mes.
       </span>
     </HoverCardContent>

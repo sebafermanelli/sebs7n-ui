@@ -246,7 +246,7 @@ function DrawerBody({ className, ...props }: DrawerBodyProps) {
   return (
     <DrawerPrimitive.Content
       data-slot="drawer-body"
-      className={cn("min-h-0 flex-1 overflow-auto overscroll-contain scroll-fade px-6", className)}
+      className={cn("min-h-0 flex-1 overflow-auto overscroll-contain scroll-fade px-5", className)}
       {...props}
     />
   )
@@ -257,10 +257,11 @@ function DrawerHeader({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="drawer-header"
       className={cn(
-        "flex flex-col gap-1.5 px-6 pt-2 pb-4 pr-12",
+        // Mismo padding que la hoja de Dialog (20 px, 2.0).
+        "flex flex-col gap-1 px-5 pt-2 pb-4 pr-12",
         // Las hojas laterales no tienen la franja del handle arriba, así que el
-        // título necesita su propio aire.
-        "group-data-[swipe-direction=left]/drawer:pt-6 group-data-[swipe-direction=right]/drawer:pt-6",
+        // título necesita su propio aire: 20 px, y así queda en la línea de la X.
+        "group-data-[swipe-direction=left]/drawer:pt-5 group-data-[swipe-direction=right]/drawer:pt-5",
         className
       )}
       {...props}
@@ -269,13 +270,14 @@ function DrawerHeader({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 function DrawerFooter({ className, ...props }: React.ComponentProps<"div">) {
-  return <div data-slot="drawer-footer" className={cn("mt-auto flex flex-col gap-2 border-t border-gray-alpha-400 p-6", className)} {...props} />
+  // Sin línea arriba, como el pie de una hoja de macOS (2.0).
+  return <div data-slot="drawer-footer" className={cn("mt-auto flex flex-col gap-2 p-5", className)} {...props} />
 }
 
 type DrawerTitleProps = WithClassName<DrawerPrimitive.Title.Props>
 
 function DrawerTitle({ className, ...props }: DrawerTitleProps) {
-  return <DrawerPrimitive.Title data-slot="drawer-title" className={cn("text-title-2 text-gray-1000", className)} {...props} />
+  return <DrawerPrimitive.Title data-slot="drawer-title" className={cn("text-title-3 text-gray-1000", className)} {...props} />
 }
 
 type DrawerDescriptionProps = WithClassName<DrawerPrimitive.Description.Props>
