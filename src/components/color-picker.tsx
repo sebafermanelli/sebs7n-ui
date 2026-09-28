@@ -144,7 +144,9 @@ function ColorPicker({
           <PopoverPrimitive.Popup
             aria-label={labels.popup}
             data-slot="color-picker-popup"
-            className={cn(floatingPopupClassName, "w-80 gap-4", popupClassName)}
+            // `p-4` y no el `p-3` del popover común (2.0): con 12 de borde y 16 entre bloques, el
+            // panel quedaba más apretado por fuera que por dentro.
+            className={cn(floatingPopupClassName, "w-80 gap-4 p-4", popupClassName)}
           >
             <Tabs defaultValue="palette">
               <TabsList aria-label={labels.tabs} className="w-full [&>[data-slot=tabs-trigger]]:flex-1">

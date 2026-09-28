@@ -190,6 +190,17 @@ describe("ColorPicker: valores y espectro", () => {
     expect(perilla).toHaveClass("h-5", "w-7", "peer-active:scale-x-125", "peer-active:scale-y-135", "peer-active:thumb-lens")
   })
 
+  // floatingPopupClassName bajó a p-3 en 2.0 (popover de macOS); el ColorPicker es un panel de
+  // 320 px con gap-4 entre la paleta, los sliders y los campos, y con 12 de borde quedaba más
+  // apretado por fuera que por dentro. Se queda en 16.
+  it("el panel conserva p-4: más aire que un popover común", async () => {
+    render(<ColorPicker aria-label="Color" />)
+    await abrir()
+    const panel = document.querySelector("[data-slot=color-picker-popup]")!
+    expect(panel).toHaveClass("w-80", "gap-4", "p-4")
+    expect(panel).not.toHaveClass("p-3")
+  })
+
   it("footer recibe el color actual", async () => {
     render(<ColorPicker aria-label="Color" defaultValue={TEAL} footer={(color) => <p>Elegiste {hexOfOklch(color)}</p>} />)
     await abrir()
