@@ -3,7 +3,6 @@
 import { BellIcon, MoreHorizontalIcon, PlusIcon, RotateCcwIcon, SearchIcon } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useEffect, useId, useState } from "react"
-import { toast } from "sonner"
 import { Alert, AlertDescription, AlertTitle } from "sebs7n-ui/alert"
 import { Avatar, AvatarFallback } from "sebs7n-ui/avatar"
 import { Badge } from "sebs7n-ui/badge"
@@ -361,12 +360,15 @@ function Muestra() {
                   </DialogContent>
                 </Dialog>
                 <Button
-                  onClick={() =>
+                  onClick={async () => {
+                    // sonner se pide al primer clic, no en el arranque: el `Toaster` ya se carga
+                    // después de hidratar (ver `providers.tsx`).
+                    const { toast } = await import("sonner")
                     toast("Factura guardada", {
                       description: "Se le avisó al cliente.",
                       action: { label: "Deshacer", onClick: () => toast.success("Restaurada") },
                     })
-                  }
+                  }}
                   variant="outline"
                 >
                   Mostrar un toast
