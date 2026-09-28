@@ -1006,7 +1006,7 @@ export const COMPONENTS = {
       "No tiene botón X: la única salida es una de las acciones.",
       "`AlertDialogIcon` es decorativo (`aria-hidden`): el título ya dice qué pasa.",
       "El texto de la acción tintada es la tinta de su color (`text-red-ink`), que llega a 4,5:1 sobre el tinte en reposo, hover y apretado, en claro y en oscuro.",
-      "El foco arranca en «Cancelar», no en la acción destructiva.",
+      "El foco arranca en `AlertDialogCancel` esté donde esté en el pie —también apilada con la acción arriba—, nunca en la acción destructiva. Sin `AlertDialogCancel`, en el primer botón. Un `initialFocus` propio gana siempre.",
     ],
     usage: [
       "**`AlertDialogAction` no cierra sola** — a propósito, para poder mostrar `loading` mientras corre la acción. O controlás `open`, o la envolvés: `<AlertDialogClose render={<AlertDialogAction variant=\"destructive\" />}>Eliminar</AlertDialogClose>`.",

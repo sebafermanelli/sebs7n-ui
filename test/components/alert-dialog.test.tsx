@@ -332,3 +332,68 @@ describe("foco inicial (revisión fase 2)", () => {
     await waitFor(() => expect(screen.queryByRole("alertdialog")).toBeNull())
   })
 })
+
+// Bug visto en el navegador: con `stacked` y la acción destructiva primero en el DOM, Base UI
+// enfocaba el primer tabulable —«Descartar cambios»— y un Return descartaba. macOS nunca arranca
+// en una acción destructiva: si hay `AlertDialogCancel`, el foco inicial es ese.
+describe("el foco inicial nunca cae en la acción destructiva", () => {
+  function Alerta({ destructivaPrimero, stacked }: { destructivaPrimero: boolean; stacked?: boolean }) {
+    const accion = (
+      <AlertDialogClose key="a" render={<AlertDialogAction variant="destructive" />}>
+        Descartar cambios
+      </AlertDialogClose>
+    )
+    const cancelar = <AlertDialogCancel key="c">Seguir editando</AlertDialogCancel>
+    return (
+      <AlertDialog>
+        <AlertDialogTrigger render={<Button />}>Abrir</AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogTitle>¿Salir sin guardar?</AlertDialogTitle>
+          <AlertDialogFooter stacked={stacked}>{destructivaPrimero ? [accion, cancelar] : [cancelar, accion]}</AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    )
+  }
+
+  it("apilada con la destructiva primero, el foco arranca en Cancelar", async () => {
+    render(<Alerta destructivaPrimero stacked />)
+    await userEvent.click(screen.getByRole("button", { name: "Abrir" }))
+    await waitFor(() => expect(screen.getByRole("button", { name: "Seguir editando" })).toHaveFocus())
+    expect(screen.getByRole("button", { name: "Descartar cambios" })).not.toHaveFocus()
+  })
+
+  it("lado a lado con Cancelar primero, sigue arrancando en Cancelar", async () => {
+    render(<Alerta destructivaPrimero={false} />)
+    await userEvent.click(screen.getByRole("button", { name: "Abrir" }))
+    await waitFor(() => expect(screen.getByRole("button", { name: "Seguir editando" })).toHaveFocus())
+  })
+
+  it("sin AlertDialogCancel, queda el comportamiento de Base UI (primer tabulable)", async () => {
+    render(
+      <AlertDialog>
+        <AlertDialogTrigger render={<Button />}>Abrir</AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogTitle>Se guardó la factura</AlertDialogTitle>
+          <AlertDialogFooter>
+            <AlertDialogClose render={<AlertDialogAction />}>Entendido</AlertDialogClose>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    )
+    await userEvent.click(screen.getByRole("button", { name: "Abrir" }))
+    await waitFor(() => expect(screen.getByRole("button", { name: "Entendido" })).toHaveFocus())
+  })
+
+  it("el ref del llamador sigue llegando al popup", async () => {
+    let nodo: HTMLDivElement | null = null
+    render(
+      <AlertDialog defaultOpen>
+        <AlertDialogContent ref={(n: HTMLDivElement | null) => { nodo = n }}>
+          <AlertDialogTitle>¿Salir?</AlertDialogTitle>
+        </AlertDialogContent>
+      </AlertDialog>
+    )
+    await screen.findByRole("alertdialog")
+    expect(nodo).toBe(screen.getByRole("alertdialog"))
+  })
+})

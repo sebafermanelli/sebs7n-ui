@@ -64,6 +64,10 @@ Fase 2 de 2.0: diálogos.
   para que las áreas táctiles de 44 no se pisen. Las etiquetas largas bajan de renglón adentro del
   botón (`whitespace-normal`, `min-h-8`) en vez de salirse.
 - **`AlertDialogCancel` es `secondary`** (el gris de macOS), antes `outline`.
+- **El foco inicial de AlertDialog es `AlertDialogCancel`** esté donde esté en el pie, y no el
+  primer botón: apilada con la acción destructiva arriba, Base UI enfocaba «Descartar cambios» y
+  un Return descartaba. Sin `AlertDialogCancel`, o con el dedo, queda el de Base UI; un
+  `initialFocus` de la app gana siempre.
 - **`AlertDialogAction variant` cambia de significado**: `default` renderiza `accent` (antes el
   negro) y `destructive` renderiza `destructive-tinted`, texto rojo sobre tinte rojo (antes el rojo
   sólido). `<AlertDialogClose render={<AlertDialogAction variant="destructive" />}>` sigue andando.

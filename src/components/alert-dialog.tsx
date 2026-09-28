@@ -1,6 +1,6 @@
 "use client"
 
-import type * as React from "react"
+import * as React from "react"
 import { AlertDialog as AlertDialogPrimitive } from "@base-ui/react/alert-dialog"
 
 import { cn, type WithClassName } from "../lib/utils.js"
@@ -40,13 +40,45 @@ function AlertDialogOverlay({ className, ...props }: AlertDialogOverlayProps) {
 
 type AlertDialogContentProps = WithClassName<AlertDialogPrimitive.Popup.Props>
 
-function AlertDialogContent({ className, ...props }: AlertDialogContentProps) {
+/**
+ * El foco inicial por defecto: «Cancelar», si la alerta lo tiene.
+ *
+ * Base UI enfoca el primer tabulable, y en una alerta apilada con la acción destructiva arriba
+ * (`stacked`, la acción primero en el DOM) eso era «Descartar cambios»: un Return y se perdía
+ * todo. macOS nunca arranca en una acción destructiva. Sin `AlertDialogCancel`, o con el dedo
+ * (donde Base UI enfoca el popup para no abrir el teclado), queda lo de Base UI. Un
+ * `initialFocus` de la app gana siempre: es el caso de la alerta que no destruye nada.
+ */
+function useFocoEnCancelar(ref: React.Ref<HTMLDivElement> | undefined) {
+  const popup = React.useRef<HTMLDivElement | null>(null)
+  const mergedRef = React.useCallback(
+    (node: HTMLDivElement | null) => {
+      popup.current = node
+      if (typeof ref === "function") return ref(node)
+      if (ref) ref.current = node
+    },
+    [ref]
+  )
+  const initialFocus = React.useCallback(
+    (openType: string) =>
+      openType === "touch"
+        ? popup.current
+        : (popup.current?.querySelector<HTMLElement>('[data-slot="alert-dialog-cancel"]') ?? true),
+    []
+  )
+  return { mergedRef, initialFocus }
+}
+
+function AlertDialogContent({ className, ref, initialFocus, ...props }: AlertDialogContentProps) {
+  const foco = useFocoEnCancelar(ref)
   return (
     <AlertDialogPrimitive.Portal>
       <AlertDialogOverlay />
       <AlertDialogPrimitive.Popup
         data-slot="alert-dialog-content"
         className={cn(alertPopupClassName, className)}
+        ref={foco.mergedRef}
+        initialFocus={initialFocus ?? foco.initialFocus}
         {...props}
       />
     </AlertDialogPrimitive.Portal>
