@@ -22,6 +22,8 @@ type TooltipContentProps = WithClassName<TooltipPrimitive.Popup.Props> &
 // Vidrio denso (`material-popover`) desde 2.0, como en macOS. Hasta 1.x era invertido
 // (gray-1000) porque tiene que leerse igual sobre una foto que sobre una tabla; el vidrio denso
 // ya lo garantiza: texto principal a 4,5:1 contra cualquier fondo (`test/glass-contrast.test.ts`).
+// Lo que no garantiza es el borde: en claro el vidrio denso es casi blanco y sobre una página
+// blanca el Tooltip no se separaba de nada. Lleva un filo de 1 px (`border-gray-alpha-400`, el de los campos).
 //
 // Sin flecha desde 1.0. La cercanía al control ya dice de quién habla —son 6px—, y la flecha
 // era un rombo de 8px que en una cápsula redondeada quedaba colgando de la curva.
@@ -32,7 +34,7 @@ function TooltipContent({ className, side = "top", sideOffset = 6, align = "cent
         <TooltipPrimitive.Popup
           data-slot="tooltip-content"
           className={cn(
-            "relative w-fit max-w-xs origin-(--transform-origin) rounded-control material-popover px-2 py-1 text-body text-gray-1000 shadow-tooltip",
+            "relative w-fit max-w-xs origin-(--transform-origin) rounded-control border border-gray-alpha-400 material-popover px-2 py-1 text-body text-gray-1000 shadow-tooltip",
             "transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0",
             className
           )}

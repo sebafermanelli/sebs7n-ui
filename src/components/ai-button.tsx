@@ -109,8 +109,10 @@ function AiLauncher({ className, label, labelVisible = false, labelSide = "left"
     >
       {children ?? <AiIcon className="size-6" />}
       {/* La etiqueta es el nombre, ya dicho en `aria-label`: para un lector sería oírlo dos
-          veces. Invertida, como el Tooltip: una línea chica que aparece encima de cualquier
-          cosa tiene que leerse igual sobre una foto que sobre una tabla. */}
+          veces. Invertida (`gray-1000`): una línea chica que aparece encima de cualquier cosa tiene
+          que leerse igual sobre una foto que sobre una tabla. El Tooltip dejó de ser invertido en
+          2.0 (vidrio denso con filo), pero esta etiqueta no es un Tooltip: está pegada a un botón
+          de vidrio que brilla, y otro vidrio al lado se confundía con él. */}
       <span
         aria-hidden="true"
         data-slot="ai-launcher-label"

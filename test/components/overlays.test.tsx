@@ -32,6 +32,8 @@ describe("Tooltip", () => {
     await userEvent.tab()
     const tip = await screen.findByText("Copiar al portapapeles")
     expect(tip.closest("[data-slot=tooltip-content]")).toHaveClass("material-popover", "text-gray-1000", "shadow-tooltip", "rounded-control")
+    // En claro el vidrio denso es casi blanco: sobre una página blanca, sin un filo no se separa.
+    expect(tip.closest("[data-slot=tooltip-content]")).toHaveClass("border", "border-gray-alpha-400")
   })
 })
 
