@@ -54,13 +54,15 @@ enlaza.
 
 Fase 2 de 2.0: diálogos.
 
-- **AlertDialog es la alerta de macOS.** Mide 300 px como máximo (`sm:max-w-[300px]`, antes
-  `sm:max-w-md`), con 20 px de padding y 12 entre bloques; el título pasa a `text-title-3`. El pie
+- **AlertDialog es la alerta de macOS.** Mide 300 px como máximo a cualquier ancho
+  (`max-w-[min(300px,calc(100%-2rem))]`, antes `sm:max-w-md`), con 20 px de padding y 12 entre bloques; el título pasa a `text-title-3`. El pie
   es una grilla de botones del mismo ancho, sin línea arriba ni márgenes negativos; con tres o más
   botones, o en pantallas de 360 px o menos, se apilan **en el orden del DOM** (Tab sigue el orden
   en pantalla; macOS pone el por defecto arriba, acá lo escribís primero si lo querés ahí).
   `AlertDialogContent` usa `alertPopupClassName` y el pie `alertFooterClassName`, ya no
-  `modalPopupClassName` ni `modalFooterClassName`.
+  `modalPopupClassName` ni `modalFooterClassName`. Apilados, los botones se separan 12 px (antes 8),
+  para que las áreas táctiles de 44 no se pisen. Las etiquetas largas bajan de renglón adentro del
+  botón (`whitespace-normal`, `min-h-8`) en vez de salirse.
 - **`AlertDialogCancel` es `secondary`** (el gris de macOS), antes `outline`.
 - **`AlertDialogAction variant` cambia de significado**: `default` renderiza `accent` (antes el
   negro) y `destructive` renderiza `destructive-tinted`, texto rojo sobre tinte rojo (antes el rojo
@@ -71,9 +73,16 @@ Fase 2 de 2.0: diálogos.
   `flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end`, sin `-mx-6` ni `border-t`. La X
   se queda y `overlayCloseClassName` pasa a `top-4.5 right-4.5`, en la línea del título. Si la app
   ponía contenido con `px-6` entre el header y el pie de un Sheet, pasalo a `px-5`.
+- **El pie de Dialog ya no se invierte en mobile.** `modalFooterClassName` pasa a
+  `flex flex-col gap-3 pt-2 sm:flex-row sm:justify-end`: sin `flex-col-reverse`, los botones se
+  apilan en el orden del DOM, que es el orden de Tab (WCAG 1.3.2 y 2.4.3). Con «Cancelar» primero,
+  el principal queda abajo en mobile; si la app contaba con que subiera, escribilo primero. Los
+  pies de Dialog, Sheet y Drawer separan los botones 12 px (antes 8), para que apilados las áreas
+  táctiles de 44 no se pisen.
 - **Popover y HoverCard más angostos**: `floatingPopupClassName` pasa a `w-64` (antes `w-72`),
   `p-3` (antes `p-4`) y `gap-2` (antes `gap-3`). ColorPicker y DatePicker ya pisaban el ancho; un
-  popover con más contenido lo pide con `className`.
+  popover con más contenido lo pide con `className`. El ColorPicker conserva `p-4`: es un panel de
+  320 px con 16 entre bloques, y con 12 de borde quedaba más apretado por fuera que por dentro.
 
 ### Added (2.0)
 
@@ -92,6 +101,7 @@ Fase 2 de 2.0: diálogos.
 - `sliderThumbClassName` y sus estados (`variants/slider`), y `tooltipSurfaceClassName`
   (`variants/overlay`), que comparten el Slider con el ColorPicker y el Tooltip con la etiqueta
   del `AiLauncher`.
+- `AlertDialogFooter stacked`: apila los botones aunque sean dos, para etiquetas largas.
 - `AlertDialogIcon`: el ícono de la alerta, arriba a la izquierda, 48 px, `aria-hidden`.
 - Variantes de Button `tinted` (tinta de marca sobre tinte de marca) y `destructive-tinted`
   (tinta roja sobre tinte rojo), con `touch-target`. El texto es `-ink` y no `-900`: sobre el
