@@ -999,7 +999,9 @@ export const COMPONENTS = {
     ],
     a11y: [
       "Emite `role=\"alertdialog\"`, que el lector anuncia con más urgencia que un diálogo común.",
-      "No tiene botón X: la única salida es una de las dos acciones.",
+      "No tiene botón X: la única salida es una de las acciones.",
+      "`AlertDialogIcon` es decorativo (`aria-hidden`): el título ya dice qué pasa.",
+      "El texto de la acción tintada es la tinta de su color (`text-red-ink`), que llega a 4,5:1 sobre el tinte en reposo, hover y apretado, en claro y en oscuro.",
       "El foco arranca en «Cancelar», no en la acción destructiva.",
     ],
     usage: [
@@ -1007,11 +1009,14 @@ export const COMPONENTS = {
       "`AlertDialogCancel` sí cierra sola.",
       "El título es la pregunta («¿Eliminar la factura 0012?»), no «¿Estás seguro?».",
       "El botón dice qué va a pasar («Eliminar»), no «Aceptar».",
+      "**`AlertDialogIcon` cuando la alerta advierte algo** (el triángulo de advertencia en ámbar) o cuando la dispara la app y no una pantalla (el ícono de la app). Va primero adentro de `AlertDialogContent` y recibe un `<svg>` o una `<img>`, que sin tamaño propio se lleva a 48 px. Para una confirmación de rutina, sin ícono.",
+      "**La acción destructiva va tintada** (`variant=\"destructive\"`: texto rojo sobre tinte rojo), no roja sólida: la alerta ya es la advertencia. La que no destruye nada va sin `variant` y es del acento.",
+      "**Dos botones van lado a lado, iguales a lo ancho**: primero `AlertDialogCancel`, después la acción. Con tres o más —o en una pantalla angosta— se apilan en el orden en que los escribiste, que es también el orden de Tab. No se invierten: si querés la acción arriba, escribila primero.",
     ],
     props: {
       AlertDialog: heredadas("open", "defaultOpen", "onOpenChange", "actionsRef"),
       AlertDialogAction: {
-        variant: "`default` (negro) o `destructive` (rojo). Es el `variant` del `Button`, recortado a los dos que tienen sentido acá.",
+        variant: "`default` (acento, el botón por defecto de macOS) o `destructive` (tintado: texto rojo sobre tinte rojo). Desde 2.0; hasta 1.x eran el negro y el rojo sólido.",
         loading: "El spinner del `Button` mientras corre la acción. Es el motivo por el que esta acción no cierra sola.",
       },
       AlertDialogContent: heredadas("initialFocus", "finalFocus"),

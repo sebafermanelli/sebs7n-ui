@@ -11,6 +11,7 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
+  AlertDialogIcon,
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../../src/components/alert-dialog"
@@ -41,15 +42,17 @@ describe("AlertDialog", () => {
     render(<Example />)
     await userEvent.click(screen.getByRole("button", { name: "Eliminar viaje" }))
     const dialog = await screen.findByRole("alertdialog")
-    expect(dialog).toHaveClass("shadow-modal", "rounded-panel", "p-6", "material-modal")
+    expect(dialog).toHaveClass("shadow-modal", "rounded-panel", "p-5", "gap-3", "material-modal")
     expect(dialog.className).not.toMatch(/\bborder\b/)
-    expect(screen.getByText("¿Eliminar el viaje?")).toHaveClass("text-title-2", "text-gray-1000")
+    expect(screen.getByText("¿Eliminar el viaje?")).toHaveClass("text-title-3", "text-gray-1000")
     expect(screen.getByText("Se borran también los pasajeros cargados.")).toHaveClass("text-body", "text-gray-900")
     expect(document.querySelector("[data-slot=alert-dialog-overlay]")).toHaveClass("bg-backdrop")
     // Sin botón X: un alert dialog exige respuesta.
     expect(screen.queryByRole("button", { name: "Cerrar" })).toBeNull()
     const cancel = screen.getByRole("button", { name: "Cancelar" })
-    expect(cancel).toHaveClass("border-gray-alpha-400", "glass-control")
+    // El push button gris de macOS, no el de vidrio con borde.
+    expect(cancel).toHaveClass("bg-gray-alpha-200")
+    expect(cancel).not.toHaveClass("glass-control")
     await userEvent.click(cancel)
     await waitFor(() => expect(screen.queryByRole("alertdialog")).toBeNull())
   })
@@ -59,16 +62,20 @@ describe("AlertDialog", () => {
     render(<Example onAction={onAction} />)
     await userEvent.click(screen.getByRole("button", { name: "Eliminar viaje" }))
     const action = await screen.findByRole("button", { name: "Eliminar" })
-    expect(action).toHaveClass("bg-red-800")
+    expect(action).toHaveClass("text-red-ink", "bg-red-700/(--sf-tint-fill)")
+    expect(action).not.toHaveClass("bg-red-800")
     await userEvent.click(action)
     expect(onAction).toHaveBeenCalled()
   })
 
-  it("el footer va a la derecha con borde superior", async () => {
+  it("el footer es una grilla de botones iguales, sin borde superior", async () => {
     render(<Example />)
     await userEvent.click(screen.getByRole("button", { name: "Eliminar viaje" }))
     const footer = (await screen.findByRole("button", { name: "Cancelar" })).parentElement!
-    expect(footer).toHaveClass("border-t", "border-gray-alpha-400", "sm:justify-end")
+    expect(footer).toHaveAttribute("data-slot", "alert-dialog-footer")
+    expect(footer).toHaveClass("grid", "auto-cols-fr", "grid-flow-col")
+    expect(footer).not.toHaveClass("border-t")
+    expect(footer.className).not.toMatch(/-mx-6/)
   })
 
   it("sin controlar open, AlertDialogClose envuelve la acción y cierra", async () => {
@@ -102,5 +109,107 @@ describe("AlertDialog", () => {
     await userEvent.keyboard("{Escape}")
     await waitFor(() => expect(screen.queryByRole("alertdialog")).toBeNull())
     expect(screen.getByRole("button", { name: "Eliminar viaje" })).toHaveFocus()
+  })
+})
+
+describe("alerta de macOS (2.0)", () => {
+  function Alerta({ extra = false }: { extra?: boolean }) {
+    return (
+      <AlertDialog defaultOpen>
+        <AlertDialogContent>
+          <AlertDialogIcon>
+            <svg data-testid="icono" />
+          </AlertDialogIcon>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Eliminar la factura 0012?</AlertDialogTitle>
+            <AlertDialogDescription>Se borra del listado y del resumen del mes.</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel />
+            {extra && <AlertDialogAction>Archivar</AlertDialogAction>}
+            <AlertDialogAction variant="destructive">Eliminar</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    )
+  }
+
+  it("es compacta: 300 px como máximo", async () => {
+    render(<Alerta />)
+    const alerta = await screen.findByRole("alertdialog")
+    expect(alerta).toHaveClass("sm:max-w-[300px]")
+    expect(alerta).not.toHaveClass("sm:max-w-md")
+  })
+
+  it("el ícono va arriba, mide 48 y es decorativo", async () => {
+    render(<Alerta />)
+    const alerta = await screen.findByRole("alertdialog")
+    const icono = alerta.querySelector('[data-slot="alert-dialog-icon"]')!
+    expect(icono).toHaveAttribute("aria-hidden", "true")
+    expect(icono).toHaveClass("size-12")
+    expect(alerta.firstElementChild).toBe(icono)
+    expect(screen.getByTestId("icono").parentElement).toBe(icono)
+  })
+
+  it("los botones van iguales a lo ancho y sin línea arriba", async () => {
+    render(<Alerta />)
+    const pie = (await screen.findByRole("alertdialog")).querySelector('[data-slot="alert-dialog-footer"]')!
+    expect(pie).toHaveClass("grid", "auto-cols-fr", "grid-flow-col", "[&>*]:w-full")
+    expect(pie).not.toHaveClass("border-t")
+  })
+
+  it("con tres botones se apilan, y sin espacio también", async () => {
+    render(<Alerta extra />)
+    const pie = (await screen.findByRole("alertdialog")).querySelector('[data-slot="alert-dialog-footer"]')!
+    expect(pie.className).toMatch(/has-\[>:nth-child\(3\)\]:grid-flow-row/)
+    expect(pie.className).toMatch(/max-\[360px\]:grid-flow-row/)
+  })
+
+  it("apilados, el orden de Tab es el orden en pantalla: no se invierte nada", async () => {
+    render(<Alerta extra />)
+    const pie = (await screen.findByRole("alertdialog")).querySelector('[data-slot="alert-dialog-footer"]')!
+    expect(pie.className).not.toMatch(/reverse|order-/)
+    expect([...pie.children].map((b) => b.textContent)).toEqual(["Cancelar", "Archivar", "Eliminar"])
+  })
+
+  it("Cancelar es el gris de macOS y la acción destructiva va tintada", async () => {
+    render(<Alerta />)
+    expect(await screen.findByRole("button", { name: "Cancelar" })).toHaveClass("bg-gray-alpha-200")
+    const eliminar = screen.getByRole("button", { name: "Eliminar" })
+    expect(eliminar).toHaveClass("text-red-ink")
+    expect(eliminar).not.toHaveClass("bg-red-800")
+  })
+
+  it("la acción por defecto es del acento", async () => {
+    render(
+      <AlertDialog defaultOpen>
+        <AlertDialogContent>
+          <AlertDialogTitle>¿Emitir la factura?</AlertDialogTitle>
+          <AlertDialogFooter>
+            <AlertDialogCancel />
+            <AlertDialogAction>Emitir</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    )
+    expect(await screen.findByRole("button", { name: "Emitir" })).toHaveClass("bg-brand-700")
+  })
+
+  it("AlertDialogClose con render de la acción destructiva conserva el tintado", async () => {
+    render(
+      <AlertDialog defaultOpen>
+        <AlertDialogContent>
+          <AlertDialogTitle>¿Eliminar?</AlertDialogTitle>
+          <AlertDialogFooter>
+            <AlertDialogCancel />
+            <AlertDialogClose render={<AlertDialogAction variant="destructive" />}>Eliminar</AlertDialogClose>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    )
+    const eliminar = await screen.findByRole("button", { name: "Eliminar" })
+    expect(eliminar).toHaveClass("text-red-ink")
+    await userEvent.click(eliminar)
+    await waitFor(() => expect(screen.queryByRole("alertdialog")).toBeNull())
   })
 })

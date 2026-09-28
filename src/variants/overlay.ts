@@ -16,10 +16,10 @@ export const backdropClassName =
   "fixed inset-0 z-50 bg-backdrop transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0"
 
 /**
- * El popup centrado de Dialog y AlertDialog: los dos son el mismo objeto.
+ * El popup centrado de Dialog: la hoja de macOS.
  *
- * Lo único que los diferencia es el ancho máximo —`sm:max-w-lg` en Dialog y `sm:max-w-md` en
- * AlertDialog, porque una confirmación de dos botones no necesita más— y eso lo agrega cada uno.
+ * Hasta 1.x lo compartía AlertDialog, con otro ancho. Desde 2.0 la alerta es otro objeto
+ * (`alertPopupClassName`): más chica y con los botones de otra forma.
  * La entrada sube 8px mientras aparece: es la señal de que algo entró, no decoración.
  */
 export const modalPopupClassName =
@@ -27,7 +27,28 @@ export const modalPopupClassName =
   "transition-[opacity,translate] duration-150 data-ending-style:opacity-0 data-starting-style:translate-y-[calc(-50%+8px)] data-starting-style:opacity-0"
 
 /**
- * El pie de un modal centrado: Dialog y AlertDialog.
+ * La alerta de macOS: compacta, con el ícono arriba y los botones iguales a lo ancho. Es otro
+ * objeto que la hoja (`Dialog`): una alerta interrumpe para una sola pregunta, así que es chica
+ * y no tiene un pie separado por una línea. 20 px de padding y 12 entre ícono, textos y botones.
+ */
+export const alertPopupClassName =
+  "fixed top-1/2 left-1/2 z-50 flex w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 flex-col gap-3 rounded-panel material-modal p-5 text-body text-gray-1000 shadow-modal outline-none sm:max-w-[300px] " +
+  "transition-[opacity,translate] duration-150 data-ending-style:opacity-0 data-starting-style:translate-y-[calc(-50%+8px)] data-starting-style:opacity-0"
+
+/**
+ * El pie de la alerta: botones del mismo ancho a lo ancho, el primero del DOM a la izquierda
+ * (Cancelar a la izquierda y la acción a la derecha, como macOS).
+ *
+ * Con tres o más, o en una pantalla angosta, se apilan **en el orden del DOM**. macOS pone el
+ * botón por defecto arriba, pero para eso habría que invertir la pila con CSS, y entonces Tab
+ * recorrería los botones al revés de como se ven (WCAG 1.3.2 y 2.4.3). Quien quiera la acción
+ * arriba la escribe primero.
+ */
+export const alertFooterClassName =
+  "grid auto-cols-fr grid-flow-col gap-2 pt-1 has-[>:nth-child(3)]:grid-flow-row max-[360px]:grid-flow-row [&>*]:w-full"
+
+/**
+ * El pie de un modal centrado: Dialog.
  *
  * Los márgenes negativos sacan el borde superior al ancho completo del popup, que tiene `p-6`.
  * `flex-col-reverse` en mobile pone la acción principal arriba, que es donde cae el pulgar.
