@@ -272,7 +272,7 @@ function Calendar(props: CalendarProps) {
                 <thead>
                   <tr>
                     {weeksOfMonth(mes, weekStartsOn)[0]!.map((dia) => (
-                      <th abbr={formatos.largo.format(dia)} className="size-7 pointer-coarse:size-11 text-callout font-normal text-gray-900" key={dia.getDay()} scope="col">
+                      <th abbr={formatos.largo.format(dia)} className="size-7 pointer-coarse:size-10 text-callout font-normal text-gray-900" key={dia.getDay()} scope="col">
                         {formatos.corto.format(dia).replace(".", "").slice(0, 2)}
                       </th>
                     ))}
@@ -285,7 +285,7 @@ function Calendar(props: CalendarProps) {
                         const iso = toISODate(dia)
                         if (!isSameMonth(dia, mes)) {
                           return (
-                            <td aria-hidden="true" className="size-7 pointer-coarse:size-11 p-0 text-center text-body tabular-nums text-gray-700" data-outside="" key={iso}>
+                            <td aria-hidden="true" className="size-7 pointer-coarse:size-10 p-0 text-center text-body tabular-nums text-gray-700" data-outside="" key={iso}>
                               {cuantos === 1 ? dia.getDate() : null}
                             </td>
                           )
@@ -305,10 +305,11 @@ function Calendar(props: CalendarProps) {
                           <td
                             aria-selected={marcada || (enRango && mode === "range") || undefined}
                             className={cn(
-                              // 28 px, la celda del selector de fecha de macOS. Con el dedo, 44 de verdad: el
+                              // 28 px, la celda del selector de fecha de macOS. Con el dedo, 40 de verdad: el
                               // botón ya usa `::after` para el punto de hoy y las celdas están pegadas, así que
-                              // `touch-target` no sirve acá.
-                              "size-7 pointer-coarse:size-11 p-0",
+                              // `touch-target` no sirve acá. 40 y no 44: siete de 44 más el `p-3` del DatePicker
+                              // no entran en un teléfono de 320 px; siete de 40 sí.
+                              "size-7 pointer-coarse:size-10 p-0",
                               "data-[range=middle]:bg-highlight data-[range=middle]:first:rounded-l-full data-[range=middle]:last:rounded-r-full",
                               "data-[range=start]:bg-[linear-gradient(to_right,transparent_50%,var(--color-highlight)_50%)]",
                               "data-[range=end]:bg-[linear-gradient(to_left,transparent_50%,var(--color-highlight)_50%)]",
@@ -328,7 +329,7 @@ function Calendar(props: CalendarProps) {
                               aria-disabled={off || undefined}
                               aria-label={formatos.dia.format(dia)}
                               className={cn(
-                                "relative inline-flex size-7 pointer-coarse:size-11 cursor-pointer items-center justify-center rounded-full text-body tabular-nums outline-none select-none transition-surface",
+                                "relative inline-flex size-7 pointer-coarse:size-10 cursor-pointer items-center justify-center rounded-full text-body tabular-nums outline-none select-none transition-surface",
                                 "hover:bg-gray-alpha-200 focus-visible:focus-ring active:scale-95",
                                 // Hoy: el número en el color de marca y un punto debajo. El punto es lo que
                                 // lo distingue cuando además está elegido, que es cuando el color no alcanza.

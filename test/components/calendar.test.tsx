@@ -130,6 +130,16 @@ describe("Calendar", () => {
     expect(flechas).toContainElement(screen.getByRole("button", { name: "Mes siguiente" }))
   })
 
+  // Con el dedo los días crecen de verdad (están pegados: `touch-target` no sirve). A 44, siete
+  // columnas + el p-3 del DatePicker + el borde miden 334 y no entran en un teléfono de 320. A
+  // 40 son 306, que entran con el margen de 5 px que deja Base UI contra el borde de la pantalla.
+  it("en táctil los días miden 40: la grilla entra en 320 px", () => {
+    render(<Calendar defaultValue={d("2026-09-27")} />)
+    expect(dia("2026-09-27")).toHaveClass("pointer-coarse:size-10")
+    expect(document.querySelector("[data-slot=calendar]")!.innerHTML).not.toMatch(/pointer-coarse:size-11/)
+    expect(7 * 40 + 2 * 12 + 2).toBeLessThanOrEqual(320 - 2 * 5)
+  })
+
   it("hoy se anuncia con aria-current", () => {
     vi.useFakeTimers({ now: new Date(2026, 8, 27, 15, 0), toFake: ["Date"] })
     render(<Calendar />)
