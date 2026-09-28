@@ -12,11 +12,11 @@ import {
   SidebarHeader,
   SidebarSearch,
 } from "sebs7n-ui/sidebar"
+import { ThemeSwitcher } from "sebs7n-ui/theme-switcher"
 
 import { DocsNav } from "./docs-nav"
 import { useGlassConfig } from "./glass-config"
 import { SearchButton, useSearch } from "./search"
-import { ThemeSwitcher } from "./theme-switcher"
 
 const REPO = "https://github.com/sebafermanelli/sebs7n-ui"
 

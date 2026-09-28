@@ -4,10 +4,10 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Badge } from "sebs7n-ui/badge"
 import { Navbar } from "sebs7n-ui/navbar"
+import { ThemeSwitcher } from "sebs7n-ui/theme-switcher"
 import { cn } from "sebs7n-ui/lib/utils"
 
 import { SearchButton } from "./search"
-import { ThemeSwitcher } from "./theme-switcher"
 
 const LINKS = [
   { href: "/docs/instalacion", label: "Docs" },
