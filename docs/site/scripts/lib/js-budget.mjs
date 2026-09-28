@@ -19,9 +19,18 @@ export const ROUTES = [
   "/docs/requests",
 ]
 
-/** Los chunks de Next que referencia un HTML, sin repetir. */
+/**
+ * Los chunks de Next que referencia un HTML, sin repetir.
+ *
+ * Los `<script noModule>` no cuentan: un navegador que entiende `type="module"` —todos los que
+ * soporta Next 16— no los baja. Es el polyfill de core-js que Next agrega a cada página, ~38 KB
+ * gzip que el presupuesto sumaba en las siete rutas sin que nadie los pidiera. Se saca la
+ * etiqueta entera antes de buscar: si el mismo chunk apareciera además como preload o en el
+ * payload, ahí sí se cuenta.
+ */
 export function chunkRefs(html) {
-  return [...new Set(html.match(/\/_next\/static\/chunks\/[\w.-]+\.js/g) ?? [])]
+  const sinNoModule = html.replace(/<script\b[^>]*\bnomodule\b[^>]*>(?:<\/script>)?/gi, "")
+  return [...new Set(sinNoModule.match(/\/_next\/static\/chunks\/[\w.-]+\.js/g) ?? [])]
 }
 
 /** Suma el gzip de cada chunk. `readChunk` recibe la ruta pública y devuelve el archivo. */

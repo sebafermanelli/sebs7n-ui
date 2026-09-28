@@ -16,6 +16,18 @@ describe("chunkRefs", () => {
     expect(chunkRefs(html).sort()).toEqual(["/_next/static/chunks/aaa.js", "/_next/static/chunks/bbb.js", "/_next/static/chunks/ccc.js"])
   })
 
+  it("no cuenta los <script noModule>: un navegador moderno no los baja", () => {
+    const conPolyfill = `${html}<script src="/_next/static/chunks/polyfill.js" noModule=""></script>`
+    expect(chunkRefs(conPolyfill)).not.toContain("/_next/static/chunks/polyfill.js")
+    expect(chunkRefs(conPolyfill).sort()).toEqual(chunkRefs(html).sort())
+    // Con el atributo en cualquier lugar de la etiqueta y en minúsculas, igual.
+    expect(chunkRefs('<script nomodule src="/_next/static/chunks/p.js"></script>')).toEqual([])
+    // Si el mismo chunk además se pide como módulo, cuenta.
+    expect(chunkRefs('<script src="/_next/static/chunks/p.js" noModule=""></script><script src="/_next/static/chunks/p.js"></script>')).toEqual([
+      "/_next/static/chunks/p.js",
+    ])
+  })
+
   it("ignora scripts que no son chunks de Next", () => {
     expect(chunkRefs('<script src="/foo.js"></script>')).toEqual([])
   })
