@@ -58,6 +58,9 @@ function TabsTrigger({ className, ...props }: TabsTriggerProps) {
         // Segmentado: 28 + los 2 px de la pista de cada lado = 32, el alto de un botón `md` y el del
         // ThemeSwitcher, que es el mismo objeto. Línea: 32, el alto de los controles.
         "group-data-[variant=line]/tabs-list:h-8 group-data-[variant=segmented]/tabs-list:h-7 group-data-[variant=segmented]/tabs-list:rounded-full",
+        // Con el dedo crecen de verdad y no con `touch-target`: el `::after` ya es el subrayado,
+        // y van pegadas. La de línea a 44; la segmentada a 40, que con el `p-0.5` de la pista da 44.
+        "pointer-coarse:group-data-[variant=line]/tabs-list:h-11 pointer-coarse:group-data-[variant=segmented]/tabs-list:h-10",
         // El `before` existe solo para el anillo de foco: una pestaña no es un botón, así que en
         // hover no se pinta ninguna pastilla. Lo único que cambia es el color del texto, y el
         // activo lo marca la línea de abajo (`after`) o la pastilla de la pista.

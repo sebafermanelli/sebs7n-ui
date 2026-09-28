@@ -43,6 +43,23 @@ describe("Tabs", () => {
     expect(pagos).toHaveAttribute("data-active")
     expect(screen.getByText("panel b")).toBeVisible()
   })
+
+  // Las pestañas van pegadas: `touch-target` no sirve (el `::after` es el subrayado, y taparía a
+  // la de al lado). Con el dedo crecen de verdad: la de línea a 44, la segmentada a 40 (+ los
+  // 2 + 2 de la pista = 44).
+  it("con el dedo las pestañas llegan a 44", () => {
+    render(
+      <Tabs defaultValue="a">
+        <TabsList>
+          <TabsTrigger value="a">Resumen</TabsTrigger>
+        </TabsList>
+      </Tabs>
+    )
+    expect(screen.getByRole("tab", { name: "Resumen" })).toHaveClass(
+      "pointer-coarse:group-data-[variant=line]/tabs-list:h-11",
+      "pointer-coarse:group-data-[variant=segmented]/tabs-list:h-10"
+    )
+  })
 })
 
 describe("Separator / Skeleton", () => {
