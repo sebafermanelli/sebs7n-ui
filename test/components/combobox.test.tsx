@@ -379,6 +379,37 @@ describe("menús de macOS (2.0)", () => {
     expect(screen.getByText("Sudamérica")).toHaveClass("pl-7")
   })
 
+  it("Combobox: el botón que abre la lista es ⌃⌄, como el de Select, también con chips", () => {
+    const { container } = render(
+      <>
+        <CountryCombobox />
+        <Combobox items={COUNTRIES} multiple>
+          <ComboboxChips aria-label="Países">
+            <ComboboxChipsInput aria-label="Países" />
+          </ComboboxChips>
+        </Combobox>
+      </>
+    )
+    const flechas = container.querySelectorAll("[data-slot=combobox-trigger] svg.lucide-chevrons-up-down")
+    expect(flechas).toHaveLength(2)
+    expect(container.querySelector("[data-slot=combobox-trigger] svg.lucide-chevron-down")).toBeNull()
+    // ⌃⌄ es simétrico: girarlo al abrir no dice nada.
+    for (const trigger of container.querySelectorAll("[data-slot=combobox-trigger]")) {
+      expect(trigger.className).not.toMatch(/rotate-180/)
+    }
+  })
+
+  it("Autocomplete: el campo es la cápsula de 32 y no trae botón de despliegue", () => {
+    render(
+      <Autocomplete items={["Rosario"]}>
+        <AutocompleteInput aria-label="Ciudad" />
+      </Autocomplete>
+    )
+    const grupo = screen.getByRole("combobox", { name: "Ciudad" }).closest("[data-slot=autocomplete-input-group]")!
+    expect(grupo).toHaveClass("rounded-field", "data-[size=md]:h-8")
+    expect(grupo.querySelector("[data-slot=autocomplete-trigger]")).toBeNull()
+  })
+
   it("Autocomplete: sin tilde no hay canaleta, ni en las sugerencias ni en el título", async () => {
     render(
       <Autocomplete items={["Rosario", "Rafaela"]} defaultOpen>

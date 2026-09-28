@@ -604,13 +604,13 @@ export const COMPONENTS = {
       ComboboxInput: {
         size: "Mismas tres alturas que `Input`: `sm` 32px · `md` 40px · `lg` 48px.",
         showClear: "La cruz de limpiar. Aparece sola cuando hay valor.",
-        showTrigger: "El chevron que abre la lista.",
+        showTrigger: "El ⌃⌄ que abre la lista, el mismo del `Select`.",
         disabled: "Apaga el input y la superficie que lo rodea. Para bloquear todo el combobox, ponelo en el root.",
       },
       ComboboxChips: {
         size: "Mismas tres alturas que `Input`, aunque con varios chips la superficie crece hacia abajo.",
         showClear: "La cruz que borra todos los chips de una.",
-        showTrigger: "El chevron que abre la lista.",
+        showTrigger: "El ⌃⌄ que abre la lista, el mismo del `Select`.",
         disabled: "Apaga la superficie, el input y los botones de quitar de cada chip.",
       },
     },
@@ -1397,6 +1397,7 @@ export const COMPONENTS = {
       "`NavigationMenuViewport` va **una sola vez**, hermano de la lista: el panel es uno para todos los ítems.",
       "**Color propio adentro de un ítem seleccionable → `selectionSecondaryClassName`.** La selección es acento sólido: una fecha en `text-gray-900` o un ícono en `text-green-900` desaparecen sobre el azul. `cn(\"text-gray-900\", selectionSecondaryClassName)` pasa a `text-on-selection` cuando el ítem está en la página actual (`active`); para bordes o fondos, el variant `inside-selection:` directo. Un `Badge` adentro se adapta solo.",
       "Adentro de un `<nav>` que ya existe, `render={<div />}` para no anidar dos landmarks.",
+      "**Títulos de columna con `menuLabelClassName`** (de `sebs7n-ui/variants/menu`), el mismo título chico, en negrita y gris de los menús. Conectalo a su lista con `aria-labelledby` para que el lector anuncie la columna.",
     ],
     props: {
       NavigationMenu: {

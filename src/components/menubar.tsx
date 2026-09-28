@@ -62,8 +62,11 @@ function MenubarTrigger({ className, ...props }: MenubarTriggerProps) {
       data-slot="menubar-trigger"
       className={cn(
         "inline-flex h-6 pointer-coarse:h-11 cursor-pointer items-center gap-1 rounded-control bg-transparent px-2 text-body text-gray-1000 outline-none select-none",
-        "transition-control hover:bg-gray-alpha-200 focus-visible:focus-ring",
-        "data-popup-open:bg-gray-alpha-300 data-popup-open:hover:bg-gray-alpha-300",
+        // El título abierto de la barra de menús de macOS (2.0) es una pastilla gris sutil, no del
+        // acento: el acento es del ítem resaltado adentro del menú, y dos manchas azules a la vez
+        // competirían por decir dónde está el foco.
+        "transition-control hover:bg-gray-alpha-100 focus-visible:focus-ring",
+        "data-popup-open:bg-gray-alpha-200 data-popup-open:hover:bg-gray-alpha-200",
         "data-disabled:cursor-not-allowed data-disabled:text-gray-700 data-disabled:hover:bg-transparent",
         className
       )}

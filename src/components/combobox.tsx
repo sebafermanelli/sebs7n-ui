@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Combobox as ComboboxPrimitive } from "@base-ui/react/combobox"
-import { CheckIcon, ChevronDownIcon, Loader2Icon, XIcon } from "lucide-react"
+import { CheckIcon, ChevronsUpDownIcon, Loader2Icon, XIcon } from "lucide-react"
 
 import { nombreDeQuitar } from "../internal/remove-label.js"
 import { renderShellTrigger } from "../internal/shell-trigger.js"
@@ -68,9 +68,11 @@ function ComboboxInput({
           render={renderShellTrigger}
           aria-label={labels?.trigger ?? l.trigger}
           disabled={disabled}
-          className={cn(inputShellButtonClassName, "[&_svg]:transition-transform [&_svg]:duration-150 data-popup-open:[&_svg]:rotate-180")}
+          className={inputShellButtonClassName}
         >
-          <ChevronDownIcon />
+          {/* ⌃⌄ como en Select (2.0): es el mismo control de «elegir de una lista». Simétrico,
+              así que ya no gira al abrir. */}
+          <ChevronsUpDownIcon />
         </ComboboxPrimitive.Trigger>
       )}
     </ComboboxPrimitive.InputGroup>
@@ -230,7 +232,7 @@ function ComboboxChips({ className, size = "md", showTrigger = true, showClear =
           disabled={disabled}
           className={cn(inputShellButtonClassName, "self-center")}
         >
-          <ChevronDownIcon />
+          <ChevronsUpDownIcon />
         </ComboboxPrimitive.Trigger>
       )}
     </ComboboxPrimitive.InputGroup>
