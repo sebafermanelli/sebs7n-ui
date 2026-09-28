@@ -223,6 +223,13 @@ const PLAYGROUND = {
   description: "Regulá el vidrio, el tinte, el color de marca y los radios, mirá los componentes cambiar y copiá el CSS.",
 }
 
+// Pedidos tampoco es una página .md: la arma app/docs/requests con los issues de GitHub.
+const REQUESTS = {
+  title: "Pedidos",
+  href: "/docs/requests",
+  description: "Los componentes que se pidieron, ordenados por votos, y los que ya salieron.",
+}
+
 const nav = [
   {
     id: "sistema",
@@ -231,6 +238,7 @@ const nav = [
       { title: PLAYGROUND.title, href: PLAYGROUND.href },
       ...pages.map((page) => ({ title: page.title, href: `/docs/${page.slug}` })),
       { title: ICONOS.title, href: ICONOS.href },
+      { title: REQUESTS.title, href: REQUESTS.href },
     ],
   },
   ...GROUPS.map((group) => ({
@@ -245,6 +253,7 @@ const nav = [
 const search = [
   { title: PLAYGROUND.title, href: PLAYGROUND.href, group: "Sistema", description: PLAYGROUND.description, keywords: "glass vidrio brand color picker theming configurar" },
   { title: ICONOS.title, href: ICONOS.href, group: "Sistema", description: ICONOS.description, keywords: "icon lucide svg" },
+  { title: REQUESTS.title, href: REQUESTS.href, group: "Sistema", description: REQUESTS.description, keywords: "pedir componente request bug votar roadmap" },
   ...pages.map((page) => ({
     title: page.title,
     href: `/docs/${page.slug}`,
