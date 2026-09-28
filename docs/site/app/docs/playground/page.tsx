@@ -1,7 +1,10 @@
 import type { Metadata } from "next"
 import { ViewTransition } from "react"
 
+import site from "@/.generated/site.json"
+import { AllComponents } from "../../_components/all-components"
 import { Playground } from "../../_components/playground"
+import { allComponents } from "../../_lib/all-components"
 
 export const metadata: Metadata = {
   title: "Playground",
@@ -19,6 +22,7 @@ export default function PlaygroundPage() {
           </p>
         </header>
         <Playground />
+        <AllComponents groups={allComponents(site)} />
       </div>
     </ViewTransition>
   )

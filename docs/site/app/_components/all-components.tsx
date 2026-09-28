@@ -1,0 +1,53 @@
+import Link from "next/link"
+
+import type { ComponentGroup } from "../_lib/all-components"
+import { DemoSlot } from "./demo-slot"
+import { Inline } from "./inline"
+
+/**
+ * Todos los componentes en una sola página, para revisar el sistema entero con el vidrio, la marca
+ * y el tema que se eligieron arriba (el Playground los escribe en `<html>`, así que valen acá
+ * también).
+ *
+ * Es un Server Component: los títulos, las descripciones y los links van en el HTML y no suman JS.
+ * Cada demo pasa por `DemoSlot`, que la monta recién cuando su marco se acerca a la pantalla: con
+ * las 67 montadas de entrada, el Playground pediría el código de todas al abrir.
+ */
+export function AllComponents({ groups }: { groups: ComponentGroup[] }) {
+  return (
+    <section aria-labelledby="todos-los-componentes" className="flex flex-col gap-10 border-t border-gray-alpha-400 pt-8">
+      <header className="flex flex-col gap-2">
+        <h2 className="scroll-mt-24 text-heading-32 text-gray-1000" id="todos-los-componentes">
+          Todos los componentes
+        </h2>
+        <p className="text-copy-16 text-gray-900">La primera demo de cada uno, con la configuración de arriba. El título lleva a su página.</p>
+      </header>
+      {groups.map((group) => (
+        <section aria-labelledby={`todos-${group.id}`} className="flex flex-col gap-6" key={group.id}>
+          <h3 className="scroll-mt-24 text-heading-24 text-gray-1000" id={`todos-${group.id}`}>
+            {group.title}
+          </h3>
+          <div className="grid gap-6 lg:grid-cols-2">
+            {group.components.map((component) => (
+              <article aria-labelledby={`todos-${component.slug}`} className="flex min-w-0 flex-col gap-3" key={component.slug}>
+                <div className="flex flex-col gap-1">
+                  <h4 className="text-heading-20" id={`todos-${component.slug}`}>
+                    <Link className="text-gray-1000 underline-offset-4 hover:underline focus-visible:focus-ring rounded-sm" href={component.href}>
+                      {component.title}
+                    </Link>
+                  </h4>
+                  <p className="text-copy-14 text-gray-900">
+                    <Inline text={component.description} />
+                  </p>
+                </div>
+                <div className="flex min-h-32 min-w-0 flex-1 items-center justify-center overflow-x-auto rounded-surface border border-gray-alpha-400 glass p-6 shadow-card">
+                  {component.demoId ? <DemoSlot id={component.demoId} /> : <p className="text-copy-14 text-gray-900">Sin demo.</p>}
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      ))}
+    </section>
+  )
+}
