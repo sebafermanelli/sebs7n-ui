@@ -12,7 +12,8 @@ major.
 ### Breaking (2.0)
 
 Fase 1 de 2.0 (macOS Golden Gate): tokens globales. Sin versión todavía; la 2.0.0 sale al final
-de la fase 5.
+de la fase 5, y con ella la guía de migración (`/docs/migrating-to-2`), que `theme.css` ya
+enlaza.
 
 - **Inter en vez de Geist.** `--font-sans` es `var(--font-inter)`, con `system-ui` de respaldo, y
   la mono es la del sistema. `geist` deja de ser peer: la app carga Inter con `next/font/google`
@@ -26,13 +27,48 @@ de la fase 5.
 - **Controles un paso más chicos.** El `md` pasa de 40 a 32 px (`sm` 24, `lg` 40); los ítems de
   menú miden 24 y los del Sidebar 28. Con el dedo el área crece a 44 por `touch-target`, sin
   cambiar lo que se ve. Si la app fijaba alturas contra las de 1.x, revisalas.
-- **Selección en acento sólido.** El ítem resaltado de un menú, la opción marcada y el ítem
-  activo del Sidebar van en `bg-selection` con `text-on-selection` (el par del botón `accent`).
-  `--sf-highlight` queda para lo que se marca sin ser la selección.
+- **Selección en acento sólido.** El ítem resaltado de un menú (`data-highlighted`, también en
+  Select y Combobox), el ítem activo del Sidebar, la fila seleccionada de Table y el
+  NavigationMenuLink de la página actual van en `bg-selection` con `text-on-selection` (el par del
+  botón `accent`). La opción elegida de Select y Combobox no se pinta: lleva el check, como en
+  macOS. `--sf-highlight` queda para lo que se marca sin ser la selección.
+- **Cualquier color propio adentro de un ítem seleccionable tiene que usar
+  `selectionSecondaryClassName` o `text-on-selection`.** Sobre el acento sólido, una fecha en
+  `text-gray-900` o un ícono en `text-green-900` desaparecen. `cn("text-gray-900",
+  selectionSecondaryClassName)` pasa al color de contraste cuando el ítem está seleccionado. El
+  `Badge` se adapta solo (el `subtle` pasa a contorno, el `solid` brand se invierte).
 - **Material por rol.** `material-bar` (barras), `material-popover` (menús, popovers, Tooltip),
   `material-modal` (Dialog, AlertDialog, Sheet, Drawer: 91 % de fill, no se ve lo de atrás) y
   `material-group` (Card, Table, EmptyState: sólido `--sf-group`, sin blur). El Tooltip deja de
-  ser invertido. `glass`, `glass-dense` y `glass-thick` siguen existiendo para las apps.
+  ser invertido y lleva un filo de 1 px; el toast de Sonner también es `material-popover`.
+  `glass`, `glass-dense` y `glass-thick` siguen existiendo para las apps.
+- **`Button variant="link"` no agranda su área con el dedo**: es texto adentro de un párrafo.
+- **Toggle con borde lleno** en los dos estados (antes, punteado sin apretar).
+- **La perilla del Slider es una cápsula** de 20 × 28, la misma del matiz del ColorPicker.
+- **NumberField mide lo que el número**: el grupo pasa a `w-fit` y el input usa
+  `field-sizing: content`. Si la app contaba con que ocupara todo el ancho, pasale `className="w-full"`.
+- **SidebarSearch mide 32** (`h-8`, antes 28) y el atajo va en `Kbd size="sm"`.
+- **Con el dedo** las pestañas llegan a 44, los días del Calendar miden 40 (antes 44: no entraban
+  en 320 px), y la Toolbar, sus grupos, las flechas del Calendar y el ToggleGroup se separan 20 px
+  para que las áreas de 44 no se pisen.
+
+### Added (2.0)
+
+- `touch-target` (área de 44 con el dedo, sin cambiar lo que se ve) y `touch-target-y` (solo en
+  alto, para controles en fila que no se pueden separar; con `cn()` reemplaza al otro).
+- `menuItemSecondaryClassName` (el atajo de un ítem de menú) y `selectionSecondaryClassName`
+  (cualquier ítem seleccionable), con el variant `inside-selection:` que sostiene al segundo.
+  `MenuItem`, `SidebarItem`, `TableRow` y `NavigationMenuLink` (el de tarjeta) llevan
+  `group/selectable`.
+- Tokens `--sf-selection`, `--sf-on-selection` y `--sf-group` (con sus utilidades
+  `bg-selection`, `text-on-selection` y `material-group`).
+- Los roles tipográficos de macOS y `text-body-large` (15/20/400), el cuerpo de los controles `lg`.
+- `material-bar`, `material-popover`, `material-modal` y `material-group`.
+- `EmptyState variant`: `default`, `subtle` y `plain` (sin superficie, adentro de una Card o Table).
+- `Kbd size`: `md` (20 px) y `sm` (18 px).
+- `sliderThumbClassName` y sus estados (`variants/slider`), y `tooltipSurfaceClassName`
+  (`variants/overlay`), que comparten el Slider con el ColorPicker y el Tooltip con la etiqueta
+  del `AiLauncher`.
 
 ## [1.13.1] - 2026-09-28
 
