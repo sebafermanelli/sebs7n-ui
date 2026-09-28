@@ -46,7 +46,9 @@ export const ROUTES = [
  * payload, ahí sí se cuenta.
  */
 export function chunkRefs(html) {
-  const sinNoModule = html.replace(/<script\b[^>]*\bnomodule\b[^>]*>(?:<\/script>)?/gi, "")
+  // El atributo exacto, precedido de un espacio: `\bnomodule\b` también agarraba `data-nomodule`
+  // y un `src` con «nomodule» en el nombre.
+  const sinNoModule = html.replace(/<script\b[^>]*\snomodule(?=[\s=>\/])[^>]*>(?:<\/script>)?/gi, "")
   return [...new Set(sinNoModule.match(/\/_next\/static\/chunks\/[\w.-]+\.js/g) ?? [])]
 }
 

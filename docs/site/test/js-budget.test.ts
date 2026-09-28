@@ -22,6 +22,10 @@ describe("chunkRefs", () => {
     expect(chunkRefs(conPolyfill).sort()).toEqual(chunkRefs(html).sort())
     // Con el atributo en cualquier lugar de la etiqueta y en minúsculas, igual.
     expect(chunkRefs('<script nomodule src="/_next/static/chunks/p.js"></script>')).toEqual([])
+    // `data-nomodule` no es el atributo, y un nombre de archivo con «nomodule» tampoco.
+    expect(chunkRefs('<script data-nomodule="" src="/_next/static/chunks/a.js"></script>')).toEqual(["/_next/static/chunks/a.js"])
+    expect(chunkRefs('<script src="/_next/static/chunks/nomodule-x.js"></script>')).toEqual(["/_next/static/chunks/nomodule-x.js"])
+    expect(chunkRefs('<script src="/_next/static/chunks/b.js" nomodule></script>')).toEqual([])
     // Si el mismo chunk además se pide como módulo, cuenta.
     expect(chunkRefs('<script src="/_next/static/chunks/p.js" noModule=""></script><script src="/_next/static/chunks/p.js"></script>')).toEqual([
       "/_next/static/chunks/p.js",
