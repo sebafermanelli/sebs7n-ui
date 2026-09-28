@@ -33,7 +33,7 @@ const buttonVariantsBase = cva(
         // En `sm` el ícono baja a 14 px: 16 en un botón de 24 se lee como un bloque.
         sm: "h-6 px-2.5 text-body [&_svg:not([class*='size-'])]:size-3.5",
         md: "h-8 px-3 text-body",
-        lg: "h-10 px-4 text-title-3 font-normal [&_svg:not([class*='size-'])]:size-5",
+        lg: "h-10 px-4 text-body-large [&_svg:not([class*='size-'])]:size-5",
         // El de ícono chico conserva el glifo de 16: es el botón de una barra de herramientas, y
         // ahí el dibujo es todo lo que dice qué hace.
         "icon-sm": "size-6",

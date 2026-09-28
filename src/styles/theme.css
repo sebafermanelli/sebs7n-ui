@@ -1132,6 +1132,9 @@
 @utility text-title-3 { font-family: var(--font-sans); font-size: 15px; line-height: 20px; font-weight: 600; letter-spacing: -0.01em; }
 @utility text-headline { font-family: var(--font-sans); font-size: 13px; line-height: 16px; font-weight: 600; }
 @utility text-body { font-family: var(--font-sans); font-size: 13px; line-height: 16px; font-weight: 400; }
+/* El cuerpo de los controles `lg` (40 px) y del texto que se escribe con el dedo. AppKit no tiene
+   controles de ese alto; es `title-3` en regular, para no pisar el peso de un título. */
+@utility text-body-large { font-family: var(--font-sans); font-size: 15px; line-height: 20px; font-weight: 400; }
 @utility text-callout { font-family: var(--font-sans); font-size: 12px; line-height: 15px; font-weight: 400; }
 @utility text-subheadline { font-family: var(--font-sans); font-size: 11px; line-height: 14px; font-weight: 400; }
 @utility text-footnote { font-family: var(--font-sans); font-size: 10px; line-height: 13px; font-weight: 400; }

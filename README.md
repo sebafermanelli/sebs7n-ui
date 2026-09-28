@@ -257,7 +257,7 @@ La paleta, los radios y las sombras por defecto de Tailwind están **reseteados*
 | Grupo | Tokens |
 |---|---|
 | Color | `gray`, `gray-alpha`, `brand`, `blue`, `red`, `amber`, `green`, `teal`, `purple`, `pink` en pasos 100–1000, más `background`, `background-100`, `background-200` y `brand-contrast` |
-| Tipografía | Roles de macOS: `text-large-title`, `text-title-{1,2,3}`, `text-headline`, `text-body`, `text-callout`, `text-subheadline`, `text-footnote`, `text-caption`, `text-mono-{body,callout}`. Los de Geist (`text-heading-*`, `text-copy-*`, `text-label-*`, `text-button-*`) siguen andando pero están obsoletos desde 2.0 |
+| Tipografía | Roles de macOS: `text-large-title`, `text-title-{1,2,3}`, `text-headline`, `text-body`, `text-body-large`, `text-callout`, `text-subheadline`, `text-footnote`, `text-caption`, `text-mono-{body,callout}`. Los de Geist (`text-heading-*`, `text-copy-*`, `text-label-*`, `text-button-*`) siguen andando pero están obsoletos desde 2.0 |
 | Sombras | `shadow-tooltip`, `shadow-menu`, `shadow-modal` |
 | Foco | `focus-visible:focus-ring`, `focus:focus-border` |
 | Movimiento | `transition-control`, `animate-skeleton` |

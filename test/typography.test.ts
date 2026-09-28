@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { readFileSync } from "node:fs"
+import { readdirSync, readFileSync } from "node:fs"
 import { fileURLToPath } from "node:url"
 import { describe, expect, it } from "vitest"
 
@@ -89,6 +89,10 @@ const APPLE_ROLES: Record<string, { size: number; weight: number }> = {
   "title-3": { size: 15, weight: 600 },
   headline: { size: 13, weight: 600 },
   body: { size: 13, weight: 400 },
+  // El cuerpo de los controles `lg` (40 px): 15 px como `title-3`, pero regular. No es un rol de
+  // AppKit —ahí no hay controles de 40—; existe para que el peso no sea un `font-normal` pisando
+  // un título.
+  "body-large": { size: 15, weight: 400 },
   callout: { size: 12, weight: 400 },
   subheadline: { size: 11, weight: 400 },
   footnote: { size: 10, weight: 400 },
@@ -102,6 +106,21 @@ describe("roles de Apple (2.0)", () => {
     for (const [role, expected] of Object.entries(APPLE_ROLES)) {
       expect(utility(role), role).toEqual(expected)
     }
+  })
+
+  // Un rol trae su peso: pisarlo con `font-normal` es usar un título como cuerpo. Para cuerpo a
+  // 15 px está `text-body-large`.
+  it("ningún componente pisa el peso de un título con font-normal", () => {
+    const dirs = ["../src/components/", "../src/variants/"]
+    const pisados: string[] = []
+    for (const dir of dirs) {
+      const url = new URL(dir, import.meta.url)
+      for (const file of readdirSync(url)) {
+        const source = readFileSync(new URL(file, url), "utf8")
+        for (const match of source.matchAll(/\S*text-(?:large-title|title-[123])\s+\S*font-normal/g)) pisados.push(`${file}: ${match[0]}`)
+      }
+    }
+    expect(pisados).toEqual([])
   })
 
   it("tailwind-merge los reconoce como tamaño de letra: un color no se come el rol", async () => {
