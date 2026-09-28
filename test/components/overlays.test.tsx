@@ -3,6 +3,8 @@ import userEvent from "@testing-library/user-event"
 import { toast } from "sonner"
 import { describe, expect, it, vi } from "vitest"
 
+import { tooltipSurfaceClassName } from "../../src/variants/overlay"
+
 import { Button } from "../../src/components/button"
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "../../src/components/dialog"
 import {
@@ -34,6 +36,7 @@ describe("Tooltip", () => {
     expect(tip.closest("[data-slot=tooltip-content]")).toHaveClass("material-popover", "text-gray-1000", "shadow-tooltip", "rounded-control")
     // En claro el vidrio denso es casi blanco: sobre una página blanca, sin un filo no se separa.
     expect(tip.closest("[data-slot=tooltip-content]")).toHaveClass("border", "border-gray-alpha-400")
+    for (const clase of tooltipSurfaceClassName.split(" ")) expect(tip.closest("[data-slot=tooltip-content]")).toHaveClass(clase)
   })
 })
 

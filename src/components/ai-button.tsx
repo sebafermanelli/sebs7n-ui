@@ -6,6 +6,7 @@ import { SparklesIcon } from "lucide-react"
 import { useLabels, type Labels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
 import type { ButtonSize } from "../variants/button.js"
+import { tooltipSurfaceClassName } from "../variants/overlay.js"
 import { Button, type ButtonProps } from "./button.js"
 
 type AiLabels = Labels["ai"]
@@ -109,16 +110,17 @@ function AiLauncher({ className, label, labelVisible = false, labelSide = "left"
     >
       {children ?? <AiIcon className="size-6" />}
       {/* La etiqueta es el nombre, ya dicho en `aria-label`: para un lector sería oírlo dos
-          veces. Invertida (`gray-1000`): una línea chica que aparece encima de cualquier cosa tiene
-          que leerse igual sobre una foto que sobre una tabla. El Tooltip dejó de ser invertido en
-          2.0 (vidrio denso con filo), pero esta etiqueta no es un Tooltip: está pegada a un botón
-          de vidrio que brilla, y otro vidrio al lado se confundía con él. */}
+          veces. Se ve igual que un Tooltip (`tooltipSurfaceClassName`, clase por clase) pero no
+          es el componente: `labelVisible` la deja fija sin hover, y el lanzador casi siempre es el
+          trigger de un Popover o un Sheet, así que un Tooltip encima sería un segundo trigger
+          peleando por el mismo botón. */}
       <span
         aria-hidden="true"
         data-slot="ai-launcher-label"
         data-visible={labelVisible ? "" : undefined}
         className={cn(
-          "pointer-events-none absolute top-1/2 -translate-y-1/2 rounded-full bg-gray-1000 px-3 py-1.5 text-body whitespace-nowrap text-background-100 shadow-tooltip",
+          tooltipSurfaceClassName,
+          "pointer-events-none absolute top-1/2 -translate-y-1/2 whitespace-nowrap",
           labelSide === "left" ? "right-full mr-3" : "left-full ml-3",
           "opacity-0 transition-opacity duration-150 data-visible:opacity-100",
           "group-hover/ai-launcher:opacity-100 group-focus-visible/ai-launcher:opacity-100"

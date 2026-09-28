@@ -62,3 +62,14 @@ export const overlayCloseClassName = "absolute top-5 right-5"
 export const floatingPopupClassName =
   "flex w-72 origin-(--transform-origin) flex-col gap-3 rounded-surface material-popover p-4 text-body text-gray-1000 shadow-menu outline-none " +
   "focus-visible:focus-ring transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0"
+
+/**
+ * La superficie del Tooltip: vidrio denso (`material-popover`) con un filo de 1 px —en claro el
+ * vidrio es casi blanco y sobre una página blanca no se separaba— y el texto normal.
+ *
+ * La usan `TooltipContent` y la etiqueta del `AiLauncher`, que se tiene que ver igual que un
+ * Tooltip pero no puede ser uno (se muestra fija con `labelVisible`, y el lanzador ya es el
+ * trigger de un Popover o un Sheet). Sin posición ni animación: eso lo pone cada uno.
+ */
+export const tooltipSurfaceClassName =
+  "rounded-control border border-gray-alpha-400 material-popover px-2 py-1 text-body text-gray-1000 shadow-tooltip"

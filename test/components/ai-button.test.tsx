@@ -7,6 +7,7 @@ import { describe, expect, it, vi } from "vitest"
 import { AiButton, AiIcon, AiLauncher, AiShimmer } from "../../src/components/ai-button"
 import { contrastRatio, luminanceOfHex, luminanceOfOklch, type Oklch } from "../../src/lib/contrast"
 import { LabelsProvider } from "../../src/lib/labels"
+import { tooltipSurfaceClassName } from "../../src/variants/overlay"
 
 const css = readFileSync(join(import.meta.dirname, "../../src/styles/theme.css"), "utf8")
 const bloque = (tema: "light" | "dark") => {
@@ -83,6 +84,17 @@ describe("AiLauncher", () => {
     expect(etiqueta).toHaveTextContent("Preguntale a Rita")
     expect(etiqueta).toHaveAttribute("aria-hidden", "true")
     expect(etiqueta).toHaveClass("opacity-0", "group-hover/ai-launcher:opacity-100", "group-focus-visible/ai-launcher:opacity-100")
+  })
+
+  // La etiqueta ES el Tooltip: misma superficie, clase por clase. No es el componente `Tooltip`
+  // porque `labelVisible` la deja a la vista sin hover y porque el lanzador casi siempre es el
+  // trigger de un Popover o un Sheet (`render={<AiLauncher />}`): un Tooltip encima sería un
+  // segundo trigger peleando por el mismo botón.
+  it("la etiqueta tiene la superficie del Tooltip", () => {
+    render(<AiLauncher />)
+    const etiqueta = document.querySelector("[data-slot=ai-launcher-label]")!
+    for (const clase of tooltipSurfaceClassName.split(" ")) expect(etiqueta).toHaveClass(clase)
+    expect(etiqueta.className).not.toMatch(/bg-gray-1000|text-background-100|rounded-full/)
   })
 
   it("labelVisible la deja a la vista, y labelSide la cambia de lado", () => {

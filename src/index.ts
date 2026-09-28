@@ -65,6 +65,7 @@ export {
   modalFooterClassName,
   modalPopupClassName,
   overlayCloseClassName,
+  tooltipSurfaceClassName,
 } from "./variants/overlay.js"
 export { sidebarItemVariants } from "./variants/sidebar.js"
 export { tagRemoveClassName, tagVariants, TAG_COLORS, type TagColor, type TagSize, type TagVariantProps } from "./variants/tag.js"

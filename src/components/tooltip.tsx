@@ -3,6 +3,7 @@
 import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip"
 
 import { cn, type WithClassName } from "../lib/utils.js"
+import { tooltipSurfaceClassName } from "../variants/overlay.js"
 
 function TooltipProvider({ delay = 300, ...props }: TooltipPrimitive.Provider.Props) {
   return <TooltipPrimitive.Provider data-slot="tooltip-provider" delay={delay} {...props} />
@@ -34,7 +35,8 @@ function TooltipContent({ className, side = "top", sideOffset = 6, align = "cent
         <TooltipPrimitive.Popup
           data-slot="tooltip-content"
           className={cn(
-            "relative w-fit max-w-xs origin-(--transform-origin) rounded-control border border-gray-alpha-400 material-popover px-2 py-1 text-body text-gray-1000 shadow-tooltip",
+            "relative w-fit max-w-xs origin-(--transform-origin)",
+            tooltipSurfaceClassName,
             "transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0",
             className
           )}
