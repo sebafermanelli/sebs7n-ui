@@ -9,6 +9,31 @@ major.
 
 ## [Unreleased]
 
+### Breaking (2.0)
+
+Fase 1 de 2.0 (macOS Golden Gate): tokens globales. Sin versión todavía; la 2.0.0 sale al final
+de la fase 5.
+
+- **Inter en vez de Geist.** `--font-sans` es `var(--font-inter)`, con `system-ui` de respaldo, y
+  la mono es la del sistema. `geist` deja de ser peer: la app carga Inter con `next/font/google`
+  (`variable: "--font-inter"`) o `@fontsource-variable/inter`.
+- **Las clases tipográficas de Geist quedan obsoletas.** `text-copy-*`, `text-label-*`,
+  `text-heading-*` y `text-button-*` siguen andando y `cn()` las sigue fusionando, pero el paquete
+  ya no las usa; se van en la próxima major.
+- **Roles tipográficos de Apple.** `text-large-title`, `text-title-1/2/3`, `text-headline`,
+  `text-body` (13 px), `text-callout`, `text-subheadline`, `text-footnote`, `text-caption`,
+  `text-mono-body` y `text-mono-callout`. Todos los componentes los usan.
+- **Controles un paso más chicos.** El `md` pasa de 40 a 32 px (`sm` 24, `lg` 40); los ítems de
+  menú miden 24 y los del Sidebar 28. Con el dedo el área crece a 44 por `touch-target`, sin
+  cambiar lo que se ve. Si la app fijaba alturas contra las de 1.x, revisalas.
+- **Selección en acento sólido.** El ítem resaltado de un menú, la opción marcada y el ítem
+  activo del Sidebar van en `bg-selection` con `text-on-selection` (el par del botón `accent`).
+  `--sf-highlight` queda para lo que se marca sin ser la selección.
+- **Material por rol.** `material-bar` (barras), `material-popover` (menús, popovers, Tooltip),
+  `material-modal` (Dialog, AlertDialog, Sheet, Drawer: 91 % de fill, no se ve lo de atrás) y
+  `material-group` (Card, Table, EmptyState: sólido `--sf-group`, sin blur). El Tooltip deja de
+  ser invertido. `glass`, `glass-dense` y `glass-thick` siguen existiendo para las apps.
+
 ## [1.13.1] - 2026-09-28
 
 ### Fixed
