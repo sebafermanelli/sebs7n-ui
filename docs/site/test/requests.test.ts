@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest"
+import { afterEach, describe, expect, it, vi } from "vitest"
 
 import { fetchRequests, toRequests, type GitHubIssue } from "../app/_lib/requests"
 
@@ -62,6 +62,26 @@ describe("toRequests", () => {
 })
 
 describe("fetchRequests", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs()
+  })
+
+  it("sin GITHUB_TOKEN no manda Authorization", async () => {
+    vi.stubEnv("GITHUB_TOKEN", "")
+    const fetcher = vi.fn(async () => new Response(JSON.stringify([issue({})]), { status: 200 }))
+    await fetchRequests(fetcher)
+    const [, init] = fetcher.mock.calls[0] as unknown as [string, RequestInit & { headers: Record<string, string> }]
+    expect(init.headers).not.toHaveProperty("Authorization")
+  })
+
+  it("con GITHUB_TOKEN manda Authorization: Bearer <token>", async () => {
+    vi.stubEnv("GITHUB_TOKEN", "t0k3n")
+    const fetcher = vi.fn(async () => new Response(JSON.stringify([issue({})]), { status: 200 }))
+    await fetchRequests(fetcher)
+    const [, init] = fetcher.mock.calls[0] as unknown as [string, RequestInit & { headers: Record<string, string> }]
+    expect(init.headers.Authorization).toBe("Bearer t0k3n")
+  })
+
   it("con GitHub caído o sin cupo devuelve error, no tira", async () => {
     const limitado = vi.fn(async () => new Response("rate limited", { status: 403 }))
     expect(await fetchRequests(limitado)).toEqual({ ok: false })
