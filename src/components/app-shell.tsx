@@ -8,7 +8,6 @@ import { useLabels, type Labels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
 import { Button } from "./button.js"
 import { Navbar } from "./navbar.js"
-import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "./sheet.js"
 
 /**
  * Los textos viven una sola vez, en `sebs7n-ui/labels`. Acá queda el alias para
@@ -51,6 +50,13 @@ type AppShellProps = Omit<React.ComponentProps<"div">, "children"> & {
 // Mismo corte que lg de Tailwind (64rem): desde ahí el sidebar está fijo y el Sheet sobra.
 const DESKTOP_QUERY = "(min-width: 64rem)"
 
+type SheetModule = typeof import("./sheet.js")
+
+// Una sola carga del Sheet para todos los AppShell de la página: la promesa y el módulo quedan acá.
+let sheetCargado: SheetModule | null = null
+let sheetPromesa: Promise<SheetModule> | null = null
+const cargarSheet = () => (sheetPromesa ??= import("./sheet.js").then((mod) => (sheetCargado = mod)))
+
 function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido", ambient = false, variant = "floating", labels: labelsProp, children, ...props }: AppShellProps) {
   // El provider gana sobre el español; la prop `labels` gana sobre el provider, porque es la
   // excepción puntual de una pantalla y no una traducción.
@@ -87,34 +93,66 @@ function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido
 
   // Lo de la barra del teléfono: la hamburguesa con su Sheet y lo que pase la app. Lo mismo
   // en las dos variantes; cambia la superficie que lo contiene.
+  // El Sheet (el Dialog de Base UI, con su focus trap y el bloqueo de scroll) se pide recién
+  // cuando hace falta: en desktop nunca se abre, y en el teléfono recién al tocar la hamburguesa.
+  // Importado de entrada pesaba ~13 KB gzip en cada página con AppShell (medido en el sitio de
+  // docs). El toque no se pierde: deja `mobileOpen` en true y el Sheet nace abierto cuando llega.
+  // Lo mismo si la app lo abre desde `useAppShell()`.
+  //
+  // No se precarga con el hover ni con el foco, a propósito: al llegar el módulo la hamburguesa
+  // provisoria se cambia por el trigger de Base UI —es otro nodo—, y si eso pasa con el foco
+  // adentro, el foco se cae al `<body>`; si pasa entre el pointerdown y el click de un toque, el
+  // click se pierde. Cargándolo en el click, el cambio coincide con la apertura, y abrir el Sheet
+  // ya mueve el foco adentro; al cerrarlo vuelve al trigger nuevo.
+  const [sheet, setSheet] = React.useState<SheetModule | null>(() => sheetCargado)
+  React.useEffect(() => {
+    if (mobileOpen && !sheet) void cargarSheet().then(setSheet)
+  }, [mobileOpen, sheet])
+
+  const triggerProps = { variant: "ghost", size: "icon-sm", "aria-label": labels.openMenu, className: "-ml-2" } as const
+
   const barContent = (
     <>
-      <Sheet
-        open={mobileOpen}
-        onOpenChange={(open) => {
-          if (open) focusMainOnClose.current = false
-          setMobileOpen(open)
-        }}
-      >
-        <SheetTrigger render={<Button variant="ghost" size="icon-sm" aria-label={labels.openMenu} className="-ml-2" />}>
-          <MenuIcon aria-hidden="true" />
-        </SheetTrigger>
-        <SheetContent
-          side="left"
-          // Cierre por navegación: el foco va al <main> mismo (no a su primer control, que es lo que
-          // hace Base UI si le devolvemos el elemento). El flag se limpia al abrir: finalFocus puede
-          // evaluarse más de una vez.
-          finalFocus={() => {
-            if (!focusMainOnClose.current) return true
-            requestAnimationFrame(() => mainRef.current?.focus({ preventScroll: true }))
-            return false
+      {sheet ? (
+        <sheet.Sheet
+          open={mobileOpen}
+          onOpenChange={(open) => {
+            if (open) focusMainOnClose.current = false
+            setMobileOpen(open)
           }}
-          className="gap-0 overflow-hidden overscroll-contain p-0 [&_[data-slot=sidebar-header]>:first-child]:pr-10"
         >
-          <SheetTitle className="sr-only">{labels.navigation}</SheetTitle>
-          <SidebarInSheetContext.Provider value={true}>{sidebar}</SidebarInSheetContext.Provider>
-        </SheetContent>
-      </Sheet>
+          <sheet.SheetTrigger render={<Button {...triggerProps} />}>
+            <MenuIcon aria-hidden="true" />
+          </sheet.SheetTrigger>
+          <sheet.SheetContent
+            side="left"
+            finalFocus={() => {
+              if (!focusMainOnClose.current) return true
+              requestAnimationFrame(() => mainRef.current?.focus({ preventScroll: true }))
+              return false
+            }}
+            className="gap-0 overflow-hidden overscroll-contain p-0 [&_[data-slot=sidebar-header]>:first-child]:pr-10"
+          >
+            <sheet.SheetTitle className="sr-only">{labels.navigation}</sheet.SheetTitle>
+            <SidebarInSheetContext.Provider value={true}>{sidebar}</SidebarInSheetContext.Provider>
+          </sheet.SheetContent>
+        </sheet.Sheet>
+      ) : (
+        // Hasta que llega el Sheet, la misma hamburguesa con lo que el trigger de Base UI
+        // anuncia cerrado (`aria-haspopup`, `aria-expanded`): se ve y se lee igual.
+        <Button
+          {...triggerProps}
+          data-slot="sheet-trigger"
+          aria-haspopup="dialog"
+          aria-expanded={false}
+          onClick={() => {
+            focusMainOnClose.current = false
+            setMobileOpen(true)
+          }}
+        >
+          <MenuIcon aria-hidden="true" />
+        </Button>
+      )}
       <div data-slot="app-shell-mobile-bar-content" className="flex min-w-0 flex-1 items-center gap-2">
         {mobileBar}
       </div>

@@ -2,7 +2,7 @@ import { act, fireEvent, render, screen, waitFor, within } from "@testing-librar
 import userEvent from "@testing-library/user-event"
 import { HomeIcon } from "lucide-react"
 import { ThemeProvider } from "next-themes"
-import { afterEach, beforeEach, describe, expect, it } from "vitest"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 import { AppShell, useAppShell } from "../../src/components/app-shell"
 import { DropdownMenuItem } from "../../src/components/dropdown-menu"
@@ -153,5 +153,71 @@ describe("AppShell", () => {
     expect(mediaListeners.length).toBeGreaterThan(0)
     act(() => mediaListeners.forEach((l) => l({ matches: true })))
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull())
+  })
+})
+
+// 1.13.1: el Sheet se pide recién al usar la hamburguesa. Cada test carga el AppShell de cero
+// (`resetModules`) para arrancar sin el Sheet en memoria, que es lo que pasa en la primera
+// visita; los de arriba ya lo encuentran cargado.
+describe("AppShell: el Sheet se carga al usarlo", () => {
+  async function fresco() {
+    vi.resetModules()
+    const cargado = vi.fn()
+    vi.doMock("../../src/components/sheet", async (original) => {
+      cargado()
+      return await original()
+    })
+    const { AppShell: Shell } = await import("../../src/components/app-shell")
+    const { Sidebar: Lateral, SidebarContent: Contenido, SidebarItem: Item } = await import("../../src/components/sidebar")
+    render(
+      <Shell
+        mobileBar={<span>Acme</span>}
+        sidebar={
+          <Lateral>
+            <Contenido>
+              <Item href="#facturas">Facturas</Item>
+            </Contenido>
+          </Lateral>
+        }
+      >
+        <p>contenido</p>
+      </Shell>
+    )
+    return cargado
+  }
+
+  afterEach(() => {
+    vi.doUnmock("../../src/components/sheet")
+  })
+
+  it("no lo pide al montar, y la hamburguesa se anuncia igual que el trigger del Sheet", async () => {
+    const cargado = await fresco()
+    await new Promise((resolver) => setTimeout(resolver, 50))
+    expect(cargado).not.toHaveBeenCalled()
+    const hamburguesa = screen.getByRole("button", { name: "Abrir menú" })
+    expect(hamburguesa).toHaveAttribute("aria-haspopup", "dialog")
+    expect(hamburguesa).toHaveAttribute("aria-expanded", "false")
+    expect(hamburguesa).toHaveAttribute("data-slot", "sheet-trigger")
+  })
+
+  it("el primer toque abre el Sheet: no se pierde mientras llega", async () => {
+    const cargado = await fresco()
+    fireEvent.click(screen.getByRole("button", { name: "Abrir menú" }))
+    const sheet = await screen.findByRole("dialog")
+    expect(cargado).toHaveBeenCalled()
+    expect(within(sheet).getByRole("link", { name: "Facturas" })).toBeInTheDocument()
+  })
+
+  it("con teclado: enfocarla no la cambia de nodo, Enter abre y Escape devuelve el foco", async () => {
+    const cargado = await fresco()
+    act(() => screen.getByRole("button", { name: "Abrir menú" }).focus())
+    await new Promise((resolver) => setTimeout(resolver, 50))
+    expect(cargado).not.toHaveBeenCalled()
+    expect(screen.getByRole("button", { name: "Abrir menú" })).toHaveFocus()
+    await userEvent.keyboard("{Enter}")
+    await screen.findByRole("dialog")
+    await userEvent.keyboard("{Escape}")
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull())
+    await waitFor(() => expect(screen.getByRole("button", { name: "Abrir menú" })).toHaveFocus())
   })
 })
