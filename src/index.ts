@@ -45,6 +45,7 @@ export { buttonVariants, type ButtonIconSize, type ButtonShape, type ButtonSize,
 export { cardVariants } from "./variants/card.js"
 export { linkVariants } from "./variants/link.js"
 export { segmentedThumbClassName, segmentedTrackClassName } from "./variants/segmented.js"
+export { sliderThumbClassName, sliderThumbDraggingClassName, sliderThumbPeerActiveClassName } from "./variants/slider.js"
 export {
   inputControlClassName,
   inputDisabledClassName,

@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event"
 import { describe, expect, it, vi } from "vitest"
 
 import { ColorPicker } from "../../src/components/color-picker"
+import { sliderThumbClassName } from "../../src/variants/slider"
 import { hexOfOklch, type Oklch } from "../../src/lib/contrast"
 import { LabelsProvider } from "../../src/lib/labels"
 
@@ -178,6 +179,15 @@ describe("ColorPicker: valores y espectro", () => {
     await userEvent.click(screen.getByRole("tab", { name: "Espectro" }))
     fireEvent.change(screen.getByRole("slider", { name: "Matiz" }), { target: { value: "90" } })
     expect(onValueChange).toHaveBeenLastCalledWith([0.6, 0.1, 90])
+  })
+
+  it("la perilla del matiz es la misma cápsula que la del Slider", async () => {
+    render(<ColorPicker aria-label="Color" defaultValue={[0.6, 0.1, 200]} />)
+    await abrir()
+    await userEvent.click(screen.getByRole("tab", { name: "Espectro" }))
+    const perilla = screen.getByRole("slider", { name: "Matiz" }).nextElementSibling!
+    for (const clase of sliderThumbClassName.split(" ")) expect(perilla).toHaveClass(clase)
+    expect(perilla).toHaveClass("h-5", "w-7", "peer-active:scale-x-125", "peer-active:scale-y-135", "peer-active:thumb-lens")
   })
 
   it("footer recibe el color actual", async () => {

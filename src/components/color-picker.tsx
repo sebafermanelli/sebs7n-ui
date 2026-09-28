@@ -15,6 +15,7 @@ import {
   inputSizeClassName,
 } from "../variants/input.js"
 import { floatingPopupClassName } from "../variants/overlay.js"
+import { sliderThumbClassName, sliderThumbPeerActiveClassName } from "../variants/slider.js"
 import { Input } from "./input.js"
 import { Label } from "./label.js"
 import { Slider } from "./slider.js"
@@ -342,7 +343,12 @@ function Espectro({ color, onChange, labels }: { color: Oklch; onChange: (color:
           />
           <span
             aria-hidden="true"
-            className="pointer-events-none absolute top-0 h-5 w-7 -translate-x-1/2 rounded-full bg-white shadow-tooltip transition-thumb peer-focus-visible:focus-ring peer-active:scale-x-125 peer-active:scale-y-135 peer-active:thumb-lens"
+            // La perilla del Slider: la misma cápsula de 20 × 28, de `variants/slider`.
+            className={cn(
+              sliderThumbClassName,
+              sliderThumbPeerActiveClassName,
+              "pointer-events-none absolute top-0 h-5 w-7 -translate-x-1/2 peer-focus-visible:focus-ring"
+            )}
             style={{ left: `calc(14px + (100% - 28px) * ${h / 360})` }}
           />
         </div>

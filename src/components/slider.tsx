@@ -4,6 +4,7 @@ import type * as React from "react"
 import { Slider as SliderPrimitive } from "@base-ui/react/slider"
 
 import { cn, type WithClassName } from "../lib/utils.js"
+import { sliderThumbClassName, sliderThumbDraggingClassName } from "../variants/slider.js"
 
 /**
  * Elegir un número —o un rango— arrastrando. Va cuando el valor exacto importa
@@ -110,11 +111,13 @@ function Slider<Value extends number | readonly number[] = number | readonly num
               // Con `label` lo pone Base UI solo (`aria-labelledby`), así que no se pisa.
               aria-label={label == null ? ariaLabel : undefined}
               className={cn(
-                "rounded-full border border-gray-alpha-400 bg-white shadow-tooltip outline-none transition-thumb",
-                "group-data-[size=sm]/slider:size-4 group-data-[size=md]/slider:size-5",
-                "hover:border-gray-600",
-                // Mientras se arrastra, el pulgar se vuelve lente y la pista se ve a través.
-                "data-dragging:scale-x-135 data-dragging:scale-y-150 data-dragging:thumb-lens",
+                // La cápsula de macOS, la misma del matiz del ColorPicker: 20 × 28, y en `sm` la
+                // misma proporción (16 × 22). El borde transparente es el lugar del de deshabilitado.
+                sliderThumbClassName,
+                "border border-transparent outline-none",
+                "group-data-[size=sm]/slider:h-4 group-data-[size=sm]/slider:w-5.5 group-data-[size=md]/slider:h-5 group-data-[size=md]/slider:w-7",
+                // Mientras se arrastra, la perilla se vuelve lente y la pista se ve a través.
+                sliderThumbDraggingClassName,
                 // El foco vive en el <input type="range"> de adentro: el anillo va en el thumb.
                 "has-[input:focus-visible]:focus-ring",
                 "data-disabled:cursor-not-allowed data-disabled:border-gray-alpha-400 data-disabled:bg-gray-alpha-100 data-disabled:shadow-none data-disabled:scale-100"

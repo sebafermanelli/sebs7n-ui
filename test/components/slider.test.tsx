@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event"
 import { describe, expect, it, vi } from "vitest"
 
 import { Slider } from "../../src/components/slider"
+import { sliderThumbClassName } from "../../src/variants/slider"
 
 const control = () => document.querySelector("[data-slot=slider-control]")!
 const track = () => document.querySelector("[data-slot=slider-track]")!
@@ -99,7 +100,20 @@ describe("Slider", () => {
     render(<Slider aria-label="x" defaultValue={10} />)
     expect(track()).toHaveClass("bg-gray-alpha-400", "rounded-full")
     expect(document.querySelector("[data-slot=slider-indicator]")).toHaveClass("bg-brand-700")
-    expect(thumbs()[0]).toHaveClass("bg-white", "border-gray-alpha-400", "shadow-tooltip", "transition-thumb", "data-dragging:thumb-lens")
+    expect(thumbs()[0]).toHaveClass("bg-white", "shadow-tooltip", "transition-thumb", "data-dragging:thumb-lens")
+  })
+
+  // La perilla de macOS es una cápsula horizontal, no un círculo: la misma del matiz del
+  // ColorPicker. Sale de `sliderThumbClassName` para que las dos no puedan quedar distintas.
+  it("la perilla es una cápsula de 20 × 28 (16 × 22 en sm) que se hace lente al arrastrar", () => {
+    const { rerender } = render(<Slider aria-label="x" defaultValue={10} />)
+    const thumb = thumbs()[0]!
+    for (const clase of sliderThumbClassName.split(" ")) expect(thumb).toHaveClass(clase)
+    expect(thumb).toHaveClass("group-data-[size=md]/slider:h-5", "group-data-[size=md]/slider:w-7", "rounded-full")
+    expect(thumb).toHaveClass("data-dragging:scale-x-125", "data-dragging:scale-y-135")
+    expect(thumb.className).not.toMatch(/size-[45]\b/)
+    rerender(<Slider aria-label="x" defaultValue={10} size="sm" />)
+    expect(thumbs()[0]).toHaveClass("group-data-[size=sm]/slider:h-4", "group-data-[size=sm]/slider:w-5.5")
   })
 
   it("disabled: no se mueve y queda marcado", async () => {
