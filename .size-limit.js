@@ -45,6 +45,11 @@ export default [
     // repite en las apps pasa al paquete. El umbral no está para frenar eso sino para que un
     // salto que no se explique por un componente nuevo se vea en el PR. El que importa para una
     // app es el de arriba, el subpath, que no se movió.
-    limit: "47 kB",
+    //
+    // 2.0 (fase 1): 47,06 KB. Estilo macOS: roles tipográficos, `touch-target`, selección, material
+    // por rol, la cápsula compartida de Slider/ColorPicker y `selectionSecondaryClassName`. Se subió
+    // a 49 para las fases que siguen (Command, Tree, GroupedList…): cada una tiene que explicar su
+    // salto en el PR.
+    limit: "49 kB",
   },
 ]
