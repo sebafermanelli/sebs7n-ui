@@ -8,6 +8,7 @@ import { AppShell, useAppShell } from "../../src/components/app-shell"
 import { DropdownMenuItem } from "../../src/components/dropdown-menu"
 import { Sidebar, SidebarContent, SidebarFooter, SidebarItem } from "../../src/components/sidebar"
 import { UserMenu } from "../../src/components/user-menu"
+import { hidratar } from "../hidratar"
 
 // matchMedia controlable: el test decide cuándo el viewport pasa a ser ≥ lg.
 let mediaListeners: Array<(e: { matches: boolean }) => void> = []
@@ -256,7 +257,6 @@ describe("AppShell: el Sheet se carga al usarlo", () => {
 describe("AppShell: hidratar con el Sheet ya cargado", () => {
   it("no hay mismatch y el Sheet se toma después de hidratar", async () => {
     const { renderToString } = await import("react-dom/server")
-    const { hydrateRoot } = await import("react-dom/client")
     // Carga el Sheet en el módulo del cliente con un primer shell.
     const { unmount } = render(<Example />)
     await userEvent.click(screen.getByRole("button", { name: "Abrir menú" }))
@@ -276,9 +276,7 @@ describe("AppShell: hidratar con el Sheet ya cargado", () => {
     document.body.append(container)
     const recoverable = vi.fn()
     const errores = vi.spyOn(console, "error").mockImplementation(() => {})
-    await act(async () => {
-      hydrateRoot(container, arbol(AppShell), { onRecoverableError: recoverable })
-    })
+    await hidratar(container, arbol(AppShell), { onRecoverableError: recoverable })
     expect(recoverable).not.toHaveBeenCalled()
     expect(errores.mock.calls.filter(([m]) => /hydrat|did not match/i.test(String(m)))).toEqual([])
     errores.mockRestore()

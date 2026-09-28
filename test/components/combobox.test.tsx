@@ -1,7 +1,6 @@
 import { act, render, screen, waitFor, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import * as React from "react"
-import { hydrateRoot } from "react-dom/client"
 import { renderToString } from "react-dom/server"
 import { afterEach, describe, expect, it, vi } from "vitest"
 
@@ -31,6 +30,7 @@ import {
 } from "../../src/components/combobox"
 import { menuItemClassName, menuPopupClassName } from "../../src/variants/menu"
 import { tagRemoveClassName } from "../../src/variants/tag"
+import { hidratar } from "../hidratar"
 
 const COUNTRIES = ["Argentina", "Armenia", "Bolivia", "Brasil", "Chile", "Uruguay"]
 
@@ -356,9 +356,7 @@ describe("SSR", () => {
     expect(before).toContain('role="combobox"')
     const errors = vi.spyOn(console, "error").mockImplementation(() => {})
     const recoverable = vi.fn()
-    await act(async () => {
-      hydrateRoot(container, <Form />, { onRecoverableError: recoverable })
-    })
+    await hidratar(container, <Form />, { onRecoverableError: recoverable })
     expect(recoverable).not.toHaveBeenCalled()
     expect(errors.mock.calls.filter(([message]) => /hydrat|did not match/i.test(String(message)))).toEqual([])
     const ids = (html: string) => [...html.matchAll(/\s(?:id|aria-labelledby|aria-controls|for)="([^"]+)"/g)].map((m) => m[1])

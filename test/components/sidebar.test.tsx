@@ -16,6 +16,7 @@ import {
 } from "../../src/components/sidebar"
 import { TooltipProvider } from "../../src/components/tooltip"
 import { sidebarItemVariants } from "../../src/variants/sidebar"
+import { hidratar } from "../hidratar"
 
 function Example({
   collapsed = false,
@@ -194,7 +195,6 @@ describe("Sidebar", () => {
 
   it("hidratar colapsado con el Tooltip ya en memoria no da mismatch", async () => {
     const { renderToString } = await import("react-dom/server")
-    const { hydrateRoot } = await import("react-dom/client")
     // El cliente ya tiene el Tooltip: otro Sidebar colapsado lo cargó.
     const { unmount } = render(<Example collapsed />)
     await waitFor(() => expect(screen.getByRole("link", { name: "Inicio" })).toHaveAttribute("data-base-ui-tooltip-trigger"))
@@ -217,9 +217,7 @@ describe("Sidebar", () => {
     document.body.append(container)
     const recoverable = vi.fn()
     const errores = vi.spyOn(console, "error").mockImplementation(() => {})
-    await act(async () => {
-      hydrateRoot(container, arbol({ Sidebar, SidebarItem }), { onRecoverableError: recoverable })
-    })
+    await hidratar(container, arbol({ Sidebar, SidebarItem }), { onRecoverableError: recoverable })
     expect(recoverable).not.toHaveBeenCalled()
     expect(errores.mock.calls.filter(([m]) => /hydrat|did not match/i.test(String(m)))).toEqual([])
     errores.mockRestore()

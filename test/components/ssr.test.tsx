@@ -1,7 +1,5 @@
-import { act } from "@testing-library/react"
 import { InboxIcon } from "lucide-react"
 import { ThemeProvider } from "next-themes"
-import { hydrateRoot } from "react-dom/client"
 import { renderToString } from "react-dom/server"
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest"
 
@@ -10,6 +8,7 @@ import { DropdownMenuItem } from "../../src/components/dropdown-menu"
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupLabel, SidebarHeader, SidebarItem } from "../../src/components/sidebar"
 import { TooltipProvider } from "../../src/components/tooltip"
 import { UserMenu } from "../../src/components/user-menu"
+import { hidratar } from "../hidratar"
 
 beforeAll(() => {
   window.matchMedia ??= ((query: string) => ({
@@ -91,9 +90,7 @@ describe.each([false, true])("SSR del shell (colapsado: %s)", (collapsed) => {
     const before = container.innerHTML
     const errors = vi.spyOn(console, "error").mockImplementation(() => {})
     const recoverable = vi.fn()
-    await act(async () => {
-      hydrateRoot(container, <Shell collapsed={collapsed} />, { onRecoverableError: recoverable })
-    })
+    await hidratar(container, <Shell collapsed={collapsed} />, { onRecoverableError: recoverable })
     expect(recoverable).not.toHaveBeenCalled()
     expect(errors.mock.calls.filter(([message]) => /hydrat|did not match/i.test(String(message)))).toEqual([])
     // Colapsado, los triggers con tooltip (ítems, buscador, UserMenu) cargan el Tooltip después
