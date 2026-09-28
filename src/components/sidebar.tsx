@@ -286,8 +286,11 @@ function SidebarSearch({
       data-slot="sidebar-search"
       aria-keyshortcuts={keyshortcuts}
       className={cn(
-        "flex h-7 pointer-coarse:h-11 w-full min-w-0 cursor-pointer items-center gap-2 rounded-field border border-gray-alpha-400 glass-control px-2.5 text-left text-body text-gray-900 shadow-card outline-none transition-control hover:border-gray-alpha-500 hover:text-gray-1000 focus-visible:focus-ring [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
-        "group-data-collapsed/sidebar:w-7 pointer-coarse:group-data-collapsed/sidebar:w-11 group-data-collapsed/sidebar:justify-center group-data-collapsed/sidebar:px-0",
+        // 32 px, el alto de un campo `md`: a 28 (el alto de un ítem) el ⌘K de 20 casi tocaba los
+        // bordes. Con el Kbd `sm` de 18 quedan 7 px de aire arriba y abajo.
+        "flex h-8 pointer-coarse:h-11 w-full min-w-0 cursor-pointer items-center gap-2 rounded-field border border-gray-alpha-400 glass-control px-3 text-left text-body text-gray-900 shadow-card outline-none transition-control hover:border-gray-alpha-500 hover:text-gray-1000 focus-visible:focus-ring [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+        // Colapsado es un ícono más de la columna: el cuadrado de 28 de los ítems, no un campo.
+        "group-data-collapsed/sidebar:h-7 group-data-collapsed/sidebar:w-7 pointer-coarse:group-data-collapsed/sidebar:h-11 pointer-coarse:group-data-collapsed/sidebar:w-11 group-data-collapsed/sidebar:justify-center group-data-collapsed/sidebar:px-0",
         className
       )}
       {...props}
@@ -295,7 +298,7 @@ function SidebarSearch({
       <SearchIcon aria-hidden="true" />
       <span className="min-w-0 flex-1 truncate group-data-collapsed/sidebar:sr-only">{texto}</span>
       {shortcut != null && (
-        <Kbd aria-hidden="true" className="group-data-collapsed/sidebar:hidden">
+        <Kbd aria-hidden="true" className="group-data-collapsed/sidebar:hidden" size="sm">
           {shortcut}
         </Kbd>
       )}

@@ -244,13 +244,19 @@ export const COMPONENTS = {
   kbd: {
     title: "Kbd",
     group: "fundamentos",
-    description: "Una tecla o un atajo en línea, en Geist Mono.",
+    description: "Una tecla o un atajo en línea, en la mono del sistema.",
     keyboard: [["—", "Es texto."]],
     a11y: ["Emite `<kbd>`, que es lo que corresponde. No registra ningún atajo: solo lo muestra."],
     usage: [
       "Para anunciar el atajo, `aria-keyshortcuts` va en el control que lo dispara, no en el `Kbd`.",
       "Símbolos de Mac (`⌘`, `⌥`, `⇧`) o nombres (`Ctrl`, `Alt`): elegí uno y mantenelo en toda la app.",
+      "`size=\"sm\"` adentro de un control de 32 px (un campo, el buscador del Sidebar): el de 20 casi toca los bordes.",
     ],
+    props: {
+      Kbd: {
+        size: "`md` 20px, mono (default) · `sm` 18px, en la fuente del sistema como los atajos de los menús de macOS.",
+      },
+    },
     related: ["sidebar", "dropdown-menu"],
   },
   separator: {

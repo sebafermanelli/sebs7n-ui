@@ -114,6 +114,8 @@ describe("Sidebar", () => {
     render(<Example collapsed />)
     const home = screen.getByRole("link", { name: "Inicio" })
     expect(screen.getByText("Inicio")).toHaveClass("group-data-collapsed/sidebar:sr-only")
+    // Colapsado, el buscador es un ícono más de la columna: el cuadrado de 28 de los ítems.
+    expect(screen.getByRole("button", { name: "Buscar…" })).toHaveClass("group-data-collapsed/sidebar:h-7", "group-data-collapsed/sidebar:w-7")
     await userEvent.tab() // búsqueda
     await userEvent.tab()
     expect(home).toHaveFocus()
@@ -230,9 +232,12 @@ describe("Sidebar", () => {
     const onSearch = vi.fn()
     render(<Example onSearch={onSearch} />)
     const search = screen.getByRole("button", { name: "Buscar…" })
-    expect(search).toHaveClass("h-7", "border", "border-gray-alpha-400", "glass-control", "rounded-field", "hover:border-gray-alpha-500", "focus-visible:focus-ring")
+    // 32 px, el alto de un campo `md`: a 28 el atajo de 20 tocaba los bordes. Con el dedo, 44.
+    expect(search).toHaveClass("h-8", "px-3", "pointer-coarse:h-11", "border", "border-gray-alpha-400", "glass-control", "rounded-field", "hover:border-gray-alpha-500", "focus-visible:focus-ring")
     expect(search).toHaveAttribute("aria-keyshortcuts", "Meta+K")
     expect(search.querySelector("kbd")).toHaveTextContent("⌘K")
+    // El atajo chico (18 px) deja 7 px de aire arriba y abajo adentro de los 32.
+    expect(search.querySelector("kbd")).toHaveAttribute("data-size", "sm")
     await userEvent.click(search)
     expect(onSearch).toHaveBeenCalledOnce()
   })

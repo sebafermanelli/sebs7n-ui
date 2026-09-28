@@ -2,13 +2,24 @@ import type * as React from "react"
 
 import { cn } from "../lib/utils.js"
 
-// Atajo de teclado en línea (⌘K, Esc). Geist Mono, como todo lo que es código.
-function Kbd({ className, ...props }: React.ComponentProps<"kbd">) {
+type KbdProps = React.ComponentProps<"kbd"> & {
+  /**
+   * `md` (20 px) suelto en un texto. `sm` (18 px) adentro de un control de 32, como el ⌘K del
+   * buscador del Sidebar: a 20 casi tocaba los bordes y el campo se veía apretado.
+   */
+  size?: "sm" | "md"
+}
+
+// Atajo de teclado en línea (⌘K, Esc). Mono, como todo lo que es código. El `sm` va en la fuente
+// del sistema, como los atajos de los menús de macOS: a 10 px la mono pierde el dibujo del ⌘.
+function Kbd({ className, size = "md", ...props }: KbdProps) {
   return (
     <kbd
       data-slot="kbd"
+      data-size={size}
       className={cn(
-        "inline-flex h-5 min-w-5 shrink-0 items-center justify-center gap-0.5 rounded-xs border border-gray-alpha-400 bg-gray-alpha-100 px-1 text-mono-callout text-gray-900 shadow-card select-none",
+        "inline-flex shrink-0 items-center justify-center gap-0.5 rounded-xs border border-gray-alpha-400 bg-gray-alpha-100 px-1 text-gray-900 shadow-card select-none",
+        size === "sm" ? "h-[18px] min-w-[18px] text-caption" : "h-5 min-w-5 text-mono-callout",
         className
       )}
       {...props}
@@ -16,4 +27,4 @@ function Kbd({ className, ...props }: React.ComponentProps<"kbd">) {
   )
 }
 
-export { Kbd }
+export { Kbd, type KbdProps }

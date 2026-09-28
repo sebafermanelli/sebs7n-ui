@@ -15,6 +15,15 @@ describe("Kbd", () => {
     const kbd = screen.getByText("⌘K")
     expect(kbd.tagName).toBe("KBD")
     expect(kbd).toHaveClass("text-mono-callout", "bg-gray-alpha-100", "border", "border-gray-alpha-400", "rounded-xs", "px-1", "h-5", "text-gray-900")
+    expect(kbd).toHaveAttribute("data-size", "md")
+  })
+
+  it("size=sm mide 18 px, para ir adentro de un campo de 32", () => {
+    render(<Kbd size="sm">⌘K</Kbd>)
+    const kbd = screen.getByText("⌘K")
+    expect(kbd).toHaveAttribute("data-size", "sm")
+    expect(kbd).toHaveClass("h-[18px]", "min-w-[18px]", "text-caption")
+    expect(kbd).not.toHaveClass("h-5")
   })
 })
 
