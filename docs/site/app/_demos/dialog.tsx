@@ -16,7 +16,45 @@ import { Input } from "sebs7n-ui/input"
 import { Label } from "sebs7n-ui/label"
 
 /**
- * Básico
+ * La hoja de macOS
+ * Título a la izquierda, el contenido agrupado en un bloque `material-group` y el principal
+ * del acento abajo a la derecha. El pie no lleva línea: el aire alcanza.
+ */
+export function Hoja() {
+  return (
+    <Dialog>
+      <DialogTrigger render={<Button variant="outline" />}>Ver factura 0012</DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Factura 0012</DialogTitle>
+          <DialogDescription>Emitida el 15/09. Todavía no se cobró.</DialogDescription>
+        </DialogHeader>
+        <dl className="flex flex-col gap-2 rounded-surface material-group p-4 text-body">
+          <div className="flex justify-between gap-4">
+            <dt className="text-gray-900">Cliente</dt>
+            <dd>Acme S.A.</dd>
+          </div>
+          <div className="flex justify-between gap-4">
+            <dt className="text-gray-900">Vence</dt>
+            <dd>15/10</dd>
+          </div>
+          <div className="flex justify-between gap-4">
+            <dt className="text-gray-900">Total</dt>
+            <dd className="text-headline tabular-nums">$ 12.400</dd>
+          </div>
+        </dl>
+        <p className="text-footnote text-gray-900">Pasado el vencimiento se suma el recargo que figura en las condiciones de venta.</p>
+        <DialogFooter>
+          <DialogClose render={<Button variant="secondary" />}>Cancelar</DialogClose>
+          <DialogClose render={<Button variant="accent" />}>Listo</DialogClose>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+/**
+ * Con formulario
  * El trigger usa `render={<Button … />}`, no `asChild`.
  */
 export function Basico() {
@@ -34,7 +72,7 @@ export function Basico() {
           <Input defaultValue="Acme S.A." id={id} />
         </div>
         <DialogFooter>
-          <DialogClose render={<Button variant="ghost" />}>Cancelar</DialogClose>
+          <DialogClose render={<Button variant="secondary" />}>Cancelar</DialogClose>
           <DialogClose render={<Button variant="accent" />}>Guardar</DialogClose>
         </DialogFooter>
       </DialogContent>
@@ -58,7 +96,7 @@ export function Controlado() {
           <DialogDescription>Se envía a AFIP y después no se puede editar.</DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <DialogClose render={<Button variant="ghost" />}>Cancelar</DialogClose>
+          <DialogClose render={<Button variant="secondary" />}>Cancelar</DialogClose>
           <Button
             loading={guardando}
             onClick={() => {

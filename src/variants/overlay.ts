@@ -23,7 +23,7 @@ export const backdropClassName =
  * La entrada sube 8px mientras aparece: es la señal de que algo entró, no decoración.
  */
 export const modalPopupClassName =
-  "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-panel material-modal p-6 text-body text-gray-1000 shadow-modal outline-none " +
+  "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-panel material-modal p-5 text-body text-gray-1000 shadow-modal outline-none " +
   "transition-[opacity,translate] duration-150 data-ending-style:opacity-0 data-starting-style:translate-y-[calc(-50%+8px)] data-starting-style:opacity-0"
 
 /**
@@ -48,25 +48,27 @@ export const alertFooterClassName =
   "grid auto-cols-fr grid-flow-col gap-2 pt-1 has-[>:nth-child(3)]:grid-flow-row max-[360px]:grid-flow-row [&>*]:w-full"
 
 /**
- * El pie de un modal centrado: Dialog.
+ * El pie de la hoja (Dialog): los botones abajo a la derecha, sin línea arriba, como una hoja de
+ * macOS («Done» en la esquina). Hasta 1.x llevaba un borde al ancho completo con márgenes
+ * negativos; en macOS el aire alcanza para separar el contenido de las acciones.
  *
- * Los márgenes negativos sacan el borde superior al ancho completo del popup, que tiene `p-6`.
  * `flex-col-reverse` en mobile pone la acción principal arriba, que es donde cae el pulgar.
  */
-export const modalFooterClassName =
-  "-mx-6 mt-2 flex flex-col-reverse gap-2 border-t border-gray-alpha-400 px-6 pt-4 sm:flex-row sm:justify-end"
+export const modalFooterClassName = "flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end"
 
 /**
- * Dónde va la X de cerrar: Dialog, Sheet y Drawer.
+ * Dónde va la X de cerrar: Dialog, Sheet y Drawer. Se queda en 2.0 aunque macOS no la ponga en
+ * las hojas: en la web es la salida que todos buscan (decisión de Sebastián).
  *
  * El botón en sí es un `Button variant="ghost" size="icon-sm"` —eso ya es una decisión con
  * nombre— y el nombre accesible lo pone cada uno desde sus `labels`. Lo único compartido, y
  * lo único que se puede desincronizar sin que nadie lo note, es la posición.
  *
- * `top-5 right-5` desde 2.0: el botón bajó de 32 a 24 y así su centro queda donde estaba, a
- * 32 px de las dos esquinas, alineado con el título.
+ * Con el padding de 20 px de 2.0 y el título `title-3` (renglón de 20 px), el centro del título
+ * queda a 30 px del borde. La X mide 24: a 18 px (`4.5`) su centro cae en esa misma línea, y a la
+ * misma distancia del borde derecho.
  */
-export const overlayCloseClassName = "absolute top-5 right-5"
+export const overlayCloseClassName = "absolute top-4.5 right-4.5"
 
 /**
  * El popup anclado a un disparador: Popover y HoverCard, que son el mismo objeto.

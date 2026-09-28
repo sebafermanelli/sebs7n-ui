@@ -73,8 +73,11 @@ function DialogContent({ className, children, showCloseButton = true, labels, ..
   )
 }
 
+// La hoja de macOS (2.0): título `title-3` a la izquierda, contenido, y el pie abajo a la derecha
+// sin línea. El principal del pie es `accent` —el «Done» azul—, pero lo elige quien la arma.
+// `pr-8` deja lugar a la X, que se queda (decisión de Sebastián).
 function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
-  return <div data-slot="dialog-header" className={cn("flex flex-col gap-1.5 pr-8", className)} {...props} />
+  return <div data-slot="dialog-header" className={cn("flex flex-col gap-1 pr-8", className)} {...props} />
 }
 
 function DialogFooter({ className, ...props }: React.ComponentProps<"div">) {
@@ -90,7 +93,7 @@ function DialogFooter({ className, ...props }: React.ComponentProps<"div">) {
 type DialogTitleProps = WithClassName<DialogPrimitive.Title.Props>
 
 function DialogTitle({ className, ...props }: DialogTitleProps) {
-  return <DialogPrimitive.Title data-slot="dialog-title" className={cn("text-title-2 text-gray-1000", className)} {...props} />
+  return <DialogPrimitive.Title data-slot="dialog-title" className={cn("text-title-3 text-gray-1000", className)} {...props} />
 }
 
 type DialogDescriptionProps = WithClassName<DialogPrimitive.Description.Props>

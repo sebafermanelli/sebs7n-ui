@@ -6,7 +6,15 @@ import { describe, expect, it, vi } from "vitest"
 import { tooltipSurfaceClassName } from "../../src/variants/overlay"
 
 import { Button } from "../../src/components/button"
-import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "../../src/components/dialog"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../../src/components/dialog"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -143,10 +151,55 @@ describe("Dialog", () => {
     )
     await userEvent.click(screen.getByRole("button", { name: "Nuevo viaje" }))
     const dialog = await screen.findByRole("dialog")
-    expect(dialog).toHaveClass("shadow-modal", "rounded-panel", "p-6", "material-modal")
+    expect(dialog).toHaveClass("shadow-modal", "rounded-panel", "p-5", "gap-4", "material-modal")
     expect(screen.getByText("Cargá los datos.")).toHaveClass("text-gray-900")
     await userEvent.click(screen.getByRole("button", { name: "Cerrar" }))
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull())
+  })
+})
+
+describe("hoja de macOS (2.0)", () => {
+  it("el pie no tiene línea ni márgenes negativos y alinea a la derecha", async () => {
+    render(
+      <Dialog defaultOpen>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Factura 0012</DialogTitle>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="accent">Listo</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    )
+    const pie = (await screen.findByRole("dialog")).querySelector('[data-slot="dialog-footer"]')!
+    expect(pie).not.toHaveClass("border-t")
+    expect(pie.className).not.toMatch(/-mx-6/)
+    expect(pie).toHaveClass("sm:justify-end")
+  })
+
+  it("sigue teniendo la X, a la altura del título", async () => {
+    render(
+      <Dialog defaultOpen>
+        <DialogContent>
+          <DialogTitle>Factura 0012</DialogTitle>
+        </DialogContent>
+      </Dialog>
+    )
+    // Con `p-5` el renglón del título (20 px de alto) está centrado a 30 px del borde; la X mide
+    // 24, así que va a 18 px (`4.5`) para que su centro caiga en la misma línea.
+    expect(await screen.findByRole("button", { name: "Cerrar" })).toHaveClass("top-4.5", "right-4.5")
+  })
+
+  it("el título es el de una hoja: title-3", async () => {
+    render(
+      <Dialog defaultOpen>
+        <DialogContent>
+          <DialogTitle>Factura 0012</DialogTitle>
+        </DialogContent>
+      </Dialog>
+    )
+    expect(await screen.findByRole("heading", { name: "Factura 0012" })).toHaveClass("text-title-3")
   })
 })
 

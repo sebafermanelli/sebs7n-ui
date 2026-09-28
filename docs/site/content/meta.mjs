@@ -974,6 +974,9 @@ export const COMPONENTS = {
       "Para confirmar algo destructivo, `AlertDialog`: no se cierra con click afuera y exige una respuesta.",
       "En mobile, un formulario largo no va en Dialog: va en una página o en un `Sheet`.",
       "El footer va con la acción principal a la derecha y «Cancelar» a su izquierda.",
+      "**Es la hoja de macOS**: título a la izquierda, contenido y el pie abajo a la derecha, sin línea arriba. El principal va del acento (`<Button variant=\"accent\">Listo</Button>`, el «Done» azul) y «Cancelar» en `secondary`. El componente no lo fuerza: una hoja de solo lectura puede cerrar con un único «Listo».",
+      "**El contenido que es un bloque —un resumen, una lista de datos— va agrupado** en `rounded-surface material-group p-4`, como la tarjeta de una hoja de Ajustes. Un formulario suelto no necesita el bloque.",
+      "La X se queda aunque macOS no la ponga en las hojas: en la web es la salida que se busca primero. `showCloseButton={false}` si el pie ya tiene «Cancelar» y querés la hoja limpia.",
     ],
     props: {
       Dialog: {
