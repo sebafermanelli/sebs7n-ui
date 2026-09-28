@@ -208,6 +208,35 @@ describe("AppShell: el Sheet se carga al usarlo", () => {
     expect(within(sheet).getByRole("link", { name: "Facturas" })).toBeInTheDocument()
   })
 
+  it("la primera apertura también se desliza: el popup pasa por data-starting-style", async () => {
+    await fresco()
+    // `data-starting-style` vive un frame: se registra cada vez que aparece en un dialog.
+    let deslizo = false
+    const observer = new MutationObserver((cambios) => {
+      for (const cambio of cambios) {
+        const nodos = cambio.type === "childList" ? [...cambio.addedNodes] : [cambio.target]
+        for (const nodo of nodos) {
+          if (!(nodo instanceof HTMLElement)) continue
+          const popups = [nodo, ...nodo.querySelectorAll<HTMLElement>("[role=dialog]")]
+          if (popups.some((el) => el.getAttribute("role") === "dialog" && el.hasAttribute("data-starting-style"))) deslizo = true
+        }
+      }
+    })
+    observer.observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ["data-starting-style"] })
+    fireEvent.click(screen.getByRole("button", { name: "Abrir menú" }))
+    await screen.findByRole("dialog")
+    await waitFor(() => expect(deslizo).toBe(true))
+    observer.disconnect()
+  })
+
+  it("tocada, la hamburguesa provisoria anuncia aria-expanded mientras llega el Sheet", async () => {
+    await fresco()
+    const hamburguesa = screen.getByRole("button", { name: "Abrir menú" })
+    fireEvent.click(hamburguesa)
+    expect(hamburguesa).toHaveAttribute("aria-expanded", "true")
+    await screen.findByRole("dialog")
+  })
+
   it("con teclado: enfocarla no la cambia de nodo, Enter abre y Escape devuelve el foco", async () => {
     const cargado = await fresco()
     act(() => screen.getByRole("button", { name: "Abrir menú" }).focus())
@@ -219,5 +248,44 @@ describe("AppShell: el Sheet se carga al usarlo", () => {
     await userEvent.keyboard("{Escape}")
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull())
     await waitFor(() => expect(screen.getByRole("button", { name: "Abrir menú" })).toHaveFocus())
+  })
+})
+
+// Con el Sheet ya en memoria (otro AppShell lo cargó), un AppShell que hidrata después tiene que
+// arrancar igual que el HTML del servidor, que nunca lo tiene.
+describe("AppShell: hidratar con el Sheet ya cargado", () => {
+  it("no hay mismatch y el Sheet se toma después de hidratar", async () => {
+    const { renderToString } = await import("react-dom/server")
+    const { hydrateRoot } = await import("react-dom/client")
+    // Carga el Sheet en el módulo del cliente con un primer shell.
+    const { unmount } = render(<Example />)
+    await userEvent.click(screen.getByRole("button", { name: "Abrir menú" }))
+    await screen.findByRole("dialog")
+    unmount()
+
+    // El servidor es otro proceso, que nunca cargó el Sheet: una copia fresca del módulo.
+    vi.resetModules()
+    const { AppShell: ShellDelServidor } = await import("../../src/components/app-shell")
+    const arbol = (Shell: typeof AppShell) => (
+      <Shell mobileBar={<span>Acme</span>} sidebar={<nav>menú</nav>}>
+        <p>contenido</p>
+      </Shell>
+    )
+    const container = document.createElement("div")
+    container.innerHTML = renderToString(arbol(ShellDelServidor))
+    document.body.append(container)
+    const recoverable = vi.fn()
+    const errores = vi.spyOn(console, "error").mockImplementation(() => {})
+    await act(async () => {
+      hydrateRoot(container, arbol(AppShell), { onRecoverableError: recoverable })
+    })
+    expect(recoverable).not.toHaveBeenCalled()
+    expect(errores.mock.calls.filter(([m]) => /hydrat|did not match/i.test(String(m)))).toEqual([])
+    errores.mockRestore()
+    // Ya hidratado, la hamburguesa pasa a ser el trigger de Base UI.
+    await waitFor(() =>
+      expect(within(container).getByRole("button", { name: "Abrir menú" })).toHaveAttribute("data-base-ui-click-trigger")
+    )
+    container.remove()
   })
 })

@@ -96,7 +96,7 @@ function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido
   // El Sheet (el Dialog de Base UI, con su focus trap y el bloqueo de scroll) se pide recién
   // cuando hace falta: en desktop nunca se abre, y en el teléfono recién al tocar la hamburguesa.
   // Importado de entrada pesaba ~13 KB gzip en cada página con AppShell (medido en el sitio de
-  // docs). El toque no se pierde: deja `mobileOpen` en true y el Sheet nace abierto cuando llega.
+  // docs). El toque no se pierde: deja `mobileOpen` en true y el Sheet se abre cuando llega.
   // Lo mismo si la app lo abre desde `useAppShell()`.
   //
   // No se precarga con el hover ni con el foco, a propósito: al llegar el módulo la hamburguesa
@@ -104,10 +104,26 @@ function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido
   // adentro, el foco se cae al `<body>`; si pasa entre el pointerdown y el click de un toque, el
   // click se pierde. Cargándolo en el click, el cambio coincide con la apertura, y abrir el Sheet
   // ya mueve el foco adentro; al cerrarlo vuelve al trigger nuevo.
-  const [sheet, setSheet] = React.useState<SheetModule | null>(() => sheetCargado)
+  //
+  // El estado arranca siempre en `null`, aunque el módulo ya esté en memoria: un AppShell que
+  // hidrata tarde (otro Suspense, un segundo shell) tiene que coincidir con el HTML del servidor,
+  // que nunca lo tiene. Si ya estaba cargado se toma en el layout effect, antes de pintar.
+  const [sheet, setSheet] = React.useState<SheetModule | null>(null)
+  React.useLayoutEffect(() => {
+    if (!sheet && sheetCargado) setSheet(sheetCargado)
+  }, [sheet])
   React.useEffect(() => {
     if (mobileOpen && !sheet) void cargarSheet().then(setSheet)
   }, [mobileOpen, sheet])
+  // El Sheet se monta cerrado y se abre en el frame siguiente. Si naciera con `open`, Base UI no
+  // pasa por el estado inicial de la transición (`data-starting-style`) y la primera apertura
+  // aparecía de golpe, sin deslizarse desde el costado como las siguientes.
+  const [listo, setListo] = React.useState(false)
+  React.useEffect(() => {
+    if (!sheet || listo) return
+    const frame = requestAnimationFrame(() => setListo(true))
+    return () => cancelAnimationFrame(frame)
+  }, [sheet, listo])
 
   const triggerProps = { variant: "ghost", size: "icon-sm", "aria-label": labels.openMenu, className: "-ml-2" } as const
 
@@ -115,7 +131,7 @@ function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido
     <>
       {sheet ? (
         <sheet.Sheet
-          open={mobileOpen}
+          open={mobileOpen && listo}
           onOpenChange={(open) => {
             if (open) focusMainOnClose.current = false
             setMobileOpen(open)
@@ -138,13 +154,13 @@ function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido
           </sheet.SheetContent>
         </sheet.Sheet>
       ) : (
-        // Hasta que llega el Sheet, la misma hamburguesa con lo que el trigger de Base UI
-        // anuncia cerrado (`aria-haspopup`, `aria-expanded`): se ve y se lee igual.
+        // Hasta que llega el Sheet, un botón con el mismo aspecto y lo que anuncia el trigger de
+        // Base UI (`aria-haspopup`, `aria-expanded`). Tocado, dice `expanded` mientras el Sheet llega.
         <Button
           {...triggerProps}
           data-slot="sheet-trigger"
           aria-haspopup="dialog"
-          aria-expanded={false}
+          aria-expanded={mobileOpen}
           onClick={() => {
             focusMainOnClose.current = false
             setMobileOpen(true)
