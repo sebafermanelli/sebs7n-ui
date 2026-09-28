@@ -84,8 +84,8 @@ export default async function ComponentPage({ params }: Params) {
 
         <Section id="ejemplos" title="Ejemplos">
           <div className="flex flex-col gap-10">
-            {component.examples.map((example) => (
-              <Example example={example} key={example.id} />
+            {component.examples.map((example, index) => (
+              <Example eager={index === 0} example={example} key={example.id} />
             ))}
           </div>
         </Section>

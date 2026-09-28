@@ -21,12 +21,18 @@ import { DEMOS } from "../_demos/registry"
 // está cuando llega). Montadas en el render, Next las prerenderizaba y metía sus chunks en el HTML:
 // la página de un componente con cinco ejemplos pedía los cinco al abrir. El código de cada
 // ejemplo sigue visible sin la demo, y el marco (`min-h-32` en `Example`) reserva el alto.
-export function DemoSlot({ id }: { id: string }) {
+//
+// La primera demo de la página es la excepción: es lo que se ve al abrirla, y las demos son
+// bastante más altas que el marco vacío (Sidebar ~416px, Chat 480px) — un hueco ahí es un salto
+// de layout visible apenas hidrata. Al resto, el margen de 400px les alcanza para montar antes
+// de que se vean.
+export function DemoSlot({ id, eager = false }: { id: string; eager?: boolean }) {
   const Demo = DEMOS[id]
   const marco = useRef<HTMLDivElement>(null)
-  const [visible, setVisible] = useState(false)
+  const [visible, setVisible] = useState(eager)
 
   useEffect(() => {
+    if (eager) return
     const nodo = marco.current
     if (!nodo) return
     const observer = new IntersectionObserver(
@@ -40,7 +46,7 @@ export function DemoSlot({ id }: { id: string }) {
     )
     observer.observe(nodo)
     return () => observer.disconnect()
-  }, [])
+  }, [eager])
 
   if (!Demo) return <p className="text-copy-14 text-red-900">Falta la demo {id}.</p>
   return (

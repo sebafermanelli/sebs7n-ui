@@ -3,7 +3,7 @@ import { DemoSlot } from "./demo-slot"
 
 type Ejemplo = { id: string; title: string; description: string; code: string }
 
-export function Example({ example }: { example: Ejemplo }) {
+export function Example({ example, eager = false }: { example: Ejemplo; eager?: boolean }) {
   const anchor = example.id.split("--")[1].toLowerCase()
   return (
     <section aria-labelledby={`ej-${anchor}`} className="flex flex-col gap-3">
@@ -14,7 +14,7 @@ export function Example({ example }: { example: Ejemplo }) {
         {example.description && <p className="text-copy-14 text-gray-900">{example.description}</p>}
       </div>
       <div className="flex min-h-32 items-center justify-center rounded-surface border border-gray-alpha-400 glass p-6 shadow-card">
-        <DemoSlot id={example.id} />
+        <DemoSlot eager={eager} id={example.id} />
       </div>
       <CodeBlock code={example.code} label={`Copiar el código de ${example.title}`} />
     </section>

@@ -291,8 +291,9 @@ writeFileSync(join(generated, "search.json"), JSON.stringify(search, null, 2))
 // `/docs/components/<slug>` —que es una sola ruta dinámica— se llevaba las 59 al
 // bundle para mostrar dos o tres: 454 KB raw / 137 KB gz de chunk en cada página.
 // Con `import()` el bundler corta un chunk por demo y la página pide solo los
-// suyos. `ssr` queda en su default (`true`): el HTML prerenderizado tiene que
-// seguir trayendo la demo dibujada, no un hueco.
+// suyos. `ssr` queda en su default (`true`): el HTML prerenderizado tiene que seguir
+// trayendo dibujada la primera demo de la página (la única que `Example` monta eager,
+// ver `demo-slot.tsx`); el resto los monta `DemoSlot` recién cuando entran en pantalla.
 const registryLines = [
   "// Generado por scripts/generate.mjs. No editar.",
   'import dynamic from "next/dynamic"',
