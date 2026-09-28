@@ -1,4 +1,5 @@
 import { render, screen, waitFor } from "@testing-library/react"
+import { useRef } from "react"
 import userEvent from "@testing-library/user-event"
 import { describe, expect, it, vi } from "vitest"
 
@@ -293,5 +294,41 @@ describe("apilados, las áreas táctiles no se pisan (revisión fase 2)", () => 
     const pie = (await screen.findByRole("alertdialog")).querySelector('[data-slot="alert-dialog-footer"]')!
     expect(pie).toHaveClass("gap-3")
     expect(pie).not.toHaveClass("gap-2")
+  })
+})
+
+// Lo que documenta meta.mjs para una alerta que no destruye nada: el foco inicial en la acción,
+// así Return la dispara como en macOS. Por defecto sigue arrancando en «Cancelar».
+describe("foco inicial (revisión fase 2)", () => {
+  function Emitir({ enAccion }: { enAccion: boolean }) {
+    const emitir = useRef<HTMLButtonElement>(null)
+    return (
+      <AlertDialog>
+        <AlertDialogTrigger render={<Button />}>Abrir</AlertDialogTrigger>
+        <AlertDialogContent initialFocus={enAccion ? emitir : undefined}>
+          <AlertDialogTitle>¿Emitir la factura?</AlertDialogTitle>
+          <AlertDialogFooter>
+            <AlertDialogCancel />
+            <AlertDialogClose ref={emitir} render={<AlertDialogAction />}>
+              Emitir
+            </AlertDialogClose>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    )
+  }
+
+  it("por defecto arranca en Cancelar", async () => {
+    render(<Emitir enAccion={false} />)
+    await userEvent.click(screen.getByRole("button", { name: "Abrir" }))
+    await waitFor(() => expect(screen.getByRole("button", { name: "Cancelar" })).toHaveFocus())
+  })
+
+  it("con initialFocus en la acción, Return la dispara y cierra", async () => {
+    render(<Emitir enAccion />)
+    await userEvent.click(screen.getByRole("button", { name: "Abrir" }))
+    await waitFor(() => expect(screen.getByRole("button", { name: "Emitir" })).toHaveFocus())
+    await userEvent.keyboard("{Enter}")
+    await waitFor(() => expect(screen.queryByRole("alertdialog")).toBeNull())
   })
 })

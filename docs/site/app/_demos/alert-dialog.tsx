@@ -1,6 +1,7 @@
 "use client"
 
 import { TriangleAlertIcon } from "lucide-react"
+import { useRef } from "react"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -46,20 +47,24 @@ export function Basico() {
 
 /**
  * Acción por defecto
- * Sin `variant`, la acción es del acento: el botón por defecto de macOS. Para lo que no destruye nada.
+ * Sin `variant`, la acción es del acento: el botón por defecto de macOS. Para lo que no destruye
+ * nada. `initialFocus` la enfoca al abrir, así Return la dispara, como en macOS.
  */
 export function AccionPorDefecto() {
+  const emitir = useRef<HTMLButtonElement>(null)
   return (
     <AlertDialog>
       <AlertDialogTrigger render={<Button variant="outline" />}>Emitir factura</AlertDialogTrigger>
-      <AlertDialogContent>
+      <AlertDialogContent initialFocus={emitir}>
         <AlertDialogHeader>
           <AlertDialogTitle>¿Emitir la factura 0013?</AlertDialogTitle>
           <AlertDialogDescription>Se numera y se envía al cliente. Después solo se puede anular.</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel />
-          <AlertDialogClose render={<AlertDialogAction />}>Emitir</AlertDialogClose>
+          <AlertDialogClose ref={emitir} render={<AlertDialogAction />}>
+            Emitir
+          </AlertDialogClose>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

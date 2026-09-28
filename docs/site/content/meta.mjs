@@ -1011,6 +1011,7 @@ export const COMPONENTS = {
     usage: [
       "**`AlertDialogAction` no cierra sola** — a propósito, para poder mostrar `loading` mientras corre la acción. O controlás `open`, o la envolvés: `<AlertDialogClose render={<AlertDialogAction variant=\"destructive\" />}>Eliminar</AlertDialogClose>`.",
       "`AlertDialogCancel` sí cierra sola.",
+      "**El foco arranca en «Cancelar»**, y en una alerta destructiva se queda ahí: un Return de más no borra nada. **En una alerta que no destruye nada** podés hacer lo de macOS, donde Return dispara el botón por defecto: pasale un ref de la acción a `initialFocus` (`<AlertDialogContent initialFocus={emitirRef}>` y `ref={emitirRef}` en la acción o en el `AlertDialogClose` que la envuelve).",
       "El título es la pregunta («¿Eliminar la factura 0012?»), no «¿Estás seguro?».",
       "El botón dice qué va a pasar («Eliminar»), no «Aceptar».",
       "**`AlertDialogIcon` cuando la alerta advierte algo** (el triángulo de advertencia en ámbar) o cuando la dispara la app y no una pantalla (el ícono de la app). Va primero adentro de `AlertDialogContent` y recibe un `<svg>` o una `<img>`, que sin tamaño propio se lleva a 48 px. Para una confirmación de rutina, sin ícono.",
