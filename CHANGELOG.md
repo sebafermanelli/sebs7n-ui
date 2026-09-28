@@ -52,6 +52,29 @@ enlaza.
   en 320 px), y la Toolbar, sus grupos, las flechas del Calendar y el ToggleGroup se separan 20 px
   para que las áreas de 44 no se pisen.
 
+Fase 2 de 2.0: diálogos.
+
+- **AlertDialog es la alerta de macOS.** Mide 300 px como máximo (`sm:max-w-[300px]`, antes
+  `sm:max-w-md`), con 20 px de padding y 12 entre bloques; el título pasa a `text-title-3`. El pie
+  es una grilla de botones del mismo ancho, sin línea arriba ni márgenes negativos; con tres o más
+  botones, o en pantallas de 360 px o menos, se apilan **en el orden del DOM** (Tab sigue el orden
+  en pantalla; macOS pone el por defecto arriba, acá lo escribís primero si lo querés ahí).
+  `AlertDialogContent` usa `alertPopupClassName` y el pie `alertFooterClassName`, ya no
+  `modalPopupClassName` ni `modalFooterClassName`.
+- **`AlertDialogCancel` es `secondary`** (el gris de macOS), antes `outline`.
+- **`AlertDialogAction variant` cambia de significado**: `default` renderiza `accent` (antes el
+  negro) y `destructive` renderiza `destructive-tinted`, texto rojo sobre tinte rojo (antes el rojo
+  sólido). `<AlertDialogClose render={<AlertDialogAction variant="destructive" />}>` sigue andando.
+- **Dialog, Sheet y Drawer son la hoja de macOS**: título `text-title-3` (antes `title-2`),
+  20 px de padding (antes 24: `modalPopupClassName` pasa a `p-5`, los header y pie de Sheet a
+  `p-5`, los de Drawer a `px-5`) y el pie sin línea arriba. `modalFooterClassName` queda en
+  `flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end`, sin `-mx-6` ni `border-t`. La X
+  se queda y `overlayCloseClassName` pasa a `top-4.5 right-4.5`, en la línea del título. Si la app
+  ponía contenido con `px-6` entre el header y el pie de un Sheet, pasalo a `px-5`.
+- **Popover y HoverCard más angostos**: `floatingPopupClassName` pasa a `w-64` (antes `w-72`),
+  `p-3` (antes `p-4`) y `gap-2` (antes `gap-3`). ColorPicker y DatePicker ya pisaban el ancho; un
+  popover con más contenido lo pide con `className`.
+
 ### Added (2.0)
 
 - `touch-target` (área de 44 con el dedo, sin cambiar lo que se ve) y `touch-target-y` (solo en
@@ -69,6 +92,14 @@ enlaza.
 - `sliderThumbClassName` y sus estados (`variants/slider`), y `tooltipSurfaceClassName`
   (`variants/overlay`), que comparten el Slider con el ColorPicker y el Tooltip con la etiqueta
   del `AiLauncher`.
+- `AlertDialogIcon`: el ícono de la alerta, arriba a la izquierda, 48 px, `aria-hidden`.
+- Variantes de Button `tinted` (tinta de marca sobre tinte de marca) y `destructive-tinted`
+  (tinta roja sobre tinte rojo), con `touch-target`. El texto es `-ink` y no `-900`: sobre el
+  tinte, `-900` no llega a 4,5:1 en claro; con la tinta, el mínimo es 5,23:1 en claro y 5,88:1 en
+  oscuro, en reposo, hover y apretado.
+- Tokens `--sf-tint-hover` (18 % claro, 28 % oscuro) y `--sf-tint-active` (24 % y 34 %), los
+  estados de un botón teñido sobre `--sf-tint-fill`.
+- `alertPopupClassName` y `alertFooterClassName` (`variants/overlay`, también en el barrel).
 
 ## [1.13.1] - 2026-09-28
 
