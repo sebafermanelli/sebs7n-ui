@@ -6,7 +6,7 @@ type TooltipModule = typeof import("../components/tooltip.js")
 
 // El Tooltip de un Sidebar o un UserMenu colapsados. Solo colapsados muestran tooltips —abiertos,
 // el texto está a la vista—, y el import estático metía el Tooltip de Base UI con todo su
-// posicionamiento (floating-ui) en el arranque de cada página con Sidebar: ~40 KB gzip medidos en
+// posicionamiento (floating-ui) en el arranque de cada página con Sidebar: ~43 KB gzip medidos en
 // el sitio de docs, que nunca lo colapsa. Se pide recién cuando hace falta, una sola vez para
 // todos los ítems: la promesa queda acá.
 let tooltipCargado: TooltipModule | null = null

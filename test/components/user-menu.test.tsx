@@ -1,4 +1,4 @@
-import { render, screen, waitFor, within } from "@testing-library/react"
+import { act, render, screen, waitFor, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { LogOutIcon, SettingsIcon } from "lucide-react"
 import { ThemeProvider } from "next-themes"
@@ -110,6 +110,29 @@ describe("UserMenu", () => {
     expect(await screen.findByText("Ana Pérez · ana@example.com", { selector: "[data-slot=tooltip-content]" })).toBeInTheDocument()
     // Buscado de nuevo: al llegar el Tooltip (1.13.1) el trigger es otro nodo, y el foco lo sigue.
     expect(screen.getByRole("button", { name: "Ana Pérez · ana@example.com" })).toHaveFocus()
+  })
+
+  it("colapsar con el foco en el trigger: cuando llega el Tooltip, el foco sigue ahí", async () => {
+    // Módulos de cero: el Tooltip todavía no está en memoria, como en la primera carga.
+    vi.resetModules()
+    const { UserMenu: Menu } = await import("../../src/components/user-menu")
+    const { Sidebar: Lateral, SidebarFooter: Pie } = await import("../../src/components/sidebar")
+    const { TooltipProvider: Proveedor } = await import("../../src/components/tooltip")
+    const Arbol = ({ collapsed }: { collapsed: boolean }) => (
+      <Proveedor delay={0}>
+        <Lateral collapsed={collapsed}>
+          <Pie>
+            <Menu user={user} showTheme={false} />
+          </Pie>
+        </Lateral>
+      </Proveedor>
+    )
+    const trigger = () => document.querySelector<HTMLElement>("[data-slot=user-menu-trigger]")!
+    const { rerender } = render(<Arbol collapsed={false} />)
+    act(() => trigger().focus())
+    rerender(<Arbol collapsed />)
+    await waitFor(() => expect(trigger()).toHaveAttribute("data-base-ui-tooltip-trigger"))
+    expect(trigger()).toHaveFocus()
   })
 
   describe("separadores solo entre grupos no vacíos", () => {
