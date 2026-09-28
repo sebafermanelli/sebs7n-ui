@@ -86,8 +86,8 @@ jobs:
       # Las devDependencies de la raíz son obligatorias acá: `docs/site/scripts/sync-ui.mjs`
       # hace `npm pack` del paquete, y `npm pack` dispara el `prepack` (tsc), que sin React ni
       # sus tipos tira ~300 errores de "Could not find a declaration file for module 'react'".
-      # El `pretest` de hoy solo corre `generate.mjs`, pero `prebuild` sí llama a sync-ui y no
-      # quiero que el día que se agregue el build acá el fallo sea un misterio.
+      # El `pretest` solo corre `generate.mjs`, pero el `prebuild` del paso «Build del sitio» sí
+      # llama a sync-ui.
       - name: Dependencias de la raíz
         run: npm ci
 
@@ -100,3 +100,14 @@ jobs:
       - name: Tests del sitio
         working-directory: docs/site
         run: npm test
+
+      # El presupuesto de JS se mide sobre el build real: `npm run budget` lee el HTML
+      # prerenderizado de cada ruta y suma el gzip de los chunks que pide al abrir. Falla si una
+      # pasa su límite (ver `scripts/lib/js-budget.mjs`).
+      - name: Build del sitio
+        working-directory: docs/site
+        run: npm run build
+
+      - name: Presupuesto de JS
+        working-directory: docs/site
+        run: npm run budget
