@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs"
 import { join } from "node:path"
 import { fileURLToPath } from "node:url"
 
-import { BUDGET_KB, measure, ROUTES } from "./lib/js-budget.mjs"
+import { limitOf, measure, ROUTES } from "./lib/js-budget.mjs"
 
 const site = fileURLToPath(new URL("..", import.meta.url))
 const htmlOf = (route) => readFileSync(join(site, ".next/server/app", route === "/" ? "index.html" : `${route}.html`), "utf8")
@@ -14,8 +14,9 @@ let excede = false
 console.log(`${"ruta".padEnd(28)}${"KB".padStart(6)}  límite  archivos`)
 for (const route of ROUTES) {
   const { kb, files } = measure(htmlOf(route), readChunk)
-  const ok = kb <= BUDGET_KB
+  const limite = limitOf(route)
+  const ok = kb <= limite
   if (!ok) excede = true
-  console.log(`${route.padEnd(28)}${String(kb).padStart(6)}  ${String(BUDGET_KB).padStart(6)}  ${String(files).padStart(8)}  ${ok ? "ok" : "EXCEDE"}`)
+  console.log(`${route.padEnd(28)}${String(kb).padStart(6)}  ${String(limite).padStart(6)}  ${String(files).padStart(8)}  ${ok ? "ok" : "EXCEDE"}`)
 }
 process.exit(excede ? 1 : 0)

@@ -7,6 +7,23 @@ import { gzipSync } from "node:zlib"
 /** KB de JS comprimido que puede pedir una página al abrir. Ver la spec de 2026-09-28. */
 export const BUDGET_KB = 200
 
+/**
+ * Las rutas que tienen su propio límite. Cada uno es lo medido el 2026-09-28, después de diferir
+ * todo lo diferible, más un 5 % y redondeado para arriba a 5 KB: alcanza para que un cambio chico
+ * no rompa el CI y no tanto como para que un salto pase sin que se vea.
+ */
+export const LIMITS = {
+  // 305 KB. Recharts entra por la primera demo, que se carga al abrir (`DemoSlot` eager): es lo
+  // que se ve arriba de todo, y diferirla dejaría un hueco del alto de un gráfico.
+  "/docs/components/chart": 325,
+  // 295 KB. Todo lo que pide está a la vista y prerenderizado: los controles y la muestra con
+  // Select, DropdownMenu, Dialog, Tabs, Slider… Diferirlo sería dejar la pantalla sin hidratar.
+  "/docs/playground": 310,
+}
+
+/** El límite de una ruta: el suyo si lo tiene, si no `BUDGET_KB`. */
+export const limitOf = (route) => LIMITS[route] ?? BUDGET_KB
+
 // Una de cada tipo de página, más la demo más pesada (Chart, con Recharts) para que su peso
 // no se cuele al arranque de las demás.
 export const ROUTES = [

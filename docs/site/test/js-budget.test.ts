@@ -1,7 +1,7 @@
 import { gzipSync } from "node:zlib"
 import { describe, expect, it } from "vitest"
 
-import { BUDGET_KB, chunkRefs, measure, ROUTES } from "../scripts/lib/js-budget.mjs"
+import { BUDGET_KB, chunkRefs, limitOf, LIMITS, measure, ROUTES } from "../scripts/lib/js-budget.mjs"
 
 const html = `
 <link rel="preload" as="script" href="/_next/static/chunks/aaa.js"/>
@@ -49,8 +49,15 @@ describe("measure", () => {
 })
 
 describe("configuración", () => {
-  it("mide las siete rutas acordadas con un límite de 200 KB", () => {
+  it("mide las siete rutas acordadas; 200 KB salvo Chart y Playground, que tienen el suyo", () => {
     expect(BUDGET_KB).toBe(200)
+    expect(LIMITS).toEqual({ "/docs/components/chart": 325, "/docs/playground": 310 })
+    expect(limitOf("/docs/components/chart")).toBe(325)
+    expect(limitOf("/docs/playground")).toBe(310)
+    expect(limitOf("/")).toBe(200)
+    expect(limitOf("/docs/iconos")).toBe(200)
+    // Un límite propio solo tiene sentido para una ruta que se mide.
+    for (const ruta of Object.keys(LIMITS)) expect(ROUTES).toContain(ruta)
     expect(ROUTES).toEqual([
       "/",
       "/docs/instalacion",
