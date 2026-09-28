@@ -116,7 +116,13 @@ describe("Card", () => {
     const interactive = cardVariants({ interactive: true })
     // Sube un pixel con la sombra grande; al apretar vuelve a su lugar y a la sombra de reposo.
     expect(interactive).toContain("hover:-translate-y-px hover:border-gray-alpha-500 hover:shadow-card-hover")
-    expect(interactive).toContain("active:translate-y-0 active:bg-gray-alpha-200 active:shadow-card focus-visible:focus-ring")
+    expect(interactive.split(" ")).toEqual(expect.arrayContaining(["active:translate-y-0", "active:shadow-card", "focus-visible:focus-ring"]))
+    // Apretada se oscurece con una capa encima (`background-image`) y no cambiando el fondo: un
+    // `bg-gray-alpha-*` reemplazaba el sólido del grupo por un alfa y la card se volvía
+    // transparente justo al tocarla.
+    expect(interactive).toContain("active:bg-[linear-gradient(var(--color-gray-alpha-200),var(--color-gray-alpha-200))]")
+    expect(interactive).not.toMatch(/active:bg-gray-alpha/)
+    expect(interactive).toMatch(/\bmaterial-group\b/)
     // `translate` no está en `transition-control`: la interactiva usa la transición que sí lo incluye.
     expect(interactive).toContain("transition-surface")
     render(<Card selected>sel</Card>)

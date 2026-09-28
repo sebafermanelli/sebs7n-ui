@@ -18,8 +18,11 @@ const cardVariantsBase = cva(
       },
       interactive: {
         // Sube un pixel y la sombra crece: la profundidad se nota al tocar, no de lejos.
-        // Al apretar vuelve a su lugar, que es el gesto de «hundir».
-        true: "cursor-pointer outline-none transition-surface hover:-translate-y-px hover:border-gray-alpha-500 hover:shadow-card-hover active:translate-y-0 active:bg-gray-alpha-200 active:shadow-card focus-visible:focus-ring",
+        // Al apretar vuelve a su lugar, que es el gesto de «hundir», y se oscurece con una capa
+        // de `gray-alpha-200` ENCIMA del fondo (`background-image`), no en su lugar: un
+        // `active:bg-gray-alpha-*` cambiaba el sólido del grupo por un alfa y la card se volvía
+        // transparente justo al tocarla.
+        true: "cursor-pointer outline-none transition-surface hover:-translate-y-px hover:border-gray-alpha-500 hover:shadow-card-hover active:translate-y-0 active:bg-[linear-gradient(var(--color-gray-alpha-200),var(--color-gray-alpha-200))] active:shadow-card focus-visible:focus-ring",
         false: "",
       },
       selected: {
