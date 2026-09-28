@@ -1,7 +1,7 @@
 import { act, render, screen, waitFor } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { toast } from "sonner"
-import { describe, expect, it, vi } from "vitest"
+import { describe, expect, it, onTestFinished, vi } from "vitest"
 
 import { tooltipSurfaceClassName } from "../../src/variants/overlay"
 
@@ -160,6 +160,60 @@ describe("Select", () => {
     expect(elegida.querySelector("[data-slot=select-item-indicator]")).toHaveClass("left-2")
     // El título alinea con el texto de las opciones, no con el tilde.
     expect(screen.getByText("Monedas")).toHaveClass("pl-7")
+  })
+})
+
+describe("Select como pop-up button de macOS (2.0)", () => {
+  function Moneda({ alignItemWithTrigger }: { alignItemWithTrigger?: boolean }) {
+    return (
+      <Select defaultValue="ars" items={[{ value: "ars", label: "Pesos" }, { value: "usd", label: "Dólares" }]}>
+        <SelectTrigger aria-label="Moneda">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent alignItemWithTrigger={alignItemWithTrigger}>
+          <SelectItem value="ars">Pesos</SelectItem>
+          <SelectItem value="usd">Dólares</SelectItem>
+        </SelectContent>
+      </Select>
+    )
+  }
+
+  it("el disparador es el pop-up button de macOS: flechas arriba y abajo", () => {
+    const { container } = render(<Moneda />)
+    const icono = container.querySelector("svg.lucide-chevrons-up-down")
+    expect(icono).toBeInTheDocument()
+    expect(icono).toHaveClass("size-3.5", "text-gray-900")
+    expect(container.querySelector("svg.lucide-chevron-down")).toBeNull()
+  })
+
+  it("la lista se abre con la opción elegida encima del disparador", async () => {
+    // jsdom mide todo en 0, y con el disparador pegado al borde de la ventana Base UI cae al modo
+    // menú (lo mismo que haría en un navegador). Se lo ubica en el medio de una ventana de 800.
+    const alto = vi.spyOn(document.documentElement, "clientHeight", "get").mockReturnValue(800)
+    const ancho = vi.spyOn(document.documentElement, "clientWidth", "get").mockReturnValue(1200)
+    const original = HTMLElement.prototype.getBoundingClientRect
+    const rect = vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockImplementation(function (this: HTMLElement) {
+      return this.dataset.slot === "select-trigger" ? new DOMRect(100, 300, 240, 32) : original.call(this)
+    })
+    onTestFinished(() => {
+      alto.mockRestore()
+      ancho.mockRestore()
+      rect.mockRestore()
+    })
+    render(<Moneda />)
+    await userEvent.click(screen.getByRole("combobox", { name: "Moneda" }))
+    const lista = await screen.findByRole("listbox")
+    // Base UI marca `data-side="none"` cuando `alignItemWithTrigger` está activo: no hay lado,
+    // la lista se superpone al disparador.
+    expect(lista.closest("[data-side]")).toHaveAttribute("data-side", "none")
+    expect(lista.closest("[data-slot=select-content]")).toHaveClass("min-w-(--anchor-width)")
+  })
+
+  it("con alignItemWithTrigger={false} vuelve a bajar como un menú", async () => {
+    render(<Moneda alignItemWithTrigger={false} />)
+    await userEvent.click(screen.getByRole("combobox", { name: "Moneda" }))
+    const lista = await screen.findByRole("listbox")
+    expect(lista.closest("[data-side]")).toHaveAttribute("data-side", "bottom")
   })
 })
 

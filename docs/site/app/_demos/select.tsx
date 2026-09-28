@@ -36,6 +36,33 @@ export function Basico() {
   )
 }
 
+/**
+ * Pop-up button de macOS
+ * El ⌃⌄ avisa que la lista no baja: se abre con la opción elegida encima del disparador, en el
+ * mismo lugar que el valor. Con el dedo, Base UI la hace bajar como un menú.
+ */
+export function PopUpButton() {
+  const id = useId()
+  const monedas = { ars: "Pesos", usd: "Dólares", eur: "Euros" }
+  return (
+    <form className="flex w-full max-w-sm flex-col gap-2" onSubmit={(event) => event.preventDefault()}>
+      <Label htmlFor={id}>Moneda de la factura</Label>
+      <Select defaultValue="ars" items={monedas} name="moneda">
+        <SelectTrigger id={id}>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {Object.entries(monedas).map(([value, label]) => (
+            <SelectItem key={value} value={value}>
+              {label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </form>
+  )
+}
+
 /** Con grupos */
 export function Grupos() {
   const monedas = { ars: "Peso argentino", usd: "Dólar", eur: "Euro", brl: "Real" }

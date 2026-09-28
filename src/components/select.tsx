@@ -1,7 +1,7 @@
 "use client"
 
 import { Select as SelectPrimitive } from "@base-ui/react/select"
-import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react"
+import { CheckIcon, ChevronDownIcon, ChevronsUpDownIcon, ChevronUpIcon } from "lucide-react"
 
 import { cn, type WithClassName } from "../lib/utils.js"
 import { inputControlClassName, inputDisabledClassName, inputPaddingClassName, inputSizeClassName } from "../variants/input.js"
@@ -36,7 +36,9 @@ function SelectTrigger({ className, size = "md", children, ...props }: SelectTri
       {...props}
     >
       {children}
-      <SelectPrimitive.Icon render={<ChevronDownIcon className="text-gray-900" />} />
+      {/* ⌃⌄ y no ⌄: es el pop-up button de macOS. La lista no baja, se abre encima con la opción
+          elegida sobre el disparador (ver `alignItemWithTrigger`), y las dos flechas lo dicen. */}
+      <SelectPrimitive.Icon render={<ChevronsUpDownIcon className="size-3.5 text-gray-900" />} />
     </SelectPrimitive.Trigger>
   )
 }
@@ -57,7 +59,11 @@ function SelectContent({
   sideOffset = 6,
   align = "start",
   alignOffset = 0,
-  alignItemWithTrigger = false,
+  // Como el pop-up button de macOS (2.0): la lista se abre con la opción elegida encima del
+  // disparador y su texto en el mismo lugar que el del valor, así el ojo no la tiene que buscar.
+  // Base UI lo apaga solo cuando se abrió con el dedo (`openMethod === "touch"`): en un teléfono
+  // la lista baja como un menú, que es lo que el pulgar espera. `false` vuelve al menú en todos lados.
+  alignItemWithTrigger = true,
   ...props
 }: SelectContentProps) {
   return (

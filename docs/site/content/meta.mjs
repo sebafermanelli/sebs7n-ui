@@ -536,7 +536,7 @@ export const COMPONENTS = {
     usage: [
       "**Hasta ~8 opciones fijas.** Más que eso, o si el usuario sabe lo que busca, `Combobox`.",
       "Para 2 o 3 opciones excluyentes que entran en pantalla, `RadioGroup` o `ToggleGroup`: se ven todas sin abrir nada.",
-      "`alignItemWithTrigger` está en `false` a propósito: el popup se abre debajo, no encima del trigger.",
+      "**Es el pop-up button de macOS** (2.0): el ⌃⌄ del trigger avisa que la lista se abre encima, con la opción elegida sobre el valor y el tilde a la izquierda. Si el Select vive pegado al borde de la ventana o se abre con el dedo, Base UI la hace bajar como un menú. Para que baje siempre, `alignItemWithTrigger={false}` en `SelectContent`.",
       "Agrupá con `SelectGroup` + `SelectLabel` cuando las opciones tienen categorías; no uses ítems deshabilitados como títulos.",
       "**Pasale `items` al `Select` raíz** con el mismo mapa `value → label` que usan los `SelectItem`: es lo que le permite a `SelectValue` mostrar la etiqueta en vez del valor. La alternativa es `<SelectValue>{(value) => …}</SelectValue>`, que sirve para formatear, pero duplica el mapa.",
     ],
@@ -549,7 +549,7 @@ export const COMPONENTS = {
       SelectTrigger: { size: "Mismas tres alturas que `Input`, para que un formulario mixto quede alineado." },
       SelectContent: {
         alignItemWithTrigger:
-          "Con `true` el popup se abre **encima** del trigger, con la opción elegida sobre él (el comportamiento nativo de macOS). Acá está en `false`: la lista baja, que es lo que hace el resto de los menús del sistema.",
+          "Por defecto `true`: la lista se abre **encima** del trigger, con la opción elegida sobre él y su texto donde estaba el valor (el pop-up button de macOS). Con el dedo o sin lugar en la ventana, Base UI la hace bajar sola. `false` la hace bajar siempre, como un menú.",
       },
     },
     related: ["combobox", "dropdown-menu", "radio-group"],
