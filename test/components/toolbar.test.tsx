@@ -111,6 +111,16 @@ describe("Toolbar", () => {
     expect(onEnlace).toHaveBeenCalledTimes(1)
   })
 
+  // Con el dedo cada control necesita 44 × 44 (HIG). Los botones de la barra miden 24: con 4 px (o
+  // 2 en un grupo) entre uno y otro, los `::after` de 44 se pisaban y el toque caía en el vecino.
+  // 24 + 20 de gap = 44 entre centros: las áreas se tocan sin pisarse.
+  it("en táctil la barra y sus grupos separan los controles para que las áreas de 44 no se pisen", () => {
+    render(<Formato />)
+    expect(screen.getByRole("toolbar")).toHaveClass("pointer-coarse:gap-5")
+    expect(screen.getByRole("group", { name: "Alineación" })).toHaveClass("pointer-coarse:gap-5")
+    expect(screen.getByRole("group", { name: "Estilo" })).toHaveClass("pointer-coarse:gap-5")
+  })
+
   it("`plain` no lleva material: es la barra que vive adentro de otra superficie", () => {
     const { rerender } = render(<Toolbar aria-label="Búsqueda" />)
     expect(screen.getByRole("toolbar")).toHaveClass("material-bar", "glass-rim", "shadow-card")

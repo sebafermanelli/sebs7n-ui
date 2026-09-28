@@ -12,6 +12,17 @@ describe("Pagination", () => {
     expect(screen.getByRole("button", { name: "Página 2" })).toBeInTheDocument()
   })
 
+  // Una fila de números en un teléfono: con `touch-target` los `::after` de 44 se pisaban (32 + 4
+  // de gap), y con gap de 12 los nueve controles ya no entran en 390 px. `touch-target-y` crece
+  // solo en alto y conserva el ancho del número.
+  it("en táctil los controles crecen en alto sin meterse en el de al lado", () => {
+    render(<Pagination page={5} pageCount={10} />)
+    for (const boton of screen.getAllByRole("button")) {
+      expect(boton).toHaveClass("touch-target-y")
+      expect(boton).not.toHaveClass("touch-target")
+    }
+  })
+
   it("con 0 páginas no renderiza nada", () => {
     const { container } = render(<Pagination page={1} pageCount={0} />)
     expect(container).toBeEmptyDOMElement()

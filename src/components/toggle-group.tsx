@@ -11,7 +11,9 @@ function ToggleGroup({ className, ...props }: ToggleGroupProps) {
   return (
     <ToggleGroupPrimitive
       data-slot="toggle-group"
-      className={cn("flex flex-wrap items-center gap-2", className)}
+      // En táctil 20 px entre filtros (y entre filas, porque envuelve): un filtro mide 24 de alto y
+      // su área de 44 se metía en la fila de abajo con 8 px.
+      className={cn("flex flex-wrap items-center gap-2 pointer-coarse:gap-5", className)}
       {...props}
     />
   )

@@ -3,7 +3,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "../lib/utils.js"
 
 const buttonVariantsBase = cva(
-  "relative touch-target inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full border border-transparent whitespace-nowrap outline-none select-none transition-surface focus-visible:focus-ring data-disabled:cursor-not-allowed data-disabled:border-gray-alpha-400 data-disabled:bg-gray-alpha-100 data-disabled:text-gray-700 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full border border-transparent whitespace-nowrap outline-none select-none transition-surface focus-visible:focus-ring data-disabled:cursor-not-allowed data-disabled:border-gray-alpha-400 data-disabled:bg-gray-alpha-100 data-disabled:text-gray-700 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
@@ -57,6 +57,10 @@ const buttonVariantsBase = cva(
       },
     },
     compoundVariants: [
+      // El área táctil de 44 va en todos menos en `link`: ese es texto adentro de un párrafo, y un
+      // `::after` de 44 px taparía la línea de arriba y la de abajo. Va acá y no en la base porque
+      // una clase de la base no se puede sacar desde una variante.
+      { variant: ["default", "outline", "secondary", "ghost", "accent", "destructive"], className: "touch-target" },
       // Un escalón más de aire, por tamaño. `lg` ya es ancho, así que sube
       // menos: a 20px de padding la curva ya no toca el texto.
       { shape: "pill", size: "sm", className: "px-4" },

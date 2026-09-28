@@ -1019,6 +1019,31 @@
   }
 }
 
+/**
+ * `touch-target` solo en alto: para controles en fila, pegados de costado (los números de una
+ * paginación, un botón de ícono al lado de un campo). El área crece a 44 hacia arriba y hacia
+ * abajo pero conserva el ancho del control, así que no se mete en el vecino: dos `::after` de 44
+ * con 4 px entre controles de 32 se pisaban 8 px y el toque caía en el de al lado.
+ *
+ * Si hay lugar para separarlos, es mejor `pointer-coarse:gap-*`, que deja el área de 44 × 44
+ * entera. Con `cn()` reemplaza a `touch-target`: `cn(buttonVariants(), "touch-target-y")`.
+ */
+@utility touch-target-y {
+  @media (pointer: coarse) {
+    position: relative;
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: max(100%, 44px);
+      transform: translateY(-50%);
+    }
+  }
+}
+
 /* Anillo de foco de Geist (--ds-focus-ring) con el color de marca. */
 @utility focus-ring {
   outline: none;

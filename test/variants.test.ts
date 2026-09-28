@@ -9,6 +9,7 @@ import { linkVariants } from "../src/variants/link"
 import { menuItemClassName } from "../src/variants/menu"
 import { sidebarItemVariants } from "../src/variants/sidebar"
 import { toggleVariants } from "../src/variants/toggle"
+import { cn } from "../src/lib/utils"
 
 const classes = (value: string) => value.split(/\s+/)
 
@@ -55,11 +56,12 @@ describe("variantes exportadas pasan por cn()", () => {
    * `buttonVariants` sin argumentos: una clase de más o de menos les cambia el botón en
    * todas las pantallas, y este test lo dice con el diff, no con una captura que alguien
    * mire tres semanas después. En 1.0 cambió una sola: `rounded-md` pasó a `rounded-full`.
-   * En 2.0, la densidad de macOS: `h-10 px-4` pasó a `h-8 px-3`, y se sumó `touch-target`.
+   * En 2.0, la densidad de macOS: `h-10 px-4` pasó a `h-8 px-3`, y se sumó `touch-target`,
+   * que va al final porque lo pone una variante compuesta: el `link` no lo lleva.
    */
   const SIN_SHAPE = {
     "default/md":
-      "relative touch-target inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full border border-transparent whitespace-nowrap outline-none select-none transition-surface focus-visible:focus-ring data-disabled:cursor-not-allowed data-disabled:border-gray-alpha-400 data-disabled:bg-gray-alpha-100 data-disabled:text-gray-700 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 bg-gray-1000 text-background-100 shadow-button-inverted hover:bg-button-primary-hover active:translate-y-px active:shadow-none data-disabled:shadow-none h-8 px-3 text-body",
+      "relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full border border-transparent whitespace-nowrap outline-none select-none transition-surface focus-visible:focus-ring data-disabled:cursor-not-allowed data-disabled:border-gray-alpha-400 data-disabled:bg-gray-alpha-100 data-disabled:text-gray-700 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 bg-gray-1000 text-background-100 shadow-button-inverted hover:bg-button-primary-hover active:translate-y-px active:shadow-none data-disabled:shadow-none h-8 px-3 text-body touch-target",
   } as const
 
   it("sin shape, buttonVariants emite la cadena fijada", () => {
@@ -126,7 +128,7 @@ describe("densidad macOS (2.0)", () => {
   })
 
   it("área táctil: el botón agranda su área con el dedo y el campo sube de alto", () => {
-    for (const variant of ["default", "outline", "secondary", "ghost", "accent", "destructive", "link"] as const) {
+    for (const variant of ["default", "outline", "secondary", "ghost", "accent", "destructive"] as const) {
       expect(classes(buttonVariants({ variant })), variant).toContain("touch-target")
     }
     expect(classes(toggleVariants())).toContain("touch-target")
@@ -138,5 +140,17 @@ describe("densidad macOS (2.0)", () => {
     // lado, así que en táctil crecen de verdad.
     expect(classes(menuItemClassName)).toContain("pointer-coarse:h-11")
     expect(classes(sidebarItemVariants())).toContain("pointer-coarse:h-11")
+  })
+
+  // El link es texto adentro de un párrafo: un área de 44 px taparía la línea de arriba y la de
+  // abajo, y el toque en una palabra vecina abriría el link.
+  it("el botón `link` no agranda su área: vive adentro del texto", () => {
+    expect(classes(buttonVariants({ variant: "link" }))).not.toContain("touch-target")
+  })
+
+  it("touch-target-y reemplaza a touch-target con cn()", () => {
+    const out = classes(cn(buttonVariants({ variant: "ghost", size: "icon-md" }), "touch-target-y"))
+    expect(out).toContain("touch-target-y")
+    expect(out).not.toContain("touch-target")
   })
 })

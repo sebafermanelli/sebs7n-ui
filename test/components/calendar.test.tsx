@@ -121,6 +121,15 @@ describe("Calendar", () => {
     expect(onValueChange).not.toHaveBeenCalled()
   })
 
+  // Las flechas de mes miden 24 y van pegadas: en táctil se separan 20 para que sus áreas de 44
+  // no se pisen.
+  it("en táctil las flechas de mes se separan", () => {
+    render(<Calendar defaultValue={d("2026-09-27")} />)
+    const flechas = screen.getByRole("button", { name: "Mes anterior" }).parentElement
+    expect(flechas).toHaveClass("pointer-coarse:gap-5")
+    expect(flechas).toContainElement(screen.getByRole("button", { name: "Mes siguiente" }))
+  })
+
   it("hoy se anuncia con aria-current", () => {
     vi.useFakeTimers({ now: new Date(2026, 8, 27, 15, 0), toFake: ["Date"] })
     render(<Calendar />)

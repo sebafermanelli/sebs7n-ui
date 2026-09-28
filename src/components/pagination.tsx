@@ -77,7 +77,9 @@ function Pagination({
       "aria-current": options.active ? ("page" as const) : undefined,
       className: cn(
         buttonVariants({ variant: options.active ? "secondary" : "ghost", size: iconSize }),
-        "text-body tabular-nums",
+        // Crece solo en alto: nueve controles de 32 con 12 px entre sí (lo que haría falta para
+        // áreas de 44 × 44) ya no entran en un teléfono de 390, y la fila se partía en dos.
+        "touch-target-y text-body tabular-nums",
         !options.active && "text-gray-900 hover:text-gray-1000",
         off && "text-gray-700 pointer-events-none"
       ),

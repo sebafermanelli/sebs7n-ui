@@ -74,6 +74,9 @@ function Toolbar({ className, onKeyDown, variant = "glass", ...props }: ToolbarP
         // Una cápsula de vidrio con el canto especular: es la barra de Safari. `relative` es lo
         // que ancla el `::after` del canto.
         "relative flex items-center gap-1 rounded-full p-1 text-gray-1000",
+        // Con el dedo, 20 px entre controles: un botón de 24 + 20 = 44 entre centros, y las áreas
+        // de `touch-target` se tocan sin pisarse. Con 4 px el toque caía en el vecino.
+        "pointer-coarse:gap-5",
         variant === "glass" && "material-bar glass-rim shadow-card",
         "data-[orientation=vertical]:rounded-surface",
         "data-[orientation=vertical]:w-fit data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-stretch",
@@ -141,7 +144,10 @@ function ToolbarGroup({ className, ...props }: ToolbarGroupProps) {
   return (
     <ToolbarPrimitive.Group
       data-slot="toolbar-group"
-      className={cn("flex items-center gap-0.5 data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-stretch", className)}
+      // En táctil el grupo se separa igual que la barra (`gap-5`), como en las barras del iPad. Se
+      // pierde el segmento pegado, pero `touch-target-y` dejaba cada botón en 24 px de ancho, la
+      // mitad de lo que pide la HIG; el grupo lo siguen marcando los separadores.
+      className={cn("flex items-center gap-0.5 pointer-coarse:gap-5 data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-stretch", className)}
       {...props}
     />
   )

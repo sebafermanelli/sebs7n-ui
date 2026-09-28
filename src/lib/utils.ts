@@ -14,7 +14,7 @@ export const TYPE_SCALE = [
   "subheadline", "footnote", "caption", "mono-body", "mono-callout",
 ] as const
 
-const twMerge = extendTailwindMerge({
+const twMerge = extendTailwindMerge<"touch-target">({
   extend: {
     theme: {
       text: [...TYPE_SCALE],
@@ -24,6 +24,8 @@ const twMerge = extendTailwindMerge({
     classGroups: {
       // `glass`, `glass-control` y los `material-*` pintan el fondo. Sin esto, un `bg-*` que pase el llamador
       // convive con el vidrio y gana el que Tailwind haya emitido último, que no se elige.
+      // Las dos formas del área táctil pelean por el mismo `::after`: la que se pase después gana.
+      "touch-target": ["touch-target", "touch-target-y"],
       "bg-color": ["glass", "glass-control", "bg-ambient", "material-bar", "material-popover", "material-modal", "material-group"],
     },
   },

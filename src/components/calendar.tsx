@@ -245,7 +245,8 @@ function Calendar(props: CalendarProps) {
               {cuantos === 1 ? (
                 <div className="flex items-center justify-between gap-2 pl-2">
                   {titulo}
-                  <div className="flex items-center gap-0.5">
+                  {/* En táctil 20 px entre flechas de 24: las áreas de 44 se tocan sin pisarse. */}
+                  <div className="flex items-center gap-0.5 pointer-coarse:gap-5">
                     {anterior}
                     {siguiente}
                   </div>

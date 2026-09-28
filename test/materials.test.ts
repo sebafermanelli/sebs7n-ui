@@ -80,6 +80,15 @@ describe("material por rol (2.0)", () => {
   })
 })
 
+describe("touch-target-y", () => {
+  it("crece a 44 en alto, conserva el ancho y solo con el dedo", () => {
+    const block = utility("touch-target-y")
+    expect(block).toMatch(/@media \(pointer: coarse\)/)
+    expect(block).toMatch(/width: 100%;/)
+    expect(block).toMatch(/height: max\(100%, 44px\);/)
+  })
+})
+
 describe("--sf-group: el texto se lee sobre un grupo (WCAG 1.4.3)", () => {
   const ratio = (fg: string, bg: string) => contrastRatio(luminanceOfHex(fg), luminanceOfHex(bg))
   for (const tema of ["light", "dark"] as const) {
