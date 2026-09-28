@@ -1,6 +1,6 @@
 "use client"
 
-import type * as React from "react"
+import * as React from "react"
 import { Combobox as ComboboxPrimitive } from "@base-ui/react/combobox"
 import { CheckIcon, ChevronDownIcon, Loader2Icon, XIcon } from "lucide-react"
 
@@ -11,7 +11,7 @@ import { useModality } from "../internal/modality.js"
 import { cn, type WithClassName } from "../lib/utils.js"
 import { inputMultilineRadiusClassName, inputShellButtonClassName, inputShellClassName, inputShellInputClassName } from "../variants/input.js"
 import { menuItemClassName, menuLabelClassName, menuPopupClassName, menuSeparatorClassName } from "../variants/menu.js"
-import { tagRemoveClassName, tagVariants } from "../variants/tag.js"
+import { tagRemoveClassName, tagVariants, type TagSize } from "../variants/tag.js"
 
 type InputSize = "sm" | "md" | "lg"
 
@@ -183,6 +183,13 @@ type ComboboxChipsProps = WithClassName<ComboboxPrimitive.Chips.Props> & {
   labels?: { clear?: string; trigger?: string }
 }
 
+/**
+ * El tamaño de chip que corresponde al campo. Un chip `md` mide 24: en un campo `sm` (24) lo
+ * estiraba a 30. Va por contexto y no por CSS porque el chip es el `Tag` del sistema, y su tamaño
+ * ya es una prop de `tagVariants` (alto, padding y el aire del botón de quitar).
+ */
+const ChipSizeContext = React.createContext<TagSize>("md")
+
 // Selección múltiple: superficie de Input que crece con los chips.
 function ComboboxChips({ className, size = "md", showTrigger = true, showClear = false, disabled, labels, ...props }: ComboboxChipsProps) {
   useModality()
@@ -198,11 +205,15 @@ function ComboboxChips({ className, size = "md", showTrigger = true, showClear =
         // Los chips pueden ocupar varias filas.
         inputMultilineRadiusClassName,
         // `py-0.5`: un chip mide 24 y el `md` 32; con `py-1` y el borde, el campo vacío ya crecía.
-        "h-auto! data-[size=sm]:min-h-6 data-[size=md]:min-h-8 data-[size=lg]:min-h-10 pointer-coarse:data-[size=sm]:min-h-8 pointer-coarse:data-[size=md]:min-h-10 items-start py-0.5 pr-1 pl-1",
+        // En `sm` el chip mide 20 y el campo 24: con los 2 px del borde no queda lugar para
+        // padding, así que va `py-0` y el `self-center` de los chips reparte el aire.
+        "h-auto! data-[size=sm]:min-h-6 data-[size=md]:min-h-8 data-[size=lg]:min-h-10 pointer-coarse:data-[size=sm]:min-h-8 pointer-coarse:data-[size=md]:min-h-10 items-start py-0.5 data-[size=sm]:py-0 pr-1 pl-1",
         className
       )}
     >
-      <ComboboxPrimitive.Chips data-slot="combobox-chips" className="flex min-w-0 flex-1 flex-wrap items-center gap-1 self-center" {...props} />
+      <ChipSizeContext.Provider value={size === "sm" ? "sm" : "md"}>
+        <ComboboxPrimitive.Chips data-slot="combobox-chips" className="flex min-w-0 flex-1 flex-wrap items-center gap-1 self-center" {...props} />
+      </ChipSizeContext.Provider>
       {showClear && (
         <ComboboxPrimitive.Clear data-slot="combobox-clear" aria-label={labels?.clear ?? l.clear} disabled={disabled} className={cn(inputShellButtonClassName, "self-center")}>
           <XIcon />
@@ -250,18 +261,19 @@ function ComboboxChip({ className, children, removeLabel, textValue, ...props }:
   // `useLabels()` va suelto y no adentro de un `??`: el `??` corta, y un hook que a veces se llama
   // y a veces no rompe el orden de los hooks.
   const l = useLabels().combobox
+  const size = React.useContext(ChipSizeContext)
   const name = textValue ?? (typeof children === "string" || typeof children === "number" ? String(children) : undefined)
   return (
     <ComboboxPrimitive.Chip
       data-slot="combobox-chip"
-      className={cn(tagVariants({ removable: true }), "outline-none focus-visible:focus-ring data-highlighted:focus-ring", className)}
+      className={cn(tagVariants({ removable: true, size }), "outline-none focus-visible:focus-ring data-highlighted:focus-ring", className)}
       {...props}
     >
       <span className="truncate">{children}</span>
       <ComboboxPrimitive.ChipRemove
         data-slot="combobox-chip-remove"
         aria-label={nombreDeQuitar(removeLabel ?? l.remove, name)}
-        className={tagRemoveClassName.md}
+        className={tagRemoveClassName[size]}
       >
         <XIcon />
       </ComboboxPrimitive.ChipRemove>

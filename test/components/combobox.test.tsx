@@ -234,6 +234,36 @@ describe("Combobox", () => {
     expect(await screen.findByText("Sin resultados")).toBeInTheDocument()
   })
 
+  // Un chip `md` mide 24: en un campo `sm` (24) lo estiraba a 30. El chip sigue al tamaño del
+  // campo: `sm` va con chips de 20, y el campo se queda en 24.
+  it("múltiple sm: los chips siguen al tamaño del campo", () => {
+    const Campo = ({ size }: { size?: "sm" | "md" }) => (
+      <Combobox items={COUNTRIES} multiple defaultValue={["Chile"]}>
+        <ComboboxChips size={size}>
+          <ComboboxValue>
+            {(values: string[]) => (
+              <>
+                {values.map((value) => (
+                  <ComboboxChip key={value}>{value}</ComboboxChip>
+                ))}
+                <ComboboxChipsInput aria-label="Países" />
+              </>
+            )}
+          </ComboboxValue>
+        </ComboboxChips>
+      </Combobox>
+    )
+    const chip = () => screen.getByText("Chile").closest<HTMLElement>("[data-slot=combobox-chip]")!
+    const { rerender } = render(<Campo size="sm" />)
+    expect(chip()).toHaveClass("h-5")
+    expect(chip()).not.toHaveClass("h-6")
+    // 20 del chip + 2 del borde entran en 24 solo sin padding vertical.
+    expect(chip().closest("[data-slot=combobox-chips-group]")).toHaveClass("data-[size=sm]:py-0")
+    expect(screen.getByRole("button", { name: "Quitar Chile" })).toHaveClass(...tagRemoveClassName.sm.split(" "))
+    rerender(<Campo />)
+    expect(chip()).toHaveClass("h-6")
+  })
+
   it("múltiple: chips con estilo Badge subtle que se quitan", async () => {
     const onValueChange = vi.fn()
     render(
