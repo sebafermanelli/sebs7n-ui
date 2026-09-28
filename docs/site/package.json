@@ -10,6 +10,7 @@
     "prebuild": "npm run sync-ui && npm run generate",
     "build": "next build",
     "start": "next start --port 4100",
+    "budget": "node scripts/js-budget.mjs",
     "pretest": "npm run generate",
     "test": "vitest run"
   },
