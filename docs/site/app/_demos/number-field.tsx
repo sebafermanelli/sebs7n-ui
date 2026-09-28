@@ -65,15 +65,15 @@ export function Stock() {
     <div className="flex w-full max-w-sm flex-col gap-4">
       <Field name="stock-deposito">
         <FieldLabel>Stock en depósito</FieldLabel>
-        <NumberField className="w-32" defaultValue={140} min={0} size="sm" step={10} />
+        <NumberField defaultValue={140} min={0} size="sm" step={10} />
       </Field>
       <Field name="stock-minimo">
         <FieldLabel>Stock mínimo antes de reponer</FieldLabel>
-        <NumberField className="w-32" defaultValue={20} min={0} size="lg" />
+        <NumberField defaultValue={20} min={0} size="lg" />
       </Field>
       <Field name="stock-reservado">
         <FieldLabel>Reservado por pedidos abiertos</FieldLabel>
-        <NumberField className="w-32" defaultValue={12} readOnly />
+        <NumberField defaultValue={12} readOnly />
       </Field>
     </div>
   )
