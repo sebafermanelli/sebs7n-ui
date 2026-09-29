@@ -145,14 +145,38 @@ describe("Anillo de foco interior en las cuatro marcas (WCAG 1.4.11)", () => {
     }
   })
 
+  // El anillo no se ve solo sobre la página: los campos y la búsqueda son `fill-1`, el ítem
+  // resaltado de un menú `fill-2`, y las barras `surface-bar`/`surface-header`. En oscuro esas
+  // capas son más claras que la página, y la marca a su luz (brand-700) no llegaba a 3:1 sobre la
+  // barra con las marcas más oscuras. Por eso el tema puede apuntar el foco a otro paso de la
+  // marca; el paso sale de `--sf-focus` del tema, no de una copia.
   const marcas = brands as Record<string, Record<string, { base: number[]; contrast: string }>>
+  const ESCALA = { light: { 900: [0.535, 0.945] }, dark: { 900: [0.717, 0.705] } } as const
+  const paso = (theme: "light" | "dark") => {
+    const inicio = css.indexOf(theme === "light" ? ":root {" : ".dark {")
+    const cuerpo = css.slice(inicio, css.indexOf("\n  }", inicio))
+    return Number(/--sf-focus: color-mix\(in srgb, var\(--sf-brand-(\d+)\)/.exec(cuerpo)![1]) as 700 | 900
+  }
+  const anilloDe = (theme: "light" | "dark", base: number[]) => {
+    const n = paso(theme)
+    if (n === 700) return hexOfOklch(base as unknown as Oklch)
+    const [l, c] = ESCALA[theme][n]
+    return hexOfOklch([l, base[1]! * c, base[2]!] as unknown as Oklch)
+  }
+  const capas = (t: "light" | "dark") => ({
+    página: paleta[t]["--sf-background"]!,
+    superficie: paleta[t]["--sf-surface"]!,
+    "surface-bar": paleta[t]["--sf-surface-bar"]!,
+    "surface-header": paleta[t]["--sf-surface-header"]!,
+    "fill-1 sobre la superficie": flattenAlpha(paleta[t]["--sf-fill-1"]!, paleta[t]["--sf-surface"]!),
+    "fill-2 sobre la superficie": flattenAlpha(paleta[t]["--sf-fill-2"]!, paleta[t]["--sf-surface"]!),
+  })
   for (const [marca, temas] of Object.entries(marcas)) {
     for (const [theme, { base }] of Object.entries(temas)) {
       const t = theme as "light" | "dark"
-      for (const fondo of ["--sf-background", "--sf-surface"] as const) {
-        const bg = paleta[t][fondo]!
-        const anillo = composite(hexOfOklch(base as unknown as Oklch), alfa(t), bg)
-        it(`${marca} (${theme}): el anillo (${anillo}) sobre ${fondo.replace("--sf-", "")} ${bg} llega a 3:1`, () => {
+      for (const [donde, bg] of Object.entries(capas(t))) {
+        const anillo = composite(anilloDe(t, base), alfa(t), bg)
+        it(`${marca} (${theme}): el anillo (${anillo}) sobre ${donde} ${bg} llega a 3:1`, () => {
           expect(ratio(anillo, bg)).toBeGreaterThanOrEqual(3)
         })
       }

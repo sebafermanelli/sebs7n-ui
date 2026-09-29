@@ -523,8 +523,11 @@
 
     --sf-ai: oklch(0.68 0.19 293);
     --sf-ai-2: oklch(0.72 0.2 330);
-    /* Se redeclara: `var()` se resuelve donde se declara, y el brand cambia por tema. */
-    --sf-focus: color-mix(in srgb, var(--sf-brand-700) var(--sf-focus-alpha), transparent);
+    /* Se redeclara: `var()` se resuelve donde se declara, y el brand cambia por tema. En oscuro
+       va el paso claro de la marca (`brand-900`, L 0,717): las barras, los campos (`fill-1`) y el
+       ítem resaltado (`fill-2`) son más claros que la página, y sobre ellos `brand-700` no llega a
+       3:1 con las marcas oscuras (terracota 2,2:1, azul 2,6:1 sobre `surface-header`). */
+    --sf-focus: color-mix(in srgb, var(--sf-brand-900) var(--sf-focus-alpha), transparent);
 
     /* En oscuro las de iCloud llegan al 65 %: sobre #1C1C1E una sombra suave no se ve. */
     --sf-shadow-menu: 0 0 0 1px var(--sf-hairline), 0 11px 34px 0 #000000a6;
