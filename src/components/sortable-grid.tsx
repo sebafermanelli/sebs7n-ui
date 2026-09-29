@@ -9,6 +9,11 @@ import { SortableBase, sortableLabels, type SortableItemState, type SortableLabe
  * los widgets de la home de iCloud. Con el teclado, Espacio toma la tarjeta, las flechas la mueven
  * en las dos direcciones y Espacio la suelta (Escape cancela), con anuncios.
  *
+ * **Solo en modo edición**, como la pantalla de inicio de iOS: se entra con el botón de la app
+ * (`editing`) o manteniendo apretada una tarjeta ~0,5 s, y se sale con «Listo», Esc o un clic en un
+ * espacio vacío. En edición las tarjetas tiemblan, `onRemove` pone un «−» en cada una y `onAdd` una
+ * celda «+ Agregar» al final.
+ *
  * Sin `handle` se arrastra la tarjeta entera: el mouse arranca a los 8 px (un click en un botón de
  * adentro sigue siendo un click) y el dedo después de 250 ms apretado (deslizar sigue scrolleando).
  * Con `handle`, `renderItem` recibe la manija ⋮⋮ para ponerla donde vaya. Usa `@dnd-kit/*`, peers

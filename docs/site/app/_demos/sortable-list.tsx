@@ -2,6 +2,7 @@
 
 import { ReceiptIcon } from "lucide-react"
 import { useState } from "react"
+import { Button } from "sebs7n-ui"
 import { SortableList } from "sebs7n-ui/sortable-list"
 
 type Line = { id: string; concept: string; amount: string }
@@ -23,22 +24,38 @@ function LineRow({ line }: { line: Line }) {
   )
 }
 
+/** El botón de la app que prende y apaga el modo edición: «Listo» es el acento mientras se edita. */
+function EditButton({ editing, onEditingChange }: { editing: boolean; onEditingChange: (editing: boolean) => void }) {
+  return (
+    <Button className="self-end" onClick={() => onEditingChange(!editing)} size="sm" variant={editing ? "default" : "secondary"}>
+      {editing ? "Listo" : "Editar"}
+    </Button>
+  )
+}
+
 /**
  * Las líneas de una factura
- * Arrastrá la manija ⋮⋮, o enfocala con Tab y usá Espacio, ↑/↓ y Espacio.
+ * «Editar» (o mantener apretada una fila) muestra el «−» y la manija ⋮⋮: arrastrala, o enfocala con Tab y usá Espacio, ↑/↓ y Espacio. «Agregar» suma una línea.
  */
 export function InvoiceLines() {
   const [lines, setLines] = useState(LINES)
+  const [editing, setEditing] = useState(false)
   return (
-    <SortableList
-      aria-label="Líneas de la factura"
-      className="w-full max-w-md"
-      getKey={(line) => line.id}
-      getLabel={(line) => line.concept}
-      items={lines}
-      onReorder={setLines}
-      renderItem={(line) => <LineRow line={line} />}
-    />
+    <div className="flex w-full max-w-md flex-col gap-3">
+      <EditButton editing={editing} onEditingChange={setEditing} />
+      <SortableList
+        aria-label="Líneas de la factura"
+        editing={editing}
+        getKey={(line) => line.id}
+        getLabel={(line) => line.concept}
+        items={lines}
+        onAdd={() => setLines([...lines, { id: `line-${lines.length + 1}`, concept: `Línea ${lines.length + 1}`, amount: "$ 0" }])}
+        onEditingChange={setEditing}
+        onRemove={(id) => setLines(lines.filter((line) => line.id !== id))}
+        onReorder={setLines}
+        renderItem={(line) => <LineRow line={line} />}
+      />
+    </div>
   )
 }
 
@@ -47,15 +64,20 @@ export function InvoiceLines() {
  * `onReorder` devuelve una promesa: el orden cambia al soltar y, si la promesa falla, vuelve el anterior y se anuncia.
  */
 export function Rollback() {
+  const [editing, setEditing] = useState(false)
   return (
-    <SortableList
-      aria-label="Líneas de la factura, sin conexión"
-      className="w-full max-w-md"
-      getKey={(line) => line.id}
-      getLabel={(line) => line.concept}
-      items={LINES}
-      onReorder={() => new Promise((_, reject) => setTimeout(() => reject(new Error("Sin conexión")), 800))}
-      renderItem={(line) => <LineRow line={line} />}
-    />
+    <div className="flex w-full max-w-md flex-col gap-3">
+      <EditButton editing={editing} onEditingChange={setEditing} />
+      <SortableList
+        aria-label="Líneas de la factura, sin conexión"
+        editing={editing}
+        getKey={(line) => line.id}
+        getLabel={(line) => line.concept}
+        items={LINES}
+        onEditingChange={setEditing}
+        onReorder={() => new Promise((_, reject) => setTimeout(() => reject(new Error("Sin conexión")), 800))}
+        renderItem={(line) => <LineRow line={line} />}
+      />
+    </div>
   )
 }

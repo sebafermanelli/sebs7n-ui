@@ -2484,27 +2484,29 @@ export const COMPONENTS = {
   "sortable-list": {
     title: "SortableList",
     group: "contenido",
-    description: "Una lista que se reordena arrastrando la manija ⋮⋮ de cada fila, o con el teclado, con cada movimiento anunciado.",
+    description: "Una lista que en modo edición se reordena arrastrando la manija ⋮⋮ de cada fila, o con el teclado, con cada movimiento anunciado; y saca y agrega filas.",
     keyboard: [
-      ["Tab", "Recorre las manijas."],
+      ["Tab", "En edición, recorre los «−», las manijas y «Agregar»."],
       ["Espacio · Enter", "Toma la fila; con la fila tomada, la suelta en el lugar nuevo."],
       ["↑ / ↓", "Con la fila tomada, la mueven."],
-      ["Escape", "Cancela: la fila vuelve a su lugar."],
+      ["Escape", "Con una fila tomada, cancela: vuelve a su lugar. Si no, sale de la edición."],
     ],
     a11y: [
       "Cada fila es un `ListRow` de un `<ul role=\"list\">`: nombrá la lista con `aria-label`.",
-      "La manija es un `<button>` «Reordenar Factura 0012» (`getLabel` da el nombre) con las instrucciones en su `aria-describedby`.",
+      "La manija es un `<button>` «Reordenar Factura 0012» (`getLabel` da el nombre) con las instrucciones en su `aria-describedby`. Fuera de edición no está: no hay paradas de Tab que no hagan nada.",
       "Tomar, mover, soltar y cancelar se anuncian en una región viva: «Tomaste Factura 0012, posición 2 de 5».",
+      "El «−» es un `<button>` «Sacar Factura 0012»; al sacar se anuncia «Se sacó Factura 0012.» y el foco pasa al «−» que queda en su lugar.",
       "Con movimiento reducido las filas no se deslizan: saltan a su lugar.",
     ],
     usage: [
-      "`renderItem` devuelve **el contenido** de la fila, no un `<li>` (un `<li>` adentro de otro rompe la hidratación).",
+      "**Solo se ordena en modo edición**, como en iOS: `editing` + `onEditingChange` con un botón «Editar»/«Listo» de la app (o `defaultEditing`). También entra manteniendo apretada una fila ~0,5 s (mouse o dedo; un clic normal no), y sale con Esc o un clic afuera. En edición cada fila lleva el «−» adelante (con `onRemove`) y la manija al final; con `onAdd`, una fila «Agregar» al final, y la app decide qué abre.",
+      "`renderItem` devuelve **el contenido** de la fila, no un `<li>` (un `<li>` adentro de otro rompe la hidratación). Recibe `state.editing`.",
       "`onReorder` recibe los ítems en el orden nuevo, que se ve al soltar. **Optimista:** devolvé una promesa sin tocar `items`; si falla, vuelve el anterior y se anuncia «No se pudo guardar el orden». **Si la app aplica el orden ella** (cambia `items`), revertirlo y avisar si falla también es suyo: el componente no anuncia una vuelta atrás que no hizo.",
       "**`@dnd-kit/core`, `@dnd-kit/sortable` y `@dnd-kit/utilities` son peers opcionales:** `npm install @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities` en la app que lo usa. Solo por subpath (`sebs7n-ui/sortable-list`).",
     ],
     props: {
       SortableList: {
-        labels: "Textos: `handle`, `instructions`, `picked`, `dropped`, `canceled`, `position`, `of`, `failed` y `grabbed` (solo `SortableGrid` sin manija). Los que vienen por defecto son `sortableLabels`.",
+        labels: "Textos: `handle`, `instructions`, `picked`, `dropped`, `canceled`, `position`, `of`, `failed`, `grabbed` (solo `SortableGrid` sin manija), `remove`, `removed` y `add`. Los que vienen por defecto son `sortableLabels`.",
         "aria-label": PROP_DESCRIPTIONS["aria-label"],
       },
     },
@@ -2513,19 +2515,22 @@ export const COMPONENTS = {
   "sortable-grid": {
     title: "SortableGrid",
     group: "contenido",
-    description: "Tarjetas en una grilla que se reordenan arrastrando —las demás se corren mientras tanto—, o con el teclado en las dos direcciones.",
+    description: "Tarjetas en una grilla que, en modo edición, tiemblan y se reordenan arrastrando —las demás se corren— o con el teclado; se sacan con «−» y se agregan con «+ Agregar», como la pantalla de inicio de iOS.",
     keyboard: [
-      ["Tab", "Recorre las tarjetas (o las manijas, con `handle`) y lo interactivo de adentro."],
+      ["Tab", "En edición, recorre las tarjetas (o las manijas, con `handle`), sus «−», lo interactivo de adentro y «+ Agregar»."],
       ["Espacio · Enter", "Sobre la tarjeta, la toma; tomada, la suelta. En un botón de adentro es del botón."],
       ["← → ↑ ↓", "Con la tarjeta tomada, la mueven en la grilla."],
-      ["Escape", "Cancela: la tarjeta vuelve a su lugar."],
+      ["Escape", "Con una tarjeta tomada, cancela: vuelve a su lugar. Si no, sale de la edición."],
     ],
     a11y: [
       "Es un `<ul role=\"list\">` de `<li>`: sin `handle`, cada `<li>` es la parada de Tab (con el anillo de foco por fuera) y lleva las instrucciones en `aria-describedby`; tomada, su descripción empieza con «En movimiento» (un `listitem` no puede llevar el `aria-pressed` de la manija).",
-      "Los anuncios son los de `SortableList`: «Tomaste Facturas, posición 1 de 4».",
-      "Con movimiento reducido las tarjetas no se deslizan: saltan a su lugar.",
+      "Fuera de edición la tarjeta no es parada de Tab ni tiene instrucciones: el arrastre no existe.",
+      "Los anuncios son los de `SortableList`: «Tomaste Facturas, posición 1 de 4». El «−» es un `<button>` «Sacar Facturas» y al sacar se anuncia «Se sacó Facturas.».",
+      "Con movimiento reducido las tarjetas no se deslizan ni tiemblan: en edición llevan un contorno punteado sutil.",
     ],
     usage: [
+      "**Solo se ordena en modo edición:** `editing` + `onEditingChange` con un botón «Editar»/«Listo» de la app, o `defaultEditing`. También entra manteniendo apretada una tarjeta ~0,5 s (mouse o dedo; un clic normal no, y el clic que sigue no abre nada), y sale con Esc o un clic en un espacio vacío. En edición las tarjetas tiemblan (±1°, la que se arrastra no).",
+      "`onRemove(key)` pone en cada tarjeta el «−» de iOS, arriba a la izquierda: saca sin confirmar y la app la saca de `items`. `onAdd()` suma al final una celda «+ Agregar» punteada; la app decide qué abre (un `Dialog` con los widgets que faltan). Hay que dejar lugar arriba a la izquierda: el «−» sobresale 8 px.",
       "**Sin `handle` se arrastra la tarjeta entera:** con el mouse arranca a los 8 px, así un click en un botón de adentro sigue siendo un click; con el dedo, después de 250 ms apretado, así deslizar sigue scrolleando.",
       "Con `handle`, `renderItem` recibe la manija en `state.handle` y la pone donde vaya (en la cabecera de la tarjeta).",
       "`columns` fija las columnas; sin `columns`, las pone `className` (`@2xl:grid-cols-2`). `itemClassName` para una tarjeta más ancha (`col-span-2`).",

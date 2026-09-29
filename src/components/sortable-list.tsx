@@ -9,6 +9,10 @@ import { SortableBase, sortableLabels, type SortableItemState, type SortableLabe
  * toma, ↑/↓ la mueven y Espacio la suelta (Escape cancela). Cada movimiento se anuncia: «Tomaste
  * Factura 0012, posición 2 de 5».
  *
+ * **Solo en modo edición** (`editing`, o mantener apretada una fila ~0,5 s): la manija aparece al
+ * final de cada fila, `onRemove` pone un «−» adelante y `onAdd` una fila «Agregar» al final. Se sale
+ * con el «Listo» de la app, Esc o un clic afuera.
+ *
  * Cada fila es un `ListRow` con la manija a la izquierda: `renderItem` devuelve lo de adentro, no
  * un `<li>` (un `<li>` adentro de otro rompe la hidratación). Usa `@dnd-kit/core`,
  * `@dnd-kit/sortable` y `@dnd-kit/utilities`, peers opcionales: los instala la app que lo usa.
