@@ -162,7 +162,7 @@ export function Panel() {
     <Card>
       <CardHeader><CardTitle>Facturas</CardTitle></CardHeader>
       <CardContent>
-        <Button variant="accent">Nueva factura</Button>
+        <Button>Nueva factura</Button>
       </CardContent>
     </Card>
   )
@@ -336,14 +336,13 @@ opción "Sistema".
 
 ## Reglas de uso
 
-- **Un solo acento por pantalla:** `Button variant="accent"` o
-  `Switch variant="accent"` para la acción principal; el CTA por defecto es el
-  negro (`variant="default"`).
-- **`shape="pill"` solo en los CTA de un hero o de una sección de marketing.**
-  `rounded-full` con un escalón más de padding horizontal (`sm` 20px, `md` 24px,
-  `lg` 28px), con cualquier variante y tamaño; en `icon-*` se ignora, que ya es
-  cuadrado con su propio radio. **Nunca en el chrome de una app** —nav, tablas,
-  formularios, diálogos—. Dos formas de botón en la misma pantalla se leen como
+- **Un solo acento por pantalla:** el `Button` por defecto (`<Button>`, sin
+  `variant`) es el primario de iCloud, el acento sólido, y va en la acción
+  principal; las demás son `secondary` (gris) o `plain` (texto de acento).
+  `variant="accent"` quedó como alias obsoleto de `default`.
+- **Sin cápsulas desde 2.0.** `shape="pill"` solo suma un escalón de padding
+  horizontal (`sm` 20px, `md` 24px, `lg` 28px); el radio es el del botón (8).
+  En `icon-*` se ignora. Dos formas de botón en la misma pantalla se leen como
   un descuido, no como una jerarquía. `shape` es opcional y su default no agrega
   ninguna clase: sin pasarlo, `buttonVariants` emite exactamente la misma cadena
   que antes de que la variante existiera, y hay un test que compara la cadena
