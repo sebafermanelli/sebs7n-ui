@@ -20,7 +20,7 @@ describe("DateTimePicker", () => {
     expect(date()).toHaveTextContent("29 sept 2026")
     expect(date()).toHaveClass("rounded-e-none")
     expect(time()).toHaveValue("09:30")
-    expect(time().closest("[data-slot=time-picker]")).toHaveClass("rounded-s-none", "border-s-separator")
+    expect(time().closest("[data-slot=time-picker]")).toHaveClass("rounded-s-none", "border-s-hairline")
   })
 
   it("elegir el día conserva la hora", async () => {

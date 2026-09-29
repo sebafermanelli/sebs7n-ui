@@ -106,7 +106,7 @@ function DateTimePicker({
       />
       <TimePicker
         aria-label={labels.time}
-        className="w-28 shrink-0 rounded-s-none border-s-separator"
+        className="w-28 shrink-0 rounded-s-none border-s-hairline"
         disabled={disabled}
         onValueChange={(next) => {
           setPendingTime(next)
