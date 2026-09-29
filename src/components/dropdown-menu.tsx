@@ -166,7 +166,9 @@ function DropdownMenuSubTrigger({ className, inset, children, ...props }: Dropdo
   )
 }
 
-function DropdownMenuSubContent({ side = "right", align = "start", alignOffset = -5, sideOffset = 2, ...props }: DropdownMenuContentProps) {
+// El submenú abre hacia `inline-end`, como el de Menubar: es el default de Base UI para submenús y
+// se da vuelta solo en un documento en árabe o hebreo.
+function DropdownMenuSubContent({ side = "inline-end", align = "start", alignOffset = -5, sideOffset = 2, ...props }: DropdownMenuContentProps) {
   return <DropdownMenuContent data-slot="dropdown-menu-sub-content" side={side} align={align} alignOffset={alignOffset} sideOffset={sideOffset} {...props} />
 }
 

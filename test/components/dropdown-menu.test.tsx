@@ -405,3 +405,12 @@ describe("inset en los ítems marcables", () => {
     expect(fuente).toMatch(/(Radio)ItemProps = WithClassName<[^>]+> & MenuInsetProps/)
   })
 })
+
+// Revisión de R3: el submenú abre hacia `inline-end`, como el de Menubar y el default de Base UI:
+// en un documento de derecha a izquierda se da vuelta solo. `right` lo dejaba siempre a la derecha.
+it("el submenú abre hacia inline-end", async () => {
+  const { readFileSync } = await import("node:fs")
+  const { join } = await import("node:path")
+  const fuente = readFileSync(join(import.meta.dirname, "../../src/components/dropdown-menu.tsx"), "utf8")
+  expect(fuente).toMatch(/function DropdownMenuSubContent\(\{ side = "inline-end"/)
+})
