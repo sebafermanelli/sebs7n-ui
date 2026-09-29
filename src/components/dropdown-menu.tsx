@@ -166,7 +166,7 @@ function DropdownMenuSubTrigger({ className, inset, children, ...props }: Dropdo
   )
 }
 
-function DropdownMenuSubContent({ side = "right", align = "start", alignOffset = -4, sideOffset = 2, ...props }: DropdownMenuContentProps) {
+function DropdownMenuSubContent({ side = "right", align = "start", alignOffset = -5, sideOffset = 2, ...props }: DropdownMenuContentProps) {
   return <DropdownMenuContent data-slot="dropdown-menu-sub-content" side={side} align={align} alignOffset={alignOffset} sideOffset={sideOffset} {...props} />
 }
 

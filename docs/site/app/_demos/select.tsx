@@ -37,7 +37,7 @@ export function Basico() {
 }
 
 /**
- * Pop-up button de macOS
+ * La lista se abre encima
  * El ⌃⌄ avisa que la lista no baja: se abre con la opción elegida encima del disparador, en el
  * mismo lugar que el valor. Con el dedo, Base UI la hace bajar como un menú.
  */

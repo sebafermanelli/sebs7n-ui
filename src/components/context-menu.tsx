@@ -265,7 +265,7 @@ function ContextMenuSubTrigger({ className, inset, children, ...props }: Context
  * documento en árabe o hebreo abre para el otro lado. Escribir `right` acá
  * rompería eso.
  */
-function ContextMenuSubContent({ align = "start", alignOffset = -4, sideOffset = -4, ...props }: ContextMenuContentProps) {
+function ContextMenuSubContent({ align = "start", alignOffset = -5, sideOffset = -5, ...props }: ContextMenuContentProps) {
   return <ContextMenuContent data-slot="context-menu-sub-content" align={align} alignOffset={alignOffset} sideOffset={sideOffset} {...props} />
 }
 

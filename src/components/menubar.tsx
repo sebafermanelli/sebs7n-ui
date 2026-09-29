@@ -231,7 +231,7 @@ function MenubarSubTrigger({ className, inset, children, ...props }: MenubarSubT
  * `right` porque es el default de Base UI para submenús y se da vuelta solo en
  * un documento en árabe o hebreo.
  */
-function MenubarSubContent({ align = "start", alignOffset = -4, side = "inline-end", sideOffset = 2, ...props }: MenubarContentProps) {
+function MenubarSubContent({ align = "start", alignOffset = -5, side = "inline-end", sideOffset = 2, ...props }: MenubarContentProps) {
   return <MenubarContent data-slot="menubar-sub-content" align={align} alignOffset={alignOffset} side={side} sideOffset={sideOffset} {...props} />
 }
 
