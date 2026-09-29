@@ -55,7 +55,7 @@ export function DemoSlot({ id, eager = false }: { id: string; eager?: boolean })
     return () => observer.disconnect()
   }, [eager])
 
-  if (!Demo) return <p className="text-copy-14 text-red-900">Falta la demo {id}.</p>
+  if (!Demo) return <p className="text-callout text-red-900">Falta la demo {id}.</p>
   return (
     // Mismo centrado que el marco de `Example`, para que la demo quede donde quedaba.
     <div className="flex w-full items-center justify-center" ref={marco}>

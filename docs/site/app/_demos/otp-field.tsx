@@ -22,7 +22,7 @@ export function VerificarMail() {
         <FieldDescription>Te lo mandamos a hola@acme.com. Probá con 482913.</FieldDescription>
       </Field>
       {codigo.length === 6 && (
-        <p className={verificado ? "text-copy-13 text-blue-900" : "text-copy-13 text-red-900"}>
+        <p className={verificado ? "text-callout text-blue-900" : "text-callout text-red-900"}>
           {verificado ? "Mail verificado." : "Ese código no es el que mandamos."}
         </p>
       )}
@@ -46,7 +46,7 @@ export function DosFactores() {
         <FieldError />
       </Field>
       <Button type="submit">Entrar</Button>
-      {enviado && <p className="text-copy-13 text-label-secondary">Se envió {enviado}.</p>}
+      {enviado && <p className="text-callout text-label-secondary">Se envió {enviado}.</p>}
     </Form>
   )
 }

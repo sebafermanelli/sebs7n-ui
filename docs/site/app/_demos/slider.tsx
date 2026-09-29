@@ -39,7 +39,7 @@ export function Rango() {
         step={25_000}
         value={precio}
       />
-      <p className="text-copy-13 text-label-secondary">
+      <p className="text-callout text-label-secondary">
         De {formato.format(precio[0])} a {formato.format(precio[1])}
       </p>
     </div>

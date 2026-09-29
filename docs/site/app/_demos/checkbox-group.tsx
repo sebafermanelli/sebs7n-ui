@@ -32,7 +32,7 @@ export function ServiciosDelPaquete() {
         <FieldError />
       </Field>
       <Button type="submit">Cotizar</Button>
-      {enviado && <p className="text-copy-13-mono text-label-secondary">servicios: {JSON.stringify(enviado)}</p>}
+      {enviado && <p className="text-mono-callout text-label-secondary">servicios: {JSON.stringify(enviado)}</p>}
     </Form>
   )
 }

@@ -10,23 +10,23 @@ export function PropsTable({ exports }: { exports: Exportado[] }) {
     <div className="flex flex-col gap-8">
       {exports.map((exportado) => (
         <div className="flex flex-col gap-3" key={exportado.name}>
-          <h3 className="scroll-mt-24 text-heading-16 text-label" id={`props-${exportado.name}`}>
+          <h3 className="scroll-mt-24 text-headline text-label" id={`props-${exportado.name}`}>
             {exportado.name}
           </h3>
           {exportado.bases.length > 0 && (
-            <p className="text-copy-14 text-label-secondary">
+            <p className="text-callout text-label-secondary">
               Hereda las props de{" "}
               {exportado.bases.map((base, indice) => (
                 <span key={base}>
                   {indice > 0 && " y "}
-                  <code className="rounded-sm bg-gray-100 px-1 py-0.5 text-copy-13-mono text-label">{base}</code>
+                  <code className="rounded-sm bg-gray-100 px-1 py-0.5 text-mono-body text-label">{base}</code>
                 </span>
               ))}
               .
             </p>
           )}
           {exportado.props.length === 0 ? (
-            <p className="text-copy-14 text-label-secondary">Sin props propias: pasa todo al primitivo.</p>
+            <p className="text-callout text-label-secondary">Sin props propias: pasa todo al primitivo.</p>
           ) : (
             <div className="overflow-x-auto">
               <Table density="compact">
@@ -42,19 +42,19 @@ export function PropsTable({ exports }: { exports: Exportado[] }) {
                   {exportado.props.map((prop) => (
                     <TableRow key={prop.name}>
                       <TableCell className="py-3 align-top whitespace-normal">
-                        <code className="text-copy-13-mono text-label">{prop.name}</code>
+                        <code className="text-mono-body text-label">{prop.name}</code>
                         {prop.required && (
-                          <span className="ml-1 text-copy-13 text-red-900" title="Obligatoria">
+                          <span className="ml-1 text-callout text-red-900" title="Obligatoria">
                             *
                           </span>
                         )}
                       </TableCell>
                       <TableCell className="py-3 align-top whitespace-normal">
-                        <code className="text-copy-13-mono break-words text-label-secondary">{prop.type}</code>
+                        <code className="text-mono-body break-words text-label-secondary">{prop.type}</code>
                       </TableCell>
                       <TableCell className="py-3 align-top whitespace-normal">
                         {prop.default ? (
-                          <code className="text-copy-13-mono text-label-secondary">{prop.default}</code>
+                          <code className="text-mono-body text-label-secondary">{prop.default}</code>
                         ) : (
                           <span className="text-label-tertiary">—</span>
                         )}

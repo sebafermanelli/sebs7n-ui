@@ -25,7 +25,7 @@ export function Tamanos() {
  */
 export function ConNombre() {
   return (
-    <div className="flex items-center gap-2 text-copy-14 text-label-secondary">
+    <div className="flex items-center gap-2 text-callout text-label-secondary">
       <Spinner label="Buscando facturas" size="sm" />
       <span aria-hidden="true">Buscando facturas…</span>
     </div>

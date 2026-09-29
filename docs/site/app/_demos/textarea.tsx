@@ -11,7 +11,7 @@ export function Basico() {
     <div className="flex w-full max-w-sm flex-col gap-2">
       <Label htmlFor={id}>Notas internas</Label>
       <Textarea id={id} placeholder="No se muestran al cliente." rows={4} />
-      <p className="text-copy-13 text-label-secondary">Admite saltos de línea. No se envía por email.</p>
+      <p className="text-callout text-label-secondary">Admite saltos de línea. No se envía por email.</p>
     </div>
   )
 }

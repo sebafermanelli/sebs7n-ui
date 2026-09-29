@@ -154,13 +154,13 @@ export function IconCatalog({ nombres, iniciales }: { nombres: string[]; inicial
           <ToggleGroupItem value="md">20</ToggleGroupItem>
           <ToggleGroupItem value="lg">24</ToggleGroupItem>
         </ToggleGroup>
-        <span aria-live="polite" className="text-label-13 text-label-secondary">
+        <span aria-live="polite" className="text-callout text-label-secondary">
           {resultados.length === todos.length ? `${todos.length} íconos` : `${resultados.length} de ${todos.length}`}
         </span>
       </div>
 
       {visibles.length === 0 ? (
-        <p className="py-12 text-center text-copy-14 text-label-secondary">Nada con «{diferida}». Probá en inglés: lucide nombra en inglés.</p>
+        <p className="py-12 text-center text-callout text-label-secondary">Nada con «{diferida}». Probá en inglés: lucide nombra en inglés.</p>
       ) : (
         grillaConTooltips
       )}

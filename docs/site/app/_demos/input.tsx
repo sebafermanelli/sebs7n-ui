@@ -48,7 +48,7 @@ export function Error() {
         value={valor}
       />
       {invalido && (
-        <p className="text-copy-13 text-red-900" id={`${id}-error`}>
+        <p className="text-callout text-red-900" id={`${id}-error`}>
           Escribí un email válido, con dominio.
         </p>
       )}

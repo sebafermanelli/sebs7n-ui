@@ -32,8 +32,8 @@ export default async function SystemPage({ params }: Params) {
       <div className="flex gap-10">
         <article className="min-w-0 flex-1 pb-24">
         <header className="flex flex-col gap-3 pb-8">
-          <h1 className="text-heading-40 text-label">{page.title}</h1>
-          <p className="text-copy-18 text-label-secondary">{page.description}</p>
+          <h1 className="text-large-title text-label">{page.title}</h1>
+          <p className="text-body text-label-secondary">{page.description}</p>
           <div className="flex gap-2">
             <MdLink href={`/docs/${page.slug}`} />
           </div>

@@ -14,7 +14,7 @@ export function Inline({ text }: { text: string }) {
     if (match.index > last) nodes.push(text.slice(last, match.index))
     if (match[1] !== undefined) {
       nodes.push(
-        <code className="rounded-sm bg-gray-100 px-1 py-0.5 text-copy-13-mono text-label" key={match.index}>
+        <code className="rounded-sm bg-gray-100 px-1 py-0.5 text-mono-body text-label" key={match.index}>
           {match[1]}
         </code>
       )

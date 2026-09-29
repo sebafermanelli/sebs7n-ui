@@ -29,10 +29,10 @@ export function Basico() {
             {indice > 0 && <Separator className="my-2" />}
             <div className="flex items-baseline justify-between gap-4">
               <div className="flex min-w-0 flex-col">
-                <span className="truncate text-copy-14 text-label">{movimiento.detalle}</span>
-                <span className="text-copy-13 text-label-secondary">{movimiento.fecha}</span>
+                <span className="truncate text-callout text-label">{movimiento.detalle}</span>
+                <span className="text-callout text-label-secondary">{movimiento.fecha}</span>
               </div>
-              <span className="shrink-0 text-copy-13-mono text-label-secondary">{movimiento.monto}</span>
+              <span className="shrink-0 text-mono-body text-label-secondary">{movimiento.monto}</span>
             </div>
           </div>
         ))}
@@ -65,7 +65,7 @@ export function DosEjes() {
         <thead>
           <tr>
             {columnas.map((columna) => (
-              <th className="text-label-12 whitespace-nowrap text-label-secondary" key={columna} scope="col">
+              <th className="text-footnote whitespace-nowrap text-label-secondary" key={columna} scope="col">
                 {columna}
               </th>
             ))}
@@ -75,7 +75,7 @@ export function DosEjes() {
           {filas.map((fila) => (
             <tr key={fila[0]}>
               {fila.map((celda) => (
-                <td className="text-copy-14 whitespace-nowrap text-label" key={celda}>
+                <td className="text-callout whitespace-nowrap text-label" key={celda}>
                   {celda}
                 </td>
               ))}
@@ -98,8 +98,8 @@ export function Horizontal() {
       <div className="flex w-max gap-3">
         {meses.map((mes, indice) => (
           <div className="flex w-40 flex-col gap-1 rounded-surface border border-separator bg-surface p-4" key={mes}>
-            <span className="text-label-12 text-label-secondary">{mes}</span>
-            <span className="text-heading-20 text-label">$ {(420 + indice * 37).toLocaleString("es-AR")}k</span>
+            <span className="text-footnote text-label-secondary">{mes}</span>
+            <span className="text-title-3 text-label">$ {(420 + indice * 37).toLocaleString("es-AR")}k</span>
           </div>
         ))}
       </div>

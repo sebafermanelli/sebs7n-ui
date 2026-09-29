@@ -127,10 +127,10 @@ export function Donut() {
               if (!viewBox || !("cx" in viewBox) || !("cy" in viewBox)) return null
               return (
                 <text dominantBaseline="middle" textAnchor="middle" x={viewBox.cx} y={viewBox.cy}>
-                  <tspan className="fill-gray-1000 text-heading-24 tabular-nums" x={viewBox.cx} y={viewBox.cy}>
+                  <tspan className="fill-gray-1000 text-title-2 tabular-nums" x={viewBox.cx} y={viewBox.cy}>
                     {total}
                   </tspan>
-                  <tspan className="fill-label-secondary text-label-12" x={viewBox.cx} y={(viewBox.cy ?? 0) + 22}>
+                  <tspan className="fill-label-secondary text-footnote" x={viewBox.cx} y={(viewBox.cy ?? 0) + 22}>
                     ventas
                   </tspan>
                 </text>

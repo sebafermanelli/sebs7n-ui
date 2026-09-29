@@ -20,12 +20,12 @@ export default async function RequestsPage() {
     <ViewTransition default="none" enter="page-in" exit="page-out">
       <div className="flex max-w-4xl flex-col gap-8 pb-24">
         <header className="flex flex-col gap-3">
-          <h1 className="text-heading-40 text-label">Pedidos</h1>
-          <p className="text-copy-18 text-label-secondary">
+          <h1 className="text-large-title text-label">Pedidos</h1>
+          <p className="text-body text-label-secondary">
             Los componentes que se pidieron, ordenados por votos. Para sumar el tuyo a uno que ya está, votalo con 👍 en GitHub; para uno nuevo, pedilo.
           </p>
           <a
-            className="w-fit rounded-full bg-label px-4 py-2 text-label-14 text-surface outline-none focus-visible:focus-ring"
+            className="w-fit rounded-full bg-label px-4 py-2 text-callout text-surface outline-none focus-visible:focus-ring"
             href={issueUrl("component-request")}
             rel="noreferrer"
             target="_blank"
@@ -36,7 +36,7 @@ export default async function RequestsPage() {
         {result.ok ? (
           <RequestsBoard open={result.open} released={result.released} />
         ) : (
-          <p className="text-copy-14 text-label-secondary">
+          <p className="text-callout text-label-secondary">
             No pude traer los pedidos ahora.{" "}
             <a className="text-label underline underline-offset-4" href={`${REPO}/issues?q=label%3Arequest`} rel="noreferrer" target="_blank">
               Miralos en GitHub

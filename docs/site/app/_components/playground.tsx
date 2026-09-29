@@ -85,7 +85,7 @@ export function Playground() {
           {/* Ancho fijo: el rótulo cambia con el tema («claro», «oscuro») y, midiendo lo que mide su
               texto, la columna corría todo lo que tiene a la derecha al cambiar de tema. */}
           <div className="flex w-52 flex-col gap-2">
-            <span className="text-label-14 whitespace-nowrap text-label">Color de marca · tema {oscuro ? "oscuro" : "claro"}</span>
+            <span className="text-callout whitespace-nowrap text-label">Color de marca · tema {oscuro ? "oscuro" : "claro"}</span>
             <ColorPicker
               aria-label={`Color de marca (tema ${oscuro ? "oscuro" : "claro"})`}
               className="w-40"
@@ -101,7 +101,7 @@ export function Playground() {
             />
           </div>
           <div className="flex flex-col gap-2">
-            <span className="text-label-14 text-label">Tema</span>
+            <span className="text-callout text-label">Tema</span>
             <ThemeSwitcher />
           </div>
           <div className="flex h-8 items-center gap-2">
@@ -130,12 +130,12 @@ export function Playground() {
 
       <section aria-labelledby="pg-css" className="flex flex-col gap-3">
         <div className="flex flex-col gap-1">
-          <h2 className="text-heading-24 text-label" id="pg-css">
+          <h2 className="text-title-2 text-label" id="pg-css">
             Tu configuración
           </h2>
-          <p className="text-copy-14 text-label-secondary">
-            Pegala en el <code className="text-copy-13-mono">globals.css</code> de la app, después del{" "}
-            <code className="text-copy-13-mono">@import &quot;sebs7n-ui/theme.css&quot;</code>. Queda guardada en este
+          <p className="text-callout text-label-secondary">
+            Pegala en el <code className="text-mono-body">globals.css</code> de la app, después del{" "}
+            <code className="text-mono-body">@import &quot;sebs7n-ui/theme.css&quot;</code>. Queda guardada en este
             navegador: el resto del sitio se ve con ella.
           </p>
         </div>
@@ -174,10 +174,10 @@ function Muestra() {
     <TooltipProvider>
       <section aria-labelledby="pg-muestra" className="flex flex-col gap-4">
         <div className="flex flex-col gap-1">
-          <h2 className="text-heading-24 text-label" id="pg-muestra">
+          <h2 className="text-title-2 text-label" id="pg-muestra">
             Cómo se ve
           </h2>
-          <p className="text-copy-14 text-label-secondary">
+          <p className="text-callout text-label-secondary">
             Todo lo de abajo son los componentes del paquete, sin una clase de más. Abrí el menú y el diálogo, arrastrá el
             slider, tabulá por el formulario.
           </p>
@@ -394,7 +394,7 @@ function Muestra() {
           <TableBody>
             {FACTURAS.map((factura) => (
               <TableRow key={factura.id}>
-                <TableCell className="text-label-13-mono">{factura.id}</TableCell>
+                <TableCell className="text-mono-body">{factura.id}</TableCell>
                 <TableCell>{factura.cliente}</TableCell>
                 <TableCell>{factura.concepto}</TableCell>
                 <TableCell>

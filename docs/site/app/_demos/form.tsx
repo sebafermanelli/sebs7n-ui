@@ -29,7 +29,7 @@ export function Valores() {
       </Field>
       <Button type="submit">Enviar</Button>
       {enviado && (
-        <pre className="rounded-control bg-fill-1 p-3 text-copy-13-mono text-label-secondary">
+        <pre className="rounded-control bg-fill-1 p-3 text-mono-callout text-label-secondary">
           {JSON.stringify(enviado, null, 2)}
         </pre>
       )}

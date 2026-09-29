@@ -15,22 +15,22 @@
    habla el sitio. */
 @layer components {
   .prose {
-    @apply text-copy-16 text-label;
+    @apply text-body text-label;
   }
   .prose > * + * {
     @apply mt-4;
   }
   .prose h2 {
-    @apply mt-10 scroll-mt-24 border-t border-separator pt-8 text-heading-24 text-label;
+    @apply mt-10 scroll-mt-24 border-t border-separator pt-8 text-title-2 text-label;
   }
   .prose h3 {
-    @apply mt-8 scroll-mt-24 text-heading-20 text-label;
+    @apply mt-8 scroll-mt-24 text-title-3 text-label;
   }
   .prose h4 {
-    @apply mt-6 scroll-mt-24 text-heading-16 text-label;
+    @apply mt-6 scroll-mt-24 text-headline text-label;
   }
   .prose p {
-    @apply text-copy-16 text-label;
+    @apply text-body text-label;
   }
   .prose a {
     @apply rounded-sm text-brand-900 underline underline-offset-4 transition-control hover:text-brand-1000 focus-visible:focus-ring;
@@ -49,19 +49,19 @@
     @apply mt-2;
   }
   .prose blockquote {
-    @apply rounded-surface border border-separator bg-fill-1 px-4 py-3 text-copy-14 text-label-secondary;
+    @apply rounded-surface border border-separator bg-fill-1 px-4 py-3 text-callout text-label-secondary;
   }
   .prose blockquote p {
-    @apply text-copy-14 text-label-secondary;
+    @apply text-callout text-label-secondary;
   }
   .prose code {
-    @apply rounded-sm bg-fill-1 px-1 py-0.5 text-copy-13-mono text-label;
+    @apply rounded-sm bg-fill-1 px-1 py-0.5 text-mono-body text-label;
   }
   .prose pre {
     @apply overflow-x-auto rounded-surface border border-separator bg-fill-1 p-4;
   }
   .prose pre code {
-    @apply bg-transparent p-0 text-copy-13-mono text-label;
+    @apply bg-transparent p-0 text-mono-body text-label;
   }
   .prose table {
     @apply w-full border-collapse text-left;
@@ -70,10 +70,10 @@
     @apply border-b border-separator bg-fill-1;
   }
   .prose th {
-    @apply px-3 py-2 text-label-12 text-label-secondary;
+    @apply px-3 py-2 text-footnote text-label-secondary;
   }
   .prose td {
-    @apply border-b border-separator px-3 py-2 align-top text-copy-14 text-label;
+    @apply border-b border-separator px-3 py-2 align-top text-callout text-label;
   }
   .prose hr {
     @apply border-separator;
