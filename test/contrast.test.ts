@@ -215,10 +215,19 @@ describe("Anillo de foco interior en las cuatro marcas (WCAG 1.4.11)", () => {
     "fill-1 sobre la superficie": flattenAlpha(paleta[t]["--sf-fill-1"]!, paleta[t]["--sf-surface"]!),
     "fill-2 sobre la superficie": flattenAlpha(paleta[t]["--sf-fill-2"]!, paleta[t]["--sf-surface"]!),
   })
+  // Revisión de R4 (M5): el botón `plain` apretado pinta el tinte de la marca (`highlight`) debajo
+  // del anillo, y ahí el anillo es del mismo matiz. Se mide sobre la superficie, como el resto.
+  const tinteHighlight = (t: "light" | "dark") => {
+    const inicio = css.indexOf(t === "light" ? ":root {" : ".dark {")
+    const cuerpo = css.slice(inicio, css.indexOf("\n  }", inicio))
+    const propio = /--sf-highlight: color-mix\(in srgb, var\(--sf-brand-700\) (\d+)%/.exec(cuerpo)
+    return Number((propio ?? /--sf-highlight: color-mix\(in srgb, var\(--sf-brand-700\) (\d+)%/.exec(css)!)[1]) / 100
+  }
   for (const [marca, temas] of Object.entries(marcas)) {
     for (const [theme, { base }] of Object.entries(temas)) {
       const t = theme as "light" | "dark"
-      for (const [donde, bg] of Object.entries(capas(t))) {
+      const highlight = composite(hexOfOklch(base as unknown as Oklch), tinteHighlight(t), paleta[t]["--sf-surface"]!)
+      for (const [donde, bg] of Object.entries({ ...capas(t), "highlight (plain apretado)": highlight })) {
         const anillo = composite(anilloDe(t, base), alfa(t), bg)
         it(`${marca} (${theme}): el anillo (${anillo}) sobre ${donde} ${bg} llega a 3:1`, () => {
           expect(ratio(anillo, bg)).toBeGreaterThanOrEqual(3)
