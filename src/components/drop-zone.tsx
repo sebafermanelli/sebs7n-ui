@@ -59,7 +59,10 @@ type DropZoneProps = Omit<React.ComponentProps<"div">, "children" | "onChange"> 
   actionsRef?: React.Ref<DropZoneHandle>
   /** Los tipos que acepta, como el `accept` de un `<input type="file">`: `".pdf,image/*"`. */
   accept?: string
-  /** Más de un archivo. Sin `multiple`, uno nuevo reemplaza al anterior. */
+  /**
+   * Más de un archivo. Sin `multiple`, uno nuevo reemplaza al anterior y gana la última tanda: si una
+   * elección (o un soltar) termina de validar después de otra más nueva, se descarta.
+   */
   multiple?: boolean
   /** El tamaño máximo de cada archivo, en bytes. */
   maxSize?: number

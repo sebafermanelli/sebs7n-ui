@@ -1065,7 +1065,7 @@ export const COMPONENTS = {
       "Los tamaños van en base 1024 (`maxSize={20 * 1024 * 1024}` dice «20 MB»); `formatSize` los escribe de otra forma, en la lista y en el error.",
       "Con `name`, los archivos viajan con el `<form>` en un `<input type=\"file\">`, también los que llegaron arrastrando: sirve igual para una Server Action. Necesita `DataTransfer` (todos los navegadores actuales): sin él, el input queda como lo dejó el diálogo.",
       "`scope=\"window\"`: mientras se arrastra un archivo, toda la ventana es la zona (una app de una sola tarea, como un conversor). Deshabilitada sigue montada como guardia: soltar un archivo no lo abre en la pestaña (el cursor dice que ahí no se suelta).",
-      "Sin `multiple`, uno nuevo reemplaza al anterior; si se sueltan varios, entra el primero y el resto se avisa. `accept=\"*/*\"` acepta todo. Solo por subpath (`sebs7n-ui/drop-zone`): no está en el barrel, por peso.",
+      "Sin `multiple`, uno nuevo reemplaza al anterior y gana la última tanda (si una elección termina de validar después de otra más nueva, se descarta); si se sueltan varios, entra el primero y el resto se avisa. `accept=\"*/*\"` acepta todo. Solo por subpath (`sebs7n-ui/drop-zone`): no está en el barrel, por peso.",
     ],
     props: {
       DropZone: {
@@ -1307,8 +1307,8 @@ export const COMPONENTS = {
     ],
     usage: [
       "Texto libre: correos a copiar, palabras clave, etiquetas de un producto. Para elegir de una lista, `Combobox multiple`.",
-      "Pegar una lista la separa por comas, punto y coma, tabs y renglones.",
-      "`validate(tag, tags)` valida cada una antes de agregarla; `max` pone el tope. Las repetidas no entran.",
+      "Pegar inserta en el cursor, como en cualquier campo, y después separa por comas, punto y coma, tabs y renglones.",
+      "`validate(tag, tags)` valida cada una antes de agregarla; `max` pone el tope. Las repetidas no entran, sin importar mayúsculas («Urgente» si ya está «urgente»); una lista controlada con repetidas se muestra igual.",
       "Con `name` (o el del `Field`) cada etiqueta viaja como un campo del form, como un grupo de checkboxes; en `onFormSubmit` de `Form` llega la lista. `required` no deja enviar sin etiquetas.",
       "Solo por subpath (`sebs7n-ui/tags-input`).",
     ],
@@ -1341,7 +1341,7 @@ export const COMPONENTS = {
       "La estrella llena (`amber-900`) y la vacía (`label-tertiary`) llegan a 3:1 sobre la página y la card en los dos temas. Cada estrella tiene 24 de área de toque aunque mida 16.",
     ],
     usage: [
-      "`readOnly` para mostrar el promedio de una reseña, con fracciones (la estrella se llena en parte). Como entrada, solo valores enteros: media estrella es más precisión de la que alguien sabe dar.",
+      "`readOnly` para mostrar el promedio de una reseña, con fracciones (la estrella se llena en parte). Es un dato mostrado: no se registra en `Form` ni viaja en el form, aunque tenga `name`. Como entrada, solo valores enteros: media estrella es más precisión de la que alguien sabe dar.",
       "Con `name` viaja en el form («4», vacío sin valor). Dentro de un `Field`, `Form` manda el número y, con `required`, no deja enviar sin valor y enfoca la estrella.",
       "`size`: estrellas de 16, 20 (default) o 24; `max` cambia la escala.",
       "Solo por subpath (`sebs7n-ui/rating`).",
