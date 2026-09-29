@@ -23,7 +23,7 @@ function AiIcon({ className, ...props }: React.ComponentProps<typeof SparklesIco
 // Solo los colores de la IA sobre el Button del sistema: mismos tamaños, mismo foco, mismo
 // apagado, misma espera. `not-data-disabled:` para que el hover no le gane al estado apagado.
 const OUTLINE =
-  "border-ai/40 text-ai not-data-disabled:hover:border-ai/60 not-data-disabled:hover:bg-ai/8 not-data-disabled:active:bg-ai/12"
+  "bg-transparent border-ai/40 text-ai not-data-disabled:hover:border-ai/60 not-data-disabled:hover:bg-ai/8 not-data-disabled:active:bg-ai/12"
 const SOLID =
   "bg-ai-solid text-white shadow-ai not-data-disabled:hover:bg-ai-solid-hover not-data-disabled:active:bg-ai-solid-hover [&_svg]:text-current focus-visible:focus-ring-inverse [--sf-focus-inverse:white]"
 
@@ -50,7 +50,7 @@ function AiButton<S extends ButtonSize = ButtonSize>({ variant = "outline", clas
   return (
     <Button
       data-ai={variant}
-      variant={variant === "solid" ? "default" : "outline"}
+      variant={variant === "solid" ? "default" : "ghost"}
       className={cn(variant === "solid" ? SOLID : OUTLINE, className)}
       {...(props as ButtonProps)}
     />

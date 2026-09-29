@@ -39,7 +39,7 @@ describe("selectionSecondaryClassName: lo que tiene color propio adentro de un Ã
   it("MenuItem resaltado no cuenta", async () => {
     render(
       <DropdownMenu>
-        <DropdownMenuTrigger render={<Button variant="outline" />}>Acciones</DropdownMenuTrigger>
+        <DropdownMenuTrigger render={<Button variant="secondary" />}>Acciones</DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuItem>
             Guardar <Secundario />

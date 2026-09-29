@@ -207,8 +207,8 @@ function AlertDialogAction({ variant = "default", className, ...props }: AlertDi
     <Button
       data-alert-action={variant}
       data-slot="alert-dialog-action"
-      variant={destructive || hayDestructiva ? "secondary" : "accent"}
-      className={cn(destructive && "text-red-ink", className)}
+      variant={destructive ? "destructive" : hayDestructiva ? "secondary" : "default"}
+      className={className}
       {...props}
     />
   )
@@ -228,7 +228,7 @@ function AlertDialogCancel({ className, size, children = "Cancelar", ...props }:
   return (
     <AlertDialogPrimitive.Close
       data-slot="alert-dialog-cancel"
-      render={<Button variant={destructive ? "accent" : "secondary"} size={size} className={className} />}
+      render={<Button variant={destructive ? "default" : "secondary"} size={size} className={className} />}
       {...props}
     >
       {children}

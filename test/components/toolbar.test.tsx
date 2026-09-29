@@ -167,10 +167,10 @@ describe("Toolbar", () => {
 
   it("el render pone los estilos y no hay dos juegos de clases peleando", () => {
     render(<Formato />)
-    // Sin `render`: el Button del sistema en ghost.
+    // Sin `render`: el botón de ícono de la toolbar de iCloud (`plain`): 28, glifo en el acento.
     const suelto = control("Insertar enlace")
     expect(suelto).toHaveAttribute("data-slot", "toolbar-button")
-    expect(suelto).toHaveClass("size-7", "hover:bg-fill-2")
+    expect(suelto).toHaveClass("size-7", "hover:bg-fill-2", "[&_svg]:text-brand-900")
 
     // Con `render={<ToggleGroupItem />}`: el chip de Toggle, sin nada del Button.
     const negrita = control("Negrita")

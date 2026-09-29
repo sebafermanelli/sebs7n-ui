@@ -151,16 +151,17 @@ describe("Anillo de foco interior en las cuatro marcas (WCAG 1.4.11)", () => {
 
   // Sobre un fondo de marca (botón `accent`, casilla marcada) el anillo sería del mismo color que
   // el fondo: ahí va el color de contraste de la marca, el par que `brand-contrast.test.ts` ya
-  // lleva a 4,5:1. Sobre el rojo destructivo, el blanco del botón.
+  // lleva a 4,5:1.
   it("sobre la marca, el anillo es el color de contraste (focus-ring-inverse)", () => {
     const util = css.slice(css.indexOf("@utility focus-ring-inverse {"), css.indexOf("\n}", css.indexOf("@utility focus-ring-inverse {")))
     expect(util).toContain("--tw-inset-ring-shadow: inset 0 0 0 3px var(--sf-focus-inverse, var(--sf-brand-fg));")
     expect(util).toContain(`box-shadow: ${COMPUESTA};`)
-    for (const variant of ["accent", "destructive"] as const) {
+    for (const variant of ["default", "accent"] as const) {
       expect(buttonVariants({ variant }).split(" "), variant).toContain("focus-visible:focus-ring-inverse")
       expect(buttonVariants({ variant }).split(" "), variant).not.toContain("focus-visible:focus-ring")
     }
-    expect(buttonVariants({ variant: "destructive" })).toContain("[--sf-focus-inverse:var(--sf-button-error-fg)]")
+    // El destructivo de R4 es gris (fill-2): lleva el anillo del acento, que llega a 3:1 sobre fill-2.
+    expect(buttonVariants({ variant: "destructive" }).split(" ")).toContain("focus-visible:focus-ring")
     for (const file of ["checkbox.tsx", "radio-group.tsx"]) {
       expect(readFileSync(join(root, "src/components", file), "utf8"), file).toContain("data-checked:focus-visible:focus-ring-inverse")
     }
@@ -260,20 +261,14 @@ describe("Badge y Tag sólidos: la tinta sobre su relleno (WCAG 1.4.3)", () => {
   }
 })
 
+// El destructivo de iCloud (R4) es gris con el texto rojo (`block.secondary.destructive`) o el texto
+// rojo sin fondo: la tinta es `red-ink` en los dos, y sus números sobre fill-2/fill-3 y el panel
+// están en los bloques de la alerta y del menú, más abajo. Acá se ata la variante a esa tinta.
 describe("Button variant=\"destructive\" (WCAG 1.4.3, texto normal)", () => {
-  for (const theme of ["light", "dark"] as const) {
-    const fg = heredado(theme, "--sf-button-error-fg")
-    const estados = {
-      reposo: paleta[theme]["--sf-red-800"]!,
-      hover: heredado(theme, "--sf-button-error-hover"),
-      active: heredado(theme, "--sf-button-error-active"),
-    }
-    for (const [estado, bg] of Object.entries(estados)) {
-      it(`${theme} · ${estado}: ${fg} sobre ${bg} llega a 4.5:1`, () => {
-        expect(ratio(fg, bg)).toBeGreaterThanOrEqual(4.5)
-      })
-    }
-  }
+  it("destructive y destructive-plain escriben en red-ink", () => {
+    expect(buttonVariants({ variant: "destructive" }).split(" ")).toEqual(expect.arrayContaining(["bg-fill-2", "text-red-ink"]))
+    expect(buttonVariants({ variant: "destructive-plain" }).split(" ")).toContain("text-red-ink")
+  })
 })
 
 // La tinta de cada paleta (`--color-*-ink`) sale de una sola mezcla de `-900` y `-1000`. La usaban

@@ -3,29 +3,34 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "../lib/utils.js"
 
 const buttonVariantsBase = cva(
-  "relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-control border border-transparent whitespace-nowrap outline-none select-none transition-surface focus-visible:focus-ring data-disabled:cursor-not-allowed data-disabled:border-separator data-disabled:bg-fill-1 data-disabled:text-label-tertiary [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  // Deshabilitado = opacidad .4 y nada más, como los botones de iCloud: el botón apagado sigue
+  // siendo el mismo botón, con su color. Los estados inactivos quedan fuera de WCAG 1.4.3.
+  "relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-control border border-transparent whitespace-nowrap outline-none select-none transition-surface focus-visible:focus-ring data-disabled:cursor-not-allowed data-disabled:opacity-40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
+      // Los botones de iCloud (R4, medidos en su CSS): la jerarquía es acento sólido → gris →
+      // texto de acento → ícono. No hay botón con borde ni rojo sólido. Planos: sin sombra ni
+      // hundimiento; el estado lo dice el fondo.
       variant: {
-        // Planos, como en iCloud (2.0): sin sombra, sin brillo y sin hundirse al apretar; el
-        // estado lo dice el fondo. `default` es el label primario (negro en claro, blanco en
-        // oscuro) con el texto del color de la superficie.
-        default:
-          "bg-label text-surface hover:bg-button-primary-hover",
-        // `outline`: borde y sin fondo. iCloud no tiene botón con borde (R4 decide si queda); vive adentro de una
-        // superficie que ya lo tiene.
-        outline:
-          "border-separator-strong bg-transparent text-label hover:bg-fill-1 active:bg-fill-2",
-        // El gris de iCloud: `fill-2` en reposo y `fill-3` con el puntero, el hover de un botón
-        // en la barra global. `ghost` en reposo no tiene superficie: es texto.
-        secondary:
-          "bg-fill-2 text-label hover:bg-fill-3 active:bg-fill-3",
+        // El primario (`block.primary`): el acento sólido con su color de contraste.
+        default: "bg-brand-700 text-brand-contrast hover:bg-brand-800 active:bg-brand-800 focus-visible:focus-ring-inverse",
+        /** @deprecated Desde 2.0 es lo mismo que `default` (el primario de iCloud); se va en 3.0. */
+        accent: "bg-brand-700 text-brand-contrast hover:bg-brand-800 active:bg-brand-800 focus-visible:focus-ring-inverse",
+        // El gris (`block.secondary`): `fill-2` y `fill-3` con el puntero.
+        secondary: "bg-fill-2 text-label hover:bg-fill-3 active:bg-fill-3",
+        // El `push` de iCloud: sin fondo, texto semibold en el acento, `fill-2` con el puntero y el
+        // tinte de la marca al apretar. El texto va en `brand-ink` porque el hover es un relleno
+        // (brand-900 no llega a 4,5:1 sobre fill-2 en claro con todas las marcas); el glifo en
+        // `brand-900`, el azul de la toolbar de Drive (3:1). Ver test/contrast.test.ts.
+        plain: "font-semibold text-brand-ink hover:bg-fill-2 active:bg-highlight [&_svg]:text-brand-900",
+        // El `push neutral`: lo mismo con el texto `label` (la X de un diálogo, la barra global).
         ghost: "text-label hover:bg-fill-2 active:bg-fill-3",
-        accent:
-          "bg-brand-700 text-brand-contrast hover:bg-brand-800 active:bg-brand-800 focus-visible:focus-ring-inverse",
-        destructive:
-          "bg-red-800 text-button-error-fg hover:bg-button-error-hover active:bg-button-error-active focus-visible:focus-ring-inverse [--sf-focus-inverse:var(--sf-button-error-fg)]",
-        link: "h-auto! rounded-sm border-0 px-0! text-brand-900 underline-offset-4 hover:text-brand-1000 hover:underline data-disabled:bg-transparent",
+        // `block.secondary.destructive`: gris con el texto rojo. `red-ink` llega a 4,5:1 sobre fill-2
+        // y fill-3 en los dos temas.
+        destructive: "bg-fill-2 text-red-ink hover:bg-fill-3 active:bg-fill-3",
+        // `push.destructive`: el texto rojo sin fondo («Delete», al final de una lista).
+        "destructive-plain": "font-semibold text-red-ink hover:bg-fill-2 active:bg-fill-3",
+        link: "h-auto! rounded-sm border-0 px-0! text-brand-900 underline-offset-4 hover:text-brand-1000 hover:underline",
       },
       size: {
         // La escala que comparten campos y botones (revisión visual de R1): 28, 36 y 40. 36 es el
@@ -36,9 +41,9 @@ const buttonVariantsBase = cva(
         md: "h-9 px-3 text-callout",
         lg: "h-10 px-3.5 text-callout",
         // Los de ícono son los de iCloud: 28 el de una barra de herramientas y el de cerrar un
-        // diálogo, 36 el de la barra global. El de 40 lleva el glifo de 20.
+        // diálogo (glifo 16; iCloud 17), 36 el de la barra global (glifo 18) y 40 con el de 20.
         "icon-sm": "size-7",
-        "icon-md": "size-9",
+        "icon-md": "size-9 [&_svg:not([class*='size-'])]:size-4.5",
         "icon-lg": "size-10 [&_svg:not([class*='size-'])]:size-5",
       },
       /**
@@ -61,7 +66,7 @@ const buttonVariantsBase = cva(
       // `::after` de 44 px taparía la línea de arriba y la de abajo. Va acá y no en la base porque
       // una clase de la base no se puede sacar desde una variante.
       {
-        variant: ["default", "outline", "secondary", "ghost", "accent", "destructive"],
+        variant: ["default", "accent", "secondary", "plain", "ghost", "destructive", "destructive-plain"],
         className: "touch-target",
       },
       // Un escalón más de aire, por tamaño. `lg` ya es ancho, así que sube

@@ -97,8 +97,8 @@ function Toolbar({ className, onKeyDown, variant = "glass", ...props }: ToolbarP
  *
  * ```tsx
  * <ToolbarButton render={<Toggle />} aria-label="Negrita" />
- * <ToolbarButton render={<Button variant="outline" size="sm" />}>Publicar</ToolbarButton>
- * <ToolbarButton render={<DropdownMenuTrigger render={<Button variant="ghost" size="icon-sm" />} />} />
+ * <ToolbarButton render={<Button variant="secondary" size="sm" />}>Publicar</ToolbarButton>
+ * <ToolbarButton render={<DropdownMenuTrigger render={<Button variant="plain" size="icon-sm" />} />} />
  * ```
  *
  * Nunca hay dos juegos de clases peleando: el `className` que llega acá se
@@ -122,7 +122,7 @@ function ToolbarButton({ className, render, "aria-label": ariaLabel, ...props }:
       data-slot="toolbar-button"
       className={className}
       aria-label={ariaLabel}
-      render={render ?? <Button size="icon-sm" variant="ghost" aria-label={ariaLabel ?? ""} />}
+      render={render ?? <Button size="icon-sm" variant="plain" aria-label={ariaLabel ?? ""} />}
       {...props}
     />
   )

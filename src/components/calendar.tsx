@@ -216,12 +216,12 @@ function Calendar(props: CalendarProps) {
   const sinAnterior = min != null && compareDays(addDays(month, -1), min) < 0
   const sinSiguiente = max != null && compareDays(addMonths(month, cuantos), max) > 0
   const anterior = (
-    <Button aria-label={labels.previousMonth} disabled={sinAnterior} onClick={() => mostrar(addMonths(month, -1))} size="icon-sm" variant="ghost">
+    <Button aria-label={labels.previousMonth} disabled={sinAnterior} onClick={() => mostrar(addMonths(month, -1))} size="icon-sm" variant="plain">
       <ChevronLeftIcon />
     </Button>
   )
   const siguiente = (
-    <Button aria-label={labels.nextMonth} disabled={sinSiguiente} onClick={() => mostrar(addMonths(month, 1))} size="icon-sm" variant="ghost">
+    <Button aria-label={labels.nextMonth} disabled={sinSiguiente} onClick={() => mostrar(addMonths(month, 1))} size="icon-sm" variant="plain">
       <ChevronRightIcon />
     </Button>
   )

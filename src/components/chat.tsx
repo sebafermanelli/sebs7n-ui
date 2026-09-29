@@ -268,7 +268,7 @@ function ChatError({ className, onRetry, labels: labelsProp, children, ...props 
     <div data-slot="chat-error" className={cn("flex flex-wrap items-center gap-2 text-callout text-red-900", className)} {...props}>
       <p role="alert">{children}</p>
       {onRetry && (
-        <Button onClick={onRetry} size="sm" type="button" variant="outline">
+        <Button onClick={onRetry} size="sm" type="button" variant="secondary">
           <RotateCwIcon aria-hidden="true" />
           {labels.retry}
         </Button>

@@ -198,7 +198,7 @@ describe("build", () => {
           'import { Button as BarrelButton } from "sebs7n-ui"',
           "",
           'const props: ButtonProps = { variant: "secondary" }',
-          'const className: string = cn(buttonVariants({ variant: "outline" }), "x")',
+          'const className: string = cn(buttonVariants({ variant: "plain" }), "x")',
           "export const Page = () => (",
           "  <Card><CardContent><Button {...props} className={className} /><BarrelButton /><ThemeSwitcher /></CardContent></Card>",
           ")",

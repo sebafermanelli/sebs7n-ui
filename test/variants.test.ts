@@ -16,10 +16,10 @@ const classes = (value: string) => value.split(/\s+/)
 // Las variantes exportadas se usan sobre <a>/<Link> sin pasar por el componente:
 // tienen que salir ya resueltas por tailwind-merge, o la clase base le gana a la de la variante.
 describe("variantes exportadas pasan por cn()", () => {
-  it("buttonVariants outline no deja el border-transparent de la base", () => {
-    const out = classes(buttonVariants({ variant: "outline" }))
-    expect(out).toContain("border-separator-strong")
-    expect(out).not.toContain("border-transparent")
+  it("buttonVariants: la clase de la variante le gana a la de la base", () => {
+    const out = classes(buttonVariants({ variant: "link" }))
+    expect(out).toContain("rounded-sm")
+    expect(out).not.toContain("rounded-control")
   })
 
   it("cardVariants selected no deja el border-separator-strong del default", () => {
@@ -58,12 +58,14 @@ describe("variantes exportadas pasan por cn()", () => {
    * mire tres semanas después. En 1.0 cambió una sola: `rounded-md` pasó a `rounded-full`; en 2.0 (iCloud) volvió al rectángulo, `rounded-control`.
    * En 2.0, la densidad de macOS: `h-10 px-4` pasó a `h-8 px-3`, y se sumó `touch-target`,
    * que va al final porque lo pone una variante compuesta: el `link` no lo lleva. Con iCloud (R1)
-   * el botón es plano: sin `shadow-button-inverted` ni hundimiento, y los colores son `label`. En la
-   * revisión visual de R1 el `md` pasó a `h-9`, el alto compartido con los campos.
+   * el botón es plano: sin `shadow-button-inverted` ni hundimiento. En la revisión visual de R1 el
+   * `md` pasó a `h-9`, el alto compartido con los campos. En R4 el default es el primario de iCloud
+   * —el acento sólido, antes el negro— y el deshabilitado es `opacity-40`; el anillo es el inverso
+   * (`focus-ring-inverse`), que `cn()` deja en lugar del de la base.
    */
   const SIN_SHAPE = {
     "default/md":
-      "relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-control border border-transparent whitespace-nowrap outline-none select-none transition-surface focus-visible:focus-ring data-disabled:cursor-not-allowed data-disabled:border-separator data-disabled:bg-fill-1 data-disabled:text-label-tertiary [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 bg-label text-surface hover:bg-button-primary-hover h-9 px-3 text-callout touch-target",
+      "relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-control border border-transparent whitespace-nowrap outline-none select-none transition-surface data-disabled:cursor-not-allowed data-disabled:opacity-40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 bg-brand-700 text-brand-contrast hover:bg-brand-800 active:bg-brand-800 focus-visible:focus-ring-inverse h-9 px-3 text-callout touch-target",
   } as const
 
   it("sin shape, buttonVariants emite la cadena fijada", () => {
@@ -90,24 +92,25 @@ describe("variantes exportadas pasan por cn()", () => {
   })
 
   it("shape rect devuelve el rectángulo, con el radio de los controles", () => {
-    for (const variant of ["default", "outline", "secondary", "ghost", "accent", "destructive"] as const) {
+    for (const variant of ["default", "secondary", "plain", "ghost", "destructive", "destructive-plain"] as const) {
       const out = classes(buttonVariants({ variant, shape: "rect" }))
       // tailwind-merge tiene que haber resuelto el radio: si sobrevive el de la base, cuál
       // gana depende del orden en la hoja compilada.
       expect(out.filter((c) => c.startsWith("rounded-")), variant).toEqual(["rounded-control"])
       // La variante sigue poniendo su color: `shape` es ortogonal.
-      expect(out.length, variant).toBeGreaterThan(20)
+      expect(out.length, variant).toBeGreaterThan(18)
     }
   })
 
   it("VariantProps sigue funcionando", () => {
     expectTypeOf<VariantProps<typeof buttonVariants>["variant"]>().toEqualTypeOf<
       | "default"
-      | "outline"
-      | "secondary"
-      | "ghost"
       | "accent"
+      | "secondary"
+      | "plain"
+      | "ghost"
       | "destructive"
+      | "destructive-plain"
       | "link"
       | null
       | undefined
@@ -138,7 +141,7 @@ describe("densidad macOS (2.0)", () => {
   })
 
   it("área táctil: el botón agranda su área con el dedo y el campo sube de alto", () => {
-    for (const variant of ["default", "outline", "secondary", "ghost", "accent", "destructive"] as const) {
+    for (const variant of ["default", "secondary", "plain", "ghost", "destructive", "destructive-plain"] as const) {
       expect(classes(buttonVariants({ variant })), variant).toContain("touch-target")
     }
     expect(classes(toggleVariants())).toContain("touch-target")

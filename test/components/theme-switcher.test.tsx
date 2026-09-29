@@ -111,7 +111,7 @@ describe("ThemeSwitcher", () => {
     render(
       withTheme(
         <DropdownMenu>
-          <DropdownMenuTrigger render={<Button variant="outline" />}>Cuenta</DropdownMenuTrigger>
+          <DropdownMenuTrigger render={<Button variant="secondary" />}>Cuenta</DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuItem>Ajustes</DropdownMenuItem>
             <ThemeSwitcher />

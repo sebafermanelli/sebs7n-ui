@@ -35,7 +35,7 @@ function Acciones({
   const [densidad, setDensidad] = React.useState("compacta")
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger render={<Button variant="outline" />}>Acciones</DropdownMenuTrigger>
+      <DropdownMenuTrigger render={<Button variant="secondary" />}>Acciones</DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuItem onClick={onGuardar}>
           Guardar

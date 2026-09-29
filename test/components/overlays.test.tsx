@@ -54,7 +54,7 @@ describe("Popover", () => {
   it("abre con click, panel con shadow-menu y sin border", async () => {
     render(
       <Popover>
-        <PopoverTrigger render={<Button variant="outline" />}>Filtros</PopoverTrigger>
+        <PopoverTrigger render={<Button variant="secondary" />}>Filtros</PopoverTrigger>
         <PopoverContent>contenido</PopoverContent>
       </Popover>
     )
@@ -70,7 +70,7 @@ describe("Popover", () => {
   it("el panel enfocado tiene anillo, no outline-none pelado", async () => {
     render(
       <Popover>
-        <PopoverTrigger render={<Button variant="outline" />}>Filtros</PopoverTrigger>
+        <PopoverTrigger render={<Button variant="secondary" />}>Filtros</PopoverTrigger>
         <PopoverContent>contenido</PopoverContent>
       </Popover>
     )
@@ -86,7 +86,7 @@ describe("DropdownMenu", () => {
     const onClick = vi.fn()
     render(
       <DropdownMenu>
-        <DropdownMenuTrigger render={<Button variant="outline" />}>Acciones</DropdownMenuTrigger>
+        <DropdownMenuTrigger render={<Button variant="secondary" />}>Acciones</DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuItem onClick={onClick}>Editar</DropdownMenuItem>
           <DropdownMenuItem variant="destructive">Eliminar</DropdownMenuItem>
@@ -107,7 +107,7 @@ describe("DropdownMenu", () => {
   it("el label de grupo va dentro de DropdownMenuGroup (Base UI lo exige)", async () => {
     render(
       <DropdownMenu>
-        <DropdownMenuTrigger render={<Button variant="outline" />}>Más</DropdownMenuTrigger>
+        <DropdownMenuTrigger render={<Button variant="secondary" />}>Más</DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuGroup>
             <DropdownMenuLabel>Viaje</DropdownMenuLabel>
@@ -461,7 +461,7 @@ describe("Sheet, Popover al estilo iCloud (2.0)", () => {
   it("Popover: el de iCloud, radio 12 y 16 px de aire; título headline", async () => {
     render(
       <Popover defaultOpen>
-        <PopoverTrigger render={<Button variant="outline" />}>Filtros</PopoverTrigger>
+        <PopoverTrigger render={<Button variant="secondary" />}>Filtros</PopoverTrigger>
         <PopoverContent>
           <PopoverHeader>
             <PopoverTitle>Rango</PopoverTitle>
@@ -479,7 +479,7 @@ describe("Sheet, Popover al estilo iCloud (2.0)", () => {
   it("Popover translucent: el material translúcido en vez de la superficie opaca", async () => {
     render(
       <Popover defaultOpen>
-        <PopoverTrigger render={<Button variant="outline" />}>Apps</PopoverTrigger>
+        <PopoverTrigger render={<Button variant="secondary" />}>Apps</PopoverTrigger>
         <PopoverContent translucent>accesos</PopoverContent>
       </Popover>
     )

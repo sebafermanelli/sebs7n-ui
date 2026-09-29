@@ -210,7 +210,7 @@ function DatePicker(props: DatePickerProps) {
               // El pie se va con la fecha: vacío no hay nada que sacar, y un botón que no hace
               // nada es ruido.
               <div className="-mx-3 mt-3 -mb-1 border-t border-separator px-3 pt-2" data-slot="date-picker-footer">
-                <Button onClick={limpiar} size="sm" type="button" variant="ghost">
+                <Button onClick={limpiar} size="sm" type="button" variant="plain">
                   {labels.clear}
                 </Button>
               </div>

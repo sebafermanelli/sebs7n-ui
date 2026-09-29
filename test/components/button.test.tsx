@@ -6,21 +6,19 @@ import { Button } from "../../src/components/button"
 import { buttonVariants } from "../../src/variants/button"
 
 describe("Button", () => {
-  it("es el primario negro de Vercel por defecto, tamaño md", () => {
+  it("por defecto es el primario de iCloud: el acento sólido, tamaño md", () => {
     render(<Button>Deploy</Button>)
     const button = screen.getByRole("button", { name: "Deploy" })
-    expect(button).toHaveClass("bg-label", "text-surface", "hover:bg-button-primary-hover", "h-9", "px-3")
+    expect(button).toHaveClass("bg-brand-700", "text-brand-contrast", "hover:bg-brand-800", "h-9", "px-3")
   })
 
-  it("tiene foco de teclado con el anillo de marca y disabled estilo Vercel", () => {
+  // iCloud apaga un botón con opacidad (.4 en toolbars y en los de texto), sin cambiarle el color:
+  // el botón apagado se reconoce como el mismo botón.
+  it("foco interior y deshabilitado a .4, como iCloud", () => {
     render(<Button>Deploy</Button>)
-    expect(screen.getByRole("button")).toHaveClass(
-      "focus-visible:focus-ring",
-      "data-disabled:bg-fill-1",
-      "data-disabled:text-label-tertiary",
-      "data-disabled:border-separator",
-      "data-disabled:cursor-not-allowed"
-    )
+    const button = screen.getByRole("button")
+    expect(button).toHaveClass("focus-visible:focus-ring-inverse", "data-disabled:opacity-40", "data-disabled:cursor-not-allowed")
+    expect(button.className).not.toMatch(/data-disabled:(bg|text|border)-/)
   })
 
   it("marca data-disabled y no dispara click cuando está deshabilitado", async () => {
@@ -49,26 +47,53 @@ describe("Button", () => {
     expect(label).toHaveClass("opacity-0")
   })
 
-  it("accent usa la marca con su color de contraste", () => {
-    expect(buttonVariants({ variant: "accent" })).toContain("bg-brand-700 text-brand-contrast hover:bg-brand-800")
+  it("accent es un alias obsoleto de default: dibuja lo mismo", () => {
+    expect(buttonVariants({ variant: "accent" })).toBe(buttonVariants({ variant: "default" }))
   })
 
-  it("destructive usa los valores de error de Vercel", () => {
-    expect(buttonVariants({ variant: "destructive" })).toContain(
-      "bg-red-800 text-button-error-fg hover:bg-button-error-hover active:bg-button-error-active"
-    )
+  // El `block.secondary.destructive` de iCloud: gris con el texto rojo. iCloud no tiene rojo sólido.
+  it("destructive es gris con el texto rojo; destructive-plain, el texto rojo sin fondo", () => {
+    expect(buttonVariants({ variant: "destructive" })).toContain("bg-fill-2 text-red-ink hover:bg-fill-3")
+    const plain = buttonVariants({ variant: "destructive-plain" }).split(" ")
+    expect(plain).toEqual(expect.arrayContaining(["font-semibold", "text-red-ink", "hover:bg-fill-2"]))
+    expect(plain.filter((c) => c.startsWith("bg-"))).toEqual([])
+  })
+
+  // El `push` de iCloud: texto semibold en el acento, sin fondo, `fill-2` con el puntero y el tinte
+  // de la marca al apretar. El texto va en `brand-ink` (el hover es un relleno: ver el test de
+  // contraste del acento) y el glifo en `brand-900`, el azul de la toolbar de Drive.
+  it("plain: texto de acento sobre relleno en brand-ink, glifo en brand-900", () => {
+    const plain = buttonVariants({ variant: "plain" }).split(" ")
+    expect(plain).toEqual(expect.arrayContaining(["font-semibold", "text-brand-ink", "[&_svg]:text-brand-900", "hover:bg-fill-2", "active:bg-highlight"]))
+    expect(plain.filter((c) => /^bg-/.test(c))).toEqual([])
   })
 
   it("planos, como en iCloud: sin sombra y sin hundirse al apretar", () => {
-    for (const variant of ["default", "outline", "secondary", "ghost", "accent", "destructive", "link"] as const) {
+    for (const variant of ["default", "secondary", "plain", "ghost", "destructive", "destructive-plain", "link"] as const) {
       expect(buttonVariants({ variant }), variant).not.toMatch(/shadow-|translate-y-px|sheen/)
     }
   })
 
-  it("outline y ghost hacen hover con los rellenos de iCloud", () => {
-    expect(buttonVariants({ variant: "outline" })).toContain("hover:bg-fill-1")
-    expect(buttonVariants({ variant: "ghost" })).toContain("hover:bg-fill-2")
+  it("secondary y ghost hacen hover con los rellenos de iCloud", () => {
+    expect(buttonVariants({ variant: "ghost" })).toContain("text-label hover:bg-fill-2")
     expect(buttonVariants({ variant: "secondary" })).toContain("bg-fill-2 text-label hover:bg-fill-3")
+  })
+
+  // iCloud no tiene botón con borde (catálogo §2.12): la jerarquía es acento sólido → gris → texto
+  // de acento → ícono. `outline` se fue en R4; su reemplazo es `secondary`.
+  it("no hay botón con borde", () => {
+    for (const variant of ["default", "secondary", "plain", "ghost", "destructive", "destructive-plain", "link"] as const) {
+      expect(buttonVariants({ variant }), variant).not.toMatch(/border-(separator|label|gray)/)
+    }
+    expect(buttonVariants({ variant: "outline" } as never)).not.toMatch(/border-separator-strong/)
+  })
+
+  // Los de ícono: 28 el de la toolbar y el de cerrar (glifo 16; iCloud 17), 36 el de la barra global
+  // (glifo 18), 40 con el de 20.
+  it("los glifos crecen con el botón de ícono", () => {
+    expect(buttonVariants({ size: "icon-sm" })).not.toMatch(/\[&_svg:not\(\[class\*='size-'\]\)\]:size-(4\.5|5)/)
+    expect(buttonVariants({ size: "icon-md" })).toContain("[&_svg:not([class*='size-'])]:size-4.5")
+    expect(buttonVariants({ size: "icon-lg" })).toContain("[&_svg:not([class*='size-'])]:size-5")
   })
 
   it.each([
@@ -83,8 +108,8 @@ describe("Button", () => {
   })
 
   it("los links usan buttonVariants() sobre <a>, no render (Base UI les pondría role=button)", () => {
-    render(<a href="/docs" className={buttonVariants({ variant: "outline" })}>Docs</a>)
-    expect(screen.getByRole("link", { name: "Docs" })).toHaveClass("border-separator-strong")
+    render(<a href="/docs" className={buttonVariants({ variant: "secondary" })}>Docs</a>)
+    expect(screen.getByRole("link", { name: "Docs" })).toHaveClass("bg-fill-2")
   })
 
   it("el contenido se puede encoger: un hijo con `truncate` termina en puntos suspensivos", () => {
