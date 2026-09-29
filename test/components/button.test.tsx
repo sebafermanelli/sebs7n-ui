@@ -9,7 +9,7 @@ describe("Button", () => {
   it("es el primario negro de Vercel por defecto, tamaño md", () => {
     render(<Button>Deploy</Button>)
     const button = screen.getByRole("button", { name: "Deploy" })
-    expect(button).toHaveClass("bg-label", "text-surface", "hover:bg-button-primary-hover", "h-8", "px-3")
+    expect(button).toHaveClass("bg-label", "text-surface", "hover:bg-button-primary-hover", "h-9", "px-3")
   })
 
   it("tiene foco de teclado con el anillo de marca y disabled estilo Vercel", () => {
@@ -72,11 +72,11 @@ describe("Button", () => {
   })
 
   it.each([
-    ["sm", "h-6"],
-    ["md", "h-8"],
+    ["sm", "h-7"],
+    ["md", "h-9"],
     ["lg", "h-10"],
-    ["icon-sm", "size-6"],
-    ["icon-md", "size-8"],
+    ["icon-sm", "size-7"],
+    ["icon-md", "size-9"],
     ["icon-lg", "size-10"],
   ] as const)("size %s → %s", (size, cls) => {
     expect(buttonVariants({ size }).split(" ")).toContain(cls)

@@ -18,11 +18,11 @@ export function Basico() {
         <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="pop-desde">Desde</Label>
-            <DatePicker id="pop-desde" size="sm" />
+            <DatePicker id="pop-desde" />
           </div>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="pop-hasta">Hasta</Label>
-            <DatePicker id="pop-hasta" size="sm" />
+            <DatePicker id="pop-hasta" />
           </div>
         </div>
       </PopoverContent>

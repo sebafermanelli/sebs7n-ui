@@ -137,7 +137,7 @@ describe("Select", () => {
       </Select>
     )
     const trigger = screen.getByRole("combobox", { name: "Moneda" })
-    expect(trigger).toHaveClass("bg-fill-1", "focus-visible:focus-border", "data-placeholder:text-label-secondary", "data-[size=md]:h-8")
+    expect(trigger).toHaveClass("bg-fill-1", "focus-visible:focus-border", "data-placeholder:text-label-secondary", "data-[size=md]:h-9")
     await userEvent.click(trigger)
     await userEvent.click(await screen.findByRole("option", { name: "USD" }))
     expect(onValueChange).toHaveBeenCalledWith("usd", expect.anything())
@@ -326,7 +326,7 @@ describe("diálogo de iCloud (2.0, R2)", () => {
     // Con `p-5` el renglón del título (24 px) está centrado a 32 px del borde; la X mide 28, así
     // que va a 18 px (`4.5`) para que su centro caiga en la misma línea.
     expect(x).toHaveClass("top-4.5", "left-4.5", "size-7", "rounded-control")
-    expect(x).not.toHaveClass("right-4.5", "size-6")
+    expect(x).not.toHaveClass("right-4.5", "size-9")
     expect(x.className).toContain("[&_svg:not([class*='size-'])]:size-3.5")
   })
 

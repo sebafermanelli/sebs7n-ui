@@ -58,7 +58,9 @@ function Chat({ className, busy = false, ...props }: ChatProps) {
         data-slot="chat"
         // `rounded-[inherit]`: el borde de la IA sigue la curva de quien contiene al chat, que
         // es quien tiene el radio. `relative` es lo que ancla ese borde.
-        className={cn("relative flex min-h-0 flex-col rounded-[inherit] text-body text-label ai-glow", className)}
+        // Los mensajes a 15 (`subheadline`), como Mensajes de macOS: 17 es el cuerpo de una página, y
+        // adentro de un panel se leía grande. El campo, los avisos y las sugerencias van a 14.
+        className={cn("relative flex min-h-0 flex-col rounded-[inherit] text-subheadline text-label ai-glow", className)}
         {...props}
       />
     </ChatContext.Provider>
@@ -86,7 +88,7 @@ function ChatTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="chat-title"
-      className={cn("flex min-w-0 flex-1 items-center gap-2 truncate text-title-3 [&_svg]:shrink-0", className)}
+      className={cn("flex min-w-0 flex-1 items-center gap-2 truncate text-headline [&_svg]:shrink-0", className)}
       {...props}
     />
   )
@@ -263,7 +265,7 @@ type ChatErrorProps = React.ComponentProps<"div"> & {
 function ChatError({ className, onRetry, labels: labelsProp, children, ...props }: ChatErrorProps) {
   const labels = { ...useLabels().chat, ...labelsProp }
   return (
-    <div data-slot="chat-error" className={cn("flex flex-wrap items-center gap-2 text-red-900", className)} {...props}>
+    <div data-slot="chat-error" className={cn("flex flex-wrap items-center gap-2 text-callout text-red-900", className)} {...props}>
       <p role="alert">{children}</p>
       {onRetry && (
         <Button onClick={onRetry} size="sm" type="button" variant="outline">
@@ -383,9 +385,10 @@ function ChatInput({
           inputControlClassName,
           inputDisabledClassName,
           inputMultilineRadiusClassName,
-          // 32px como el botón de al lado. En táctil, 44px y 16px de letra: con menos, iOS hace
-          // zoom al enfocar. Sin `field-sizing` (un Safari viejo) queda en una línea con scroll.
-          "field-sizing-content max-h-36 min-h-8 min-w-0 flex-1 resize-none overflow-y-auto px-3 py-1.75 placeholder:text-label-secondary focus:focus-border",
+          // 36 px como el botón de al lado (`icon-md`), texto 14. En táctil, 44 px y 17 de letra:
+          // con menos de 16, iOS hace zoom al enfocar. Sin `field-sizing` (un Safari viejo) queda en
+          // una línea con scroll.
+          "field-sizing-content max-h-36 min-h-9 min-w-0 flex-1 resize-none overflow-y-auto px-3 py-2 placeholder:text-label-secondary focus:focus-border",
           "pointer-coarse:min-h-11 pointer-coarse:py-2.5 pointer-coarse:text-body-large",
           "disabled:cursor-not-allowed disabled:border-separator disabled:bg-fill-1 disabled:text-label-tertiary"
         )}

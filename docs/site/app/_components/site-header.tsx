@@ -55,7 +55,7 @@ export function SiteHeader({ version }: { version: string }) {
         <div className="ml-auto flex items-center gap-2">
           <SearchButton />
           <a
-            className="hidden rounded-control px-2 py-1 text-copy-14 text-label-secondary outline-none transition-control hover:text-label focus-visible:focus-ring sm:inline"
+            className="hidden h-8 items-center rounded-control px-2 text-callout text-label-secondary outline-none transition-control hover:text-label focus-visible:focus-ring sm:inline-flex"
             href="https://github.com/sebafermanelli/sebs7n-ui"
             rel="noreferrer"
             target="_blank"

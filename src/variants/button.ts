@@ -28,16 +28,17 @@ const buttonVariantsBase = cva(
         link: "h-auto! rounded-sm border-0 px-0! text-brand-900 underline-offset-4 hover:text-brand-1000 hover:underline data-disabled:bg-transparent",
       },
       size: {
-        // Densidad de macOS (2.0): 32 px es el botón normal, como el «Push Button» regular de
-        // AppKit. Con el dedo el área crece a 44 por `touch-target`, sin cambiar lo que se ve.
-        // En `sm` el ícono baja a 14 px: 16 en un botón de 24 se lee como un bloque.
-        sm: "h-6 px-2.5 text-callout [&_svg:not([class*='size-'])]:size-3.5",
-        md: "h-8 px-3 text-callout",
-        lg: "h-10 px-4 text-body-large [&_svg:not([class*='size-'])]:size-5",
-        // El de ícono chico conserva el glifo de 16: es el botón de una barra de herramientas, y
-        // ahí el dibujo es todo lo que dice qué hace.
-        "icon-sm": "size-6",
-        "icon-md": "size-8",
+        // La escala que comparten campos y botones (revisión visual de R1): 28, 36 y 40. 36 es el
+        // botón del modal de iCloud y el alto de su search field, así que un botón al lado de un
+        // campo del mismo `size` mide lo mismo. Texto 14 e íconos 16 en los tres: iCloud no agranda
+        // la letra de un control. Con el dedo el área crece a 44 por `touch-target`.
+        sm: "h-7 px-2.5 text-callout",
+        md: "h-9 px-3 text-callout",
+        lg: "h-10 px-3.5 text-callout",
+        // Los de ícono son los de iCloud: 28 el de una barra de herramientas y el de cerrar un
+        // diálogo, 36 el de la barra global. El de 40 lleva el glifo de 20.
+        "icon-sm": "size-7",
+        "icon-md": "size-9",
         "icon-lg": "size-10 [&_svg:not([class*='size-'])]:size-5",
       },
       /**

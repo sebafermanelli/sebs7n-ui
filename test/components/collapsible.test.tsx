@@ -32,7 +32,7 @@ describe("Collapsible", () => {
         <CollapsibleContent>x</CollapsibleContent>
       </Collapsible>
     )
-    expect(screen.getByRole("button", { name: "Más" })).toHaveClass("h-6", "text-callout")
+    expect(screen.getByRole("button", { name: "Más" })).toHaveClass("h-7", "text-callout")
   })
 
   it("teclado: abre con Enter y cierra con Espacio, sin salir del trigger", async () => {

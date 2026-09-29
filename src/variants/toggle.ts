@@ -15,11 +15,10 @@ import { cn } from "../lib/utils.js"
  * más contrasta en los dos temas, que es lo que el estado tiene que comunicar. Antes el prendido
  * (`gray-600`, 2,38:1 en claro) contrastaba MENOS que el apagado nuevo, y eso se lee al revés.
  *
- * 24 px desde 2.0, el alto de un botón `sm`: un chip es un control secundario y en macOS los
- * filtros de ese tamaño (las etiquetas del Finder) son así de bajos. Con el dedo, `touch-target`.
+ * 28 px, el alto de un botón `sm`: un chip es un control secundario. Con el dedo, `touch-target`.
  */
 const toggleVariantsBase = cva(
-  "touch-target inline-flex h-6 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-control border border-label-tertiary bg-transparent px-2.5 text-callout whitespace-nowrap text-label-secondary outline-none select-none transition-surface hover:border-label-secondary hover:text-label focus-visible:focus-ring data-pressed:border-label data-pressed:bg-fill-2 data-pressed:text-label data-pressed:hover:bg-fill-3 data-disabled:cursor-not-allowed data-disabled:border-separator data-disabled:bg-fill-1 data-disabled:text-label-tertiary [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5"
+  "touch-target inline-flex h-7 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-control border border-label-tertiary bg-transparent px-2.5 text-callout whitespace-nowrap text-label-secondary outline-none select-none transition-surface hover:border-label-secondary hover:text-label focus-visible:focus-ring data-pressed:border-label data-pressed:bg-fill-2 data-pressed:text-label data-pressed:hover:bg-fill-3 data-disabled:cursor-not-allowed data-disabled:border-separator data-disabled:bg-fill-1 data-disabled:text-label-tertiary [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
 )
 
 // Pasa por cn() (tailwind-merge): usada sobre <a>/<Link>, la clase de la variante tiene que ganarle a la base.

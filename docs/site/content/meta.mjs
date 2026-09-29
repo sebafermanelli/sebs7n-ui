@@ -130,7 +130,7 @@ export const COMPONENTS = {
         loading: "Muestra el spinner encima del contenido y cancela el `onClick`. El ancho no cambia.",
         onClick: "Se ignora mientras `loading` está activo.",
         variant: "`default` (negro) · `accent` (marca) · `outline` · `secondary` · `ghost` · `destructive` · `link`.",
-        size: "`sm` 24px · `md` 32px · `lg` 40px, más los tres `icon-*` cuadrados. Con el dedo el área crece a 44 sin cambiar lo que se ve.",
+        size: "`sm` 28 px · `md` 36 px · `lg` 40 px, los mismos altos que los campos (un botón al lado de un campo del mismo `size` mide lo mismo), texto 14 e íconos 16. Los `icon-*` son cuadrados: 28 (barra de herramientas, cerrar un diálogo), 36 y 40. Con el dedo el área crece a 44 sin cambiar lo que se ve.",
       },
     },
     related: ["badge", "dropdown-menu", "alert-dialog"],
@@ -436,12 +436,12 @@ export const COMPONENTS = {
       "`focus:focus-border` en vez del anillo: en un campo el borde teñido molesta menos y se ve igual.",
     ],
     usage: [
-      "**El tamaño se elige una vez por formulario**, no por campo. `md` (32px) es el de una app; `lg` para un formulario de una sola pregunta.",
+      "**El tamaño se elige una vez por formulario**, no por campo: un `Input` y un `DatePicker` de distinto `size` en la misma fila se ven desparejos. `md` (36 px, el search field de iCloud) es el de una app; `lg` para un formulario de una sola pregunta. Un botón al lado de un campo lleva el mismo `size`.",
       "`type` importa más que el estilo: `email`, `tel`, `url` y `numeric` cambian el teclado del celular.",
       "Un campo obligatorio se marca en la etiqueta (`required` en `FieldLabel` o en `Label`), no con un asterisco pegado al placeholder.",
       "Para un buscador con sugerencias no uses `Input` a mano: `Combobox` o `Autocomplete`.",
     ],
-    props: { Input: { size: "`sm` 24px · `md` 32px · `lg` 40px, con el texto un paso más grande." } },
+    props: { Input: { size: "`sm` 28 px · `md` 36 px · `lg` 40 px, con el texto en 14 en los tres. Los comparten todos los campos y el `Button`." } },
     related: ["field", "label", "textarea", "select", "combobox"],
   },
   textarea: {
@@ -507,7 +507,7 @@ export const COMPONENTS = {
     props: {
       OTPField: {
         length: "Cuántas casillas. Seis es lo que manda casi todo el mundo por SMS.",
-        size: "`sm` 24px · `md` 32px · `lg` 40px, las mismas alturas que `Input`.",
+        size: "`sm` 28 px · `md` 36 px · `lg` 40 px, las mismas alturas que `Input`.",
         inputClassName: "Clases de cada casilla, para tocar el ancho o el tipo de letra sin reescribir el componente.",
       },
     },
@@ -601,7 +601,7 @@ export const COMPONENTS = {
         disabled: "En el root apaga todo el combobox. En el input solo apaga la superficie, y la lista sigue viva.",
       },
       ComboboxInput: {
-        size: "Mismas tres alturas que `Input`: `sm` 24px · `md` 32px · `lg` 40px.",
+        size: "Mismas tres alturas que `Input`: `sm` 28 px · `md` 36 px · `lg` 40 px.",
         showClear: "La cruz de limpiar. Aparece sola cuando hay valor.",
         showTrigger: "El ⌃⌄ que abre la lista, el mismo del `Select`.",
         disabled: "Apaga el input y la superficie que lo rodea. Para bloquear todo el combobox, ponelo en el root.",
@@ -641,7 +641,7 @@ export const COMPONENTS = {
         filter: "Cómo se comparan las sugerencias con lo tipeado. Con `null` no filtra: es lo que va cuando busca el servidor.",
       },
       AutocompleteInput: {
-        size: "Mismas tres alturas que `Input`: `sm` 24px · `md` 32px · `lg` 40px.",
+        size: "Mismas tres alturas que `Input`: `sm` 28 px · `md` 36 px · `lg` 40 px.",
         groupClassName: "Clases de la superficie con borde que envuelve al input y a sus botones. Acá va el ancho.",
         showClear: "La cruz de limpiar. Aparece sola cuando hay texto.",
         disabled: "Apaga el input y la superficie que lo rodea. Para bloquear todo, ponelo en el root.",
@@ -940,7 +940,7 @@ export const COMPONENTS = {
     ],
     props: {
       NumberField: {
-        size: "`sm` 24px · `md` 32px · `lg` 40px. Los mismos altos que `Input`.",
+        size: "`sm` 28 px · `md` 36 px · `lg` 40 px. Los mismos altos que `Input`.",
         className: "Clases de la superficie con borde. Acá va el ancho: `className=\"w-32\"`.",
         inputClassName: "Clases del `<input>`. Por defecto va centrado y con cifras de ancho fijo.",
         labels: "`increment`, `decrement` y `roleDescription`: los tres textos que lee el lector de pantalla.",

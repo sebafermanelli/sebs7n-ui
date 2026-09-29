@@ -21,9 +21,9 @@ export function ConEtiqueta() {
 export function Tamanos() {
   return (
     <div className="flex w-full max-w-sm flex-col gap-3">
-      <Input size="sm" placeholder="sm · 32px" />
-      <Input size="md" placeholder="md · 40px" />
-      <Input size="lg" placeholder="lg · 48px" />
+      <Input size="sm" placeholder="sm · 28 px" />
+      <Input size="md" placeholder="md · 36 px" />
+      <Input size="lg" placeholder="lg · 40 px" />
     </div>
   )
 }

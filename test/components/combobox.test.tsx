@@ -71,11 +71,12 @@ describe("Combobox", () => {
     expect(group(md)).toHaveAttribute("data-size", "md")
     expect(group(md)).toHaveClass(
       "rounded-field", "border", "border-transparent", "bg-fill-1", "transition-control",
-      "data-[size=sm]:h-6", "data-[size=md]:h-8", "data-[size=lg]:h-10",
+      "data-[size=sm]:h-7", "data-[size=md]:h-9", "data-[size=lg]:h-10",
       "has-[input:focus]:focus-border",
       "has-[input[aria-invalid=true]]:border-red-800", "data-disabled:bg-fill-1"
     )
-    expect(group(md)).toHaveClass("text-callout", "data-[size=lg]:text-body-large")
+    expect(group(md)).toHaveClass("text-callout")
+    expect(group(md).className).not.toMatch(/text-body/)
     expect(md).toHaveClass("placeholder:text-label-secondary", "bg-transparent", "outline-none")
     expect(group(sm)).toHaveAttribute("data-size", "sm")
     expect(sm).toHaveAttribute("aria-invalid", "true")
@@ -259,8 +260,8 @@ describe("Combobox", () => {
     const { rerender } = render(<Campo size="sm" />)
     expect(chip()).toHaveClass("h-5")
     expect(chip()).not.toHaveClass("h-6")
-    // 20 del chip + 2 del borde entran en 24 solo sin padding vertical.
-    expect(chip().closest("[data-slot=combobox-chips-group]")).toHaveClass("data-[size=sm]:py-0")
+    // 20 del chip + 2 del borde + 2 × 2 de padding: 26, adentro de los 28 del `sm`.
+    expect(chip().closest("[data-slot=combobox-chips-group]")).toHaveClass("data-[size=sm]:py-0.5")
     expect(screen.getByRole("button", { name: "Quitar Chile" })).toHaveClass(...tagRemoveClassName.sm.split(" "))
     rerender(<Campo />)
     expect(chip()).toHaveClass("h-6")
@@ -333,7 +334,7 @@ describe("Autocomplete", () => {
     const onValueChange = vi.fn()
     render(<CityAutocomplete onValueChange={onValueChange} />)
     const input = screen.getByRole("combobox", { name: "Ciudad" })
-    expect(input.closest("[data-slot=autocomplete-input-group]")).toHaveClass("has-[input:focus]:focus-border", "data-[size=md]:h-8")
+    expect(input.closest("[data-slot=autocomplete-input-group]")).toHaveClass("has-[input:focus]:focus-border", "data-[size=md]:h-9")
     await userEvent.click(input)
     await userEvent.keyboard("ro")
     const listbox = await screen.findByRole("listbox")
@@ -406,7 +407,7 @@ describe("menús de macOS (2.0)", () => {
       </Autocomplete>
     )
     const grupo = screen.getByRole("combobox", { name: "Ciudad" }).closest("[data-slot=autocomplete-input-group]")!
-    expect(grupo).toHaveClass("rounded-field", "data-[size=md]:h-8")
+    expect(grupo).toHaveClass("rounded-field", "data-[size=md]:h-9")
     expect(grupo.querySelector("[data-slot=autocomplete-trigger]")).toBeNull()
   })
 

@@ -80,7 +80,7 @@ function OTPField({ className, inputClassName, length = 6, size = "md", ...props
             // La casilla es cuadrada, así que no usa `inputSizeClassName`: el `size-*` fija
             // los dos ejes y el alto del sistema solo fijaría uno.
             "shrink-0 text-center tabular-nums focus:focus-border",
-            "data-[size=sm]:size-6 data-[size=md]:size-8 data-[size=lg]:size-10 pointer-coarse:data-[size=sm]:size-8 pointer-coarse:data-[size=md]:size-10 data-[size=lg]:text-body-large",
+            "data-[size=sm]:size-7 data-[size=md]:size-9 data-[size=lg]:size-10 pointer-coarse:data-[size=sm]:size-9 pointer-coarse:data-[size=md]:size-11",
             // La casilla llena se marca con el borde, no con el fondo: seis
             // rectángulos grises tapan dónde quedó el cursor.
             "data-filled:border-separator-strong",

@@ -206,10 +206,9 @@ function ComboboxChips({ className, size = "md", showTrigger = true, showClear =
         inputShellClassName,
         // Los chips pueden ocupar varias filas.
         inputMultilineRadiusClassName,
-        // `py-0.5`: un chip mide 24 y el `md` 32; con `py-1` y el borde, el campo vacío ya crecía.
-        // En `sm` el chip mide 20 y el campo 24: con los 2 px del borde no queda lugar para
-        // padding, así que va `py-0` y el `self-center` de los chips reparte el aire.
-        "h-auto! data-[size=sm]:min-h-6 data-[size=md]:min-h-8 data-[size=lg]:min-h-10 pointer-coarse:data-[size=sm]:min-h-8 pointer-coarse:data-[size=md]:min-h-10 items-start py-0.5 data-[size=sm]:py-0 pr-1 pl-1",
+        // Un chip mide 24 y el `md` 36: con `py-1` y el borde quedan 4 px arriba y abajo. En `sm`
+        // el chip mide 20 y el campo 28: `py-0.5`, y el `self-center` de los chips reparte el aire.
+        "h-auto! data-[size=sm]:min-h-7 data-[size=md]:min-h-9 data-[size=lg]:min-h-10 pointer-coarse:data-[size=sm]:min-h-9 pointer-coarse:data-[size=md]:min-h-11 items-start py-1 data-[size=sm]:py-0.5 pr-1 pl-1",
         className
       )}
     >

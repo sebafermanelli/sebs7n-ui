@@ -46,11 +46,11 @@ export function Controlado() {
         <CollapsibleContent className="flex flex-col gap-3 pt-1">
           <div className="flex flex-col gap-1.5">
             <Label htmlFor={desde}>Desde</Label>
-            <DatePicker id={desde} size="sm" />
+            <DatePicker id={desde} />
           </div>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor={hasta}>Hasta</Label>
-            <DatePicker id={hasta} size="sm" />
+            <DatePicker id={hasta} />
           </div>
         </CollapsibleContent>
       </Collapsible>

@@ -30,18 +30,20 @@ export const inputMultilineRadiusClassName = "rounded-[min(var(--radius-field),-
  * llamador —el lugar para una lupa— perdía: la variante tiene más especificidad, y
  * tailwind-merge no las ve como un conflicto porque no comparten modificador.
  */
-export const inputPaddingClassName = { sm: "px-2.5", md: "px-3", lg: "px-4" } as const
+export const inputPaddingClassName = { sm: "px-2.5", md: "px-3", lg: "px-3" } as const
 
 /**
- * Los tres altos del sistema, por `data-size`: 24, 32 y 40, los de macOS. El `lg` sube también la
- * tipografía.
+ * Los tres altos del sistema, por `data-size`: 28, 36 y 40. Es la escala que comparten campos y
+ * botones (revisión visual de R1): el search field de iCloud mide 32–36 y su botón de modal 36, y un
+ * campo y un botón en la misma fila tienen que medir lo mismo. El texto es 14 en los tres: iCloud no
+ * agranda la letra de un control.
  *
- * Con el dedo (`pointer: coarse`) `sm` y `md` vuelven a 32 y 40. Un `<input>` no admite `::after`,
+ * Con el dedo (`pointer: coarse`) `sm` y `md` suben a 36 y 44. Un `<input>` no admite `::after`,
  * así que `touch-target` no le sirve: el área de toque tiene que ser el campo mismo.
  */
 export const inputSizeClassName =
-  "data-[size=sm]:h-6 data-[size=md]:h-8 data-[size=lg]:h-10 data-[size=lg]:text-body-large " +
-  "pointer-coarse:data-[size=sm]:h-8 pointer-coarse:data-[size=md]:h-10"
+  "data-[size=sm]:h-7 data-[size=md]:h-9 data-[size=lg]:h-10 " +
+  "pointer-coarse:data-[size=sm]:h-9 pointer-coarse:data-[size=md]:h-11"
 
 /**
  * Deshabilitado por `data-disabled`, que es el que pone Base UI —y también un `Fieldset`

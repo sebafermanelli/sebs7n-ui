@@ -58,11 +58,12 @@ describe("variantes exportadas pasan por cn()", () => {
    * mire tres semanas después. En 1.0 cambió una sola: `rounded-md` pasó a `rounded-full`; en 2.0 (iCloud) volvió al rectángulo, `rounded-control`.
    * En 2.0, la densidad de macOS: `h-10 px-4` pasó a `h-8 px-3`, y se sumó `touch-target`,
    * que va al final porque lo pone una variante compuesta: el `link` no lo lleva. Con iCloud (R1)
-   * el botón es plano: sin `shadow-button-inverted` ni hundimiento, y los colores son `label`.
+   * el botón es plano: sin `shadow-button-inverted` ni hundimiento, y los colores son `label`. En la
+   * revisión visual de R1 el `md` pasó a `h-9`, el alto compartido con los campos.
    */
   const SIN_SHAPE = {
     "default/md":
-      "relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-control border border-transparent whitespace-nowrap outline-none select-none transition-surface focus-visible:focus-ring data-disabled:cursor-not-allowed data-disabled:border-separator data-disabled:bg-fill-1 data-disabled:text-label-tertiary [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 bg-label text-surface hover:bg-button-primary-hover h-8 px-3 text-callout touch-target",
+      "relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-control border border-transparent whitespace-nowrap outline-none select-none transition-surface focus-visible:focus-ring data-disabled:cursor-not-allowed data-disabled:border-separator data-disabled:bg-fill-1 data-disabled:text-label-tertiary [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 bg-label text-surface hover:bg-button-primary-hover h-9 px-3 text-callout touch-target",
   } as const
 
   it("sin shape, buttonVariants emite la cadena fijada", () => {
@@ -116,18 +117,18 @@ describe("variantes exportadas pasan por cn()", () => {
 
 describe("densidad macOS (2.0)", () => {
   it("botones: sm 24, md 32, lg 40; los de ícono, cuadrados de lo mismo", () => {
-    expect(classes(buttonVariants({ size: "sm" }))).toContain("h-6")
-    expect(classes(buttonVariants({ size: "md" }))).toContain("h-8")
+    expect(classes(buttonVariants({ size: "sm" }))).toContain("h-7")
+    expect(classes(buttonVariants({ size: "md" }))).toContain("h-9")
     expect(classes(buttonVariants({ size: "lg" }))).toContain("h-10")
-    expect(classes(buttonVariants({ size: "icon-sm" }))).toContain("size-6")
-    expect(classes(buttonVariants({ size: "icon-md" }))).toContain("size-8")
+    expect(classes(buttonVariants({ size: "icon-sm" }))).toContain("size-7")
+    expect(classes(buttonVariants({ size: "icon-md" }))).toContain("size-9")
     expect(classes(buttonVariants({ size: "icon-lg" }))).toContain("size-10")
   })
 
   it("campos: sm 24, md 32, lg 40", () => {
     const out = classes(inputSizeClassName)
-    expect(out).toContain("data-[size=sm]:h-6")
-    expect(out).toContain("data-[size=md]:h-8")
+    expect(out).toContain("data-[size=sm]:h-7")
+    expect(out).toContain("data-[size=md]:h-9")
     expect(out).toContain("data-[size=lg]:h-10")
   })
 
@@ -143,7 +144,7 @@ describe("densidad macOS (2.0)", () => {
     expect(classes(toggleVariants())).toContain("touch-target")
     // Un <input> no admite pseudo-elementos: en táctil vuelve a los altos de 1.x.
     expect(classes(inputSizeClassName)).toEqual(
-      expect.arrayContaining(["pointer-coarse:data-[size=sm]:h-8", "pointer-coarse:data-[size=md]:h-10"])
+      expect.arrayContaining(["pointer-coarse:data-[size=sm]:h-9", "pointer-coarse:data-[size=md]:h-11"])
     )
     // Los ítems de una lista están pegados: un `::after` de 44 px taparía la mitad del de al
     // lado, así que en táctil crecen de verdad.

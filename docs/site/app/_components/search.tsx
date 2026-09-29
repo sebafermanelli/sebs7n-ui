@@ -3,7 +3,6 @@
 import { SearchIcon } from "lucide-react"
 import dynamic from "next/dynamic"
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react"
-import { Button } from "sebs7n-ui/button"
 import { Kbd } from "sebs7n-ui/kbd"
 import { cn } from "sebs7n-ui/lib/utils"
 
@@ -68,25 +67,29 @@ export function SearchProvider({ children }: { children: ReactNode }) {
 export function SearchButton({ className, compact = false }: { className?: string; compact?: boolean }) {
   const { abrir } = useSearch()
   return (
-    <Button
+    // El search field de iCloud (catálogo §2.13): relleno `fill-1`, sin borde, radio 10, la lupa y
+    // el texto en terciario. 32 px, el alto de todos los controles de la barra (el ThemeSwitcher y
+    // el link a GitHub), que es el del campo de búsqueda de la barra de Mail.
+    <button
       aria-keyshortcuts="Meta+K"
       className={cn(
-        "w-9 justify-center gap-2 px-0",
-        !compact && "sm:w-56 sm:justify-start sm:px-3",
+        "inline-flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-field bg-fill-1 text-callout text-label-tertiary outline-none transition-control hover:bg-fill-2 focus-visible:focus-ring [&_svg]:size-4 [&_svg]:shrink-0",
+        !compact && "sm:w-56 sm:justify-start sm:px-2.5",
         className
       )}
       onClick={abrir}
-      size="sm"
-      variant="outline"
+      type="button"
     >
-      <SearchIcon className="text-label-secondary" />
+      <SearchIcon aria-hidden="true" />
       {!compact && (
         <>
-          <span className="hidden text-label-tertiary sm:inline">Buscar…</span>
-          <Kbd className="ml-auto hidden sm:inline-flex">⌘K</Kbd>
+          <span className="hidden sm:inline">Buscar…</span>
+          <Kbd className="ml-auto hidden sm:inline-flex" size="sm">
+            ⌘K
+          </Kbd>
         </>
       )}
       <span className={cn("sr-only", !compact && "sm:hidden")}>Buscar</span>
-    </Button>
+    </button>
   )
 }

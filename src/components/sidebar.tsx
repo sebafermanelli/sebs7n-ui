@@ -285,8 +285,9 @@ function SidebarSearch({
       data-slot="sidebar-search"
       aria-keyshortcuts={keyshortcuts}
       className={cn(
-        // 32 px, el alto de un campo `md`: a 28 (el alto de un ítem) el ⌘K de 20 casi tocaba los
-        // bordes. Con el Kbd `sm` de 18 quedan 7 px de aire arriba y abajo.
+        // 32 px, el search field de la barra de Mail y el alto de los controles de una barra: a 28
+        // (el alto de un ítem) el ⌘K de 20 casi tocaba los bordes. Con el Kbd `sm` de 18 quedan
+        // 7 px de aire arriba y abajo.
         "flex h-8 pointer-coarse:h-11 w-full min-w-0 cursor-pointer items-center gap-2 rounded-field bg-fill-1 px-3 text-left text-callout text-label-secondary outline-none transition-control hover:text-label focus-visible:focus-ring [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
         // Colapsado es un ícono más de la columna: el cuadrado de 28 de los ítems, no un campo.
         "group-data-collapsed/sidebar:h-7 group-data-collapsed/sidebar:w-7 pointer-coarse:group-data-collapsed/sidebar:h-11 pointer-coarse:group-data-collapsed/sidebar:w-11 group-data-collapsed/sidebar:justify-center group-data-collapsed/sidebar:px-0",
