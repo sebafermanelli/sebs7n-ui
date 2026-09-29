@@ -1,8 +1,8 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Button, Field, FieldDescription, FieldLabel, Label } from "sebs7n-ui"
-import { DropZone } from "sebs7n-ui/drop-zone"
+import { DropZone, type DropZoneHandle } from "sebs7n-ui/drop-zone"
 
 /**
  * Comprobantes de un pago
@@ -83,10 +83,19 @@ export function Validate() {
 
 /**
  * Compacta
- * `compact`: con un archivo elegido, el recuadro grande pasa a una fila «Elegir otro» y el protagonista es el archivo.
+ * `compact`: con un archivo elegido, el recuadro grande pasa a una fila «Elegir otro» y el protagonista es el archivo. El botón de abajo abre el selector con el `ref` (`open()`).
  */
 export function Compact() {
-  return <DropZone accept=".pdf" aria-label="Factura para convertir" className="w-full max-w-md" compact />
+  const zone = useRef<DropZoneHandle>(null)
+  return (
+    <div className="flex w-full max-w-md flex-col gap-3">
+      <DropZone accept=".pdf" aria-label="Factura para convertir" compact ref={zone} />
+      {/* El `ref` abre el selector desde un botón propio (`open()`) o vuelve al recuadro (`focus()`). */}
+      <Button className="self-start" onClick={() => zone.current?.open()} type="button" variant="secondary">
+        Elegir PDF…
+      </Button>
+    </div>
+  )
 }
 
 /**
