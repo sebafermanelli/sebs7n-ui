@@ -9,7 +9,7 @@ import { useLabels, type Labels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
 import type { BadgeColor } from "../variants/badge.js"
 import { Button } from "./button.js"
-import { ToggleGroup, ToggleGroupItem } from "./toggle-group.js"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs.js"
 
 /**
  * El calendario de iCloud (catálogo §2.17), en vista de mes y de semana: cabecera con el mes en 21/600
@@ -408,21 +408,27 @@ function CalendarView({
     )
   }
 
+  // El cambio de vista es el segmentado gris de Calendar (§2.10): una sola opción, el segmento
+  // elevado (`Tabs` segmentado) y no el acento de `ToggleGroup`, que es para opciones que se prenden.
+  // Todo el calendario es el `Tabs`: el cuerpo es el panel de la vista elegida, con `tabIndex={-1}`
+  // porque la grilla ya es la parada de Tab y un panel tabulable la duplicaría.
   return (
-    <div data-slot="calendar-view" data-view={view} className={cn("flex h-full min-h-0 w-full flex-col bg-surface text-label", className)} {...props}>
+    <Tabs
+      data-slot="calendar-view"
+      data-view={view}
+      className={cn("flex h-full min-h-0 w-full flex-col gap-0 bg-surface text-label", className)}
+      onValueChange={(value) => setView(value as CalendarViewMode)}
+      value={view}
+      {...(props as Omit<React.ComponentProps<typeof Tabs>, "value" | "defaultValue" | "onValueChange">)}
+    >
       <div className="flex min-h-14 flex-wrap items-center justify-between gap-x-4 gap-y-2 px-5 py-2.5">
         <h2 className="text-title-2 whitespace-nowrap" aria-live="polite">
           {monthName} <span className="font-normal text-label-secondary">{year}</span>
         </h2>
-        <ToggleGroup
-          aria-label={labels.view}
-          className="w-56"
-          onValueChange={(value) => value[0] && setView(value[0] as CalendarViewMode)}
-          value={[view]}
-        >
-          <ToggleGroupItem value="week">{labels.week}</ToggleGroupItem>
-          <ToggleGroupItem value="month">{labels.month}</ToggleGroupItem>
-        </ToggleGroup>
+        <TabsList aria-label={labels.view} className="w-56" variant="segmented">
+          <TabsTrigger value="week">{labels.week}</TabsTrigger>
+          <TabsTrigger value="month">{labels.month}</TabsTrigger>
+        </TabsList>
         <div className="flex items-center gap-1">
           <Button aria-label={view === "month" ? labels.previousMonth : labels.previousWeek} onClick={() => shift(-1)} size="icon-sm" variant="plain">
             <ChevronLeftIcon />
@@ -435,8 +441,10 @@ function CalendarView({
           </Button>
         </div>
       </div>
-      {body}
-    </div>
+      <TabsContent className="flex min-h-0 flex-1 flex-col rounded-none text-inherit focus-visible:shadow-none" tabIndex={-1} value={view}>
+        {body}
+      </TabsContent>
+    </Tabs>
   )
 }
 

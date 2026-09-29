@@ -549,7 +549,8 @@ las fases R2–R5 rehacen diálogos, menús, controles y listas con las medidas 
   sigue al foco; `actions` para el «…» del puntero (el teclado usa un `ContextMenu`). Sin medir en
   iCloud: derivado de la lista de Drive y de Photos.
 - **`CalendarView`** (`sebs7n-ui/calendar-view`, **solo por subpath**), el calendario de iCloud en mes y
-  semana (R5b): cabecera mes 21/600 + año en gris, segmentado Semana/Mes y ‹ Hoy ›; mes con las semanas
+  semana (R5b): cabecera mes 21/600 + año en gris, segmentado Semana/Mes (el gris de `Tabs variant="segmented"`,
+  un `tablist` con el cuerpo como panel; R6) y ‹ Hoy ›; mes con las semanas
   justas, hoy en círculo de 30 del acento, chips de todo el día de 18 (color al 20 %, tinta 12/600) y
   eventos con hora (punto 8 + título + hora); semana con fila «Todo el día», horas de 61, bloques con
   borde izquierdo de 3 repartidos si se pisan y la línea roja de ahora. `role="grid"` con foco

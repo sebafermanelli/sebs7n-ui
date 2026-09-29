@@ -20,8 +20,13 @@ describe("CalendarView · mes", () => {
     render(<CalendarView defaultDate={AHORA} events={EVENTOS} locale="es-AR" now={AHORA} />)
     expect(screen.getByText("Septiembre")).toHaveClass("text-title-2")
     expect(screen.getByText("2026")).toHaveClass("font-normal", "text-label-secondary")
-    const vista = screen.getByRole("group", { name: "Vista" })
-    expect(within(vista).getByRole("button", { name: "Mes" })).toHaveAttribute("aria-pressed", "true")
+    // El segmentado gris de Calendar (§2.10): una sola opción, el segmento elevado y no el acento.
+    const vista = screen.getByRole("tablist", { name: "Vista" })
+    expect(vista).toHaveAttribute("data-variant", "segmented")
+    expect(within(vista).getByRole("tab", { name: "Mes" })).toHaveAttribute("aria-selected", "true")
+    expect(within(vista).getByRole("tab", { name: "Semana" })).toHaveAttribute("aria-selected", "false")
+    expect(vista.querySelector("[data-slot=tabs-indicator]")).toHaveClass("bg-segment")
+    expect(vista.querySelector("[data-slot=toggle-group-item]")).toBeNull()
     expect(screen.getByRole("button", { name: "Mes anterior" })).toBeInTheDocument()
     expect(screen.getByRole("button", { name: "Hoy" })).toBeInTheDocument()
     expect(screen.getByRole("button", { name: "Mes siguiente" })).toBeInTheDocument()
@@ -97,11 +102,30 @@ describe("CalendarView · mes", () => {
   })
 })
 
+describe("CalendarView · segmentado", () => {
+  it("cambiar de pestaña cambia la vista, y el cuerpo es su panel sin sumar una parada de Tab", async () => {
+    const onViewChange = vi.fn()
+    render(<CalendarView defaultDate={AHORA} locale="es-AR" now={AHORA} onViewChange={onViewChange} />)
+    await userEvent.click(screen.getByRole("tab", { name: "Semana" }))
+    expect(onViewChange).toHaveBeenCalledWith("week")
+    const panel = screen.getByRole("tabpanel")
+    expect(panel).toHaveAttribute("tabindex", "-1")
+    expect(within(panel).getByRole("grid", { name: /28 de septiembre/ })).toBeInTheDocument()
+    expect(screen.getByRole("tab", { name: "Semana" })).toHaveAttribute("aria-selected", "true")
+  })
+
+  it("con el teclado: ← → mueven entre Semana y Mes", async () => {
+    render(<CalendarView defaultDate={AHORA} locale="es-AR" now={AHORA} />)
+    screen.getByRole("tab", { name: "Mes" }).focus()
+    await userEvent.keyboard("{ArrowLeft}{Enter}")
+    expect(screen.getByRole("tab", { name: "Semana" })).toHaveAttribute("aria-selected", "true")
+  })
+})
+
 describe("CalendarView · semana", () => {
   it("siete días con la fila «Todo el día», horas de 61 y bloques con borde izquierdo de 3", () => {
     render(<CalendarView defaultDate={AHORA} defaultView="week" events={EVENTOS} locale="es-AR" now={AHORA} />)
-    expect(screen.getByRole("group", { name: "Vista" })).toBeInTheDocument()
-    expect(within(screen.getByRole("group", { name: "Vista" })).getByRole("button", { name: "Semana" })).toHaveAttribute("aria-pressed", "true")
+    expect(within(screen.getByRole("tablist", { name: "Vista" })).getByRole("tab", { name: "Semana" })).toHaveAttribute("aria-selected", "true")
     const grilla = screen.getByRole("grid", { name: /28 de septiembre/ })
     expect(within(grilla).getAllByRole("gridcell")).toHaveLength(7)
     expect(screen.getByText("Todo el día")).toBeInTheDocument()

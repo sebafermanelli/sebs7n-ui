@@ -2086,6 +2086,7 @@ export const COMPONENTS = {
     description: "El calendario de iCloud en vista de mes y de semana: hoy en el círculo del acento, chips de todo el día, eventos con hora y la línea roja de ahora.",
     keyboard: [
       ["Tab", "Recorre el segmentado de la vista, ‹ Hoy › y entra a la grilla en el día activo (una sola parada)."],
+      ["← → (en el segmentado)", "Mueven entre Semana y Mes; Enter o Espacio la elige. Es un `tablist` de una sola opción, el segmentado gris de Calendar."],
       ["← →", "El día anterior o siguiente (cruza de mes o de semana)."],
       ["↑ ↓", "En el mes, la misma fecha una semana antes o después."],
       ["Home End", "El primer y el último día de la semana."],
