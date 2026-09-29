@@ -92,28 +92,30 @@ describe("Slider", () => {
   it("el foco vive en el input de adentro, así que el anillo va en el thumb", () => {
     render(<Slider aria-label="x" defaultValue={10} />)
     const thumb = thumbs()[0]!
-    expect(thumb).toHaveClass("has-[input:focus-visible]:focus-ring", "rounded-full")
+    // Por fuera, como el Switch: adentro de una perilla de 14 un anillo interior de 3 la taparía.
+    expect(thumb).toHaveClass("has-[input:focus-visible]:outline-2", "has-[input:focus-visible]:outline-offset-2", "rounded-full")
     expect(thumb.querySelector("input[type=range]")).toBeInTheDocument()
   })
 
-  it("usa los tokens del sistema", () => {
+  // El slider de Photos (§2.14): pista de 2 px con radio completo, el progreso en el label y la
+  // pista en el label al 32 %.
+  it("usa los tokens del sistema: pista de 2 px y progreso en el label", () => {
     render(<Slider aria-label="x" defaultValue={10} />)
-    expect(track()).toHaveClass("bg-fill-3", "rounded-full")
-    expect(document.querySelector("[data-slot=slider-indicator]")).toHaveClass("bg-brand-700")
-    expect(thumbs()[0]).toHaveClass("bg-white", "shadow-tooltip", "transition-thumb", "data-dragging:scale-x-125")
+    expect(track()).toHaveClass("h-0.5", "bg-label/32", "rounded-full")
+    expect(document.querySelector("[data-slot=slider-indicator]")).toHaveClass("bg-label", "rounded-full")
+    expect(thumbs()[0]).toHaveClass("transition-thumb", "data-dragging:scale-125")
   })
 
-  // La perilla de macOS es una cápsula horizontal, no un círculo: la misma del matiz del
-  // ColorPicker. Sale de `sliderThumbClassName` para que las dos no puedan quedar distintas.
-  it("la perilla es una cápsula de 20 × 28 (16 × 22 en sm) que se hace lente al arrastrar", () => {
+  // La perilla de iCloud: un círculo de 14 con borde de 2 en el label y el centro de la superficie,
+  // la misma del matiz del ColorPicker (`sliderThumbClassName`). El área de toque la agranda un
+  // `::after` sin cambiar lo que se ve.
+  it("la perilla es un círculo de 14 con borde de 2, y crece al arrastrar", () => {
     const { rerender } = render(<Slider aria-label="x" defaultValue={10} />)
     const thumb = thumbs()[0]!
     for (const clase of sliderThumbClassName.split(" ")) expect(thumb).toHaveClass(clase)
-    expect(thumb).toHaveClass("group-data-[size=md]/slider:h-5", "group-data-[size=md]/slider:w-7", "rounded-full")
-    expect(thumb).toHaveClass("data-dragging:scale-x-125", "data-dragging:scale-y-135")
-    expect(thumb.className).not.toMatch(/size-[45]\b/)
+    expect(thumb).toHaveClass("size-3.5", "rounded-full", "border-2", "border-label", "bg-surface", "after:-inset-2.5", "pointer-coarse:after:-inset-4")
     rerender(<Slider aria-label="x" defaultValue={10} size="sm" />)
-    expect(thumbs()[0]).toHaveClass("group-data-[size=sm]/slider:h-4", "group-data-[size=sm]/slider:w-5.5")
+    expect(thumbs()[0]).toHaveClass("size-3.5")
   })
 
   it("disabled: no se mueve y queda marcado", async () => {

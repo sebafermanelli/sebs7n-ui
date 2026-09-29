@@ -78,27 +78,23 @@ function Slider<Value extends number | readonly number[] = number | readonly num
         className={cn(
           "flex w-full cursor-pointer touch-none items-center select-none",
           "group-data-[size=sm]/slider:h-6 group-data-[size=md]/slider:h-8",
-          "data-disabled:cursor-not-allowed",
+          // Apagado a .4, como todo control de iCloud.
+          "data-disabled:cursor-not-allowed data-disabled:opacity-40",
           controlClassName
         )}
       >
         <SliderPrimitive.Track
           data-slot="slider-track"
-          className={cn(
-            "w-full rounded-full bg-fill-3",
-            "group-data-[size=sm]/slider:h-1 group-data-[size=md]/slider:h-1.5",
-            "data-disabled:bg-fill-2"
-          )}
+          // La pista de Photos (§2.14): 2 px con radio completo, el label al 32 % y el progreso en el
+          // label. Lo que dice el valor es la perilla; la pista es contexto.
+          className="h-0.5 w-full rounded-full bg-label/32"
         >
-          <SliderPrimitive.Indicator
-            data-slot="slider-indicator"
-            className="h-full rounded-full bg-brand-700 data-disabled:bg-gray-400"
-          />
+          <SliderPrimitive.Indicator data-slot="slider-indicator" className="h-full rounded-full bg-label" />
 
           {marks?.map((mark) => (
             <span
               aria-hidden="true"
-              className="absolute top-1/2 size-1 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gray-600"
+              className="absolute top-1/2 size-1 -translate-x-1/2 -translate-y-1/2 rounded-full bg-label-tertiary"
               data-slot="slider-mark"
               key={mark}
               style={{ insetInlineStart: `${((mark - min) / (max - min)) * 100}%` }}
@@ -111,16 +107,17 @@ function Slider<Value extends number | readonly number[] = number | readonly num
               // Con `label` lo pone Base UI solo (`aria-labelledby`), así que no se pisa.
               aria-label={label == null ? ariaLabel : undefined}
               className={cn(
-                // La cápsula de macOS, la misma del matiz del ColorPicker: 20 × 28, y en `sm` la
-                // misma proporción (16 × 22). El borde transparente es el lugar del de deshabilitado.
+                // La perilla de iCloud, la misma del matiz del ColorPicker: 14 con borde de 2, en los
+                // dos tamaños. El `::after` agranda el área de toque (34, y 46 con el dedo) sin
+                // cambiar lo que se ve.
                 sliderThumbClassName,
-                "border border-transparent outline-none",
-                "group-data-[size=sm]/slider:h-4 group-data-[size=sm]/slider:w-5.5 group-data-[size=md]/slider:h-5 group-data-[size=md]/slider:w-7",
+                "outline-none after:absolute after:-inset-2.5 pointer-coarse:after:-inset-4",
                 // Mientras se arrastra, la perilla crece: es la respuesta al toque.
                 sliderThumbDraggingClassName,
-                // El foco vive en el <input type="range"> de adentro: el anillo va en el thumb.
-                "has-[input:focus-visible]:focus-ring",
-                "data-disabled:cursor-not-allowed data-disabled:border-separator data-disabled:bg-fill-1 data-disabled:scale-100"
+                // El foco vive en el <input type="range"> de adentro, y el anillo va por fuera del
+                // thumb, como en el Switch: adentro de 14 px un anillo interior de 3 la taparía.
+                "has-[input:focus-visible]:outline-solid has-[input:focus-visible]:outline-2 has-[input:focus-visible]:outline-offset-2 has-[input:focus-visible]:outline-(color:--sf-focus)",
+                "data-disabled:cursor-not-allowed data-disabled:scale-100"
               )}
               data-slot="slider-thumb"
               index={index}

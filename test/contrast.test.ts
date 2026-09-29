@@ -338,28 +338,20 @@ describe("Pista del Switch apagado (WCAG 1.4.11)", () => {
   }
 })
 
-// Revisión de R1: la perilla del Slider es blanca en los dos temas, y en claro sobre la página
-// blanca solo la separaba el filo de `shadow-tooltip` (1,1:1). La perilla es lo que se agarra:
-// cae bajo WCAG 1.4.11. Lleva un borde de 1 px en `label-tertiary`, que llega a 3:1 contra la
-// página y contra la propia perilla.
+// La perilla del Slider (R4, la de Photos en iCloud) es un círculo de 14 con borde de 2 px en el
+// label y el centro de la superficie. Lo que se agarra es ese borde: cae bajo WCAG 1.4.11 (3:1
+// contra la página y contra el centro, que es la superficie).
 describe("La perilla del Slider se ve sobre la página (WCAG 1.4.11)", () => {
-  it("lleva un borde de 1 px en label-tertiary", () => {
-    expect(sliderThumbClassName.split(" ")).toEqual(expect.arrayContaining(["ring-1", "ring-label-tertiary"]))
+  it("lleva un borde de 2 px en el label", () => {
+    expect(sliderThumbClassName.split(" ")).toEqual(expect.arrayContaining(["border-2", "border-label", "bg-surface"]))
   })
 
   for (const theme of ["light", "dark"] as const) {
     for (const [donde, token] of Object.entries(FONDOS)) {
       const bg = paleta[theme][token]!
-      const borde = flattenAlpha(paleta[theme]["--sf-label-tertiary"]!, bg)
+      const borde = flattenAlpha(paleta[theme]["--sf-label"]!, bg)
       it(`${theme} · el borde (${borde}) sobre ${donde} ${bg} llega a 3:1`, () => {
         expect(ratio(borde, bg)).toBeGreaterThanOrEqual(3)
-      })
-    }
-    // Contra la perilla blanca solo importa en claro: en oscuro la perilla contra la página ya da 17:1.
-    if (theme === "light") {
-      const borde = flattenAlpha(paleta.light["--sf-label-tertiary"]!, "#ffffff")
-      it(`light · el borde (${borde}) contra la perilla blanca llega a 3:1`, () => {
-        expect(ratio(borde, "#ffffff")).toBeGreaterThanOrEqual(3)
       })
     }
   }

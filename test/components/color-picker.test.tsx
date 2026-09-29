@@ -187,7 +187,7 @@ describe("ColorPicker: valores y espectro", () => {
     await userEvent.click(screen.getByRole("tab", { name: "Espectro" }))
     const perilla = screen.getByRole("slider", { name: "Matiz" }).nextElementSibling!
     for (const clase of sliderThumbClassName.split(" ")) expect(perilla).toHaveClass(clase)
-    expect(perilla).toHaveClass("h-5", "w-7", "peer-active:scale-x-125", "peer-active:scale-y-135")
+    expect(perilla).toHaveClass("size-3.5", "peer-active:scale-125")
   })
 
   // floatingPopupClassName bajó a p-3 en 2.0 (popover de macOS); el ColorPicker es un panel de

@@ -345,13 +345,14 @@ function Espectro({ color, onChange, labels }: { color: Oklch; onChange: (color:
           />
           <span
             aria-hidden="true"
-            // La perilla del Slider: la misma cápsula de 20 × 28, de `variants/slider`.
+            // La perilla del Slider: el círculo de 14 de `variants/slider`, centrado en la franja
+            // de 8 (top 3 = (20 − 14) / 2). El anillo va por fuera, como en el Slider.
             className={cn(
               sliderThumbClassName,
               sliderThumbPeerActiveClassName,
-              "pointer-events-none absolute top-0 h-5 w-7 -translate-x-1/2 peer-focus-visible:focus-ring"
+              "pointer-events-none absolute top-0.75 -translate-x-1/2 peer-focus-visible:outline-solid peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-(color:--sf-focus)"
             )}
-            style={{ left: `calc(14px + (100% - 28px) * ${h / 360})` }}
+            style={{ left: `calc(7px + (100% - 14px) * ${h / 360})` }}
           />
         </div>
       </div>
