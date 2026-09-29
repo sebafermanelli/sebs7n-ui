@@ -372,6 +372,13 @@
      * widget y no el 40 % de la barra: con 40 el texto no se lee sobre cualquier foto.
      */
     --sf-translucent: #f8f8fcd9;
+    /**
+     * El fill de la barra del Navbar, que es translúcida siempre (la home de iCloud: el contenido
+     * pasa por abajo, desenfocado). Va sobre cualquier cosa que scrollee, así que es más denso que el
+     * del widget: con 88 % el texto y el secundario llegan a 4,5:1 aunque abajo haya blanco o negro
+     * puro (`test/surfaces.test.ts`).
+     */
+    --sf-translucent-bar: #f8f8fce0;
 
     /* L fija = la del paso equivalente de blue en Geist; k = croma relativo a blue-700. */
     --sf-brand-100: oklch(from var(--sf-brand-src) 0.973 calc(c * 0.059) h);
@@ -524,6 +531,7 @@
     --sf-on-tooltip: #ffffff;
     --sf-segment: #636366;
     --sf-translucent: #38383d99;
+    --sf-translucent-bar: #38383de0;
 
     --sf-brand-100: oklch(from var(--sf-brand-src) 0.22 calc(c * 0.317) h);
     --sf-brand-200: oklch(from var(--sf-brand-src) 0.255 calc(c * 0.369) h);

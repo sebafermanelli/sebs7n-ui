@@ -285,7 +285,8 @@ No hay más flotantes. `variant="floating"` (el default de Sidebar y AppShell en
 ```
 
 - **Sidebar**: lista de fuentes a ras, ítems 32 en 15 px, ícono en el acento, activo gris. Secciones que se abren y cierran con `SidebarGroup collapsible`, y el «+» de una sección con `SidebarGroupAction` (exige `aria-label`).
-- **Navbar**: barra fija de 44 a todo el ancho, opaca desde arriba. `useNavbar().floating` ya no existe.
+- **Navbar**: barra fija de 44 a todo el ancho, **translúcida con desenfoque desde arriba** (el contenido pasa por abajo, como en la home de iCloud; antes transparente hasta scrollear). Con menos transparencia es opaca. `useNavbar().floating` ya no existe.
+- **La barra de `AppShell`** (`header` y la del teléfono) es **opaca**, como en Mail o Drive.
 - **AppShell**: `header` (nuevo) es la barra global arriba de todo; en el teléfono la barra mide 44.
 - `Sidebar` y `Navbar` ya no ponen `data-variant`: un estilo propio colgado de `[data-variant=floating]` pasa a `data-slot`.
 

@@ -16,14 +16,14 @@ const surface = (c: HTMLElement) => c.querySelector("[data-slot=navbar-surface]"
 const header = (c: HTMLElement) => c.querySelector("[data-slot=navbar]") as HTMLElement
 
 describe("Navbar", () => {
-  it("es un <header> sticky a todo el ancho, opaco desde arriba: la barra global de iCloud", () => {
+  it("es un <header> sticky a todo el ancho, translúcido desde arriba: la barra de la home de iCloud", () => {
     const { container } = render(<Navbar><NavbarContent>x</NavbarContent></Navbar>)
     expect(header(container).tagName).toBe("HEADER")
     expect(header(container)).toHaveClass("sticky", "top-0", "w-full")
     expect(header(container)).not.toHaveAttribute("data-scrolled")
-    // Sin estado transparente: la barra de una app de iCloud es opaca siempre, y translúcida solo
-    // sobre el wallpaper.
-    expect(surface(container)).toHaveClass("bg-surface-header", "in-data-ambient:material-translucent", "shadow-[inset_0_-1px_0_var(--color-separator-strong)]")
+    // Sin estado transparente: translúcida con desenfoque siempre (el contenido pasa por abajo), con
+    // el fill denso de la barra. Opaca con menos transparencia: lo resuelve la utilidad.
+    expect(surface(container)).toHaveClass("material-translucent", "[--sf-translucent:var(--sf-translucent-bar)]", "shadow-[inset_0_-1px_0_var(--color-separator-strong)]")
     expect(surface(container).className).not.toMatch(/bg-transparent|rounded-|shadow-menu|backdrop-blur/)
   })
 

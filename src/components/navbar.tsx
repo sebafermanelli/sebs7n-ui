@@ -53,9 +53,12 @@ type NavbarProps = React.ComponentProps<"header"> & {
 }
 
 /**
- * La barra global de iCloud (catálogo §2.1): a todo el ancho, opaca (`surface-header`) con el borde
- * entre paneles abajo, y `material-translucent` solo sobre el wallpaper de `AppShell ambient`, como
- * la de Home. El contenido va en `NavbarContent` (44 de alto).
+ * La barra global de la home de iCloud (catálogo §2.1): a todo el ancho, con el borde entre paneles
+ * abajo y **translúcida con desenfoque** (`material-translucent`): el contenido de la página pasa por
+ * abajo. Su fill (`--sf-translucent-bar`) es más denso que el del widget para que el texto llegue a
+ * 4,5:1 sobre cualquier cosa; con menos transparencia o más contraste es la barra opaca
+ * (`surface-header`). La barra de `AppShell` no es esta: queda opaca, como la de Mail o Drive, donde
+ * el contenido scrollea adentro de los paneles. El contenido va en `NavbarContent` (44 de alto).
  *
  * El borde es una sombra interior de 1 px y no un `border`: así la barra mide 44 con él adentro, lo
  * mismo que en iCloud, sin que `NavbarContent` tenga que descontarlo.
@@ -76,7 +79,7 @@ function Navbar({ className, surfaceClassName, variant: _variant, position = "st
       <div
         data-slot="navbar-surface"
         className={cn(
-          "relative bg-surface-header text-label shadow-[inset_0_-1px_0_var(--color-separator-strong)] in-data-ambient:material-translucent",
+          "relative material-translucent [--sf-translucent:var(--sf-translucent-bar)] text-label shadow-[inset_0_-1px_0_var(--color-separator-strong)]",
           surfaceClassName
         )}
       >

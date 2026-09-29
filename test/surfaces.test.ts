@@ -147,8 +147,12 @@ describe("material-translucent: el único con blur", () => {
     expect(utility("bg-ambient")).toContain("background-attachment: fixed")
   })
 
-  it("lo usa la barra del Navbar sobre el wallpaper", () => {
-    expect(read("../src/components/navbar.tsx")).toContain("in-data-ambient:material-translucent")
+  // Como la barra de la home de iCloud: el contenido pasa por abajo, desenfocado. Siempre, no solo sobre
+  // el wallpaper; con el fill de la barra (`translucent-bar`), que es más denso que el del widget.
+  it("la barra del Navbar es siempre translúcida, con su fill", () => {
+    const navbar = read("../src/components/navbar.tsx")
+    expect(navbar).toContain("material-translucent [--sf-translucent:var(--sf-translucent-bar)]")
+    expect(navbar).not.toContain("in-data-ambient:material-translucent")
   })
 
   it("un bg-* de la app le gana", () => {
@@ -190,6 +194,17 @@ describe("textos sobre las superficies (WCAG 1.4.3 y 1.4.11)", () => {
       const bg = token(tema, "selection-inactive")
       expect(ratio(flattenAlpha(token(tema, "label"), bg), bg)).toBeGreaterThanOrEqual(4.5)
     })
+
+    // El Navbar va sobre cualquier contenido que scrollee: se mide contra lo peor, blanco y negro
+    // puros debajo del fill (el desenfoque promedia, así que un fondo parejo es el caso extremo).
+    for (const debajo of ["#ffffff", "#000000"]) {
+      for (const rol of ["label", "label-secondary"] as const) {
+        it(`${tema} · ${rol} sobre la barra translúcida del Navbar con ${debajo} debajo llega a 4.5:1`, () => {
+          const bg = flattenAlpha(token(tema, "translucent-bar"), debajo)
+          expect(ratio(flattenAlpha(token(tema, rol), bg), bg)).toBeGreaterThanOrEqual(4.5)
+        })
+      }
+    }
 
     it(`${tema} · label sobre material-translucent llega a 4.5:1 sobre el fondo opaco de respaldo`, () => {
       const bg = flattenAlpha(token(tema, "translucent"), token(tema, "background"))

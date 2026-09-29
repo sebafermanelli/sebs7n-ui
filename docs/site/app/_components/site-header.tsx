@@ -19,7 +19,7 @@ const LINKS = [
 export function SiteHeader({ version }: { version: string }) {
   const pathname = usePathname()
   return (
-    // El `Navbar` del paquete: la barra global de iCloud, a todo el ancho, 44 de alto y opaca.
+    // El `Navbar` del paquete: la barra de la home de iCloud, a todo el ancho, 44 de alto y translúcida.
     <Navbar>
       <NavbarContent className="justify-start">
         <Link

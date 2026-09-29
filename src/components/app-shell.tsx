@@ -25,7 +25,7 @@ type AppShellProps = Omit<React.ComponentProps<"div">, "children"> & {
   mainId?: string
   /**
    * El wallpaper: tres focos de color que salen del brand, fijos detrás de todo, como el fondo
-   * de Home en iCloud. Sobre él la barra del `Navbar` pasa a `material-translucent`. Es opt-in
+   * de Home en iCloud. Sobre él la barra (`header`) y la franja de `WidgetCard` pasan a `material-translucent`. Es opt-in
    * porque cambia el fondo de la app entera, y esa decisión es de la app.
    */
   ambient?: boolean

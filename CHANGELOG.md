@@ -219,9 +219,12 @@ DropdownMenu, ContextMenu, Menubar, Select, Combobox, Autocomplete y las filas d
   cápsula con borde y vidrio).
 - **AppShell:** barra del teléfono de **44** (antes el `Navbar` flotante de 56); ya no importa
   `Navbar`.
-- **Navbar = la barra global:** a todo el ancho, **44** (antes 56), opaca desde arriba con borde
-  abajo (antes transparente hasta scrollear), translúcida solo sobre el wallpaper. `NavbarContent`
-  sin `max-w-6xl`, padding `0 6px 0 16px`.
+- **Navbar = la barra de la home de iCloud:** a todo el ancho, **44** (antes 56), con borde abajo
+  y **translúcida con desenfoque desde arriba** (`material-translucent` con su propio fill,
+  `--sf-translucent-bar`, al 88 %: el texto y el secundario llegan a 4,5:1 con blanco o negro puro
+  debajo, en los dos temas); antes transparente hasta scrollear. Con menos transparencia o más
+  contraste es opaca (`surface-header`). `NavbarContent` sin `max-w-6xl`, padding `0 6px 0 16px`.
+  La barra de `AppShell` no cambia con esto: es opaca, como la de Mail o Drive.
 - **Toolbar:** `variant="bar"` es el nuevo default (antes `glass`, cápsula de vidrio del ancho del
   contenido): a todo el ancho, 44, `surface-bar`, borde abajo, gap 6. `glass` queda como alias
   obsoleto de `bar`. El botón por defecto de la Toolbar es `plain`.
@@ -314,7 +317,8 @@ para no pasar el tope de 55 kB gzip del barrel (sus textos de `labels` sí entra
 - **Tokens y utilidades:** los roles tipográficos; los radios nuevos (ver Breaking); las superficies,
   fills, separadores y labels; `--sf-selection`/`--sf-on-selection`/`--sf-selection-inactive`;
   `--sf-focus`/`--sf-focus-alpha`; `focus-ring-inverse`; `material-translucent` (el único material
-  con blur, opaco con `prefers-reduced-transparency`); `shadow-widget`, `shadow-segment`,
+  con blur, opaco con `prefers-reduced-transparency`) y `--sf-translucent-bar` (su fill para el
+  Navbar); `shadow-widget`, `shadow-segment`,
   `shadow-badge`, `shadow-thumbnail`; `touch-target` y `touch-target-y`; el variant
   `inside-selection`; `--sf-skeleton-shine`; `monogram-top`/`monogram-bottom`.
 - **Clases compartidas** (`variants/*`, también en el barrel): `menuGutterClassName`,
