@@ -33,9 +33,10 @@ describe("radios de iCloud", () => {
     expect(radio("tag")).toBe(4)
   })
 
-  it("el panel de un menú es concéntrico con su ítem: 8 + p-1 (4) = 12", () => {
-    expect(radio("menu-item") + 4).toBe(radio("menu"))
-    expect(clases(menuPopupClassName)).toEqual(expect.arrayContaining(["rounded-menu", "p-1"]))
+  // iCloud no los hace concéntricos: radio 12 con 5 de padding e ítem de 8 (menú de fila de Drive).
+  it("el panel de un menú es el de iCloud: radio 12, padding 5, ítem de 8", () => {
+    expect(radio("menu-item")).toBe(8)
+    expect(clases(menuPopupClassName)).toEqual(expect.arrayContaining(["rounded-menu", "p-1.25"]))
     expect(clases(menuItemClassName)).toContain("rounded-menu-item")
   })
 

@@ -126,7 +126,7 @@ function DropdownMenuSeparator({ className, ...props }: DropdownMenuSeparatorPro
 // `SidebarItemBadge`, por el mismo motivo.
 function DropdownMenuShortcut({ className, children, ...props }: React.ComponentProps<"span">) {
   return (
-    <span data-slot="dropdown-menu-shortcut" className={cn("ml-auto text-mono-callout", menuItemSecondaryClassName, className)} {...props}>
+    <span data-slot="dropdown-menu-shortcut" className={cn("ml-auto pl-4 text-callout", menuItemSecondaryClassName, className)} {...props}>
       <span className="sr-only">,</span>{" "}
       {children}
     </span>

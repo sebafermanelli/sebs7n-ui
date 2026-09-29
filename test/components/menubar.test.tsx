@@ -172,7 +172,7 @@ describe("Menubar", () => {
     await userEvent.click(titulo("Archivo"))
 
     const panel = await screen.findByRole("menu")
-    expect(panel).toHaveClass("shadow-menu", "rounded-menu", "bg-surface", "p-1", "min-w-48")
+    expect(panel).toHaveClass("shadow-menu", "rounded-menu", "bg-surface", "p-1.25", "min-w-52")
     expect(titulo("Archivo")).toHaveAttribute("data-popup-open")
   })
 

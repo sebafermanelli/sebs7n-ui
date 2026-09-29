@@ -141,7 +141,7 @@ describe("ContextMenu", () => {
     expect(menu.className).not.toMatch(/\bborder\b/)
 
     const item = screen.getByRole("menuitem", { name: /Renombrar/ })
-    expect(item).toHaveClass("h-6", "rounded-menu-item", "data-highlighted:bg-fill-2")
+    expect(item).toHaveClass("h-7.5", "rounded-menu-item", "data-highlighted:bg-fill-2")
 
     const borrar = screen.getByRole("menuitem", { name: "Mover a la papelera" })
     expect(borrar).toHaveAttribute("data-variant", "destructive")

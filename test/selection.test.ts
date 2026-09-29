@@ -33,7 +33,8 @@ describe("selección de iCloud (2.0)", () => {
   it("un ítem deshabilitado no se resalta", () => {
     const menu = clases(menuItemClassName)
     expect(menu).toContain("data-disabled:data-highlighted:bg-transparent")
-    expect(menu).toContain("data-disabled:text-label-tertiary")
+    // iCloud apaga el ítem entero al 30 % (catálogo §2.8), ícono incluido.
+    expect(menu).toContain("data-disabled:opacity-30")
   })
 
   it("el activo del sidebar va en fill 1, con el texto principal", () => {

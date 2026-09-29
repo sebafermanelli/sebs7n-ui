@@ -234,10 +234,10 @@ describe("menú de macOS (2.0)", () => {
     expect(screen.getByRole("menuitem", { name: "Imprimir" }).className).not.toMatch(/(^|\s)pl-7\b/)
   })
 
-  it("el título de grupo es chico, en negrita y gris; con inset alinea con la canaleta", async () => {
-    expect(menuLabelClassName).toMatch(/\btext-callout\b/)
-    expect(menuLabelClassName).toMatch(/\bfont-semibold\b/)
-    expect(menuLabelClassName).toMatch(/\btext-label-secondary\b/)
+  it("el título de grupo es una fila de 30, 14/600 en el color del texto (el «View as» de iCloud)", async () => {
+    const titulo = menuLabelClassName.split(" ")
+    expect(titulo).toEqual(expect.arrayContaining(["h-7.5", "px-2.5", "text-callout", "font-semibold", "text-label"]))
+    expect(titulo).not.toContain("text-label-secondary")
     render(
       <DropdownMenu defaultOpen>
         <DropdownMenuTrigger>Ver</DropdownMenuTrigger>
@@ -248,23 +248,45 @@ describe("menú de macOS (2.0)", () => {
         </DropdownMenuContent>
       </DropdownMenu>
     )
-    expect(await screen.findByText("Orden")).toHaveClass("data-inset:pl-7")
+    expect(await screen.findByText("Orden")).toHaveAttribute("data-inset")
   })
 
-  it("el separador tiene aire a los costados", () => {
-    expect(menuSeparatorClassName).toMatch(/\bmx-2\b/)
+  it("el separador: 9 px de alto, línea de fill-2 con 11 de margen a los costados", () => {
+    const separador = menuSeparatorClassName.split(" ")
+    expect(separador).toEqual(expect.arrayContaining(["mx-2.75", "my-1", "h-px", "bg-fill-2"]))
     expect(menuSeparatorClassName).not.toMatch(/-mx-1/)
   })
 
-  it("el panel: p-1, radio concéntrico y 192 px de mínimo", () => {
-    expect(menuPopupClassName).toMatch(/(^|\s)p-1(\s|$)/)
-    // 8 del ítem + 4 del padding = 12, el radio de los menús de iCloud.
-    expect(menuPopupClassName).toMatch(/(^|\s)rounded-menu(\s|$)/)
+  it("el panel: radio 12, 5 de padding y 208 px de mínimo, como el menú de Drive", () => {
+    const panel = menuPopupClassName.split(" ")
+    expect(panel).toEqual(expect.arrayContaining(["rounded-menu", "p-1.25", "min-w-52", "bg-surface", "shadow-menu"]))
     expect(menuPopupClassName).not.toContain("--radius-control")
-    expect(menuPopupClassName).toMatch(/(^|\s)min-w-48(\s|$)/)
   })
 
-  it("el ítem resaltado usa el radio de ítem de menú (6 px), no el de control", () => {
+  it("el ítem: 30 de alto, 10 de lado, 14 de texto, íconos de 16 y el primero en el acento", () => {
+    const item = menuItemClassName.split(" ")
+    expect(item).toEqual(expect.arrayContaining(["h-7.5", "px-2.5", "gap-2.5", "text-callout", "[&>svg:first-child]:text-brand-900"]))
+    expect(menuItemClassName).toContain("[&_svg:not([class*='size-'])]:size-4")
+  })
+
+  it("el atajo va a la derecha, gris y en el tamaño del ítem", async () => {
+    render(
+      <DropdownMenu defaultOpen>
+        <DropdownMenuTrigger>Ver</DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem>
+            Guardar
+            <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    )
+    const atajo = (await screen.findByRole("menuitem", { name: /Guardar/ })).querySelector("[data-slot=dropdown-menu-shortcut]")
+    expect(atajo).toHaveClass("ml-auto", "text-callout", "text-label-secondary")
+    expect(atajo).not.toHaveClass("text-mono-callout")
+  })
+
+  it("el ítem resaltado usa el radio de ítem de menú (8 px), no el de control", () => {
     expect(menuItemClassName).toMatch(/(^|\s)rounded-menu-item(\s|$)/)
     expect(menuItemClassName).not.toMatch(/(^|\s)rounded-control(\s|$)/)
   })

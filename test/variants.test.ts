@@ -132,8 +132,8 @@ describe("densidad macOS (2.0)", () => {
     expect(out).toContain("data-[size=lg]:h-10")
   })
 
-  it("ítems de menú a 24 y del sidebar a 28, como en macOS", () => {
-    expect(classes(menuItemClassName)).toContain("h-6")
+  it("ítems de menú a 30 (iCloud) y del sidebar a 28", () => {
+    expect(classes(menuItemClassName)).toContain("h-7.5")
     expect(classes(sidebarItemVariants())).toContain("h-7")
   })
 

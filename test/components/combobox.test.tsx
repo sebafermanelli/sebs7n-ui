@@ -130,7 +130,7 @@ describe("Combobox", () => {
     await userEvent.keyboard("zzz")
     expect(await screen.findByText("Sin resultados")).toBeInTheDocument()
     // Del alto de un ítem, no de tres.
-    expect(screen.getByText("Sin resultados")).toHaveClass("h-6")
+    expect(screen.getByText("Sin resultados")).toHaveClass("h-7.5", "px-2.5")
     expect(screen.queryAllByRole("option")).toHaveLength(0)
   })
 
@@ -176,7 +176,7 @@ describe("Combobox", () => {
     await userEvent.click(screen.getByRole("button", { name: "Abrir lista" }))
     const europa = await screen.findByRole("group", { name: "Europa" })
     expect(within(europa).getAllByRole("option").map((o) => o.textContent)).toEqual(["España", "Italia"])
-    expect(screen.getByText("Europa")).toHaveClass("text-callout", "font-semibold", "text-label-secondary")
+    expect(screen.getByText("Europa")).toHaveClass("text-callout", "font-semibold", "text-label")
   })
 
   it("búsqueda async: fila de carga con spinner, después resultados o vacío", async () => {

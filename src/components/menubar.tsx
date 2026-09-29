@@ -190,7 +190,7 @@ function MenubarSeparator({ className, ...props }: MenubarSeparatorProps) {
 // `SidebarItemBadge`, por el mismo motivo.
 function MenubarShortcut({ className, children, ...props }: React.ComponentProps<"span">) {
   return (
-    <span data-slot="menubar-shortcut" className={cn("ml-auto pl-6 text-mono-callout", menuItemSecondaryClassName, className)} {...props}>
+    <span data-slot="menubar-shortcut" className={cn("ml-auto pl-4 text-callout", menuItemSecondaryClassName, className)} {...props}>
       <span className="sr-only">,</span>{" "}
       {children}
     </span>

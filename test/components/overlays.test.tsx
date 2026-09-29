@@ -82,7 +82,7 @@ describe("Popover", () => {
 })
 
 describe("DropdownMenu", () => {
-  it("ítems de 24px con el resaltado en acento sólido; el destructivo, igual que los demás", async () => {
+  it("ítems de 30 px con el resaltado gris; el destructivo, igual que los demás", async () => {
     const onClick = vi.fn()
     render(
       <DropdownMenu>
@@ -95,7 +95,7 @@ describe("DropdownMenu", () => {
     )
     await userEvent.click(screen.getByRole("button", { name: "Acciones" }))
     const edit = await screen.findByRole("menuitem", { name: "Editar" })
-    expect(edit).toHaveClass("h-6", "rounded-menu-item", "data-highlighted:bg-fill-2", "active:bg-fill-3", "data-disabled:text-label-tertiary", "data-disabled:data-highlighted:bg-transparent")
+    expect(edit).toHaveClass("h-7.5", "rounded-menu-item", "data-highlighted:bg-fill-2", "active:bg-fill-3", "data-disabled:opacity-30", "data-disabled:data-highlighted:bg-transparent")
     // Como el «Eliminar» de Mail: texto común, y resaltado en el mismo acento. El peligro lo
     // muestra la alerta que confirma, no el ítem.
     const eliminar = screen.getByRole("menuitem", { name: "Eliminar" })
@@ -118,7 +118,7 @@ describe("DropdownMenu", () => {
       </DropdownMenu>
     )
     await userEvent.click(screen.getByRole("button", { name: "Más" }))
-    expect(await screen.findByText("Viaje")).toHaveClass("text-callout", "font-semibold", "text-label-secondary")
+    expect(await screen.findByText("Viaje")).toHaveClass("h-7.5", "text-callout", "font-semibold", "text-label")
   })
 })
 
@@ -221,7 +221,7 @@ describe("Select como pop-up button de macOS (2.0)", () => {
     const lista = await screen.findByRole("listbox")
     const panel = lista.closest("[data-slot=select-content]")!
     expect(lista).toHaveAttribute("data-slot", "select-list")
-    expect(lista).toHaveClass("overflow-y-auto", "max-h-(--available-height)", "scroll-py-6", "p-1")
+    expect(lista).toHaveClass("overflow-y-auto", "max-h-(--available-height)", "scroll-py-6", "p-1.25")
     expect(panel).toHaveClass("overflow-hidden", "p-0")
     expect(panel.className).not.toMatch(/overflow-y-auto/)
   })

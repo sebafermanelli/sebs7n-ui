@@ -147,9 +147,9 @@ function ComboboxEmpty({ className, children, labels, ...props }: ComboboxEmptyP
   const content = children === undefined ? (labels?.empty ?? l.empty) : children
   return (
     <ComboboxPrimitive.Empty data-slot="combobox-empty" {...props}>
-      {/* Del alto de un ítem (h-8) y con su mismo padding: un popup con «Sin resultados» no
+      {/* Del alto de un ítem (30) y con su mismo padding: un popup con «Sin resultados» no
           es más alto que uno con una sola coincidencia. Antes era py-6 y ocupaba tres filas. */}
-      {content ? <div className={cn("flex h-6 items-center px-2 text-callout text-label-secondary", className)}>{content}</div> : null}
+      {content ? <div className={cn("flex h-7.5 items-center px-2.5 text-callout text-label-secondary", className)}>{content}</div> : null}
     </ComboboxPrimitive.Empty>
   )
 }
@@ -164,12 +164,12 @@ type ComboboxStatusProps = WithClassName<ComboboxPrimitive.Status.Props> & {
 function ComboboxStatus({ className, loading = false, labels, children, ...props }: ComboboxStatusProps) {
   const l = useLabels().combobox
   const content = loading ? (
-    <div data-slot="combobox-loading" className="flex h-6 items-center gap-2 px-2 text-callout text-label-secondary">
+    <div data-slot="combobox-loading" className="flex h-7.5 items-center gap-2 px-2.5 text-callout text-label-secondary">
       <Loader2Icon aria-hidden="true" className="size-4 shrink-0 animate-spin" />
       {labels?.loading ?? l.loading}
     </div>
   ) : children ? (
-    <div className="flex min-h-6 items-center px-2 text-callout text-label-secondary">{children}</div>
+    <div className="flex min-h-7.5 items-center px-2.5 text-callout text-label-secondary">{children}</div>
   ) : null
   return (
     <ComboboxPrimitive.Status data-slot="combobox-status" className={className} {...props}>

@@ -11,22 +11,24 @@
 export type MenuInsetProps = { inset?: boolean }
 
 /**
- * 24 px, el alto de un ítem de menú de macOS. Con el dedo sube a 44 de verdad y no con
+ * El ítem de un menú de iCloud (catálogo §2.8, medido en el menú de fila de Drive): **30 px**,
+ * `px-2.5` (10), `rounded-menu-item` (8), 14/400. Con el dedo sube a 44 de verdad y no con
  * `touch-target`: los ítems están pegados, y un `::after` de 44 taparía la mitad del de al lado
  * (el que va después en el DOM se pinta encima y se queda con el toque).
  *
- * `rounded-menu-item` (8, como los ítems de menú de Mail y Drive en iCloud).
+ * Íconos de 16 y **el primero, el que encabeza el ítem, en el acento** (`text-brand-900`, la tinta
+ * de link), como los glifos azules de los menús de Drive y Mail. `gap-2.5`: el texto de un ítem con
+ * ícono arranca a 36 (10 + 16 + 10; en iCloud, 37).
  *
- * El resaltado es el de iCloud (2.0): gris translúcido (`fill-2`) y el texto no cambia de color;
+ * El resaltado es el de iCloud: gris translúcido (`fill-2`) y el texto no cambia de color;
  * apretado, `fill-3`. Base UI pone `data-highlighted` tanto con el puntero como con las flechas.
- * Un ítem deshabilitado no lo toma aunque quede resaltado: se queda transparente y en
- * `label-tertiary`.
+ * Deshabilitado, el ítem entero queda al **30 %** (el `opacity .3` de iCloud) y no se resalta.
  * `group/menu-item` es para lo que adentro tiene color propio (el atajo): ver
  * `menuItemSecondaryClassName`. `group/selectable` es el mismo gancho, compartido con los otros
  * ítems seleccionables: ver `selectionSecondaryClassName`.
  */
 export const menuItemClassName =
-  "group/menu-item group/selectable relative flex h-6 pointer-coarse:h-11 cursor-pointer items-center gap-2 rounded-menu-item px-2 text-callout text-label outline-none select-none transition-control data-highlighted:bg-fill-2 active:bg-fill-3 data-disabled:cursor-not-allowed data-disabled:text-label-tertiary data-disabled:active:bg-transparent data-disabled:data-highlighted:bg-transparent data-disabled:data-highlighted:text-label-tertiary data-disabled:data-highlighted:[&_svg]:text-label-tertiary [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+  "group/menu-item group/selectable relative flex h-7.5 pointer-coarse:h-11 cursor-pointer items-center gap-2.5 rounded-menu-item px-2.5 text-callout text-label outline-none select-none transition-control data-highlighted:bg-fill-2 active:bg-fill-3 data-disabled:cursor-not-allowed data-disabled:opacity-30 data-disabled:active:bg-transparent data-disabled:data-highlighted:bg-transparent [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&>svg:first-child]:text-brand-900"
 
 /**
  * El texto secundario de un ítem —el atajo de teclado—: `label-secondary`, también resaltado.
@@ -36,15 +38,14 @@ export const menuItemClassName =
 export const menuItemSecondaryClassName = "text-label-secondary"
 
 /**
- * `rounded-menu` (12, el de los menús de iCloud) con `p-1`: el ítem mide `rounded-menu-item` (8)
- * y 8 + 4 = 12, así que las dos curvas son concéntricas. iCloud usa 5 de padding; con 4 el
- * resaltado queda paralelo al borde, que es lo que se ve. Si la app pisa uno de los dos radios,
- * tiene que pisar el otro.
+ * El panel de un menú de iCloud: `rounded-menu` (12) con **5 de padding** (`p-1.25`), opaco
+ * (`bg-surface`) y `shadow-menu`, que ya trae el filo de 1 px que iCloud dibuja como borde. El
+ * ítem mide 8 de radio: 8 + 5 = 13 contra 12, lo mismo que iCloud.
  *
- * `min-w-48`: un menú de dos palabras no queda más angosto que su propio atajo.
+ * `min-w-52` (208): el menú más angosto de iCloud mide 207 con el borde.
  */
 export const menuPopupClassName =
-  "max-h-(--available-height) min-w-48 origin-(--transform-origin) overflow-y-auto rounded-menu bg-surface p-1 text-label shadow-menu outline-none transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0"
+  "max-h-(--available-height) min-w-52 origin-(--transform-origin) overflow-y-auto rounded-menu bg-surface p-1.25 text-label shadow-menu outline-none transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0"
 
 /**
  * La canaleta del tilde (2.0). En macOS el tilde de un ítem marcable va a la **izquierda**, en
@@ -69,20 +70,17 @@ export const menuInsetClassName = "data-inset:pl-7"
 export const menuIndicatorClassName = "pointer-events-none absolute left-2 flex items-center"
 
 /**
- * El encabezado de un grupo de ítems: DropdownMenu, ContextMenu, Menubar, Select, Combobox y
- * Autocomplete. Chico, en negrita y gris, como el «Move & Resize» del popover de ventanas de
- * Finder (2.0): se lee como el título de lo que sigue y no como un ítem más apagado.
- *
- * Los tres menús le suman `menuInsetClassName` para que `inset` lo alinee con la canaleta del
- * tilde; Select y Combobox, `menuGutterClassName` siempre, porque todas sus opciones la reservan.
+ * El título de un grupo de ítems: DropdownMenu, ContextMenu, Menubar, Select, Combobox,
+ * Autocomplete y Command. Es el «View as» o el «Create New» de iCloud: una fila de 30 como las
+ * demás, en **14/600 y el color del texto**, no gris. Se lee como el título de lo que sigue por el
+ * peso, no por estar apagado.
  */
-export const menuLabelClassName = "px-2 pt-2 pb-1 text-callout font-semibold text-label-secondary"
+export const menuLabelClassName = "flex h-7.5 items-center px-2.5 text-callout font-semibold text-label"
 
 /**
  * La línea entre grupos de ítems: los tres menús, Select, Combobox y Autocomplete.
  *
- * `mx-2` (2.0): en macOS la línea tiene aire a los costados y arranca donde arranca el
- * resaltado de un ítem. Hasta 1.x iba de borde a borde del panel con `-mx-1`, que en el panel
- * se leía como un corte del material y no como una pausa entre grupos.
+ * El divisor de iCloud: 9 px de alto (`my-1` + la línea) y la línea de 1 px en `fill-2`, con
+ * **11 de margen** a los costados (`mx-2.75`), así arranca un poco más adentro que el resaltado.
  */
-export const menuSeparatorClassName = "mx-2 my-1 h-px bg-fill-3"
+export const menuSeparatorClassName = "mx-2.75 my-1 h-px bg-fill-2"
