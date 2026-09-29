@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react"
+import { act, render, screen, waitFor } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { describe, expect, it, vi } from "vitest"
 
@@ -246,5 +246,38 @@ describe("DatePicker en Field", () => {
       </Field>
     )
     expect(screen.getByRole("button", { name: /^Vencimiento/ })).toBeDisabled()
+  })
+})
+
+describe("DatePicker y el reset nativo del form", () => {
+  it("vuelve al defaultValue, también el hidden", async () => {
+    render(
+      <form data-testid="form">
+        <DatePicker aria-label="Vencimiento" defaultValue={d("2026-09-27")} name="vence" />
+      </form>
+    )
+    const form = screen.getByTestId("form") as HTMLFormElement
+    await userEvent.click(screen.getByRole("button", { name: "Vencimiento" }))
+    await userEvent.click(dia("2026-09-15"))
+    expect(new FormData(form).get("vence")).toBe("2026-09-15")
+    act(() => form.reset())
+    expect(screen.getByRole("button", { name: "Vencimiento" })).toHaveTextContent("27 sept 2026")
+    expect(new FormData(form).get("vence")).toBe("2026-09-27")
+  })
+
+  it("en rango vuelve al rango inicial", async () => {
+    render(
+      <form data-testid="form">
+        <DatePicker aria-label="Período" defaultValue={{ from: d("2026-09-10"), to: d("2026-09-14") }} mode="range" name="periodo" />
+      </form>
+    )
+    const form = screen.getByTestId("form") as HTMLFormElement
+    await userEvent.click(screen.getByRole("button", { name: "Período" }))
+    await userEvent.click(dia("2026-09-20"))
+    await userEvent.click(dia("2026-09-22"))
+    expect(new FormData(form).get("periodo-desde")).toBe("2026-09-20")
+    act(() => form.reset())
+    expect(new FormData(form).get("periodo-desde")).toBe("2026-09-10")
+    expect(new FormData(form).get("periodo-hasta")).toBe("2026-09-14")
   })
 })

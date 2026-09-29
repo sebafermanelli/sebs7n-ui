@@ -1,6 +1,6 @@
 // Toggle y ToggleGroup (2.1): `size` como los botones (sm 28 · md 36 · lg 40) y, como control de un
 // formulario, `name` y el registro en `Field` (FieldLabel, Form los manda y los enfoca si quedan inválidos).
-import { render, screen } from "@testing-library/react"
+import { act, render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { describe, expect, it, vi } from "vitest"
 
@@ -127,5 +127,46 @@ describe("ToggleGroup como control de formulario", () => {
     await user.click(screen.getByRole("button", { name: "Vencidas" }))
     await user.click(screen.getByRole("button", { name: "Filtrar" }))
     expect(onFormSubmit.mock.calls[0]![0]).toEqual({ status: ["due"] })
+  })
+})
+
+describe("reset nativo del form", () => {
+  it("Toggle vuelve a defaultPressed y su hidden también", async () => {
+    const user = userEvent.setup()
+    render(
+      <form data-testid="form">
+        <Toggle aria-label="Vencidas" defaultPressed name="overdue" />
+        <Toggle aria-label="Pagadas" name="paid" />
+      </form>
+    )
+    const form = screen.getByTestId("form") as HTMLFormElement
+    await user.click(screen.getByRole("button", { name: "Vencidas" }))
+    await user.click(screen.getByRole("button", { name: "Pagadas" }))
+    expect(new FormData(form).get("overdue")).toBeNull()
+    act(() => form.reset())
+    expect(screen.getByRole("button", { name: "Vencidas" })).toHaveAttribute("aria-pressed", "true")
+    expect(screen.getByRole("button", { name: "Pagadas" })).toHaveAttribute("aria-pressed", "false")
+    expect(new FormData(form).get("overdue")).toBe("on")
+    expect(new FormData(form).get("paid")).toBeNull()
+  })
+
+  it("ToggleGroup vuelve a defaultValue y sus hidden también", async () => {
+    const user = userEvent.setup()
+    render(
+      <form data-testid="form">
+        <ToggleGroup aria-label="Estados" defaultValue={["paid"]} multiple name="status">
+          <ToggleGroupItem value="paid">Pagadas</ToggleGroupItem>
+          <ToggleGroupItem value="due">Vencidas</ToggleGroupItem>
+        </ToggleGroup>
+      </form>
+    )
+    const form = screen.getByTestId("form") as HTMLFormElement
+    await user.click(screen.getByRole("button", { name: "Pagadas" }))
+    await user.click(screen.getByRole("button", { name: "Vencidas" }))
+    expect(new FormData(form).getAll("status")).toEqual(["due"])
+    act(() => form.reset())
+    expect(screen.getByRole("button", { name: "Pagadas" })).toHaveAttribute("aria-pressed", "true")
+    expect(screen.getByRole("button", { name: "Vencidas" })).toHaveAttribute("aria-pressed", "false")
+    expect(new FormData(form).getAll("status")).toEqual(["paid"])
   })
 })

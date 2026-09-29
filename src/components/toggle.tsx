@@ -4,6 +4,7 @@ import * as React from "react"
 import { Toggle as TogglePrimitive } from "@base-ui/react/toggle"
 
 import { useFieldControl } from "../internal/field-control.js"
+import { useFormReset } from "../internal/form-reset.js"
 import { mergeRefs } from "../internal/merge-refs.js"
 import { cn, type WithClassName } from "../lib/utils.js"
 import { toggleVariants } from "../variants/toggle.js"
@@ -22,7 +23,9 @@ function Toggle({ className, size, name, pressed, defaultPressed = false, onPres
   const [own, setOwn] = React.useState(defaultPressed)
   const on = pressed ?? own
   const button = React.useRef<HTMLButtonElement>(null)
-  const buttonRef = React.useMemo(() => mergeRefs(button, ref), [ref])
+  // El reset nativo no sabe del estado de React: vuelve a `defaultPressed`, y con él el hidden.
+  const resetRef = useFormReset(() => setOwn(defaultPressed))
+  const buttonRef = React.useMemo(() => mergeRefs(button, ref, resetRef), [ref, resetRef])
   const field = useFieldControl({ id, name, value: on, filled: on, disabled, controlRef: button })
   return (
     <>

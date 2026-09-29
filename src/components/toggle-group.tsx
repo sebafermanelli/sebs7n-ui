@@ -5,6 +5,8 @@ import { Toggle as TogglePrimitive } from "@base-ui/react/toggle"
 import { ToggleGroup as ToggleGroupPrimitive } from "@base-ui/react/toggle-group"
 
 import { useFieldControl } from "../internal/field-control.js"
+import { useFormReset } from "../internal/form-reset.js"
+import { mergeRefs } from "../internal/merge-refs.js"
 import { cn, type WithClassName } from "../lib/utils.js"
 import { segmentedGroupClassName, segmentedItemClassName, segmentedTrackClassName } from "../variants/segmented.js"
 import type { ToggleProps } from "./toggle.js"
@@ -28,10 +30,13 @@ type ToggleGroupProps = WithClassName<ToggleGroupPrimitive.Props> & {
  * Dentro de un `Field` se registra como su control (2.1): `FieldLabel` nombra el grupo, `Form` manda
  * la lista de valores y, si el campo queda inválido, enfoca el primer ítem prendido (o el primero).
  */
-function ToggleGroup({ className, size = "sm", name, value, defaultValue, onValueChange, disabled, ...props }: ToggleGroupProps) {
+function ToggleGroup({ className, size = "sm", name, value, defaultValue, onValueChange, disabled, ref, ...props }: ToggleGroupProps) {
   const [own, setOwn] = React.useState<NonNullable<ToggleGroupProps["value"]>>(defaultValue ?? [])
   const current = value ?? own
   const group = React.useRef<HTMLDivElement>(null)
+  // El reset nativo no sabe del estado de React: vuelve a `defaultValue`, y con él los hidden.
+  const resetRef = useFormReset(() => setOwn(defaultValue ?? []))
+  const groupRef = React.useMemo(() => mergeRefs(group, ref, resetRef), [ref, resetRef])
   // `Form` enfoca el control de un campo inválido: el grupo no es enfocable, su primer ítem sí.
   const firstItem = React.useMemo(
     () => ({
@@ -52,7 +57,7 @@ function ToggleGroup({ className, size = "sm", name, value, defaultValue, onValu
         aria-describedby={field.messageIds.join(" ") || undefined}
         aria-invalid={field.invalid || undefined}
         {...props}
-        ref={group}
+        ref={groupRef}
         disabled={field.disabled}
         value={current}
         onValueChange={(next, details) => {

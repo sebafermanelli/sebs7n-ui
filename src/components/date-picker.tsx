@@ -6,6 +6,7 @@ import { CalendarIcon } from "lucide-react"
 
 import { defined } from "../internal/defined.js"
 import { useFieldControl } from "../internal/field-control.js"
+import { useFormReset } from "../internal/form-reset.js"
 import { mergeRefs } from "../internal/merge-refs.js"
 import { toISODate, type DateRange, type WeekStart } from "../lib/dates.js"
 import { useLabels, type Labels } from "../lib/labels.js"
@@ -186,7 +187,9 @@ function DatePicker(props: DatePickerProps) {
   const hasta = rango.to ? toISODate(rango.to) : ""
   const valorDelCampo = React.useMemo(() => (mode === "range" ? { from: desde || null, to: hasta || null } : iso || null), [mode, iso, desde, hasta])
   const trigger = React.useRef<HTMLButtonElement>(null)
-  const triggerRef = React.useMemo(() => mergeRefs(trigger, ref), [ref])
+  // El reset nativo no sabe del estado de React: vuelve al `defaultValue`, y con él los hidden.
+  const resetRef = useFormReset(() => setInterno(defaultValue ?? (mode === "range" ? SIN_RANGO : null)))
+  const triggerRef = React.useMemo(() => mergeRefs(trigger, ref, resetRef), [ref, resetRef])
   const field = useFieldControl({ id, name, value: valorDelCampo, filled: !vacio, disabled: disabledProp, controlRef: trigger })
   const nombre = field.name
   const disabled = field.disabled
