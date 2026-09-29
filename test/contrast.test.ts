@@ -728,6 +728,17 @@ describe("El borde de la elegida de FileGrid, en las cinco marcas (WCAG 1.4.11)"
     return hexOfOklch([Number(pl), base[1]! * Number(pc), base[2]!] as unknown as Oklch)
   }
 
+  // Sin esto, un cambio en theme.css que rompa la regex dejaba cero tonos (o un fondo `undefined`) y
+  // los contrastes de abajo pasaban sin medir nada.
+  it("se leen los cuatro tonos del wallpaper y cada fondo de la paleta, en los dos temas", () => {
+    for (const theme of ["light", "dark"] as const) {
+      expect(tonos(theme)).toHaveLength(4)
+      for (const token of ["--sf-selection-inactive", "--sf-background", "--sf-surface", "--sf-surface-secondary", "--sf-translucent-body"]) {
+        expect(paleta[theme][token], `${theme} ${token}`).toBeDefined()
+      }
+    }
+  })
+
   for (const theme of ["light", "dark"] as const) {
     const p = paleta[theme]
     for (const [marca, temas] of Object.entries(marcas)) {
@@ -745,6 +756,7 @@ describe("El borde de la elegida de FileGrid, en las cinco marcas (WCAG 1.4.11)"
         fondos[`cuerpo translúcido de Card sobre el tono ${i + 1}`] = flattenAlpha(p["--sf-translucent-body"]!, wp)
       })
       it(`${theme} · ${marca}: el borde ${borde} llega a 3:1 contra la caja y contra lo de afuera`, () => {
+        expect(Object.entries(fondos).filter(([, bg]) => !bg)).toEqual([])
         const fallas = Object.entries(fondos).flatMap(([donde, bg]) => {
           const valor = ratio(borde, bg)
           return valor < 3 ? [`${donde} ${bg}: ${valor.toFixed(2)}`] : []
