@@ -2348,10 +2348,11 @@ export const COMPONENTS = {
       ["← →", "El día anterior o siguiente (cruza de mes o de semana)."],
       ["↑ ↓", "En el mes, la misma fecha una semana antes o después."],
       ["Home End", "El primer y el último día de la semana."],
-      ["PageUp PageDown", "El mes anterior o siguiente (en la semana, la semana). Con Shift, un año."],
+      ["PageUp PageDown", "El mes anterior o siguiente (en la semana, la semana). Con Shift, un año (en la semana, un mes)."],
       ["Enter · Espacio", "Abre el día (`onDayOpen`): mostrar sus eventos o crear uno."],
     ],
     a11y: [
+      "El mes o la semana nueva se anuncia (región `status`) al cambiarla con ‹ Hoy ›; con el teclado en la grilla no, porque el foco ya dice la fecha de la celda.",
       "Los días son un `role=\"grid\"` nombrado por el mes («Septiembre 2026») o la semana, con `columnheader` de los días y `gridcell` con foco itinerante.",
       "Cada celda se lee con la fecha completa («martes, 29 de septiembre de 2026») y sus eventos; el número grande es decorativo. Hoy lleva `aria-current=\"date\"` y el activo `aria-selected`.",
       "En la semana, los bloques con hora están fuera de las celdas (en la escala de horas, `aria-hidden`): cada celda de «Todo el día» repite para el lector los eventos del día con su hora.",

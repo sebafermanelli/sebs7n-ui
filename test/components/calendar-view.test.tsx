@@ -134,6 +134,53 @@ describe("CalendarView · eventos con el teclado", () => {
   })
 })
 
+describe("CalendarView · revisión de R5b", () => {
+  it("un evento que cruza la medianoche se parte entre los dos días de la semana", () => {
+    const tarde: CalendarEvent[] = [{ id: "cierre", title: "Cierre nocturno", start: new Date(2026, 8, 29, 22, 0), end: new Date(2026, 8, 30, 2, 0) }]
+    render(<CalendarView defaultDate={AHORA} defaultView="week" events={tarde} locale="es-AR" now={AHORA} />)
+    const bloques = screen.getAllByText("Cierre nocturno").map((texto) => texto.closest<HTMLElement>("[data-slot=calendar-view-event]")!)
+    expect(bloques).toHaveLength(2)
+    expect(bloques[0]!.style.top).toBe(`${22 * 61}px`)
+    expect(bloques[0]!.style.height).toBe(`${2 * 61}px`)
+    expect(bloques[1]!.style.top).toBe("0px")
+    expect(bloques[1]!.style.height).toBe(`${2 * 61}px`)
+  })
+
+  it("la duración sale del reloj de pared, no de los milisegundos (cambio de horario)", () => {
+    const zona = process.env.TZ
+    process.env.TZ = "America/New_York"
+    try {
+      // 8 de marzo de 2026 a las 2:00 el reloj salta a las 3:00: de 1:00 a 4:00 son 3 horas de pared
+      // (lo que ocupa en la grilla) aunque pasen 2.
+      const dia = new Date(2026, 2, 8)
+      const evento: CalendarEvent[] = [{ id: "x", title: "Inventario", start: new Date(2026, 2, 8, 1, 0), end: new Date(2026, 2, 8, 4, 0) }]
+      render(<CalendarView defaultDate={dia} defaultView="week" events={evento} locale="es-AR" now={dia} />)
+      expect(screen.getByText("Inventario").closest<HTMLElement>("[data-slot=calendar-view-event]")!.style.height).toBe(`${3 * 61}px`)
+    } finally {
+      if (zona === undefined) delete process.env.TZ
+      else process.env.TZ = zona
+    }
+  })
+
+  it("el mes se anuncia al cambiarlo con ‹ ›, no cuando el foco ya dice la fecha", async () => {
+    render(<CalendarView defaultDate={AHORA} locale="es-AR" now={AHORA} />)
+    expect(screen.getByRole("heading", { name: /Septiembre/ })).not.toHaveAttribute("aria-live")
+    const aviso = screen.getByRole("status")
+    await userEvent.click(screen.getByRole("button", { name: "Mes siguiente" }))
+    expect(aviso).toHaveTextContent("Octubre 2026")
+    celda(/jueves, 1 de octubre/).focus()
+    await userEvent.keyboard("{PageDown}")
+    expect(aviso).toHaveTextContent("Octubre 2026")
+  })
+
+  it("en la semana, Shift+PageDown salta un mes", async () => {
+    render(<CalendarView defaultDate={new Date(2026, 8, 28)} defaultView="week" locale="es-AR" now={AHORA} />)
+    celda(/28 de septiembre/).focus()
+    await userEvent.keyboard("{Shift>}{PageDown}{/Shift}")
+    expect(screen.getByRole("grid", { name: /26 de octubre/ })).toBeInTheDocument()
+  })
+})
+
 describe("CalendarView · segmentado", () => {
   it("cambiar de pestaña cambia la vista, y el cuerpo es su panel sin sumar una parada de Tab", async () => {
     const onViewChange = vi.fn()

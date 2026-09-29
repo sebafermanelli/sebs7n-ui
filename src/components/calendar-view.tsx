@@ -78,6 +78,27 @@ function eventsOf(events: CalendarEvent[], day: Date) {
     .sort((a, b) => Number(!!b.allDay) - Number(!!a.allDay) || a.start.getTime() - b.start.getTime())
 }
 
+/**
+ * Los tramos con hora de un día en la semana: un evento que cruza la medianoche se parte, y cada día
+ * dibuja su parte (22:00–24:00 y 00:00–02:00). `origin` es el comienzo real, para la hora que se lee.
+ */
+function segmentsOf(events: CalendarEvent[], day: Date) {
+  const next = addDays(day, 1)
+  return events
+    .filter((event) => !event.allDay && event.start < next && endOf(event) > day)
+    .map((event) => ({ ...event, start: event.start < day ? day : event.start, end: endOf(event) > next ? next : endOf(event), origin: event.start }))
+    .sort((a, b) => a.start.getTime() - b.start.getTime())
+}
+
+/**
+ * Minutos de reloj de pared entre dos momentos: en el día del cambio de horario, 1:00 a 4:00 ocupan
+ * tres horas de la grilla aunque pasen dos (la grilla es de horas de pared, no de milisegundos).
+ */
+function wallMinutes(from: Date, to: Date) {
+  const days = Math.round((startOfDay(to).getTime() - startOfDay(from).getTime()) / 86_400_000)
+  return days * 1440 + minutes(to) - minutes(from)
+}
+
 /** Columnas para los eventos que se pisan en un día: cada uno recibe su columna y cuántas hay en su grupo. */
 function layoutDay(events: CalendarEvent[]) {
   const placed: { event: CalendarEvent; column: number; columns: number }[] = []
@@ -171,6 +192,12 @@ function CalendarView({
   const hourLabel = fmt({ hour: "numeric", hour12 })
   const monthName = capitalize(fmt({ month: "long" }).format(date))
   const year = date.getFullYear()
+  const title = view === "month" ? `${monthName} ${year}` : `${labels.weekOf} ${fmt({ day: "numeric", month: "long", year: "numeric" }).format(startOfWeek(date, weekStartsOn))}`
+  React.useEffect(() => {
+    if (!announceNext.current) return
+    announceNext.current = false
+    setAnnouncement(title)
+  }, [title])
 
   // La semana abre en la hora de ahora (si hoy está en ella) o en `scrollToHour`.
   const showsToday = now != null && weekDays.some((day) => isSameDay(day, now))
@@ -218,7 +245,10 @@ function CalendarView({
             PageDown: () => addMonths(date, event.shiftKey ? 12 : 1),
             PageUp: () => addMonths(date, event.shiftKey ? -12 : -1),
           }
-        : { PageDown: () => addDays(date, 7), PageUp: () => addDays(date, -7) }),
+        : {
+            PageDown: () => (event.shiftKey ? addMonths(date, 1) : addDays(date, 7)),
+            PageUp: () => (event.shiftKey ? addMonths(date, -1) : addDays(date, -7)),
+          }),
     }
     const next = step[event.key]
     if (next) {
@@ -230,9 +260,16 @@ function CalendarView({
     }
   }
 
-  const shift = (direction: 1 | -1) => setDate(view === "month" ? addMonths(date, direction) : addDays(date, 7 * direction))
+  // Lo que se anuncia al cambiar de mes o semana con ‹ Hoy ›. Con el teclado en la grilla no: el foco
+  // ya dice la fecha de la celda nueva, y el título con `aria-live` la decía dos veces.
+  const [announcement, setAnnouncement] = React.useState("")
+  const announceNext = React.useRef(false)
+  const shift = (direction: 1 | -1) => {
+    announceNext.current = true
+    setDate(view === "month" ? addMonths(date, direction) : addDays(date, 7 * direction))
+  }
 
-  const renderEvent = (item: CalendarEvent, variant: "chip" | "line" | "block", style?: React.CSSProperties) => {
+  const renderEvent = (item: CalendarEvent & { origin?: Date }, variant: "chip" | "line" | "block", style?: React.CSSProperties) => {
     const color = item.color ?? "brand"
     const Tag = onEventClick ? "button" : "div"
     return (
@@ -262,7 +299,7 @@ function CalendarView({
         <span className={cn("min-w-0 truncate", variant === "line" && "flex-1")}>{item.title}</span>
         {!item.allDay && variant !== "chip" && (
           <span className={cn("shrink-0 tabular-nums", variant === "line" ? "text-caption text-label-secondary" : "font-normal")}>
-            {time.format(item.start)}
+            {time.format(item.origin ?? item.start)}
           </span>
         )}
       </Tag>
@@ -414,10 +451,10 @@ function CalendarView({
                 key={day.getTime()}
                 className="relative border-s border-separator bg-[linear-gradient(to_bottom,var(--color-separator)_1px,transparent_1px)] bg-size-[100%_61px]"
               >
-                {layoutDay(eventsOf(events, day).filter((item) => !item.allDay)).map(({ event: item, column, columns }) =>
+                {layoutDay(segmentsOf(events, day)).map(({ event: item, column, columns }) =>
                   renderEvent(item, "block", {
                     top: (minutes(item.start) / 60) * HOUR,
-                    height: Math.max(((endOf(item).getTime() - item.start.getTime()) / 3_600_000) * HOUR, 20),
+                    height: Math.max((wallMinutes(item.start, endOf(item)) / 60) * HOUR, 20),
                     insetInlineStart: `calc(${(column / columns) * 100}% + 1px)`,
                     width: `calc(${100 / columns}% - 2px)`,
                   })
@@ -462,7 +499,7 @@ function CalendarView({
       {...(props as Omit<React.ComponentProps<typeof Tabs>, "value" | "defaultValue" | "onValueChange">)}
     >
       <div className="flex min-h-14 flex-wrap items-center justify-between gap-x-4 gap-y-2 px-5 py-2.5">
-        <h2 className="text-title-2 whitespace-nowrap" aria-live="polite">
+        <h2 className="text-title-2 whitespace-nowrap">
           {monthName} <span className="font-normal text-label-secondary">{year}</span>
         </h2>
         <TabsList aria-label={labels.view} className="w-56" variant="segmented">
@@ -473,7 +510,15 @@ function CalendarView({
           <Button aria-label={view === "month" ? labels.previousMonth : labels.previousWeek} onClick={() => shift(-1)} size="icon-sm" variant="plain">
             <ChevronLeftIcon />
           </Button>
-          <Button className="text-body" onClick={() => setDate(now ?? new Date())} size="sm" variant="plain">
+          <Button
+            className="text-body"
+            onClick={() => {
+              announceNext.current = true
+              setDate(now ?? new Date())
+            }}
+            size="sm"
+            variant="plain"
+          >
             {labels.today}
           </Button>
           <Button aria-label={view === "month" ? labels.nextMonth : labels.nextWeek} onClick={() => shift(1)} size="icon-sm" variant="plain">
@@ -481,6 +526,9 @@ function CalendarView({
           </Button>
         </div>
       </div>
+      <p role="status" className="sr-only">
+        {announcement}
+      </p>
       <TabsContent className="flex min-h-0 flex-1 flex-col rounded-none text-inherit focus-visible:shadow-none" tabIndex={-1} value={view}>
         {body}
       </TabsContent>
