@@ -199,5 +199,7 @@ export * from "./components/widget-card.js"
 //   `sortable-grid`     sebs7n-ui/sortable-grid
 //   `drop-zone`         sebs7n-ui/drop-zone
 //   `carousel`          sebs7n-ui/carousel
+// Y el de R9, `ListIndex`, con su texto fuera del barrel como los de R8.
+//   `list-index`        sebs7n-ui/list-index
 // `lib/countries` y `lib/phone` tampoco entran: son los únicos de `lib/` solo por subpath (ver
 // `test/api-publica.test.ts`).
