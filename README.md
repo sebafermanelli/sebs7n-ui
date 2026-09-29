@@ -4,7 +4,8 @@
 [![CI](https://github.com/sebafermanelli/sebs7n-ui/actions/workflows/ci.yml/badge.svg)](https://github.com/sebafermanelli/sebs7n-ui/actions/workflows/ci.yml)
 [![licencia MIT](https://img.shields.io/npm/l/sebs7n-ui?color=0a0a0a)](./LICENSE)
 
-Design system para React con el estilo de macOS (Golden Gate) sobre las
+Design system para React con el lenguaje visual de **iCloud web** —superficies
+opacas en capas de gris, Inter, radios chicos, barras fijas— sobre las
 primitivas de **shadcn/ui `base-nova`** (Base UI), empaquetado como una sola
 dependencia.
 
@@ -13,20 +14,45 @@ y pegados: mismos neutros, misma tipografía, mismos radios y sombras, mismos
 estados de foco. Lo único que cambia entre productos es el color de marca, que
 son **cuatro variables CSS**.
 
-- 60 componentes accesibles sobre Base UI, cada uno con su entry point.
-- Tokens de color, tipografía, radios y sombras como variables CSS y utilidades
+- 80 componentes accesibles sobre Base UI, cada uno con su entry point.
+- Tokens de superficies, color, tipografía, radios y sombras como variables CSS y utilidades
   de Tailwind v4 — sin `tailwind.config`.
 - Server Components donde no hace falta estado; `"use client"` solo donde sí.
 - Contraste AA verificado por tests, no a ojo.
 
 **El detalle de cada componente vive en
-[ui.sebastianfermanelli.com](https://ui.sebastianfermanelli.com)** —60 páginas con
+[ui.sebastianfermanelli.com](https://ui.sebastianfermanelli.com)** —80 páginas con
 demos en vivo, la tabla de props generada del TypeScript y las reglas de uso— y no
 se duplica acá. Cada página se sirve también como markdown y hay un `llms.txt`
 para agentes. Para levantarlo local, `cd docs/site && npm run dev`.
 
+## 2.0
+
+La 2.0 (sin publicar todavía; el borrador está en el [CHANGELOG](./CHANGELOG.md))
+cambia el lenguaje visual de la 1.x —vidrio y cápsulas— por el de iCloud web:
+
+- **Inter** en vez de Geist (`geist` deja de ser peer) y roles tipográficos con
+  la escala de iCloud: base 17, el chrome en 14.
+- **Sin vidrio:** superficies opacas (`bg-surface`, `bg-fill-1/2/3`,
+  `text-label*`); `glass*`, `sheen` y `shadow-button*` ya no existen.
+- **Radios de 8 a 12, sin cápsula**, y una escala de alturas de 28 / 36 / 40.
+- **Foco interior** de 3 px y selección gris en menús y sidebar.
+- Button con las variantes de iCloud (`outline` se va, `default` es el acento),
+  Tabs con la línea por defecto, Card como widget, Table como la lista de
+  Drive, AlertDialog centrado con el botón seguro en el acento, navegación sin
+  flotantes.
+- Componentes nuevos: `Command`, `TextLink`, `ListRow`, `WidgetCard`,
+  `StackedMeter`, y solo por subpath `Tree`, `SplitView`, `FileGrid`,
+  `CalendarView`, `Stepper`, `DataTable`, `InputGroup`, `MultiSelect`,
+  `Timeline` y `Resizable` (la tabla de [Imports por componente](#imports-por-componente)
+  dice cuáles no están en el barrel).
+
+**Guía de migración, componente por componente:
+[ui.sebastianfermanelli.com/docs/migrating-to-2](https://ui.sebastianfermanelli.com/docs/migrating-to-2).**
+
 ## Índice
 
+- [2.0](#20) — qué cambia y la guía de migración
 - [Instalación](#instalación) · [CSS](#1-css) · [Layout raíz](#2-layout-raíz) · [Usar](#3-usar)
 - [Compatibilidad](#compatibilidad)
 - [Imports por componente](#imports-por-componente) — la tabla de subpaths y por qué no usar el barrel
@@ -66,7 +92,7 @@ React y de Base UI:
 | `recharts` (opcional) | `^3.10.0` |
 
 La fuente es **Inter**, y la carga la app: el paquete no la trae ni la declara
-como peer. `--font-sans` lee `--font-inter`, que define el layout raíz (ver
+como peer (desde 2.0, `geist` tampoco). `--font-sans` lee `--font-inter`, que define el layout raíz (ver
 abajo); sin ella todo cae en `system-ui`. La mono es la del sistema (SF Mono,
 Consolas): no hay nada que cargar.
 
@@ -211,11 +237,11 @@ import { cn } from "sebs7n-ui/lib/utils"
 
 <!-- /subpaths -->
 
-Por qué: el barrel hace `export *` de ~30 módulos `"use client"`. Next no puede
+Por qué: el barrel hace `export *` de 69 módulos, 49 con `"use client"`. Next no puede
 podar referencias cliente a través de ese barrel (tampoco con
 `optimizePackageImports`), así que una página con `Button` + `Card` +
 `ThemeSwitcher` se lleva también Sonner, Sidebar, Select, AlertDialog, etc.
-Medido en Next 16.3 (Turbopack) con esa página: **297,5 KB → 234,8 KB** de JS
+Medido en Next 16.3 (Turbopack) con esa página, en 1.x: **297,5 KB → 234,8 KB** de JS
 cliente gzip (−21 %). No mezcles barrel y subpaths en la misma página: el barrel
 vuelve a traer todo.
 
@@ -239,7 +265,7 @@ export default [
             {
               name: "sebs7n-ui",
               message:
-                "Importá por subpath: sebs7n-ui/button, sebs7n-ui/card, sebs7n-ui/lib/utils. El barrel arrastra los 60 componentes a la página.",
+                "Importá por subpath: sebs7n-ui/button, sebs7n-ui/card, sebs7n-ui/lib/utils. El barrel arrastra los 69 módulos a la página.",
             },
           ],
         },
@@ -256,43 +282,28 @@ La paleta, los radios y las sombras por defecto de Tailwind están **reseteados*
 
 | Grupo | Tokens |
 |---|---|
-| Color | `gray`, `gray-alpha`, `brand`, `blue`, `red`, `amber`, `green`, `teal`, `purple`, `pink` en pasos 100–1000, más `background`, `background-100`, `background-200` y `brand-contrast` |
-| Tipografía | Roles de macOS: `text-large-title`, `text-title-{1,2,3}`, `text-headline`, `text-body`, `text-body-large`, `text-callout`, `text-subheadline`, `text-footnote`, `text-caption`, `text-mono-{body,callout}`. Los de Geist (`text-heading-*`, `text-copy-*`, `text-label-*`, `text-button-*`) siguen andando pero están obsoletos desde 2.0 |
-| Sombras | `shadow-tooltip`, `shadow-menu`, `shadow-modal` |
-| Foco | `focus-visible:focus-ring`, `focus:focus-border` |
+| Superficies | `bg-background` (la página), `bg-surface` (lo que flota), `bg-surface-secondary` (sidebar), `bg-surface-bar` y `bg-surface-header` (barras), `bg-grouped`, `bg-fill-{1,2,3}`, `border-separator`, `border-separator-strong`, `text-label`, `text-label-{secondary,tertiary,quaternary}`, `material-translucent` (el único con blur, sobre un wallpaper) |
+| Color | `gray`, `gray-alpha`, `brand`, `blue`, `red`, `amber`, `green`, `teal`, `purple`, `pink` en pasos 100–1000 (la paleta de Geist, para la app) y `brand-contrast` |
+| Tipografía | Roles con la escala de iCloud: `text-large-title` (48), `text-title-{1,2,3}` (28, 21, 19), `text-headline` y `text-body` (17), `text-subheadline` (15), `text-callout` (14), `text-footnote` (12), `text-caption` (11), `text-mono-{body,callout}`. Los de Geist (`text-heading-*`, `text-copy-*`, `text-label-<n>`, `text-button-*`) siguen andando pero están obsoletos desde 2.0 |
+| Radios | `rounded-control` (8), `rounded-field` y `rounded-item` (10), `rounded-surface` y `rounded-panel` (11), `rounded-menu` (12), `rounded-menu-item` (8), `rounded-tag` (4) |
+| Sombras | `shadow-menu`, `shadow-modal`, `shadow-tooltip`, `shadow-widget`, `shadow-segment`, `shadow-badge`, `shadow-thumbnail` |
+| Foco | `focus-visible:focus-ring`, `focus-visible:focus-ring-inverse`, `focus:focus-border` |
 | Movimiento | `transition-control`, `animate-skeleton` |
 
-Los valores viven en `tokens/geist.json` y se compilan a
-`src/styles/colors.css` con `npm run tokens`; un test falla si el CSS quedó
-desactualizado.
+La paleta vive en `tokens/geist.json` y se compila a `src/styles/colors.css` con
+`npm run tokens`; un test falla si el CSS quedó desactualizado. Las superficies,
+la tipografía, los radios y las sombras viven en `src/styles/theme.css`. Las
+tablas con los valores claro y oscuro están en la página
+[Tokens](https://ui.sebastianfermanelli.com/docs/tokens).
 
-**Fondos: página, superficie y banda.** Son tres roles distintos y cada uno
-tiene su token. Elegir mal se nota sobre todo en oscuro, donde la página es
-negro puro:
+**La regla de las superficies:** si el elemento **es** la página, `bg-background`;
+si flota **sobre** ella, `bg-surface` con su sombra. En oscuro la página es
+`#1C1C1E`, no negro.
 
-| Token | Rol | Claro | Oscuro |
-|---|---|---|---|
-| `bg-background` | **La página.** `body` (ya lo pone el paquete) y la raíz del `AppShell`. | `#ffffff` | `#000000` |
-| `bg-background-100` | **La superficie**: lo que flota sobre la página. Input, Select, Textarea, popup de menú, Popover, Dialog, Sheet, Card, Alert, Toast, barra mobile del shell. | `#ffffff` | `#0a0a0a` |
-| `bg-background-200` | **El fondo sutil / banda**: Sidebar, `thead`/`tfoot` de Table, `Card variant="subtle"`, `EmptyState`. | `#fafafa` | `#0a0a0a` |
-
-La regla: si el elemento **es** la página, `bg-background`; si flota **sobre**
-ella, `bg-background-100`.
-
-Los valores de oscuro son los de vercel.com medidos con `getComputedStyle`
-(contact/sales, 2026-09-22): `--ds-background-100: hsla(0,0%,4%)` = `#0a0a0a`
-para las superficies y `--ds-background-200: hsla(0,0%,0%)` = `#000` para la
-página — su `body` computa `rgb(0,0,0)` y un `input`, `rgb(10,10,10)`.
-`background-200` es siempre el tono que **no** es el de la página: en claro
-baja a `#fafafa`, en oscuro no puede bajar de `#000` y sube a `#0a0a0a`. Por eso
-en oscuro coincide con `background-100`: Geist tiene dos fondos por tema, no
-tres, y el tercero —la página— es `--sf-background`, que vive en
-`src/styles/theme.css` porque no es un primitivo de Geist.
-
-**Tipografía.** Los roles de macOS: el texto normal es `text-body` (13 px, como en
-AppKit), los títulos llevan el peso en el rol (`text-title-2` es 600, `text-large-title`
-700) y no se pisan con `font-*`: para otro peso está otro rol. `cn()` los entiende como
-tamaño de fuente, así que conviven con `text-gray-900`. Inter tiene que ser la **fuente
+**Tipografía.** La prosa va en `text-body` (17), el chrome —menús, campos,
+botones, metadatos— en `text-callout` (14). Los títulos llevan el peso en el rol
+y no se pisan con `font-*`. `cn()` los entiende como tamaño de fuente, así que
+conviven con un color (`text-label-secondary`). Inter tiene que ser la **fuente
 variable**; con una estática los pesos intermedios se redondean.
 
 ## Theming
@@ -404,7 +415,8 @@ Es parte del contrato del paquete, no un extra:
   un test recalcula el ratio desde OKLCH y falla si una marca no da.
 - **Foco visible siempre.** Ningún componente saca el anillo de foco:
   `focus-visible:focus-ring` en los controles, `focus:focus-border` en los
-  campos. El anillo usa `brand-700`.
+  campos: un anillo interior de 3 px en la marca. Switch y Slider lo llevan por
+  fuera.
 - **Semántica antes que estilo.** `NavigationMenu` emite `<nav>` + `<ul>` + `<a>`;
   `DropdownMenu`, `role="menu"` / `role="menuitem"` con recorrido por flechas.
   Elegir mal cambia lo que anuncia un lector de pantalla.
