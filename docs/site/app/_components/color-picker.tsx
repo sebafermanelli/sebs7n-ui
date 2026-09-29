@@ -3,11 +3,12 @@
 import { CheckIcon, TriangleAlertIcon } from "lucide-react"
 import { Badge } from "sebs7n-ui/badge"
 
-import { focoSobre, hexOfOklch, textoSobre, type Oklch } from "../_lib/color"
+import { focoSobre, textoSobre, type Oklch } from "../_lib/color"
 
 /**
  * Lo que un color de marca no deja ver a ojo: si el texto que va encima llega a 4,5:1 y si el
- * anillo de foco llega a 3:1. Va en el `footer` del `ColorPicker` del Playground.
+ * anillo de foco llega a 3:1. Va en el `footer` del `ColorPicker` del Playground. No muestra un
+ * botón de prueba: el Playground entero ya se pinta con el color elegido.
  *
  * No es parte del componente del paquete a propósito: es la pregunta de quien elige un color
  * DE MARCA, no de quien elige el color de una etiqueta.
@@ -18,13 +19,6 @@ export function Veredicto({ color, superficie }: { color: Oklch; superficie: str
   const numero = (ratio: number) => ratio.toFixed(2).replace(".", ",")
   return (
     <>
-      {/* La forma del Button `md` de 2.0 (36 de alto, radio 8, callout), no una cápsula. */}
-      <div
-        className="flex h-9 items-center justify-center rounded-control text-callout"
-        style={{ backgroundColor: hexOfOklch(color), color: texto.hex }}
-      >
-        Así queda el botón
-      </div>
       <div className="flex flex-wrap gap-1.5">
         <Badge color={texto.aa ? "green" : "red"} size="sm">
           {texto.aa ? <CheckIcon /> : <TriangleAlertIcon />}
