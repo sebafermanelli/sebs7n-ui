@@ -591,3 +591,71 @@ describe("SortableGrid · revisión R10: el foco al sacar", () => {
   })
 })
 
+describe("SortableGrid · revisión R10: varias grillas, avisos y capas", () => {
+  const down = { button: 0, isPrimary: true, clientX: 10, clientY: 10 }
+  const tick = () => act(() => new Promise((resolve) => setTimeout(resolve)))
+
+  it("una sola en edición: entrar en la B saca a la A, y Esc sale solo de la que está editando", async () => {
+    const onA = vi.fn()
+    const onB = vi.fn()
+    render(
+      <>
+        <Widgets aria-label="Tablero A" defaultEditing={false} onEditingChange={onA} />
+        <Widgets aria-label="Tablero B" defaultEditing={false} onEditingChange={onB} />
+      </>
+    )
+    const [a, b] = screen.getAllByRole("list")
+    vi.useFakeTimers()
+    try {
+      fireEvent.pointerDown(within(a!).getByRole("button", { name: "Abrir Facturas" }), down)
+      act(() => vi.advanceTimersByTime(500))
+      expect(onA).toHaveBeenLastCalledWith(true)
+      fireEvent.pointerDown(within(b!).getByRole("button", { name: "Abrir Facturas" }), down)
+      act(() => vi.advanceTimersByTime(500))
+      // El tick en que la que edita empieza a escuchar Esc y los clics.
+      act(() => vi.advanceTimersByTime(1))
+    } finally {
+      vi.useRealTimers()
+    }
+    expect(onB).toHaveBeenLastCalledWith(true)
+    expect(onA).toHaveBeenLastCalledWith(false)
+    expect(within(a!).getAllByRole("listitem")[0]).not.toHaveClass("animate-jiggle")
+    await tick()
+    fireEvent.keyDown(document.body, { key: "Escape" })
+    expect(onB).toHaveBeenLastCalledWith(false)
+    expect(onA).toHaveBeenCalledTimes(2)
+  })
+
+  it("los clics adentro de un toast (Sonner) no salen de la edición", async () => {
+    const user = userEvent.setup()
+    const onEditingChange = vi.fn()
+    render(
+      <>
+        <Widgets onEditingChange={onEditingChange} />
+        <section data-sonner-toaster="">
+          <button type="button">Deshacer</button>
+        </section>
+      </>
+    )
+    await tick()
+    await user.click(screen.getByRole("button", { name: "Deshacer" }))
+    expect(onEditingChange).not.toHaveBeenCalled()
+  })
+
+  it("entrar y salir de la edición se anuncia una vez (labels.editing y labels.done)", async () => {
+    const { rerender } = render(<Widgets editing={false} />)
+    expect(status()).toHaveTextContent("")
+    rerender(<Widgets editing />)
+    expect(status()).toHaveTextContent("Modo edición. Arrastrá para ordenar.")
+    rerender(<Widgets editing />)
+    expect(status()).toHaveTextContent("Modo edición. Arrastrá para ordenar.")
+    rerender(<Widgets editing={false} labels={{ done: "Listo, guardado." }} />)
+    expect(status()).toHaveTextContent("Listo, guardado.")
+  })
+
+  it("arrancar en edición (defaultEditing) no anuncia nada", () => {
+    render(<Widgets />)
+    expect(status()?.textContent).toBe("")
+  })
+})
+

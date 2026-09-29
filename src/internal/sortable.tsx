@@ -60,6 +60,8 @@ const sortableLabels: SortableLabels = {
   remove: "Sacar",
   removed: "Se sacó",
   add: "Agregar",
+  editing: "Modo edición. Arrastrá para ordenar.",
+  done: "Listo.",
 }
 
 type SortableItemState = {
@@ -285,6 +287,15 @@ function SortableBase<T>({
     next?.focus()
   })
 
+  // Entrar y salir de la edición se anuncia (no al montar: arrancar editando no es un cambio). Una
+  // vez por cambio, aunque la app vuelva a mandar `editing` igual.
+  const wasEditing = React.useRef(editing)
+  React.useEffect(() => {
+    if (wasEditing.current === editing) return
+    wasEditing.current = editing
+    setStatus(editing ? labels.editing : labels.done)
+  })
+
   const settle = () => window.setTimeout(() => (dragging.current = false))
 
   const Container = variant === "list" ? List : "ul"
@@ -377,7 +388,13 @@ const LONG_PRESS = 500
 const SLOP = 8
 const ITEM = "[data-slot=sortable-list-item], [data-slot=sortable-grid-item], [data-slot=sortable-add]"
 /** Lo que flota encima (un diálogo, un menú): su Esc y sus clics son suyos, no salen de la edición. */
-const LAYER = "[role=dialog], [role=alertdialog], [role=menu], [role=listbox], [data-slot$=-overlay]"
+const LAYER = "[role=dialog], [role=alertdialog], [role=menu], [role=listbox], [data-slot$=-overlay], [data-sonner-toaster]"
+
+/**
+ * La que está en edición ahora, de todas las de la página: como en iOS, se edita una por vez.
+ * Entrar en otra saca a esta, y así el Esc (que escucha solo la que edita) sale de una sola.
+ */
+let editingNow: { exit: () => void } | null = null
 
 type PressHandlers = Pick<
   React.DOMAttributes<HTMLElement>,
@@ -411,6 +428,17 @@ function useEditMode({ editingProp, defaultEditing, onEditingChange, disabled, c
     if (current.editingProp === undefined) setOwn(next)
     current.onEditingChange?.(next)
   }, [])
+
+  const self = React.useRef({ exit: () => setEditing(false) })
+  React.useEffect(() => {
+    if (!editing) return
+    const me = self.current
+    if (editingNow && editingNow !== me) editingNow.exit()
+    editingNow = me
+    return () => {
+      if (editingNow === me) editingNow = null
+    }
+  }, [editing])
 
   const press = React.useRef<{ timer: number; x: number; y: number } | null>(null)
   // `true` cuando el mantener apretado se cumplió: el `click` que llega al soltar no es un clic.

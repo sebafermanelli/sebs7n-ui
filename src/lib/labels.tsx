@@ -357,6 +357,10 @@ export type Labels = {
     removed: string
     /** La celda del final en modo edición, cuando hay `onAdd`. */
     add: string
+    /** Lo que se anuncia al entrar en modo edición. */
+    editing: string
+    /** Lo que se anuncia al salir del modo edición. */
+    done: string
   }
   stepper: {
     /** Nombre de la lista de pasos, si no trae `aria-label`. */
