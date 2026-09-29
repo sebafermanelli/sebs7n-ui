@@ -7,7 +7,7 @@ import { ChevronDownIcon, XIcon } from "lucide-react"
 import { renderShellTrigger } from "../internal/shell-trigger.js"
 import { useLabels } from "../lib/labels.js"
 import { cn, type WithClassName } from "../lib/utils.js"
-import { inputShellButtonClassName, inputShellClassName, inputShellInputClassName } from "../variants/input.js"
+import { inputShellButtonClassName, inputShellClassName, inputShellInputClassName, inputStartIconClassName } from "../variants/input.js"
 import { menuItemClassName, menuLabelClassName, menuSeparatorClassName } from "../variants/menu.js"
 import {
   ComboboxCollection,
@@ -38,6 +38,8 @@ type AutocompleteInputProps = Omit<AutocompletePrimitive.Input.Props, "className
   showTrigger?: boolean
   showClear?: boolean
   labels?: { clear?: string; trigger?: string }
+  /** Un ícono adelante, adentro del campo (una lupa, un pin): decorativo. Reemplaza el `pl-10` a mano. */
+  startIcon?: React.ReactNode
 }
 
 function AutocompleteInput({
@@ -48,6 +50,7 @@ function AutocompleteInput({
   showClear = true,
   labels,
   disabled,
+  startIcon,
   ...props
 }: AutocompleteInputProps) {
   // El provider gana sobre el español; la prop `labels` gana sobre el provider, porque es la
@@ -61,7 +64,12 @@ function AutocompleteInput({
       data-disabled={disabled ? "" : undefined}
       className={cn(inputShellClassName, (showTrigger || showClear) && "pr-1", groupClassName)}
     >
-      <AutocompletePrimitive.Input data-slot="autocomplete-input" disabled={disabled} className={cn(inputShellInputClassName, className)} {...props} />
+      {startIcon && (
+        <span aria-hidden="true" data-slot="input-start-icon" className={inputStartIconClassName}>
+          {startIcon}
+        </span>
+      )}
+      <AutocompletePrimitive.Input data-slot="autocomplete-input" disabled={disabled} className={cn(inputShellInputClassName, startIcon != null && "ps-2", className)} {...props} />
       {showClear && (
         <AutocompletePrimitive.Clear data-slot="autocomplete-clear" aria-label={labels?.clear ?? l.clear} disabled={disabled} className={inputShellButtonClassName}>
           <XIcon />

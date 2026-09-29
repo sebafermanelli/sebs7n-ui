@@ -9,7 +9,7 @@ import { nombreDeQuitar } from "../internal/remove-label.js"
 import { renderShellTrigger } from "../internal/shell-trigger.js"
 import { useLabels } from "../lib/labels.js"
 import { cn, type WithClassName } from "../lib/utils.js"
-import { inputMultilineRadiusClassName, inputShellButtonClassName, inputShellClassName, inputShellInputClassName } from "../variants/input.js"
+import { inputMultilineRadiusClassName, inputShellButtonClassName, inputShellClassName, inputShellInputClassName, inputStartIconClassName } from "../variants/input.js"
 import { menuGutterClassName, menuIndicatorClassName, menuItemClassName, menuItemContentClassName, menuLabelClassName, menuPopupClassName, menuSeparatorClassName } from "../variants/menu.js"
 import { tagRemoveClassName, tagVariants, type TagSize } from "../variants/tag.js"
 
@@ -31,6 +31,8 @@ type ComboboxInputProps = Omit<ComboboxPrimitive.Input.Props, "className" | "siz
   /** Botón para vaciar; aparece solo cuando hay un valor. */
   showClear?: boolean
   labels?: { clear?: string; trigger?: string }
+  /** Un ícono adelante, adentro del campo (una lupa, un pin): decorativo. Reemplaza el `pl-10` a mano. */
+  startIcon?: React.ReactNode
 }
 
 // Mismo cuerpo y estados que Input: el borde y el foco van en el contenedor.
@@ -42,6 +44,7 @@ function ComboboxInput({
   showClear = true,
   labels,
   disabled,
+  startIcon,
   ...props
 }: ComboboxInputProps) {
   // El provider gana sobre el español; la prop `labels` gana sobre el provider, porque es la
@@ -55,7 +58,12 @@ function ComboboxInput({
       data-disabled={disabled ? "" : undefined}
       className={cn(inputShellClassName, (showTrigger || showClear) && "pr-1", groupClassName)}
     >
-      <ComboboxPrimitive.Input data-slot="combobox-input" disabled={disabled} className={cn(inputShellInputClassName, className)} {...props} />
+      {startIcon && (
+        <span aria-hidden="true" data-slot="input-start-icon" className={inputStartIconClassName}>
+          {startIcon}
+        </span>
+      )}
+      <ComboboxPrimitive.Input data-slot="combobox-input" disabled={disabled} className={cn(inputShellInputClassName, startIcon != null && "ps-2", className)} {...props} />
       {showClear && (
         <ComboboxPrimitive.Clear data-slot="combobox-clear" aria-label={labels?.clear ?? l.clear} disabled={disabled} className={inputShellButtonClassName}>
           <XIcon />

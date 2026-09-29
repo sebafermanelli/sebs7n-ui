@@ -494,3 +494,37 @@ it("ComboboxItem envuelve el contenido con el gap y el acento de un ítem de men
   expect(fuente).toMatch(/className=\{cn\("flex min-w-0 flex-1 items-center truncate", menuItemContentClassName\)\}/)
   expect(menuItemContentClassName).toContain("gap-2.5")
 })
+
+describe("startIcon en ComboboxInput y AutocompleteInput", () => {
+  it("el ícono va adentro de la superficie, a la izquierda, decorativo, y el texto se corre", () => {
+    render(
+      <>
+        <Combobox items={["Rosario", "Córdoba"]}>
+          <ComboboxInput aria-label="Ciudad" startIcon={<svg data-testid="pin" />} />
+        </Combobox>
+        <Autocomplete items={["Rosario", "Córdoba"]}>
+          <AutocompleteInput aria-label="Buscar" startIcon={<svg data-testid="lupa" />} />
+        </Autocomplete>
+      </>
+    )
+    for (const [id, name] of [["pin", "Ciudad"], ["lupa", "Buscar"]] as const) {
+      const icon = screen.getByTestId(id).parentElement!
+      expect(icon).toHaveAttribute("aria-hidden", "true")
+      expect(icon).toHaveAttribute("data-slot", "input-start-icon")
+      expect(icon).toHaveClass("ms-3", "text-label-secondary", "pointer-events-none")
+      const input = screen.getByRole("combobox", { name })
+      expect(icon.nextElementSibling).toBe(input)
+      expect(input).toHaveClass("ps-2")
+    }
+  })
+
+  it("sin startIcon, el input de siempre", () => {
+    render(
+      <Combobox items={["Rosario"]}>
+        <ComboboxInput aria-label="Ciudad" />
+      </Combobox>
+    )
+    expect(screen.getByRole("combobox")).not.toHaveClass("ps-2")
+    expect(document.querySelector("[data-slot=input-start-icon]")).toBeNull()
+  })
+})

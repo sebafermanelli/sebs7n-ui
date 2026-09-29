@@ -91,6 +91,10 @@ export const inputShellClassName =
 export const inputShellInputClassName =
   "h-full min-w-0 flex-1 bg-transparent px-3 text-inherit outline-none placeholder:text-label-secondary disabled:cursor-not-allowed"
 
+// El ícono de adelante (una lupa, un pin) adentro de la superficie: decorativo, gris, 16. El input que
+// lo sigue lleva `ps-2` en vez de sus 12. Lo usan ComboboxInput y AutocompleteInput (`startIcon`).
+export const inputStartIconClassName = "pointer-events-none ms-3 flex shrink-0 text-label-secondary [&_svg]:size-4"
+
 // Botones chicos dentro de la superficie (limpiar, chevron, quitar chip, los steppers de
 // NumberField). 20 px con el glifo de 14: en un campo `sm` un botón más grande lo llenaba de borde
 // a borde. Con el dedo, 28 (el campo ya creció a 36/44): arriba de los 24 de WCAG 2.5.8.
