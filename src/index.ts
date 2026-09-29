@@ -169,7 +169,7 @@ export * from "./components/tooltip.js"
 export * from "./components/user-menu.js"
 export * from "./components/widget-card.js"
 
-// Solo por subpath, por peso (R5b): el barrel tiene un tope de 56 kB gzip (`.size-limit.js`) que
+// Solo por subpath, por peso (R5b): el barrel tiene un tope de 58 kB gzip (`.size-limit.js`) que
 // no se sube sin que lo pida Sebastián, y estos componentes grandes lo pasaban. No son peers
 // opcionales como `chart`: andan igual, pero se importan por su ruta. La tabla del README los nombra (la genera
 // scripts/subpaths.mjs leyendo este archivo).

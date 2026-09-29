@@ -54,7 +54,7 @@ describe("API pública: los tipos de props se exportan", () => {
   // grupo es el de `ls`. Lo que se verifica es que no falte nada, no cómo está ordenado.
   //
   // Las excepciones son `lib/countries` y `lib/phone` (R7): las tablas de países y de códigos de
-  // discado pesan y el barrel está en su tope de 56 kB. Van solo por subpath, como los componentes
+  // discado pesan y el barrel está en su tope de 58 kB. Van solo por subpath, como los componentes
   // de `SOLO_SUBPATH` (`test/solo-subpath.test.ts`), y el README los nombra igual.
   const LIB_SOLO_SUBPATH = ["countries.ts", "phone.ts"]
 

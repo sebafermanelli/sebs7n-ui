@@ -133,7 +133,7 @@ export type Labels = {
     /**
      * Los de la vista Día (R9) son **opcionales**: sus textos en español viven en
      * `calendarViewDayLabels` de `sebs7n-ui/calendar-view` y no en `defaultLabels`, porque el barrel
-     * está en su tope de 56 kB (ver `carousel`). El provider y la prop `labels` los cambian igual.
+     * está en su tope (56 kB en 2.0, 58 desde 2.1; ver `carousel`). El provider y la prop `labels` los cambian igual.
      */
     day?: string
     previousDay?: string
@@ -142,7 +142,7 @@ export type Labels = {
   /**
    * Los tres grupos de R8 (`carousel`, `dropZone`, `sortable`) son **opcionales**: sus textos en
    * español viven en su componente (`carouselLabels`, `dropZoneLabels`, `sortableLabels`) y no en
-   * `defaultLabels`, porque el barrel está en su tope de 56 kB y los tres juntos le sumaban 0,31 kB.
+   * `defaultLabels`, porque el barrel estaba en su tope (56 kB en 2.0, 58 desde 2.1) y los tres juntos le sumaban 0,31 kB.
    * El provider y la prop `labels` los cambian igual que al resto.
    */
   carousel?: {

@@ -59,6 +59,12 @@ export default [
     // 2.0 (fase macOS 2): 55,84 KB. El selector de mes y año de `Calendar` (+0,99 KB: la grilla de
     // meses y la de años, sus seis textos en `labels`). Estaba en 54,85 de 55 y sin lugar; Sebastián
     // aprobó subir a 56 solo por esto.
-    limit: "56 kB",
+    //
+    // 2.1: estaba en 55,99 de 56. Sebastián aprobó subir a 58 para los arreglos de la revisión de 2.1 y
+    // los huecos de los formularios de las apps que tocan componentes del barrel: el registro en `Field`
+    // de DatePicker y Toggle/ToggleGroup (`internal/field-control`), `size` de Toggle, el ícono de
+    // Combobox/Autocomplete y `loading` de InputGroupButton. Lo nuevo y grande (SearchField, TagsInput,
+    // Rating) va solo por subpath.
+    limit: "58 kB",
   },
 ]
