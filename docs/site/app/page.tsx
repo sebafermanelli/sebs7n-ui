@@ -86,7 +86,7 @@ export default function Home() {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {RAZONES.map((razon) => (
               <Card key={razon.title} size="sm">
-                <CardHeader>
+                <CardHeader className="content-start">
                   <CardTitle>{razon.title}</CardTitle>
                   <CardDescription>{razon.body}</CardDescription>
                 </CardHeader>
@@ -105,7 +105,7 @@ export default function Home() {
             {destacados.map((component) => (
               <Link className="block h-full" href={`/docs/components/${component.slug}`} key={component.slug}>
                 <Card className="h-full" interactive size="sm">
-                  <CardHeader>
+                  <CardHeader className="content-start">
                     <CardTitle>{component.title}</CardTitle>
                     <CardDescription>
                       <Inline text={component.description} />

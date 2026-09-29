@@ -48,7 +48,9 @@ function CardHeader({ className, icon, children, ...props }: CardHeaderProps) {
       data-slot="card-header"
       data-icon={icon != null ? "" : undefined}
       className={cn(
-        "group/card-header grid min-h-20 auto-rows-min content-center items-center gap-x-4 gap-y-0.5 px-(--card-spacing) py-3.5",
+        // `last:grow`: si la cabecera cierra la card y una grilla estira la card, la franja la llena; si no,
+        // abajo quedaba una banda del cuerpo, más oscura sobre el wallpaper.
+        "group/card-header grid min-h-20 auto-rows-min content-center items-center gap-x-4 gap-y-0.5 px-(--card-spacing) py-3.5 last:grow",
         "bg-(--card-strip,var(--color-surface-bar)) group-data-[size=sm]/card:min-h-0 group-data-[size=sm]/card:py-3",
         "has-data-[slot=card-action]:grid-cols-[1fr_auto] data-icon:grid-cols-[auto_1fr] data-icon:has-data-[slot=card-action]:grid-cols-[auto_1fr_auto]",
         className

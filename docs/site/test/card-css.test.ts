@@ -85,4 +85,10 @@ describe("CardHeader: la franja con el CSS compilado", () => {
   it("sobre el wallpaper, una hundida adentro de una default no hereda la franja de la de afuera", () => {
     expect(fondo(cabecera("hundida"))).toMatch(sinFondo)
   })
+
+  // Una card de solo cabecera estirada por la fila de una grilla dejaba ver el cuerpo más oscuro al pie.
+  it("la cabecera que cierra la card crece hasta llenarla; con más hijos abajo, no", () => {
+    expect(window.getComputedStyle(cabecera("hundida-opaca")).flexGrow).toBe("1")
+    expect(window.getComputedStyle(cabecera("opaca")).flexGrow).not.toBe("1")
+  })
 })

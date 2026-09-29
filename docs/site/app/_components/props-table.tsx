@@ -19,7 +19,7 @@ export function PropsTable({ exports }: { exports: Exportado[] }) {
               {exportado.bases.map((base, indice) => (
                 <span key={base}>
                   {indice > 0 && " y "}
-                  <code className="rounded-sm bg-gray-100 px-1 py-0.5 text-mono-body text-label">{base}</code>
+                  <code className="rounded-sm bg-fill-2 px-1 py-0.5 text-mono-body text-label">{base}</code>
                 </span>
               ))}
               .
