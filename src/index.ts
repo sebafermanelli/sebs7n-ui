@@ -188,3 +188,4 @@ export * from "./components/widget-card.js"
 // Y los de R7 (campos), también nacidos afuera:
 //   `copy-button`       sebs7n-ui/copy-button
 //   `password-input`    sebs7n-ui/password-input
+//   `time-picker`       sebs7n-ui/time-picker

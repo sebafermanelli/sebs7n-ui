@@ -268,6 +268,12 @@ export type Labels = {
     dark: string
     system: string
   }
+  timePicker: {
+    /** Lo que dice el campo vacío. */
+    placeholder: string
+    /** Lo que se anuncia cuando lo tipeado no es una hora y el campo vuelve a la anterior. */
+    invalid: string
+  }
   tree: {
     /** Lo que se lee en una carpeta mientras llegan sus hijos. */
     loading: string
@@ -401,6 +407,7 @@ export const defaultLabels: Labels = {
     dark: "Tema oscuro",
     system: "Tema del sistema",
   },
+  timePicker: { placeholder: "hh:mm", invalid: "Hora no válida" },
   tree: { loading: "Cargando…" },
   userMenu: { theme: "Tema" },
 }

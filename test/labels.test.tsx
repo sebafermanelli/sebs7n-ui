@@ -208,6 +208,7 @@ describe("LabelsProvider", () => {
       "sidebar",
       "stepper",
       "themeSwitcher",
+      "timePicker",
       "tree",
       "userMenu",
     ])
