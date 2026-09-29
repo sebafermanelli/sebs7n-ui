@@ -173,7 +173,7 @@ export * from "./components/widget-card.js"
 // que no se sube, y estos componentes grandes lo pasaban. No son peers opcionales como `chart`:
 // andan igual, pero se importan por su ruta. La tabla del README los nombra (la genera
 // scripts/subpaths.mjs leyendo este archivo).
-//   `tree`            sebs7n-ui/tree (+1,95 kB al barrel)
+//   `tree`            sebs7n-ui/tree (+1,95 kB al barrel, medido de a uno)
 //   `split-view`      sebs7n-ui/split-view (+0,70 kB)
-//   `file-grid`       sebs7n-ui/file-grid
-//   `calendar-view`   sebs7n-ui/calendar-view
+//   `file-grid`       sebs7n-ui/file-grid (+1,16 kB)
+//   `calendar-view`   sebs7n-ui/calendar-view (+2,84 kB)
