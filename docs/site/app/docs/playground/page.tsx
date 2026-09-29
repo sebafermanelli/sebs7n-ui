@@ -16,8 +16,8 @@ export default function PlaygroundPage() {
     <ViewTransition default="none" enter="page-in" exit="page-out">
       <div className="flex max-w-5xl flex-col gap-8 pb-24">
         <header className="flex flex-col gap-3">
-          <h1 className="text-heading-40 text-gray-1000">Playground</h1>
-          <p className="text-copy-18 text-gray-900">
+          <h1 className="text-heading-40 text-label">Playground</h1>
+          <p className="text-copy-18 text-label-secondary">
             Todo el material sale de dos números y un color. Movelos, mirá cómo cambian los componentes y llevate el CSS.
           </p>
         </header>

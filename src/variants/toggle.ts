@@ -19,7 +19,7 @@ import { cn } from "../lib/utils.js"
  * filtros de ese tamaño (las etiquetas del Finder) son así de bajos. Con el dedo, `touch-target`.
  */
 const toggleVariantsBase = cva(
-  "touch-target inline-flex h-6 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-control border border-gray-700 glass-control px-2.5 text-callout whitespace-nowrap text-gray-900 shadow-card outline-none select-none transition-surface hover:border-gray-800 active:translate-y-px hover:text-gray-1000 focus-visible:focus-ring data-pressed:border-gray-900 data-pressed:bg-gray-alpha-200 data-pressed:text-gray-1000 data-pressed:hover:bg-gray-alpha-300 data-disabled:cursor-not-allowed data-disabled:border-gray-alpha-400 data-disabled:bg-gray-alpha-100 data-disabled:text-gray-700 data-disabled:shadow-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5"
+  "touch-target inline-flex h-6 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-control border border-label-tertiary bg-transparent px-2.5 text-callout whitespace-nowrap text-label-secondary outline-none select-none transition-surface hover:border-label-secondary hover:text-label focus-visible:focus-ring data-pressed:border-label data-pressed:bg-fill-2 data-pressed:text-label data-pressed:hover:bg-fill-3 data-disabled:cursor-not-allowed data-disabled:border-separator data-disabled:bg-fill-1 data-disabled:text-label-tertiary [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5"
 )
 
 // Pasa por cn() (tailwind-merge): usada sobre <a>/<Link>, la clase de la variante tiene que ganarle a la base.

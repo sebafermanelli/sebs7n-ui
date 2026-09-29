@@ -19,8 +19,8 @@ const iconSizes = { sm: "size-4", md: "size-5", lg: "size-6" } as const
  */
 const iconTones = {
   current: "",
-  muted: "text-gray-900",
-  subtle: "text-gray-700",
+  muted: "text-label-secondary",
+  subtle: "text-label-tertiary",
   brand: "text-brand-900",
   success: "text-green-900",
   warning: "text-amber-900",
@@ -47,7 +47,7 @@ type IconProps = WithClassName<Omit<LucideProps, "ref" | "size">> & {
  *
  * `lucide-react` ya es dependencia del paquete y los componentes lo usan
  * directo; esto no lo reemplaza, lo **normaliza**: en vez de `className="size-5
- * text-gray-900"` repetido en cada llamada, `size` y `tone` con nombres que
+ * text-label-secondary"` repetido en cada llamada, `size` y `tone` con nombres que
  * vienen de la escala. Y decide por defecto lo que casi siempre se olvida: que
  * un ícono sin nombre es decoración y va con `aria-hidden`.
  *

@@ -670,7 +670,7 @@ export const COMPONENTS = {
       "Con varios meses hay una grilla por mes, cada una con su nombre, y siguen siendo una sola parada de tabulación entre todas.",
     ],
     usage: [
-      "No dibuja superficie: va adentro de un `Popover`, de una `Card` o suelto. El vidrio lo pone quien lo contiene.",
+      "No dibuja superficie: va adentro de un `Popover`, de una `Card` o suelto. El fondo lo pone quien lo contiene.",
       "Para un campo de formulario, usá `DatePicker`, que ya lo trae adentro.",
       "Siempre son seis semanas, aunque el mes entre en cinco: con un alto fijo, lo que está debajo no se mueve al cambiar de mes.",
       "`numberOfMonths={2}` para un rango que suele cruzar de un mes al otro: una estadía, un alquiler. Cada fecha aparece una sola vez; los huecos de un mes quedan vacíos.",
@@ -976,7 +976,7 @@ export const COMPONENTS = {
       "El footer va con la acción principal a la derecha y «Cancelar» a su izquierda: escribí «Cancelar» primero.",
       "**En mobile el pie se apila en el orden en que lo escribiste**, que es también el orden de Tab: no se invierte con CSS. Con «Cancelar» primero, el principal queda abajo, al alcance del pulgar. Si lo querés arriba, escribilo primero (y en desktop queda a la izquierda).",
       "**Es la hoja de macOS**: título a la izquierda, contenido y el pie abajo a la derecha, sin línea arriba. El principal va del acento (`<Button variant=\"accent\">Listo</Button>`, el «Done» azul) y «Cancelar» en `secondary`. El componente no lo fuerza: una hoja de solo lectura puede cerrar con un único «Listo».",
-      "**El contenido que es un bloque —un resumen, una lista de datos— va agrupado** en `rounded-surface material-group p-4`, como la tarjeta de una hoja de Ajustes. Un formulario suelto no necesita el bloque.",
+      "**El contenido que es un bloque —un resumen, una lista de datos— va agrupado** en `rounded-surface bg-grouped p-4`, como la tarjeta de una hoja de Ajustes. Un formulario suelto no necesita el bloque.",
       "La X se queda aunque macOS no la ponga en las hojas: en la web es la salida que se busca primero. `showCloseButton={false}` si el pie ya tiene «Cancelar» y querés la hoja limpia.",
     ],
     props: {
@@ -1320,7 +1320,7 @@ export const COMPONENTS = {
     ],
     a11y: [
       "Sonner emite una región `aria-live` con `role=\"status\"`: el mensaje se anuncia sin robar el foco.",
-      "El `Toaster` de sebs7n-ui toma el tema de `next-themes` y las superficies del paquete (`glass`, `shadow-menu`).",
+      "El `Toaster` de sebs7n-ui toma el tema de `next-themes` y las superficies del paquete (`bg-surface`, `shadow-menu`).",
       "Un toast con acción tiene que durar lo suficiente para leerlo y apretarla, o no llevarla.",
     ],
     usage: [
@@ -1422,7 +1422,7 @@ export const COMPONENTS = {
         variant: "`bar` (default) · `floating`.",
         position: "`sticky` (default) ocupa su alto; `fixed` se superpone al contenido.",
         scrollThreshold: "Cuántos px de scroll cambian el estado. Por defecto, 12.",
-        surfaceClassName: "Clases de la caja de vidrio, que es la que tiene el ancho y el radio de la barra despegada.",
+        surfaceClassName: "Clases de la caja con fondo, que es la que tiene el ancho y el radio de la barra despegada.",
         className: PROP_DESCRIPTIONS.className,
       },
       NavbarContent: {
@@ -1539,7 +1539,7 @@ export const COMPONENTS = {
     props: {
       Toolbar: {
         orientation: "`vertical` cambia las flechas a ↑ ↓ y da vuelta los separadores.",
-        variant: "`glass` (default) es la cápsula de vidrio · `plain` no lleva material, para una barra adentro de otra superficie.",
+        variant: "`glass` (default) lleva el fondo opaco de las barras (`bg-surface-bar`; el nombre queda de 1.x) · `plain` no lleva fondo, para una barra adentro de otra superficie.",
         loopFocus: "Si al pasar del último control se vuelve al primero.",
         onKeyDown: "Corre **antes** que el manejador propio de la barra. Si hacés `preventDefault()`, Home y End no mueven el foco.",
       },
@@ -1613,7 +1613,7 @@ export const COMPONENTS = {
     props: {
       Sidebar: {
         collapsed: "Solo íconos, 64px. El ancho cambia sin animación: animarlo hace saltar todo el contenido.",
-        variant: "`floating` (default) es una píldora de vidrio despegada del borde · `bar` va a ras de la ventana con un borde derecho.",
+        variant: "`floating` (default) es un panel despegado del borde · `bar` va a ras de la ventana con un borde derecho, como en iCloud.",
       },
       SidebarSearch: { shortcut: "Solo muestra el `Kbd` y lo anuncia. Escuchar la tecla es trabajo de la app." },
       SidebarItem: { icon: "El ícono de la izquierda, que es lo único que queda visible con el sidebar colapsado." },
@@ -1838,7 +1838,7 @@ export const COMPONENTS = {
       "`CardTitle` es un `<div>`: si la tarjeta encabeza una sección, poné el heading vos (`render` no aplica acá — usá tu propio `<h3>` adentro).",
     ],
     usage: [
-      "**`variant=\"default\"` es la superficie** (borde + `material-group`, sólido); **`subtle` es la banda** (`bg-gray-alpha-100`, sin borde) para una zona hundida.",
+      "**`variant=\"default\"` es el grupo** (`bg-grouped`, opaco y sin borde, como las cards de iCloud); **`subtle` es la banda** (`bg-fill-1`) para una zona hundida.",
       "Una card dentro de otra card es una señal de que falta una tabla o una lista.",
       "`size=\"sm\"` en una grilla de 3 o más columnas; `md` suelta.",
       "`CardAction` se ubica sola arriba a la derecha si está dentro de `CardHeader`.",

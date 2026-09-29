@@ -62,7 +62,7 @@ export function TamanosYPie() {
         defaultValue={[0.53, 0.13, 162]}
         footer={(color) => (
           <div
-            className="flex h-10 items-center justify-center rounded-full text-button-14 text-white sheen"
+            className="flex h-10 items-center justify-center rounded-full text-button-14 text-white"
             style={{ backgroundColor: hexOfOklch(color) }}
           >
             Vista previa

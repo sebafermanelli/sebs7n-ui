@@ -34,7 +34,7 @@ describe("ThemeSwitcher", () => {
   it("es un radiogroup con nombres en español y cambia el tema", async () => {
     render(withTheme(<ThemeSwitcher />))
     const group = screen.getByRole("radiogroup", { name: "Tema" })
-    expect(group).toHaveClass("rounded-control", "bg-gray-alpha-200", "shadow-track", "p-0.5")
+    expect(group).toHaveClass("rounded-control", "bg-fill-2", "p-0.5")
     const system = await screen.findByRole("radio", { name: "Tema del sistema" })
     await waitFor(() => expect(system).toHaveAttribute("aria-checked", "true"))
     const dark = screen.getByRole("radio", { name: "Tema oscuro" })
@@ -49,9 +49,9 @@ describe("ThemeSwitcher", () => {
     expect(screen.getByRole("radio", { name: "Tema claro" })).toHaveClass(
       "size-7",
       "rounded-[calc(var(--radius-control)-2px)]",
-      "text-gray-900",
-      "hover:text-gray-1000",
-      "data-checked:text-gray-1000",
+      "text-label-secondary",
+      "hover:text-label",
+      "data-checked:text-label",
       "focus-visible:focus-ring"
     )
   })
@@ -149,7 +149,7 @@ describe("ThemeSwitcher: la pastilla", () => {
   it("en oscuro es más clara que la pista, no un hueco", async () => {
     render(withTheme(<ThemeSwitcher />))
     await waitFor(() => expect(pastilla()).not.toBeNull())
-    expect(pastilla()).toHaveClass("glass-control", "dark:bg-gray-alpha-400")
+    expect(pastilla()).toHaveClass("bg-segment", "shadow-segment")
   })
 
   it("se corre al índice de la opción elegida, sin medir nada", async () => {

@@ -29,7 +29,7 @@ function TabsList({ className, variant = "segmented", children, ...props }: Tabs
       data-variant={variant}
       className={cn(
         "group/tabs-list",
-        variant === "line" ? "relative flex w-full items-center border-b border-gray-alpha-400" : segmentedTrackClassName,
+        variant === "line" ? "relative flex w-full items-center border-b border-separator" : segmentedTrackClassName,
         className
       )}
       {...props}
@@ -54,7 +54,7 @@ function TabsTrigger({ className, ...props }: TabsTriggerProps) {
     <TabsPrimitive.Tab
       data-slot="tabs-trigger"
       className={cn(
-        "relative isolate inline-flex cursor-pointer items-center justify-center gap-1.5 px-3 text-callout whitespace-nowrap text-gray-900 outline-none select-none transition-control",
+        "relative isolate inline-flex cursor-pointer items-center justify-center gap-1.5 px-3 text-callout whitespace-nowrap text-label-secondary outline-none select-none transition-control",
         // Segmentado: 28 + los 2 px de la pista de cada lado = 32, el alto de un botón `md` y el del
         // ThemeSwitcher, que es el mismo objeto. Línea: 32, el alto de los controles.
         "group-data-[variant=line]/tabs-list:h-8 group-data-[variant=segmented]/tabs-list:h-7 group-data-[variant=segmented]/tabs-list:rounded-control",
@@ -67,10 +67,10 @@ function TabsTrigger({ className, ...props }: TabsTriggerProps) {
         "before:absolute before:inset-x-0 before:-z-10 before:transition-control",
         "group-data-[variant=line]/tabs-list:before:inset-y-1 group-data-[variant=line]/tabs-list:before:rounded-control",
         "group-data-[variant=segmented]/tabs-list:before:inset-y-0 group-data-[variant=segmented]/tabs-list:before:rounded-[calc(var(--radius-control)-2px)]",
-        "hover:text-gray-1000 focus-visible:before:focus-ring",
-        "after:absolute after:inset-x-3 after:-bottom-px after:h-0.5 after:bg-gray-1000 after:opacity-0",
-        "data-active:text-gray-1000 group-data-[variant=line]/tabs-list:data-active:after:opacity-100",
-        "data-disabled:cursor-not-allowed data-disabled:text-gray-700",
+        "hover:text-label focus-visible:before:focus-ring",
+        "after:absolute after:inset-x-3 after:-bottom-px after:h-0.5 after:bg-label after:opacity-0",
+        "data-active:text-label group-data-[variant=line]/tabs-list:data-active:after:opacity-100",
+        "data-disabled:cursor-not-allowed data-disabled:text-label-tertiary",
         "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className
       )}

@@ -32,10 +32,10 @@ function Textarea({ className, ...props }: TextareaProps) {
         inputInvalidClassName,
         // Sin alto del sistema: `field-sizing-content` lo hace crecer con el texto.
         inputMultilineRadiusClassName,
-        "peer field-sizing-content min-h-20 w-full min-w-0 px-4 py-3 placeholder:text-gray-900 focus:focus-border",
+        "peer field-sizing-content min-h-20 w-full min-w-0 px-4 py-3 placeholder:text-label-secondary focus:focus-border",
         // Además del `data-disabled:` de arriba —que es el que pone un `Fieldset`—, el
         // `<textarea>` puede venir deshabilitado por el atributo nativo. Los dos pasan.
-        "disabled:cursor-not-allowed disabled:border-gray-alpha-400 disabled:bg-gray-alpha-100 disabled:text-gray-700",
+        "disabled:cursor-not-allowed disabled:border-separator disabled:bg-fill-1 disabled:text-label-tertiary",
         className
       )}
       // `Field.Control` tipa sus props contra un `<input>`, así que no conoce

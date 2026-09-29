@@ -80,8 +80,8 @@ function Pagination({
         // Crece solo en alto: nueve controles de 32 con 12 px entre sí (lo que haría falta para
         // áreas de 44 × 44) ya no entran en un teléfono de 390, y la fila se partía en dos.
         "touch-target-y text-callout tabular-nums",
-        !options.active && "text-gray-900 hover:text-gray-1000",
-        off && "text-gray-700 pointer-events-none"
+        !options.active && "text-label-secondary hover:text-label",
+        off && "text-label-tertiary pointer-events-none"
       ),
       children: options.children,
     }
@@ -110,7 +110,7 @@ function Pagination({
               // `gray-900` y no `gray-700`: los puntos son `aria-hidden`, pero
               // se ven, y en claro `gray-700` sobre la página da 3,23:1. Que al
               // lado haya un `sr-only` resuelve a quien escucha, no a quien mira.
-              className={cn("inline-flex items-center justify-center text-gray-900", size === "sm" ? "size-6" : "size-8")}
+              className={cn("inline-flex items-center justify-center text-label-secondary", size === "sm" ? "size-6" : "size-8")}
               key={`ellipsis-${slot.side}`}
             >
               <span aria-hidden="true">…</span>

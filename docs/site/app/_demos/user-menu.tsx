@@ -10,7 +10,7 @@ import { UserMenu } from "sebs7n-ui/user-menu"
  */
 export function Basico() {
   return (
-    <div className="w-64 rounded-surface border border-gray-alpha-400 bg-gray-alpha-100 p-2">
+    <div className="w-64 rounded-surface border border-separator bg-fill-1 p-2">
       <UserMenu
         signOut={
           <DropdownMenuItem>

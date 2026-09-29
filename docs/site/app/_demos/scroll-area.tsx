@@ -22,17 +22,17 @@ const MOVIMIENTOS = [
  */
 export function Basico() {
   return (
-    <ScrollArea className="h-56 w-full max-w-sm rounded-surface border border-gray-alpha-400 glass" contentClassName="p-3">
+    <ScrollArea className="h-56 w-full max-w-sm rounded-surface border border-separator bg-surface" contentClassName="p-3">
       <div className="flex flex-col">
         {MOVIMIENTOS.map((movimiento, indice) => (
           <div key={movimiento.detalle + movimiento.fecha}>
             {indice > 0 && <Separator className="my-2" />}
             <div className="flex items-baseline justify-between gap-4">
               <div className="flex min-w-0 flex-col">
-                <span className="truncate text-copy-14 text-gray-1000">{movimiento.detalle}</span>
-                <span className="text-copy-13 text-gray-900">{movimiento.fecha}</span>
+                <span className="truncate text-copy-14 text-label">{movimiento.detalle}</span>
+                <span className="text-copy-13 text-label-secondary">{movimiento.fecha}</span>
               </div>
-              <span className="shrink-0 text-copy-13-mono text-gray-900">{movimiento.monto}</span>
+              <span className="shrink-0 text-copy-13-mono text-label-secondary">{movimiento.monto}</span>
             </div>
           </div>
         ))}
@@ -57,7 +57,7 @@ export function DosEjes() {
   ]
   return (
     <ScrollArea
-      className="h-48 w-full max-w-sm rounded-surface border border-gray-alpha-400 glass"
+      className="h-48 w-full max-w-sm rounded-surface border border-separator bg-surface"
       contentClassName="p-3"
       orientation="both"
     >
@@ -65,7 +65,7 @@ export function DosEjes() {
         <thead>
           <tr>
             {columnas.map((columna) => (
-              <th className="text-label-12 whitespace-nowrap text-gray-900" key={columna} scope="col">
+              <th className="text-label-12 whitespace-nowrap text-label-secondary" key={columna} scope="col">
                 {columna}
               </th>
             ))}
@@ -75,7 +75,7 @@ export function DosEjes() {
           {filas.map((fila) => (
             <tr key={fila[0]}>
               {fila.map((celda) => (
-                <td className="text-copy-14 whitespace-nowrap text-gray-1000" key={celda}>
+                <td className="text-copy-14 whitespace-nowrap text-label" key={celda}>
                   {celda}
                 </td>
               ))}
@@ -97,9 +97,9 @@ export function Horizontal() {
     <ScrollArea className="w-full max-w-sm" contentClassName="pb-3" orientation="horizontal">
       <div className="flex w-max gap-3">
         {meses.map((mes, indice) => (
-          <div className="flex w-40 flex-col gap-1 rounded-surface border border-gray-alpha-400 glass p-4" key={mes}>
-            <span className="text-label-12 text-gray-900">{mes}</span>
-            <span className="text-heading-20 text-gray-1000">$ {(420 + indice * 37).toLocaleString("es-AR")}k</span>
+          <div className="flex w-40 flex-col gap-1 rounded-surface border border-separator bg-surface p-4" key={mes}>
+            <span className="text-label-12 text-label-secondary">{mes}</span>
+            <span className="text-heading-20 text-label">$ {(420 + indice * 37).toLocaleString("es-AR")}k</span>
           </div>
         ))}
       </div>

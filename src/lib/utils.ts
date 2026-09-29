@@ -18,15 +18,15 @@ const twMerge = extendTailwindMerge<"touch-target">({
   extend: {
     theme: {
       text: [...TYPE_SCALE],
-      shadow: ["tooltip", "menu", "modal", "card", "card-hover", "button", "button-inverted", "button-accent", "track", "chip", "ai"],
+      shadow: ["tooltip", "menu", "modal", "widget", "segment", "badge", "thumbnail", "card", "card-hover", "ai"],
       radius: ["control", "surface", "panel", "field", "item", "menu", "menu-item", "tag"],
     },
     classGroups: {
-      // `glass`, `glass-control` y los `material-*` pintan el fondo. Sin esto, un `bg-*` que pase el llamador
-      // convive con el vidrio y gana el que Tailwind haya emitido último, que no se elige.
+      // `material-translucent` y `bg-ambient` pintan el fondo. Sin esto, un `bg-*` que pase el llamador
+      // convive con ellos y gana el que Tailwind haya emitido último, que no se elige.
       // Las dos formas del área táctil pelean por el mismo `::after`: la que se pase después gana.
       "touch-target": ["touch-target", "touch-target-y"],
-      "bg-color": ["glass", "glass-control", "bg-ambient", "material-bar", "material-popover", "material-modal", "material-group"],
+      "bg-color": ["material-translucent", "bg-ambient"],
     },
   },
 })

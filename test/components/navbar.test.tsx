@@ -25,11 +25,11 @@ describe("Navbar", () => {
     expect(surface(container).className).not.toMatch(/backdrop-blur/)
   })
 
-  it("bar: al pasar el umbral se vuelve de vidrio, con borde abajo", () => {
+  it("bar: al pasar el umbral toma el fondo de la barra global, con borde abajo", () => {
     const { container } = render(<Navbar>x</Navbar>)
     scrollTo(40)
     expect(header(container)).toHaveAttribute("data-scrolled")
-    expect(surface(container)).toHaveClass("material-bar", "glass-thick", "border-b-gray-alpha-400")
+    expect(surface(container)).toHaveClass("bg-surface-header", "in-data-ambient:material-translucent", "border-b-separator")
     expect(surface(container)).not.toHaveClass("rounded-panel")
     expect(header(container)).toHaveClass("pt-0")
   })
@@ -42,7 +42,7 @@ describe("Navbar", () => {
     )
     scrollTo(40)
     const surface = container.querySelector("[data-slot=navbar-surface]")!
-    expect(surface).toHaveClass("max-w-none", "rounded-full", "glass-rim")
+    expect(surface).toHaveClass("max-w-none", "rounded-full")
     expect(surface).not.toHaveClass("max-w-6xl")
     expect(surface).not.toHaveClass("rounded-panel")
     // Al `<header>` no le llega: su `className` es otro.
@@ -55,7 +55,7 @@ describe("Navbar", () => {
     expect(surface(container)).toHaveClass("rounded-none")
     scrollTo(40)
     expect(header(container)).toHaveClass("px-3", "pt-3")
-    expect(surface(container)).toHaveClass("rounded-panel", "border-gray-alpha-400", "shadow-menu", "material-bar", "glass-rim")
+    expect(surface(container)).toHaveClass("rounded-panel", "border-separator", "shadow-menu", "bg-surface-header")
     scrollTo(0)
     expect(surface(container)).toHaveClass("rounded-none")
   })
@@ -76,7 +76,7 @@ describe("Navbar", () => {
     expect(header(container)).not.toHaveClass("sticky")
   })
 
-  it("useNavbar le avisa a un hijo si la barra ya tiene vidrio y si está despegada", () => {
+  it("useNavbar le avisa a un hijo si la barra ya tiene fondo y si está despegada", () => {
     const Hijo = () => {
       const { scrolled, floating } = useNavbar()
       return <span data-testid="hijo">{`${scrolled} ${floating}`}</span>

@@ -50,15 +50,15 @@ describe("fondos: página vs superficie", () => {
     expect(geist.dark.background["200"]).toBe("#0a0a0a")
   })
 
-  it("--sf-background es blanco en claro y negro puro en oscuro", () => {
+  it("--sf-background es blanco en claro y el #1C1C1E de iCloud en oscuro", () => {
     expect(theme).toMatch(/--sf-background:\s*#ffffff;/)
-    expect(theme).toMatch(/--sf-background:\s*#000000;/)
+    expect(theme).toMatch(/--sf-background:\s*#1c1c1e;/)
     expect(theme).toContain("--color-background: var(--sf-background);")
   })
 
   it("la página no usa la superficie: body y raíz del AppShell van con el token de página", () => {
     expect(base).toContain("background-color: var(--color-background);")
-    expect(base).not.toContain("var(--color-background-100)")
+    expect(base).not.toContain("var(--color-surface)")
     expect(appShell).toContain("grid-cols-1 bg-background [--app-shell-height:100dvh]")
   })
 

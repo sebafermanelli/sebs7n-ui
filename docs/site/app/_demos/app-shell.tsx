@@ -27,12 +27,12 @@ import { UserMenu } from "sebs7n-ui/user-menu"
 export function Completo() {
   const usuario = { name: "Ana Pérez", email: "ana@acme.com" }
   return (
-    <div className="overflow-hidden rounded-surface border border-gray-alpha-400">
+    <div className="overflow-hidden rounded-surface border border-separator">
       <AppShell
         className="[--app-shell-height:560px]"
         mobileBar={
           <>
-            <div className="size-6 rounded-control bg-gray-1000" />
+            <div className="size-6 rounded-control bg-label" />
             <span className="ml-auto" />
             <UserMenu collapsed user={usuario} />
           </>
@@ -41,7 +41,7 @@ export function Completo() {
           <Sidebar>
             <SidebarHeader>
               <div className="flex h-8 items-center gap-2 px-1">
-                <div className="size-6 shrink-0 rounded-control bg-gray-1000" />
+                <div className="size-6 shrink-0 rounded-control bg-label" />
                 <span className="text-label-14 font-medium">Acme</span>
               </div>
             </SidebarHeader>

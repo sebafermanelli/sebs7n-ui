@@ -32,8 +32,8 @@ export function SiteHeader({ version }: { version: string }) {
           className="flex shrink-0 items-center gap-2 rounded-sm outline-none focus-visible:focus-ring"
           href="/"
         >
-          <span className="size-5 rounded-control bg-gray-1000" />
-          <span className="text-heading-16 text-gray-1000">sebs7n-ui</span>
+          <span className="size-5 rounded-control bg-label" />
+          <span className="text-heading-16 text-label">sebs7n-ui</span>
           <Badge size="sm">{version}</Badge>
         </Link>
 
@@ -41,8 +41,8 @@ export function SiteHeader({ version }: { version: string }) {
           {LINKS.map((link) => (
             <Link
               className={cn(
-                "rounded-control px-2 py-1 text-copy-14 outline-none transition-control hover:text-gray-1000 focus-visible:focus-ring",
-                pathname.startsWith(link.href.split("/").slice(0, 3).join("/")) ? "text-gray-1000" : "text-gray-900"
+                "rounded-control px-2 py-1 text-copy-14 outline-none transition-control hover:text-label focus-visible:focus-ring",
+                pathname.startsWith(link.href.split("/").slice(0, 3).join("/")) ? "text-label" : "text-label-secondary"
               )}
               href={link.href}
               key={link.href}
@@ -55,7 +55,7 @@ export function SiteHeader({ version }: { version: string }) {
         <div className="ml-auto flex items-center gap-2">
           <SearchButton />
           <a
-            className="hidden rounded-control px-2 py-1 text-copy-14 text-gray-900 outline-none transition-control hover:text-gray-1000 focus-visible:focus-ring sm:inline"
+            className="hidden rounded-control px-2 py-1 text-copy-14 text-label-secondary outline-none transition-control hover:text-label focus-visible:focus-ring sm:inline"
             href="https://github.com/sebafermanelli/sebs7n-ui"
             rel="noreferrer"
             target="_blank"

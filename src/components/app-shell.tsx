@@ -25,16 +25,14 @@ type AppShellProps = Omit<React.ComponentProps<"div">, "children"> & {
   /** id del <main> (destino del skip link). */
   mainId?: string
   /**
-   * La luz ambiente: tres focos de color que salen del brand, fijos detrás de todo.
-   *
-   * Sobre una página lisa el vidrio no tiene nada que desenfocar y se ve como un gris plano;
-   * con esto el Sidebar, las Cards y los menús muestran el material. Es opt-in porque cambia el
-   * fondo de la app entera, y esa decisión es de la app.
+   * El wallpaper: tres focos de color que salen del brand, fijos detrás de todo, como el fondo
+   * de Home en iCloud. Sobre él la barra del `Navbar` pasa a `material-translucent`. Es opt-in
+   * porque cambia el fondo de la app entera, y esa decisión es de la app.
    */
   ambient?: boolean
   /**
    * `floating` (el default): la barra del teléfono es el `Navbar` flotante —transparente arriba,
-   * una píldora de vidrio al scrollear— y el `Sidebar` va despegado, en su propia píldora.
+   * con fondo al scrollear— y el `Sidebar` va despegado, en su propio panel.
    * `bar`: las dos a ras de la ventana, como antes de 1.10. El `Sidebar` se elige con su propia
    * prop `variant`; esta decide la barra.
    */
@@ -182,7 +180,7 @@ function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido
         data-ambient={ambient ? "" : undefined}
         className={cn(
           // La raíz pinta el fondo de página (el shell suele ocupar todo el viewport),
-          // así que va con `bg-background`, no con la superficie `bg-background-100`.
+          // así que va con `bg-background`, no con la superficie `bg-surface`.
           "grid min-h-(--app-shell-height) grid-cols-1 bg-background [--app-shell-height:100dvh] lg:grid-cols-[auto_minmax(0,1fr)]",
           // `bg-ambient` pinta el mismo color de página y le suma los focos encima.
           ambient && "bg-ambient",
@@ -192,7 +190,7 @@ function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido
       >
         <a
           href={`#${mainId}`}
-          className="sr-only z-50 rounded-control bg-background-100 px-3 py-2 text-callout text-gray-1000 shadow-menu focus-visible:not-sr-only focus-visible:fixed focus-visible:top-2 focus-visible:left-2 focus-visible:focus-ring"
+          className="sr-only z-50 rounded-control bg-surface px-3 py-2 text-callout text-label shadow-menu focus-visible:not-sr-only focus-visible:fixed focus-visible:top-2 focus-visible:left-2 focus-visible:focus-ring"
         >
           {labels.skipToContent}
         </a>
@@ -216,7 +214,7 @@ function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido
           ) : (
             <header
               data-slot="app-shell-mobile-bar"
-              className="sticky top-0 z-40 flex h-14 shrink-0 items-center gap-2 border-b border-gray-alpha-400 material-bar px-4 shadow-card lg:hidden"
+              className="sticky top-0 z-40 flex h-14 shrink-0 items-center gap-2 border-b border-separator-strong bg-surface-header px-4 lg:hidden"
             >
               {barContent}
             </header>

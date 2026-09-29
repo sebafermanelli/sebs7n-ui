@@ -42,14 +42,13 @@ import { Switch } from "sebs7n-ui/switch"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "sebs7n-ui/table"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "sebs7n-ui/tabs"
 import { ThemeSwitcher } from "sebs7n-ui/theme-switcher"
-import { ToggleGroup, ToggleGroupItem } from "sebs7n-ui/toggle-group"
 import { Toolbar, ToolbarButton, ToolbarSeparator } from "sebs7n-ui/toolbar"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "sebs7n-ui/tooltip"
 
 import { cssOfOklch, hexOfOklch, oklchOfHex, type Oklch } from "../_lib/color"
 import { CodeBlock } from "./code-block"
 import { Veredicto } from "./color-picker"
-import { variables, useGlassConfig, type Radios } from "./glass-config"
+import { variables, useGlassConfig } from "./glass-config"
 
 /** El brand del sitio, que es el del paquete. Es de donde arranca el selector. */
 const BRAND_DEL_SITIO: Oklch = [0.573, 0.214, 258]
@@ -80,53 +79,17 @@ export function Playground() {
     <div className="flex flex-col gap-10">
       <section
         aria-label="Configuración"
-        className="sticky top-16 z-30 flex flex-col gap-5 rounded-panel border border-gray-alpha-400 glass glass-thick p-5 shadow-menu lg:top-4"
+        className="sticky top-16 z-30 flex flex-col gap-5 rounded-panel border border-separator bg-surface p-5 shadow-menu lg:top-4"
       >
-        <div className="grid gap-x-8 gap-y-5 md:grid-cols-3">
-          <Slider
-            format={{ maximumFractionDigits: 2, minimumFractionDigits: 2 }}
-            label="Glass"
-            locale="es-AR"
-            max={1}
-            min={0}
-            onValueChange={(valor) => set({ glass: Number((valor as number).toFixed(2)) })}
-            showValue
-            step={0.05}
-            value={config.glass}
-          />
-          <Slider
-            format={{ maximumFractionDigits: 2, minimumFractionDigits: 2 }}
-            label="Tinte de marca"
-            locale="es-AR"
-            max={1}
-            min={0}
-            onValueChange={(valor) => set({ tint: Number((valor as number).toFixed(2)) })}
-            showValue
-            step={0.05}
-            value={config.tint}
-          />
-          <Slider
-            disabled={!config.ambient}
-            format={{ maximumFractionDigits: 2, minimumFractionDigits: 2 }}
-            label="Intensidad de la luz"
-            locale="es-AR"
-            max={1}
-            min={0}
-            onValueChange={(valor) => set({ luz: Number((valor as number).toFixed(2)) })}
-            showValue
-            step={0.05}
-            value={config.luz}
-          />
-        </div>
         <div className="flex flex-wrap items-end gap-x-8 gap-y-4">
           {/* Ancho fijo: el rótulo cambia con el tema («claro», «oscuro») y, midiendo lo que mide su
               texto, la columna corría todo lo que tiene a la derecha al cambiar de tema. */}
           <div className="flex w-52 flex-col gap-2">
-            <span className="text-label-14 whitespace-nowrap text-gray-1000">Color de marca · tema {oscuro ? "oscuro" : "claro"}</span>
+            <span className="text-label-14 whitespace-nowrap text-label">Color de marca · tema {oscuro ? "oscuro" : "claro"}</span>
             <ColorPicker
               aria-label={`Color de marca (tema ${oscuro ? "oscuro" : "claro"})`}
               className="w-40"
-              footer={(color) => <Veredicto color={color} superficie={oscuro ? "#0a0a0a" : "#ffffff"} />}
+              footer={(color) => <Veredicto color={color} superficie={oscuro ? "#1c1c1e" : "#ffffff"} />}
               onOpenChange={(abierto) => {
                 if (abierto) return
                 // Lo que se probó y se dejó queda a mano para volver: el más nuevo adelante.
@@ -138,26 +101,26 @@ export function Playground() {
             />
           </div>
           <div className="flex flex-col gap-2">
-            <span className="text-label-14 text-gray-1000" id="pg-radios">
-              Radios
-            </span>
-            <ToggleGroup
-              aria-labelledby="pg-radios"
-              onValueChange={(valor) => valor[0] && set({ radios: valor[0] as Radios })}
-              value={[config.radios]}
-            >
-              <ToggleGroupItem value="apple">Apple</ToggleGroupItem>
-              <ToggleGroupItem value="geist">Geist</ToggleGroupItem>
-            </ToggleGroup>
-          </div>
-          <div className="flex flex-col gap-2">
-            <span className="text-label-14 text-gray-1000">Tema</span>
+            <span className="text-label-14 text-label">Tema</span>
             <ThemeSwitcher />
           </div>
           <div className="flex h-8 items-center gap-2">
             <Switch checked={config.ambient} id="pg-ambient" onCheckedChange={(ambient) => set({ ambient })} />
-            <Label htmlFor="pg-ambient">Luz ambiente</Label>
+            <Label htmlFor="pg-ambient">Wallpaper</Label>
           </div>
+          <Slider
+            className="w-48"
+            disabled={!config.ambient}
+            format={{ maximumFractionDigits: 2, minimumFractionDigits: 2 }}
+            label="Color del wallpaper"
+            locale="es-AR"
+            max={1}
+            min={0}
+            onValueChange={(valor) => set({ luz: Number((valor as number).toFixed(2)) })}
+            showValue
+            step={0.05}
+            value={config.luz}
+          />
           <Button className="ml-auto" disabled={esDefault} onClick={reset} variant="ghost">
             <RotateCcwIcon />
             Volver al default
@@ -167,19 +130,19 @@ export function Playground() {
 
       <section aria-labelledby="pg-css" className="flex flex-col gap-3">
         <div className="flex flex-col gap-1">
-          <h2 className="text-heading-24 text-gray-1000" id="pg-css">
+          <h2 className="text-heading-24 text-label" id="pg-css">
             Tu configuración
           </h2>
-          <p className="text-copy-14 text-gray-900">
+          <p className="text-copy-14 text-label-secondary">
             Pegala en el <code className="text-copy-13-mono">globals.css</code> de la app, después del{" "}
             <code className="text-copy-13-mono">@import &quot;sebs7n-ui/theme.css&quot;</code>. Queda guardada en este
             navegador: el resto del sitio se ve con ella.
           </p>
         </div>
         <CodeBlock code={cssDe(pisadas)} label="Copiar la configuración" />
-        {/* Prender la luz ambiente no es una variable: es una prop del AppShell (o `bg-ambient` en el
-            body). Cuánta, sí: `--ambient`, que sale arriba con el resto. */}
-        {config.ambient && <CodeBlock code={`<AppShell ambient sidebar={…}>`} label="Copiar la prop de la luz ambiente" />}
+        {/* Prender el wallpaper no es una variable: es una prop del AppShell (o `bg-ambient` en el
+            body). Cuánto color, sí: `--ambient`, que sale arriba con el resto. */}
+        {config.ambient && <CodeBlock code={`<AppShell ambient sidebar={…}>`} label="Copiar la prop del wallpaper" />}
       </section>
 
       <Muestra />
@@ -211,10 +174,10 @@ function Muestra() {
     <TooltipProvider>
       <section aria-labelledby="pg-muestra" className="flex flex-col gap-4">
         <div className="flex flex-col gap-1">
-          <h2 className="text-heading-24 text-gray-1000" id="pg-muestra">
+          <h2 className="text-heading-24 text-label" id="pg-muestra">
             Cómo se ve
           </h2>
-          <p className="text-copy-14 text-gray-900">
+          <p className="text-copy-14 text-label-secondary">
             Todo lo de abajo son los componentes del paquete, sin una clase de más. Abrí el menú y el diálogo, arrastrá el
             slider, tabulá por el formulario.
           </p>
@@ -405,13 +368,13 @@ function Muestra() {
                 <TabsTrigger value="cobros">Cobros</TabsTrigger>
                 <TabsTrigger value="clientes">Clientes</TabsTrigger>
               </TabsList>
-              <TabsContent className="text-gray-900" value="resumen">
+              <TabsContent className="text-label-secondary" value="resumen">
                 La pastilla se desliza de una pestaña a otra.
               </TabsContent>
-              <TabsContent className="text-gray-900" value="cobros">
+              <TabsContent className="text-label-secondary" value="cobros">
                 4 cobros pendientes de conciliar.
               </TabsContent>
-              <TabsContent className="text-gray-900" value="clientes">
+              <TabsContent className="text-label-secondary" value="clientes">
                 23 clientes activos.
               </TabsContent>
             </Tabs>

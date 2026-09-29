@@ -66,7 +66,7 @@ export default function SearchDialog({ open, onOpenChange }: { open: boolean; on
           para «butt»» el lector lo repetía en cada tecla. */}
       <CommandEmpty>{index === null ? "Cargando…" : consulta.trim() ? "Sin resultados" : "Buscá un componente, un token o una regla."}</CommandEmpty>
       {index !== null && consulta.trim() && !grupos.length && (
-        <p aria-hidden="true" className="-mt-5 truncate px-4 pb-6 text-center text-callout text-gray-700">
+        <p aria-hidden="true" className="-mt-5 truncate px-4 pb-6 text-center text-callout text-label-tertiary">
           «{consulta}»
         </p>
       )}

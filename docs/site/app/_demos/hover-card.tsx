@@ -11,7 +11,7 @@ import { linkVariants } from "sebs7n-ui/variants/link"
  */
 export function Basico() {
   return (
-    <p className="max-w-sm text-copy-14 text-gray-1000">
+    <p className="max-w-sm text-copy-14 text-label">
       La factura 0012 salió a nombre de{" "}
       <HoverCard>
         <HoverCardTrigger className={linkVariants({ variant: "inline" })} href="#">
@@ -23,15 +23,15 @@ export function Basico() {
               <AvatarFallback>AC</AvatarFallback>
             </Avatar>
             <div className="flex min-w-0 flex-col">
-              <span className="text-headline text-gray-1000">Acme S.A.</span>
-              <span className="text-body text-gray-900">CUIT 30-71234567-8</span>
+              <span className="text-headline text-label">Acme S.A.</span>
+              <span className="text-body text-label-secondary">CUIT 30-71234567-8</span>
             </div>
           </HoverCardHeader>
           <div className="flex items-center gap-2">
             <Badge color="green" size="sm">
               Al día
             </Badge>
-            <span className="text-body text-gray-900">12 facturas · $ 1.284.000</span>
+            <span className="text-body text-label-secondary">12 facturas · $ 1.284.000</span>
           </div>
         </HoverCardContent>
       </HoverCard>{" "}
@@ -47,14 +47,14 @@ export function Basico() {
 export function Retardos() {
   const ficha = (
     <HoverCardContent side="top">
-      <span className="text-headline text-gray-1000">Plan Pro</span>
-      <span className="text-body text-gray-900">
+      <span className="text-headline text-label">Plan Pro</span>
+      <span className="text-body text-label-secondary">
         Usuarios ilimitados, facturación electrónica y soporte en 24 h. $ 18.400 por mes.
       </span>
     </HoverCardContent>
   )
   return (
-    <div className="flex max-w-sm flex-col gap-3 text-copy-14 text-gray-1000">
+    <div className="flex max-w-sm flex-col gap-3 text-copy-14 text-label">
       <span>
         Por defecto, 600 ms para abrir:{" "}
         <HoverCard>

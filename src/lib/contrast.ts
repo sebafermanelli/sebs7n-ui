@@ -88,50 +88,12 @@ export function hexOfOklch(color: Oklch): string {
 /**
  * Compone un color opaco con un alfa sobre otro, en sRGB, que es como lo hace el navegador.
  * `flattenAlpha` hace lo mismo cuando el alfa viene adentro del hexadecimal (`#rrggbbaa`);
- * esta es para cuando el alfa se calcula, como el del fill de un vidrio.
+ * esta es para cuando el alfa se calcula, como el de un relleno o un anillo de foco.
  */
 export function composite(fg: string, alpha: number, bg: string): string {
   const canal = (i: number) =>
     Math.round(parseInt(fg.slice(1 + i, 3 + i), 16) * alpha + parseInt(bg.slice(1 + i, 3 + i), 16) * (1 - alpha))
   return `#${[0, 2, 4].map((i) => canal(i).toString(16).padStart(2, "0")).join("")}`
-}
-
-/**
- * El alfa del fill de la utilidad `glass` para una intensidad `--glass`: 1 − 0,35·g.
- *
- * `clear` es cuánta de esa transparencia queda: 1 en el vidrio común, menos en uno denso
- * (`glass-dense`), que con `--glass: 1` lleva el fill de `--sf-glass-dense-fill`.
- */
-export const glassAlpha = (glass: number, clear = 1) => 1 - 0.35 * glass * clear
-
-/**
- * El color que termina viéndose debajo del texto de una superficie `glass`.
- *
- * Reproduce la utilidad: la superficie se corre hacia `lift` en proporción a la intensidad y
- * se compone con su alfa sobre lo que haya detrás. **No modela el `backdrop-filter`** —blur,
- * `saturate()`, `brightness()`— **ni el brillo del canto**: el blur promedia el fondo sin
- * cambiarle la luminancia media, y los otros la mueven poco, pero no es cero. Sirve para
- * fijar un piso, no para prometer el decimal.
- *
- * `dense` es el vidrio de los menús: con qué fill queda a `--glass: 1` y cuánto le cambia el
- * brillo a lo de atrás (`--sf-glass-dense-fill`, `--sf-glass-dense-backdrop`). Ahí el brillo
- * sí se modela, porque es la mitad del efecto.
- */
-export function glassSurface(
-  glass: number,
-  tokens: { surface: string; lift: string },
-  backdrop: string,
-  dense?: { fill: number; backdrop: number }
-): string {
-  const superficie = composite(tokens.lift, glass, tokens.surface)
-  if (!dense) return composite(superficie, glassAlpha(glass), backdrop)
-  // `brightness()` multiplica cada canal, y el resultado se recorta en blanco.
-  const detras = composite("#ffffff", 0, backdrop).replace(/[0-9a-f]{2}/g, (canal) =>
-    Math.min(255, Math.round(parseInt(canal, 16) * (1 + glass * dense.backdrop)))
-      .toString(16)
-      .padStart(2, "0")
-  )
-  return composite(superficie, glassAlpha(glass, (1 - dense.fill) / 0.35), detras)
 }
 
 /**

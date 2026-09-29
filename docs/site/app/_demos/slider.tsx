@@ -13,7 +13,7 @@ export function Basico() {
     <div className="flex w-full max-w-sm flex-col gap-6">
       <Slider label="Opacidad de la marca de agua" onValueChange={setOpacidad} showValue value={opacidad} />
       <div
-        className="h-16 rounded-control bg-gray-1000"
+        className="h-16 rounded-control bg-label"
         style={{ opacity: opacidad / 100 }}
       />
     </div>
@@ -39,7 +39,7 @@ export function Rango() {
         step={25_000}
         value={precio}
       />
-      <p className="text-copy-13 text-gray-900">
+      <p className="text-copy-13 text-label-secondary">
         De {formato.format(precio[0])} a {formato.format(precio[1])}
       </p>
     </div>

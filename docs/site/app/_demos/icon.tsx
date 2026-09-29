@@ -33,15 +33,15 @@ export function Tamanos() {
     <div className="flex items-end gap-6">
       <div className="flex flex-col items-center gap-2">
         <Icon icon={SettingsIcon} size="sm" />
-        <span className="text-label-12 text-gray-900">sm · 16</span>
+        <span className="text-label-12 text-label-secondary">sm · 16</span>
       </div>
       <div className="flex flex-col items-center gap-2">
         <Icon icon={SettingsIcon} size="md" />
-        <span className="text-label-12 text-gray-900">md · 20</span>
+        <span className="text-label-12 text-label-secondary">md · 20</span>
       </div>
       <div className="flex flex-col items-center gap-2">
         <Icon icon={SettingsIcon} size="lg" />
-        <span className="text-label-12 text-gray-900">lg · 24</span>
+        <span className="text-label-12 text-label-secondary">lg · 24</span>
       </div>
     </div>
   )
@@ -67,7 +67,7 @@ export function Tonos() {
       ).map(([tone, icon]) => (
         <div className="flex flex-col items-center gap-2" key={tone}>
           <Icon icon={icon} size="lg" tone={tone} />
-          <span className="text-label-12 text-gray-900">{tone}</span>
+          <span className="text-label-12 text-label-secondary">{tone}</span>
         </div>
       ))}
     </div>
@@ -115,10 +115,10 @@ export function ConNombre() {
     ["Factura 0014", "Rechazada", XCircleIcon, "danger"],
   ] as const
   return (
-    <ul className="flex w-full max-w-sm flex-col divide-y divide-gray-400 rounded-surface border border-gray-alpha-400 glass">
+    <ul className="flex w-full max-w-sm flex-col divide-y divide-gray-400 rounded-surface border border-separator bg-surface">
       {filas.map(([nombre, estado, icon, tone]) => (
         <li className="flex items-center justify-between gap-3 px-4 py-3 text-copy-14" key={nombre}>
-          <span className="text-gray-1000">{nombre}</span>
+          <span className="text-label">{nombre}</span>
           <Icon icon={icon} label={estado} tone={tone} />
         </li>
       ))}
@@ -193,11 +193,11 @@ export function CambioDeEstado() {
 export function Animados() {
   return (
     <div className="flex flex-wrap items-center gap-6">
-      <span className="inline-flex items-center gap-2 text-copy-14 text-gray-900">
+      <span className="inline-flex items-center gap-2 text-copy-14 text-label-secondary">
         <Icon className="animate-spin motion-reduce:animate-none" icon={Loader2Icon} />
         Sincronizando
       </span>
-      <span className="inline-flex items-center gap-2 text-copy-14 text-gray-900">
+      <span className="inline-flex items-center gap-2 text-copy-14 text-label-secondary">
         <Icon className="animate-pulse motion-reduce:animate-none" icon={InfoIcon} tone="brand" />
         Hay una versión nueva
       </span>

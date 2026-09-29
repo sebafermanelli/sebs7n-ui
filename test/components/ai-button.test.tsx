@@ -25,7 +25,7 @@ describe("AiButton", () => {
     const boton = screen.getByRole("button", { name: "Resumir" })
     expect(boton).toHaveAttribute("data-slot", "button")
     expect(boton).toHaveAttribute("data-ai", "outline")
-    expect(boton).toHaveClass("rounded-control", "h-8", "focus-visible:focus-ring", "glass-control", "text-ai", "border-ai/40")
+    expect(boton).toHaveClass("rounded-control", "h-8", "focus-visible:focus-ring", "bg-transparent", "text-ai", "border-ai/40")
     // No usa la marca: una acción de IA se reconoce igual en cualquier app.
     expect(boton.className).not.toMatch(/brand/)
   })
@@ -34,8 +34,8 @@ describe("AiButton", () => {
     render(<AiButton variant="solid">Generar</AiButton>)
     const boton = screen.getByRole("button", { name: "Generar" })
     expect(boton).toHaveAttribute("data-ai", "solid")
-    expect(boton).toHaveClass("bg-ai-solid", "text-white", "sheen", "shadow-ai")
-    expect(boton).not.toHaveClass("bg-gray-1000")
+    expect(boton).toHaveClass("bg-ai-solid", "text-white", "shadow-ai")
+    expect(boton).not.toHaveClass("bg-label")
   })
 
   it("hereda la espera y el apagado del Button", async () => {
@@ -62,10 +62,10 @@ describe("AiButton", () => {
 })
 
 describe("AiLauncher", () => {
-  it("es un botón redondo de vidrio con el canto de la IA, y se llama Asistente", () => {
+  it("es un botón redondo opaco con el canto de la IA, y se llama Asistente", () => {
     render(<AiLauncher />)
     const lanzador = screen.getByRole("button", { name: "Asistente" })
-    expect(lanzador).toHaveClass("size-14", "rounded-full", "glass", "glass-thick", "ai-rim", "relative", "focus-visible:focus-ring")
+    expect(lanzador).toHaveClass("size-14", "rounded-full", "bg-surface", "ai-rim", "relative", "focus-visible:focus-ring")
     expect(lanzador.querySelector("[data-slot=ai-icon]")).not.toBeNull()
   })
 
@@ -94,7 +94,7 @@ describe("AiLauncher", () => {
     render(<AiLauncher />)
     const etiqueta = document.querySelector("[data-slot=ai-launcher-label]")!
     for (const clase of tooltipSurfaceClassName.split(" ")) expect(etiqueta).toHaveClass(clase)
-    expect(etiqueta.className).not.toMatch(/bg-gray-1000|text-background-100|rounded-full/)
+    expect(etiqueta.className).not.toMatch(/bg-label|text-surface|rounded-full/)
   })
 
   it("labelVisible la deja a la vista, y labelSide la cambia de lado", () => {

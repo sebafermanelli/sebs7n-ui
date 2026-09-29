@@ -17,7 +17,7 @@ describe("Avatar", () => {
       </Avatar>
     )
     const fallback = screen.getByText("sf")
-    expect(fallback).toHaveClass("bg-gray-200", "text-gray-900", "text-callout", "uppercase")
+    expect(fallback).toHaveClass("bg-fill-2", "text-label-secondary", "text-callout", "uppercase")
     expect(fallback.closest("[data-slot=avatar]")).toHaveAttribute("data-size", "lg")
   })
 })
@@ -35,7 +35,7 @@ describe("Tabs", () => {
       </Tabs>
     )
     const pagos = screen.getByRole("tab", { name: "Pagos" })
-    expect(pagos).toHaveClass("text-gray-900", "hover:text-gray-1000", "after:bg-gray-1000", "group-data-[variant=line]/tabs-list:data-active:after:opacity-100")
+    expect(pagos).toHaveClass("text-label-secondary", "hover:text-label", "after:bg-label", "group-data-[variant=line]/tabs-list:data-active:after:opacity-100")
     // En hover solo cambia el texto: una pestaña no se pinta como botón.
     expect(pagos.className).not.toMatch(/hover:before:bg-/)
     expect(pagos.className).not.toMatch(/brand/)
@@ -65,7 +65,7 @@ describe("Tabs", () => {
 describe("Separator / Skeleton", () => {
   it("separator de 1px gray-400", () => {
     render(<Separator />)
-    expect(screen.getByRole("separator")).toHaveClass("bg-gray-400", "data-[orientation=horizontal]:h-px")
+    expect(screen.getByRole("separator")).toHaveClass("bg-separator", "data-[orientation=horizontal]:h-px")
   })
 
   // Dejó de ser el primitivo de Base UI —que traía `'use client'` por un elemento sin
@@ -86,7 +86,7 @@ describe("Separator / Skeleton", () => {
 
   it("skeleton con el pulso de Geist", () => {
     render(<Skeleton data-testid="sk" />)
-    expect(screen.getByTestId("sk")).toHaveClass("animate-skeleton", "bg-gray-alpha-200", "rounded-control")
+    expect(screen.getByTestId("sk")).toHaveClass("animate-skeleton", "bg-fill-2", "rounded-control")
   })
 })
 
@@ -100,11 +100,11 @@ describe("Alert", () => {
       </Alert>
     )
     const alert = screen.getByRole("alert")
-    expect(alert).toHaveClass("glass-control", "border-gray-alpha-400", "rounded-surface", "shadow-card", "before:bg-amber-700", "*:[svg]:text-amber-900")
-    expect(screen.getByText("Cargalo antes de facturar.")).toHaveClass("text-gray-900")
+    expect(alert).toHaveClass("bg-fill-1", "border-transparent", "rounded-surface", "before:bg-amber-700", "*:[svg]:text-amber-900")
+    expect(screen.getByText("Cargalo antes de facturar.")).toHaveClass("text-label-secondary")
   })
 
-  it("es alfa y no vidrio: vive adentro de una Card sin apilar dos blur", () => {
+  it("es un relleno sin blur: vive adentro de una Card", () => {
     render(<Alert>x</Alert>)
     expect(screen.getByRole("alert").className).not.toMatch(/(^|\s)glass(\s|$)/)
   })

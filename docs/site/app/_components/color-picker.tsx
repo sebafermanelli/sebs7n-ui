@@ -19,7 +19,7 @@ export function Veredicto({ color, superficie }: { color: Oklch; superficie: str
   return (
     <>
       <div
-        className="flex h-10 items-center justify-center rounded-full text-button-14 shadow-button-accent sheen"
+        className="flex h-10 items-center justify-center rounded-full text-button-14"
         style={{ backgroundColor: hexOfOklch(color), color: texto.hex }}
       >
         Así queda el botón
@@ -35,7 +35,7 @@ export function Veredicto({ color, superficie }: { color: Oklch; superficie: str
         </Badge>
       </div>
       {(!texto.aa || !foco.ok) && (
-        <p className="text-copy-13 text-gray-900">
+        <p className="text-copy-13 text-label-secondary">
           {!texto.aa
             ? "Con este color ni el blanco ni el negro llegan a 4,5:1 encima. Bajale o subile la luminosidad."
             : "El anillo de foco no llega a 3:1 contra la superficie de este tema."}

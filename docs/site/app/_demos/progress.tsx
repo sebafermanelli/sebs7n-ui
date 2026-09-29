@@ -74,8 +74,8 @@ export function Tamanos() {
       {cuotas.map((cuota) => (
         <div className="flex flex-col gap-1.5" key={cuota.plan}>
           <div className="flex items-baseline justify-between">
-            <span className="text-label-14 text-gray-1000">{cuota.plan}</span>
-            <span className="text-copy-13 text-gray-900">{cuota.pagadas} de 12 cuotas</span>
+            <span className="text-label-14 text-label">{cuota.plan}</span>
+            <span className="text-copy-13 text-label-secondary">{cuota.pagadas} de 12 cuotas</span>
           </div>
           <Progress
             aria-label={`Cuotas pagadas de ${cuota.plan}`}

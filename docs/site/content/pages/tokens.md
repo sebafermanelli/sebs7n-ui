@@ -10,7 +10,7 @@ Son tres roles distintos y cada uno tiene su token. Elegir mal se nota sobre tod
 
 {{fondos}}
 
-**La regla:** si el elemento **es** la página, `bg-background`; si flota **sobre** ella, `glass`. `bg-background-100` sigue siendo el color de la superficie —es de donde parte el vidrio, y lo que se ve con `--glass: 0`—, pero ya no es lo que escribe un componente que flota. Ver [Glass](/docs/theming#glass).
+**La regla (2.0, iCloud):** la página es `bg-background`; lo que flota encima (menú, popover, diálogo) es `bg-surface` con `shadow-menu`; la columna del sidebar es `bg-surface-secondary`, las barras `bg-surface-bar`, las cards `bg-grouped`. Los rellenos neutros son `bg-fill-1/2/3`, las líneas `border-separator` y los textos `text-label`, `text-label-secondary` y `text-label-tertiary`. No hay vidrio: el único material translúcido es `material-translucent`, para lo que va sobre un wallpaper.
 
 Los valores de oscuro son los de vercel.com medidos con `getComputedStyle` (contact/sales, 2026-09-22): `--ds-background-100: hsla(0,0%,4%)` = `#0a0a0a` para las superficies y `--ds-background-200: hsla(0,0%,0%)` = `#000` para la página. `background-200` es siempre el tono que **no** es el de la página: en claro baja a `#fafafa`, en oscuro no puede bajar de `#000` y sube a `#0a0a0a`. Por eso en oscuro coincide con `background-100`: Geist tiene dos fondos por tema, no tres.
 
@@ -44,7 +44,7 @@ Diez pasos por familia, de `100` (el más claro en tema claro) a `1000`. La conv
 
 **Existen para que un componente pegado de shadcn se vea bien sin tocarlo**, que es el caso real: el registry (`shadcn add`) funciona y tarde o temprano alguien copia un bloque de shadcn.io a una app que ya usa este paquete. Sin los alias, ese bloque saldría sin color; con ellos sale en la paleta de Geist. Los pares resuelven a combinaciones que pasan AA: `primary` 17,9:1 claro y 16,9:1 oscuro, `muted-foreground` sobre `muted` 7,55 y 6,66, `destructive` 4,75 y 4,79.
 
-**No los uses en código nuevo.** Los componentes del paquete no los tocan: usan `glass`, `text-gray-900`, `border-gray-alpha-400`. Dos vocabularios para lo mismo es exactamente lo que las [reglas](/docs/reglas) dicen que no queremos, así que el segundo es una compuerta de entrada, no una opción.
+**No los uses en código nuevo.** Los componentes del paquete no los tocan: usan `bg-surface`, `text-label-secondary`, `border-separator`. Dos vocabularios para lo mismo es exactamente lo que las [reglas](/docs/reglas) dicen que no queremos, así que el segundo es una compuerta de entrada, no una opción.
 
 ## Tipografía
 

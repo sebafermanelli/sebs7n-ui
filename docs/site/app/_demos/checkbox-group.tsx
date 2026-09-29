@@ -32,7 +32,7 @@ export function ServiciosDelPaquete() {
         <FieldError />
       </Field>
       <Button type="submit">Cotizar</Button>
-      {enviado && <p className="text-copy-13-mono text-gray-900">servicios: {JSON.stringify(enviado)}</p>}
+      {enviado && <p className="text-copy-13-mono text-label-secondary">servicios: {JSON.stringify(enviado)}</p>}
     </Form>
   )
 }
@@ -50,7 +50,7 @@ export function PermisosDelOperador() {
       <FieldLabel>Permisos del operador</FieldLabel>
       <CheckboxGroup allValues={permisos} onValueChange={setValor} value={valor}>
         <CheckboxGroupItem parent>Acceso total</CheckboxGroupItem>
-        <div className="flex flex-col gap-3 border-l border-gray-alpha-400 pl-4">
+        <div className="flex flex-col gap-3 border-l border-separator pl-4">
           <CheckboxGroupItem value="reservas">Crear y editar reservas</CheckboxGroupItem>
           <CheckboxGroupItem value="pagos">Registrar pagos</CheckboxGroupItem>
           <CheckboxGroupItem value="clientes">Ver la ficha del cliente</CheckboxGroupItem>

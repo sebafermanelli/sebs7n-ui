@@ -28,8 +28,8 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
 function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
   return (
-    <section aria-labelledby={id} className="flex flex-col gap-4 border-t border-gray-alpha-400 pt-8">
-      <h2 className="scroll-mt-24 text-heading-24 text-gray-1000" id={id}>
+    <section aria-labelledby={id} className="flex flex-col gap-4 border-t border-separator pt-8">
+      <h2 className="scroll-mt-24 text-heading-24 text-label" id={id}>
         {title}
       </h2>
       {children}
@@ -58,18 +58,18 @@ export default async function ComponentPage({ params }: Params) {
       <div className="flex gap-10">
         <article className="flex min-w-0 flex-1 flex-col gap-10 pb-24">
         <header className="flex flex-col gap-3">
-          <div className="flex items-center gap-2 text-label-12 text-gray-900">
+          <div className="flex items-center gap-2 text-label-12 text-label-secondary">
             <span>{grupo?.title}</span>
             {!component.useClient && <Badge size="sm">Server Component</Badge>}
           </div>
-          <h1 className="text-heading-40 text-gray-1000">{component.title}</h1>
-          <p className="text-copy-18 text-gray-900">
+          <h1 className="text-heading-40 text-label">{component.title}</h1>
+          <p className="text-copy-18 text-label-secondary">
             <Inline text={component.description} />
           </p>
           <div className="flex flex-wrap gap-2">
             <MdLink href={`/docs/components/${component.slug}`} />
             <a
-              className="rounded-control border border-gray-alpha-400 glass px-3 py-1.5 text-button-14 text-gray-1000 outline-none transition-control hover:bg-gray-alpha-200 focus-visible:focus-ring"
+              className="rounded-control border border-separator bg-surface px-3 py-1.5 text-button-14 text-label outline-none transition-control hover:bg-fill-2 focus-visible:focus-ring"
               href={`https://github.com/sebafermanelli/sebs7n-ui/blob/main/src/components/${component.slug}.tsx`}
               rel="noreferrer"
               target="_blank"
@@ -91,7 +91,7 @@ export default async function ComponentPage({ params }: Params) {
         </Section>
 
         <Section id="props" title="Props">
-          <p className="text-copy-14 text-gray-900">
+          <p className="text-copy-14 text-label-secondary">
             Generadas del TypeScript del paquete. Las propias del componente, más las heredadas del primitivo que
             tienen algo que explicar —marcadas «heredada de Base UI»—. El resto está en la línea «hereda de».
           </p>
@@ -103,8 +103,8 @@ export default async function ComponentPage({ params }: Params) {
             <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-3">
               {component.keyboard.map(([tecla, que]) => (
                 <div className="contents" key={tecla + que}>
-                  <dt className="text-copy-13-mono text-gray-1000">{tecla}</dt>
-                  <dd className="text-copy-14 text-gray-900">
+                  <dt className="text-copy-13-mono text-label">{tecla}</dt>
+                  <dd className="text-copy-14 text-label-secondary">
                     <Inline text={que} />
                   </dd>
                 </div>
@@ -115,9 +115,9 @@ export default async function ComponentPage({ params }: Params) {
 
         {component.a11y.length > 0 && (
           <Section id="accesibilidad" title="Accesibilidad">
-            <ul className="flex list-disc flex-col gap-2 pl-5 marker:text-gray-700">
+            <ul className="flex list-disc flex-col gap-2 pl-5 marker:text-label-tertiary">
               {component.a11y.map((linea) => (
-                <li className="text-copy-16 text-gray-1000" key={linea}>
+                <li className="text-copy-16 text-label" key={linea}>
                   <Inline text={linea} />
                 </li>
               ))}
@@ -127,9 +127,9 @@ export default async function ComponentPage({ params }: Params) {
 
         {component.usage.length > 0 && (
           <Section id="reglas" title="Reglas de uso">
-            <ul className="flex list-disc flex-col gap-2 pl-5 marker:text-gray-700">
+            <ul className="flex list-disc flex-col gap-2 pl-5 marker:text-label-tertiary">
               {component.usage.map((linea) => (
-                <li className="text-copy-16 text-gray-1000" key={linea}>
+                <li className="text-copy-16 text-label" key={linea}>
                   <Inline text={linea} />
                 </li>
               ))}
@@ -144,7 +144,7 @@ export default async function ComponentPage({ params }: Params) {
                 const destino = site.components.find((entry) => entry.slug === otro)
                 return (
                   <Link
-                    className="rounded-control border border-gray-alpha-400 px-3 py-1.5 text-copy-14 text-gray-1000 outline-none transition-control hover:bg-gray-100 focus-visible:focus-ring"
+                    className="rounded-control border border-separator px-3 py-1.5 text-copy-14 text-label outline-none transition-control hover:bg-gray-100 focus-visible:focus-ring"
                     href={`/docs/components/${otro}`}
                     key={otro}
                   >

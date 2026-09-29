@@ -77,7 +77,7 @@ describe("Drawer", () => {
     render(<DrawerDePrueba />)
     await userEvent.click(screen.getByRole("button", { name: "Filtros" }))
     expect(await screen.findByRole("dialog", { name: "Filtrar viajes" })).toBeInTheDocument()
-    expect(screen.getByText("Se aplican al listado.")).toHaveClass("text-gray-900")
+    expect(screen.getByText("Se aplican al listado.")).toHaveClass("text-label-secondary")
   })
 
   it("se cierra con el botón visible: el gesto nunca es el único camino", async () => {

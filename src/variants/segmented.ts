@@ -1,5 +1,5 @@
-// El control segmentado: una pista hundida en cápsula y una pastilla que se desliza hasta la
-// opción elegida. Es la tira de pestañas de Safari.
+// El control segmentado: una pista con `fill-2` y radio 8 y una pastilla de radio 6 que se desliza
+// hasta la opción elegida. Es el segmentado de Calendar en iCloud.
 //
 // Lo usan `Tabs` y `ThemeSwitcher`, que son el mismo objeto con distinto contenido: uno lleva
 // texto y el otro íconos. Están acá para que no puedan quedar distintos: la curva del
@@ -10,11 +10,11 @@
  * las opciones pero adelante del fondo de la pista.
  */
 export const segmentedTrackClassName =
-  "relative isolate flex w-fit max-w-full items-center gap-0.5 rounded-control bg-gray-alpha-200 p-0.5 shadow-track"
+  "relative isolate flex w-fit max-w-full items-center gap-0.5 rounded-control bg-fill-2 p-0.5"
 
 /**
- * La pastilla, siempre más clara que la pista. Alfa y no vidrio: la pista casi siempre vive adentro de una superficie que ya
- * tiene el blur.
+ * La pastilla, el segmento activo del segmentado de Calendar en iCloud: blanca en claro y
+ * `#636366` en oscuro (`bg-segment`), siempre más clara que la pista (`fill-2`).
  *
  * No trae posición ni tamaño: los pone cada uno, porque no salen del mismo lado. En `Tabs` los
  * mide Base UI —las pestañas tienen el ancho de su texto— y llegan por `left` y `width`; en
@@ -25,8 +25,5 @@ export const segmentedTrackClassName =
  * pixel y vuelve. Con `prefers-reduced-motion` salta, sin recorrido.
  */
 export const segmentedThumbClassName =
-  // En oscuro `glass-control` es la superficie —casi negra— en alfa, y sobre una pista que es
-  // blanco al 9 % la pastilla quedaba MÁS oscura que lo que la rodea: se leía como un hueco y
-  // no como una pieza apoyada encima. Ahí va un blanco en alfa, que la levanta.
-  "pointer-events-none absolute -z-10 rounded-[calc(var(--radius-control)-2px)] glass-control shadow-card dark:bg-gray-alpha-400 " +
+  "pointer-events-none absolute -z-10 rounded-[calc(var(--radius-control)-2px)] bg-segment shadow-segment " +
   "transition-[left,width,translate] duration-300 ease-[cubic-bezier(0.3,1.25,0.4,1)] motion-reduce:transition-none"

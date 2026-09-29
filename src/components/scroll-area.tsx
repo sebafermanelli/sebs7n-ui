@@ -66,7 +66,7 @@ function ScrollAreaScrollbar({ className, ...props }: ScrollAreaScrollbarProps) 
     >
       <ScrollAreaPrimitive.Thumb
         data-slot="scroll-area-thumb"
-        className="flex-1 rounded-full bg-gray-alpha-500 transition-control hover:bg-gray-alpha-600"
+        className="flex-1 rounded-full bg-label-tertiary transition-control hover:bg-label-secondary"
       />
     </ScrollAreaPrimitive.Scrollbar>
   )

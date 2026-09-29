@@ -168,7 +168,7 @@ function ColorPicker({
               </TabsContent>
             </Tabs>
             {footer != null && (
-              <div className="flex flex-col gap-2 border-t border-gray-alpha-400 pt-3" data-slot="color-picker-footer">
+              <div className="flex flex-col gap-2 border-t border-separator pt-3" data-slot="color-picker-footer">
                 {typeof footer === "function" ? footer(color) : footer}
               </div>
             )}
@@ -207,7 +207,7 @@ function Grilla({
   const id = React.useId()
   return (
     <div className="flex flex-col gap-2" data-slot={`color-picker-${slot}`}>
-      <span className="text-callout text-gray-900" id={id}>
+      <span className="text-callout text-label-secondary" id={id}>
         {titulo}
       </span>
       <div aria-labelledby={id} className="grid grid-cols-10 gap-1.5" role="group">
@@ -227,7 +227,7 @@ function Grilla({
                 "relative aspect-square w-full cursor-pointer rounded-[7px] outline-none transition-[scale,box-shadow] duration-150 after:absolute after:-inset-0.5",
                 "shadow-[inset_0_1px_0_rgb(255_255_255/0.4),0_0_0_0.5px_rgb(0_0_0/0.16)]",
                 "hover:scale-115 focus-visible:focus-ring active:scale-95",
-                "aria-pressed:shadow-[0_0_0_2px_var(--color-background-100),0_0_0_4px_var(--color-gray-1000)]"
+                "aria-pressed:shadow-[0_0_0_2px_var(--color-surface),0_0_0_4px_var(--color-label)]"
               )}
               onClick={() => onPick(color)}
               style={{ backgroundColor: valor }}
@@ -313,8 +313,8 @@ function Espectro({ color, onChange, labels }: { color: Oklch; onChange: (color:
           aria-hidden="true"
           className={cn(
             "pointer-events-none absolute size-5 -translate-1/2 rounded-full border-2 border-white shadow-tooltip transition-thumb",
-            // El mismo gesto que el Slider: agarrado, el pulgar es un lente.
-            arrastrando && "scale-150 border thumb-lens"
+            // El mismo gesto que el Slider: agarrado, el pulgar crece.
+            arrastrando && "scale-150 border"
           )}
           style={{
             left: `${clamp(c / C_MAX) * 100}%`,
@@ -328,7 +328,7 @@ function Espectro({ color, onChange, labels }: { color: Oklch; onChange: (color:
         <div className="relative h-5">
           <div
             aria-hidden="true"
-            className="absolute inset-x-0 top-1.5 h-2 rounded-full shadow-track"
+            className="absolute inset-x-0 top-1.5 h-2 rounded-full"
             style={{ background: "linear-gradient(to right in oklch longer hue, oklch(0.7 0.19 0), oklch(0.7 0.19 360))" }}
           />
           {/* Un `<input type="range">` de verdad, invisible y encima: el teclado, el lector de

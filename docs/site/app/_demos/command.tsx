@@ -107,7 +107,7 @@ export function Basico() {
         Buscar en facturación
         <Kbd size="sm">⌘J</Kbd>
       </Button>
-      {elegido && <p className="text-body text-gray-900">Elegiste: {elegido}</p>}
+      {elegido && <p className="text-body text-label-secondary">Elegiste: {elegido}</p>}
       <CommandDialog labels={{ dialog: "Buscar en facturación" }} onOpenChange={setAbierto} open={abierto}>
         <CommandInput placeholder="Facturas, clientes, acciones…" />
         <CommandFilters onValueChange={setFiltro} value={filtro}>
@@ -135,11 +135,11 @@ export function Incrustado() {
   const [elegido, setElegido] = useState<string | null>(null)
   return (
     <div className="flex w-full max-w-md flex-col gap-2">
-      <Command className="rounded-surface material-group">
+      <Command className="rounded-surface bg-grouped">
         <CommandInput />
         <Resultados filtro="todo" onSelect={setElegido} />
       </Command>
-      {elegido && <p className="text-body text-gray-900">Elegiste: {elegido}</p>}
+      {elegido && <p className="text-body text-label-secondary">Elegiste: {elegido}</p>}
     </div>
   )
 }

@@ -85,7 +85,7 @@ function OTPField({ className, inputClassName, length = 6, size = "md", ...props
             "data-[size=sm]:size-6 data-[size=md]:size-8 data-[size=lg]:size-10 pointer-coarse:data-[size=sm]:size-8 pointer-coarse:data-[size=md]:size-10 data-[size=lg]:text-body-large",
             // La casilla llena se marca con el borde, no con el fondo: seis
             // rectángulos grises tapan dónde quedó el cursor.
-            "data-filled:border-gray-600",
+            "data-filled:border-separator-strong",
             inputClassName
           )}
         />

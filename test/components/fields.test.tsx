@@ -10,10 +10,9 @@ describe("Input", () => {
   it("tiene los estados del sistema: borde alfa, hover más marcado, foco focus-border", () => {
     render(<Input placeholder="Nombre" />)
     expect(screen.getByPlaceholderText("Nombre")).toHaveClass(
-      "border-gray-alpha-400",
-      "glass-control",
-      "placeholder:text-gray-900",
-      "hover:border-gray-alpha-500",
+      "border-transparent",
+      "bg-fill-1",
+      "placeholder:text-label-secondary",
       "focus:focus-border",
       "rounded-field",
       "px-3"
@@ -54,7 +53,7 @@ describe("Input", () => {
     render(<Input disabled placeholder="X" />)
     const input = screen.getByPlaceholderText("X")
     expect(input).toHaveAttribute("data-disabled")
-    expect(input).toHaveClass("data-disabled:bg-gray-alpha-100", "data-disabled:text-gray-700")
+    expect(input).toHaveClass("data-disabled:bg-fill-1", "data-disabled:text-label-tertiary")
   })
 
   it.each([
@@ -78,10 +77,9 @@ describe("Textarea", () => {
   it("comparte los estados del Input", () => {
     render(<Textarea placeholder="Notas" />)
     expect(screen.getByPlaceholderText("Notas")).toHaveClass(
-      "border-gray-alpha-400",
-      "hover:border-gray-alpha-500",
+      "border-transparent",
       "focus:focus-border",
-      "disabled:bg-gray-alpha-100",
+      "disabled:bg-fill-1",
       "aria-invalid:border-red-800"
     )
   })
@@ -128,7 +126,7 @@ describe("Label", () => {
   it("usa el rol callout y marca los requeridos con * rojo oculto al lector", () => {
     render(<Label htmlFor="n" required>Nombre</Label>)
     const label = screen.getByText("Nombre")
-    expect(label).toHaveClass("text-callout", "text-gray-1000")
+    expect(label).toHaveClass("text-callout", "text-label")
     const star = label.querySelector("span")
     expect(star).toHaveTextContent("*")
     expect(star).toHaveAttribute("aria-hidden", "true")

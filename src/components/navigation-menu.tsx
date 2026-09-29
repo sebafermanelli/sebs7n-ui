@@ -69,10 +69,10 @@ function NavigationMenuTrigger({ className, active, chevron = true, children, ..
         // padding existe solo para que el área clickeable llegue a 28px (el alto de
         // un ítem del sidebar) y el
         // anillo de foco no apriete el texto.
-        "inline-flex cursor-pointer items-center gap-1 rounded-control bg-transparent px-2 py-1.5 text-callout text-gray-900 select-none",
-        "outline-none transition-control hover:text-gray-1000 focus-visible:focus-ring",
-        "data-popup-open:text-gray-1000 data-active:text-gray-1000",
-        "data-disabled:cursor-not-allowed data-disabled:text-gray-700 data-disabled:hover:text-gray-700",
+        "inline-flex cursor-pointer items-center gap-1 rounded-control bg-transparent px-2 py-1.5 text-callout text-label-secondary select-none",
+        "outline-none transition-control hover:text-label focus-visible:focus-ring",
+        "data-popup-open:text-label data-active:text-label",
+        "data-disabled:cursor-not-allowed data-disabled:text-label-tertiary data-disabled:hover:text-label-tertiary",
         className
       )}
       {...props}
@@ -180,7 +180,7 @@ function NavigationMenuLink({ className, title, description, icon, children, ...
         // sólido, y el título, la descripción y el ícono pasan al color de contraste.
         // `group/selectable` solo acá: el link de la barra no se pinta de acento, y lo de adentro
         // no tiene que pasar a blanco.
-        "group/nav-link group/selectable block p-2 text-callout text-gray-1000 hover:bg-gray-alpha-100 data-[active]:bg-selection data-[active]:text-on-selection",
+        "group/nav-link group/selectable block p-2 text-callout text-label hover:bg-fill-1 data-[active]:bg-selection data-[active]:text-on-selection",
         className
       )}
       {...props}
@@ -190,17 +190,17 @@ function NavigationMenuLink({ className, title, description, icon, children, ...
           <span
             aria-hidden="true"
             data-slot="navigation-menu-link-icon"
-            className="mt-px flex shrink-0 text-gray-900 group-data-[active]/nav-link:text-on-selection [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4"
+            className="mt-px flex shrink-0 text-label-secondary group-data-[active]/nav-link:text-on-selection [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4"
           >
             {icon}
           </span>
         )}
         <span className="flex min-w-0 flex-col gap-0.5">
-          <span data-slot="navigation-menu-link-title" className="text-callout text-gray-1000 group-data-[active]/nav-link:text-on-selection">
+          <span data-slot="navigation-menu-link-title" className="text-callout text-label group-data-[active]/nav-link:text-on-selection">
             {title}
           </span>
           {description && (
-            <span data-slot="navigation-menu-link-description" className="truncate text-callout text-gray-900 group-data-[active]/nav-link:text-on-selection">
+            <span data-slot="navigation-menu-link-description" className="truncate text-callout text-label-secondary group-data-[active]/nav-link:text-on-selection">
               {description}
             </span>
           )}
@@ -268,7 +268,7 @@ function NavigationMenuPopup({ className, ...props }: NavigationMenuPopupProps) 
         // `p-1` que los separa suma 4, así que las dos curvas son concéntricas. El `p-1` lo pone el
         // contenido y no el panel: con padding en los dos, el aire no coincidía con el radio, y un
         // panel que entra de costado se corta en el borde y no 4 px antes.
-        "rounded-menu material-popover text-gray-1000 shadow-menu outline-none focus-visible:focus-ring",
+        "rounded-menu bg-surface text-label shadow-menu outline-none focus-visible:focus-ring",
         "transition-[opacity,transform,width,height] duration-200 ease-out motion-reduce:transition-none",
         "data-starting-style:scale-[0.98] data-starting-style:opacity-0",
         "data-ending-style:scale-[0.98] data-ending-style:opacity-0",

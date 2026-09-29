@@ -16,7 +16,7 @@ export function Completa() {
         </CardAction>
       </CardHeader>
       <CardContent>
-        <div className="text-heading-32 text-gray-1000 tabular-nums">$ 128.400</div>
+        <div className="text-heading-32 text-label tabular-nums">$ 128.400</div>
       </CardContent>
       <CardFooter>
         <Button size="sm" variant="outline">
@@ -40,13 +40,13 @@ export function Variantes() {
       <Card size="sm">
         <CardHeader>
           <CardTitle>default</CardTitle>
-          <CardDescription>Borde y `material-group`.</CardDescription>
+          <CardDescription>El grupo opaco de iCloud (`bg-grouped`).</CardDescription>
         </CardHeader>
       </Card>
       <Card size="sm" variant="subtle">
         <CardHeader>
           <CardTitle>subtle</CardTitle>
-          <CardDescription>Sin borde, `bg-gray-alpha-100`.</CardDescription>
+          <CardDescription>Sin borde, `bg-fill-1`.</CardDescription>
         </CardHeader>
       </Card>
     </div>

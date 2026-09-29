@@ -35,14 +35,14 @@ function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-title"
-      className={cn("text-title-2 text-gray-1000 group-data-[size=sm]/card:text-title-3", className)}
+      className={cn("text-title-2 text-label group-data-[size=sm]/card:text-title-3", className)}
       {...props}
     />
   )
 }
 
 function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
-  return <div data-slot="card-description" className={cn("text-callout text-gray-900", className)} {...props} />
+  return <div data-slot="card-description" className={cn("text-callout text-label-secondary", className)} {...props} />
 }
 
 function CardAction({ className, ...props }: React.ComponentProps<"div">) {
@@ -63,7 +63,7 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-footer"
-      className={cn("flex items-center gap-2 border-t border-gray-alpha-400 px-(--card-spacing) pt-(--card-spacing)", className)}
+      className={cn("flex items-center gap-2 border-t border-separator px-(--card-spacing) pt-(--card-spacing)", className)}
       {...props}
     />
   )

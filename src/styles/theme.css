@@ -34,23 +34,6 @@
 }
 
 /**
- * Los dos ajustes de un vidrio denso (`glass-dense`). Registrados con `inherits: false`: son
- * de la superficie que los declara. Heredados, un vidrio adentro de un menú saldría denso sin
- * haberlo pedido.
- */
-@property --sf-glass-clear {
-  syntax: "<number>";
-  inherits: false;
-  initial-value: 1;
-}
-
-@property --sf-glass-backdrop {
-  syntax: "<number>";
-  inherits: false;
-  initial-value: 0.06;
-}
-
-/**
  * Cuánto difuminado lleva cada borde de un `scroll-fade`. Registradas para que la animación
  * las interpole; sin registro saltarían de 0 al máximo de un cuadro al otro.
  */
@@ -154,9 +137,28 @@
      del sistema, y `AppShell` lo usa. Los otros dos salen de colors.css. */
   --color-background: var(--sf-background);
 
+  /* Superficies, rellenos, separadores y textos de iCloud (2.0): ver `:root` más abajo. */
+  --color-surface: var(--sf-surface);
+  --color-surface-secondary: var(--sf-surface-secondary);
+  --color-surface-bar: var(--sf-surface-bar);
+  --color-surface-header: var(--sf-surface-header);
+  --color-grouped: var(--sf-group);
+  --color-fill-1: var(--sf-fill-1);
+  --color-fill-2: var(--sf-fill-2);
+  --color-fill-3: var(--sf-fill-3);
+  --color-separator: var(--sf-separator);
+  --color-separator-strong: var(--sf-separator-strong);
+  --color-hairline: var(--sf-hairline);
+  --color-label: var(--sf-label);
+  --color-label-secondary: var(--sf-label-secondary);
+  --color-label-tertiary: var(--sf-label-tertiary);
+  --color-label-quaternary: var(--sf-label-quaternary);
+  --color-selection-inactive: var(--sf-selection-inactive);
+  --color-segment: var(--sf-segment);
+
   /**
    * De acá abajo, alias de compatibilidad con shadcn. **Ningún componente del
-   * paquete los usa**: van a `glass`, `text-gray-900`, `border-gray-alpha-400`.
+   * paquete los usa**: van a `bg-surface`, `text-label-secondary`, `border-separator`.
    *
    * Están para el componente que alguien pega de shadcn.io —o que trae
    * `shadcn add`— en una app que ya usa este paquete: sin estos nombres ese
@@ -233,13 +235,12 @@
   --shadow-tooltip: var(--sf-shadow-tooltip);
   --shadow-menu: var(--sf-shadow-menu);
   --shadow-modal: var(--sf-shadow-modal);
+  --shadow-widget: var(--sf-shadow-widget);
+  --shadow-segment: var(--sf-shadow-segment);
+  --shadow-badge: var(--sf-shadow-badge);
+  --shadow-thumbnail: var(--sf-shadow-thumbnail);
   --shadow-card: var(--sf-shadow-card);
   --shadow-card-hover: var(--sf-shadow-card-hover);
-  --shadow-button: var(--sf-shadow-button);
-  --shadow-button-inverted: var(--sf-shadow-button-inverted);
-  --shadow-button-accent: var(--sf-shadow-button-accent);
-  --shadow-track: var(--sf-shadow-track);
-  --shadow-chip: var(--sf-shadow-chip);
   --shadow-ai: var(--sf-shadow-ai);
 
   /**
@@ -267,44 +268,10 @@
     --brand-contrast-dark: var(--brand-contrast);
 
     /**
-     * El material. Un solo parámetro, como el ajuste de transparencia de macOS:
-     *
-     *   --glass       0 = sólido (el Geist de 0.8.0) · 1 = vidrio pleno, que es el default
-     *   --glass-tint  cuánto brand entra al fill del vidrio
-     *   --ambient     cuánta luz ambiente (`bg-ambient`) · 0 = página lisa · 1 = el default
-     *
-     * De `--glass` salen el alfa del fill, el radio del blur, la saturación y el filo claro.
-     * Las fórmulas viven en la utilidad `glass`, más abajo, y no acá: una custom property con
-     * `var()` se resuelve en el elemento que la declara, así que calculadas en `:root` no
-     * responderían cuando una app pisa `--glass` en un subárbol.
+     * La luz ambiente (`bg-ambient`, el wallpaper opcional): 0 = página lisa · 1 = el default.
+     * El vidrio de 1.x (`--glass`, `--glass-tint`) se fue en 2.0: iCloud es opaco en capas.
      */
-    --glass: 1;
-    --glass-tint: 0;
     --ambient: 1;
-    /* El interruptor de accesibilidad. La app no lo toca: lo apagan los media queries de abajo. */
-    --sf-glass-on: 1;
-    /* La intensidad efectiva, para los tokens que sí se calculan en `:root` (sombras). */
-    --sf-g: calc(var(--glass) * var(--sf-glass-on));
-    /**
-     * Hacia dónde se aclara la superficie cuando se vuelve vidrio. En claro no cambia nada
-     * (la superficie ya es blanca); en oscuro #0a0a0a traslúcido sobre negro no se distingue
-     * de la página, y el vidrio necesita un tono más alto para leerse como material.
-     */
-    --sf-glass-lift: #ffffff;
-    /**
-     * El canto: la luz pegando en el filo del material. Opacidad = min + g · gain en la
-     * esquina de arriba a la izquierda, y `--sf-glass-edge-back` de eso en la opuesta, que es
-     * la luz que atravesó el vidrio y sale por el otro lado. `--sf-glass-glow` es el brillo
-     * interno, el que hace que el borde se lea con espesor.
-     */
-    --sf-glass-edge-min: 0.25;
-    --sf-glass-edge-gain: 0.6;
-    --sf-glass-edge-back: 0.35;
-    --sf-glass-glow: 0.3;
-    /* El canto del pulgar hecho lente (`thumb-lens`). */
-    --sf-glass-lens: 0.9;
-    /* El canto especular del cromo (`glass-rim`), a vidrio pleno. */
-    --sf-glass-rim: 1;
 
     --sf-brand-src: var(--brand-base);
     --sf-brand-fg: var(--brand-contrast);
@@ -319,16 +286,6 @@
      */
     --sf-ambient-gain: 1;
 
-    /**
-     * El vidrio denso, el de las listas de texto (`glass-dense`): cuánto fill lleva con
-     * `--glass: 1` y cuánto le cambia el brillo a lo que tiene detrás.
-     *
-     * En claro el texto es oscuro y lo que lo tapa es un fondo oscuro. Eso no se arregla
-     * aclarando lo de atrás —el negro por cualquier número sigue siendo negro—, así que todo
-     * el trabajo lo hace el fill: 80 %.
-     */
-    --sf-glass-dense-fill: 0.8;
-    --sf-glass-dense-backdrop: 0.06;
     --sf-ambient-1: oklch(from var(--sf-brand-src) 0.8 calc(c * 0.75) h);
     --sf-ambient-2: oklch(from var(--sf-brand-src) 0.84 calc(c * 0.6) calc(h + 55));
     --sf-ambient-3: oklch(from var(--sf-brand-src) 0.86 calc(c * 0.55) calc(h - 45));
@@ -351,12 +308,49 @@
      * inputs, popups y tarjetas no se despegaban del fondo.
      */
     --sf-background: #ffffff;
+
     /**
-     * El fondo de un grupo (`material-group`): Card, Table, EmptyState. Es sólido, como el
-     * «grouped background» de macOS: un grupo no flota, está apoyado en la ventana, y el vidrio
-     * ahí solo costaba contraste. En claro es la superficie blanca; en oscuro, abajo.
+     * Las superficies de iCloud web (2.0, catálogo §1.4): grises opacos en capas, sin vidrio.
+     * Van en hex de 8 dígitos (y no `rgba()`) para que los tests de contraste los lean.
+     *
+     *   background          la página y el contenido (lista, detalle)
+     *   surface             lo que flota opaco: menús, popovers, diálogos (en iCloud, igual que la página)
+     *   surface-secondary   la columna del sidebar
+     *   surface-bar         barras de herramientas y pies
+     *   surface-header      la barra global de una app
+     *   grouped (`--sf-group`) Card, EmptyState: el fill 1 compuesto sobre la página, opaco
+     *   fill-1/2/3          hover y selección neutra · resaltado de menú · selección fuerte
+     *   separator           entre filas · separator-strong entre paneles · hairline el borde de un popover
+     *   label…              texto principal, secundario, terciario (deshabilitado, contornos) y cuaternario
+     *   selection-inactive  la fila elegida cuando la lista no tiene el foco
+     *
+     * Los de claro que iCloud no mostró (fill 3, selección sin foco) están derivados de la misma
+     * escala de iOS; el resto es lo medido.
      */
-    --sf-group: var(--sf-background-100);
+    --sf-surface: #ffffff;
+    --sf-surface-secondary: #fbfbfd;
+    --sf-surface-bar: #f2f2f7;
+    --sf-surface-header: #f2f2f7;
+    --sf-group: #f4f4f5;
+    --sf-fill-1: #78788014;
+    --sf-fill-2: #7676801f;
+    --sf-fill-3: #78788029;
+    --sf-separator: #e5e5ea;
+    --sf-separator-strong: #d1d1d6;
+    --sf-hairline: #78788014;
+    --sf-label: #000000e0;
+    --sf-label-secondary: #0000008f;
+    --sf-label-tertiary: #0000007a;
+    --sf-label-quaternary: #78788029;
+    --sf-selection-inactive: #dcdce0;
+    /* El segmento activo de un control segmentado: blanco en claro, el gris de Calendar en oscuro. */
+    --sf-segment: #ffffff;
+    /**
+     * El único material translúcido (`material-translucent`), para lo que iCloud pone sobre el
+     * wallpaper: la barra global de Home, el header de un widget. En claro, el 85 % del header de
+     * widget y no el 40 % de la barra: con 40 el texto no se lee sobre cualquier foto.
+     */
+    --sf-translucent: #f8f8fcd9;
 
     /* L fija = la del paso equivalente de blue en Geist; k = croma relativo a blue-700. */
     --sf-brand-100: oklch(from var(--sf-brand-src) 0.973 calc(c * 0.059) h);
@@ -435,11 +429,6 @@
      */
     --sf-ai-solid: oklch(0.5 0.23 293);
     --sf-ai-solid-hover: oklch(0.46 0.23 293);
-    /* El halo del botón de IA sólido, como el del botón de marca. Escala con el vidrio. */
-    --sf-shadow-ai: var(--sf-shadow-button),
-      0 8px 18px -8px color-mix(in srgb, var(--sf-ai-solid) calc(var(--sf-g) * 80%), transparent);
-    /* El filo de luz de un chip: lo que hace que el tinte se lea como material y no como relleno. */
-    --sf-shadow-chip: inset 0 1px 0 0 rgb(255 255 255 / calc(0.2 + var(--sf-g) * 0.4));
     /**
      * El borde del campo enfocado (`focus-border`).
      *
@@ -459,54 +448,32 @@
     --sf-focus-border: var(--sf-brand-700);
     --sf-focus-halo: color-mix(in srgb, var(--sf-brand-700) 22%, transparent);
 
-    --sf-shadow-border-base: 0 0 0 1px #00000014;
     /**
-     * Anillo exterior de las sombras: funde la sombra contra el fondo sobre el
-     * que flota la superficie. En vercel.com es siempre --ds-background-200,
-     * que allá es el fondo de página. Acá los dos roles se separaron, así que
-     * el anillo sigue al fondo de página: en claro es el tono #fafafa (igual
-     * que hoy y que Geist), en oscuro el negro puro (--sf-background), que es
-     * el valor medido en --ds-shadow-menu.
-     */
-    --sf-shadow-background-border: 0 0 0 1px var(--sf-background-200);
-    --sf-shadow-tooltip: var(--sf-shadow-border-base), 0px 1px 1px #00000005,
-      0px 4px 8px #0000000a, var(--sf-shadow-background-border);
-    --sf-shadow-menu: var(--sf-shadow-border-base), 0px 1px 1px #00000005,
-      0px 4px 8px -4px #0000000a, 0px 16px 24px -8px #0000000f,
-      var(--sf-shadow-background-border);
-    --sf-shadow-modal: var(--sf-shadow-border-base), 0px 1px 1px #00000005,
-      0px 8px 16px -4px #0000000a, 0px 24px 32px -8px #0000000f,
-      var(--sf-shadow-background-border);
-    /**
-     * Profundidad de reposo y de hover de una superficie que se puede tocar.
+     * Las sombras de iCloud web (2.0, catálogo §1.6). Planas en reposo: botones, campos y cards
+     * no llevan sombra; flota lo que se abre encima (menú, popover, diálogo) y el widget.
      *
-     * Geist es plano de lejos y se despega al tocarlo: la card en reposo lleva
-     * una sombra de 1px que apenas la separa de la página, y al pasar el puntero
-     * sube un pixel y la sombra crece a la del menú. Un botón sólido lleva un
-     * filo claro arriba (inset) y una sombra de 1px abajo, que es lo que hace que
-     * se lea como algo que se puede apretar y no como un rectángulo pintado.
+     *   menu / modal   0 11 34, con el filo de 1 px de un popover (`hairline`)
+     *   tooltip        la misma familia, más corta (iCloud no tiene tooltip propio)
+     *   widget         0 17 40, la card de Home sobre el wallpaper
+     *   segment        0 3 8, el segmento activo de un segmentado
+     *   badge          0 2 4, el contador rojo sobre un ícono
+     *   thumbnail      el filo de 1 px de una miniatura de archivo
+     *   card           plana (queda el token para la app); card-hover, la de una card que se toca
+     *
+     * En claro iCloud solo mostró la de menú y la de widget (al 16 %); las otras se derivan de la
+     * oscura con la misma proporción.
      */
-    --sf-shadow-card: 0px 1px 2px #0000000a, 0px 1px 1px #00000005;
-    --sf-shadow-card-hover: 0px 1px 1px #00000005, 0px 4px 8px -4px #0000000a,
-      0px 12px 20px -8px #0000000f;
-    --sf-shadow-button: inset 0 1px 0 0 #ffffff1f, 0px 1px 2px #0000001a;
-    /**
-     * El botón de marca suma un halo de su propio color debajo: es la luz que atraviesa un
-     * vidrio teñido. Escala con `--sf-g`, así que con `--glass: 0` es `shadow-button` a secas.
-     */
-    --sf-shadow-button-accent: var(--sf-shadow-button),
-      0 8px 18px -8px color-mix(in srgb, var(--sf-brand-700) calc(var(--sf-g) * 75%), transparent);
-    /**
-     * La versión para lo que se pinta con `gray-1000`: el Button `default`, el
-     * Checkbox y el Radio marcados. En claro es negro y le sirve el mismo filo
-     * blanco que a los de color; en oscuro es BLANCO, y un filo blanco sobre
-     * blanco no existe: ahí el filo es un gris apenas más oscuro que el fondo,
-     * que es lo que le da el relieve a una superficie clara.
-     */
-    --sf-shadow-button-inverted: var(--sf-shadow-button);
-    /* Lo hundido: la pista de un Switch, un Slider, un Progress; la Card `subtle`. Una
-       sombra interior de 1px arriba, que es lo contrario del filo claro del botón. */
-    --sf-shadow-track: inset 0 1px 2px #0000001a;
+    --sf-shadow-menu: 0 0 0 1px var(--sf-hairline), 0 11px 34px 0 #00000029;
+    --sf-shadow-modal: var(--sf-shadow-menu);
+    --sf-shadow-tooltip: 0 0 0 1px var(--sf-hairline), 0 4px 12px 0 #0000001f;
+    --sf-shadow-widget: 0 17px 40px 0 #00000029;
+    --sf-shadow-segment: 0 3px 8px 0 #0000001f;
+    --sf-shadow-badge: 0 2px 4px 0 #00000033;
+    --sf-shadow-thumbnail: 0 0 0 1px #0000001a;
+    --sf-shadow-card: 0 0 #0000;
+    --sf-shadow-card-hover: 0 4px 16px 0 #0000001f;
+    /* El halo del botón de IA sólido: lo que dice «esto es de la IA» sin un borde. */
+    --sf-shadow-ai: 0 8px 18px -8px color-mix(in srgb, var(--sf-ai-solid) 80%, transparent);
 
     --sf-chart-1: var(--sf-blue-700);
     --sf-chart-2: var(--sf-amber-900);
@@ -519,33 +486,35 @@
     --sf-brand-src: var(--brand-base-dark);
     --sf-brand-fg: var(--brand-contrast-dark);
 
-    --sf-glass-lift: #1c1c1e;
-    /* Sobre una superficie oscura el mismo filo blanco quema: va a la cuarta parte. */
-    --sf-glass-edge-min: 0.04;
-    --sf-glass-edge-gain: 0.34;
-    --sf-glass-edge-back: 0.3;
-    --sf-glass-glow: 0.07;
-    --sf-glass-lens: 0.6;
-    --sf-glass-rim: 0.4;
-
     /* Sobre negro un color saturado se ve mucho más que sobre blanco: acá la luz es una
        penumbra. Menos croma, menos alfa y los focos más cerca del matiz del brand —30° y −25°,
        no 55° y −45°—, para que detrás del vidrio haya un color y no tres. */
     --sf-ambient-gain: 0.5;
 
-    /* En oscuro lo que tapa al texto es un fondo claro, y ese sí se puede apagar: lo de atrás
-       baja al 40 % de su brillo antes de pasar por el vidrio, y el fill alcanza con 65 %. */
-    --sf-glass-dense-fill: 0.65;
-    --sf-glass-dense-backdrop: -0.6;
     --sf-ambient-1: oklch(from var(--sf-brand-src) 0.38 calc(c * 0.45) h);
     --sf-ambient-2: oklch(from var(--sf-brand-src) 0.34 calc(c * 0.4) calc(h + 30));
     --sf-ambient-3: oklch(from var(--sf-brand-src) 0.32 calc(c * 0.35) calc(h - 25));
 
-    --sf-background: #000000;
-    /* Un paso más claro que la página negra: `gray-300` (#292929), el gris de un grupo en macOS
-       oscuro. `background-100` (#0a0a0a) no se despegaba del negro. Sobre él `gray-1000` da
-       12,43:1 y `gray-900` 5,56:1 (`test/materials.test.ts`). */
-    --sf-group: var(--sf-gray-300);
+    /* La escala «systemGray» de iOS que usa iCloud en oscuro: la página es #1C1C1E, no negro. */
+    --sf-background: #1c1c1e;
+    --sf-surface: #1c1c1e;
+    --sf-surface-secondary: #202023;
+    --sf-surface-bar: #2c2c2e;
+    --sf-surface-header: #323236;
+    --sf-group: #323235;
+    --sf-fill-1: #74748040;
+    --sf-fill-2: #7676804d;
+    --sf-fill-3: #7878805c;
+    --sf-separator: #343436;
+    --sf-separator-strong: #3c3c3e;
+    --sf-hairline: #74748040;
+    --sf-label: #fffffffa;
+    --sf-label-secondary: #ffffffa8;
+    --sf-label-tertiary: #ffffff80;
+    --sf-label-quaternary: #7878805c;
+    --sf-selection-inactive: #3c3c3e;
+    --sf-segment: #636366;
+    --sf-translucent: #38383d99;
 
     --sf-brand-100: oklch(from var(--sf-brand-src) 0.22 calc(c * 0.317) h);
     --sf-brand-200: oklch(from var(--sf-brand-src) 0.255 calc(c * 0.369) h);
@@ -559,7 +528,8 @@
     --sf-brand-1000: oklch(from var(--sf-brand-src) 0.968 calc(c * 0.077) h);
 
     --sf-button-primary-hover: #cccccc;
-    --sf-backdrop: #00000080;
+    /* El velo de un modal de iCloud: casi negro al 80 %, sin blur. */
+    --sf-backdrop: #0a0a0acc;
     /* Sobre una superficie oscura el mismo 14 % no se ve: sube a 22. El apretado se queda en
        26 y no en 30: con el emerald del paquete, que en oscuro es un verde claro, al 30 %
        `gray-900` daba 4,27:1. */
@@ -577,19 +547,17 @@
 
     --sf-ai: oklch(0.68 0.19 293);
     --sf-ai-2: oklch(0.72 0.2 330);
-    --sf-shadow-chip: inset 0 1px 0 0 rgb(255 255 255 / calc(0.04 + var(--sf-g) * 0.1));
     --sf-focus-halo: color-mix(in srgb, var(--sf-brand-700) 30%, transparent);
 
-    --sf-shadow-border-base: 0 0 0 1px #ffffff25;
-    --sf-shadow-background-border: 0 0 0 1px var(--sf-background);
-    /* En oscuro una sombra negra sobre negro no existe: la profundidad la da el
-       filo claro de arriba, que acá sube un poco para que se vea. */
-    --sf-shadow-card: 0px 1px 2px #00000066, inset 0 1px 0 0 #ffffff0a;
-    --sf-shadow-card-hover: 0px 4px 8px -4px #00000080, 0px 12px 20px -8px #00000099,
-      inset 0 1px 0 0 #ffffff14;
-    --sf-shadow-button: inset 0 1px 0 0 #ffffff29, 0px 1px 2px #00000080;
-    --sf-shadow-button-inverted: inset 0 1px 0 0 #0000001f, 0px 1px 2px #00000080;
-    --sf-shadow-track: inset 0 1px 2px #00000099;
+    /* En oscuro las de iCloud llegan al 65 %: sobre #1C1C1E una sombra suave no se ve. */
+    --sf-shadow-menu: 0 0 0 1px var(--sf-hairline), 0 11px 34px 0 #000000a6;
+    --sf-shadow-modal: var(--sf-shadow-menu);
+    --sf-shadow-tooltip: 0 0 0 1px var(--sf-hairline), 0 4px 12px 0 #00000080;
+    --sf-shadow-widget: 0 17px 40px 0 #000000a6;
+    --sf-shadow-segment: 0 3px 8px 0 #0000004d;
+    --sf-shadow-badge: 0 2px 4px 0 #00000080;
+    --sf-shadow-thumbnail: 0 0 0 1px #000000a6;
+    --sf-shadow-card-hover: 0 4px 16px 0 #00000080;
 
     --sf-chart-1: var(--sf-blue-700);
     --sf-chart-2: var(--sf-amber-600);
@@ -600,144 +568,23 @@
 }
 
 /**
- * Quien pidió menos transparencia o más contraste ve el sistema sólido.
+ * El único material translúcido (2.0), catálogo §1.5: iCloud reserva el vidrio para la capa
+ * «escritorio» —la barra global y los widgets sobre el wallpaper de Home, el popover de acceso
+ * rápido— y las apps son opacas en capas de gris. No va en menús, diálogos ni barras de una app:
+ * ahí van `bg-surface`, `bg-surface-bar` y compañía.
  *
- * Se apaga `--sf-glass-on` y no `--glass`: la app pisa `--glass` fuera de toda capa, y una
- * declaración sin capa le gana a cualquiera de `@layer base`, media query incluido. El
- * interruptor es una variable que la app no toca, así que acá siempre gana el usuario.
+ * Quien pidió menos transparencia o más contraste lo ve opaco (la barra de herramientas), sin blur.
  */
-@layer base {
+@utility material-translucent {
+  background-color: var(--sf-translucent);
+  -webkit-backdrop-filter: blur(15px) saturate(0.86);
+  backdrop-filter: blur(15px) saturate(0.86);
+
   @media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
-    :root {
-      --sf-glass-on: 0;
-    }
+    background-color: var(--sf-surface-bar);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
   }
-}
-
-/**
- * La superficie de vidrio: Card, Popover, menús, Dialog, Sidebar, Navbar.
- *
- * Reemplaza a `bg-background-100` en todo lo que flota. Es el Liquid Glass de Apple llevado
- * a CSS: poco fill, un blur moderado —el fondo se reconoce, no se borra—, saturación y un
- * punto de brillo para que el color de atrás no salga lavado, y el canto especular en dos
- * esquinas opuestas.
- *
- *   fill      1 − 0,35·g       100 % sólido en 0, 65 % en 1
- *   blur      g · k · 16px     k es el grosor: 0,6 lámina, 1, 1,5 placa
- *   saturate  1 + 0,8·g
- *   brillo    1 + 0,06·g
- *
- * **65 % de fill con `--glass: 1`, no 30 %.** Es el mínimo con el que el texto principal pasa
- * 4,5:1 contra cualquier cosa que pase por debajo —una foto clara bajo una barra oscura, una
- * negra bajo una clara—. Con 30 % el fondo se veía más, pero los links de una barra se perdían
- * sobre una portada, y la otra salida (un halo detrás de cada letra) se veía peor que perder
- * transparencia. El texto secundario pasa sobre la página y la luz ambiente; contra contenido
- * arbitrario, no. Los números están en `test/glass-contrast.test.ts`.
- *
- * El canto va por `--tw-inset-shadow` y no por `box-shadow` directo: así se compone con el
- * `shadow-menu` o el `shadow-card` que el componente ya tiene, en vez de pisarlo. Y va en
- * sombras interiores y no en un `::after` porque una Card no está posicionada: un
- * pseudo-elemento absoluto se iría a anclar a cualquier ancestro.
- */
-@utility glass {
-  --sf-g: calc(var(--glass) * var(--sf-glass-on));
-  --sf-edge: calc(var(--sf-glass-edge-min) + var(--sf-g) * var(--sf-glass-edge-gain));
-  --tw-inset-shadow:
-    inset 1px 1px 0 rgb(255 255 255 / var(--sf-edge)),
-    inset -1px -1px 0 rgb(255 255 255 / calc(var(--sf-edge) * var(--sf-glass-edge-back) * var(--sf-g))),
-    inset 0 0 14px rgb(255 255 255 / calc(var(--sf-glass-glow) * var(--sf-g)));
-  background-color: color-mix(
-    in srgb,
-    color-mix(
-      in srgb,
-      var(--sf-brand-600) calc(var(--glass-tint) * 34%),
-      color-mix(in srgb, var(--sf-glass-lift) calc(var(--sf-g) * 100%), var(--sf-background-100))
-    )
-    calc((1 - var(--sf-g) * 0.35 * var(--sf-glass-clear, 1)) * 100%),
-    transparent
-  );
-  background-image: linear-gradient(
-    160deg,
-    rgb(255 255 255 / calc(var(--sf-glass-glow) * var(--sf-g) * 1.2)) 0%,
-    transparent 32%,
-    transparent 72%,
-    rgb(255 255 255 / calc(var(--sf-glass-glow) * var(--sf-g) * 0.45)) 100%
-  );
-  /* Los dos con su valor por defecto escrito: un navegador sin `@property` no tiene de dónde
-     sacar el inicial, y un `var()` vacío invalida la declaración entera. */
-  -webkit-backdrop-filter: blur(calc(var(--sf-g) * var(--sf-glass-k, 1) * 16px)) saturate(calc(1 + var(--sf-g) * 0.8))
-    brightness(calc(1 + var(--sf-g) * var(--sf-glass-backdrop, 0.06)));
-  backdrop-filter: blur(calc(var(--sf-g) * var(--sf-glass-k, 1) * 16px)) saturate(calc(1 + var(--sf-g) * 0.8))
-    brightness(calc(1 + var(--sf-g) * var(--sf-glass-backdrop, 0.06)));
-  box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-}
-
-/* El grosor sigue al tamaño: un Tooltip es una lámina, un Dialog es una placa. */
-@utility glass-thin {
-  --sf-glass-k: 0.6;
-}
-
-@utility glass-thick {
-  --sf-glass-k: 1.5;
-}
-
-/**
- * El vidrio de las listas de texto: un menú, un select, un combobox. Va al lado de `glass`.
- *
- * Una barra o una tarjeta son cromo: si detrás pasa una foto, se ve la foto y no pasa nada.
- * Un menú se LEE, y flota encima de lo que haya —fotos incluidas—. Con el vidrio pleno, sobre
- * una foto clara en tema oscuro el texto quedaba en 1,64:1. Este lleva más fill y, en oscuro,
- * apaga lo que tiene detrás: el texto principal pasa 4,5:1 contra cualquier fondo en los dos
- * temas, y el secundario también (`test/glass-contrast.test.ts`).
- *
- * Sigue a `--glass`: con 0 es sólido, igual que el resto.
- */
-@utility glass-dense {
-  --sf-glass-clear: calc((1 - var(--sf-glass-dense-fill)) / 0.35);
-  --sf-glass-backdrop: var(--sf-glass-dense-backdrop);
-}
-
-/**
- * Lo que vive ADENTRO de un vidrio: Input, Button `outline`, Checkbox vacío, Toggle.
- *
- * Alfa, sin blur. Un elemento con `backdrop-filter` se vuelve la raíz del fondo de sus hijos:
- * un hijo con blur solo desenfoca lo que pintó el padre, no la página, así que el segundo
- * vidrio cuesta lo mismo de pintar y no muestra nada. Y dos traslúcidos apilados se comen el
- * contraste del texto.
- */
-@utility glass-control {
-  --sf-g: calc(var(--glass) * var(--sf-glass-on));
-  background-color: color-mix(in srgb, var(--sf-background-100) calc((1 - var(--sf-g) * 0.45) * 100%), transparent);
-}
-
-/**
- * Material por rol (2.0), como macOS Golden Gate: no todo es el mismo vidrio. `--glass` sigue
- * siendo la única perilla; cada rol decide cuánto de ella usa.
- *
- *   material-bar      barras, sidebar, toolbar: el vidrio de siempre
- *   material-popover  menús, popovers, tooltips: vidrio denso, se leen sobre cualquier cosa
- *   material-modal    diálogos, alertas, hojas: casi opacos; en macOS no se ve lo de atrás
- *   material-group    cards, tablas: sólido sobre el fondo de la ventana, sin blur
- *
- * `glass`, `glass-dense` y `glass-thick` siguen existiendo para las apps.
- */
-@utility material-bar {
-  @apply glass;
-}
-
-@utility material-popover {
-  @apply glass glass-dense;
-}
-
-/* Deja pasar la cuarta parte de lo que deja `glass`: 91 % de fill con `--glass: 1`. Antes, a
-   65 %, un botón rojo detrás de una confirmación se veía como una mancha rosa. */
-@utility material-modal {
-  @apply glass glass-thick;
-  --sf-glass-clear: 0.25;
-}
-
-@utility material-group {
-  background-color: var(--sf-group);
 }
 
 /**
@@ -794,41 +641,10 @@
 }
 
 /**
- * El canto especular del cromo: Toolbar, ThemeSwitcher, Navbar flotante.
- *
- * Un borde de 1px en degradé a 135°, brillante en la esquina de arriba a la izquierda y a
- * media luz en la opuesta, que es como Safari dibuja sus cápsulas. Va en un `::after`
- * enmascarado y no en `border-image`, que no respeta `border-radius`.
- *
- * El elemento tiene que estar posicionado (`relative`, `sticky`, `fixed`): la utilidad no lo
- * fuerza, porque pisaría el `fixed` o el `sticky` de quien la use.
- */
-@utility glass-rim {
-  &::after {
-    content: "";
-    position: absolute;
-    inset: -1px;
-    padding: 1px;
-    border-radius: inherit;
-    pointer-events: none;
-    background: linear-gradient(
-      135deg,
-      rgb(255 255 255 / calc(var(--glass) * var(--sf-glass-on) * var(--sf-glass-rim))),
-      transparent 35%,
-      transparent 65%,
-      rgb(255 255 255 / calc(var(--glass) * var(--sf-glass-on) * var(--sf-glass-rim) * 0.6))
-    );
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
-  }
-}
-
-/**
  * El canto de la IA: el mismo borde de 1px en degradé del cromo, pero en los dos matices de
  * la IA. Es lo que dice «esto lo hace la IA» sin pintar el botón entero de violeta.
  *
- * Igual que `glass-rim`, el elemento tiene que estar posicionado. El degradé no se anima ni
+ * El elemento tiene que estar posicionado. El degradé no se anima ni
  * se transiciona —un `background` en degradé no se puede interpolar, y el hover saltaba de
  * golpe—: lo que cambia al pasar el puntero es la opacidad del canto, que sí.
  */
@@ -874,7 +690,7 @@
  * `::before` es el mismo filo desenfocado, que es el halo. Gira el ángulo del degradé
  * (`--sf-ai-angle`), no el elemento: rotar una caja que no es cuadrada la saca de su lugar.
  *
- * El elemento tiene que estar posicionado, igual que con `glass-rim`. El radio se hereda, así
+ * El elemento tiene que estar posicionado, igual que con `ai-rim`. El radio se hereda, así
  * que sigue la curva de quien lo lleve.
  *
  * Con `prefers-reduced-motion` el borde se enciende pero no gira: lo corta el reset de base.css.
@@ -942,21 +758,17 @@
   animation: var(--animate-ai-shimmer);
 }
 
-/* El brillo de arriba de un botón de color: la mitad superior más clara, como una gota. */
-@utility sheen {
-  background-image: linear-gradient(180deg, rgb(255 255 255 / calc(var(--glass) * var(--sf-glass-on) * 0.26)), transparent 60%);
-}
-
 /**
- * La luz ambiente. Sobre una página blanca o negra lisa el vidrio no tiene nada que
- * desenfocar y se ve como un gris plano: esto le pone color detrás.
+ * La luz ambiente: el wallpaper opcional (2.0). En iCloud solo Home tiene wallpaper, y sobre él
+ * van la barra global y los widgets con `material-translucent`; adentro de una app la página es
+ * lisa. Por eso es opt-in (`AppShell ambient`), no el default.
  *
  * Son tres `radial-gradient` y no tres `div` con `filter: blur()`: el degradé lo resuelve el
  * rasterizador una vez, y un blur de 90px sobre media pantalla se repinta en cada scroll.
  * `fixed` para que la luz quede quieta y sea el contenido el que pasa por delante.
  *
  * El alfa se calcula acá, en el elemento, y no en los tokens de `:root`: por lo mismo que en
- * `glass`, así `--ambient` responde donde la app lo pise.
+ * una variable de `:root`, así `--ambient` responde donde la app lo pise.
  */
 @utility bg-ambient {
   background-color: var(--color-background);
@@ -1025,7 +837,7 @@
  * cambiar lo que se ve. Va en el control, que tiene que estar posicionado (lo pone la utilidad).
  *
  * Usa `::after`: si el control ya usa `::after` (Tabs, el día del Calendar, Checkbox, Radio,
- * Switch, `glass-rim`, `ai-rim`), no se aplica ahí, porque las dos reglas pelearían por el mismo
+ * Switch, `ai-rim`), no se aplica ahí, porque las dos reglas pelearían por el mismo
  * pseudo-elemento. Tampoco en ítems de lista pegados (menú, sidebar): el `::after` del que va
  * después taparía al de antes; esos crecen de verdad con `pointer-coarse:h-11`.
  */
@@ -1100,30 +912,6 @@
   :root:not([data-sf-modality="pointer"]) & {
     box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-red-800) 24%, transparent);
   }
-}
-
-/**
- * El pulgar mientras se lo arrastra: deja de ser un objeto y pasa a ser un lente.
- *
- * Es lo que hace el Slider de iOS 26: en reposo el pulgar es una pastilla blanca y sólida; al
- * agarrarlo se vuelve transparente, crece, y la pista se ve a través con un punto más de
- * brillo. Acá el blur es de 1,5px a propósito —un lente no esmerila— y lo que lo dibuja es
- * el canto.
- *
- * Todo escala con `--glass`: con el material apagado el pulgar sigue siendo blanco y solo crece.
- */
-@utility thumb-lens {
-  --sf-g: calc(var(--glass) * var(--sf-glass-on));
-  border-color: transparent;
-  background-color: color-mix(in srgb, #ffffff calc((1 - var(--sf-g) * 0.95) * 100%), transparent);
-  -webkit-backdrop-filter: blur(calc(var(--sf-g) * 1.5px)) saturate(calc(1 + var(--sf-g) * 0.6)) brightness(calc(1 + var(--sf-g) * 0.12));
-  backdrop-filter: blur(calc(var(--sf-g) * 1.5px)) saturate(calc(1 + var(--sf-g) * 0.6)) brightness(calc(1 + var(--sf-g) * 0.12));
-  box-shadow:
-    inset 1px 1px 0 rgb(255 255 255 / calc(var(--sf-glass-lens) * var(--sf-g))),
-    inset -1px -1px 0 rgb(255 255 255 / calc(var(--sf-glass-lens) * var(--sf-g) * 0.5)),
-    inset 0 0 6px rgb(255 255 255 / calc(var(--sf-glass-lens) * var(--sf-g) * 0.4)),
-    0 4px 14px rgb(0 0 0 / 0.22),
-    0 0 0 0.5px rgb(0 0 0 / 0.1);
 }
 
 /* Lo que anima el pulgar: `scale` para crecer, y el fondo y la sombra para volverse lente. */

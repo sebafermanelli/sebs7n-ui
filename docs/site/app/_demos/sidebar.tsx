@@ -26,15 +26,15 @@ export function Completo() {
   const [colapsado, setColapsado] = useState(false)
   return (
     <div className="flex flex-col gap-4">
-      <label className="flex items-center gap-2 text-copy-13 text-gray-900">
+      <label className="flex items-center gap-2 text-copy-13 text-label-secondary">
         <Switch checked={colapsado} onCheckedChange={setColapsado} size="sm" />
         Colapsado
       </label>
-      <div className="h-[26rem] overflow-hidden rounded-surface border border-gray-alpha-400">
+      <div className="h-[26rem] overflow-hidden rounded-surface border border-separator">
         <Sidebar className="h-full" collapsed={colapsado}>
           <SidebarHeader>
             <div className="flex h-8 items-center gap-2 px-1">
-              <div className="size-6 shrink-0 rounded-control bg-gray-1000" />
+              <div className="size-6 shrink-0 rounded-control bg-label" />
               <span className="text-label-14 font-medium group-data-collapsed/sidebar:hidden">Acme</span>
               <Badge className="group-data-collapsed/sidebar:hidden" size="sm">
                 Admin

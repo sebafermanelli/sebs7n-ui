@@ -28,8 +28,8 @@ function Marca({ version }: { version: string }) {
       className="flex h-8 min-w-0 items-center gap-2 rounded-sm px-1 outline-none focus-visible:focus-ring"
       href="/"
     >
-      <span className="size-5 shrink-0 rounded-control bg-gray-1000" />
-      <span className="truncate text-heading-16 text-gray-1000">sebs7n-ui</span>
+      <span className="size-5 shrink-0 rounded-control bg-label" />
+      <span className="truncate text-heading-16 text-label">sebs7n-ui</span>
       <Badge size="sm">{version}</Badge>
     </Link>
   )
@@ -49,7 +49,7 @@ function DocsSidebar({ nav, version }: { nav: Grupo[]; version: string }) {
       </SidebarContent>
       <SidebarFooter className="flex-row items-center justify-between gap-2">
         <a
-          className="rounded-control px-2 py-1 text-copy-14 text-gray-900 outline-none transition-control hover:text-gray-1000 focus-visible:focus-ring"
+          className="rounded-control px-2 py-1 text-copy-14 text-label-secondary outline-none transition-control hover:text-label focus-visible:focus-ring"
           href={REPO}
           rel="noreferrer"
           target="_blank"

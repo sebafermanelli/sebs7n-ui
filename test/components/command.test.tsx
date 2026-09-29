@@ -211,7 +211,7 @@ describe("Command", () => {
     await userEvent.type(screen.getByRole("combobox"), "fact")
     const elegido = screen.getAllByRole("option")[0]!
     expect(elegido).toHaveAttribute("data-highlighted")
-    expect(elegido.className).toMatch(/data-highlighted:bg-gray-alpha-200/)
+    expect(elegido.className).toMatch(/data-highlighted:bg-fill-2/)
     expect(elegido.className).not.toMatch(/bg-selection/)
     const pista = elegido.querySelector("[data-slot='command-item-hint']")
     expect(pista).toHaveTextContent("tab")
@@ -235,7 +235,7 @@ describe("Command", () => {
     expect(fila).toHaveClass("h-10")
     expect(screen.getByTestId("icono").parentElement).toHaveClass("size-8")
     expect(within(fila).getByText("Factura 0012")).toHaveClass("text-callout", "font-medium")
-    expect(within(fila).getByText("Acme S.A.")).toHaveClass("text-callout", "text-gray-900")
+    expect(within(fila).getByText("Acme S.A.")).toHaveClass("text-callout", "text-label-secondary")
   })
 
   it("los grupos llevan el título de sección de los menús", () => {
@@ -380,7 +380,7 @@ describe("Command", () => {
     const todo = screen.getByRole("radio", { name: "Todo" })
     expect(todo).toHaveAttribute("aria-checked", "true")
     // Se ven como los chips de Toggle.
-    expect(todo).toHaveClass("rounded-control", "data-checked:bg-gray-alpha-200")
+    expect(todo).toHaveClass("rounded-control", "data-checked:bg-fill-2")
     await userEvent.click(screen.getByRole("radio", { name: "Facturas" }))
     expect(onValueChange).toHaveBeenLastCalledWith("facturas")
     expect(todo).toHaveAttribute("aria-checked", "false")
@@ -453,14 +453,14 @@ describe("CommandDialog", () => {
     expect(onOpenChange).toHaveBeenCalledWith(false, expect.anything())
   })
 
-  it("se nombra con labels y va anclado arriba, en el vidrio del popover", () => {
+  it("se nombra con labels y va anclado arriba, opaco como un popover", () => {
     render(
       <CommandDialog open labels={{ dialog: "Buscar en facturación" }}>
         {contenido}
       </CommandDialog>
     )
     const dialogo = screen.getByRole("dialog", { name: "Buscar en facturación" })
-    expect(dialogo).toHaveClass("top-[18vh]", "material-popover", "rounded-panel")
+    expect(dialogo).toHaveClass("top-[18vh]", "bg-surface", "rounded-panel")
     expect(dialogo.className).toMatch(/w-\[min\(640px,calc\(100%-2rem\)\)\]/)
   })
 })

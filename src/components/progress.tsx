@@ -57,19 +57,19 @@ function Progress({ className, size = "md", label, showValue = false, trackClass
       {(label != null || showValue) && (
         <div className={cn("flex items-baseline gap-3", label != null ? "justify-between" : "justify-end")}>
           {label != null && (
-            <ProgressPrimitive.Label data-slot="progress-label" className="text-callout text-gray-1000">
+            <ProgressPrimitive.Label data-slot="progress-label" className="text-callout text-label">
               {label}
             </ProgressPrimitive.Label>
           )}
           {showValue && (
-            <ProgressPrimitive.Value data-slot="progress-value" className="text-mono-body tabular-nums text-gray-900" />
+            <ProgressPrimitive.Value data-slot="progress-value" className="text-mono-body tabular-nums text-label-secondary" />
           )}
         </div>
       )}
       <ProgressPrimitive.Track
         data-slot="progress-track"
         className={cn(
-          "w-full overflow-hidden rounded-full bg-gray-alpha-400 shadow-track",
+          "w-full overflow-hidden rounded-full bg-fill-3",
           "group-data-[size=sm]/progress:h-1 group-data-[size=md]/progress:h-1.5",
           trackClassName
         )}

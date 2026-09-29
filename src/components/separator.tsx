@@ -24,7 +24,7 @@ function Separator({ className, orientation = "horizontal", ...props }: Separato
       aria-orientation={orientation}
       data-slot="separator"
       className={cn(
-        "shrink-0 bg-gray-400 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:w-px data-[orientation=vertical]:self-stretch",
+        "shrink-0 bg-separator data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:w-px data-[orientation=vertical]:self-stretch",
         className
       )}
       {...props}

@@ -19,7 +19,7 @@ type EmptyStateProps = Omit<React.ComponentProps<"div">, "title"> & {
   variant?: "default" | "subtle" | "plain"
 }
 
-// Un grupo, como una Card (2.0): fondo sólido `material-group` con borde. Antes era la zona
+// Un grupo, como una Card (2.0): fondo opaco `bg-grouped`. Antes era la zona
 // hundida de `subtle`, que en oscuro sobre la página negra casi no se veía. Adentro de una Card o
 // de una Table el grupo ya está, y un segundo borde con sombra es una caja adentro de otra: para
 // eso `subtle` (la de `cardVariants`) y `plain`, que no dibuja superficie.
@@ -29,7 +29,7 @@ function EmptyState({ className, icon, title, titleAs: Title = "h2", description
       data-slot="empty-state"
       data-variant={variant}
       className={cn(
-        variant === "plain" ? "flex flex-col text-callout text-gray-1000" : cardVariants({ variant: variant === "subtle" ? "subtle" : "default" }),
+        variant === "plain" ? "flex flex-col text-callout text-label" : cardVariants({ variant: variant === "subtle" ? "subtle" : "default" }),
         "items-center justify-center gap-4 px-6 py-12 text-center",
         className
       )}
@@ -39,17 +39,17 @@ function EmptyState({ className, icon, title, titleAs: Title = "h2", description
         <div
           data-slot="empty-state-icon"
           aria-hidden="true"
-          className="flex size-10 items-center justify-center rounded-control border border-gray-alpha-400 glass-control text-gray-900 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-5"
+          className="flex size-10 items-center justify-center rounded-control bg-fill-1 text-label-secondary [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-5"
         >
           {icon}
         </div>
       )}
       <div className="flex max-w-sm flex-col gap-1">
-        <Title data-slot="empty-state-title" className="text-title-3 text-balance text-gray-1000">
+        <Title data-slot="empty-state-title" className="text-title-3 text-balance text-label">
           {title}
         </Title>
         {description && (
-          <p data-slot="empty-state-description" className="text-callout text-pretty text-gray-900">
+          <p data-slot="empty-state-description" className="text-callout text-pretty text-label-secondary">
             {description}
           </p>
         )}

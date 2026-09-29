@@ -69,7 +69,7 @@ export function Trabajando() {
             <AiShimmer className="w-1/2" />
           </div>
         ) : (
-          <p className="text-copy-14 text-gray-900">Subí el comprobante y la IA completa los datos de la factura.</p>
+          <p className="text-copy-14 text-label-secondary">Subí el comprobante y la IA completa los datos de la factura.</p>
         )}
         <AiButton
           disabled={leyendo}

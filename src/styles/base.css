@@ -2,9 +2,8 @@
   *,
   ::before,
   ::after {
-    /* En alfa: un `border-t` sin color adentro de un vidrio, con el gris opaco, era una raya
-       clara que no tomaba el tono de lo que tenía debajo. */
-    border-color: var(--color-gray-alpha-400);
+    /* El separador de filas de iCloud: un `border-t` sin color es una línea entre filas. */
+    border-color: var(--color-separator);
   }
 
   html {
@@ -18,12 +17,11 @@
     color-scheme: dark;
   }
 
-  /* El fondo de página es --color-background, no la superficie background-100:
-     si fueran el mismo token, en oscuro los inputs, popups y tarjetas quedan
-     del mismo negro que la página. */
+  /* La página es --color-background (#FFF / #1C1C1E, el contenido de una app de iCloud) y el
+     texto es el label primario. */
   body {
     background-color: var(--color-background);
-    color: var(--color-gray-1000);
+    color: var(--color-label);
   }
 
   /* Foco por defecto para lo que no sea un componente del paquete. */

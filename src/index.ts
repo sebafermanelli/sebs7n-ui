@@ -3,8 +3,6 @@ export {
   composite,
   contrastRatio,
   flattenAlpha,
-  glassAlpha,
-  glassSurface,
   hexOfOklch,
   luminanceOfHex,
   luminanceOfOklch,

@@ -3,14 +3,14 @@ import { cva } from "class-variance-authority"
 import { cn } from "../lib/utils.js"
 
 const cardVariantsBase = cva(
-  "group/card flex flex-col gap-(--card-spacing) rounded-surface py-(--card-spacing) text-callout text-gray-1000",
+  "group/card flex flex-col gap-(--card-spacing) rounded-surface py-(--card-spacing) text-callout text-label",
   {
     variants: {
       variant: {
-        default: "border border-gray-alpha-400 material-group shadow-card",
-        // Hundida y sin blur: es la que va ADENTRO de otra superficie, y ahí un segundo vidrio
+        default: "bg-grouped",
+        // Hundida: es la que va ADENTRO de otra superficie, y ahí una segunda superficie
         // no tiene nada que desenfocar.
-        subtle: "bg-gray-alpha-100 shadow-track",
+        subtle: "bg-fill-1",
       },
       size: {
         sm: "[--card-spacing:--spacing(4)]",
@@ -22,7 +22,7 @@ const cardVariantsBase = cva(
         // de `gray-alpha-200` ENCIMA del fondo (`background-image`), no en su lugar: un
         // `active:bg-gray-alpha-*` cambiaba el sólido del grupo por un alfa y la card se volvía
         // transparente justo al tocarla.
-        true: "cursor-pointer outline-none transition-surface hover:-translate-y-px hover:border-gray-alpha-500 hover:shadow-card-hover active:translate-y-0 active:bg-[linear-gradient(var(--color-gray-alpha-200),var(--color-gray-alpha-200))] active:shadow-card focus-visible:focus-ring",
+        true: "cursor-pointer outline-none transition-surface hover:-translate-y-px hover:border-separator-strong hover:shadow-card-hover active:translate-y-0 active:bg-[linear-gradient(var(--color-fill-2),var(--color-fill-2))] active:shadow-card focus-visible:focus-ring",
         false: "",
       },
       selected: {

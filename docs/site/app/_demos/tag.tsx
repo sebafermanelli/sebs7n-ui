@@ -19,7 +19,7 @@ export function Filtros() {
             {filtro}
           </Tag>
         ))}
-        {filtros.length === 0 && <span className="text-copy-14 text-gray-900">Sin filtros</span>}
+        {filtros.length === 0 && <span className="text-copy-14 text-label-secondary">Sin filtros</span>}
       </div>
       <Button disabled={filtros.length === 3} onClick={() => setFiltros(["Pendientes", "Acme S.A.", "Septiembre"])} size="sm" variant="outline">
         Restaurar
@@ -63,7 +63,7 @@ export function ColoresYTamanos() {
  */
 export function BadgeOTag() {
   return (
-    <div className="flex flex-col gap-3 text-copy-14 text-gray-900">
+    <div className="flex flex-col gap-3 text-copy-14 text-label-secondary">
       <div className="flex flex-wrap items-center gap-2">
         <span className="w-28">Estado:</span>
         <Badge color="green">Pagada</Badge>

@@ -28,7 +28,7 @@ function SelectTrigger({ className, size = "md", children, ...props }: SelectTri
         // El foco va por `focus-visible` y no por `focus`, que es lo que hacen los demás: el
         // trigger es un botón y con `focus:` el borde aparecía también al hacer click. Por eso
         // tampoco usa `inputInvalidClassName`, que trae el halo rojo en `focus:`.
-        "focus-visible:focus-border data-popup-open:focus-border data-placeholder:text-gray-900",
+        "focus-visible:focus-border data-popup-open:focus-border data-placeholder:text-label-secondary",
         "aria-invalid:border-red-800 data-invalid:border-red-800",
         "*:data-[slot=select-value]:line-clamp-1 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className
@@ -38,7 +38,7 @@ function SelectTrigger({ className, size = "md", children, ...props }: SelectTri
       {children}
       {/* ⌃⌄ y no ⌄: es el pop-up button de macOS. La lista no baja, se abre encima con la opción
           elegida sobre el disparador (ver `alignItemWithTrigger`), y las dos flechas lo dicen. */}
-      <SelectPrimitive.Icon render={<ChevronsUpDownIcon className="size-3.5 text-gray-900" />} />
+      <SelectPrimitive.Icon render={<ChevronsUpDownIcon className="size-3.5 text-label-secondary" />} />
     </SelectPrimitive.Trigger>
   )
 }
@@ -52,8 +52,8 @@ function SelectValue({ className, ...props }: SelectValueProps) {
 type SelectContentProps = WithClassName<SelectPrimitive.Popup.Props> &
   Pick<SelectPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset" | "alignItemWithTrigger">
 
-// Las flechas de desplazamiento de una lista larga: una franja de vidrio encima del borde de la lista.
-const scrollArrowClassName = "absolute inset-x-0 z-10 flex h-5 cursor-default items-center justify-center glass-control text-gray-900"
+// Las flechas de desplazamiento de una lista larga: una franja opaca encima del borde de la lista.
+const scrollArrowClassName = "absolute inset-x-0 z-10 flex h-5 cursor-default items-center justify-center bg-surface text-label-secondary"
 
 function SelectContent({
   className,

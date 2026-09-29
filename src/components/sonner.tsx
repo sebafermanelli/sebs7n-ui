@@ -22,17 +22,16 @@ function Toaster(props: ToasterProps) {
         info: <InfoIcon className="size-4 text-blue-900" />,
         warning: <TriangleAlertIcon className="size-4 text-amber-900" />,
         error: <OctagonXIcon className="size-4 text-red-900" />,
-        loading: <Loader2Icon className="size-4 animate-spin text-gray-900" />,
+        loading: <Loader2Icon className="size-4 animate-spin text-label-secondary" />,
       }}
       toastOptions={{
         classNames: {
-          // `material-popover`: en macOS un aviso es un banner de notificación, que flota sobre
-          // cualquier cosa y se tiene que leer igual; el vidrio claro de `glass` dejaba pasar lo de atrás.
-          toast: "rounded-menu! border-0! material-popover!text-callout! text-gray-1000! shadow-modal!",
-          title: "text-callout! font-medium! text-gray-1000!",
-          description: "text-callout! text-gray-900!",
-          actionButton: "rounded-control! bg-gray-1000! text-callout! text-background-100!",
-          cancelButton: "rounded-control! bg-gray-alpha-200! text-callout! text-gray-1000!",
+          // Opaco, como un popover de iCloud: flota sobre cualquier cosa y se tiene que leer igual.
+          toast: "rounded-menu! border-0! bg-surface! text-callout! text-label! shadow-modal!",
+          title: "text-callout! font-medium! text-label!",
+          description: "text-callout! text-label-secondary!",
+          actionButton: "rounded-control! bg-label! text-callout! text-surface!",
+          cancelButton: "rounded-control! bg-fill-2! text-callout! text-label!",
         },
       }}
       {...props}

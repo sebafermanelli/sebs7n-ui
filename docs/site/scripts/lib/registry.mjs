@@ -135,7 +135,7 @@ function declarations(body) {
  *
  * Los bloques anidados (`&::after { … }`, `:root:not(…) & { … }`) salen como una clave con
  * su propio objeto. Mientras las utilidades eran planas alcanzaba con una expresión regular;
- * desde `glass-rim` y `focus-border` no: aplanadas, el `position: absolute` del canto caía
+ * desde `ai-rim` y `material-translucent` no: aplanadas, el `position: absolute` del canto caía
  * sobre el elemento y no sobre su `::after`, y el halo de foco dejaba de depender del teclado.
  */
 function rules(body) {

@@ -137,7 +137,7 @@ describe("ContextMenu", () => {
     abrirConClickDerecho()
 
     const menu = await screen.findByRole("menu")
-    expect(menu).toHaveClass("shadow-menu", "rounded-menu", "material-popover")
+    expect(menu).toHaveClass("shadow-menu", "rounded-menu", "bg-surface")
     expect(menu.className).not.toMatch(/\bborder\b/)
 
     const item = screen.getByRole("menuitem", { name: /Renombrar/ })
@@ -146,7 +146,7 @@ describe("ContextMenu", () => {
     const borrar = screen.getByRole("menuitem", { name: "Mover a la papelera" })
     expect(borrar).toHaveAttribute("data-variant", "destructive")
     expect(borrar.className).not.toMatch(/red|error/)
-    expect(borrar).toHaveClass("text-gray-1000", "data-highlighted:bg-selection", "data-highlighted:text-on-selection")
+    expect(borrar).toHaveClass("text-label", "data-highlighted:bg-selection", "data-highlighted:text-on-selection")
   })
 
   it("el checkbox se lee como menuitemcheckbox y no cierra el menú", async () => {

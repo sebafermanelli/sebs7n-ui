@@ -143,7 +143,7 @@ export function Asistente() {
           aria-label="Asistente"
           // Material grueso: es de lo más grande que flota. `p-0` y `gap-0` porque el aire lo
           // ponen las piezas del chat, que llegan hasta el borde con sus líneas divisorias.
-          className="h-[min(560px,var(--available-height))] w-[min(400px,var(--available-width))] gap-0 overflow-hidden rounded-panel glass-thick p-0"
+          className="h-[min(560px,var(--available-height))] w-[min(400px,var(--available-width))] gap-0 overflow-hidden rounded-panel p-0"
           side="top"
           sideOffset={12}
         >

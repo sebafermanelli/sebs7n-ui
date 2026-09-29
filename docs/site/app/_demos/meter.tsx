@@ -69,8 +69,8 @@ export function LicenciasPorEquipo() {
       {equipos.map((equipo) => (
         <div className="flex flex-col gap-1.5" key={equipo.nombre}>
           <div className="flex items-baseline justify-between">
-            <span className="text-label-14 text-gray-1000">{equipo.nombre}</span>
-            <span className="text-copy-13 text-gray-900">
+            <span className="text-label-14 text-label">{equipo.nombre}</span>
+            <span className="text-copy-13 text-label-secondary">
               {equipo.usadas} de {equipo.licencias} licencias
             </span>
           </div>

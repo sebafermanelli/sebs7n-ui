@@ -153,16 +153,15 @@ describe("OTPField", () => {
 
     for (const casilla of casillas()) {
       expect(casilla).toHaveAttribute("data-disabled")
-      expect(casilla).toHaveClass("data-disabled:bg-gray-alpha-100", "data-disabled:text-gray-700")
+      expect(casilla).toHaveClass("data-disabled:bg-fill-1", "data-disabled:text-label-tertiary")
     }
   })
 
   it("comparte el borde, el radio y el foco de Input", () => {
     render(<OTPField aria-label="Código" />)
     expect(casillas()[0]).toHaveClass(
-      "border-gray-alpha-400",
-      "glass-control",
-      "hover:border-gray-alpha-500",
+      "border-transparent",
+      "bg-fill-1",
       "focus:focus-border",
       // Una casilla cuadrada en cápsula sería un círculo.
       "rounded-[min(var(--radius-field),var(--radius-control))]"

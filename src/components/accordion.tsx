@@ -24,7 +24,7 @@ function Accordion({ className, ...props }: AccordionProps) {
   return (
     <AccordionPrimitive.Root
       data-slot="accordion"
-      className={cn("flex w-full flex-col border-b border-gray-alpha-400", className)}
+      className={cn("flex w-full flex-col border-b border-separator", className)}
       {...props}
     />
   )
@@ -33,7 +33,7 @@ function Accordion({ className, ...props }: AccordionProps) {
 type AccordionItemProps = WithClassName<AccordionPrimitive.Item.Props>
 
 function AccordionItem({ className, ...props }: AccordionItemProps) {
-  return <AccordionPrimitive.Item data-slot="accordion-item" className={cn("border-t border-gray-alpha-400", className)} {...props} />
+  return <AccordionPrimitive.Item data-slot="accordion-item" className={cn("border-t border-separator", className)} {...props} />
 }
 
 type AccordionTriggerProps = WithClassName<AccordionPrimitive.Trigger.Props> & {
@@ -54,9 +54,9 @@ function AccordionTrigger({ className, chevron = true, children, headerClassName
       <AccordionPrimitive.Trigger
         data-slot="accordion-trigger"
         className={cn(
-          "group/accordion-trigger flex flex-1 cursor-pointer items-center justify-between gap-3 rounded-control px-1 py-4 text-left text-headline text-gray-1000 outline-none select-none transition-control",
-          "hover:text-gray-900 focus-visible:focus-ring",
-          "data-disabled:cursor-not-allowed data-disabled:text-gray-700 data-disabled:hover:text-gray-700",
+          "group/accordion-trigger flex flex-1 cursor-pointer items-center justify-between gap-3 rounded-control px-1 py-4 text-left text-headline text-label outline-none select-none transition-control",
+          "hover:text-label-secondary focus-visible:focus-ring",
+          "data-disabled:cursor-not-allowed data-disabled:text-label-tertiary data-disabled:hover:text-label-tertiary",
           "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
           className
         )}
@@ -66,7 +66,7 @@ function AccordionTrigger({ className, chevron = true, children, headerClassName
         {chevron && (
           <ChevronDownIcon
             aria-hidden="true"
-            className="text-gray-900 transition-transform duration-150 ease-out motion-reduce:transition-none group-data-panel-open/accordion-trigger:rotate-180"
+            className="text-label-secondary transition-transform duration-150 ease-out motion-reduce:transition-none group-data-panel-open/accordion-trigger:rotate-180"
           />
         )}
       </AccordionPrimitive.Trigger>
@@ -96,7 +96,7 @@ function AccordionContent({ className, children, panelClassName, ...props }: Acc
       )}
       {...props}
     >
-      <div data-slot="accordion-content-inner" className={cn("px-1 pb-4 text-body text-gray-900", className)}>
+      <div data-slot="accordion-content-inner" className={cn("px-1 pb-4 text-body text-label-secondary", className)}>
         {children}
       </div>
     </AccordionPrimitive.Panel>

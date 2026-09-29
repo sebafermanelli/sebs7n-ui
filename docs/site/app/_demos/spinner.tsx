@@ -10,7 +10,7 @@ import { Spinner } from "sebs7n-ui/spinner"
  */
 export function Tamanos() {
   return (
-    <div className="flex flex-wrap items-center gap-6 text-gray-900">
+    <div className="flex flex-wrap items-center gap-6 text-label-secondary">
       <Spinner size="sm" />
       <Spinner />
       <Spinner size="lg" />
@@ -25,7 +25,7 @@ export function Tamanos() {
  */
 export function ConNombre() {
   return (
-    <div className="flex items-center gap-2 text-copy-14 text-gray-900">
+    <div className="flex items-center gap-2 text-copy-14 text-label-secondary">
       <Spinner label="Buscando facturas" size="sm" />
       <span aria-hidden="true">Buscando facturas…</span>
     </div>

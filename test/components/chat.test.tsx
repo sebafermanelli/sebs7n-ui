@@ -35,7 +35,7 @@ afterEach(() => {
 const campo = () => screen.getByRole("textbox", { name: "Mensaje" })
 
 describe("Chat: estructura", () => {
-  it("no dibuja superficie: el vidrio lo pone quien lo contiene", () => {
+  it("no dibuja superficie: el fondo lo pone quien lo contiene", () => {
     render(
       <Chat data-testid="chat">
         <ChatHeader>
@@ -49,8 +49,8 @@ describe("Chat: estructura", () => {
     const chat = screen.getByTestId("chat")
     expect(chat).toHaveClass("flex", "min-h-0", "flex-col")
     expect(chat.className).not.toMatch(/glass|bg-|shadow|border/)
-    expect(screen.getByText("Asistente").closest("[data-slot=chat-header]")).toHaveClass("border-b", "border-gray-alpha-400")
-    expect(screen.getByText("Revisá los datos importantes.")).toHaveClass("text-center", "text-footnote", "text-gray-900")
+    expect(screen.getByText("Asistente").closest("[data-slot=chat-header]")).toHaveClass("border-b", "border-separator")
+    expect(screen.getByText("Revisá los datos importantes.")).toHaveClass("text-center", "text-footnote", "text-label-secondary")
   })
 
   it("la lista es un log que se anuncia solo y se puede recorrer con el teclado", () => {
@@ -223,7 +223,7 @@ describe("ChatInput", () => {
 
   it("el campo tiene el cuerpo de un Textarea y el botón es el de IA sólido", () => {
     render(<ChatInput defaultValue="hola" maxLength={2000} />)
-    expect(campo()).toHaveClass("glass-control", "rounded-[min(var(--radius-field),--spacing(4))]", "field-sizing-content", "focus:focus-border", "resize-none")
+    expect(campo()).toHaveClass("bg-fill-1", "rounded-[min(var(--radius-field),--spacing(4))]", "field-sizing-content", "focus:focus-border", "resize-none")
     expect(campo()).toHaveAttribute("maxlength", "2000")
     expect(campo()).toHaveAttribute("rows", "1")
     expect(screen.getByRole("button", { name: "Enviar" })).toHaveClass("bg-ai-solid", "size-8", "rounded-control")
@@ -253,7 +253,7 @@ describe("Chat: lo que rodea a los mensajes", () => {
     )
     const sugerencia = screen.getByRole("button", { name: "¿Cuánto facturé este mes?" })
     expect(sugerencia).toHaveAttribute("type", "button")
-    expect(sugerencia).toHaveClass("glass-control", "w-full", "text-left", "min-h-10", "rounded-[min(var(--radius-field),--spacing(4))]")
+    expect(sugerencia).toHaveClass("bg-fill-1", "w-full", "text-left", "min-h-10", "rounded-[min(var(--radius-field),--spacing(4))]")
     expect(sugerencia).not.toHaveClass("h-10")
     await userEvent.click(sugerencia)
     expect(onClick).toHaveBeenCalled()

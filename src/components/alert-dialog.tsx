@@ -131,7 +131,7 @@ function AlertDialogFooter({ className, stacked = false, ...props }: AlertDialog
 type AlertDialogTitleProps = WithClassName<AlertDialogPrimitive.Title.Props>
 
 function AlertDialogTitle({ className, ...props }: AlertDialogTitleProps) {
-  return <AlertDialogPrimitive.Title data-slot="alert-dialog-title" className={cn("text-title-3 text-gray-1000", className)} {...props} />
+  return <AlertDialogPrimitive.Title data-slot="alert-dialog-title" className={cn("text-title-3 text-label", className)} {...props} />
 }
 
 type AlertDialogDescriptionProps = WithClassName<AlertDialogPrimitive.Description.Props>
@@ -140,7 +140,7 @@ function AlertDialogDescription({ className, ...props }: AlertDialogDescriptionP
   return (
     <AlertDialogPrimitive.Description
       data-slot="alert-dialog-description"
-      className={cn("text-callout text-pretty text-gray-900", className)}
+      className={cn("text-callout text-pretty text-label-secondary", className)}
       {...props}
     />
   )
@@ -178,7 +178,7 @@ function AlertDialogCancel({ className, size, children = "Cancelar", ...props }:
   return (
     <AlertDialogPrimitive.Close
       data-slot="alert-dialog-cancel"
-      // `secondary` es el push button gris de macOS: el de vidrio con borde (`outline`) se leía
+      // `secondary` es el botón gris: el de borde (`outline`) se leía
       // como otra jerarquía al lado de la acción.
       render={<Button variant="secondary" size={size} className={className} />}
       {...props}

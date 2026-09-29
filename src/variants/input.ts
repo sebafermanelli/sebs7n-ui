@@ -13,7 +13,7 @@
  * el contenido, una casilla de OTP es cuadrada y un input de barra de herramientas mide 24px—.
  */
 export const inputControlClassName =
-  "rounded-field border border-gray-alpha-400 glass-control text-callout text-gray-1000 shadow-card outline-none transition-control hover:border-gray-alpha-500"
+  "rounded-field border border-transparent bg-fill-1 text-callout text-label outline-none transition-control"
 
 /**
  * El radio de un campo de más de una línea: Textarea, Combobox con chips.
@@ -48,7 +48,7 @@ export const inputSizeClassName =
  * deshabilitado sobre sus hijos—. El `disabled:` nativo lo agrega aparte el que lo necesite.
  */
 export const inputDisabledClassName =
-  "data-disabled:cursor-not-allowed data-disabled:border-gray-alpha-400 data-disabled:bg-gray-alpha-100 data-disabled:text-gray-700 data-disabled:shadow-none"
+  "data-disabled:cursor-not-allowed data-disabled:border-separator data-disabled:bg-fill-1 data-disabled:text-label-tertiary"
 
 /**
  * Inválido: borde rojo y, al enfocar, el halo rojo.
@@ -82,11 +82,11 @@ export const inputShellClassName =
 // comunicar. Un solo tono para los dos temas: `gray-900` ya pasa en ambos, así que no hace falta
 // una variante por tema ni un token nuevo.
 export const inputShellInputClassName =
-  "h-full min-w-0 flex-1 bg-transparent px-3 text-inherit outline-none placeholder:text-gray-900 disabled:cursor-not-allowed"
+  "h-full min-w-0 flex-1 bg-transparent px-3 text-inherit outline-none placeholder:text-label-secondary disabled:cursor-not-allowed"
 
 // Botones chicos dentro de la superficie (limpiar, chevron, quitar chip). 20 px con el glifo de 14:
 // en un campo `sm` de 24 un botón de 24 lo llenaba de borde a borde.
 export const inputShellButtonClassName =
-  "inline-flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-[calc(var(--radius-control)-2px)] text-gray-900 outline-none transition-control " +
-  "hover:bg-gray-alpha-200 hover:text-gray-1000 active:bg-gray-alpha-300 focus-visible:focus-ring " +
+  "inline-flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-[calc(var(--radius-control)-2px)] text-label-secondary outline-none transition-control " +
+  "hover:bg-fill-2 hover:text-label active:bg-fill-3 focus-visible:focus-ring " +
   "disabled:pointer-events-none data-disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:size-3.5"

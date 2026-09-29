@@ -76,7 +76,7 @@ function BreadcrumbList({
   return (
     <ol
       data-slot="breadcrumb-list"
-      className={cn("flex min-w-0 flex-wrap items-center gap-1.5 text-callout text-gray-900", className)}
+      className={cn("flex min-w-0 flex-wrap items-center gap-1.5 text-callout text-label-secondary", className)}
       {...props}
     >
       {visible.map((item, index) => (
@@ -125,7 +125,7 @@ function BreadcrumbPage({ className, ...props }: React.ComponentProps<"span">) {
     <span
       data-slot="breadcrumb-page"
       aria-current="page"
-      className={cn("truncate text-gray-1000", className)}
+      className={cn("truncate text-label", className)}
       {...props}
     />
   )
@@ -138,7 +138,7 @@ function BreadcrumbSeparator({ className, children, ...props }: React.ComponentP
       data-slot="breadcrumb-separator"
       role="presentation"
       aria-hidden="true"
-      className={cn("inline-flex shrink-0 items-center text-gray-700 [&>svg]:size-3.5", className)}
+      className={cn("inline-flex shrink-0 items-center text-label-tertiary [&>svg]:size-3.5", className)}
       {...props}
     >
       {children ?? <ChevronRightIcon />}
@@ -161,7 +161,7 @@ function BreadcrumbEllipsis({ className, label = "Rutas intermedias", ...props }
       // niveles colapsados, así que son información y no adorno. El separador
       // de al lado sí se queda en `gray-700` —un chevron más oscuro competiría
       // con los nombres de las rutas, y la jerarquía ya la da el orden—.
-      className={cn("inline-flex shrink-0 items-center text-gray-900", className)}
+      className={cn("inline-flex shrink-0 items-center text-label-secondary", className)}
       {...props}
     >
       <span aria-hidden="true">…</span>

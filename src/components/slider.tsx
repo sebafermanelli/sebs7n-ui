@@ -63,12 +63,12 @@ function Slider<Value extends number | readonly number[] = number | readonly num
       {(label != null || showValue) && (
         <div className={cn("flex items-baseline gap-3", label != null ? "justify-between" : "justify-end")}>
           {label != null && (
-            <SliderPrimitive.Label data-slot="slider-label" className="text-callout text-gray-1000">
+            <SliderPrimitive.Label data-slot="slider-label" className="text-callout text-label">
               {label}
             </SliderPrimitive.Label>
           )}
           {showValue && (
-            <SliderPrimitive.Value data-slot="slider-value" className="text-mono-body tabular-nums text-gray-900" />
+            <SliderPrimitive.Value data-slot="slider-value" className="text-mono-body tabular-nums text-label-secondary" />
           )}
         </div>
       )}
@@ -85,9 +85,9 @@ function Slider<Value extends number | readonly number[] = number | readonly num
         <SliderPrimitive.Track
           data-slot="slider-track"
           className={cn(
-            "w-full rounded-full bg-gray-alpha-400 shadow-track",
+            "w-full rounded-full bg-fill-3",
             "group-data-[size=sm]/slider:h-1 group-data-[size=md]/slider:h-1.5",
-            "data-disabled:bg-gray-200 data-disabled:shadow-none"
+            "data-disabled:bg-fill-2"
           )}
         >
           <SliderPrimitive.Indicator
@@ -116,11 +116,11 @@ function Slider<Value extends number | readonly number[] = number | readonly num
                 sliderThumbClassName,
                 "border border-transparent outline-none",
                 "group-data-[size=sm]/slider:h-4 group-data-[size=sm]/slider:w-5.5 group-data-[size=md]/slider:h-5 group-data-[size=md]/slider:w-7",
-                // Mientras se arrastra, la perilla se vuelve lente y la pista se ve a través.
+                // Mientras se arrastra, la perilla crece: es la respuesta al toque.
                 sliderThumbDraggingClassName,
                 // El foco vive en el <input type="range"> de adentro: el anillo va en el thumb.
                 "has-[input:focus-visible]:focus-ring",
-                "data-disabled:cursor-not-allowed data-disabled:border-gray-alpha-400 data-disabled:bg-gray-alpha-100 data-disabled:shadow-none data-disabled:scale-100"
+                "data-disabled:cursor-not-allowed data-disabled:border-separator data-disabled:bg-fill-1 data-disabled:scale-100"
               )}
               data-slot="slider-thumb"
               index={index}

@@ -15,16 +15,16 @@ import { Inline } from "./inline"
  */
 export function AllComponents({ groups }: { groups: ComponentGroup[] }) {
   return (
-    <section aria-labelledby="todos-los-componentes" className="flex flex-col gap-10 border-t border-gray-alpha-400 pt-8">
+    <section aria-labelledby="todos-los-componentes" className="flex flex-col gap-10 border-t border-separator pt-8">
       <header className="flex flex-col gap-2">
-        <h2 className="scroll-mt-24 text-heading-32 text-gray-1000" id="todos-los-componentes">
+        <h2 className="scroll-mt-24 text-heading-32 text-label" id="todos-los-componentes">
           Todos los componentes
         </h2>
-        <p className="text-copy-16 text-gray-900">La primera demo de cada uno, con la configuración de arriba. El título lleva a su página.</p>
+        <p className="text-copy-16 text-label-secondary">La primera demo de cada uno, con la configuración de arriba. El título lleva a su página.</p>
       </header>
       {groups.map((group) => (
         <section aria-labelledby={`todos-${group.id}`} className="flex flex-col gap-6" key={group.id}>
-          <h3 className="scroll-mt-24 text-heading-24 text-gray-1000" id={`todos-${group.id}`}>
+          <h3 className="scroll-mt-24 text-heading-24 text-label" id={`todos-${group.id}`}>
             {group.title}
           </h3>
           <div className="flex flex-col gap-10">
@@ -32,16 +32,16 @@ export function AllComponents({ groups }: { groups: ComponentGroup[] }) {
               <article aria-labelledby={`todos-${component.slug}`} className="flex min-w-0 flex-col gap-3" key={component.slug}>
                 <div className="flex flex-col gap-1">
                   <h4 className="text-heading-20" id={`todos-${component.slug}`}>
-                    <Link className="text-gray-1000 underline-offset-4 hover:underline focus-visible:focus-ring rounded-sm" href={component.href}>
+                    <Link className="text-label underline-offset-4 hover:underline focus-visible:focus-ring rounded-sm" href={component.href}>
                       {component.title}
                     </Link>
                   </h4>
-                  <p className="text-copy-14 text-gray-900">
+                  <p className="text-copy-14 text-label-secondary">
                     <Inline text={component.description} />
                   </p>
                 </div>
-                <div className="flex min-h-32 min-w-0 flex-1 items-center justify-center overflow-x-auto rounded-surface border border-gray-alpha-400 glass p-6 shadow-card">
-                  {component.demoId ? <DemoSlot id={component.demoId} /> : <p className="text-copy-14 text-gray-900">Sin demo.</p>}
+                <div className="flex min-h-32 min-w-0 flex-1 items-center justify-center overflow-x-auto rounded-surface border border-separator bg-surface p-6 shadow-card">
+                  {component.demoId ? <DemoSlot id={component.demoId} /> : <p className="text-copy-14 text-label-secondary">Sin demo.</p>}
                 </div>
               </article>
             ))}

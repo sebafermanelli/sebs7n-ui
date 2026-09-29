@@ -32,7 +32,7 @@ import { Toaster } from "../../src/components/sonner"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../src/components/tooltip"
 
 describe("Tooltip", () => {
-  it("aparece al enfocar el trigger, de vidrio denso", async () => {
+  it("aparece al enfocar el trigger, opaco", async () => {
     render(
       <TooltipProvider delay={0}>
         <Tooltip>
@@ -43,9 +43,9 @@ describe("Tooltip", () => {
     )
     await userEvent.tab()
     const tip = await screen.findByText("Copiar al portapapeles")
-    expect(tip.closest("[data-slot=tooltip-content]")).toHaveClass("material-popover", "text-gray-1000", "shadow-tooltip", "rounded-control")
+    expect(tip.closest("[data-slot=tooltip-content]")).toHaveClass("bg-surface", "text-label", "shadow-tooltip", "rounded-control")
     // En claro el vidrio denso es casi blanco: sobre una página blanca, sin un filo no se separa.
-    expect(tip.closest("[data-slot=tooltip-content]")).toHaveClass("border", "border-gray-alpha-400")
+    expect(tip.closest("[data-slot=tooltip-content]")).toHaveClass("shadow-tooltip")
     for (const clase of tooltipSurfaceClassName.split(" ")) expect(tip.closest("[data-slot=tooltip-content]")).toHaveClass(clase)
   })
 })
@@ -60,7 +60,7 @@ describe("Popover", () => {
     )
     await userEvent.click(screen.getByRole("button", { name: "Filtros" }))
     const panel = (await screen.findByText("contenido")).closest("[data-slot=popover-content]")!
-    expect(panel).toHaveClass("shadow-menu", "rounded-menu", "material-popover")
+    expect(panel).toHaveClass("shadow-menu", "rounded-menu", "bg-surface")
     expect(panel.className).not.toMatch(/\bborder\b/)
   })
 
@@ -95,7 +95,7 @@ describe("DropdownMenu", () => {
     )
     await userEvent.click(screen.getByRole("button", { name: "Acciones" }))
     const edit = await screen.findByRole("menuitem", { name: "Editar" })
-    expect(edit).toHaveClass("h-6", "rounded-menu-item", "data-highlighted:bg-selection", "data-highlighted:text-on-selection", "active:bg-selection", "data-disabled:text-gray-700", "data-disabled:data-highlighted:bg-transparent")
+    expect(edit).toHaveClass("h-6", "rounded-menu-item", "data-highlighted:bg-selection", "data-highlighted:text-on-selection", "active:bg-selection", "data-disabled:text-label-tertiary", "data-disabled:data-highlighted:bg-transparent")
     // Como el «Eliminar» de Mail: texto común, y resaltado en el mismo acento. El peligro lo
     // muestra la alerta que confirma, no el ítem.
     const eliminar = screen.getByRole("menuitem", { name: "Eliminar" })
@@ -118,7 +118,7 @@ describe("DropdownMenu", () => {
       </DropdownMenu>
     )
     await userEvent.click(screen.getByRole("button", { name: "Más" }))
-    expect(await screen.findByText("Viaje")).toHaveClass("text-callout", "font-semibold", "text-gray-900")
+    expect(await screen.findByText("Viaje")).toHaveClass("text-callout", "font-semibold", "text-label-secondary")
   })
 })
 
@@ -137,7 +137,7 @@ describe("Select", () => {
       </Select>
     )
     const trigger = screen.getByRole("combobox", { name: "Moneda" })
-    expect(trigger).toHaveClass("border-gray-alpha-400", "hover:border-gray-alpha-500", "focus-visible:focus-border", "data-placeholder:text-gray-900", "data-[size=md]:h-8")
+    expect(trigger).toHaveClass("bg-fill-1", "focus-visible:focus-border", "data-placeholder:text-label-secondary", "data-[size=md]:h-8")
     await userEvent.click(trigger)
     await userEvent.click(await screen.findByRole("option", { name: "USD" }))
     expect(onValueChange).toHaveBeenCalledWith("usd", expect.anything())
@@ -188,7 +188,7 @@ describe("Select como pop-up button de macOS (2.0)", () => {
     const { container } = render(<Moneda />)
     const icono = container.querySelector("svg.lucide-chevrons-up-down")
     expect(icono).toBeInTheDocument()
-    expect(icono).toHaveClass("size-3.5", "text-gray-900")
+    expect(icono).toHaveClass("size-3.5", "text-label-secondary")
     expect(container.querySelector("svg.lucide-chevron-down")).toBeNull()
   })
 
@@ -267,8 +267,8 @@ describe("Dialog", () => {
     )
     await userEvent.click(screen.getByRole("button", { name: "Nuevo viaje" }))
     const dialog = await screen.findByRole("dialog")
-    expect(dialog).toHaveClass("shadow-modal", "rounded-panel", "p-5", "gap-4", "material-modal")
-    expect(screen.getByText("Cargá los datos.")).toHaveClass("text-gray-900")
+    expect(dialog).toHaveClass("shadow-modal", "rounded-panel", "p-5", "gap-4", "bg-surface")
+    expect(screen.getByText("Cargá los datos.")).toHaveClass("text-label-secondary")
     await userEvent.click(screen.getByRole("button", { name: "Cerrar" }))
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull())
   })

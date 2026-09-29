@@ -20,7 +20,7 @@ type ChatLabels = Labels["chat"]
  * habla de qué lado, que la lista siga al último mensaje, que Enter envíe—, que es lo que
  * termina distinto en cada pantalla cuando se arma a mano.
  *
- * No dibuja superficie. Va adentro de un `Popover`, de un `Sheet` o de una `Card`: el vidrio
+ * No dibuja superficie. Va adentro de un `Popover`, de un `Sheet` o de una `Card`: el fondo
  * lo pone quien lo contiene.
  *
  * ```tsx
@@ -59,7 +59,7 @@ function Chat({ className, busy = false, ...props }: ChatProps) {
         data-slot="chat"
         // `rounded-[inherit]`: el borde de la IA sigue la curva de quien contiene al chat, que
         // es quien tiene el radio. `relative` es lo que ancla ese borde.
-        className={cn("relative flex min-h-0 flex-col rounded-[inherit] text-body text-gray-1000 ai-glow", className)}
+        className={cn("relative flex min-h-0 flex-col rounded-[inherit] text-body text-label ai-glow", className)}
         {...props}
       />
     </ChatContext.Provider>
@@ -76,7 +76,7 @@ function ChatHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="chat-header"
-      className={cn("flex shrink-0 items-center gap-2 border-b border-gray-alpha-400 py-2 pr-2 pl-4", className)}
+      className={cn("flex shrink-0 items-center gap-2 border-b border-separator py-2 pr-2 pl-4", className)}
       {...props}
     />
   )
@@ -189,7 +189,7 @@ function ChatMessage({ className, from, ...props }: ChatMessageProps) {
       className={cn(
         "flex max-w-full flex-col gap-1 wrap-anywhere",
         // La esquina de abajo a la derecha más cerrada: es la cola del globo, de dónde sale.
-        "data-[from=user]:ml-8 data-[from=user]:self-end data-[from=user]:rounded-surface data-[from=user]:rounded-br-control data-[from=user]:bg-highlight data-[from=user]:px-3.5 data-[from=user]:py-2 data-[from=user]:whitespace-pre-wrap data-[from=user]:shadow-chip",
+        "data-[from=user]:ml-8 data-[from=user]:self-end data-[from=user]:rounded-surface data-[from=user]:rounded-br-control data-[from=user]:bg-highlight data-[from=user]:px-3.5 data-[from=user]:py-2 data-[from=user]:whitespace-pre-wrap",
         "data-[from=assistant]:mr-8 data-[from=assistant]:items-start data-[from=assistant]:self-start",
         className
       )}
@@ -200,12 +200,12 @@ function ChatMessage({ className, from, ...props }: ChatMessageProps) {
 
 /** Lo que se puede hacer con una respuesta: copiar, calificar. Va adentro del `ChatMessage`. */
 function ChatMessageActions({ className, ...props }: React.ComponentProps<"div">) {
-  return <div data-slot="chat-message-actions" className={cn("flex items-center gap-0.5 text-gray-900", className)} {...props} />
+  return <div data-slot="chat-message-actions" className={cn("flex items-center gap-0.5 text-label-secondary", className)} {...props} />
 }
 
 /** El saludo de una conversación vacía. Se pega abajo, contra el campo, que es donde se mira. */
 function ChatEmpty({ className, ...props }: React.ComponentProps<"div">) {
-  return <div data-slot="chat-empty" className={cn("mt-auto flex flex-col gap-2 text-gray-900", className)} {...props} />
+  return <div data-slot="chat-empty" className={cn("mt-auto flex flex-col gap-2 text-label-secondary", className)} {...props} />
 }
 
 /** Preguntas sugeridas, una debajo de la otra. */
@@ -228,8 +228,8 @@ function ChatSuggestion({ className, type = "button", ...props }: React.Componen
         inputControlClassName,
         inputMultilineRadiusClassName,
         "min-h-10 w-full cursor-pointer px-4 py-2 text-left transition-surface pointer-coarse:min-h-11",
-        "hover:bg-gray-alpha-200 active:scale-[0.99] focus-visible:focus-ring",
-        "disabled:cursor-not-allowed disabled:text-gray-700 disabled:shadow-none",
+        "hover:bg-fill-2 active:scale-[0.99] focus-visible:focus-ring",
+        "disabled:cursor-not-allowed disabled:text-label-tertiary",
         className
       )}
       {...props}
@@ -280,7 +280,7 @@ function ChatFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="chat-footer"
-      className={cn("flex shrink-0 flex-col gap-2 border-t border-gray-alpha-400 px-4 pt-3 pb-3", className)}
+      className={cn("flex shrink-0 flex-col gap-2 border-t border-separator px-4 pt-3 pb-3", className)}
       {...props}
     />
   )
@@ -387,9 +387,9 @@ function ChatInput({
           inputMultilineRadiusClassName,
           // 32px como el botón de al lado. En táctil, 44px y 16px de letra: con menos, iOS hace
           // zoom al enfocar. Sin `field-sizing` (un Safari viejo) queda en una línea con scroll.
-          "field-sizing-content max-h-36 min-h-8 min-w-0 flex-1 resize-none overflow-y-auto px-3 py-1.75 placeholder:text-gray-900 focus:focus-border",
+          "field-sizing-content max-h-36 min-h-8 min-w-0 flex-1 resize-none overflow-y-auto px-3 py-1.75 placeholder:text-label-secondary focus:focus-border",
           "pointer-coarse:min-h-11 pointer-coarse:py-2.5 pointer-coarse:text-body-large",
-          "disabled:cursor-not-allowed disabled:border-gray-alpha-400 disabled:bg-gray-alpha-100 disabled:text-gray-700 disabled:shadow-none"
+          "disabled:cursor-not-allowed disabled:border-separator disabled:bg-fill-1 disabled:text-label-tertiary"
         )}
         onChange={(evento) => cambiar(evento.target.value)}
         onKeyDown={(evento) => {
@@ -432,7 +432,7 @@ function ChatInput({
 
 /** La letra chica: que lo que dice el asistente se confirme. Va debajo del campo. */
 function ChatDisclaimer({ className, ...props }: React.ComponentProps<"p">) {
-  return <p data-slot="chat-disclaimer" className={cn("text-center text-footnote text-gray-900", className)} {...props} />
+  return <p data-slot="chat-disclaimer" className={cn("text-center text-footnote text-label-secondary", className)} {...props} />
 }
 
 export {

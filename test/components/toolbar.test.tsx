@@ -123,12 +123,12 @@ describe("Toolbar", () => {
 
   it("`plain` no lleva material: es la barra que vive adentro de otra superficie", () => {
     const { rerender } = render(<Toolbar aria-label="Búsqueda" />)
-    expect(screen.getByRole("toolbar")).toHaveClass("material-bar", "glass-rim", "shadow-card")
+    expect(screen.getByRole("toolbar")).toHaveClass("bg-surface-bar")
     rerender(<Toolbar aria-label="Búsqueda" variant="plain" />)
     const barra = screen.getByRole("toolbar")
     // Ningún material, no solo el de hoy: un `glass` o un `material-*` cualquiera que se cuele
     // es vidrio sobre la superficie que la contiene.
-    expect(barra.className).not.toMatch(/\b(glass|material-)/)
+    expect(barra.className).not.toMatch(/\bbg-surface/)
     expect(barra).not.toHaveClass("shadow-card")
     expect(barra).toHaveAttribute("data-variant", "plain")
   })
@@ -170,13 +170,13 @@ describe("Toolbar", () => {
     // Sin `render`: el Button del sistema en ghost.
     const suelto = control("Insertar enlace")
     expect(suelto).toHaveAttribute("data-slot", "toolbar-button")
-    expect(suelto).toHaveClass("size-6", "hover:bg-gray-alpha-200")
+    expect(suelto).toHaveClass("size-6", "hover:bg-fill-2")
 
     // Con `render={<ToggleGroupItem />}`: el chip de Toggle, sin nada del Button.
     const negrita = control("Negrita")
-    expect(negrita).toHaveClass("rounded-control", "border-gray-700")
+    expect(negrita).toHaveClass("rounded-control", "border-label-tertiary")
     expect(negrita.className).not.toMatch(/\bsize-6\b/)
-    expect(negrita.className).not.toMatch(/hover:bg-gray-alpha-200/)
+    expect(negrita.className).not.toMatch(/hover:bg-fill-2/)
   })
 
   it("el ToggleGroup de adentro sigue funcionando: presiona y suelta", async () => {

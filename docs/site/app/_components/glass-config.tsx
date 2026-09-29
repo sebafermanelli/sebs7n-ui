@@ -8,35 +8,26 @@ import { cssOfOklch, textoSobre, type Oklch } from "../_lib/color"
  * La configuración del material que el visitante arma en el Playground.
  *
  * Vive arriba de todo el sitio y no adentro de la página del Playground por una razón: lo que
- * alguien quiere después de elegir su vidrio y su color es **ver los 60 componentes así**, no
+ * alguien quiere después de elegir su color es **ver los 60 componentes así**, no
  * una pantalla de muestra. Se guarda en `localStorage` y se aplica a `<html>`, así que navegar
  * a Button o a Dialog los muestra con la misma configuración.
  *
  * Se escribe como estilo inline de `<html>` porque es el mismo lugar donde una app pone sus
  * variables (`:root`): lo que se ve acá es exactamente lo que va a dar el CSS que se copia.
  */
-export type Radios = "apple" | "geist"
-
 export type GlassConfig = {
-  glass: number
-  tint: number
   /** `null` = el brand del sitio, sin pisar. */
   brand: Oklch | null
   brandDark: Oklch | null
-  radios: Radios
+  /** El wallpaper opcional (`bg-ambient`). Desde 2.0 arranca apagado: las apps de iCloud son lisas. */
   ambient: boolean
-  /** `--ambient`: cuánta luz ambiente, de 0 a 1. */
+  /** `--ambient`: cuánto color lleva el wallpaper, de 0 a 1. */
   luz: number
   /** Los últimos colores de marca probados. No van al CSS: son la memoria del selector. */
   recientes: Oklch[]
 }
 
-export const DEFAULTS: GlassConfig = { glass: 1, tint: 0, brand: null, brandDark: null, radios: "apple", ambient: true, luz: 1, recientes: [] }
-
-export const RADIOS: Record<Radios, { control: string; surface: string; panel: string }> = {
-  apple: { control: "10px", surface: "20px", panel: "26px" },
-  geist: { control: "6px", surface: "12px", panel: "16px" },
-}
+export const DEFAULTS: GlassConfig = { brand: null, brandDark: null, ambient: false, luz: 1, recientes: [] }
 
 const CLAVE = "sebs7n-ui:playground"
 
@@ -64,15 +55,7 @@ export function variables(config: GlassConfig): Record<string, string> {
     salida["--brand-base-dark"] = cssOfOklch(oscuro)
     salida["--brand-contrast-dark"] = textoSobre(oscuro).hex
   }
-  if (config.glass !== DEFAULTS.glass) salida["--glass"] = String(config.glass)
-  if (config.tint !== DEFAULTS.tint) salida["--glass-tint"] = String(config.tint)
   if (config.ambient && config.luz !== DEFAULTS.luz) salida["--ambient"] = String(config.luz)
-  if (config.radios !== DEFAULTS.radios) {
-    const radios = RADIOS[config.radios]
-    salida["--radius-control"] = radios.control
-    salida["--radius-surface"] = radios.surface
-    salida["--radius-panel"] = radios.panel
-  }
   return salida
 }
 
@@ -81,9 +64,10 @@ const TODAS = [
   "--brand-contrast",
   "--brand-base-dark",
   "--brand-contrast-dark",
+  "--ambient",
+  // Las de 1.x: se limpian por si quedaron escritas en `<html>` de una visita anterior.
   "--glass",
   "--glass-tint",
-  "--ambient",
   "--radius-control",
   "--radius-surface",
   "--radius-panel",
@@ -92,7 +76,16 @@ const TODAS = [
 function leer(): GlassConfig {
   try {
     const crudo = localStorage.getItem(CLAVE)
-    return crudo ? { ...DEFAULTS, ...(JSON.parse(crudo) as Partial<GlassConfig>) } : DEFAULTS
+    if (!crudo) return DEFAULTS
+    // Solo las claves de hoy: lo guardado por la 1.x (`glass`, `tint`, `radios`) se ignora.
+    const guardado = JSON.parse(crudo) as Partial<GlassConfig>
+    return {
+      brand: guardado.brand ?? null,
+      brandDark: guardado.brandDark ?? null,
+      ambient: guardado.ambient ?? DEFAULTS.ambient,
+      luz: guardado.luz ?? DEFAULTS.luz,
+      recientes: guardado.recientes ?? [],
+    }
   } catch {
     // Modo privado, almacenamiento bloqueado o un JSON viejo: el sitio anda igual con los defaults.
     return DEFAULTS

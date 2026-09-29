@@ -54,8 +54,8 @@ function FieldLabel({ className, required = false, children, ...props }: FieldLa
     <FieldPrimitive.Label
       data-slot="field-label"
       className={cn(
-        "inline-flex items-center gap-1 text-callout text-gray-1000 select-none",
-        "data-disabled:cursor-not-allowed data-disabled:text-gray-700",
+        "inline-flex items-center gap-1 text-callout text-label select-none",
+        "data-disabled:cursor-not-allowed data-disabled:text-label-tertiary",
         className
       )}
       {...props}
@@ -81,7 +81,7 @@ function FieldDescription({ className, ...props }: FieldDescriptionProps) {
   return (
     <FieldPrimitive.Description
       data-slot="field-description"
-      className={cn("text-callout text-gray-900", className)}
+      className={cn("text-callout text-label-secondary", className)}
       {...props}
     />
   )

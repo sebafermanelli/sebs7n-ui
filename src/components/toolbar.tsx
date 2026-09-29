@@ -26,9 +26,10 @@ import { Button } from "./button.js"
  */
 type ToolbarProps = WithClassName<ToolbarPrimitive.Root.Props> & {
   /**
-   * `glass`: la cápsula de vidrio, que flota sola sobre la página. `plain`: sin material, para
-   * una barra que vive ADENTRO de otra superficie —un `Navbar`, una `Card`, un `Dialog`—. Ahí
-   * el vidrio ya lo pone quien la contiene: nunca vidrio sobre vidrio.
+   * `glass`: la barra con el fondo de las barras de herramientas de iCloud (`bg-surface-bar`,
+   * opaco desde 2.0: el nombre queda hasta que la Toolbar sea la barra fija de iCloud). `plain`:
+   * sin fondo, para una barra que vive ADENTRO de otra superficie —un `Navbar`, una `Card`, un
+   * `Dialog`—.
    */
   variant?: "glass" | "plain"
 }
@@ -71,13 +72,13 @@ function Toolbar({ className, onKeyDown, variant = "glass", ...props }: ToolbarP
         target.focus()
       }}
       className={cn(
-        // Una cápsula de vidrio con el canto especular: es la barra de Safari. `relative` es lo
-        // que ancla el `::after` del canto.
-        "relative flex items-center gap-1 rounded-menu p-1 text-gray-1000",
+        // `rounded-menu` (12) con `p-1`: los controles de adentro miden `rounded-control` (8) y
+        // 8 + 4 = 12, concéntrico. `relative` ancla lo que la app posicione adentro.
+        "relative flex items-center gap-1 rounded-menu p-1 text-label",
         // Con el dedo, 20 px entre controles: un botón de 24 + 20 = 44 entre centros, y las áreas
         // de `touch-target` se tocan sin pisarse. Con 4 px el toque caía en el vecino.
         "pointer-coarse:gap-5",
-        variant === "glass" && "material-bar glass-rim shadow-card",
+        variant === "glass" && "bg-surface-bar",
         "data-[orientation=vertical]:rounded-surface",
         "data-[orientation=vertical]:w-fit data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-stretch",
         className
@@ -167,7 +168,7 @@ function ToolbarSeparator({ className, ...props }: ToolbarSeparatorProps) {
     <ToolbarPrimitive.Separator
       data-slot="toolbar-separator"
       className={cn(
-        "mx-1 shrink-0 bg-gray-400",
+        "mx-1 shrink-0 bg-separator",
         "data-[orientation=vertical]:h-5 data-[orientation=vertical]:w-px",
         "data-[orientation=horizontal]:my-1 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full",
         className
@@ -191,8 +192,8 @@ function ToolbarLink({ className, ...props }: ToolbarLinkProps) {
     <ToolbarPrimitive.Link
       data-slot="toolbar-link"
       className={cn(
-        "inline-flex h-6 items-center rounded-control px-2 text-callout text-gray-900 no-underline outline-none",
-        "transition-control hover:text-gray-1000 focus-visible:focus-ring",
+        "inline-flex h-6 items-center rounded-control px-2 text-callout text-label-secondary no-underline outline-none",
+        "transition-control hover:text-label focus-visible:focus-ring",
         className
       )}
       {...props}
@@ -221,7 +222,7 @@ function ToolbarInput({ className, ...props }: ToolbarInputProps) {
         inputDisabledClassName,
         // Mismo cuerpo que `Input size="sm"`, sin el `w-full`: en una barra el
         // ancho lo pone quien lo usa (`className="w-20"`), no el componente.
-        "h-6 min-w-0 px-2.5 placeholder:text-gray-900 focus:focus-border pointer-coarse:h-8",
+        "h-6 min-w-0 px-2.5 placeholder:text-label-secondary focus:focus-border pointer-coarse:h-8",
         className
       )}
       {...props}

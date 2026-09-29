@@ -12,7 +12,7 @@ export function Basico() {
   const c = useId()
   return (
     <div className="flex flex-col gap-3">
-      <div className="text-label-14 text-gray-1000" id={titulo}>
+      <div className="text-label-14 text-label" id={titulo}>
         Forma de pago
       </div>
       <RadioGroup aria-labelledby={titulo} className="flex flex-col gap-3" defaultValue="transferencia">

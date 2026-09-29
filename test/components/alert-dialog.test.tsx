@@ -43,17 +43,17 @@ describe("AlertDialog", () => {
     render(<Example />)
     await userEvent.click(screen.getByRole("button", { name: "Eliminar viaje" }))
     const dialog = await screen.findByRole("alertdialog")
-    expect(dialog).toHaveClass("shadow-modal", "rounded-panel", "p-5", "gap-3", "material-modal")
+    expect(dialog).toHaveClass("shadow-modal", "rounded-panel", "p-5", "gap-3", "bg-surface")
     expect(dialog.className).not.toMatch(/\bborder\b/)
-    expect(screen.getByText("¿Eliminar el viaje?")).toHaveClass("text-title-3", "text-gray-1000")
-    expect(screen.getByText("Se borran también los pasajeros cargados.")).toHaveClass("text-callout", "text-gray-900")
+    expect(screen.getByText("¿Eliminar el viaje?")).toHaveClass("text-title-3", "text-label")
+    expect(screen.getByText("Se borran también los pasajeros cargados.")).toHaveClass("text-callout", "text-label-secondary")
     expect(document.querySelector("[data-slot=alert-dialog-overlay]")).toHaveClass("bg-backdrop")
     // Sin botón X: un alert dialog exige respuesta.
     expect(screen.queryByRole("button", { name: "Cerrar" })).toBeNull()
     const cancel = screen.getByRole("button", { name: "Cancelar" })
     // El push button gris de macOS, no el de vidrio con borde.
-    expect(cancel).toHaveClass("bg-gray-alpha-200")
-    expect(cancel).not.toHaveClass("glass-control")
+    expect(cancel).toHaveClass("bg-fill-2")
+    expect(cancel).not.toHaveClass("border-separator-strong")
     await userEvent.click(cancel)
     await waitFor(() => expect(screen.queryByRole("alertdialog")).toBeNull())
   })
@@ -176,7 +176,7 @@ describe("alerta de macOS (2.0)", () => {
 
   it("Cancelar es el gris de macOS y la acción destructiva va tintada", async () => {
     render(<Alerta />)
-    expect(await screen.findByRole("button", { name: "Cancelar" })).toHaveClass("bg-gray-alpha-200")
+    expect(await screen.findByRole("button", { name: "Cancelar" })).toHaveClass("bg-fill-2")
     const eliminar = screen.getByRole("button", { name: "Eliminar" })
     expect(eliminar).toHaveClass("text-red-ink")
     expect(eliminar).not.toHaveClass("bg-red-800")

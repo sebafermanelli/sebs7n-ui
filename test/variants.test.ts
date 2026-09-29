@@ -18,14 +18,14 @@ const classes = (value: string) => value.split(/\s+/)
 describe("variantes exportadas pasan por cn()", () => {
   it("buttonVariants outline no deja el border-transparent de la base", () => {
     const out = classes(buttonVariants({ variant: "outline" }))
-    expect(out).toContain("border-gray-alpha-400")
+    expect(out).toContain("border-separator-strong")
     expect(out).not.toContain("border-transparent")
   })
 
-  it("cardVariants selected no deja el border-gray-400 del default", () => {
+  it("cardVariants selected no deja el border-separator-strong del default", () => {
     const out = classes(cardVariants({ selected: true }))
     expect(out).toContain("border-brand-700")
-    expect(out).not.toContain("border-gray-400")
+    expect(out).not.toContain("border-separator-strong")
   })
 
   it("className del llamador gana sobre la variante", () => {
@@ -38,7 +38,7 @@ describe("variantes exportadas pasan por cn()", () => {
   it("linkVariants: inline subraya siempre, subtle solo en hover", () => {
     const inline = classes(linkVariants({ variant: "inline" }))
     expect(inline).toContain("underline")
-    expect(inline).toContain("decoration-gray-alpha-500")
+    expect(inline).toContain("decoration-label-tertiary")
     const subtle = classes(linkVariants({ variant: "subtle" }))
     expect(subtle).not.toContain("underline")
     expect(subtle).toContain("hover:underline")
@@ -57,11 +57,12 @@ describe("variantes exportadas pasan por cn()", () => {
    * todas las pantallas, y este test lo dice con el diff, no con una captura que alguien
    * mire tres semanas después. En 1.0 cambió una sola: `rounded-md` pasó a `rounded-full`; en 2.0 (iCloud) volvió al rectángulo, `rounded-control`.
    * En 2.0, la densidad de macOS: `h-10 px-4` pasó a `h-8 px-3`, y se sumó `touch-target`,
-   * que va al final porque lo pone una variante compuesta: el `link` no lo lleva.
+   * que va al final porque lo pone una variante compuesta: el `link` no lo lleva. Con iCloud (R1)
+   * el botón es plano: sin `shadow-button-inverted` ni hundimiento, y los colores son `label`.
    */
   const SIN_SHAPE = {
     "default/md":
-      "relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-control border border-transparent whitespace-nowrap outline-none select-none transition-surface focus-visible:focus-ring data-disabled:cursor-not-allowed data-disabled:border-gray-alpha-400 data-disabled:bg-gray-alpha-100 data-disabled:text-gray-700 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 bg-gray-1000 text-background-100 shadow-button-inverted hover:bg-button-primary-hover active:translate-y-px active:shadow-none data-disabled:shadow-none h-8 px-3 text-callout touch-target",
+      "relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-control border border-transparent whitespace-nowrap outline-none select-none transition-surface focus-visible:focus-ring data-disabled:cursor-not-allowed data-disabled:border-separator data-disabled:bg-fill-1 data-disabled:text-label-tertiary [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 bg-label text-surface hover:bg-button-primary-hover h-8 px-3 text-callout touch-target",
   } as const
 
   it("sin shape, buttonVariants emite la cadena fijada", () => {

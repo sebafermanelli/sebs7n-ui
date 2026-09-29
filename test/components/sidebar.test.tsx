@@ -52,24 +52,24 @@ function Example({
 }
 
 describe("Sidebar", () => {
-  it("flotante por defecto: una píldora de vidrio despegada del borde, con el canto del cromo", () => {
+  it("flotante por defecto: un panel opaco despegado del borde", () => {
     render(<Example />)
     const aside = screen.getByRole("complementary")
     expect(aside).toHaveAttribute("data-variant", "floating")
-    expect(aside).toHaveClass("m-3", "mr-0", "h-[calc(100%-1.5rem)]", "rounded-panel", "border", "shadow-menu", "material-bar", "glass-thick", "glass-rim")
+    expect(aside).toHaveClass("m-3", "mr-0", "h-[calc(100%-1.5rem)]", "rounded-panel", "border", "shadow-menu", "bg-surface-secondary")
     expect(aside).not.toHaveClass("border-r")
   })
 
-  it("variant=bar: a ras, w-60, vidrio grueso, borde derecho; colapsado w-16 sin animar el ancho", () => {
+  it("variant=bar: a ras, w-60, fondo de sidebar, borde derecho; colapsado w-16 sin animar el ancho", () => {
     const { rerender } = render(<Example variant="bar" />)
     const aside = screen.getByRole("complementary")
     expect(aside).toHaveAttribute("data-slot", "sidebar")
-    expect(aside).toHaveClass("w-60", "data-collapsed:w-16", "material-bar", "glass-thick", "border-r", "border-gray-alpha-400", "flex-col", "h-full")
+    expect(aside).toHaveClass("w-60", "data-collapsed:w-16", "bg-surface-secondary", "border-r", "border-separator", "flex-col", "h-full")
     expect(aside).not.toHaveAttribute("data-collapsed")
     expect(aside.className).not.toMatch(/transition(-all|-\[width)|duration/)
     rerender(<Example collapsed variant="bar" />)
     expect(aside).toHaveAttribute("data-collapsed")
-    expect(screen.getByText("pie").closest("[data-slot=sidebar-footer]")).toHaveClass("border-t", "border-gray-alpha-400")
+    expect(screen.getByText("pie").closest("[data-slot=sidebar-footer]")).toHaveClass("border-t", "border-separator")
   })
 
   it("items: links con el activo marcado por aria-current y data-active, y badge tabular", () => {
@@ -86,9 +86,9 @@ describe("Sidebar", () => {
       "px-2",
       "gap-2",
       "text-subheadline",
-      "text-gray-900",
-      "hover:bg-gray-alpha-100",
-      "hover:text-gray-1000",
+      "text-label-secondary",
+      "hover:bg-fill-1",
+      "hover:text-label",
       "data-active:bg-selection",
       "aria-[current=page]:bg-selection",
       "focus-visible:focus-ring"
@@ -97,7 +97,7 @@ describe("Sidebar", () => {
     // contraste; nada de `brand-*` en el texto.
     expect(clients).toHaveClass("data-active:text-on-selection", "data-active:[&_svg]:text-on-selection", "aria-[current=page]:text-on-selection")
     expect(clients.className).not.toMatch(/(^|\s)(data-active:|aria-\[current=page\]:)?text-brand/)
-    expect(screen.getByText("3")).toHaveClass("ml-auto", "text-callout", "tabular-nums", "text-gray-900")
+    expect(screen.getByText("3")).toHaveClass("ml-auto", "text-callout", "tabular-nums", "text-label-secondary")
     // Adentro del activo, el contador también pasa al color de contraste.
     expect(screen.getByText("3")).toHaveClass("group-data-active/sidebar-item:text-on-selection", "group-aria-[current=page]/sidebar-item:text-on-selection")
   })
@@ -105,7 +105,7 @@ describe("Sidebar", () => {
   it("label de grupo en callout gris sin uppercase; se oculta colapsado y nombra al grupo", () => {
     render(<Example />)
     const label = screen.getByText("Operación")
-    expect(label).toHaveClass("text-callout", "font-semibold", "text-gray-900", "group-data-collapsed/sidebar:hidden")
+    expect(label).toHaveClass("text-callout", "font-semibold", "text-label-secondary", "group-data-collapsed/sidebar:hidden")
     expect(label.className).not.toMatch(/uppercase/)
     expect(screen.getByRole("group", { name: "Operación" })).toBeInTheDocument()
   })
@@ -233,7 +233,7 @@ describe("Sidebar", () => {
     render(<Example onSearch={onSearch} />)
     const search = screen.getByRole("button", { name: "Buscar…" })
     // 32 px, el alto de un campo `md`: a 28 el atajo de 20 tocaba los bordes. Con el dedo, 44.
-    expect(search).toHaveClass("h-8", "px-3", "pointer-coarse:h-11", "border", "border-gray-alpha-400", "glass-control", "rounded-field", "hover:border-gray-alpha-500", "focus-visible:focus-ring")
+    expect(search).toHaveClass("h-8", "px-3", "pointer-coarse:h-11", "bg-fill-1", "rounded-field", "focus-visible:focus-ring")
     expect(search).toHaveAttribute("aria-keyshortcuts", "Meta+K")
     expect(search.querySelector("kbd")).toHaveTextContent("⌘K")
     // El atajo chico (18 px) deja 7 px de aire arriba y abajo adentro de los 32.
@@ -338,6 +338,6 @@ describe("Sidebar", () => {
   })
 
   it("sidebarItemVariants sirve para un Link propio", () => {
-    expect(sidebarItemVariants()).toContain("hover:bg-gray-alpha-100")
+    expect(sidebarItemVariants()).toContain("hover:bg-fill-1")
   })
 })

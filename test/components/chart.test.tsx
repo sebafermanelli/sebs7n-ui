@@ -65,10 +65,10 @@ describe("ChartTooltipContent", () => {
         <ChartTooltipContent active label="Marzo" payload={payload} />
       </ChartContainer>
     )
-    expect(screen.getByText("Marzo")).toHaveClass("text-gray-900")
-    expect(screen.getByText("Ventas")).toHaveClass("text-gray-900")
+    expect(screen.getByText("Marzo")).toHaveClass("text-label-secondary")
+    expect(screen.getByText("Ventas")).toHaveClass("text-label-secondary")
     const valor = screen.getByText("1,200")
-    expect(valor).toHaveClass("tabular-nums", "text-gray-1000")
+    expect(valor).toHaveClass("tabular-nums", "text-label")
     const indicador = document.querySelector("[data-slot=chart-tooltip-indicator]") as HTMLElement
     expect(indicador.style.backgroundColor).toBe("var(--color-ventas)")
     expect(indicador).toHaveAttribute("aria-hidden", "true")

@@ -13,16 +13,16 @@ type StatProps = React.ComponentProps<"div"> & {
   hint?: React.ReactNode
 }
 
-const trendClassName = { up: "text-green-900", down: "text-red-900", neutral: "text-gray-900" } as const
+const trendClassName = { up: "text-green-900", down: "text-red-900", neutral: "text-label-secondary" } as const
 
 // KPI plano: sin card. Para una fila de KPIs, componé varios dentro de un Card o una grilla.
 function Stat({ className, label, value, delta, trend = "neutral", hint, ...props }: StatProps) {
   return (
     <div data-slot="stat" data-trend={delta != null ? trend : undefined} className={cn("flex min-w-0 flex-col gap-1", className)} {...props}>
-      <div data-slot="stat-label" className="truncate text-callout text-gray-900">
+      <div data-slot="stat-label" className="truncate text-callout text-label-secondary">
         {label}
       </div>
-      <div data-slot="stat-value" className="text-title-1 text-gray-1000 tabular-nums">
+      <div data-slot="stat-value" className="text-title-1 text-label tabular-nums">
         {value}
       </div>
       {(delta != null || hint != null) && (
@@ -33,7 +33,7 @@ function Stat({ className, label, value, delta, trend = "neutral", hint, ...prop
             </span>
           )}
           {hint != null && (
-            <span data-slot="stat-hint" className="text-callout text-gray-900">
+            <span data-slot="stat-hint" className="text-callout text-label-secondary">
               {hint}
             </span>
           )}

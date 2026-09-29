@@ -21,7 +21,7 @@ function useScrolled(threshold: number) {
 }
 
 type NavbarState = {
-  /** La ventana bajó más que el umbral: la barra ya tiene su vidrio. */
+  /** La ventana bajó más que el umbral: la barra ya tiene su fondo. */
   scrolled: boolean
   /** Además de eso, es `floating`: está despegada. */
   floating: boolean
@@ -43,13 +43,14 @@ function useNavbar(): NavbarState {
 
 type NavbarProps = React.ComponentProps<"header"> & {
   /**
-   * `bar`: a todo el ancho; transparente arriba y, al scrollear, de vidrio y con
-   * un borde abajo.
+   * `bar`: a todo el ancho; transparente arriba y, al scrollear, con el fondo de la barra global
+   * de iCloud (`bg-surface-header`) y un borde abajo. Sobre el wallpaper de `AppShell ambient`
+   * el fondo es `material-translucent`, como la barra de Home.
    *
    * `floating`: arranca igual que `bar`, pegada arriba y a todo el ancho, y al
    * scrollear se despega: margen a los costados y arriba, borde redondeado y la
-   * sombra de un menú. La transición es de 300 ms sobre padding, radio, fondo y
-   * blur, así que la barra se transforma en la píldora en vez de saltar.
+   * sombra de un menú. La transición es de 300 ms sobre padding, radio y fondo, así
+   * que la barra se transforma en vez de saltar.
    */
   variant?: "bar" | "floating"
   /**
@@ -60,10 +61,10 @@ type NavbarProps = React.ComponentProps<"header"> & {
   /** Cuántos px de scroll la despegan. Por defecto, 12. */
   scrollThreshold?: number
   /**
-   * Clases de la superficie —la caja de vidrio—, que es la que tiene el ancho y el radio de
+   * Clases de la superficie —la caja con fondo—, que es la que tiene el ancho y el radio de
    * la barra despegada. `className` va al `<header>`, que es la franja entera.
    *
-   * Para que `floating` sea una cápsula del ancho del contenido de la app:
+   * Para que `floating` mida el ancho del contenido de la app:
    * `surfaceClassName="max-w-none"`, y el ancho se le da al `<header>`.
    */
   surfaceClassName?: string
@@ -102,10 +103,10 @@ function Navbar({ className, surfaceClassName, variant = "bar", position = "stic
           "relative border border-transparent transition-[background-color,border-color,border-radius,box-shadow,backdrop-filter] duration-300 ease-out",
           !scrolled && "rounded-none bg-transparent",
           // Una barra es de lo más grande que flota en una pantalla: material grueso.
-          scrolled && "material-bar glass-thick",
-          scrolled && !floating && "rounded-none border-b-gray-alpha-400",
+          scrolled && "bg-surface-header in-data-ambient:material-translucent",
+          scrolled && !floating && "rounded-none border-b-separator",
           // Despegada es cromo, y el cromo lleva el canto especular de las cápsulas de Safari.
-          floating && "mx-auto max-w-6xl rounded-panel border-gray-alpha-400 shadow-menu glass-rim",
+          floating && "mx-auto max-w-6xl rounded-panel border-separator shadow-menu",
           surfaceClassName
         )}
       >

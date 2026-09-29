@@ -15,7 +15,7 @@ describe("DatePicker", () => {
     const campo = screen.getByRole("button", { name: "Vencimiento" })
     expect(campo).toHaveTextContent("Elegí una fecha")
     expect(campo).toHaveAttribute("data-placeholder")
-    expect(campo).toHaveClass("rounded-field", "glass-control", "border-gray-alpha-400", "data-[size=md]:h-8", "px-3", "focus-visible:focus-border")
+    expect(campo).toHaveClass("rounded-field", "bg-fill-1", "border-transparent", "data-[size=md]:h-8", "px-3", "focus-visible:focus-border")
   })
 
   it("muestra la fecha en el idioma de la app, no en el del navegador", () => {
@@ -25,12 +25,12 @@ describe("DatePicker", () => {
     expect(campo).not.toHaveAttribute("data-placeholder")
   })
 
-  it("abre un calendario de vidrio, elige y se cierra solo", async () => {
+  it("abre un calendario opaco, elige y se cierra solo", async () => {
     const onValueChange = vi.fn()
     render(<DatePicker aria-label="Vencimiento" defaultValue={d("2026-09-27")} onValueChange={onValueChange} />)
     await userEvent.click(screen.getByRole("button", { name: "Vencimiento" }))
     const panel = await screen.findByRole("dialog", { name: "Calendario" })
-    expect(panel).toHaveClass("material-popover", "rounded-menu", "shadow-menu")
+    expect(panel).toHaveClass("bg-surface", "rounded-menu", "shadow-menu")
     await userEvent.click(dia("2026-09-15"))
     expect(toISODate(onValueChange.mock.calls[0]![0])).toBe("2026-09-15")
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull())

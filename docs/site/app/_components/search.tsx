@@ -79,10 +79,10 @@ export function SearchButton({ className, compact = false }: { className?: strin
       size="sm"
       variant="outline"
     >
-      <SearchIcon className="text-gray-900" />
+      <SearchIcon className="text-label-secondary" />
       {!compact && (
         <>
-          <span className="hidden text-gray-700 sm:inline">Buscar…</span>
+          <span className="hidden text-label-tertiary sm:inline">Buscar…</span>
           <Kbd className="ml-auto hidden sm:inline-flex">⌘K</Kbd>
         </>
       )}

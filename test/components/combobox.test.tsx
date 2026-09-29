@@ -70,13 +70,13 @@ describe("Combobox", () => {
     const group = (input: HTMLElement) => input.closest<HTMLElement>("[data-slot=combobox-input-group]")!
     expect(group(md)).toHaveAttribute("data-size", "md")
     expect(group(md)).toHaveClass(
-      "rounded-field", "border", "border-gray-alpha-400", "glass-control", "transition-control",
+      "rounded-field", "border", "border-transparent", "bg-fill-1", "transition-control",
       "data-[size=sm]:h-6", "data-[size=md]:h-8", "data-[size=lg]:h-10",
-      "hover:border-gray-alpha-500", "has-[input:focus]:focus-border",
-      "has-[input[aria-invalid=true]]:border-red-800", "data-disabled:bg-gray-alpha-100"
+      "has-[input:focus]:focus-border",
+      "has-[input[aria-invalid=true]]:border-red-800", "data-disabled:bg-fill-1"
     )
     expect(group(md)).toHaveClass("text-callout", "data-[size=lg]:text-body-large")
-    expect(md).toHaveClass("placeholder:text-gray-900", "bg-transparent", "outline-none")
+    expect(md).toHaveClass("placeholder:text-label-secondary", "bg-transparent", "outline-none")
     expect(group(sm)).toHaveAttribute("data-size", "sm")
     expect(sm).toHaveAttribute("aria-invalid", "true")
     expect(group(lg)).toHaveAttribute("data-size", "lg")
@@ -141,7 +141,7 @@ describe("Combobox", () => {
     await userEvent.keyboard("chi{ArrowDown}{Enter}")
     await waitFor(() => expect(input).toHaveValue("Chile"))
     const clear = screen.getByRole("button", { name: "Limpiar" })
-    expect(clear).toHaveClass("transition-control", "hover:bg-gray-alpha-200", "focus-visible:focus-ring")
+    expect(clear).toHaveClass("transition-control", "hover:bg-fill-2", "focus-visible:focus-ring")
     await userEvent.click(clear)
     await waitFor(() => expect(input).toHaveValue(""))
   })
@@ -175,7 +175,7 @@ describe("Combobox", () => {
     await userEvent.click(screen.getByRole("button", { name: "Abrir lista" }))
     const europa = await screen.findByRole("group", { name: "Europa" })
     expect(within(europa).getAllByRole("option").map((o) => o.textContent)).toEqual(["España", "Italia"])
-    expect(screen.getByText("Europa")).toHaveClass("text-callout", "font-semibold", "text-gray-900")
+    expect(screen.getByText("Europa")).toHaveClass("text-callout", "font-semibold", "text-label-secondary")
   })
 
   it("búsqueda async: fila de carga con spinner, después resultados o vacío", async () => {

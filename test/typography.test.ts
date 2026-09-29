@@ -145,7 +145,7 @@ describe("roles de Apple con la escala de iCloud (2.0)", () => {
   it("tailwind-merge los reconoce como tamaño de letra: un color no se come el rol", async () => {
     const { cn } = await import("../src/lib/utils.js")
     for (const role of Object.keys(APPLE_ROLES)) {
-      expect(cn(`text-${role}`, "text-gray-900")).toBe(`text-${role} text-gray-900`)
+      expect(cn(`text-${role}`, "text-label-secondary")).toBe(`text-${role} text-label-secondary`)
       expect(cn("text-callout", `text-${role}`)).toBe(`text-${role}`)
     }
   })

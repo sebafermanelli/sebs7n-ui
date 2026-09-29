@@ -12,7 +12,7 @@ export function ConBotones() {
   const [page, setPage] = useState(1)
   return (
     <div className="flex w-full flex-col items-center gap-4">
-      <p className="text-copy-14 text-gray-900">Página {page} de 10</p>
+      <p className="text-copy-14 text-label-secondary">Página {page} de 10</p>
       <Pagination onPageChange={setPage} page={page} pageCount={10} />
     </div>
   )

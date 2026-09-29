@@ -23,7 +23,7 @@ export const backdropClassName =
  * La entrada sube 8px mientras aparece: es la señal de que algo entró, no decoración.
  */
 export const modalPopupClassName =
-  "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-panel material-modal p-5 text-callout text-gray-1000 shadow-modal outline-none " +
+  "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-panel bg-surface p-5 text-callout text-label shadow-modal outline-none " +
   "transition-[opacity,translate] duration-150 data-ending-style:opacity-0 data-starting-style:translate-y-[calc(-50%+8px)] data-starting-style:opacity-0"
 
 /**
@@ -34,7 +34,7 @@ export const modalPopupClassName =
  * (un celular acostado, una ventana angosta) la estiraba a todo el ancho.
  */
 export const alertPopupClassName =
-  "fixed top-1/2 left-1/2 z-50 flex w-full max-w-[min(300px,calc(100%-2rem))] -translate-x-1/2 -translate-y-1/2 flex-col gap-3 rounded-panel material-modal p-5 text-callout text-gray-1000 shadow-modal outline-none " +
+  "fixed top-1/2 left-1/2 z-50 flex w-full max-w-[min(300px,calc(100%-2rem))] -translate-x-1/2 -translate-y-1/2 flex-col gap-3 rounded-panel bg-surface p-5 text-callout text-label shadow-modal outline-none " +
   "transition-[opacity,translate] duration-150 data-ending-style:opacity-0 data-starting-style:translate-y-[calc(-50%+8px)] data-starting-style:opacity-0"
 
 /**
@@ -110,23 +110,23 @@ export const floatingSheetGapClassName =
  * que el panel de 288 px y 16 de aire de 1.x, que se leía como una tarjeta suelta. Quien necesita
  * más ancho lo pide con `className` (ColorPicker, DatePicker y el chat ya lo hacen).
  *
- * `NavigationMenu` comparte la superficie —`material-popover shadow-menu
+ * `NavigationMenu` comparte la superficie —`bg-surface shadow-menu
  * outline-none focus-visible:focus-ring`— pero no el resto: su panel mide lo que mide su
  * contenido (`--popup-width`/`--popup-height`), lleva `p-1` en vez de `p-3` y anima también
  * la escala y el tamaño. No usa esta constante a propósito: forzarla pediría deshacer la
  * mitad con overrides, que es peor que repetir.
  */
 export const floatingPopupClassName =
-  "flex w-64 origin-(--transform-origin) flex-col gap-2 rounded-menu material-popover p-3 text-callout text-gray-1000 shadow-menu outline-none " +
+  "flex w-64 origin-(--transform-origin) flex-col gap-2 rounded-menu bg-surface p-3 text-callout text-label shadow-menu outline-none " +
   "focus-visible:focus-ring transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0"
 
 /**
- * La superficie del Tooltip: vidrio denso (`material-popover`) con un filo de 1 px —en claro el
- * vidrio es casi blanco y sobre una página blanca no se separaba— y el texto normal.
+ * La superficie del Tooltip: opaca (`bg-surface`) con el filo de 1 px de `shadow-tooltip` —en
+ * claro la superficie es blanca y sobre una página blanca no se separaba— y el texto normal.
  *
  * La usan `TooltipContent` y la etiqueta del `AiLauncher`, que se tiene que ver igual que un
  * Tooltip pero no puede ser uno (se muestra fija con `labelVisible`, y el lanzador ya es el
  * trigger de un Popover o un Sheet). Sin posición ni animación: eso lo pone cada uno.
  */
 export const tooltipSurfaceClassName =
-  "rounded-control border border-gray-alpha-400 material-popover px-2 py-1 text-callout text-gray-1000 shadow-tooltip"
+  "rounded-control bg-surface px-2 py-1 text-callout text-label shadow-tooltip"

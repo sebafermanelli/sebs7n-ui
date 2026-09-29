@@ -7,7 +7,7 @@
  * Va junto al color de reposo, que sigue siendo de la app:
  *
  * ```tsx
- * <span className={cn("text-gray-900", selectionSecondaryClassName)}>hace 5 min</span>
+ * <span className={cn("text-label-secondary", selectionSecondaryClassName)}>hace 5 min</span>
  * ```
  *
  * Cuelga del variant `inside-selection` de theme.css, que mira el `group/selectable` más cercano;

@@ -25,7 +25,7 @@ function AiIcon({ className, ...props }: React.ComponentProps<typeof SparklesIco
 const OUTLINE =
   "border-ai/40 text-ai not-data-disabled:hover:border-ai/60 not-data-disabled:hover:bg-ai/8 not-data-disabled:active:bg-ai/12"
 const SOLID =
-  "bg-ai-solid text-white sheen shadow-ai not-data-disabled:hover:bg-ai-solid-hover not-data-disabled:active:bg-ai-solid-hover [&_svg]:text-current"
+  "bg-ai-solid text-white shadow-ai not-data-disabled:hover:bg-ai-solid-hover not-data-disabled:active:bg-ai-solid-hover [&_svg]:text-current"
 
 // Genérico en el `size`, igual que `ButtonProps`: así un `AiButton size="icon-md"` sigue
 // exigiendo `aria-label`, que es lo que el tipo del Button garantiza.
@@ -80,7 +80,7 @@ type AiLauncherProps = Omit<React.ComponentProps<"button">, "children"> & {
 /**
  * El botón redondo que abre el asistente, para dejar flotando en una esquina.
  *
- * Es de vidrio grueso —flota encima de lo que sea— y lleva el canto en el degradé de la IA,
+ * Es opaco —flota encima de lo que sea— y lleva el canto en el degradé de la IA,
  * que es lo que lo distingue de cualquier otro botón flotante.
  *
  * **No se posiciona solo.** Dónde flota lo decide la app (`className="fixed right-6 bottom-6"`),
@@ -100,9 +100,9 @@ function AiLauncher({ className, label, labelVisible = false, labelSide = "left"
       type="button"
       className={cn(
         "group/ai-launcher relative inline-flex size-14 shrink-0 cursor-pointer items-center justify-center rounded-full outline-none select-none",
-        "glass glass-thick ai-rim text-ai shadow-menu transition-surface",
+        "bg-surface ai-rim text-ai shadow-menu transition-surface",
         "hover:scale-105 active:scale-95 focus-visible:focus-ring",
-        "disabled:cursor-not-allowed disabled:text-gray-700 disabled:hover:scale-100",
+        "disabled:cursor-not-allowed disabled:text-label-tertiary disabled:hover:scale-100",
         "[&_svg]:pointer-events-none [&_svg]:size-6",
         className
       )}

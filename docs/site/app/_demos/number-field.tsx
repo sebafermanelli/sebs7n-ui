@@ -22,7 +22,7 @@ export function Usuarios() {
         />
         <FieldDescription>Hasta 9 por cuenta. Los de solo lectura no cuentan.</FieldDescription>
       </Field>
-      <p className="text-copy-13 text-gray-900">
+      <p className="text-copy-13 text-label-secondary">
         {usuarios === 1 ? "1 usuario" : `${usuarios ?? 0} usuarios`}
       </p>
     </div>
@@ -50,7 +50,7 @@ export function Precio() {
         />
         <FieldDescription>Sin IVA. Shift + flecha mueve de a $1.000.</FieldDescription>
       </Field>
-      <p className="text-copy-13-mono text-gray-900">value: {JSON.stringify(precio)}</p>
+      <p className="text-copy-13-mono text-label-secondary">value: {JSON.stringify(precio)}</p>
     </div>
   )
 }

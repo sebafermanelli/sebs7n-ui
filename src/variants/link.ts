@@ -23,9 +23,9 @@ const linkVariantsBase = cva(
   {
     variants: {
       variant: {
-        inline: "text-gray-1000 underline decoration-gray-alpha-500 hover:decoration-gray-1000",
-        subtle: "text-gray-900 hover:text-gray-1000 hover:underline",
-        row: "text-gray-1000 hover:underline",
+        inline: "text-label underline decoration-label-tertiary hover:decoration-label",
+        subtle: "text-label-secondary hover:text-label hover:underline",
+        row: "text-label hover:underline",
       },
       /** Un link suelto con ícono o flecha: alinea el ícono con la línea de texto. */
       icon: { true: "inline-flex items-center gap-1.5", false: "" },

@@ -8,12 +8,12 @@ export function Example({ example, eager = false }: { example: Ejemplo; eager?: 
   return (
     <section aria-labelledby={`ej-${anchor}`} className="flex flex-col gap-3">
       <div className="flex flex-col gap-1">
-        <h3 className="scroll-mt-24 text-heading-20 text-gray-1000" id={`ej-${anchor}`}>
+        <h3 className="scroll-mt-24 text-heading-20 text-label" id={`ej-${anchor}`}>
           {example.title}
         </h3>
-        {example.description && <p className="text-copy-14 text-gray-900">{example.description}</p>}
+        {example.description && <p className="text-copy-14 text-label-secondary">{example.description}</p>}
       </div>
-      <div className="flex min-h-32 items-center justify-center rounded-surface border border-gray-alpha-400 glass p-6 shadow-card">
+      <div className="flex min-h-32 items-center justify-center rounded-surface border border-separator bg-surface p-6 shadow-card">
         <DemoSlot eager={eager} id={example.id} />
       </div>
       <CodeBlock code={example.code} label={`Copiar el código de ${example.title}`} />

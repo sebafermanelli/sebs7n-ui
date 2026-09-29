@@ -24,7 +24,7 @@ describe("selección de macOS (2.0)", () => {
 
   it("un ítem deshabilitado no toma el acento aunque quede resaltado", () => {
     expect(menuItemClassName).toMatch(/data-disabled:data-highlighted:bg-transparent/)
-    expect(menuItemClassName).toMatch(/data-disabled:data-highlighted:text-gray-700/)
+    expect(menuItemClassName).toMatch(/data-disabled:data-highlighted:text-label-tertiary/)
   })
 
   it("el ítem activo del sidebar también", () => {

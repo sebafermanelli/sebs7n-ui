@@ -98,9 +98,9 @@ describe("Slider", () => {
 
   it("usa los tokens del sistema", () => {
     render(<Slider aria-label="x" defaultValue={10} />)
-    expect(track()).toHaveClass("bg-gray-alpha-400", "rounded-full")
+    expect(track()).toHaveClass("bg-fill-3", "rounded-full")
     expect(document.querySelector("[data-slot=slider-indicator]")).toHaveClass("bg-brand-700")
-    expect(thumbs()[0]).toHaveClass("bg-white", "shadow-tooltip", "transition-thumb", "data-dragging:thumb-lens")
+    expect(thumbs()[0]).toHaveClass("bg-white", "shadow-tooltip", "transition-thumb", "data-dragging:scale-x-125")
   })
 
   // La perilla de macOS es una cápsula horizontal, no un círculo: la misma del matiz del

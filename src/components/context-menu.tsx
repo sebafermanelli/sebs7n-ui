@@ -238,7 +238,7 @@ function ContextMenuSubTrigger({ className, inset, children, ...props }: Context
       {...props}
     >
       {children}
-      <ChevronRightIcon className="ml-auto text-gray-900" />
+      <ChevronRightIcon className="ml-auto text-label-secondary" />
     </ContextMenuPrimitive.SubmenuTrigger>
   )
 }

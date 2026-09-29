@@ -5,7 +5,7 @@ import { cn } from "../src/lib/utils"
 
 describe("cn", () => {
   it("una clase de la escala tipográfica convive con un color de texto", () => {
-    expect(cn("text-heading-32", "text-gray-1000")).toBe("text-heading-32 text-gray-1000")
+    expect(cn("text-heading-32", "text-label")).toBe("text-heading-32 text-label")
   })
 
   it("entre dos clases de la escala gana la última", () => {

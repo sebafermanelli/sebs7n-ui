@@ -89,7 +89,7 @@ describe("NavigationMenu", () => {
     render(<Nav />)
     // Sin fondo en ningún estado: en una barra de navegación el único control
     // con fondo es el CTA.
-    expect(trigger()).toHaveClass("text-callout", "text-gray-900", "bg-transparent", "hover:text-gray-1000")
+    expect(trigger()).toHaveClass("text-callout", "text-label-secondary", "bg-transparent", "hover:text-label")
     expect(trigger().className).not.toMatch(/\bhover:bg-/)
 
     const icon = document.querySelector("[data-slot=navigation-menu-icon]")!
@@ -103,7 +103,7 @@ describe("NavigationMenu", () => {
   it("`active` marca el trigger sin mentir con aria-current", () => {
     render(<Nav active />)
     expect(trigger()).toHaveAttribute("data-active")
-    expect(trigger()).toHaveClass("data-active:text-gray-1000")
+    expect(trigger()).toHaveClass("data-active:text-label")
     // El trigger no es un link: no lleva a ninguna parte y no puede decir que
     // es la página actual.
     expect(trigger()).not.toHaveAttribute("aria-current")
@@ -142,7 +142,7 @@ describe("NavigationMenu", () => {
 
     await userEvent.click(trigger())
     const card = await screen.findByRole("link", { name: /Sistemas/ })
-    expect(card).toHaveClass("p-2", "hover:bg-gray-alpha-100")
+    expect(card).toHaveClass("p-2", "hover:bg-fill-1")
   })
 
   it("el panel usa los tokens del menú del sistema y no duplica el borde", async () => {
@@ -151,7 +151,7 @@ describe("NavigationMenu", () => {
     await screen.findByRole("link", { name: /Sistemas/ })
 
     const popup = document.querySelector("[data-slot=navigation-menu-popup]")!
-    expect(popup).toHaveClass("shadow-menu", "rounded-menu", "material-popover")
+    expect(popup).toHaveClass("shadow-menu", "rounded-menu", "bg-surface")
     // El aire entre el vidrio y los links es el de los menús (`p-1`), y lo pone uno solo: con
     // `p-1` en el panel y otro `p-1` en el contenido eran 8 px contra un radio calculado para 4.
     expect(popup.className).not.toMatch(/(^|\s)p-\d/)

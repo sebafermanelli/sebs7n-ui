@@ -3,37 +3,37 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "../lib/utils.js"
 
 const buttonVariantsBase = cva(
-  "relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-control border border-transparent whitespace-nowrap outline-none select-none transition-surface focus-visible:focus-ring data-disabled:cursor-not-allowed data-disabled:border-gray-alpha-400 data-disabled:bg-gray-alpha-100 data-disabled:text-gray-700 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-control border border-transparent whitespace-nowrap outline-none select-none transition-surface focus-visible:focus-ring data-disabled:cursor-not-allowed data-disabled:border-separator data-disabled:bg-fill-1 data-disabled:text-label-tertiary [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
-        // Los sólidos llevan `shadow-button` (filo claro arriba, 1px de sombra abajo) y
-        // se hunden un pixel al apretar. Deshabilitados vuelven a ser planos. `default`
-        // es gray-1000 (blanco en oscuro): lleva la variante invertida, con filo gris.
+        // Planos, como en iCloud (2.0): sin sombra, sin brillo y sin hundirse al apretar; el
+        // estado lo dice el fondo. `default` es el label primario (negro en claro, blanco en
+        // oscuro) con el texto del color de la superficie.
         default:
-          "bg-gray-1000 text-background-100 shadow-button-inverted hover:bg-button-primary-hover active:translate-y-px active:shadow-none data-disabled:shadow-none",
-        // `outline` es el botón de vidrio: alfa sin blur, porque casi siempre vive adentro de una
+          "bg-label text-surface hover:bg-button-primary-hover",
+        // `outline`: borde y sin fondo. iCloud no tiene botón con borde (R4 decide si queda); vive adentro de una
         // superficie que ya lo tiene.
         outline:
-          "border-gray-alpha-400 glass-control text-gray-1000 shadow-card hover:bg-gray-alpha-200 active:translate-y-px active:bg-gray-alpha-300 active:shadow-none data-disabled:shadow-none",
-        // Misma sombra de 1px que `outline`: los dos son superficies que flotan sobre la página.
-        // `ghost` no la lleva porque en reposo no tiene superficie, es texto.
+          "border-separator-strong bg-transparent text-label hover:bg-fill-1 active:bg-fill-2",
+        // El gris de iCloud: `fill-2` en reposo y `fill-3` con el puntero, el hover de un botón
+        // en la barra global. `ghost` en reposo no tiene superficie: es texto.
         secondary:
-          "bg-gray-alpha-200 text-gray-1000 shadow-card hover:bg-gray-alpha-300 active:translate-y-px active:bg-gray-alpha-500 active:shadow-none data-disabled:shadow-none",
-        ghost: "text-gray-1000 hover:bg-gray-alpha-200 active:bg-gray-alpha-300",
+          "bg-fill-2 text-label hover:bg-fill-3 active:bg-fill-3",
+        ghost: "text-label hover:bg-fill-2 active:bg-fill-3",
         accent:
-          "bg-brand-700 text-brand-contrast sheen shadow-button-accent hover:bg-brand-800 active:translate-y-px active:bg-brand-800 active:shadow-none data-disabled:shadow-none",
+          "bg-brand-700 text-brand-contrast hover:bg-brand-800 active:bg-brand-800",
         destructive:
-          "bg-red-800 text-button-error-fg sheen shadow-button hover:bg-button-error-hover active:translate-y-px active:bg-button-error-active active:shadow-none data-disabled:shadow-none",
-        // Lo que pide la acción peligrosa de una alerta de macOS: texto rojo sobre un vidrio con
+          "bg-red-800 text-button-error-fg hover:bg-button-error-hover active:bg-button-error-active",
+        // Lo que pide la acción peligrosa de una alerta: texto rojo sobre un fondo con
         // tinte rojo. No grita como el rojo sólido: la alerta ya es la advertencia, el botón solo
         // nombra la acción. El texto es la tinta (`-ink`) y no `-900`: sobre el tinte, `-900` no
         // llega a 4,5:1 en claro. El tinte es el mismo que el del Badge (`--sf-tint-*`).
         "destructive-tinted":
-          "bg-red-700/(--sf-tint-fill) text-red-ink shadow-card hover:bg-red-700/(--sf-tint-hover) active:translate-y-px active:bg-red-700/(--sf-tint-active) active:shadow-none data-disabled:shadow-none",
+          "bg-red-700/(--sf-tint-fill) text-red-ink hover:bg-red-700/(--sf-tint-hover) active:bg-red-700/(--sf-tint-active)",
         // Lo mismo con el acento: una acción que importa sin ser la principal de la pantalla.
         tinted:
-          "bg-brand-700/(--sf-tint-fill) text-brand-ink shadow-card hover:bg-brand-700/(--sf-tint-hover) active:translate-y-px active:bg-brand-700/(--sf-tint-active) active:shadow-none data-disabled:shadow-none",
+          "bg-brand-700/(--sf-tint-fill) text-brand-ink hover:bg-brand-700/(--sf-tint-hover) active:bg-brand-700/(--sf-tint-active)",
         link: "h-auto! rounded-sm border-0 px-0! text-brand-900 underline-offset-4 hover:text-brand-1000 hover:underline data-disabled:bg-transparent",
       },
       size: {

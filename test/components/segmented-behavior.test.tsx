@@ -89,10 +89,10 @@ describe("Tabs: pista segmentada", () => {
     render(<Ejemplo />)
     const list = screen.getByRole("tablist")
     expect(list).toHaveAttribute("data-variant", "segmented")
-    expect(list).toHaveClass("rounded-control", "bg-gray-alpha-200", "shadow-track", "w-fit")
+    expect(list).toHaveClass("rounded-control", "bg-fill-2", "w-fit")
     expect(list).not.toHaveClass("border-b")
     const pastilla = list.querySelector("[data-slot=tabs-indicator]")!
-    expect(pastilla).toHaveClass("glass-control", "rounded-[calc(var(--radius-control)-2px)]", "transition-[left,width,translate]", "motion-reduce:transition-none")
+    expect(pastilla).toHaveClass("bg-segment", "shadow-segment", "rounded-[calc(var(--radius-control)-2px)]", "transition-[left,width,translate]", "motion-reduce:transition-none")
     // Alfa y no vidrio: la pista ya vive adentro de una superficie.
     expect(pastilla.className).not.toMatch(/(^|\s)glass(\s|$)/)
   })
@@ -100,7 +100,7 @@ describe("Tabs: pista segmentada", () => {
   it("line es la de Geist: a todo el ancho, línea abajo y sin pastilla", () => {
     render(<Ejemplo variant="line" />)
     const list = screen.getByRole("tablist")
-    expect(list).toHaveClass("w-full", "border-b", "border-gray-alpha-400")
+    expect(list).toHaveClass("w-full", "border-b", "border-separator")
     expect(list.querySelector("[data-slot=tabs-indicator]")).toBeNull()
   })
 })

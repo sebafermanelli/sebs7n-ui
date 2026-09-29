@@ -79,33 +79,21 @@ const heredado = (theme: "light" | "dark", token: string) => paleta[theme][token
 
 const ratio = (fg: string, bg: string) => contrastRatio(luminanceOfHex(fg), luminanceOfHex(bg))
 
-/** Los tres roles de fondo del sistema: página, superficie y banda. */
+/**
+ * Tres fondos de iCloud (2.0): la página, lo que flota (menús, diálogos) y la columna del
+ * sidebar. El resto de las superficies y los textos `label*` los cubre `surfaces.test.ts`.
+ */
 const FONDOS = {
   página: "--sf-background",
-  superficie: "--sf-background-100",
-  banda: "--sf-background-200",
+  superficie: "--sf-surface",
+  sidebar: "--sf-surface-secondary",
 } as const
 
 /** Las nueve paletas del Badge y del Tag. */
 const PALETAS = ["gray", "brand", "red", "amber", "green", "blue", "teal", "purple", "pink"] as const
 
-// Los grises que el paquete usa COMO TEXTO, sobre los tres fondos. `gray-800` no
-// está en la lista: no se usa como texto en ninguno de los 58 componentes, y en
-// claro da 4,12:1, así que no podría. `gray-700` tampoco: quedó como color de
-// borde y de estado deshabilitado, que es donde sí puede vivir.
-describe("Grises de texto sobre los tres fondos (WCAG 1.4.3)", () => {
-  for (const theme of ["light", "dark"] as const) {
-    for (const token of ["--sf-gray-900", "--sf-gray-1000"] as const) {
-      for (const [donde, fondo] of Object.entries(FONDOS)) {
-        const fg = paleta[theme][token]!
-        const bg = paleta[theme][fondo]!
-        it(`${theme} · ${token.replace("--sf-", "")} sobre ${donde}: ${fg} / ${bg} llega a 4.5:1`, () => {
-          expect(ratio(fg, bg)).toBeGreaterThanOrEqual(4.5)
-        })
-      }
-    }
-  }
-})
+// Los textos de los componentes (2.0) son los `label*` de iCloud, en alfa: su contraste sobre cada
+// superficie lo mide `surfaces.test.ts`, que sabe componerlos. Acá quedan los colores sólidos.
 
 /**
  * El anillo de foco (`focus-ring`) es `0 0 0 2px background-100, 0 0 0 4px
@@ -180,20 +168,6 @@ describe("Button variant=\"destructive\" (WCAG 1.4.3, texto normal)", () => {
   }
 })
 
-// Los atajos de DropdownMenu, ContextMenu y Menubar son contenido informativo,
-// no decoración: enseñan el otro camino a la misma acción. En `gray-700` daban
-// 3,23:1 sobre la superficie del popup. Sobre el ítem resaltado lo mide el
-// bloque de «Texto sobre la selección», más abajo.
-describe("Atajo de menú sobre el popup (WCAG 1.4.3)", () => {
-  for (const theme of ["light", "dark"] as const) {
-    const fg = paleta[theme]["--sf-gray-900"]!
-    const bg = paleta[theme]["--sf-background-100"]!
-    it(`${theme} · popup: ${fg} sobre ${bg} llega a 4.5:1`, () => {
-      expect(ratio(fg, bg)).toBeGreaterThanOrEqual(4.5)
-    })
-  }
-})
-
 // El borde del campo enfocado es el indicador de foco de los campos: es lo
 // único que dice dónde estás parado al tabular por un formulario. WCAG 2.4.11
 // (AA en 2.2) le pide 3:1 contra el fondo. Desde 1.0 ese borde es `brand-700`,
@@ -262,12 +236,12 @@ describe("Botones tintados: la tinta sobre el tinte, en los tres estados (WCAG 1
   }
 })
 
-// El resaltado de un ítem de menú y el activo del Sidebar son el brand en tinte,
-// compuesto sobre la superficie. El texto de adentro es `gray-1000` y el
-// secundario —atajos, emails— `gray-900`.
-describe("Texto sobre la selección, en las cuatro marcas (WCAG 1.4.3)", () => {
+// El brand en tinte (`--sf-highlight`): el tramo del medio de un rango en Calendar, la burbuja del
+// usuario en Chat. Adentro vive texto `label-secondary`, el alfa de iCloud compuesto sobre el tinte.
+describe("Texto sobre el tinte de marca, en las cuatro marcas (WCAG 1.4.3)", () => {
   const css = read("theme.css")
   const marcas = brands as Record<string, Record<string, { base: number[] }>>
+  const etiqueta = { light: tokens("theme.css", "light")["--sf-label-secondary"]!, dark: tokens("theme.css", "dark")["--sf-label-secondary"]! }
   for (const theme of ["light", "dark"] as const) {
     const inicio = css.indexOf(theme === "light" ? ":root {" : ".dark {")
     const cuerpo = css.slice(inicio, css.indexOf("\n  }", inicio))
@@ -275,26 +249,26 @@ describe("Texto sobre la selección, en las cuatro marcas (WCAG 1.4.3)", () => {
       Number(cuerpo.match(new RegExp(`${token}: color-mix\\(in srgb, var\\(--sf-brand-700\\) (\\d+)%`))![1]) / 100
     for (const [estado, token] of [["resaltado", "--sf-highlight"], ["apretado", "--sf-highlight-active"]] as const) {
       for (const [marca, temas] of Object.entries(marcas)) {
-        const fondo = composite(hexOfOklch(temas[theme]!.base as unknown as Oklch), tinte(token), paleta[theme]["--sf-background-100"]!)
-        it(`${theme} · ${marca} · ${estado}: gray-900 sobre ${fondo} llega a 4.5:1`, () => {
-          expect(ratio(paleta[theme]["--sf-gray-900"]!, fondo)).toBeGreaterThanOrEqual(4.5)
+        const fondo = composite(hexOfOklch(temas[theme]!.base as unknown as Oklch), tinte(token), paleta[theme]["--sf-surface"]!)
+        const texto = flattenAlpha(etiqueta[theme], fondo)
+        it(`${theme} · ${marca} · ${estado}: label-secondary (${texto}) sobre ${fondo} llega a 4.5:1`, () => {
+          expect(ratio(texto, fondo)).toBeGreaterThanOrEqual(4.5)
         })
       }
     }
   }
 })
 
-// Checkbox, Radio, Switch y Toggle sin marcar no tienen relleno ni texto que
-// los dibuje: si el contorno no se ve, el control no existe. Por eso caen bajo
-// WCAG 1.4.11 (3:1 contra el fondo adyacente) y no bajo la licencia de la
-// decoración. `gray-500` daba 1,66:1 en claro y `gray-400`, 1,20:1.
-describe("Contorno de control sin marcar (WCAG 1.4.11)", () => {
+// La pista del Switch apagado es `gray-700` (iCloud no tiene Switch: se deriva). Checkbox, Radio y
+// Toggle dibujan su contorno con `label-tertiary`, que mide `surfaces.test.ts`. Sin marcar no
+// tienen relleno ni texto que los dibuje: caen bajo WCAG 1.4.11 (3:1 contra el fondo adyacente).
+describe("Pista del Switch apagado (WCAG 1.4.11)", () => {
   for (const theme of ["light", "dark"] as const) {
     const fg = paleta[theme]["--sf-gray-700"]!
     const superficies = {
-      "superficie del campo": paleta[theme]["--sf-background-100"]!,
+      superficie: paleta[theme]["--sf-surface"]!,
       página: paleta[theme]["--sf-background"]!,
-      banda: paleta[theme]["--sf-background-200"]!,
+      sidebar: paleta[theme]["--sf-surface-secondary"]!,
     }
     for (const [donde, bg] of Object.entries(superficies)) {
       it(`${theme} · ${donde}: ${fg} sobre ${bg} llega a 3:1`, () => {
@@ -306,20 +280,6 @@ describe("Contorno de control sin marcar (WCAG 1.4.11)", () => {
     // desaparece dentro de ella y el estado deja de leerse.
     it(`${theme} · pulgar del Switch apagado: #ffffff sobre ${fg} llega a 3:1`, () => {
       expect(ratio("#ffffff", fg)).toBeGreaterThanOrEqual(3)
-    })
-  }
-})
-
-// El placeholder es texto, no decoración: en un formulario largo es lo único
-// que dice qué espera el campo hasta que alguien escribe. En `gray-700` —el
-// tono de Geist— daba 3,23:1 en claro. Un solo tono para los dos temas: el
-// mismo `gray-900` del texto secundario pasa en los dos.
-describe("Placeholder sobre la superficie del campo (WCAG 1.4.3)", () => {
-  for (const theme of ["light", "dark"] as const) {
-    const fg = paleta[theme]["--sf-gray-900"]!
-    const bg = paleta[theme]["--sf-background-100"]!
-    it(`${theme}: ${fg} sobre ${bg} llega a 4.5:1`, () => {
-      expect(ratio(fg, bg)).toBeGreaterThanOrEqual(4.5)
     })
   }
 })

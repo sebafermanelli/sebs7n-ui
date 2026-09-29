@@ -16,16 +16,15 @@ type SidebarProps = React.ComponentProps<"aside"> & {
   /** Solo íconos (64px). El ancho cambia sin animación: el spec prohíbe animar width. */
   collapsed?: boolean
   /**
-   * `floating` (el default): una píldora de vidrio despegada del borde, con margen, radio de
-   * panel, sombra y el canto especular. Es el sidebar de macOS y de iPadOS desde Liquid Glass.
+   * `floating` (el default): un panel despegado del borde, con margen, radio de panel y sombra.
+   * iCloud lo pone a ras (`bar`); R5 decide cuál queda de default.
    *
    * `bar`: a ras de la ventana, a todo el alto y con un borde a la derecha. El de antes de 1.10.
    */
   variant?: "floating" | "bar"
 }
 
-// Adentro del Sheet mobile va transparente y a ras: el vidrio ya lo pone la hoja, y dos apilados
-// se comen el contraste sin mostrar nada (el segundo solo desenfoca lo que pintó el primero).
+// Adentro del Sheet mobile va transparente y a ras: el fondo ya lo pone la hoja.
 function Sidebar({ className, collapsed: collapsedProp = false, variant = "floating", ...props }: SidebarProps) {
   const inSheet = React.useContext(SidebarInSheetContext)
   const collapsed = inSheet ? false : collapsedProp
@@ -37,12 +36,12 @@ function Sidebar({ className, collapsed: collapsedProp = false, variant = "float
         data-collapsed={collapsed ? "" : undefined}
         data-variant={inSheet ? undefined : variant}
         className={cn(
-          "group/sidebar relative flex h-full w-60 shrink-0 flex-col material-bar glass-thick text-gray-1000 data-collapsed:w-16",
+          "group/sidebar relative flex h-full w-60 shrink-0 flex-col bg-surface-secondary text-label data-collapsed:w-16",
           // Flotante: 12px de aire alrededor —a la derecha no, ahí empieza el contenido con su
           // propio margen— y la forma del cromo. El alto descuenta el margen para no desbordar
           // la columna sticky del AppShell.
-          variant === "floating" && "m-3 mr-0 h-[calc(100%-1.5rem)] overflow-hidden rounded-panel border border-gray-alpha-400 shadow-menu glass-rim",
-          variant === "bar" && "border-r border-gray-alpha-400",
+          variant === "floating" && "m-3 mr-0 h-[calc(100%-1.5rem)] overflow-hidden rounded-panel border border-separator shadow-menu",
+          variant === "bar" && "border-r border-separator",
           inSheet && "m-0 h-full w-full rounded-none border-0 bg-transparent shadow-none backdrop-filter-none after:hidden",
           className
         )}
@@ -84,7 +83,7 @@ function SidebarFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="sidebar-footer"
-      className={cn("flex shrink-0 flex-col gap-1 border-t border-gray-alpha-400 p-2 group-data-collapsed/sidebar:items-center", className)}
+      className={cn("flex shrink-0 flex-col gap-1 border-t border-separator p-2 group-data-collapsed/sidebar:items-center", className)}
       {...props}
     />
   )
@@ -136,7 +135,7 @@ function SidebarGroupLabel({ className, id, ...props }: React.ComponentProps<"di
     <div
       data-slot="sidebar-group-label"
       id={id ?? groupId ?? undefined}
-      className={cn("flex h-7 shrink-0 items-center px-2 text-callout font-semibold text-gray-900 group-data-collapsed/sidebar:hidden", className)}
+      className={cn("flex h-7 shrink-0 items-center px-2 text-callout font-semibold text-label-secondary group-data-collapsed/sidebar:hidden", className)}
       {...props}
     />
   )
@@ -153,7 +152,7 @@ function SidebarItemBadge({ className, label, children, ...props }: SidebarItemB
   return (
     <span
       data-slot="sidebar-item-badge"
-      className={cn("ml-auto shrink-0 text-callout text-gray-900 tabular-nums group-data-active/sidebar-item:text-on-selection group-aria-[current=page]/sidebar-item:text-on-selection group-data-collapsed/sidebar:sr-only", className)}
+      className={cn("ml-auto shrink-0 text-callout text-label-secondary tabular-nums group-data-active/sidebar-item:text-on-selection group-aria-[current=page]/sidebar-item:text-on-selection group-data-collapsed/sidebar:sr-only", className)}
       {...props}
     >
       {/* La coma es solo para el lector; el espacio queda al inicio de línea y CSS lo colapsa. */}
@@ -233,7 +232,7 @@ function SidebarItem({ className, icon, active = false, tooltip, render, childre
               <span
                 data-slot="sidebar-item-dot"
                 aria-hidden="true"
-                className="absolute top-1 right-1 hidden size-1.5 rounded-full bg-gray-900 group-data-active/sidebar-item:bg-on-selection group-aria-[current=page]/sidebar-item:bg-on-selection group-data-collapsed/sidebar:block"
+                className="absolute top-1 right-1 hidden size-1.5 rounded-full bg-label-secondary group-data-active/sidebar-item:bg-on-selection group-aria-[current=page]/sidebar-item:bg-on-selection group-data-collapsed/sidebar:block"
               />
             )}
           </>
@@ -288,7 +287,7 @@ function SidebarSearch({
       className={cn(
         // 32 px, el alto de un campo `md`: a 28 (el alto de un ítem) el ⌘K de 20 casi tocaba los
         // bordes. Con el Kbd `sm` de 18 quedan 7 px de aire arriba y abajo.
-        "flex h-8 pointer-coarse:h-11 w-full min-w-0 cursor-pointer items-center gap-2 rounded-field border border-gray-alpha-400 glass-control px-3 text-left text-callout text-gray-900 shadow-card outline-none transition-control hover:border-gray-alpha-500 hover:text-gray-1000 focus-visible:focus-ring [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+        "flex h-8 pointer-coarse:h-11 w-full min-w-0 cursor-pointer items-center gap-2 rounded-field bg-fill-1 px-3 text-left text-callout text-label-secondary outline-none transition-control hover:text-label focus-visible:focus-ring [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
         // Colapsado es un ícono más de la columna: el cuadrado de 28 de los ítems, no un campo.
         "group-data-collapsed/sidebar:h-7 group-data-collapsed/sidebar:w-7 pointer-coarse:group-data-collapsed/sidebar:h-11 pointer-coarse:group-data-collapsed/sidebar:w-11 group-data-collapsed/sidebar:justify-center group-data-collapsed/sidebar:px-0",
         className

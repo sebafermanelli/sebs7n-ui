@@ -219,7 +219,7 @@ function Command({ value, defaultValue = "", onValueChange, shouldFilter = true,
         keepHighlight
         onItemHighlighted={(next) => setHighlighted(next === undefined ? undefined : String(next))}
       >
-        <div data-slot="command" className={cn("flex min-h-0 flex-col text-gray-1000", className)} {...props}>
+        <div data-slot="command" className={cn("flex min-h-0 flex-col text-label", className)} {...props}>
           {children}
         </div>
       </AutocompletePrimitive.Root>
@@ -266,8 +266,8 @@ function CommandInput({ className, wrapperClassName, placeholder, onKeyDown, ref
     setOverflowing(!!node && node.scrollWidth > node.clientWidth)
   }, [query, setOverflowing])
   return (
-    <div data-slot="command-input-wrapper" className={cn("flex h-12 shrink-0 items-center gap-3 border-b border-gray-alpha-400 px-4", wrapperClassName)}>
-      <SearchIcon aria-hidden="true" className="size-5 shrink-0 text-gray-900" />
+    <div data-slot="command-input-wrapper" className={cn("flex h-12 shrink-0 items-center gap-3 border-b border-separator px-4", wrapperClassName)}>
+      <SearchIcon aria-hidden="true" className="size-5 shrink-0 text-label-secondary" />
       <div className="relative flex h-full min-w-0 flex-1 items-center">
         <AutocompletePrimitive.Input
           data-slot="command-input"
@@ -280,7 +280,7 @@ function CommandInput({ className, wrapperClassName, placeholder, onKeyDown, ref
           autoCapitalize="off"
           spellCheck={false}
           enterKeyHint="search"
-          className={cn("h-full w-full min-w-0 bg-transparent text-body-large text-gray-1000 outline-none placeholder:text-gray-700", className)}
+          className={cn("h-full w-full min-w-0 bg-transparent text-body-large text-label outline-none placeholder:text-label-tertiary", className)}
           onKeyDown={(event) => {
             onKeyDown?.(event)
             // Con un IME (japonés, chino, acentos con tecla muerta) las teclas son de la composición.
@@ -297,7 +297,7 @@ function CommandInput({ className, wrapperClassName, placeholder, onKeyDown, ref
         {completion && (
           <span aria-hidden="true" className="pointer-events-none absolute inset-0 flex items-center overflow-hidden text-body-large whitespace-pre">
             <span className="invisible">{query}</span>
-            <span data-slot="command-completion" className="truncate text-gray-700">
+            <span data-slot="command-completion" className="truncate text-label-tertiary">
               {completion.text}
             </span>
           </span>
@@ -342,7 +342,7 @@ function CommandFilter({ className, ...props }: CommandFilterProps) {
       data-slot="command-filter"
       className={cn(
         toggleVariants(),
-        "data-checked:border-gray-900 data-checked:bg-gray-alpha-200 data-checked:text-gray-1000 data-checked:hover:bg-gray-alpha-300",
+        "data-checked:border-label data-checked:bg-fill-2 data-checked:text-label data-checked:hover:bg-fill-3",
         className
       )}
       {...props}
@@ -442,7 +442,7 @@ function CommandItem({ value, keywords, description, icon, textValue, onSelect, 
       )}
       <span className="flex min-w-0 flex-1 flex-col">
         <span className="truncate text-callout font-medium">{children}</span>
-        {description != null && <span className="truncate text-callout text-gray-900">{description}</span>}
+        {description != null && <span className="truncate text-callout text-label-secondary">{description}</span>}
       </span>
       {/* Solo cuando Tab hace algo: en el elegido, si su título completa lo escrito. */}
       {completion?.value === value && completion.accepts && (
@@ -470,7 +470,7 @@ function CommandEmpty({ className, children, ...props }: React.ComponentProps<"d
       role="status"
       aria-live="polite"
       aria-atomic="true"
-      className={cn("text-center text-callout text-gray-900 not-empty:px-4 not-empty:py-6", className)}
+      className={cn("text-center text-callout text-label-secondary not-empty:px-4 not-empty:py-6", className)}
       {...props}
     >
       {count === 0 ? (children ?? labels.empty) : null}

@@ -93,7 +93,7 @@ export function IconCatalog({ nombres, iniciales }: { nombres: string[]; inicial
         const importLine = `import { ${icono.exportado} } from "lucide-react"`
         const boton = (
           <button
-            className="flex aspect-square w-full cursor-pointer items-center justify-center rounded-surface border border-gray-alpha-400 glass text-gray-1000 shadow-card outline-none transition-surface hover:-translate-y-px hover:border-gray-alpha-500 hover:shadow-card-hover active:translate-y-0 active:bg-gray-alpha-200 active:shadow-card focus-visible:focus-ring"
+            className="flex aspect-square w-full cursor-pointer items-center justify-center rounded-surface border border-separator bg-surface text-label shadow-card outline-none transition-surface hover:-translate-y-px hover:border-separator-strong hover:shadow-card-hover active:translate-y-0 active:bg-fill-2 active:shadow-card focus-visible:focus-ring"
             data-icono={icono.nombre}
             onClick={async () => {
               // sonner se pide al primer clic: el `Toaster` ya se carga después de
@@ -154,13 +154,13 @@ export function IconCatalog({ nombres, iniciales }: { nombres: string[]; inicial
           <ToggleGroupItem value="md">20</ToggleGroupItem>
           <ToggleGroupItem value="lg">24</ToggleGroupItem>
         </ToggleGroup>
-        <span aria-live="polite" className="text-label-13 text-gray-900">
+        <span aria-live="polite" className="text-label-13 text-label-secondary">
           {resultados.length === todos.length ? `${todos.length} íconos` : `${resultados.length} de ${todos.length}`}
         </span>
       </div>
 
       {visibles.length === 0 ? (
-        <p className="py-12 text-center text-copy-14 text-gray-900">Nada con «{diferida}». Probá en inglés: lucide nombra en inglés.</p>
+        <p className="py-12 text-center text-copy-14 text-label-secondary">Nada con «{diferida}». Probá en inglés: lucide nombra en inglés.</p>
       ) : (
         grillaConTooltips
       )}

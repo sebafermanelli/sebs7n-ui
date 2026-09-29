@@ -46,12 +46,12 @@ export default function Home() {
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-20 px-4 py-16 md:px-6 md:py-24">
         <section className="flex flex-col items-start gap-6">
           <Badge color="brand">v{site.version}</Badge>
-          <h1 className="text-heading-48 text-gray-1000 md:text-heading-64">
+          <h1 className="text-heading-48 text-label md:text-heading-64">
             {/* Un solo color para todo el título. Dos grises cercanos no leen
                 como jerarquía: leen como media frase apagada. */}
             El design system de una sola dependencia.
           </h1>
-          <p className="max-w-2xl text-copy-18 text-gray-900">
+          <p className="max-w-2xl text-copy-18 text-label-secondary">
             El estilo de macOS sobre las primitivas de shadcn/ui <code>base-nova</code> (Base UI).{" "}
             {site.components.length} componentes accesibles, tokens de color, tipografía, radios y sombras, y cuatro
             variables para el color de marca.
@@ -73,7 +73,7 @@ export default function Home() {
         </section>
 
         <section aria-labelledby="razones" className="flex flex-col gap-6">
-          <h2 className="text-heading-32 text-gray-1000" id="razones">
+          <h2 className="text-heading-32 text-label" id="razones">
             Por qué existe
           </h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -89,7 +89,7 @@ export default function Home() {
         </section>
 
         <section aria-labelledby="destacados" className="flex flex-col gap-6">
-          <h2 className="text-heading-32 text-gray-1000" id="destacados">
+          <h2 className="text-heading-32 text-label" id="destacados">
             Los que más se usan
           </h2>
           {/* `h-full` en el <a> y en la Card: sin eso la fila de la grilla estira al <a> pero no a la
@@ -115,10 +115,10 @@ export default function Home() {
         </section>
 
         <section aria-labelledby="agentes" className="flex flex-col gap-6">
-          <h2 className="text-heading-32 text-gray-1000" id="agentes">
+          <h2 className="text-heading-32 text-label" id="agentes">
             Para un agente
           </h2>
-          <p className="max-w-2xl text-copy-16 text-gray-900">
+          <p className="max-w-2xl text-copy-16 text-label-secondary">
             Todo el sitio está disponible en texto plano. Cada página responde en markdown si le agregás{" "}
             <code>.md</code> a la URL.
           </p>
@@ -137,7 +137,7 @@ export default function Home() {
                   >
                     {item.href}
                   </a>
-                  <span className="text-copy-14 text-gray-900">{item.what}</span>
+                  <span className="text-copy-14 text-label-secondary">{item.what}</span>
                 </div>
               ))}
             </CardContent>
@@ -150,10 +150,10 @@ export default function Home() {
           </div>
         </section>
 
-        <footer className="border-t border-gray-alpha-400 pt-8 text-copy-14 text-gray-900">
+        <footer className="border-t border-separator pt-8 text-copy-14 text-label-secondary">
           MIT ·{" "}
           <a
-            className="rounded-sm underline underline-offset-4 outline-none hover:text-gray-1000 focus-visible:focus-ring"
+            className="rounded-sm underline underline-offset-4 outline-none hover:text-label focus-visible:focus-ring"
             href="https://github.com/sebafermanelli/sebs7n-ui"
             rel="noreferrer"
             target="_blank"

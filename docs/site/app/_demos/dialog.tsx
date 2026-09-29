@@ -17,7 +17,7 @@ import { Label } from "sebs7n-ui/label"
 
 /**
  * La hoja de macOS
- * Título a la izquierda, el contenido agrupado en un bloque `material-group` y el principal
+ * Título a la izquierda, el contenido agrupado en un bloque `bg-grouped` y el principal
  * del acento abajo a la derecha. El pie no lleva línea: el aire alcanza.
  * «Cancelar» va primero en el DOM: en desktop queda a la izquierda de «Listo», y en mobile, donde
  * el pie se apila sin invertir, «Listo» queda abajo, al alcance del pulgar. Tab sigue ese orden.
@@ -31,21 +31,21 @@ export function Hoja() {
           <DialogTitle>Factura 0012</DialogTitle>
           <DialogDescription>Emitida el 15/09. Todavía no se cobró.</DialogDescription>
         </DialogHeader>
-        <dl className="flex flex-col gap-2 rounded-surface material-group p-4 text-body">
+        <dl className="flex flex-col gap-2 rounded-surface bg-grouped p-4 text-body">
           <div className="flex justify-between gap-4">
-            <dt className="text-gray-900">Cliente</dt>
+            <dt className="text-label-secondary">Cliente</dt>
             <dd>Acme S.A.</dd>
           </div>
           <div className="flex justify-between gap-4">
-            <dt className="text-gray-900">Vence</dt>
+            <dt className="text-label-secondary">Vence</dt>
             <dd>15/10</dd>
           </div>
           <div className="flex justify-between gap-4">
-            <dt className="text-gray-900">Total</dt>
+            <dt className="text-label-secondary">Total</dt>
             <dd className="text-headline tabular-nums">$ 12.400</dd>
           </div>
         </dl>
-        <p className="text-footnote text-gray-900">Pasado el vencimiento se suma el recargo que figura en las condiciones de venta.</p>
+        <p className="text-footnote text-label-secondary">Pasado el vencimiento se suma el recargo que figura en las condiciones de venta.</p>
         <DialogFooter>
           <DialogClose render={<Button variant="secondary" />}>Cancelar</DialogClose>
           <DialogClose render={<Button variant="accent" />}>Listo</DialogClose>

@@ -130,7 +130,7 @@ export function Donut() {
                   <tspan className="fill-gray-1000 text-heading-24 tabular-nums" x={viewBox.cx} y={viewBox.cy}>
                     {total}
                   </tspan>
-                  <tspan className="fill-gray-900 text-label-12" x={viewBox.cx} y={(viewBox.cy ?? 0) + 22}>
+                  <tspan className="fill-label-secondary text-label-12" x={viewBox.cx} y={(viewBox.cy ?? 0) + 22}>
                     ventas
                   </tspan>
                 </text>

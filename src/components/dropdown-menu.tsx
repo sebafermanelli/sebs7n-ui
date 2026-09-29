@@ -148,7 +148,7 @@ function DropdownMenuSubTrigger({ className, inset, children, ...props }: Dropdo
       {...props}
     >
       {children}
-      <ChevronRightIcon className="ml-auto text-gray-900" />
+      <ChevronRightIcon className="ml-auto text-label-secondary" />
     </MenuPrimitive.SubmenuTrigger>
   )
 }

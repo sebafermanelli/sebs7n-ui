@@ -81,7 +81,7 @@ export function Lienzo() {
 
         <ToolbarSeparator />
 
-        <label className="flex items-center gap-2 pl-1 text-copy-13 text-gray-900">
+        <label className="flex items-center gap-2 pl-1 text-copy-13 text-label-secondary">
           Zoom
           <ToolbarInput className="w-16" defaultValue="100" inputMode="numeric" />
         </label>

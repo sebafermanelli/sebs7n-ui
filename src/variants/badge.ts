@@ -23,7 +23,7 @@ const inkBlack = "text-black/85 [--sf-tag-press:rgb(255_255_255/0.3)]"
  * El cuerpo de una etiqueta (2.0): la etiqueta del Finder.
  *
  * Relleno sólido, sin borde, sin brillo y sin vidrio, con 4 px de radio (`rounded-tag`). Hasta la
- * fase 3 el default era vidrio teñido con borde (`subtle`): adentro de una tabla densa se leía
+ * fase 3 el default era un tinte con borde (`subtle`): adentro de una tabla densa se leía
  * como un control más, y el color —que es lo que dice el estado— quedaba lavado.
  *
  * El relleno es el paso de la paleta donde el color se ve vivo y su tinta llega a 4,5:1, y es el

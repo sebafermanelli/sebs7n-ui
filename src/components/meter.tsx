@@ -57,19 +57,19 @@ function Meter({ className, label, showValue = false, size = "md", trackClassNam
       {(label != null || showValue) && (
         <div className={cn("flex items-baseline gap-3", label != null ? "justify-between" : "justify-end")}>
           {label != null && (
-            <MeterPrimitive.Label data-slot="meter-label" className="text-callout text-gray-1000">
+            <MeterPrimitive.Label data-slot="meter-label" className="text-callout text-label">
               {label}
             </MeterPrimitive.Label>
           )}
           {showValue && (
-            <MeterPrimitive.Value data-slot="meter-value" className="text-mono-body tabular-nums text-gray-900" />
+            <MeterPrimitive.Value data-slot="meter-value" className="text-mono-body tabular-nums text-label-secondary" />
           )}
         </div>
       )}
       <MeterPrimitive.Track
         data-slot="meter-track"
         className={cn(
-          "w-full overflow-hidden rounded-full bg-gray-alpha-400 shadow-track",
+          "w-full overflow-hidden rounded-full bg-fill-3",
           "group-data-[size=sm]/meter:h-1 group-data-[size=md]/meter:h-1.5",
           trackClassName
         )}

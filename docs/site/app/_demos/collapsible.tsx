@@ -19,7 +19,7 @@ export function Basico() {
         Factura 0012 · $ 128.400
         <ChevronDownIcon className="transition-transform duration-150 ease-out motion-reduce:transition-none group-data-panel-open:rotate-180" />
       </CollapsibleTrigger>
-      <CollapsibleContent className="flex flex-col gap-1 rounded-control bg-gray-alpha-100 p-3">
+      <CollapsibleContent className="flex flex-col gap-1 rounded-control bg-fill-1 p-3">
         <span>Consultoría — 40 h — $ 96.000</span>
         <span>Hosting — 1 mes — $ 18.400</span>
         <span>Soporte — 1 mes — $ 14.000</span>

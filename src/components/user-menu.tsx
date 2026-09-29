@@ -70,7 +70,7 @@ function UserMenu({ user, collapsed: collapsedProp, side, align, children, signO
       data-slot="user-menu-trigger"
       aria-label={identity}
       className={cn(
-        "touch-target inline-flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full outline-none transition-control hover:bg-gray-alpha-100 focus-visible:focus-ring data-popup-open:bg-gray-alpha-200",
+        "touch-target inline-flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full outline-none transition-control hover:bg-fill-1 focus-visible:focus-ring data-popup-open:bg-fill-2",
         className
       )}
     >
@@ -80,22 +80,22 @@ function UserMenu({ user, collapsed: collapsedProp, side, align, children, signO
     <DropdownMenuTrigger
       data-slot="user-menu-trigger"
       className={cn(
-        "flex h-10 pointer-coarse:h-12 w-full min-w-0 cursor-pointer items-center gap-2 rounded-control px-2 text-left outline-none transition-control hover:bg-gray-alpha-100 focus-visible:focus-ring data-popup-open:bg-gray-alpha-200",
+        "flex h-10 pointer-coarse:h-12 w-full min-w-0 cursor-pointer items-center gap-2 rounded-control px-2 text-left outline-none transition-control hover:bg-fill-1 focus-visible:focus-ring data-popup-open:bg-fill-2",
         className
       )}
     >
       {avatar}
       <span className="flex min-w-0 flex-1 flex-col">
-        <span data-slot="user-menu-name" className="truncate text-callout text-gray-1000">
+        <span data-slot="user-menu-name" className="truncate text-callout text-label">
           {user.name}
         </span>
         {user.email && (
-          <span data-slot="user-menu-email" className="truncate text-callout text-gray-900">
+          <span data-slot="user-menu-email" className="truncate text-callout text-label-secondary">
             {user.email}
           </span>
         )}
       </span>
-      <ChevronsUpDownIcon aria-hidden="true" className="size-4 shrink-0 text-gray-900" />
+      <ChevronsUpDownIcon aria-hidden="true" className="size-4 shrink-0 text-label-secondary" />
     </DropdownMenuTrigger>
   )
 
@@ -126,15 +126,15 @@ function UserMenu({ user, collapsed: collapsedProp, side, align, children, signO
             [
               "header",
               <div data-slot="user-menu-header" className="flex min-w-0 flex-col px-2 py-1.5">
-                <span className="truncate text-callout text-gray-1000">{user.name}</span>
-                {user.email && <span className="truncate text-callout text-gray-900">{user.email}</span>}
+                <span className="truncate text-callout text-label">{user.name}</span>
+                {user.email && <span className="truncate text-callout text-label-secondary">{user.email}</span>}
               </div>,
             ],
             ["children", Children.toArray(children).length > 0 && children],
             [
               "theme",
               showTheme && (
-                <div data-slot="user-menu-theme" className="flex h-10 items-center justify-between gap-2 pr-1 pl-2 text-callout text-gray-1000">
+                <div data-slot="user-menu-theme" className="flex h-10 items-center justify-between gap-2 pr-1 pl-2 text-callout text-label">
                   <span aria-hidden="true">{tema}</span>
                   <ThemeMenuRadio labels={{ group: tema, ...labels?.switcher }} />
                 </div>

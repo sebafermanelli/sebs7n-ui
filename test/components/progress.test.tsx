@@ -53,7 +53,7 @@ describe("Progress", () => {
 
   it("usa los tokens del sistema y anima el ancho con transición propia", () => {
     render(<Progress aria-label="x" value={10} />)
-    expect(track()).toHaveClass("bg-gray-alpha-400", "rounded-full", "overflow-hidden")
+    expect(track()).toHaveClass("bg-fill-3", "rounded-full", "overflow-hidden")
     expect(indicator()).toHaveClass("bg-brand-700", "transition-[width]", "motion-reduce:transition-none")
   })
 

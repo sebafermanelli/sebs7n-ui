@@ -45,7 +45,7 @@ function ThemeMenuRadio({ className, labels: labelsProp, ...props }: ThemeMenuRa
           value={value}
           aria-label={labels[value]}
           data-slot="theme-menu-radio-item"
-          className={cn(itemClassName, "data-highlighted:text-gray-1000")}
+          className={cn(itemClassName, "data-highlighted:text-label")}
         >
           <Icon aria-hidden="true" />
         </MenuPrimitive.RadioItem>

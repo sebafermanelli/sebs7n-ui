@@ -178,8 +178,8 @@ function DatePicker(props: DatePickerProps) {
           inputInvalidClassName,
           inputPaddingClassName[size],
           "flex w-full min-w-0 cursor-pointer items-center gap-2 text-left",
-          "focus-visible:focus-border data-popup-open:focus-border data-placeholder:text-gray-900",
-          "[&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:text-gray-900",
+          "focus-visible:focus-border data-popup-open:focus-border data-placeholder:text-label-secondary",
+          "[&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:text-label-secondary",
           className
         )}
         {...rest}
@@ -209,7 +209,7 @@ function DatePicker(props: DatePickerProps) {
             {clearable && !vacio && (
               // El pie se va con la fecha: vacío no hay nada que sacar, y un botón que no hace
               // nada es ruido.
-              <div className="-mx-3 mt-3 -mb-1 border-t border-gray-alpha-400 px-3 pt-2" data-slot="date-picker-footer">
+              <div className="-mx-3 mt-3 -mb-1 border-t border-separator px-3 pt-2" data-slot="date-picker-footer">
                 <Button onClick={limpiar} size="sm" type="button" variant="ghost">
                   {labels.clear}
                 </Button>

@@ -16,9 +16,9 @@ describe("Toggle (chip)", () => {
   it("borde lleno siempre; prendido con fondo, borde y texto más fuertes, sin color de marca", async () => {
     render(<Toggle>Activos</Toggle>)
     const chip = screen.getByRole("button", { name: "Activos" })
-    expect(chip).toHaveClass("rounded-control", "border", "border-gray-700", "text-gray-900", "hover:border-gray-800")
+    expect(chip).toHaveClass("rounded-control", "border", "border-label-tertiary", "text-label-secondary", "hover:border-label-secondary")
     expect(chip.className).not.toMatch(/border-(dashed|dotted)/)
-    expect(chip).toHaveClass("data-pressed:border-gray-900", "data-pressed:bg-gray-alpha-200", "data-pressed:text-gray-1000")
+    expect(chip).toHaveClass("data-pressed:border-label", "data-pressed:bg-fill-2", "data-pressed:text-label")
     expect(chip.className).not.toMatch(/brand/)
     await userEvent.click(chip)
     expect(chip).toHaveAttribute("aria-pressed", "true")
@@ -113,7 +113,7 @@ describe("Badge", () => {
 })
 
 describe("Card", () => {
-  it("superficie de vidrio: borde alfa, radio de superficie, la sombra de 1px de reposo, padding 24", () => {
+  it("grupo opaco: radio de superficie, plana, padding 24", () => {
     render(
       <Card>
         <CardHeader>
@@ -125,26 +125,26 @@ describe("Card", () => {
       </Card>
     )
     const card = screen.getByText("Ingresos").closest("[data-slot=card]")!
-    expect(card).toHaveClass("border-gray-alpha-400", "material-group", "rounded-surface", "[--card-spacing:--spacing(6)]")
-    // `shadow-card` es 1px que la despega de la página; la de menú/modal no va en una card.
-    expect(card).toHaveClass("shadow-card")
+    expect(card).toHaveClass("bg-grouped", "rounded-surface", "[--card-spacing:--spacing(6)]")
+    // Plana, como las cards de iCloud: sin sombra en reposo.
+    expect(card.className).not.toMatch(/(^|\s)shadow-/)
     expect(card.className).not.toMatch(/shadow-(menu|modal|tooltip)/)
     expect(screen.getByText("Ingresos")).toHaveClass("text-title-2")
-    expect(screen.getByText("Últimos 30 días")).toHaveClass("text-callout", "text-gray-900")
-    expect(screen.getByText("pie")).toHaveClass("border-t", "border-gray-alpha-400")
+    expect(screen.getByText("Últimos 30 días")).toHaveClass("text-callout", "text-label-secondary")
+    expect(screen.getByText("pie")).toHaveClass("border-t", "border-separator")
   })
 
   it("interactiva y seleccionada", () => {
     const interactive = cardVariants({ interactive: true })
     // Sube un pixel con la sombra grande; al apretar vuelve a su lugar y a la sombra de reposo.
-    expect(interactive).toContain("hover:-translate-y-px hover:border-gray-alpha-500 hover:shadow-card-hover")
+    expect(interactive).toContain("hover:-translate-y-px hover:border-separator-strong hover:shadow-card-hover")
     expect(interactive.split(" ")).toEqual(expect.arrayContaining(["active:translate-y-0", "active:shadow-card", "focus-visible:focus-ring"]))
     // Apretada se oscurece con una capa encima (`background-image`) y no cambiando el fondo: un
     // `bg-gray-alpha-*` reemplazaba el sólido del grupo por un alfa y la card se volvía
     // transparente justo al tocarla.
-    expect(interactive).toContain("active:bg-[linear-gradient(var(--color-gray-alpha-200),var(--color-gray-alpha-200))]")
+    expect(interactive).toContain("active:bg-[linear-gradient(var(--color-fill-2),var(--color-fill-2))]")
     expect(interactive).not.toMatch(/active:bg-gray-alpha/)
-    expect(interactive).toMatch(/\bmaterial-group\b/)
+    expect(interactive).toMatch(/\bbg-grouped\b/)
     // `translate` no está en `transition-control`: la interactiva usa la transición que sí lo incluye.
     expect(interactive).toContain("transition-surface")
     render(<Card selected>sel</Card>)
@@ -173,10 +173,10 @@ describe("Table", () => {
       </Table>
     )
     const container = screen.getByRole("table").parentElement!
-    expect(container).toHaveClass("rounded-surface", "border", "border-gray-alpha-400", "material-group", "overflow-x-auto")
-    expect(screen.getByRole("table").querySelector("thead")).toHaveClass("bg-gray-alpha-100", "[&_tr]:h-10")
-    expect(screen.getByText("Cliente")).toHaveClass("text-callout", "text-gray-900")
-    expect(screen.getByText("Ana").closest("tr")).toHaveClass("h-12", "hover:bg-gray-alpha-100", "data-[state=selected]:bg-selection", "data-[state=selected]:text-on-selection")
+    expect(container).toHaveClass("rounded-surface", "border", "border-separator", "bg-surface", "overflow-x-auto")
+    expect(screen.getByRole("table").querySelector("thead")).toHaveClass("bg-fill-1", "[&_tr]:h-10")
+    expect(screen.getByText("Cliente")).toHaveClass("text-callout", "text-label-secondary")
+    expect(screen.getByText("Ana").closest("tr")).toHaveClass("h-12", "hover:bg-fill-1", "data-[state=selected]:bg-selection", "data-[state=selected]:text-on-selection")
     expect(screen.getByText("$1.200")).toHaveClass("text-right", "tabular-nums")
   })
 

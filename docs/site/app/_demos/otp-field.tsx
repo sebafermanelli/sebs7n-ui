@@ -46,7 +46,7 @@ export function DosFactores() {
         <FieldError />
       </Field>
       <Button type="submit">Entrar</Button>
-      {enviado && <p className="text-copy-13 text-gray-900">Se envió {enviado}.</p>}
+      {enviado && <p className="text-copy-13 text-label-secondary">Se envió {enviado}.</p>}
     </Form>
   )
 }

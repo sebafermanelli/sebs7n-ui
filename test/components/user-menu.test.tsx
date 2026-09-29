@@ -55,10 +55,10 @@ describe("UserMenu", () => {
   it("fila de usuario: avatar con iniciales grises, nombre y email truncados", () => {
     render(<Example />)
     const trigger = screen.getByRole("button", { name: /Ana Pérez/ })
-    expect(screen.getByText("AP")).toHaveClass("bg-gray-200", "text-gray-900")
-    expect(screen.getByText("Ana Pérez", { selector: "[data-slot=user-menu-name]" })).toHaveClass("text-callout", "text-gray-1000", "truncate")
-    expect(screen.getByText("ana@example.com", { selector: "[data-slot=user-menu-email]" })).toHaveClass("text-callout", "text-gray-900", "truncate")
-    expect(trigger).toHaveClass("hover:bg-gray-alpha-100", "focus-visible:focus-ring", "data-popup-open:bg-gray-alpha-200")
+    expect(screen.getByText("AP")).toHaveClass("bg-fill-2", "text-label-secondary")
+    expect(screen.getByText("Ana Pérez", { selector: "[data-slot=user-menu-name]" })).toHaveClass("text-callout", "text-label", "truncate")
+    expect(screen.getByText("ana@example.com", { selector: "[data-slot=user-menu-email]" })).toHaveClass("text-callout", "text-label-secondary", "truncate")
+    expect(trigger).toHaveClass("hover:bg-fill-1", "focus-visible:focus-ring", "data-popup-open:bg-fill-2")
   })
 
   it("abre hacia arriba con cabecera no interactiva, ítems de la app, tema y salir neutral", async () => {
@@ -100,7 +100,7 @@ describe("UserMenu", () => {
     await waitFor(() => expect(document.documentElement).toHaveClass("dark"))
     expect(dark).toHaveAttribute("aria-checked", "true")
     expect(screen.getByRole("menu")).toBeInTheDocument()
-    expect(dark).toHaveClass("size-7", "rounded-[calc(var(--radius-control)-2px)]", "data-checked:text-gray-1000", "focus-visible:focus-ring")
+    expect(dark).toHaveClass("size-7", "rounded-[calc(var(--radius-control)-2px)]", "data-checked:text-label", "focus-visible:focus-ring")
   })
 
   it("colapsado: solo el avatar, con tooltip \"Nombre · email\"", async () => {

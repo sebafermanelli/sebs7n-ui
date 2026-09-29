@@ -69,15 +69,15 @@ export function DetalleAMediaHoja() {
           </div>
           <dl className="flex flex-col gap-3 text-copy-14">
             <div className="flex justify-between">
-              <dt className="text-gray-900">Vencimiento</dt>
+              <dt className="text-label-secondary">Vencimiento</dt>
               <dd className="tabular-nums">13/04</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-gray-900">Importe</dt>
+              <dt className="text-label-secondary">Importe</dt>
               <dd className="tabular-nums">$ 128.400</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-gray-900">Condición</dt>
+              <dt className="text-label-secondary">Condición</dt>
               <dd>A 30 días</dd>
             </div>
           </dl>
@@ -126,7 +126,7 @@ export function ElegirDeUnaListaLarga() {
               {CHOFERES.map((nombre) => (
                 <li key={nombre}>
                   <DrawerClose
-                    className="flex h-11 w-full items-center rounded-control px-2 text-left text-copy-14 outline-none hover:bg-gray-200 focus-visible:focus-ring"
+                    className="flex h-11 w-full items-center rounded-control px-2 text-left text-copy-14 outline-none hover:bg-fill-2 focus-visible:focus-ring"
                     onClick={() => setChofer(nombre)}
                   >
                     {nombre}
@@ -137,7 +137,7 @@ export function ElegirDeUnaListaLarga() {
           </DrawerBody>
         </DrawerContent>
       </Drawer>
-      {chofer && <p className="text-copy-13 text-gray-900">Asignado: {chofer}</p>}
+      {chofer && <p className="text-copy-13 text-label-secondary">Asignado: {chofer}</p>}
     </div>
   )
 }

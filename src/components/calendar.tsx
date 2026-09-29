@@ -77,11 +77,11 @@ const SIN_RANGO: DateRange = { from: null, to: null }
  * Un mes en una grilla —o varios, uno al lado del otro—, para elegir una fecha o un rango.
  *
  * Existe porque `<input type="date">` abre el calendario del navegador, que no se puede
- * estilar: adentro de un Popover de vidrio aparecía una caja gris del sistema operativo, con
+ * estilar: adentro de un Popover aparecía una caja gris del sistema operativo, con
  * otra tipografía y en el idioma del navegador y no en el de la app.
  *
  * No dibuja superficie. Va adentro de un `Popover` (que es lo que hace `DatePicker`), de una
- * `Card` o suelto en la página: el vidrio lo pone quien lo contiene.
+ * `Card` o suelto en la página: el fondo lo pone quien lo contiene.
  *
  * Sigue el patrón de grilla de fechas de WAI-ARIA: una sola parada de tabulación, y adentro se
  * recorre con las flechas. Los días de los meses vecinos se ven para completar las semanas,
@@ -227,7 +227,7 @@ function Calendar(props: CalendarProps) {
   )
 
   return (
-    <div data-slot="calendar" data-mode={mode} data-months={cuantos} className={cn("w-fit text-gray-1000", className)} {...rest}>
+    <div data-slot="calendar" data-mode={mode} data-months={cuantos} className={cn("w-fit text-label", className)} {...rest}>
       <div className="flex flex-wrap gap-x-6 gap-y-4" data-slot="calendar-months" onPointerLeave={() => setSobre(null)} ref={vista}>
         {meses.map((mes, indice) => {
           const id = `${titleId}-${indice}`
@@ -272,7 +272,7 @@ function Calendar(props: CalendarProps) {
                 <thead>
                   <tr>
                     {weeksOfMonth(mes, weekStartsOn)[0]!.map((dia) => (
-                      <th abbr={formatos.largo.format(dia)} className="size-7 pointer-coarse:size-10 text-footnote font-semibold text-gray-900" key={dia.getDay()} scope="col">
+                      <th abbr={formatos.largo.format(dia)} className="size-7 pointer-coarse:size-10 text-footnote font-semibold text-label-secondary" key={dia.getDay()} scope="col">
                         {formatos.corto.format(dia).replace(".", "").slice(0, 2)}
                       </th>
                     ))}
@@ -285,7 +285,7 @@ function Calendar(props: CalendarProps) {
                         const iso = toISODate(dia)
                         if (!isSameMonth(dia, mes)) {
                           return (
-                            <td aria-hidden="true" className="size-7 pointer-coarse:size-10 p-0 text-center text-callout tabular-nums text-gray-700" data-outside="" key={iso}>
+                            <td aria-hidden="true" className="size-7 pointer-coarse:size-10 p-0 text-center text-callout tabular-nums text-label-tertiary" data-outside="" key={iso}>
                               {cuantos === 1 ? dia.getDate() : null}
                             </td>
                           )
@@ -330,14 +330,14 @@ function Calendar(props: CalendarProps) {
                               aria-label={formatos.dia.format(dia)}
                               className={cn(
                                 "relative inline-flex size-7 pointer-coarse:size-10 cursor-pointer items-center justify-center rounded-full text-callout tabular-nums outline-none select-none transition-surface",
-                                "hover:bg-gray-alpha-200 focus-visible:focus-ring active:scale-95",
+                                "hover:bg-fill-2 focus-visible:focus-ring active:scale-95",
                                 // Hoy: el número en el color de marca y un punto debajo. El punto es lo que
                                 // lo distingue cuando además está elegido, que es cuando el color no alcanza.
                                 "aria-[current=date]:font-medium aria-[current=date]:text-brand-900",
                                 "aria-[current=date]:after:absolute aria-[current=date]:after:bottom-0.5 pointer-coarse:aria-[current=date]:after:bottom-1.5 aria-[current=date]:after:size-1 aria-[current=date]:after:rounded-full aria-[current=date]:after:bg-brand-700",
-                                "data-selected:bg-brand-700 data-selected:text-brand-contrast data-selected:sheen data-selected:shadow-button-accent data-selected:hover:bg-brand-800",
+                                "data-selected:bg-brand-700 data-selected:text-brand-contrast data-selected:hover:bg-brand-800",
                                 "data-selected:aria-[current=date]:text-brand-contrast data-selected:aria-[current=date]:after:bg-brand-contrast",
-                                "aria-disabled:cursor-not-allowed aria-disabled:text-gray-700 aria-disabled:hover:bg-transparent aria-disabled:active:scale-100"
+                                "aria-disabled:cursor-not-allowed aria-disabled:text-label-tertiary aria-disabled:hover:bg-transparent aria-disabled:active:scale-100"
                               )}
                               data-date={iso}
                               data-selected={marcada ? "" : undefined}

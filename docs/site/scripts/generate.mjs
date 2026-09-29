@@ -220,7 +220,7 @@ const ICONOS = { title: "Iconos", href: "/docs/iconos", description: "Los 1.800 
 const PLAYGROUND = {
   title: "Playground",
   href: "/docs/playground",
-  description: "Regulá el vidrio, el tinte, el color de marca y los radios, mirá los componentes cambiar y copiá el CSS.",
+  description: "Elegí el color de marca, el tema y el wallpaper, mirá los componentes cambiar y copiá el CSS.",
 }
 
 // Pedidos tampoco es una página .md: la arma app/docs/requests con los issues de GitHub.
@@ -251,7 +251,7 @@ const nav = [
 ]
 
 const search = [
-  { title: PLAYGROUND.title, href: PLAYGROUND.href, group: "Sistema", description: PLAYGROUND.description, keywords: "glass vidrio brand color picker theming configurar" },
+  { title: PLAYGROUND.title, href: PLAYGROUND.href, group: "Sistema", description: PLAYGROUND.description, keywords: "brand color picker theming wallpaper configurar" },
   { title: ICONOS.title, href: ICONOS.href, group: "Sistema", description: ICONOS.description, keywords: "icon lucide svg" },
   { title: REQUESTS.title, href: REQUESTS.href, group: "Sistema", description: REQUESTS.description, keywords: "pedir componente request bug votar roadmap" },
   ...pages.map((page) => ({

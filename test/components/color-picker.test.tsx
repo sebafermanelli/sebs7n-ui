@@ -22,14 +22,14 @@ describe("ColorPicker", () => {
     render(<ColorPicker aria-label="Color" defaultValue={AZUL} />)
     const campo = screen.getByRole("button", { name: "Color" })
     expect(campo).toHaveTextContent(hexOfOklch(AZUL))
-    expect(campo).toHaveClass("rounded-field", "glass-control", "data-[size=md]:h-8", "focus-visible:focus-border")
+    expect(campo).toHaveClass("rounded-field", "bg-fill-1", "data-[size=md]:h-8", "focus-visible:focus-border")
     expect(campo.querySelector("[data-slot=color-picker-swatch]")).toHaveStyle({ backgroundColor: hexOfOklch(AZUL) })
   })
 
-  it("abre un panel de vidrio con tres pestañas", async () => {
+  it("abre un panel opaco con tres pestañas", async () => {
     render(<ColorPicker aria-label="Color" />)
     const panel = await abrir()
-    expect(panel).toHaveClass("material-popover", "rounded-menu", "shadow-menu")
+    expect(panel).toHaveClass("bg-surface", "rounded-menu", "shadow-menu")
     expect(within(panel).getAllByRole("tab").map((t) => t.textContent)).toEqual(["Paleta", "Espectro", "Valores"])
   })
 
@@ -187,7 +187,7 @@ describe("ColorPicker: valores y espectro", () => {
     await userEvent.click(screen.getByRole("tab", { name: "Espectro" }))
     const perilla = screen.getByRole("slider", { name: "Matiz" }).nextElementSibling!
     for (const clase of sliderThumbClassName.split(" ")) expect(perilla).toHaveClass(clase)
-    expect(perilla).toHaveClass("h-5", "w-7", "peer-active:scale-x-125", "peer-active:scale-y-135", "peer-active:thumb-lens")
+    expect(perilla).toHaveClass("h-5", "w-7", "peer-active:scale-x-125", "peer-active:scale-y-135")
   })
 
   // floatingPopupClassName bajó a p-3 en 2.0 (popover de macOS); el ColorPicker es un panel de

@@ -108,7 +108,7 @@ describe("ScrollArea", () => {
       "data-hovering:pointer-events-auto",
       "motion-reduce:transition-none"
     )
-    expect(document.querySelector("[data-slot=scroll-area-thumb]")).toHaveClass("bg-gray-alpha-500", "rounded-full")
+    expect(document.querySelector("[data-slot=scroll-area-thumb]")).toHaveClass("bg-label-tertiary", "rounded-full")
   })
 
   it("no rompe el scroll nativo: el viewport es el que scrollea de verdad", async () => {

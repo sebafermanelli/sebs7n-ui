@@ -58,6 +58,6 @@ describe("Icon", () => {
     const icon = screen.getByTestId("i")
     expect(icon).toHaveClass("size-8", "text-blue-900")
     expect(icon).not.toHaveClass("size-5")
-    expect(icon).not.toHaveClass("text-gray-900")
+    expect(icon).not.toHaveClass("text-label-secondary")
   })
 })

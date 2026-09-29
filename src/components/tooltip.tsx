@@ -20,11 +20,10 @@ function TooltipTrigger(props: TooltipPrimitive.Trigger.Props) {
 type TooltipContentProps = WithClassName<TooltipPrimitive.Popup.Props> &
   Pick<TooltipPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset">
 
-// Vidrio denso (`material-popover`) desde 2.0, como en macOS. Hasta 1.x era invertido
-// (gray-1000) porque tiene que leerse igual sobre una foto que sobre una tabla; el vidrio denso
-// ya lo garantiza: texto principal a 4,5:1 contra cualquier fondo (`test/glass-contrast.test.ts`).
-// Lo que no garantiza es el borde: en claro el vidrio denso es casi blanco y sobre una página
-// blanca el Tooltip no se separaba de nada. Lleva un filo de 1 px (`border-gray-alpha-400`, el de los campos).
+// Opaco (`bg-surface`) desde 2.0, la superficie de los popovers de iCloud: texto principal a
+// 4,5:1 sin depender de lo que tenga detrás. iCloud no tiene tooltip propio (usa `title`), así que
+// se deriva de su popover: el filo de 1 px lo pone `shadow-tooltip`, porque en claro la
+// superficie es blanca y sobre una página blanca no se separaba de nada.
 //
 // Sin flecha desde 1.0. La cercanía al control ya dice de quién habla —son 6px—, y la flecha
 // era un rombo de 8px que en una cápsula redondeada quedaba colgando de la curva.
