@@ -407,6 +407,31 @@ describe("Hojas pegadas: la X", () => {
   })
 })
 
+describe("Hojas y el área segura (notch, isla, barra de gestos)", () => {
+  it("la X suma el área segura de los bordes de pantalla que toca la hoja", () => {
+    expect(overlayCloseClassName.split(" ")).toEqual(
+      expect.arrayContaining(["top-[calc(var(--sf-safe-top,0px)+1.125rem)]", "right-[calc(var(--sf-safe-right,0px)+1.125rem)]"])
+    )
+  })
+
+  it.each([
+    ["right", ["[--sf-safe-top:env(safe-area-inset-top)]", "[--sf-safe-right:env(safe-area-inset-right)]"]],
+    ["left", ["[--sf-safe-top:env(safe-area-inset-top)]"]],
+    ["top", ["[--sf-safe-top:env(safe-area-inset-top)]", "[--sf-safe-right:env(safe-area-inset-right)]", "pl-[env(safe-area-inset-left)]", "pr-[env(safe-area-inset-right)]"]],
+    ["bottom", ["[--sf-safe-right:env(safe-area-inset-right)]", "pl-[env(safe-area-inset-left)]", "pr-[env(safe-area-inset-right)]"]],
+  ] as const)("Sheet %s: la X y el contenido esquivan el área segura", async (side, clases) => {
+    render(
+      <Sheet defaultOpen>
+        <SheetContent side={side}>
+          <SheetTitle>Filtrar</SheetTitle>
+        </SheetContent>
+      </Sheet>
+    )
+    const hoja = await screen.findByRole("dialog")
+    for (const clase of clases) expect(hoja).toHaveClass(`data-[side=${side}]:${clase}`)
+  })
+})
+
 describe("Sheet, Popover al estilo iCloud (2.0)", () => {
   it("Sheet: header con el padding de la hoja, título title-3 y pie sin línea", async () => {
     render(
@@ -427,8 +452,8 @@ describe("Sheet, Popover al estilo iCloud (2.0)", () => {
     const pie = hoja.querySelector("[data-slot=sheet-footer]")!
     expect(pie).toHaveClass("p-5", "gap-3")
     expect(pie).not.toHaveClass("border-t")
-    // La X, en la línea del título: la misma posición que en Dialog.
-    expect(screen.getByRole("button", { name: "Cerrar" })).toHaveClass("top-4.5", "right-4.5")
+    // La X, en la línea del título: la misma cuenta que en Dialog (18 px), más el área segura.
+    expect(screen.getByRole("button", { name: "Cerrar" })).toHaveClass(...overlayCloseClassName.split(" "))
   })
 
   // iCloud (§2.8, «Show» en Home y «Apps» en Quick Access): radio 12, opaco, el filo de 1 px y la

@@ -148,6 +148,18 @@ describe("Drawer", () => {
     expect(x).toHaveClass(...overlayCloseClassName.split(" "), "size-7")
   })
 
+  it.each([
+    ["down", ["pb-[env(safe-area-inset-bottom)]", "pl-[env(safe-area-inset-left)]", "pr-[env(safe-area-inset-right)]", "[--sf-safe-right:env(safe-area-inset-right)]"]],
+    ["up", ["pt-[env(safe-area-inset-top)]", "pl-[env(safe-area-inset-left)]", "pr-[env(safe-area-inset-right)]", "[--sf-safe-top:env(safe-area-inset-top)]"]],
+    ["left", ["pt-[env(safe-area-inset-top)]", "pb-[env(safe-area-inset-bottom)]", "pl-[env(safe-area-inset-left)]", "[--sf-safe-top:env(safe-area-inset-top)]"]],
+    ["right", ["pt-[env(safe-area-inset-top)]", "pb-[env(safe-area-inset-bottom)]", "pr-[env(safe-area-inset-right)]", "[--sf-safe-top:env(safe-area-inset-top)]", "[--sf-safe-right:env(safe-area-inset-right)]"]],
+  ] as const)("hacia %s esquiva el área segura, también la X", async (dir, clases) => {
+    render(<DrawerDePrueba swipeDirection={dir} />)
+    await userEvent.click(screen.getByRole("button", { name: "Filtros" }))
+    const hoja = await screen.findByRole("dialog")
+    for (const clase of clases) expect(hoja).toHaveClass(`data-[swipe-direction=${dir}]:${clase}`)
+  })
+
   it("el handle se ve pero no se anuncia ni recibe foco: no es el control de cierre", async () => {
     render(<DrawerDePrueba />)
     await userEvent.click(screen.getByRole("button", { name: "Filtros" }))

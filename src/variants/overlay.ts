@@ -81,9 +81,14 @@ export const dialogCloseClassName = "absolute top-4.5 left-4.5"
 /**
  * Dónde va la X de Sheet y Drawer: arriba a la derecha. iCloud no tiene panel lateral; en una hoja
  * pegada al borde el título va a la izquierda, así que la X se queda del otro lado, en la línea
- * del título (la misma cuenta que `dialogCloseClassName`).
+ * del título (la misma cuenta que `dialogCloseClassName`: 18 px).
+ *
+ * **Más el área segura**: la hoja pone su padding con `env(safe-area-inset-*)`, pero la X es
+ * `absolute` y lo ignora, así que en un iPhone quedaba debajo de la isla. La hoja declara
+ * `--sf-safe-top` y `--sf-safe-right` solo para los bordes de pantalla que toca (una hoja de abajo
+ * no suma el notch de arriba); sin ellas, 0.
  */
-export const overlayCloseClassName = "absolute top-4.5 right-4.5"
+export const overlayCloseClassName = "absolute top-[calc(var(--sf-safe-top,0px)+1.125rem)] right-[calc(var(--sf-safe-right,0px)+1.125rem)]"
 
 /**
  * El popup anclado a un disparador: Popover y HoverCard, que son el mismo objeto.
