@@ -74,7 +74,7 @@ beforeAll(async () => {
     renderToStaticMarkup(h(Textarea, { id: "plain" })),
     renderToStaticMarkup(h(Collapsible, null, h(CollapsibleTrigger, { chevron: true, id: "trigger" }, "Más datos"))),
   ].join("")
-  compiled = await css([...classes(markup), "bar-end", "text-body"])
+  compiled = await css([...classes(markup), "bar-end", "text-body", "animate-marquee"])
   const style = document.createElement("style")
   style.textContent = unlayer(compiled)
   document.head.append(style)
@@ -129,5 +129,23 @@ describe("bar-end compilado", () => {
   it("también a tres niveles: Toolbar > Group > Button", () => {
     const visible = ":nth-last-child(1 of :not(.sr-only, [hidden], .hidden))"
     expect(rule()).toContain(`> ${visible} > ${visible} > [data-size^="icon"]${visible}`)
+  })
+})
+
+describe("animate-marquee compilado", () => {
+  // Tailwind deja el anidado de `@utility` tal cual (lo aplana el build de la app, con Lightning CSS).
+  const rule = () => {
+    const start = compiled.indexOf(".animate-marquee {")
+    return compiled.slice(start, compiled.indexOf("\n}\n", start))
+  }
+
+  it("corre una tanda con la duración del componente, y se pausa con hover, foco adentro y data-paused", () => {
+    expect(rule()).toMatch(/animation: sf-marquee var\(--sf-marquee-duration, 20s\) linear infinite/)
+    for (const selector of [":hover", ":focus-within", "[data-paused]"]) expect(rule()).toContain(`[data-slot="marquee"]${selector} &`)
+    expect(rule()).toMatch(/animation-play-state: paused/)
+  })
+
+  it("con movimiento reducido no corre", () => {
+    expect(rule()).toMatch(/@media \(prefers-reduced-motion: reduce\)\s*\{\s*animation: none/)
   })
 })
