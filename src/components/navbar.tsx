@@ -93,15 +93,24 @@ function Navbar({ className, surfaceClassName, variant: _variant, position = "st
   )
 }
 
+type NavbarContentProps = React.ComponentProps<"div"> & {
+  /**
+   * El ancho de la columna del sitio (`1448`, `"80rem"`): la barra sigue a todo el ancho y su contenido
+   * se centra en esa columna, alineado con los bloques de abajo.
+   */
+  maxWidth?: number | string
+}
+
 /** La fila de la barra: 44 de alto, `0 6px 0 16px` como la de iCloud y los extremos separados. */
-function NavbarContent({ className, ...props }: React.ComponentProps<"div">) {
+function NavbarContent({ className, maxWidth, style, ...props }: NavbarContentProps) {
   return (
     <div
       data-slot="navbar-content"
-      className={cn("flex h-11 w-full items-center justify-between gap-4 ps-4 pe-1.5", className)}
+      className={cn("flex h-11 w-full items-center justify-between gap-4 ps-4 pe-1.5", maxWidth && "mx-auto", className)}
+      style={{ maxWidth, ...style }}
       {...props}
     />
   )
 }
 
-export { Navbar, NavbarContent, useNavbar, type NavbarProps, type NavbarState }
+export { Navbar, NavbarContent, useNavbar, type NavbarContentProps, type NavbarProps, type NavbarState }

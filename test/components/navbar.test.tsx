@@ -96,3 +96,41 @@ describe("Navbar y Sidebar sin restos del vidrio", () => {
     expect(sidebar).not.toMatch(/backdrop-filter-none|after:hidden/)
   })
 })
+
+describe("NavbarContent maxWidth", () => {
+  it("la barra a todo el ancho y el contenido en la columna del sitio, centrado", () => {
+    const { container } = render(
+      <Navbar>
+        <NavbarContent maxWidth={1448}>x</NavbarContent>
+      </Navbar>
+    )
+    const content = container.querySelector<HTMLElement>("[data-slot=navbar-content]")!
+    expect(content.style.maxWidth).toBe("1448px")
+    expect(content).toHaveClass("mx-auto", "w-full")
+    expect(surface(container)).not.toHaveStyle({ maxWidth: "1448px" })
+  })
+
+  it("acepta cualquier largo de CSS y respeta el style del llamador", () => {
+    const { container } = render(
+      <Navbar>
+        <NavbarContent maxWidth="80rem" style={{ color: "red" }}>
+          x
+        </NavbarContent>
+      </Navbar>
+    )
+    const content = container.querySelector<HTMLElement>("[data-slot=navbar-content]")!
+    expect(content.style.maxWidth).toBe("80rem")
+    expect(content.style.color).toBe("red")
+  })
+
+  it("sin maxWidth, lo de 2.0: sin mx-auto ni style", () => {
+    const { container } = render(
+      <Navbar>
+        <NavbarContent>x</NavbarContent>
+      </Navbar>
+    )
+    const content = container.querySelector<HTMLElement>("[data-slot=navbar-content]")!
+    expect(content).not.toHaveClass("mx-auto")
+    expect(content).not.toHaveAttribute("style")
+  })
+})

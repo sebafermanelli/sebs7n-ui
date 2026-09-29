@@ -35,3 +35,27 @@ export function Variantes() {
     </div>
   )
 }
+
+/**
+ * En la columna del sitio
+ * `maxWidth`: la barra sigue a todo el ancho y su contenido se centra en la columna de la página, alineado con los bloques de abajo.
+ */
+export function Column() {
+  return (
+    <div className="relative h-56 w-full overflow-y-auto rounded-surface border border-separator bg-background">
+      <Navbar>
+        <NavbarContent maxWidth={480}>
+          <span className="text-title-3 text-label">Facturación</span>
+          <a className={buttonVariants({ variant: "ghost", size: "sm" })} href="#ejemplos">
+            Precios
+          </a>
+        </NavbarContent>
+      </Navbar>
+      <div className="mx-auto flex max-w-[480px] flex-col gap-3 px-4 py-6">
+        {Array.from({ length: 6 }, (_, i) => (
+          <div className="h-10 rounded-control bg-fill-1" key={i} />
+        ))}
+      </div>
+    </div>
+  )
+}
