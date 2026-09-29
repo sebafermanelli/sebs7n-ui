@@ -45,7 +45,7 @@ describe("la marca llega a AA", () => {
 | Token | Dónde |
 |---|---|
 | `brand-700` | `Button` (el default, acento sólido), el anillo de foco interior (en claro), el anillo de `Card selected`, franja de `Alert variant="brand"`, `Badge color="brand"`. Y **todo lo que está prendido**: `Checkbox` y `Radio` marcados, `Switch`, `Toggle` y el segmento prendido de `ToggleGroup`, el relleno de `Progress` y `Meter`. El `Slider` no: su progreso va en el color del texto, como el de Photos. |
-| `brand-700` como selección | La fila elegida de una lista **con el foco adentro**: `Table`, `List`, `Tree`, `FileGrid`. Es `bg-selection`, con texto e íconos en `text-on-selection` (`brand-contrast`); sin foco, `bg-selection-inactive` (gris). El ítem resaltado de un menú y el activo del `Sidebar` o de `NavigationMenu` **no** van en el acento: son grises (`fill-2`, `fill-1`), como en iCloud. |
+| `brand-700` como selección | La fila elegida de una lista **con el foco adentro**: `Table`, `List`, `Tree` (en `FileGrid` la elegida es la caja gris de Drive, con o sin foco). Es `bg-selection`, con texto e íconos en `text-on-selection` (`brand-contrast`); sin foco, `bg-selection-inactive` (gris). El ítem resaltado de un menú y el activo del `Sidebar` o de `NavigationMenu` **no** van en el acento: son grises (`fill-2`, `fill-1`), como en iCloud. |
 | `brand-700` en tinte | Lo que se marca sin ser la selección: el tramo del medio de un rango en `Calendar`, la burbuja del usuario en `Chat` (14 % en claro, 22 % en oscuro). Es `bg-highlight`. |
 | `brand-800` | Hover del acento. |
 | `brand-900` | `Button variant="link"`, ícono de `Alert variant="brand"`. |

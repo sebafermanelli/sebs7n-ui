@@ -3,7 +3,6 @@
 import {
   ClockIcon,
   DownloadIcon,
-  EllipsisIcon,
   FileSpreadsheetIcon,
   FileTextIcon,
   FolderIcon,
@@ -19,7 +18,6 @@ import {
 import { useMemo, useState } from "react"
 import { AppShell } from "sebs7n-ui/app-shell"
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage } from "sebs7n-ui/breadcrumb"
-import { Button } from "sebs7n-ui/button"
 import {
   ContextMenu,
   ContextMenuContent,
@@ -122,6 +120,28 @@ const LISTA_COLUMNAS = [
   { header: "Tipo", width: 120 },
   { header: "Tamaño", width: 90, numeric: true },
 ]
+
+/**
+ * Las acciones de un ítem o de la selección: el mismo juego sirve para el «…», el click derecho y
+ * Shift+F10. Con varios elegidos, las que valen para uno solo (abrir, cambiar el nombre) no están.
+ */
+function Acciones({ item, selected }: { item: FileGridItem; selected: FileGridItem[] }) {
+  const varios = selected.length > 1
+  const cuantos = varios ? ` ${selected.length} elementos` : ""
+  return (
+    <>
+      {!varios && <ContextMenuItem>{item.folder ? "Abrir" : `Abrir «${item.name}»`}</ContextMenuItem>}
+      <ContextMenuItem>
+        {`Descargar${cuantos}`}
+        <ContextMenuShortcut>⌘D</ContextMenuShortcut>
+      </ContextMenuItem>
+      <ContextMenuItem>{`Compartir${cuantos}…`}</ContextMenuItem>
+      {!varios && <ContextMenuItem>Cambiar el nombre</ContextMenuItem>}
+      <ContextMenuSeparator />
+      <ContextMenuItem variant="destructive">{`Eliminar${cuantos}`}</ContextMenuItem>
+    </>
+  )
+}
 
 /** iCloud Drive: la lista de fuentes, la barra con la vista y las acciones, las carpetas y los archivos. */
 export function FilesShowcase() {
@@ -258,23 +278,19 @@ export function FilesShowcase() {
               </p>
             </div>
 
-            <ContextMenu>
-              <ContextMenuTrigger className="w-full" focusable={false}>
-                {vista === "grid" ? (
-                  <FileGrid
-                    actions={(item) => (
-                      <Button aria-label={`Acciones de ${item.name}`} className="rounded-full bg-surface shadow-thumbnail" size="icon-sm" variant="plain">
-                        <EllipsisIcon />
-                      </Button>
-                    )}
-                    aria-label={`Archivos de ${ruta.at(-1)?.label ?? ""}`}
-                    items={items}
-                    onOpen={abrir}
-                    onSelectedChange={(ids) => setSelected(ids)}
-                    selected={selected}
-                    selectionMode="multiple"
-                  />
-                ) : (
+            {vista === "grid" ? (
+              <FileGrid
+                aria-label={`Archivos de ${ruta.at(-1)?.label ?? ""}`}
+                items={items}
+                menu={(item, elegidos) => <Acciones item={item} selected={elegidos} />}
+                onOpen={abrir}
+                onSelectedChange={(ids) => setSelected(ids)}
+                selected={selected}
+                selectionMode="multiple"
+              />
+            ) : (
+              <ContextMenu>
+                <ContextMenuTrigger className="w-full" focusable={false}>
                   <Tree
                     aria-label={`Archivos de ${ruta.at(-1)?.label ?? ""}`}
                     columns={LISTA_COLUMNAS}
@@ -291,22 +307,22 @@ export function FilesShowcase() {
                     selected={selected}
                     selectionMode="multiple"
                   />
-                )}
-              </ContextMenuTrigger>
-              <ContextMenuContent>
-                <ContextMenuItem disabled={!hasSelection}>Abrir</ContextMenuItem>
-                <ContextMenuItem disabled={!hasSelection}>
-                  Descargar
-                  <ContextMenuShortcut>⌘D</ContextMenuShortcut>
-                </ContextMenuItem>
-                <ContextMenuItem disabled={!hasSelection}>Compartir…</ContextMenuItem>
-                <ContextMenuItem disabled={!hasSelection}>Cambiar el nombre</ContextMenuItem>
-                <ContextMenuSeparator />
-                <ContextMenuItem disabled={!hasSelection} variant="destructive">
-                  Eliminar
-                </ContextMenuItem>
-              </ContextMenuContent>
-            </ContextMenu>
+                </ContextMenuTrigger>
+                <ContextMenuContent>
+                  <ContextMenuItem disabled={!hasSelection}>Abrir</ContextMenuItem>
+                  <ContextMenuItem disabled={!hasSelection}>
+                    Descargar
+                    <ContextMenuShortcut>⌘D</ContextMenuShortcut>
+                  </ContextMenuItem>
+                  <ContextMenuItem disabled={!hasSelection}>Compartir…</ContextMenuItem>
+                  <ContextMenuItem disabled={!hasSelection}>Cambiar el nombre</ContextMenuItem>
+                  <ContextMenuSeparator />
+                  <ContextMenuItem disabled={!hasSelection} variant="destructive">
+                    Eliminar
+                  </ContextMenuItem>
+                </ContextMenuContent>
+              </ContextMenu>
+            )}
           </div>
         </div>
       </div>

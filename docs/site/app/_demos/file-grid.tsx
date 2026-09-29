@@ -1,9 +1,7 @@
 "use client"
 
-import { EllipsisIcon } from "lucide-react"
 import { useState } from "react"
-import { Button } from "sebs7n-ui/button"
-import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "sebs7n-ui/context-menu"
+import { ContextMenuItem, ContextMenuSeparator } from "sebs7n-ui/context-menu"
 import { FileGrid, type FileGridItem } from "sebs7n-ui/file-grid"
 
 // Miniaturas generadas acá mismo (sin imágenes externas): una hoja con líneas, como un PDF chico.
@@ -21,43 +19,37 @@ const ARCHIVOS: FileGridItem[] = [
   { id: "resumen", name: "Resumen anual.xlsx", kind: "44 KB" },
 ]
 
-/**
- * La vista de íconos
- * Miniaturas con el filo de 1 px de Drive, nombre y tipo abajo, y la elegida con el nombre en el acento. Flechas en dos dimensiones y Enter abre. El «…» aparece en la elegida y con el puntero; con teclado, las mismas acciones están en el menú contextual (Shift+F10).
- */
-export function Basico() {
+/** El mismo juego de ítems para el «…», el click derecho y Shift+F10; `selected` dice sobre cuáles actúa. */
+function acciones(item: FileGridItem, selected: FileGridItem[]) {
+  const cuantos = selected.length > 1 ? ` ${selected.length} elementos` : ""
   return (
-    <ContextMenu>
-      <ContextMenuTrigger className="w-full" focusable={false}>
-        <FileGrid
-          actions={(item) => (
-            <Button aria-label={`Acciones de ${item.name}`} className="rounded-full bg-surface shadow-thumbnail" size="icon-sm" variant="plain">
-              <EllipsisIcon />
-            </Button>
-          )}
-          aria-label="Archivos"
-          defaultSelected="f-0012"
-          items={ARCHIVOS}
-        />
-      </ContextMenuTrigger>
-      <ContextMenuContent>
-        <ContextMenuItem>Abrir</ContextMenuItem>
-        <ContextMenuItem>Descargar</ContextMenuItem>
-        <ContextMenuItem>Compartir…</ContextMenuItem>
-      </ContextMenuContent>
-    </ContextMenu>
+    <>
+      {selected.length === 1 && <ContextMenuItem>Abrir «{item.name}»</ContextMenuItem>}
+      <ContextMenuItem>{`Descargar${cuantos}`}</ContextMenuItem>
+      <ContextMenuItem>{`Compartir${cuantos}…`}</ContextMenuItem>
+      <ContextMenuSeparator />
+      <ContextMenuItem variant="destructive">{`Eliminar${cuantos}`}</ContextMenuItem>
+    </>
   )
 }
 
 /**
+ * La vista de íconos
+ * Miniaturas con el filo de 1 px de Drive, nombre y tipo abajo, y una caja gris con el puntero y en la elegida. Flechas en dos dimensiones y Enter abre. `menu` da las acciones: las abre el «…» (en la elegida y con el puntero), el click derecho y, con teclado, Shift+F10 o la tecla de menú.
+ */
+export function Basico() {
+  return <FileGrid aria-label="Archivos" defaultSelected="f-0012" items={ARCHIVOS} menu={acciones} />
+}
+
+/**
  * Varios elegidos
- * `selectionMode="multiple"`: ⌘ (o Ctrl) + click suma o saca, ⇧ + click elige el rango y ⌘A todos. Con el teclado, las flechas mueven sin elegir, Espacio suma o saca y ⇧ + flechas extiende en el orden de la grilla.
+ * `selectionMode="multiple"`: ⌘ (o Ctrl) + click suma o saca, ⇧ + click elige el rango y ⌘A todos. Con el teclado, las flechas mueven sin elegir, Espacio suma o saca y ⇧ + flechas extiende en el orden de la grilla. El menú sobre un elegido actúa sobre toda la selección («Descargar 3 elementos»); sobre otro, lo elige solo.
  */
 export function Varios() {
-  const [selected, setSelected] = useState<string[]>(["f-0012", "f-0013"])
+  const [selected, setSelected] = useState<string[]>(["f-0012", "f-0013", "nc-0003"])
   return (
     <div className="flex w-full flex-col gap-3">
-      <FileGrid aria-label="Archivos" items={ARCHIVOS} onSelectedChange={(ids) => setSelected(ids)} selected={selected} selectionMode="multiple" />
+      <FileGrid aria-label="Archivos" items={ARCHIVOS} menu={acciones} onSelectedChange={(ids) => setSelected(ids)} selected={selected} selectionMode="multiple" />
       <p className="text-callout text-label-secondary" role="status">
         {selected.length === 1 ? "1 elegido" : `${selected.length} elegidos`}
       </p>
