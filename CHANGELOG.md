@@ -11,9 +11,91 @@ major.
 
 ### Breaking (2.0)
 
-Fase 1 de 2.0 (macOS Golden Gate): tokens globales. Sin versión todavía; la 2.0.0 sale al final
-de la fase 5, y con ella la guía de migración (`/docs/migrating-to-2`), que `theme.css` ya
-enlaza.
+La 2.0 se reorientó a **iCloud web** (icloud.com) después de las fases 1–3, que iban hacia macOS:
+lo de esas fases que iCloud no hace se corrigió acá y no quedó escrito dos veces. Sin versión
+todavía; la 2.0.0 sale al final de todas las fases, y con ella la guía de migración
+(`/docs/migrating-to-2`), que `theme.css` ya enlaza.
+
+**Tokens globales (R1).** Valores medidos en icloud.com, claro y oscuro.
+
+- **Escala tipográfica de iCloud.** Los roles conservan el nombre y cambian el valor (base 17):
+
+  | rol | 1.x → 2.0 (px / peso / interlineado) | en iCloud |
+  |---|---|---|
+  | `text-large-title` | 26 → **48** / 600 / 52, −0,005em | título grande de página |
+  | `text-title-1` | 22 → **28** / 600 / 34 | título de modal, detalle |
+  | `text-title-2` | 17 → **21** / 600 / 25 | título de lista, de sidebar, de widget |
+  | `text-title-3` | 15 → **19** / 600 / 24 | título de grupo, de diálogo |
+  | `text-headline` | 13 → **17** / 600 / 22 | título de una fila |
+  | `text-body` | 13 → **17** / 400 / 22 | lo que se lee: celdas, párrafos |
+  | `text-subheadline` | 11 → **15** / 400 / 20 | ítems del sidebar |
+  | `text-callout` | 12 → **14** / 400 / 18 | el chrome: menús, campos, botones, metadatos |
+  | `text-footnote` | 10 → **12** / 400 / 16 | snippets, ticks de gráfico |
+  | `text-caption` | 10/500 → **11** / 400 / 13 | badge, pie legal |
+  | `text-mono-body` · `text-mono-callout` | 13 · 12 → **14** · 12 | código, atajos |
+
+  Los componentes cambiaron de rol donde hacía falta: el chrome que usaba `text-body` (13) usa
+  `text-callout` (14), el ítem del Sidebar `text-subheadline` y el título de grupo de un menú
+  `text-callout font-semibold`. **Si la app usaba `text-body` para chrome, ahora le sale a 17:
+  pasalo a `text-callout`.** `text-body-large` queda como alias de `text-body` (antes 15) y se va
+  en 3.0. Inter se queda (SF no se puede servir); las clases de Geist siguen obsoletas.
+- **Radios de iCloud, sin cápsula.** `--radius-control` 10 → **8** (botones, toggles, segmentado),
+  `--radius-field` 9999 → **10** (campos: dejan de ser cápsula), `--radius-surface` 20 → **11**
+  (cards), `--radius-panel` 26 → **11** (diálogos, hojas), `--radius-menu-item` 6 → **8**, y dos
+  nuevos: `--radius-item` **10** (ítems del Sidebar, filas) y `--radius-menu` **12** (menús y
+  popovers). Botones, chips (Toggle, filtros de Command), el segmentado y los botoncitos de los
+  campos dejan la cápsula; el segmento activo mide `control − 2` (6). El panel de menú es
+  `rounded-menu p-1` (antes `p-1.5` con radio calculado): 8 + 4 = 12, concéntrico; la lista de
+  Select y el contenido de NavigationMenu también pasan a `p-1`. Popover, HoverCard y el toast pasan
+  a `rounded-menu`. `shape="rect"` ya es igual al default.
+- **Se va el vidrio.** Desaparecen `--glass`, `--glass-tint`, todas las `--sf-glass-*`, las
+  utilidades `glass`, `glass-thin`, `glass-thick`, `glass-dense`, `glass-control`, `glass-rim`,
+  `sheen` y `thumb-lens`, las `material-bar`, `material-popover`, `material-modal` y
+  `material-group` de la fase 1, y `glassAlpha`/`glassSurface` del barrel. Una clase que ya no
+  existe no falla: el elemento queda sin fondo. Reemplazos:
+
+  | antes | 2.0 |
+  |---|---|
+  | `glass`, `material-popover`, `material-modal` | `bg-surface` (+ `shadow-menu`) |
+  | `material-bar` (Sidebar) | `bg-surface-secondary` |
+  | `material-bar` (barras) | `bg-surface-bar` · `bg-surface-header` |
+  | `material-group` | `bg-grouped` |
+  | `glass-control` (campos) | `bg-fill-1` |
+  | vidrio sobre un wallpaper | `material-translucent` |
+
+- **Superficies opacas en capas.** Tokens nuevos (`--sf-*` y su color de Tailwind): `surface`,
+  `surface-secondary`, `surface-bar`, `surface-header`, `grouped`, `fill-1/2/3`, `separator`,
+  `separator-strong`, `hairline`, `label`, `label-secondary`, `label-tertiary`, `label-quaternary`,
+  `selection-inactive` y `segment`. **La página oscura pasa de negro a `#1C1C1E`.** Los componentes
+  dejaron `text-gray-1000/900/700` por `text-label`/`-secondary`/`-tertiary`,
+  `bg-gray-alpha-100/200/300` por `bg-fill-1/2/3` y `border-gray-alpha-400` por
+  `border-separator`; lo que la app pase con la paleta de Geist sigue andando. Los campos son
+  `bg-fill-1` sin borde visible (sin hover de borde); la Card es `bg-grouped`, plana y sin borde;
+  la Table, `bg-surface` con borde. `bg-ambient` queda como wallpaper opcional (`AppShell ambient`),
+  y sobre él la barra del `Navbar` usa `material-translucent`, el único material con blur.
+- **Sombras de iCloud.** `shadow-menu` y `shadow-modal` son `0 11px 34px` (16 % en claro, 65 % en
+  oscuro) con el filo del popover; entran `shadow-widget`, `shadow-segment`, `shadow-badge` y
+  `shadow-thumbnail`; `shadow-card` es plana. Se van `shadow-button`, `shadow-button-inverted`,
+  `shadow-button-accent`, `shadow-chip` y `shadow-track`. Botones, campos, chips, casillas y
+  pistas son planos y **ya no se hunden al apretar** (`active:translate-y-px`).
+- **Foco interior.** `focus-ring` pasa del anillo de Geist por fuera a `inset 0 0 0 3px` del color
+  de foco (`--sf-focus`, la marca). iCloud lo pinta al 70 %; con las marcas de ejemplo eso no
+  llega a 3:1 en claro, así que el default es la marca plena y `--sf-focus-alpha: 70%` queda para
+  la app cuya marca lo aguante. `focus-border` (campos) es el mismo anillo y **se ve también con
+  el puntero** (ya no hay halo solo de teclado). Sobre un fondo de marca va `focus-ring-inverse`.
+- **Selección de iCloud** (reemplaza la de la fase 1, que era acento sólido en todos lados). El
+  ítem resaltado de un menú (también Select y Combobox) va en `fill-2` y **el texto no cambia de
+  color**; el activo del Sidebar y el link actual de NavigationMenu, en `fill-1`. El acento sólido
+  (`bg-selection` + `text-on-selection`) queda solo para la fila elegida de una `Table` **con el
+  foco adentro**; sin foco la fila es `bg-selection-inactive`. `inside-selection` y
+  `selectionSecondaryClassName` miran solo ese caso: un color propio adentro de un ítem de menú o
+  del Sidebar ya no pasa a blanco, y no hace falta. `menuItemSecondaryClassName` es
+  `text-label-secondary`.
+- **Playground del sitio:** sin los controles de vidrio, tinte y radios; quedan marca, tema y
+  wallpaper (apagado por defecto).
+
+**Lo que sigue de las fases 1–3.** Los números de alto y de radio que cambió R1 ya están arriba;
+las fases R2–R5 rehacen diálogos, menús, controles y listas con las medidas de iCloud.
 
 - **Inter en vez de Geist.** `--font-sans` es `var(--font-inter)`, con `system-ui` de respaldo, y
   la mono es la del sistema. `geist` deja de ser peer: la app carga Inter con `next/font/google`
@@ -21,120 +103,41 @@ enlaza.
 - **Las clases tipográficas de Geist quedan obsoletas.** `text-copy-*`, `text-label-*`,
   `text-heading-*` y `text-button-*` siguen andando y `cn()` las sigue fusionando, pero el paquete
   ya no las usa; se van en la próxima major.
-- **Roles tipográficos de Apple.** `text-large-title`, `text-title-1/2/3`, `text-headline`,
-  `text-body` (13 px), `text-callout`, `text-subheadline`, `text-footnote`, `text-caption`,
-  `text-mono-body` y `text-mono-callout`. Todos los componentes los usan.
-- **Controles un paso más chicos.** El `md` pasa de 40 a 32 px (`sm` 24, `lg` 40); los ítems de
-  menú miden 24 y los del Sidebar 28. Con el dedo el área crece a 44 por `touch-target`, sin
-  cambiar lo que se ve. Si la app fijaba alturas contra las de 1.x, revisalas.
-- **Selección en acento sólido.** El ítem resaltado de un menú (`data-highlighted`, también en
-  Select y Combobox), el ítem activo del Sidebar, la fila seleccionada de Table y el
-  NavigationMenuLink de la página actual van en `bg-selection` con `text-on-selection` (el par del
-  botón `accent`). La opción elegida de Select y Combobox no se pinta: lleva el check, como en
-  macOS. `--sf-highlight` queda para lo que se marca sin ser la selección.
-- **Cualquier color propio adentro de un ítem seleccionable tiene que usar
-  `selectionSecondaryClassName` o `text-on-selection`.** Sobre el acento sólido, una fecha en
-  `text-gray-900` o un ícono en `text-green-900` desaparecen. `cn("text-gray-900",
-  selectionSecondaryClassName)` pasa al color de contraste cuando el ítem está seleccionado. El
-  `Badge` se adapta solo (el `subtle` pasa a contorno, el `solid` brand se invierte).
-- **Material por rol.** `material-bar` (barras), `material-popover` (menús, popovers, Tooltip),
-  `material-modal` (Dialog, AlertDialog, Sheet, Drawer: 91 % de fill, no se ve lo de atrás) y
-  `material-group` (Card, Table, EmptyState: sólido `--sf-group`, sin blur). El Tooltip deja de
-  ser invertido y lleva un filo de 1 px; el toast de Sonner también es `material-popover`.
-  `glass`, `glass-dense` y `glass-thick` siguen existiendo para las apps.
+- **Alturas.** El `md` pasa de 40 a 32 px (`sm` 24, `lg` 40); los ítems de menú miden 24 y los del
+  Sidebar 28 (iCloud usa 30 y 32: R3 y R5). Con el dedo el área crece a 44 por `touch-target`, sin
+  cambiar lo que se ve.
 - **`Button variant="link"` no agranda su área con el dedo**: es texto adentro de un párrafo.
 - **Toggle con borde lleno** en los dos estados (antes, punteado sin apretar).
-- **La perilla del Slider es una cápsula** de 20 × 28, la misma del matiz del ColorPicker.
+- **La perilla del Slider es una cápsula** de 20 × 28, la misma del matiz del ColorPicker; al
+  arrastrarla crece (ya no se vuelve lente).
 - **NumberField mide lo que el número**: el grupo pasa a `w-fit` y el input usa
   `field-sizing: content`. Si la app contaba con que ocupara todo el ancho, pasale `className="w-full"`.
 - **SidebarSearch mide 32** (`h-8`, antes 28) y el atajo va en `Kbd size="sm"`.
 - **Con el dedo** las pestañas llegan a 44, los días del Calendar miden 40 (antes 44: no entraban
   en 320 px), y la Toolbar, sus grupos, las flechas del Calendar y el ToggleGroup se separan 20 px
   para que las áreas de 44 no se pisen.
-
-Fase 2 de 2.0: diálogos.
-
-- **AlertDialog es la alerta de macOS.** Mide 300 px como máximo a cualquier ancho
-  (`max-w-[min(300px,calc(100%-2rem))]`, antes `sm:max-w-md`), con 20 px de padding y 12 entre bloques; el título pasa a `text-title-3`. El pie
-  es una grilla de botones del mismo ancho, sin línea arriba ni márgenes negativos; con tres o más
-  botones, o en pantallas de 360 px o menos, se apilan **en el orden del DOM** (Tab sigue el orden
-  en pantalla; macOS pone el por defecto arriba, acá lo escribís primero si lo querés ahí).
-  `AlertDialogContent` usa `alertPopupClassName` y el pie `alertFooterClassName`, ya no
-  `modalPopupClassName` ni `modalFooterClassName`. Apilados, los botones se separan 12 px (antes 8),
-  para que las áreas táctiles de 44 no se pisen. Las etiquetas largas bajan de renglón adentro del
-  botón (`whitespace-normal`, `min-h-8`) en vez de salirse.
-- **`AlertDialogCancel` es `secondary`** (el gris de macOS), antes `outline`.
-- **El foco inicial de AlertDialog es `AlertDialogCancel`** esté donde esté en el pie, y no el
-  primer botón: apilada con la acción destructiva arriba, Base UI enfocaba «Descartar cambios» y
-  un Return descartaba. Sin `AlertDialogCancel`, o con el dedo, queda el de Base UI; un
-  `initialFocus` de la app gana siempre.
-- **`AlertDialogAction variant` cambia de significado**: `default` renderiza `accent` (antes el
-  negro) y `destructive` renderiza `destructive-tinted`, texto rojo sobre tinte rojo (antes el rojo
-  sólido). `<AlertDialogClose render={<AlertDialogAction variant="destructive" />}>` sigue andando.
-- **Dialog, Sheet y Drawer son la hoja de macOS**: título `text-title-3` (antes `title-2`),
-  20 px de padding (antes 24: `modalPopupClassName` pasa a `p-5`, los header y pie de Sheet a
-  `p-5`, los de Drawer a `px-5`) y el pie sin línea arriba. `modalFooterClassName` queda en
-  `flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end`, sin `-mx-6` ni `border-t`. La X
-  se queda y `overlayCloseClassName` pasa a `top-4.5 right-4.5`, en la línea del título. Si la app
-  ponía contenido con `px-6` entre el header y el pie de un Sheet, pasalo a `px-5`.
-- **El pie de Dialog ya no se invierte en mobile.** `modalFooterClassName` pasa a
-  `flex flex-col gap-3 pt-2 sm:flex-row sm:justify-end`: sin `flex-col-reverse`, los botones se
-  apilan en el orden del DOM, que es el orden de Tab (WCAG 1.3.2 y 2.4.3). Con «Cancelar» primero,
-  el principal queda abajo en mobile; si la app contaba con que subiera, escribilo primero. Los
-  pies de Dialog, Sheet y Drawer separan los botones 12 px (antes 8), para que apilados las áreas
-  táctiles de 44 no se pisen.
-- **Popover y HoverCard más angostos**: `floatingPopupClassName` pasa a `w-64` (antes `w-72`),
-  `p-3` (antes `p-4`) y `gap-2` (antes `gap-3`). ColorPicker y DatePicker ya pisaban el ancho; un
-  popover con más contenido lo pide con `className`. El ColorPicker conserva `p-4`: es un panel de
-  320 px con 16 entre bloques, y con 12 de borde quedaba más apretado por fuera que por dentro.
-
-Fase 3 de 2.0: menús y búsqueda.
-
-- **El tilde va a la izquierda.** En `DropdownMenu`, `ContextMenu`, `Menubar`, `Select` y
-  `Combobox` el tilde de `CheckboxItem`, `RadioItem` y de la opción elegida pasa del borde derecho
-  a una canaleta a la izquierda, y el texto de esos ítems arranca a 28 px (`pl-7`,
-  `menuGutterClassName`). `inset` pasa de `pl-8` a `pl-7` (`menuInsetClassName`) para alinear los
-  ítems comunes y los títulos con los que tienen tilde. En Select y Combobox todas las opciones y
-  los títulos reservan la canaleta; un menú sin tildes sigue en `px-2`.
-- **Títulos de grupo chicos, en negrita y gris**: `menuLabelClassName` pasa a
-  `px-2 pt-2 pb-1 text-subheadline font-semibold text-gray-900`.
-- **Separadores con aire a los costados**: `menuSeparatorClassName` pasa a `mx-2 my-1` (antes
-  `-mx-1`, de borde a borde).
-- **Panel de menú** `p-1.5`, radio concéntrico con `--spacing(1.5)` y `min-w-48`. El panel de
-  `NavigationMenu` también: el `p-1.5` lo pone `NavigationMenuContent` (el `NavigationMenuPopup` ya
-  no tiene padding; antes eran `p-1` y `p-1`) y el radio es `control + --spacing(1.5)`.
-- **Select es el pop-up button de macOS**: el disparador lleva ⌃⌄ (`ChevronsUpDownIcon`) y
-  `SelectContent` tiene `alignItemWithTrigger` en `true` por defecto, así que la lista se abre con
-  la opción elegida encima del disparador. Para el comportamiento de 1.x,
-  `alignItemWithTrigger={false}`. El scroll de una lista larga pasa del panel a `SelectPrimitive.List`
-  (`data-slot="select-list"`, con el `p-1.5`), que es lo que Base UI desplaza para alinear la
-  elegida; el panel queda `overflow-hidden p-0` y las flechas flotan arriba y abajo. Si la app
-  pisaba el padding o el `max-h` del `SelectContent`, ahora van en la lista. `Combobox` también
-  lleva ⌃⌄ y ya no gira al abrir.
-- **La canaleta del tilde le gana al `className` de la app**: `menuGutterClassName` va después en
-  el `cn()`, así que un `px-3` en un `CheckboxItem`, un `RadioItem` o una opción de Select o
-  Combobox ya no la borra. Para mover el texto de esos ítems hay que pisar `pl-*` con `!`.
-- **El título abierto de `Menubar` es una pastilla gris** (`gray-alpha-200`, hover
-  `gray-alpha-100`), no el acento.
-
-Ajustes de 2.0: menús, etiquetas y hojas.
-
-- **Radios de menú de macOS.** El resaltado de un ítem pasa de `rounded-control` (10 px) a
-  `rounded-menu-item` (6 px) y el panel, de 16 a 12: `rounded-[calc(var(--radius-menu-item)+--spacing(1.5))]`,
-  el radio del ítem más el `p-1.5`, así que siguen siendo concéntricos. Vale para los seis menús
-  (`DropdownMenu`, `ContextMenu`, `Menubar`, `Select`, `Combobox`, `Autocomplete`), que salen de
-  `menuItemClassName` y `menuPopupClassName`. `NavigationMenu` y `Command` no cambian: sus links
-  y filas no son ítems de menú. Si la app pisaba `--radius-control` para achicar los menús, ahora
-  es `--radius-menu-item`.
-- **El ítem destructivo va sin rojo.** En `DropdownMenu`, `ContextMenu` y `Menubar`,
-  `variant="destructive"` ya no cambia cómo se ve: texto común y, resaltado, el mismo acento que
-  cualquier ítem, como el «Eliminar» de Mail. El peligro lo muestra la alerta que confirma: poné
-  «…» en el ítem y abrí un `AlertDialog` con `AlertDialogAction variant="destructive"`. La prop
-  se sigue aceptando (y sale como `data-variant`), pero está **obsoleta** y se va en la próxima
-  major.
-- **Badge y Tag sólidos, como las etiquetas del Finder.** Relleno lleno, sin borde, sin brillo
-  (`sheen`, `shadow-chip`, `shadow-button`) y sin vidrio, con 4 px de radio (`rounded-tag`, antes
-  `rounded-full`). La tinta es blanca o negra al 85 %, la que llega a 4,5:1 en los dos temas:
+- **Diálogos (fase 2, provisorio hasta R2).** AlertDialog es una alerta compacta de 300 px con 20
+  de padding, título `text-title-3` y pie de botones del mismo ancho (`alertPopupClassName`,
+  `alertFooterClassName`); se apilan en el orden del DOM con tres o más, o en 360 px o menos, y
+  separados 12. `AlertDialogCancel` es `secondary` y es el foco inicial. `AlertDialogAction
+  variant` cambia de significado: `default` renderiza `accent` y `destructive` renderiza
+  `destructive-tinted`. Dialog, Sheet y Drawer llevan título `text-title-3`, 20 px de padding
+  (`modalPopupClassName` `p-5`) y el pie `flex flex-col gap-3 pt-2 sm:flex-row sm:justify-end`,
+  sin `-mx-6`, sin `border-t` y sin invertir en mobile. La X queda en `top-4.5 right-4.5`
+  (`overlayCloseClassName`). Popover y HoverCard: `w-64 p-3 gap-2` (`floatingPopupClassName`).
+  Todo esto es opaco (`bg-surface`), no el material de la fase 2. R2 lo rehace como iCloud
+  (radio 11, cerrar arriba a la izquierda, acción centrada).
+- **Menús (fase 3, provisorio hasta R3).** El tilde de `CheckboxItem`, `RadioItem` y la opción
+  elegida de Select y Combobox va en una canaleta a la izquierda (`pl-7`, `menuGutterClassName`,
+  también después del `className` de la app); `inset` pasa a `pl-7` (`menuInsetClassName`). Títulos
+  de grupo: `menuLabelClassName` = `px-2 pt-2 pb-1 text-callout font-semibold text-label-secondary`.
+  Separadores `mx-2 my-1`. Select lleva ⌃⌄ y `alignItemWithTrigger` en `true` (para 1.x,
+  `false`); el scroll de una lista larga es de `SelectPrimitive.List`, no del panel. Combobox lleva
+  ⌃⌄ y no gira. El título abierto de `Menubar` es gris. **`variant="destructive"` de un ítem sigue
+  sin rojo por ahora y la prop está obsoleta**; R3 lo vuelve rojo, como en iCloud.
+- **Badge y Tag sólidos, como las etiquetas del Finder.** Relleno lleno, sin borde, sin brillo y
+  con 4 px de radio (`rounded-tag`), texto `text-footnote`. La tinta es blanca o negra al 85 %, la
+  que llega a 4,5:1 en los dos temas:
 
   | color | relleno | tinta | claro | oscuro |
   |---|---|---|---|---|
@@ -148,43 +151,26 @@ Ajustes de 2.0: menús, etiquetas y hojas.
   | `purple` | `purple-700` | blanca | 5,55:1 | 5,31:1 |
   | `pink` | `pink-800` | blanca | 4,57:1 | 4,58:1 |
 
-  Cómo se mapean las variantes:
   - `variant="subtle"` (el default de 1.x) **se ve igual que `solid`** y queda obsoleto. El default
-    pasa a `solid`. No hace falta tocar nada para que compile, pero cada badge que era tenue ahora
-    es lleno: revisá las pantallas con muchos.
-  - `variant="solid"` ya vale en los nueve colores (antes el tipo solo dejaba `gray` y `brand`).
-  - `solid` `gray` deja de ser el negro invertido (`gray-1000` con texto de superficie) y pasa al
-    gris del Finder. Para el negro de antes: `className="bg-gray-1000 text-background-100"`.
-  - El punto de `dot` va en la tinta (`bg-current`), no en el `-700` del color, que sobre el relleno
-    no se veía. `badgeDotColor` sigue exportado para puntos sueltos.
-  - Adentro de un ítem seleccionado el badge **conserva su relleno y su tinta** (reemplaza al
-    contorno de la fase 1); solo `brand`, que es el color de la selección, se invierte. Un ícono
-    adentro del badge conserva la tinta aunque el ítem de menú resaltado pinte sus `svg` de
-    `on-selection`.
-  - `Tag` y `ComboboxChip` salen de `tagVariants`, que ahora usa este cuerpo. El hover del botón
-    de quitar pasa de `gray-alpha-300` a `--sf-tag-press`, un velo del lado contrario a la tinta
-    (oscurece bajo la X blanca, aclara bajo la negra): la X queda arriba de 4,5:1 también en hover.
-    El área de 24 × 24 y el anillo de foco no cambian.
-  - `--sf-tint-border` ya no lo usa ningún componente; sigue declarado.
-- **Sheet y Drawer flotantes.** Se despegan 8 px de cada borde que tocan (una hoja derecha: arriba,
-  a la derecha y abajo) y llevan las **cuatro** esquinas con `rounded-panel`, el radio de la
-  píldora del `Sidebar`. En un teléfono el margen es el área segura (`env(safe-area-inset-*)`)
-  cuando es más grande. Cerradas se desplazan su tamaño más el margen, así salen enteras. Antes iban
-  de borde a borde (`inset-y-0`, `right-0`…), el Sheet cuadrado y el Drawer redondeado solo del
-  lado de adentro.
-  - En el `Drawer` el gesto no cambia: el `transform` del arrastre sigue siendo el snap point más
-    el movimiento que escribe Base UI; solo la posición de reposo y la de afuera suman el margen.
-    Como un snap point mide desde abajo de la hoja, la parte visible queda 8 px más arriba.
-  - La X sigue en `top-4.5 right-4.5`, adentro del arco de 26 px aun con su anillo de foco.
-  - Si la app ponía contenido que llega al borde (una imagen, un fondo), sumale `overflow-hidden`
-    al `SheetContent` para recortarlo a la curva (el `AppShell` ya lo hace).
-  - Si la app pisaba `inset-y-0`, `right-0` o `translate-x-full` con `className`, ahora son
-    `top-(--sheet-gap-t)`, `right-(--sheet-gap-r)` y `translate-x-[calc(100%+var(--sheet-gap-r))]`.
+    pasa a `solid`; cada badge que era tenue ahora es lleno.
+  - `variant="solid"` vale en los nueve colores. `solid` `gray` deja de ser el negro invertido; para
+    el de antes: `className="bg-gray-1000 text-background-100"`.
+  - El punto de `dot` va en la tinta (`bg-current`). `badgeDotColor` sigue exportado.
+  - Adentro de una fila elegida sobre el acento el badge conserva su relleno y su tinta; solo
+    `brand` se invierte.
+  - `Tag` y `ComboboxChip` salen de `tagVariants`. El hover del botón de quitar es `--sf-tag-press`,
+    un velo del lado contrario a la tinta. `--sf-tint-border` ya no lo usa ningún componente.
+- **Sheet y Drawer flotantes (provisorio hasta R2).** Se despegan 8 px de cada borde que tocan (el
+  área segura si es más grande) y llevan las cuatro esquinas en `rounded-panel` (11 desde R1).
+  Cerradas se desplazan su tamaño más el margen. En el `Drawer` el gesto no cambia. Si la app ponía
+  contenido que llega al borde, sumale `overflow-hidden`. Si pisaba `inset-y-0`, `right-0` o
+  `translate-x-full`, ahora son `top-(--sheet-gap-t)`, `right-(--sheet-gap-r)` y
+  `translate-x-[calc(100%+var(--sheet-gap-r))]`.
 
 ### Added (2.0)
 
 - **`Command`**, la paleta de comandos estilo Spotlight (`sebs7n-ui/command`): `Command`
-  (incrustado), `CommandDialog` (anclado arriba, `material-popover`, sin X ni velo, Escape cierra),
+  (incrustado), `CommandDialog` (anclado arriba, opaco, sin X ni velo, Escape cierra),
   `CommandInput`, `CommandFilters`/`CommandFilter` (chips en un `radiogroup` nombrado «Filtros»,
   que exponen su valor),
   `CommandList`, `CommandGroup` (título con `menuLabelClassName`), `CommandItem` (40 px, ícono de
@@ -199,7 +185,7 @@ Ajustes de 2.0: menús, etiquetas y hojas.
     entra en el ancho del campo, la sugerencia se esconde.
   - Ítems que llegan tarde (un índice async, con `shouldFilter={false}`) quedan con el primero
     elegido, y dos ítems con el mismo `value` no se pisan.
-  - El campo usa `text-body-large` (15 px regular): un rol de título no se pisa con `font-normal`.
+  - El campo usa `text-body-large` (17 px regular desde R1): un rol de título no se pisa con `font-normal`.
   - `CommandEmpty` va al lado de `CommandList`, no adentro: un listbox solo admite opciones y
     grupos.
   - `shouldFilter={false}` para ítems que la app ya filtró y ordenó (es lo que usa el buscador del
@@ -209,7 +195,7 @@ Ajustes de 2.0: menús, etiquetas y hojas.
 - `commandDialogPopupClassName`, `commandItemClassName` y `commandItemIconClassName`
   (`variants/command`, también en el barrel).
 - `menuGutterClassName`, `menuInsetClassName` y `menuIndicatorClassName` (`variants/menu`).
-- Tokens `--radius-menu-item` (6 px) y `--radius-tag` (4 px), con sus utilidades `rounded-menu-item`
+- Tokens `--radius-item` (10), `--radius-menu` (12), `--radius-menu-item` (8) y `--radius-tag` (4), con sus utilidades `rounded-item`, `rounded-menu`, `rounded-menu-item`
   y `rounded-tag`; `cn()` los fusiona como los otros radios.
 - `floatingSheetGapClassName` (`variants/overlay`, también en el barrel): las cuatro variables
   `--sheet-gap-*` del margen de una hoja flotante, para armar una a mano con Sheet o Drawer.
@@ -219,10 +205,15 @@ Ajustes de 2.0: menús, etiquetas y hojas.
   (cualquier ítem seleccionable), con el variant `inside-selection:` que sostiene al segundo.
   `MenuItem`, `SidebarItem`, `TableRow` y `NavigationMenuLink` (el de tarjeta) llevan
   `group/selectable`.
-- Tokens `--sf-selection`, `--sf-on-selection` y `--sf-group` (con sus utilidades
-  `bg-selection`, `text-on-selection` y `material-group`).
-- Los roles tipográficos de macOS y `text-body-large` (15/20/400), el cuerpo de los controles `lg`.
-- `material-bar`, `material-popover`, `material-modal` y `material-group`.
+- Tokens `--sf-selection`, `--sf-on-selection` y `--sf-selection-inactive` (utilidades
+  `bg-selection`, `text-on-selection`, `bg-selection-inactive`), y las superficies de iCloud:
+  `bg-surface`, `bg-surface-secondary`, `bg-surface-bar`, `bg-surface-header`, `bg-grouped`,
+  `bg-fill-1/2/3`, `border-separator`, `border-separator-strong`, `hairline`, `text-label*` y
+  `bg-segment`.
+- `material-translucent`, el único material con blur, para lo que va sobre un wallpaper.
+- Sombras `shadow-widget`, `shadow-segment`, `shadow-badge` y `shadow-thumbnail`.
+- `focus-ring-inverse` (el anillo sobre un fondo de marca) y `--sf-focus`/`--sf-focus-alpha`.
+- Los roles tipográficos con la escala de iCloud y `text-body-large` (alias de `text-body`).
 - `EmptyState variant`: `default`, `subtle` y `plain` (sin superficie, adentro de una Card o Table).
 - `Kbd size`: `md` (20 px) y `sm` (18 px).
 - `sliderThumbClassName` y sus estados (`variants/slider`), y `tooltipSurfaceClassName`
