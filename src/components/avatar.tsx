@@ -54,7 +54,7 @@ function AvatarFallback({ className, ...props }: AvatarFallbackProps) {
       data-slot="avatar-fallback"
       className={cn(
         "flex size-full items-center justify-center bg-linear-to-b from-[#6e6e73] to-[#48484a] font-semibold text-white uppercase",
-        "text-callout group-data-[size=sm]/avatar:text-caption group-data-[size=sm]/avatar:font-semibold group-data-[size=lg]/avatar:text-subheadline group-data-[size=xl]/avatar:text-title-1",
+        "text-callout group-data-[size=sm]/avatar:text-caption group-data-[size=sm]/avatar:font-semibold group-data-[size=lg]/avatar:text-subheadline group-data-[size=lg]/avatar:font-semibold group-data-[size=xl]/avatar:text-title-1",
         className
       )}
       {...props}
