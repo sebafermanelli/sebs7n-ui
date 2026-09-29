@@ -1,8 +1,11 @@
 import { fireEvent, render, screen, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
+import { useState } from "react"
+import { renderToString } from "react-dom/server"
 import { describe, expect, it, vi } from "vitest"
 
 import { FileGrid, type FileGridItem } from "../../src/components/file-grid"
+import { hidratar } from "../hidratar"
 
 const ITEMS: FileGridItem[] = [
   { id: "a", name: "Factura 0012.pdf", kind: "PDF" },
@@ -141,5 +144,113 @@ describe("FileGrid · revisión de R5b", () => {
     render(<FileGrid actions={() => <button type="button">Más</button>} aria-label="Archivos" items={ARCHIVOS} />)
     const envoltura = document.querySelector("[data-slot=file-grid-actions]")!
     expect(fireEvent.mouseDown(envoltura)).toBe(false)
+  })
+})
+
+describe("FileGrid · selección múltiple", () => {
+  const elegidos = () => screen.getAllByRole("option").filter((el) => el.getAttribute("aria-selected") === "true").map((el) => el.textContent)
+
+  it("aria-multiselectable solo con selectionMode=multiple; el default sigue siendo simple", () => {
+    const { rerender } = render(<FileGrid aria-label="Archivos" items={ITEMS} />)
+    expect(screen.getByRole("listbox")).not.toHaveAttribute("aria-multiselectable")
+    rerender(<FileGrid aria-label="Archivos" items={ITEMS} selectionMode="multiple" />)
+    expect(screen.getByRole("listbox")).toHaveAttribute("aria-multiselectable", "true")
+  })
+
+  it("click elige uno; ⌘/Ctrl+click suma y saca; ⇧+click elige el rango desde el ancla", async () => {
+    const onSelectedChange = vi.fn()
+    const user = userEvent.setup()
+    render(<FileGrid aria-label="Archivos" items={ITEMS} onSelectedChange={onSelectedChange} selectionMode="multiple" />)
+    await user.click(screen.getByText("Factura 0013.pdf"))
+    expect(onSelectedChange).toHaveBeenLastCalledWith(["b"], [expect.objectContaining({ id: "b" })])
+    await user.keyboard("{Meta>}")
+    await user.click(screen.getByText("Notas.txt"))
+    await user.keyboard("{/Meta}")
+    expect(onSelectedChange).toHaveBeenLastCalledWith(["b", "e"], [expect.objectContaining({ id: "b" }), expect.objectContaining({ id: "e" })])
+    await user.keyboard("{Control>}")
+    await user.click(screen.getByText("Factura 0013.pdf"))
+    await user.keyboard("{/Control}")
+    expect(onSelectedChange).toHaveBeenLastCalledWith(["e"], [expect.objectContaining({ id: "e" })])
+    // El ancla quedó en «Factura 0013» (el último ⌘+click): ⇧+click en «Contratos» elige b..c.
+    await user.keyboard("{Shift>}")
+    await user.click(screen.getByText("Contratos"))
+    await user.keyboard("{/Shift}")
+    expect(onSelectedChange).toHaveBeenLastCalledWith(["b", "c"], expect.any(Array))
+    expect(opcion("Factura 0013.pdf")).toHaveAttribute("aria-selected", "true")
+    expect(opcion("Contratos")).toHaveAttribute("aria-selected", "true")
+    expect(opcion("Notas.txt")).toHaveAttribute("aria-selected", "false")
+  })
+
+  it("teclado: las flechas mueven sin elegir, Espacio suma o saca, ⇧+flechas extienden y ⌘A elige todo", async () => {
+    render(<FileGrid aria-label="Archivos" items={ITEMS} selectionMode="multiple" />)
+    grillaDeTres()
+    await userEvent.tab()
+    await userEvent.keyboard("{ArrowRight}")
+    expect(opcion("Factura 0013.pdf")).toHaveFocus()
+    expect(elegidos()).toEqual([])
+    await userEvent.keyboard(" ")
+    expect(elegidos()).toEqual(["Factura 0013.pdfPDF"])
+    await userEvent.keyboard("{Shift>}{ArrowRight}{ArrowRight}{/Shift}")
+    expect(opcion("Logo.png")).toHaveFocus()
+    expect(elegidos()).toHaveLength(3)
+    await userEvent.keyboard(" ")
+    expect(elegidos()).toHaveLength(2)
+    await userEvent.keyboard("{Meta>}a{/Meta}")
+    expect(elegidos()).toHaveLength(5)
+    // Con todo elegido, ⌘A de nuevo vacía la selección.
+    await userEvent.keyboard("{Control>}a{/Control}")
+    expect(elegidos()).toEqual([])
+  })
+
+  it("⇧+↓ extiende una fila del layout; los deshabilitados no entran en el rango", async () => {
+    const conDeshabilitado = ITEMS.map((item) => (item.id === "c" ? { ...item, disabled: true } : item))
+    render(<FileGrid aria-label="Archivos" items={conDeshabilitado} selectionMode="multiple" />)
+    grillaDeTres()
+    await userEvent.tab()
+    await userEvent.keyboard("{Shift>}{ArrowDown}{/Shift}")
+    expect(opcion("Logo.png")).toHaveFocus()
+    // a, b, (c deshabilitado), d.
+    expect(elegidos()).toEqual(["Factura 0012.pdfPDF", "Factura 0013.pdfPDF", "Logo.pngImagen"])
+  })
+
+  it("selected controlado con un array", async () => {
+    function Controlado() {
+      const [selected, setSelected] = useState<string[]>(["a"])
+      return <FileGrid aria-label="Archivos" items={ITEMS} onSelectedChange={(ids) => setSelected(ids)} selected={selected} selectionMode="multiple" />
+    }
+    const user = userEvent.setup()
+    render(<Controlado />)
+    expect(opcion("Factura 0012.pdf")).toHaveAttribute("aria-selected", "true")
+    await user.keyboard("{Meta>}")
+    await user.click(screen.getByText("Notas.txt"))
+    expect(elegidos()).toHaveLength(2)
+  })
+
+  it("tipos: con multiple, selected es string[] y onSelectedChange recibe ids", () => {
+    // @ts-expect-error -- con selectionMode="multiple", selected es un array
+    ;<FileGrid aria-label="Archivos" items={ITEMS} selected="a" selectionMode="multiple" />
+    // @ts-expect-error -- sin selectionMode (simple), selected no puede ser un array
+    ;<FileGrid aria-label="Archivos" items={ITEMS} selected={["a"]} />
+    ;<FileGrid aria-label="Archivos" items={ITEMS} onSelectedChange={(ids: string[], items: FileGridItem[]) => [ids, items]} selectionMode="multiple" />
+    ;<FileGrid aria-label="Archivos" items={ITEMS} onSelectedChange={(id: string | null) => id} />
+  })
+})
+
+describe("FileGrid · hidratación", () => {
+  it("el HTML del servidor hidrata sin mismatch, en simple y en múltiple", async () => {
+    for (const props of [{ defaultSelected: "b" }, { selectionMode: "multiple" as const, defaultSelected: ["a", "c"] }]) {
+      const ui = <FileGrid aria-label="Archivos" items={ITEMS} {...props} />
+      const container = document.createElement("div")
+      container.innerHTML = renderToString(ui)
+      document.body.append(container)
+      const errors = vi.spyOn(console, "error").mockImplementation(() => {})
+      const recoverable = vi.fn()
+      await hidratar(container, ui, { onRecoverableError: recoverable })
+      expect(recoverable).not.toHaveBeenCalled()
+      expect(errors.mock.calls.filter(([message]) => /hydrat|did not match/i.test(String(message)))).toEqual([])
+      expect(container.querySelectorAll("[aria-selected=true]")).toHaveLength(props.selectionMode ? 2 : 1)
+      errors.mockRestore()
+      container.remove()
+    }
   })
 })

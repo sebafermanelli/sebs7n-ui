@@ -4,6 +4,7 @@ import * as React from "react"
 import { FileIcon, FolderIcon } from "lucide-react"
 
 import type { AccessibleName } from "../internal/accessible-name.js"
+import { isToggleModifier, useSelection, type SelectionProps } from "../internal/selection.js"
 import { cn } from "../lib/utils.js"
 
 /**
@@ -16,7 +17,8 @@ import { cn } from "../lib/utils.js"
  * salen de la lista de Drive y de la grilla de Photos (§2.6).
  *
  * Es un `listbox`: flechas en dos dimensiones (↑↓ saltan una fila del layout real; en RTL ← y →
- * se invierten), Home/End, type-ahead, Enter abre, y la selección sigue al foco.
+ * se invierten), Home/End, type-ahead, Enter abre, y la selección sigue al foco. Con
+ * `selectionMode="multiple"`, el modelo de selección múltiple de WAI-ARIA (ver `SelectionProps`).
  */
 type FileGridItem = {
   id: string
@@ -34,10 +36,6 @@ const normalize = (text: string) => text.normalize("NFD").replace(/\p{Diacritic}
 
 type FileGridPropsBase = Omit<React.ComponentProps<"div">, "children" | "defaultValue" | "onSelect"> & {
   items: FileGridItem[]
-  /** El ítem elegido. Pasarlo lo vuelve controlado. */
-  selected?: string | null
-  defaultSelected?: string | null
-  onSelectedChange?: (id: string | null, item: FileGridItem | null) => void
   /** Enter o doble click: abrir el archivo, entrar en la carpeta. */
   onOpen?: (item: FileGridItem) => void
   /**
@@ -51,36 +49,52 @@ type FileGridPropsBase = Omit<React.ComponentProps<"div">, "children" | "default
 function FileGrid({
   className,
   items,
+  selectionMode,
   selected: selectedProp,
-  defaultSelected = null,
+  defaultSelected,
   onSelectedChange,
   onOpen,
   actions,
   onKeyDown: onKeyDownProp,
   ...props
 }: FileGridProps) {
-  const [own, setOwn] = React.useState(defaultSelected)
-  const selected = selectedProp !== undefined ? selectedProp : own
+  const selection = useSelection<FileGridItem>(
+    { selectionMode, selected: selectedProp, defaultSelected, onSelectedChange } as SelectionProps<FileGridItem>,
+    (id) => items.find((item) => item.id === id)
+  )
   const [focused, setFocused] = React.useState<string | null>(null)
   const refs = React.useRef(new Map<string, HTMLDivElement>())
   const typed = React.useRef({ text: "", at: 0 })
 
   const tabStop =
     (focused != null && items.some((item) => item.id === focused) && focused) ||
-    (selected != null && items.some((item) => item.id === selected) && selected) ||
+    items.find((item) => selection.isSelected(item.id))?.id ||
     items[0]?.id
 
   const select = (item: FileGridItem) => {
     if (item.disabled) return
-    if (selectedProp === undefined) setOwn(item.id)
-    onSelectedChange?.(item.id, item)
+    selection.only(item)
   }
 
-  const moveTo = (item: FileGridItem | undefined) => {
+  // En `single` la selección sigue al foco. En `multiple` las flechas solas mueven el foco (y el
+  // ancla), y con ⇧ extienden el rango desde el ancla.
+  const moveTo = (item: FileGridItem | undefined, extend = false) => {
     if (!item) return
+    const from = focused ?? item.id
     setFocused(item.id)
-    select(item)
+    if (!selection.multiple) select(item)
+    else if (extend) selection.extend(item, items, from)
+    else selection.anchorAt(item.id)
     refs.current.get(item.id)?.focus()
+  }
+
+  const onItemClick = (event: React.MouseEvent, item: FileGridItem) => {
+    const from = focused ?? item.id
+    setFocused(item.id)
+    if (item.disabled) return
+    if (selection.multiple && event.shiftKey) selection.extend(item, items, from)
+    else if (selection.multiple && isToggleModifier(event)) selection.toggle(item, items)
+    else selection.only(item)
   }
 
   // Cuántos ítems hay en la fila del actual, según el layout: los que comparten su `top`.
@@ -106,6 +120,11 @@ function FileGrid({
     const index = items.findIndex((item) => item.id === tabStop)
     const item = items[index]
     if (!item) return
+    if (selection.multiple && isToggleModifier(event) && event.key.toLowerCase() === "a") {
+      event.preventDefault()
+      selection.all(items)
+      return
+    }
     let next: number | undefined
     // En RTL la grilla corre de derecha a izquierda: → va al anterior.
     const forward = event.currentTarget.closest("[dir]")?.getAttribute("dir") === "rtl" ? -1 : 1
@@ -132,7 +151,7 @@ function FileGrid({
         if (!item.disabled) onOpen?.(item)
         break
       case " ":
-        select(item)
+        if (!item.disabled) selection.toggle(item, items)
         break
       default: {
         if (event.key.length !== 1 || event.ctrlKey || event.metaKey || event.altKey) return
@@ -148,7 +167,8 @@ function FileGrid({
       }
     }
     event.preventDefault()
-    if (next !== undefined) moveTo(items[next])
+    // Type-ahead no extiende: ⇧ + una letra es una mayúscula.
+    if (next !== undefined) moveTo(items[next], event.shiftKey && event.key.length > 1)
   }
 
   return (
@@ -156,12 +176,13 @@ function FileGrid({
       <div
         data-slot="file-grid"
         role="listbox"
+        aria-multiselectable={selection.multiple || undefined}
         onKeyDown={onKeyDown}
         className="grid grid-cols-[repeat(auto-fill,minmax(8.5rem,1fr))] gap-x-2 gap-y-4 outline-none"
         {...props}
       >
         {items.map((item) => {
-          const isSelected = selected === item.id
+          const isSelected = selection.isSelected(item.id)
           const action = actions?.(item)
           return (
             <div
@@ -176,10 +197,7 @@ function FileGrid({
               tabIndex={item.id === tabStop ? 0 : -1}
               data-state={isSelected ? "selected" : undefined}
               onFocus={() => setFocused(item.id)}
-              onClick={() => {
-                setFocused(item.id)
-                select(item)
-              }}
+              onClick={(event) => onItemClick(event, item)}
               onDoubleClick={() => !item.disabled && onOpen?.(item)}
               className="group/selectable relative flex min-w-0 cursor-default flex-col items-center gap-1 rounded-item p-1.5 outline-none select-none focus-visible:focus-ring aria-disabled:opacity-40"
             >
@@ -227,6 +245,6 @@ function FileGrid({
 }
 
 
-type FileGridProps = FileGridPropsBase & AccessibleName
+type FileGridProps = FileGridPropsBase & SelectionProps<FileGridItem> & AccessibleName
 
 export { FileGrid, type FileGridItem, type FileGridProps }
