@@ -118,10 +118,12 @@ describe("Toolbar", () => {
     render(<Formato />)
     expect(screen.getByRole("toolbar")).toHaveClass("pointer-coarse:gap-5")
     expect(screen.getByRole("group", { name: "Alineación" })).toHaveClass("pointer-coarse:gap-5")
-    // El ToggleGroup es el segmentado (R4): sus ítems van pegados y crecen de verdad a 40 × 44 con
-    // el dedo, así que no necesitan separarse.
+    // El ToggleGroup es el segmentado (R4): sus ítems van pegados y con el dedo se ven igual; el área
+    // de 44 crece solo en alto (`::before`), así que no se pisan y no necesitan separarse.
     expect(screen.getByRole("group", { name: "Estilo" })).toHaveClass("bg-fill-2")
-    expect(screen.getByRole("button", { name: "Negrita" })).toHaveClass("pointer-coarse:h-10", "pointer-coarse:min-w-11")
+    const negrita = screen.getByRole("button", { name: "Negrita" })
+    expect(negrita).toHaveClass("pointer-coarse:before:absolute", "pointer-coarse:before:inset-x-0", "pointer-coarse:before:-inset-y-2.5")
+    expect(negrita.className).not.toMatch(/pointer-coarse:(h|min-w)-/)
   })
 
   it("`bar` (default) es la toolbar de iCloud: a todo el ancho, 44, surface-bar y borde abajo, sin cápsula", () => {

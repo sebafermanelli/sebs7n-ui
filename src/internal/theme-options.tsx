@@ -7,6 +7,7 @@ import { useTheme } from "next-themes"
 
 import { cn } from "../lib/utils.js"
 import { segmentedThumbClassName, segmentedTrackClassName } from "../variants/segmented.js"
+import { segmentedHitAreaClassName } from "./segmented-hit-area.js"
 
 // Lo que comparten `ThemeSwitcher` y `ThemeMenuRadio`: las opciones, las clases, la pastilla y
 // los hooks. Vive acá y no en ninguno de los dos para que importar uno no arrastre al otro; ver
@@ -22,16 +23,18 @@ export const OPTIONS = [
 export const groupClassName = cn(segmentedTrackClassName, "inline-flex")
 // La opción elegida no se pinta: la marca la pastilla, que llega deslizándose. Lo único que
 // cambia en el ítem es el color del ícono. Segmentos de 24 × 32 pegados, como el de Calendar
-// (§2.10), con el separador de 1 × 16 entre los que no tocan al elegido; con el dedo, 40 × 44.
+// (§2.10), con el separador de 1 × 16 entre los que no tocan al elegido. Con el dedo se ven igual
+// (como el botón de ícono de al lado) y el área crece a 44 de alto, invisible.
 export const itemClassName =
-  "relative inline-flex h-6 w-8 pointer-coarse:h-10 pointer-coarse:w-11 cursor-pointer items-center justify-center rounded-[calc(var(--radius-control)-2px)] text-label-secondary outline-none transition-control hover:text-label focus-visible:focus-ring data-checked:text-label [&_svg]:pointer-events-none [&_svg]:size-4 " +
-  "after:absolute after:left-0 after:top-1 after:h-4 after:w-px after:bg-fill-3 pointer-coarse:after:top-3 first:after:hidden data-checked:after:hidden [[data-checked]+&]:after:hidden"
+  "relative inline-flex h-6 w-8 cursor-pointer items-center justify-center rounded-[calc(var(--radius-control)-2px)] text-label-secondary outline-none transition-control hover:text-label focus-visible:focus-ring data-checked:text-label [&_svg]:pointer-events-none [&_svg]:size-4 " +
+  "after:absolute after:left-0 after:top-1 after:h-4 after:w-px after:bg-fill-3 first:after:hidden data-checked:after:hidden [[data-checked]+&]:after:hidden " +
+  segmentedHitAreaClassName
 
 /**
  * La pastilla que se desliza hasta el tema elegido.
  *
  * Las opciones miden todas lo mismo —32 px, pegadas—, así que la posición es
- * el índice por 32 px (44 con el dedo) y no hay que medir nada: un `translate` por CSS, sin efecto ni
+ * el índice por 32 px (también con el dedo) y no hay que medir nada: un `translate` por CSS, sin efecto ni
  * `ResizeObserver`.
  *
  * No se dibuja hasta conocer el tema. En el servidor no se sabe cuál es, y si la pastilla
@@ -47,7 +50,7 @@ export function Pastilla({ index }: { index: number }) {
       data-slot="theme-switcher-indicator"
       className={cn(
         segmentedThumbClassName,
-        "top-0.5 left-0.5 h-6 w-8 translate-x-[calc(var(--index)*--spacing(8))] pointer-coarse:h-10 pointer-coarse:w-11 pointer-coarse:translate-x-[calc(var(--index)*--spacing(11))]"
+        "top-0.5 left-0.5 h-6 w-8 translate-x-[calc(var(--index)*--spacing(8))]"
       )}
       style={{ "--index": index } as React.CSSProperties}
     />

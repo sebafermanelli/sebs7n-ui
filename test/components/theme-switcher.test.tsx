@@ -44,12 +44,21 @@ describe("ThemeSwitcher", () => {
     expect(screen.getByRole("radio", { name: "Tema claro" })).toHaveAttribute("aria-checked", "false")
   })
 
+  // Con el dedo el segmentado no crece: se ve igual que el botón de ícono de al lado (28 con la
+  // pista) y el área de 44 la da un `::before` invisible solo en alto, que no pisa al vecino.
+  it("con el dedo los segmentos no crecen: el área de 44 es invisible y solo en alto", () => {
+    render(withTheme(<ThemeSwitcher />))
+    const claro = screen.getByRole("radio", { name: "Tema claro" })
+    expect(claro).toHaveClass("pointer-coarse:before:absolute", "pointer-coarse:before:inset-x-0", "pointer-coarse:before:-inset-y-2.5")
+    expect(claro.className).not.toMatch(/pointer-coarse:(h|w|min-w)-/)
+    expect(claro.className).not.toContain("pointer-coarse:after:top-3")
+  })
+
   it("contrato de clases de los ítems", () => {
     render(withTheme(<ThemeSwitcher />))
     expect(screen.getByRole("radio", { name: "Tema claro" })).toHaveClass(
       "h-6",
       "w-8",
-      "pointer-coarse:h-10",
       "rounded-[calc(var(--radius-control)-2px)]",
       "text-label-secondary",
       "hover:text-label",
@@ -163,7 +172,8 @@ describe("ThemeSwitcher: la pastilla", () => {
     await userEvent.click(screen.getByRole("radio", { name: "Tema claro" }))
     await waitFor(() => expect(pastilla()?.style.getPropertyValue("--index")).toBe("0"))
     // Segmentos de 24 × 32 pegados (iCloud, §2.10): la pastilla se corre de a 32; con el dedo, de a 44.
-    expect(pastilla()).toHaveClass("h-6", "w-8", "translate-x-[calc(var(--index)*--spacing(8))]", "pointer-coarse:translate-x-[calc(var(--index)*--spacing(11))]")
+    expect(pastilla()).toHaveClass("h-6", "w-8", "translate-x-[calc(var(--index)*--spacing(8))]")
+    expect(pastilla()!.className).not.toContain("pointer-coarse:")
   })
 
   it("no es parte del grupo para un lector de pantalla, ni recibe clics", async () => {

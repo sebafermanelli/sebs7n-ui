@@ -78,7 +78,11 @@ describe("Tabs", () => {
         </TabsList>
       </Tabs>
     )
-    expect(screen.getByRole("tab", { name: "Resumen" })).toHaveClass("h-6", "pointer-coarse:h-10")
+    // Con el dedo no crece (se ve como el botón de ícono de al lado): el área de 44 es el `::before`
+    // estirado solo en alto, y el anillo de foco pasa al segmento para no estirarse con él.
+    const tab = screen.getByRole("tab", { name: "Resumen" })
+    expect(tab).toHaveClass("h-6", "pointer-coarse:before:-inset-y-2.5", "focus-visible:focus-ring")
+    expect(tab.className).not.toMatch(/pointer-coarse:h-|focus-visible:before:focus-ring/)
   })
 })
 

@@ -1,3 +1,5 @@
+import { segmentedHitAreaClassName } from "../internal/segmented-hit-area.js"
+
 // El control segmentado: una pista con `fill-2` y radio 8 y una pastilla de radio 6 que se desliza
 // hasta la opción elegida. Es el segmentado de Calendar en iCloud (§2.10): pista de 28 con 2 de
 // padding, segmentos de 24 pegados (sin espacio entre ellos: los separa una línea de 1 × 16).
@@ -37,15 +39,17 @@ export const segmentedThumbClassName =
  * a 1,16:1 (revisión de R4); el acento llega a 3:1 en las cinco marcas. En oscuro va el paso 900 de
  * la marca (L fija) con el texto oscuro de la página: el 700 quedaba en 2,3:1 contra la pista.
  *
- * 24 de alto (28 con la pista), 14 en `label` y semibold prendido; con el dedo 40. Lleva el
+ * 24 de alto (28 con la pista), 14 en `label` y semibold prendido; con el dedo se ve igual y el área
+ * crece a 44 (`segmentedHitAreaClassName`). Lleva el
  * separador de 1 × 16 del segmentado, escondido en el prendido y en el que le sigue. El anillo de
  * foco sobre el acento va en el color del texto (`[--sf-focus-inverse:currentColor]`).
  */
 export const segmentedItemClassName =
-  "relative inline-flex h-6 min-w-8 pointer-coarse:h-10 pointer-coarse:min-w-11 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-[calc(var(--radius-control)-2px)] px-3 text-callout whitespace-nowrap text-label outline-none select-none transition-surface " +
+  "relative inline-flex h-6 min-w-8 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-[calc(var(--radius-control)-2px)] px-3 text-callout whitespace-nowrap text-label outline-none select-none transition-surface " +
   "focus-visible:focus-ring data-pressed:bg-brand-700 data-pressed:text-brand-contrast dark:data-pressed:bg-brand-900 dark:data-pressed:text-background data-pressed:font-semibold data-pressed:focus-visible:focus-ring-inverse [--sf-focus-inverse:currentColor] data-disabled:cursor-not-allowed data-disabled:opacity-40 " +
-  "after:absolute after:left-0 after:top-1 after:h-4 after:w-px after:bg-fill-3 pointer-coarse:after:top-3 first:after:hidden data-pressed:after:hidden [[data-pressed]+&]:after:hidden " +
-  "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+  "after:absolute after:left-0 after:top-1 after:h-4 after:w-px after:bg-fill-3 first:after:hidden data-pressed:after:hidden [[data-pressed]+&]:after:hidden " +
+  "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 " +
+  segmentedHitAreaClassName
 
 /**
  * La pista de un `ToggleGroup`: la del segmentado, con los segmentos del mismo ancho (como los de

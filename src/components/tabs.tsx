@@ -4,6 +4,7 @@ import * as React from "react"
 import { Tabs as TabsPrimitive } from "@base-ui/react/tabs"
 
 import { cn, type WithClassName } from "../lib/utils.js"
+import { segmentedHitAreaClassName } from "../internal/segmented-hit-area.js"
 import { segmentedThumbClassName, segmentedTrackClassName } from "../variants/segmented.js"
 
 type TabsProps = WithClassName<TabsPrimitive.Root.Props>
@@ -72,11 +73,12 @@ function TabsList({ className, variant = "line", children, ...props }: TabsListP
 
 type TabsTriggerProps = WithClassName<TabsPrimitive.Tab.Props>
 
-// Lo que comparten: el texto no usa la marca, en hover solo cambia el color, y el `before` existe
-// solo para el anillo de foco (una pestaña no es un botón: no se pinta en hover).
+// Lo que comparten: el texto no usa la marca y en hover solo cambia el color (una pestaña no es un
+// botón: no se pinta en hover). El `before` es el anillo de foco en `line` y el área de toque en
+// `segmented`.
 const TRIGGER =
   "relative isolate inline-flex cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap outline-none select-none transition-control " +
-  "before:absolute before:inset-x-0 before:-z-10 before:transition-control focus-visible:before:focus-ring " +
+  "before:absolute before:inset-x-0 before:-z-10 before:transition-control " +
   "after:absolute data-disabled:cursor-not-allowed data-disabled:opacity-40 " +
   "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
 
@@ -87,17 +89,18 @@ const TRIGGER_VARIANT: Record<TabsVariant, string> = {
   // pierden el padding de afuera: el texto arranca alineado con la línea.
   line:
     "h-15 shrink-0 px-2 text-body text-label-secondary hover:text-label data-active:text-label " +
-    "before:inset-y-3 before:rounded-control " +
+    "before:inset-y-3 before:rounded-control focus-visible:before:focus-ring " +
     "after:inset-x-2 after:bottom-0 after:h-px after:bg-label after:opacity-0 data-active:after:opacity-100 " +
     // Revisión de R4: el subrayado aparece con una transición corta; quieto con movimiento reducido.
     "after:transition-opacity after:duration-200 motion-reduce:after:transition-none",
-  // Calendar: segmento de 24 (28 con la pista), 14 en label y el activo en semibold; con el dedo 40
-  // (44 con la pista). El separador (`after`) mide 1 × 16 y se esconde en el activo y en el que le
-  // sigue, donde lo taparía el segmento elevado.
+  // Calendar: segmento de 24 (28 con la pista), 14 en label y el activo en semibold. Con el dedo se
+  // ve igual, como el botón de ícono de al lado, y el `before` estira el área a 44 de alto; por eso
+  // el anillo de foco va en el segmento y no en el `before`. El separador (`after`) mide 1 × 16 y se
+  // esconde en el activo y en el que le sigue, donde lo taparía el segmento elevado.
   segmented:
-    "h-6 min-w-0 px-3 pointer-coarse:h-10 text-callout text-label data-active:font-semibold " +
-    "before:inset-y-0 before:rounded-[calc(var(--radius-control)-2px)] " +
-    "after:left-0 after:top-1 after:h-4 after:w-px after:bg-fill-3 pointer-coarse:after:top-3 first:after:hidden data-active:after:hidden [[data-active]+&]:after:hidden",
+    "h-6 min-w-0 px-3 rounded-[calc(var(--radius-control)-2px)] text-callout text-label data-active:font-semibold focus-visible:focus-ring " +
+    "after:left-0 after:top-1 after:h-4 after:w-px after:bg-fill-3 first:after:hidden data-active:after:hidden [[data-active]+&]:after:hidden " +
+    segmentedHitAreaClassName,
 }
 
 // En el segmentado, el texto suelto va en un `<span>` que se corta con «…»: el texto directo de un
