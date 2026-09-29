@@ -201,6 +201,10 @@ export type Labels = {
     /** El botón que vacía la fecha, con `clearable`. */
     clear: string
   }
+  dateTimePicker: {
+    /** Nombre del campo de la hora, adentro del campo de fecha y hora. */
+    time: string
+  }
   dialog: {
     /** Nombre del botón X. */
     close: string
@@ -368,6 +372,7 @@ export const defaultLabels: Labels = {
     calendar: "Calendario",
     clear: "Limpiar",
   },
+  dateTimePicker: { time: "Hora" },
   dialog: { close: "Cerrar" },
   drawer: { close: "Cerrar" },
   meter: { free: "Libre", used: "Usado" },

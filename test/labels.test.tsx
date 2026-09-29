@@ -196,6 +196,7 @@ describe("LabelsProvider", () => {
       "copyButton",
       "dataTable",
       "datePicker",
+      "dateTimePicker",
       "dialog",
       "drawer",
       "meter",

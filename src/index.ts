@@ -189,3 +189,4 @@ export * from "./components/widget-card.js"
 //   `copy-button`       sebs7n-ui/copy-button
 //   `password-input`    sebs7n-ui/password-input
 //   `time-picker`       sebs7n-ui/time-picker
+//   `date-time-picker`  sebs7n-ui/date-time-picker
