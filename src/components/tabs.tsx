@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import { Tabs as TabsPrimitive } from "@base-ui/react/tabs"
 
 import { cn, type WithClassName } from "../lib/utils.js"
@@ -11,72 +12,89 @@ function Tabs({ className, ...props }: TabsProps) {
   return <TabsPrimitive.Root data-slot="tabs" className={cn("flex flex-col gap-4", className)} {...props} />
 }
 
+type TabsVariant = "line" | "segmented"
+
+// La variante vive en la lista y la necesitan las pestañas: cada una se dibuja distinto según la
+// tira, y con un contexto las clases de cada variante quedan escritas una sola vez, sin
+// `group-data-[variant=…]` repetido en cada línea.
+const VarianteContext = React.createContext<TabsVariant>("line")
+
 type TabsListProps = WithClassName<TabsPrimitive.List.Props> & {
   /**
-   * `segmented`: una pista hundida en cápsula, y la pestaña activa es una pastilla que se
-   * desliza de una a otra. Es la tira de pestañas de Safari, y el default desde 1.0.
+   * `line` (el default desde 2.0): las pestañas de Settings de iCloud, la navegación de una
+   * página. Texto 17 gris, la activa en el label con un subrayado de 1 px del ancho del texto, y
+   * una línea base a todo el ancho.
    *
-   * `line`: la de Geist, a todo el ancho, con una línea debajo de la activa. Para la
-   * navegación de una página entera, donde una cápsula de 800px de ancho no es un control.
+   * `segmented`: el control segmentado de Calendar. Una pista gris y un segmento elevado que se
+   * desliza hasta la opción elegida; todos los segmentos del mismo ancho. Para cambiar de vista
+   * adentro de un panel (Día/Semana/Mes), no para navegar.
    */
-  variant?: "segmented" | "line"
+  variant?: TabsVariant
 }
 
-function TabsList({ className, variant = "segmented", children, ...props }: TabsListProps) {
+function TabsList({ className, variant = "line", children, ...props }: TabsListProps) {
   return (
-    <TabsPrimitive.List
-      data-slot="tabs-list"
-      data-variant={variant}
-      className={cn(
-        "group/tabs-list",
-        variant === "line" ? "relative flex w-full items-center border-b border-separator" : segmentedTrackClassName,
-        className
-      )}
-      {...props}
-    >
-      {children}
-      {variant === "segmented" && (
-        // Base UI mide la pestaña activa y deja su caja en estas cuatro variables. Animar
-        // `left` y `width` es lo que hace que la pastilla se deslice en vez de saltar.
-        <TabsPrimitive.Indicator
-          data-slot="tabs-indicator"
-          className={cn(segmentedThumbClassName, "top-(--active-tab-top) left-(--active-tab-left) h-(--active-tab-height) w-(--active-tab-width)")}
-        />
-      )}
-    </TabsPrimitive.List>
+    <VarianteContext.Provider value={variant}>
+      <TabsPrimitive.List
+        data-slot="tabs-list"
+        data-variant={variant}
+        className={cn(
+          variant === "line"
+            ? // Medido en Settings: 30 entre pestañas + los 8 de padding de cada lado = 46 de texto a
+              // texto. La línea base es `fill-3`, el `rgba(120,120,128,.36)` de iCloud.
+              "relative flex w-full items-center gap-7.5 border-b border-fill-3"
+            : // Grilla de columnas iguales: los segmentos de iCloud miden todos lo mismo, y así el
+              // semibold del activo no corre a los vecinos.
+              cn(segmentedTrackClassName, "inline-grid grid-flow-col auto-cols-fr"),
+          className
+        )}
+        {...props}
+      >
+        {children}
+        {variant === "segmented" && (
+          // Base UI mide la pestaña activa y deja su caja en estas cuatro variables. Animar
+          // `left` y `width` es lo que hace que el segmento se deslice en vez de saltar.
+          <TabsPrimitive.Indicator
+            data-slot="tabs-indicator"
+            className={cn(segmentedThumbClassName, "top-(--active-tab-top) left-(--active-tab-left) h-(--active-tab-height) w-(--active-tab-width)")}
+          />
+        )}
+      </TabsPrimitive.List>
+    </VarianteContext.Provider>
   )
 }
 
 type TabsTriggerProps = WithClassName<TabsPrimitive.Tab.Props>
 
+// Lo que comparten: el texto no usa la marca, en hover solo cambia el color, y el `before` existe
+// solo para el anillo de foco (una pestaña no es un botón: no se pinta en hover).
+const TRIGGER =
+  "relative isolate inline-flex cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap outline-none select-none transition-control " +
+  "before:absolute before:inset-x-0 before:-z-10 before:transition-control focus-visible:before:focus-ring " +
+  "after:absolute data-disabled:cursor-not-allowed data-disabled:opacity-40 " +
+  "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+
+const TRIGGER_VARIANT: Record<TabsVariant, string> = {
+  // Settings: 17 (la excepción a los 14 de un control: son la navegación de la página, como en
+  // iCloud), 60 de alto. El subrayado (`after`) va del ancho del texto —descuenta el padding— y
+  // encima de la línea base (`-bottom-px`), así la reemplaza en ese tramo. La primera y la última
+  // pierden el padding de afuera: el texto arranca alineado con la línea.
+  line:
+    "h-15 px-2 first:-ml-2 last:-mr-2 text-body text-label-secondary hover:text-label data-active:text-label " +
+    "before:inset-y-3 before:rounded-control " +
+    "after:inset-x-2 after:-bottom-px after:h-px after:bg-label after:opacity-0 data-active:after:opacity-100",
+  // Calendar: segmento de 24 (28 con la pista), 14 en label y el activo en semibold; con el dedo 40
+  // (44 con la pista). El separador (`after`) mide 1 × 16 y se esconde en el activo y en el que le
+  // sigue, donde lo taparía el segmento elevado.
+  segmented:
+    "h-6 px-3 pointer-coarse:h-10 text-callout text-label data-active:font-semibold " +
+    "before:inset-y-0 before:rounded-[calc(var(--radius-control)-2px)] " +
+    "after:left-0 after:top-1 after:h-4 after:w-px after:bg-fill-3 pointer-coarse:after:top-3 first:after:hidden data-active:after:hidden [[data-active]+&]:after:hidden",
+}
+
 function TabsTrigger({ className, ...props }: TabsTriggerProps) {
-  return (
-    <TabsPrimitive.Tab
-      data-slot="tabs-trigger"
-      className={cn(
-        "relative isolate inline-flex cursor-pointer items-center justify-center gap-1.5 px-3 text-callout whitespace-nowrap text-label-secondary outline-none select-none transition-control",
-        // Segmentado: 28 + los 2 px de la pista de cada lado = 32, el alto de un botón `md` y el del
-        // ThemeSwitcher, que es el mismo objeto. Línea: 32, el alto de los controles.
-        "group-data-[variant=line]/tabs-list:h-8 group-data-[variant=segmented]/tabs-list:h-7 group-data-[variant=segmented]/tabs-list:rounded-control",
-        // Con el dedo crecen de verdad y no con `touch-target`: el `::after` ya es el subrayado,
-        // y van pegadas. La de línea a 44; la segmentada a 40, que con el `p-0.5` de la pista da 44.
-        "pointer-coarse:group-data-[variant=line]/tabs-list:h-11 pointer-coarse:group-data-[variant=segmented]/tabs-list:h-10",
-        // El `before` existe solo para el anillo de foco: una pestaña no es un botón, así que en
-        // hover no se pinta ninguna pastilla. Lo único que cambia es el color del texto, y el
-        // activo lo marca la línea de abajo (`after`) o la pastilla de la pista.
-        "before:absolute before:inset-x-0 before:-z-10 before:transition-control",
-        "group-data-[variant=line]/tabs-list:before:inset-y-1 group-data-[variant=line]/tabs-list:before:rounded-control",
-        "group-data-[variant=segmented]/tabs-list:before:inset-y-0 group-data-[variant=segmented]/tabs-list:before:rounded-[calc(var(--radius-control)-2px)]",
-        "hover:text-label focus-visible:before:focus-ring",
-        "after:absolute after:inset-x-3 after:-bottom-px after:h-0.5 after:bg-label after:opacity-0",
-        "data-active:text-label group-data-[variant=line]/tabs-list:data-active:after:opacity-100",
-        "data-disabled:cursor-not-allowed data-disabled:text-label-tertiary",
-        "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
-        className
-      )}
-      {...props}
-    />
-  )
+  const variant = React.useContext(VarianteContext)
+  return <TabsPrimitive.Tab data-slot="tabs-trigger" className={cn(TRIGGER, TRIGGER_VARIANT[variant], className)} {...props} />
 }
 
 type TabsContentProps = WithClassName<TabsPrimitive.Panel.Props>

@@ -61,35 +61,59 @@ describe("AppShell: luz ambiente", () => {
   })
 })
 
-describe("Tabs: pista segmentada", () => {
+// R4: las dos tiras de iCloud. La de línea es la de Settings (la navegación de una página) y es el
+// default; la segmentada es la de Calendar (§2.10).
+describe("Tabs: línea de Settings y segmentado de Calendar", () => {
   const Ejemplo = ({ variant }: { variant?: "segmented" | "line" }) => (
     <Tabs defaultValue="a">
       <TabsList variant={variant}>
         <TabsTrigger value="a">Resumen</TabsTrigger>
         <TabsTrigger value="b">Pagos</TabsTrigger>
+        <TabsTrigger value="c">Notas</TabsTrigger>
       </TabsList>
       <TabsContent value="a">a</TabsContent>
       <TabsContent value="b">b</TabsContent>
+      <TabsContent value="c">c</TabsContent>
     </Tabs>
   )
 
-  it("por defecto es una cápsula hundida con una pastilla que se desliza", () => {
+  // Medido en Settings: 17/400 en label-secondary, la activa en label con un subrayado de 1 px del
+  // ancho del texto encima de la línea base de 1 px (`fill-3`) de toda la barra; 60 de alto; de
+  // texto a texto 46 (8 de padding + 30 + 8).
+  it("por defecto es la de Settings de iCloud: a todo el ancho, 17 px y subrayado de 1 px", () => {
     render(<Ejemplo />)
     const list = screen.getByRole("tablist")
+    expect(list).toHaveAttribute("data-variant", "line")
+    expect(list).toHaveClass("w-full", "border-b", "border-fill-3", "gap-7.5")
+    expect(list.querySelector("[data-slot=tabs-indicator]")).toBeNull()
+    const tab = screen.getByRole("tab", { name: "Pagos" })
+    expect(tab).toHaveClass("h-15", "px-2", "text-body", "text-label-secondary", "first:-ml-2")
+    expect(tab).toHaveClass("after:inset-x-2", "after:-bottom-px", "after:h-px", "after:bg-label", "after:opacity-0", "data-active:after:opacity-100")
+  })
+
+  it("segmented es el de Calendar: pista de 28, segmento de 24 que se desliza, activo en semibold", () => {
+    render(<Ejemplo variant="segmented" />)
+    const list = screen.getByRole("tablist")
     expect(list).toHaveAttribute("data-variant", "segmented")
-    expect(list).toHaveClass("rounded-control", "bg-fill-2", "w-fit")
+    expect(list).toHaveClass("rounded-control", "bg-fill-2", "p-0.5", "w-fit", "auto-cols-fr")
     expect(list).not.toHaveClass("border-b")
     const pastilla = list.querySelector("[data-slot=tabs-indicator]")!
     expect(pastilla).toHaveClass("bg-segment", "shadow-segment", "rounded-[calc(var(--radius-control)-2px)]", "transition-[left,width,translate]", "motion-reduce:transition-none")
-    // Alfa y no vidrio: la pista ya vive adentro de una superficie.
-    expect(pastilla.className).not.toMatch(/(^|\s)glass(\s|$)/)
+    const tab = screen.getByRole("tab", { name: "Pagos" })
+    expect(tab).toHaveClass("h-6", "text-callout", "text-label", "data-active:font-semibold")
   })
 
-  it("line es la de Geist: a todo el ancho, línea abajo y sin pastilla", () => {
-    render(<Ejemplo variant="line" />)
-    const list = screen.getByRole("tablist")
-    expect(list).toHaveClass("w-full", "border-b", "border-separator")
-    expect(list.querySelector("[data-slot=tabs-indicator]")).toBeNull()
+  // El separador vertical de 1 × 16 entre segmentos (medido: `::before` a 4 px de arriba). No va
+  // antes del primero, ni en el activo, ni en el que sigue al activo: ahí lo tapa la pastilla.
+  it("segmented lleva separadores entre los segmentos que no tocan al activo", () => {
+    render(<Ejemplo variant="segmented" />)
+    const tab = screen.getByRole("tab", { name: "Notas" })
+    expect(tab).toHaveClass("after:w-px", "after:h-4", "after:top-1", "after:bg-fill-3", "first:after:hidden", "data-active:after:hidden", "[[data-active]+&]:after:hidden")
   })
 })
 
+// Las pestañas de adentro del ColorPicker (Paleta / Espectro / Valores) cambian de vista en un
+// panel: son el segmentado, no la navegación de la página.
+it("el ColorPicker pide el segmentado", () => {
+  expect(readFileSync(join(import.meta.dirname, "../../src/components/color-picker.tsx"), "utf8")).toMatch(/<TabsList[^>]*variant="segmented"/)
+})

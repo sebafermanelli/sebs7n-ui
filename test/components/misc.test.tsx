@@ -35,7 +35,7 @@ describe("Tabs", () => {
       </Tabs>
     )
     const pagos = screen.getByRole("tab", { name: "Pagos" })
-    expect(pagos).toHaveClass("text-label-secondary", "hover:text-label", "after:bg-label", "group-data-[variant=line]/tabs-list:data-active:after:opacity-100")
+    expect(pagos).toHaveClass("text-label-secondary", "hover:text-label", "data-active:text-label", "after:bg-label", "data-active:after:opacity-100")
     // En hover solo cambia el texto: una pestaña no se pinta como botón.
     expect(pagos.className).not.toMatch(/hover:before:bg-/)
     expect(pagos.className).not.toMatch(/brand/)
@@ -44,21 +44,26 @@ describe("Tabs", () => {
     expect(screen.getByText("panel b")).toBeVisible()
   })
 
-  // Las pestañas van pegadas: `touch-target` no sirve (el `::after` es el subrayado, y taparía a
-  // la de al lado). Con el dedo crecen de verdad: la de línea a 44, la segmentada a 40 (+ los
-  // 2 + 2 de la pista = 44).
+  // Las pestañas van pegadas: `touch-target` no sirve (el `::after` es el subrayado o el
+  // separador, y taparía a la de al lado). La de línea mide 60 (Settings de iCloud); la segmentada
+  // crece con el dedo a 40 (+ los 2 + 2 de la pista = 44).
   it("con el dedo las pestañas llegan a 44", () => {
-    render(
+    const { rerender } = render(
       <Tabs defaultValue="a">
         <TabsList>
           <TabsTrigger value="a">Resumen</TabsTrigger>
         </TabsList>
       </Tabs>
     )
-    expect(screen.getByRole("tab", { name: "Resumen" })).toHaveClass(
-      "pointer-coarse:group-data-[variant=line]/tabs-list:h-11",
-      "pointer-coarse:group-data-[variant=segmented]/tabs-list:h-10"
+    expect(screen.getByRole("tab", { name: "Resumen" })).toHaveClass("h-15")
+    rerender(
+      <Tabs defaultValue="a">
+        <TabsList variant="segmented">
+          <TabsTrigger value="a">Resumen</TabsTrigger>
+        </TabsList>
+      </Tabs>
     )
+    expect(screen.getByRole("tab", { name: "Resumen" })).toHaveClass("h-6", "pointer-coarse:h-10")
   })
 })
 

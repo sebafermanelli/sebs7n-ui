@@ -72,6 +72,9 @@ const PERMITIDOS: Record<string, string[]> = {
   // Los campos, con el dedo, a 17: con menos de 16 px iOS hace zoom al enfocar.
   "variants/input.ts": ["pointer-coarse:text-body-large"],
   "components/command.tsx": ["pointer-coarse:text-body-large"],
+  // R4: las pestañas de línea son la navegación de una página, como las de Settings de iCloud, que
+  // van en 17 (medido). La segmentada, que sí es un control, sigue en 14.
+  "components/tabs.tsx": ["text-body"],
 }
 
 describe("el texto de un control no pasa de 15 px", () => {

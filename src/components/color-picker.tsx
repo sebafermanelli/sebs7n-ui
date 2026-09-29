@@ -149,7 +149,7 @@ function ColorPicker({
             className={cn(floatingPopupClassName, "w-80 gap-4 p-4", popupClassName)}
           >
             <Tabs defaultValue="palette">
-              <TabsList aria-label={labels.tabs} className="w-full [&>[data-slot=tabs-trigger]]:flex-1">
+              <TabsList aria-label={labels.tabs} className="w-full" variant="segmented">
                 <TabsTrigger value="palette">{labels.palette}</TabsTrigger>
                 <TabsTrigger value="spectrum">{labels.spectrum}</TabsTrigger>
                 <TabsTrigger value="values">{labels.values}</TabsTrigger>

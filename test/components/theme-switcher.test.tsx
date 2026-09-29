@@ -47,7 +47,9 @@ describe("ThemeSwitcher", () => {
   it("contrato de clases de los ítems", () => {
     render(withTheme(<ThemeSwitcher />))
     expect(screen.getByRole("radio", { name: "Tema claro" })).toHaveClass(
-      "size-7",
+      "h-6",
+      "w-8",
+      "pointer-coarse:h-10",
       "rounded-[calc(var(--radius-control)-2px)]",
       "text-label-secondary",
       "hover:text-label",
@@ -160,7 +162,8 @@ describe("ThemeSwitcher: la pastilla", () => {
     await waitFor(() => expect(pastilla()?.style.getPropertyValue("--index")).toBe("1"))
     await userEvent.click(screen.getByRole("radio", { name: "Tema claro" }))
     await waitFor(() => expect(pastilla()?.style.getPropertyValue("--index")).toBe("0"))
-    expect(pastilla()).toHaveClass("size-7", "translate-x-[calc(var(--index)*--spacing(7.5))]")
+    // Segmentos de 24 × 32 pegados (iCloud, §2.10): la pastilla se corre de a 32; con el dedo, de a 44.
+    expect(pastilla()).toHaveClass("h-6", "w-8", "translate-x-[calc(var(--index)*--spacing(8))]", "pointer-coarse:translate-x-[calc(var(--index)*--spacing(11))]")
   })
 
   it("no es parte del grupo para un lector de pantalla, ni recibe clics", async () => {

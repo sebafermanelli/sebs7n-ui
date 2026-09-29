@@ -1,5 +1,6 @@
 // El control segmentado: una pista con `fill-2` y radio 8 y una pastilla de radio 6 que se desliza
-// hasta la opción elegida. Es el segmentado de Calendar en iCloud.
+// hasta la opción elegida. Es el segmentado de Calendar en iCloud (§2.10): pista de 28 con 2 de
+// padding, segmentos de 24 pegados (sin espacio entre ellos: los separa una línea de 1 × 16).
 //
 // Lo usan `Tabs` y `ThemeSwitcher`, que son el mismo objeto con distinto contenido: uno lleva
 // texto y el otro íconos. Están acá para que no puedan quedar distintos: la curva del
@@ -10,7 +11,7 @@
  * las opciones pero adelante del fondo de la pista.
  */
 export const segmentedTrackClassName =
-  "relative isolate flex w-fit max-w-full items-center gap-0.5 rounded-control bg-fill-2 p-0.5"
+  "relative isolate flex w-fit max-w-full items-center rounded-control bg-fill-2 p-0.5"
 
 /**
  * La pastilla, el segmento activo del segmentado de Calendar en iCloud: blanca en claro y

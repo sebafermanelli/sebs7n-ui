@@ -21,15 +21,17 @@ export const OPTIONS = [
 // La misma pista que `Tabs`, con íconos en vez de texto.
 export const groupClassName = cn(segmentedTrackClassName, "inline-flex")
 // La opción elegida no se pinta: la marca la pastilla, que llega deslizándose. Lo único que
-// cambia en el ítem es el color del ícono.
+// cambia en el ítem es el color del ícono. Segmentos de 24 × 32 pegados, como el de Calendar
+// (§2.10), con el separador de 1 × 16 entre los que no tocan al elegido; con el dedo, 40 × 44.
 export const itemClassName =
-  "inline-flex size-7 cursor-pointer items-center justify-center rounded-[calc(var(--radius-control)-2px)] text-label-secondary outline-none transition-control hover:text-label focus-visible:focus-ring data-checked:text-label [&_svg]:pointer-events-none [&_svg]:size-4"
+  "relative inline-flex h-6 w-8 pointer-coarse:h-10 pointer-coarse:w-11 cursor-pointer items-center justify-center rounded-[calc(var(--radius-control)-2px)] text-label-secondary outline-none transition-control hover:text-label focus-visible:focus-ring data-checked:text-label [&_svg]:pointer-events-none [&_svg]:size-4 " +
+  "after:absolute after:left-0 after:top-1 after:h-4 after:w-px after:bg-fill-3 pointer-coarse:after:top-3 first:after:hidden data-checked:after:hidden [[data-checked]+&]:after:hidden"
 
 /**
  * La pastilla que se desliza hasta el tema elegido.
  *
- * Las opciones miden todas lo mismo —28px, con 2px entre una y otra—, así que la posición es
- * el índice por 30px y no hay que medir nada: un `translate` por CSS, sin efecto ni
+ * Las opciones miden todas lo mismo —32 px, pegadas—, así que la posición es
+ * el índice por 32 px (44 con el dedo) y no hay que medir nada: un `translate` por CSS, sin efecto ni
  * `ResizeObserver`.
  *
  * No se dibuja hasta conocer el tema. En el servidor no se sabe cuál es, y si la pastilla
@@ -43,7 +45,10 @@ export function Pastilla({ index }: { index: number }) {
     <span
       aria-hidden="true"
       data-slot="theme-switcher-indicator"
-      className={cn(segmentedThumbClassName, "top-0.5 left-0.5 size-7 translate-x-[calc(var(--index)*--spacing(7.5))]")}
+      className={cn(
+        segmentedThumbClassName,
+        "top-0.5 left-0.5 h-6 w-8 translate-x-[calc(var(--index)*--spacing(8))] pointer-coarse:h-10 pointer-coarse:w-11 pointer-coarse:translate-x-[calc(var(--index)*--spacing(11))]"
+      )}
       style={{ "--index": index } as React.CSSProperties}
     />
   )

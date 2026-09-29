@@ -100,7 +100,7 @@ describe("UserMenu", () => {
     await waitFor(() => expect(document.documentElement).toHaveClass("dark"))
     expect(dark).toHaveAttribute("aria-checked", "true")
     expect(screen.getByRole("menu")).toBeInTheDocument()
-    expect(dark).toHaveClass("size-7", "rounded-[calc(var(--radius-control)-2px)]", "data-checked:text-label", "focus-visible:focus-ring")
+    expect(dark).toHaveClass("h-6", "w-8", "rounded-[calc(var(--radius-control)-2px)]", "data-checked:text-label", "focus-visible:focus-ring")
   })
 
   it("colapsado: solo el avatar, con tooltip \"Nombre · email\"", async () => {
