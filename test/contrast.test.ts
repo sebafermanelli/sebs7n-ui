@@ -766,3 +766,17 @@ describe("El borde de la elegida de FileGrid, en las cinco marcas (WCAG 1.4.11)"
     }
   }
 })
+
+// El Footer (2.1) es la barra global de abajo: opaco en `surface-header` y, sobre el wallpaper,
+// `material-translucent` (ese ya lo cubre el bloque del wallpaper). El texto de sus grupos es
+// `label` (título) y `label-secondary` (links y la fila de abajo).
+describe("Footer: el texto sobre surface-header", () => {
+  for (const theme of ["light", "dark"] as const) {
+    for (const rol of ["--sf-label", "--sf-label-secondary"] as const) {
+      it(`${theme} · ${rol.slice(5)} sobre surface-header llega a 4.5:1`, () => {
+        const bg = paleta[theme]["--sf-surface-header"]!
+        expect(ratio(flattenAlpha(paleta[theme][rol]!, bg), bg)).toBeGreaterThanOrEqual(4.5)
+      })
+    }
+  }
+})

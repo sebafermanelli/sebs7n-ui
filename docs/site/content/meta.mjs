@@ -1781,6 +1781,34 @@ export const COMPONENTS = {
     },
     related: ["breadcrumb", "table", "button"],
   },
+  footer: {
+    title: "Footer",
+    group: "navegacion",
+    description: "El pie de una página, la contraparte del `Navbar` abajo: a todo el ancho, con la línea arriba, opaco como la barra global y translúcido sobre el wallpaper.",
+    keyboard: [["Tab", "Recorre los links en orden, grupo por grupo."]],
+    a11y: [
+      "Es un `<footer>`: fuera de un `<article>` o `<section>` es el landmark `contentinfo`.",
+      "Cada `FooterGroup` es un `<h2>` y una lista nombrada por él (`aria-labelledby`); cada hijo va en su `<li>`.",
+      "El texto es `label` y `label-secondary`, a 4,5:1 sobre `surface-header` y sobre el material translúcido en los cuatro tonos del wallpaper (`test/contrast.test.ts`). Los links tienen foco visible y subrayado al pasar: no dependen del color.",
+    ],
+    usage: [
+      "Opaco en `surface-header` y, adentro de `data-ambient` (`AppShell ambient`), `material-translucent` como las barras: nunca transparente del todo sobre el wallpaper. Con menos transparencia vuelve a opaco solo.",
+      "`FooterContent maxWidth` alinea el contenido con la columna del sitio, igual que `NavbarContent`. La grilla de columnas es de la app.",
+      "`FooterGroup` y `FooterBottom` son opcionales: una columna de links con título y la última fila chica (copyright, dirección, el `ThemeSwitcher`). Los `<a>` de un grupo toman el link secundario sin clases.",
+      "Server Component, solo por subpath (`sebs7n-ui/footer`).",
+    ],
+    props: {
+      FooterGroup: {
+        title: "El título del grupo («Producto»); nombra la lista.",
+        className: PROP_DESCRIPTIONS.className,
+      },
+      FooterContent: {
+        style: "Se suma al `maxWidth` de la columna; lo que pongas gana.",
+        className: PROP_DESCRIPTIONS.className,
+      },
+    },
+    related: ["navbar", "text-link"],
+  },
   navbar: {
     title: "Navbar",
     group: "navegacion",
@@ -1811,7 +1839,7 @@ export const COMPONENTS = {
         style: "Se suma al `maxWidth` de la columna; lo que pongas gana.",
       },
     },
-    related: ["navigation-menu", "user-menu", "theme-switcher"],
+    related: ["navigation-menu", "user-menu", "theme-switcher", "footer"],
   },
   "navigation-menu": {
     title: "NavigationMenu",
