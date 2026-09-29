@@ -89,7 +89,7 @@ describe("NavigationMenu", () => {
     render(<Nav />)
     // Sin fondo en ningún estado: en una barra de navegación el único control
     // con fondo es el CTA.
-    expect(trigger()).toHaveClass("text-callout", "text-label-secondary", "bg-transparent", "hover:text-label")
+    expect(trigger()).toHaveClass("h-7", "px-2.5", "text-callout", "text-label-secondary", "bg-transparent", "hover:text-label")
     expect(trigger().className).not.toMatch(/\bhover:bg-/)
 
     const icon = document.querySelector("[data-slot=navigation-menu-icon]")!
@@ -123,6 +123,14 @@ describe("NavigationMenu", () => {
     expect(trigger()).toHaveAttribute("aria-expanded", "false")
   })
 
+  it("con keepMounted el contenido cerrado no ocupa lugar en la barra", () => {
+    render(<Nav keepMounted />)
+    const contenido = document.querySelector("[data-slot=navigation-menu-content]")!
+    expect(contenido).toHaveAttribute("hidden")
+    // Una grilla en el className (`grid sm:grid-cols-2`, como dice la doc) no le gana al `hidden`.
+    expect(contenido).toHaveClass("[&[hidden]]:hidden")
+  })
+
   it("con keepMounted los links salen ya en el HTML del server", () => {
     // Lo que de verdad importa para el crawler no es el DOM del cliente sino
     // el HTML que llega en la respuesta: nadie ejecuta React antes de indexar.
@@ -131,13 +139,14 @@ describe("NavigationMenu", () => {
     expect(renderToString(<Nav />)).not.toContain('href="/sistemas"')
   })
 
-  it("sin title el link no trae la tarjeta: manda el className del llamador", async () => {
+  it("sin title el link de la barra es idéntico al trigger: mismo alto, tamaño, color y estados", async () => {
     render(<Nav />)
-    // El link suelto de la barra tiene el cuerpo de un link de nav, no el de
-    // una tarjeta del panel: si `NavigationMenuLink` trajera el padding y el
-    // hover de la tarjeta, habría que pelearlos desde afuera.
+    // Antes el link solo traía el radio y el foco, y heredaba el texto de 17 de la página: al lado
+    // del trigger («Documentación» vs «Changelog») se veía más grande y más oscuro.
     const plain = screen.getByRole("link", { name: "Blog" })
-    expect(plain).toHaveClass("rounded-control", "focus-visible:focus-ring")
+    const clases = (el: Element) => el.className.split(/\s+/).filter((c) => !c.startsWith("data-popup-open") && !c.startsWith("data-disabled") && c !== "cursor-pointer")
+    expect(plain).toHaveClass("h-7", "px-2.5", "text-callout", "text-label-secondary", "hover:text-label", "rounded-control", "focus-visible:focus-ring")
+    expect(clases(trigger()).filter((c) => !clases(plain).includes(c))).toEqual([])
     expect(plain.className).not.toMatch(/\bp-2\b|hover:bg-/)
 
     await userEvent.click(trigger())
@@ -152,10 +161,9 @@ describe("NavigationMenu", () => {
 
     const popup = document.querySelector("[data-slot=navigation-menu-popup]")!
     expect(popup).toHaveClass("shadow-menu", "rounded-menu", "bg-surface")
-    // El aire entre el vidrio y los links es el de los menús (`p-1`), y lo pone uno solo: con
-    // `p-1` en el panel y otro `p-1` en el contenido eran 8 px contra un radio calculado para 4.
+    // El aire entre el panel y los links es el de los menús (5 px), y lo pone uno solo.
     expect(popup.className).not.toMatch(/(^|\s)p-\d/)
-    expect(document.querySelector("[data-slot=navigation-menu-content]")).toHaveClass("p-1")
+    expect(document.querySelector("[data-slot=navigation-menu-content]")).toHaveClass("p-1.25")
     // `shadow-menu` ya trae el hairline de 1px.
     expect(popup.className).not.toMatch(/\bborder\b/)
   })

@@ -21,10 +21,22 @@ import { cn, type WithClassName } from "../lib/utils.js"
  * lleva toda transición a 0,01ms, y las piezas animadas suman `motion-reduce`
  * para que no quede ni el desplazamiento.
  *
- * El trigger se ve **igual que un link del nav** (14px, peso 400, `gray-900`
- * que sube a `gray-1000`) y no tiene fondo en ningún estado: en una barra de
- * navegación el único control con fondo es el CTA.
+ * El trigger y el link suelto de la barra son **la misma pieza**
+ * (`barItemClassName`): 28 de alto, 14/400 en `label-secondary` que sube a
+ * `label`, sin fondo en ningún estado: en una barra de navegación el único
+ * control con fondo es el CTA.
  */
+/**
+ * El cuerpo de lo que va en la barra: el trigger de un panel y el link suelto. Idénticos a
+ * propósito: uno al lado del otro, cualquier diferencia de tamaño o de color se lee como jerarquía.
+ * 28 de alto (el botón de la toolbar de iCloud), 44 con el dedo.
+ */
+const barItemClassName = cn(
+  "inline-flex h-7 pointer-coarse:h-11 items-center gap-1 rounded-control bg-transparent px-2.5 text-callout text-label-secondary no-underline select-none",
+  "outline-none transition-control hover:text-label focus-visible:focus-ring",
+  "data-active:text-label aria-[current=page]:text-label"
+)
+
 function NavigationMenu({ className, ...props }: NavigationMenuPrimitive.Root.Props) {
   return <NavigationMenuPrimitive.Root data-slot="navigation-menu" className={cn("relative", className)} {...props} />
 }
@@ -65,13 +77,8 @@ function NavigationMenuTrigger({ className, active, chevron = true, children, ..
       data-slot="navigation-menu-trigger"
       data-active={active ? "" : undefined}
       className={cn(
-        // Mismo cuerpo que un link del nav: sin fondo en ningún estado, el
-        // padding existe solo para que el área clickeable llegue a 28px (el alto de
-        // un ítem del sidebar) y el
-        // anillo de foco no apriete el texto.
-        "inline-flex cursor-pointer items-center gap-1 rounded-control bg-transparent px-2 py-1.5 text-callout text-label-secondary select-none",
-        "outline-none transition-control hover:text-label focus-visible:focus-ring",
-        "data-popup-open:text-label data-active:text-label",
+        barItemClassName,
+        "cursor-pointer data-popup-open:text-label",
         "data-disabled:cursor-not-allowed data-disabled:text-label-tertiary data-disabled:hover:text-label-tertiary",
         className
       )}
@@ -115,7 +122,9 @@ function NavigationMenuContent({ className, ...props }: NavigationMenuContentPro
     <NavigationMenuPrimitive.Content
       data-slot="navigation-menu-content"
       className={cn(
-        "h-full w-[calc(100vw-2.5rem)] p-1 sm:w-max sm:min-w-64",
+        // `[&[hidden]]:hidden`: con `keepMounted` el contenido cerrado vive oculto en la barra, y
+        // una grilla en el `className` (`grid`, `flex`) le ganaría al `hidden` del navegador.
+        "h-full w-[calc(100vw-2.5rem)] p-1.25 sm:w-max sm:min-w-64 [&[hidden]]:hidden",
         // Entra y sale en la dirección desde la que venís, como en vercel.com:
         // pasar de un panel al de al lado se lee como un desplazamiento, no
         // como dos paneles distintos.
@@ -137,9 +146,9 @@ function NavigationMenuContent({ className, ...props }: NavigationMenuContentPro
  * Un link del panel: título, descripción de una línea y un ícono opcional.
  *
  * Con `title` arma la **tarjeta** del mega menú (superficie, padding, hover).
- * Sin `title` pone solo lo compartido —radio, foco, `transition-control`, sin
- * subrayado— y el `className` manda: es el modo para un link de la barra, que
- * tiene el cuerpo de un link de nav y no el de una tarjeta.
+ * Sin `title` es el link suelto de la barra, **idéntico al trigger** (mismo
+ * alto, texto y estados); la página actual (`active` o `aria-current`) queda
+ * en `label`. El `className` de la app le gana.
  *
  * Renderiza un `<a>`. Para el `Link` del framework, `render={<NextLink … />}`:
  * la navegación del lado del cliente la tiene que hacer el router, o cada ítem
@@ -163,7 +172,7 @@ function NavigationMenuLink({ className, title, description, icon, children, ...
     return (
       <NavigationMenuPrimitive.Link
         data-slot="navigation-menu-link"
-        className={cn(linkBaseClassName, className)}
+        className={cn(barItemClassName, className)}
         {...props}
       >
         {children}
@@ -263,10 +272,9 @@ function NavigationMenuPopup({ className, ...props }: NavigationMenuPopupProps) 
         "relative h-(--popup-height) w-(--popup-width) origin-(--transform-origin) overflow-hidden",
         // El `focus-visible:focus-ring` es por el mismo motivo que en Popover y HoverCard: si el
         // panel no tiene links adentro, Base UI lo enfoca a él y con `outline-none` no se veía nada.
-        // `rounded-menu` (12), el de los menús de iCloud: los links miden `rounded-control` (8) y el
-        // `p-1` que los separa suma 4, así que las dos curvas son concéntricas. El `p-1` lo pone el
-        // contenido y no el panel: con padding en los dos, el aire no coincidía con el radio, y un
-        // panel que entra de costado se corta en el borde y no 4 px antes.
+        // `rounded-menu` (12) y los 5 px de aire de los menús de iCloud, que pone el contenido y no
+        // el panel: con padding en los dos se sumaban, y un panel que entra de costado se corta en
+        // el borde y no 5 px antes.
         "rounded-menu bg-surface text-label shadow-menu outline-none focus-visible:focus-ring",
         "transition-[opacity,transform,width,height] duration-200 ease-out motion-reduce:transition-none",
         "data-starting-style:scale-[0.98] data-starting-style:opacity-0",
