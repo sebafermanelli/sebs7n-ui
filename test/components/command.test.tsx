@@ -364,3 +364,11 @@ describe("CommandDialog", () => {
     expect(dialogo.className).toMatch(/w-\[min\(560px,calc\(100%-2rem\)\)\]/)
   })
 })
+
+describe("Command con el dedo", () => {
+  it("el campo sube a 44 y las filas también: con 30 los toques se pisan", async () => {
+    const { commandInputClassName, commandItemClassName } = await import("../../src/variants/command")
+    expect(commandInputClassName.split(" ")).toContain("pointer-coarse:h-11")
+    expect(commandItemClassName.split(" ")).toEqual(expect.arrayContaining(["min-h-7.5", "pointer-coarse:min-h-11"]))
+  })
+})

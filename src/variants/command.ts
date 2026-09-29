@@ -16,10 +16,10 @@ export const commandDialogPopupClassName =
 /**
  * El search field de iCloud (§2.13): 36 px, radio 10, relleno `fill-1`, la lupa a 10 px del borde.
  * Con el foco el relleno se va (`bg-transparent`) y queda el anillo interior (`focus-ring`), como
- * en Mail. Va en la caja y no en el `input` porque la lupa está adentro.
+ * en Mail. Va en la caja y no en el `input` porque la lupa está adentro. Con el dedo, 44.
  */
 export const commandInputClassName =
-  "flex h-9 shrink-0 items-center gap-2 rounded-field bg-fill-1 px-2.5 transition-control focus-within:bg-transparent focus-within:focus-ring"
+  "flex h-9 pointer-coarse:h-11 shrink-0 items-center gap-2 rounded-field bg-fill-1 px-2.5 transition-control focus-within:bg-transparent focus-within:focus-ring"
 
 /**
  * Un filtro de la búsqueda: el token de iCloud (§2.13), gris (`fill-1`) y el prendido en el acento
@@ -33,10 +33,11 @@ export const commandFilterClassName =
 /**
  * Una fila de resultados: la del menú de iCloud (§2.8). 30 px de alto (más, con detalle), radio 8,
  * 14/400 y el resaltado en `fill-2`, el gris del menú: el texto no cambia de color. Con ícono el
- * padding izquierdo baja a 4, como en iCloud, para que la caja de 30 del ícono quede al borde.
+ * padding izquierdo baja a 4, como en iCloud, para que la caja de 30 del ícono quede al borde. Con
+ * el dedo sube a 44 de verdad, como los ítems de menú: las filas están pegadas.
  */
 export const commandItemClassName =
-  "group/command-item relative flex min-h-7.5 cursor-pointer items-center gap-1.5 rounded-menu-item px-2.5 py-1 text-callout text-label outline-none select-none transition-control has-[>[data-slot=command-item-icon]]:pl-1 " +
+  "group/command-item relative flex min-h-7.5 pointer-coarse:min-h-11 cursor-pointer items-center gap-1.5 rounded-menu-item px-2.5 py-1 text-callout text-label outline-none select-none transition-control has-[>[data-slot=command-item-icon]]:pl-1 " +
   "data-highlighted:bg-fill-2 active:bg-fill-3 data-disabled:cursor-not-allowed data-disabled:text-label-tertiary [&_svg]:pointer-events-none [&_svg]:shrink-0"
 
 /**
