@@ -1002,13 +1002,14 @@ export const COMPONENTS = {
     usage: [
       "Para un momento: un vencimiento con hora, un recordatorio. Para una hora sola, `TimePicker`; para un día, `DatePicker`.",
       "Elegir el día conserva la hora; sin hora, el día arranca a las 00:00. Una hora elegida antes que el día espera al día.",
-      "Con `name` viaja como `2026-09-29T09:30`, el formato de `<input type=\"datetime-local\">` en hora local: la zona horaria la pone el servidor.",
+      "Con `name` viaja como `2026-09-29T09:30`, el formato de `<input type=\"datetime-local\">`: la hora local del navegador **sin zona horaria**. El servidor no sabe de qué zona es, y si corre en UTC `new Date(\"2026-09-29T09:30\")` ahí es otro instante. Para guardar un instante, mandá la zona en otro campo o usá `onValueChange` con `toISOString()`.",
       "`clearable` vacía fecha y hora desde el pie del calendario.",
       "Solo por subpath (`sebs7n-ui/date-time-picker`): no está en el barrel, por peso.",
     ],
     props: {
       DateTimePicker: {
         defaultValue: "La fecha y hora al montar, sin controlar.",
+        name: "El nombre en el formulario: `2026-09-29T09:30`, hora local sin zona horaria (como `datetime-local`).",
         disabled: "Apaga la fecha y la hora.",
         "aria-label": PROP_DESCRIPTIONS["aria-label"],
         "aria-labelledby": "El `id` del elemento que nombra el campo.",

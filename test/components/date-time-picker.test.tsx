@@ -1,5 +1,6 @@
 import { render, screen, waitFor, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
+import * as React from "react"
 import { renderToString } from "react-dom/server"
 import { afterEach, describe, expect, it, vi } from "vitest"
 
@@ -61,6 +62,32 @@ describe("DateTimePicker", () => {
     await user.click(await screen.findByRole("button", { name: "Limpiar" }))
     expect(onValueChange).toHaveBeenLastCalledWith(null)
     await waitFor(() => expect(time()).toHaveValue(""))
+  })
+
+  it("controlado: un value que pasa a null de afuera no deja la hora tipeada antes", async () => {
+    const user = userEvent.setup()
+    function Controlled() {
+      const [value, setValue] = React.useState<Date | null>(null)
+      return (
+        <>
+          <DateTimePicker aria-label="Vencimiento" onValueChange={setValue} value={value} />
+          <button onClick={() => setValue(new Date(2026, 8, 29, 10, 0))} type="button">
+            Mañana
+          </button>
+          <button onClick={() => setValue(null)} type="button">
+            Borrar
+          </button>
+        </>
+      )
+    }
+    render(<Controlled />)
+    await user.type(time(), "1830")
+    await user.tab()
+    expect(time()).toHaveValue("18:30")
+    await user.click(screen.getByRole("button", { name: "Mañana" }))
+    expect(time()).toHaveValue("10:00")
+    await user.click(screen.getByRole("button", { name: "Borrar" }))
+    expect(time()).toHaveValue("")
   })
 
   it("con name viaja como fecha y hora local (datetime-local)", () => {

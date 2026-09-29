@@ -15,8 +15,11 @@ type DateTimePickerProps = {
   /** Avisa la fecha y hora elegidas, o `null` al limpiar. */
   onValueChange?: (value: Date | null) => void
   /**
-   * El nombre con el que viaja en un formulario, como `2026-09-29T09:30` (el formato de
-   * `<input type="datetime-local">`, hora local); vacío sin fecha.
+   * El nombre con el que viaja en un formulario, como `2026-09-29T09:30`: el formato de
+   * `<input type="datetime-local">`, en la hora local del navegador y **sin zona horaria** (ni «Z»
+   * ni «-03:00»); vacío sin fecha. El servidor no sabe de qué zona es: si corre en otra (UTC en la
+   * mayoría de los hostings), `new Date("2026-09-29T09:30")` ahí es otro instante. Para guardar un
+   * instante, mandá la zona aparte o usá `onValueChange` y `toISOString()`.
    */
   name?: string
   /** Un «Limpiar» al pie del calendario: vacía la fecha y la hora. */
@@ -44,7 +47,12 @@ type DateTimePickerProps = {
 const pad = (n: number) => String(n).padStart(2, "0")
 const timeOf = (date: Date) => `${pad(date.getHours())}:${pad(date.getMinutes())}`
 
-/** El día de `date` a la hora «HH:MM». */
+/**
+ * El día de `date` a la hora «HH:MM». Una hora que no existe ese día por el cambio de horario (el
+ * reloj salta de 00:00 a 01:00 en las zonas que adelantan a medianoche, como Chile, Paraguay o
+ * Brasil antes) la corre `setHours` a la siguiente que sí: `withTime(día, "00:00")` puede dar 01:00.
+ * Es lo mismo que hace el navegador con un `datetime-local`.
+ */
 function withTime(date: Date, time: string) {
   const next = new Date(date)
   next.setHours(Number(time.slice(0, 2)), Number(time.slice(3, 5)), 0, 0)
@@ -77,6 +85,13 @@ function DateTimePicker({
   const [own, setOwn] = React.useState(defaultValue)
   const value = valueProp !== undefined ? valueProp : own
   const [pendingTime, setPendingTime] = React.useState<string | null>(null)
+  // La hora sin día sirve solo mientras no hay valor: cualquier valor nuevo (de afuera o elegido) la
+  // descarta, o un `value` que pasa a null mostraría la hora tipeada antes (ajuste en el render).
+  const [synced, setSynced] = React.useState(value?.getTime() ?? null)
+  if (synced !== (value?.getTime() ?? null)) {
+    setSynced(value?.getTime() ?? null)
+    setPendingTime(null)
+  }
   const time = value ? timeOf(value) : pendingTime
 
   const commit = (next: Date | null) => {
