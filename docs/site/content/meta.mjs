@@ -1823,7 +1823,7 @@ export const COMPONENTS = {
     a11y: [
       "Cada panel es un `<section>`: con `aria-label` es una región con nombre, y el lector salta entre paneles con los atajos de regiones.",
       "En angosto los paneles que no se ven llevan `display: none`: no quedan en el orden de Tab ni los lee el lector.",
-      "**Al pasar de panel, mové el foco vos**: al elegir una fila en angosto, el detalle aparece y el foco tiene que ir a su título (`ref.focus()`), si no se queda en un elemento que ya no se ve.",
+      "**Al pasar de panel en angosto, el foco va solo**: si estaba en el panel que se oculta, pasa al que llega —a la fila elegida (`aria-current` o `data-state=\"selected\"`) al volver a la lista, o al primer título del panel—. En ancho, donde el de antes sigue a la vista, no se mueve.",
       "`SplitViewBack` es un `<button>` con el nombre del panel al que vuelve («‹ Facturas»), como iOS: nunca solo el chevron.",
       "Con `resizable`, cada separador es un `role=\"separator\"` tabulable con el ancho en px (`aria-valuenow/min/max`), `aria-controls` al panel y el nombre del panel («Cambiar el tamaño: Facturas»). En angosto no se ve.",
     ],

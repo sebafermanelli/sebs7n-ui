@@ -135,3 +135,65 @@ describe("SplitView resizable", () => {
     expect(onWidthsChange).toHaveBeenCalledWith({ sidebar: 290, list: 380 })
   })
 })
+
+// En angosto el panel que se va queda `display: none` y el foco se perdía en el <body>: quien usa
+// teclado o lector tenía que volver a arrancar desde arriba.
+describe("SplitView · el foco al cambiar de panel", () => {
+  // Lo que hacen las clases en el navegador, sin Tailwind: solo el activo se ve (angosto).
+  function Angosto() {
+    return <style>{"section[data-slot^=split-view-]:not([data-active]){display:none}"}</style>
+  }
+
+  function Lista() {
+    const { setPane } = useSplitView()
+    return (
+      <ul>
+        <li aria-current="true">
+          <button onClick={() => setPane("detail")} type="button">
+            Acme S.A.
+          </button>
+        </li>
+      </ul>
+    )
+  }
+
+  function Correo(props: Partial<React.ComponentProps<typeof SplitView>>) {
+    return (
+      <>
+        <Angosto />
+        <SplitView {...props}>
+          <SplitViewList aria-label="Facturas">
+            <Lista />
+          </SplitViewList>
+          <SplitViewDetail aria-label="Factura">
+            <SplitViewBack>Facturas</SplitViewBack>
+            <h2>Factura 0012</h2>
+          </SplitViewDetail>
+        </SplitView>
+      </>
+    )
+  }
+
+  it("al abrir el detalle, el foco va a su título; al volver, a la fila elegida", async () => {
+    render(<Correo />)
+    await userEvent.click(screen.getByRole("button", { name: "Acme S.A." }))
+    expect(screen.getByRole("heading", { name: "Factura 0012" })).toHaveFocus()
+    await userEvent.click(screen.getByRole("button", { name: "Facturas" }))
+    expect(screen.getByRole("button", { name: "Acme S.A." })).toHaveFocus()
+  })
+
+  it("si el panel de antes sigue a la vista (ancho), el foco no se mueve", async () => {
+    render(
+      <SplitView>
+        <SplitViewList aria-label="Facturas">
+          <Lista />
+        </SplitViewList>
+        <SplitViewDetail aria-label="Factura">
+          <h2>Factura 0012</h2>
+        </SplitViewDetail>
+      </SplitView>
+    )
+    await userEvent.click(screen.getByRole("button", { name: "Acme S.A." }))
+    expect(screen.getByRole("button", { name: "Acme S.A." })).toHaveFocus()
+  })
+})

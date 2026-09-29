@@ -80,6 +80,33 @@ function SplitView({
   )
   const value = React.useMemo(() => ({ pane, setPane }), [pane, setPane])
 
+  // En angosto el panel que se va queda `display: none` y el foco que estaba adentro se perdería en
+  // el <body>. Si pasa eso, va al panel que llega: a la fila elegida (volviendo a la lista) o al
+  // título del panel, o al panel mismo. En ancho el de antes sigue a la vista y el foco no se toca.
+  const rootRef = React.useRef<HTMLDivElement>(null)
+  const previous = React.useRef(pane)
+  const slotOf = (name: SplitViewPane) => `[data-slot="split-view-${name}"]`
+  React.useLayoutEffect(() => {
+    const from = previous.current
+    previous.current = pane
+    if (from === pane) return
+    const root = rootRef.current
+    const outgoing = root?.querySelector<HTMLElement>(slotOf(from))
+    const incoming = root?.querySelector<HTMLElement>(slotOf(pane))
+    if (!outgoing || !incoming || getComputedStyle(outgoing).display !== "none") return
+    // Solo si el foco estaba en el panel que se fue: el efecto corre antes de que el navegador lo
+    // saque del elemento oculto. Si estaba en otro lado, no se le roba.
+    if (!outgoing.contains(document.activeElement)) return
+    const target =
+      incoming.querySelector<HTMLElement>('[aria-current]:not([aria-current="false"]), [data-state="selected"]') ??
+      incoming.querySelector<HTMLElement>("h1, h2, h3, h4, h5, h6") ??
+      incoming
+    // Una fila marcada puede ser el `<li>`: el foco va a lo enfocable de adentro.
+    const focusable = target.matches("a, button, input, [tabindex]") ? target : (target.querySelector<HTMLElement>("a, button, input, [tabindex]") ?? target)
+    if (!focusable.matches("a, button, input, select, textarea, [tabindex]")) focusable.setAttribute("tabindex", "-1")
+    focusable.focus()
+  }, [pane])
+
   const [widths, setWidths] = React.useState<SplitViewWidths>(() => ({ ...WIDTHS, ...defaultWidths }))
   const widthsRef = React.useRef(widths)
   widthsRef.current = widths
@@ -101,6 +128,7 @@ function SplitView({
     <SplitViewContext.Provider value={value}>
       <ResizeContext.Provider value={resizable ? resize : null}>
         <div
+          ref={rootRef}
           data-slot="split-view"
           data-pane={pane}
           data-resizable={resizable ? "" : undefined}
