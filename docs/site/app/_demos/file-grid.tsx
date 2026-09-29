@@ -35,7 +35,7 @@ function acciones(item: FileGridItem, selected: FileGridItem[]) {
 
 /**
  * La vista de íconos
- * Miniaturas con el filo de 1 px de Drive, nombre y tipo abajo, y una caja gris con el puntero y en la elegida. Flechas en dos dimensiones y Enter abre. `menu` da las acciones: las abre el «…» (en la elegida y con el puntero), el click derecho y, con teclado, Shift+F10 o la tecla de menú.
+ * Miniaturas con el filo de 1 px de Drive, nombre y tipo abajo, una caja gris con el puntero y la misma caja con un borde del acento en la elegida. Flechas en dos dimensiones y Enter abre. `menu` da las acciones: las abre el «…» (en el ítem con el puntero o con el foco), el click derecho y, con teclado, Shift+F10 o la tecla de menú.
  */
 export function Basico() {
   return <FileGrid aria-label="Archivos" defaultSelected="f-0012" items={ARCHIVOS} menu={acciones} />
