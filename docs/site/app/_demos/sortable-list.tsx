@@ -3,7 +3,7 @@
 import { ReceiptIcon } from "lucide-react"
 import { useState } from "react"
 import { Button } from "sebs7n-ui"
-import { SortableList } from "sebs7n-ui/sortable-list"
+import { SortableAddButton, SortableList } from "sebs7n-ui/sortable-list"
 
 type Line = { id: string; concept: string; amount: string }
 
@@ -12,6 +12,13 @@ const LINES: Line[] = [
   { id: "hosting", concept: "Hosting anual", amount: "$ 36.000" },
   { id: "support", concept: "Soporte mensual", amount: "$ 22.500" },
   { id: "domain", concept: "Dominio", amount: "$ 9.800" },
+]
+
+// Lo que se puede sumar a la factura: las líneas de arriba más dos del catálogo.
+const CATALOG: Line[] = [
+  ...LINES,
+  { id: "maintenance", concept: "Mantenimiento", amount: "$ 15.000" },
+  { id: "training", concept: "Capacitación", amount: "$ 30.000" },
 ]
 
 function LineRow({ line }: { line: Line }) {
@@ -35,21 +42,29 @@ function EditButton({ editing, onEditingChange }: { editing: boolean; onEditingC
 
 /**
  * Las líneas de una factura
- * «Editar» (o mantener apretada una fila) muestra el «−» y la manija ⋮⋮: arrastrala, o enfocala con Tab y usá Espacio, ↑/↓ y Espacio. «Agregar» suma una línea.
+ * «Editar» (o mantener apretada una fila) muestra el «−» y la manija ⋮⋮: arrastrala, o enfocala con Tab y usá Espacio, ↑/↓ y Espacio. El «+» al lado de «Listo» (`SortableAddButton`) suma una línea del catálogo.
  */
 export function InvoiceLines() {
   const [lines, setLines] = useState(LINES)
   const [editing, setEditing] = useState(false)
   return (
     <div className="flex w-full max-w-md flex-col gap-3">
-      <EditButton editing={editing} onEditingChange={setEditing} />
+      <div className="flex items-center justify-end gap-1">
+        {editing && (
+          <SortableAddButton
+            items={CATALOG.filter((line) => !lines.includes(line)).map((line) => ({ id: line.id, label: line.concept }))}
+            onSelect={(id) => setLines([...lines, ...CATALOG.filter((line) => line.id === id)])}
+            size="icon-sm"
+          />
+        )}
+        <EditButton editing={editing} onEditingChange={setEditing} />
+      </div>
       <SortableList
         aria-label="Líneas de la factura"
         editing={editing}
         getKey={(line) => line.id}
         getLabel={(line) => line.concept}
         items={lines}
-        onAdd={() => setLines([...lines, { id: `line-${lines.length + 1}`, concept: `Línea ${lines.length + 1}`, amount: "$ 0" }])}
         onEditingChange={setEditing}
         onRemove={(id) => setLines(lines.filter((line) => line.id !== id))}
         onReorder={setLines}

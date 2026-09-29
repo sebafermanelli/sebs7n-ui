@@ -16,22 +16,19 @@ import {
   UsersIcon,
   type LucideIcon,
 } from "lucide-react"
-import { lazy, Suspense, useState, type ReactNode } from "react"
+import { useState, type ReactNode } from "react"
 import { Avatar, AvatarFallback } from "sebs7n-ui/avatar"
 import { Badge } from "sebs7n-ui/badge"
 import { Button } from "sebs7n-ui/button"
 import { CardRow } from "sebs7n-ui/card"
 import { Meter } from "sebs7n-ui/meter"
 import { Navbar, NavbarContent } from "sebs7n-ui/navbar"
-import { SortableGrid } from "sebs7n-ui/sortable-grid"
+import { SortableAddButton, SortableGrid } from "sebs7n-ui/sortable-grid"
 import { Stat } from "sebs7n-ui/stat"
 import { Tooltip, TooltipContent, TooltipTrigger } from "sebs7n-ui/tooltip"
 import { WidgetCard } from "sebs7n-ui/widget-card"
 
 import { AppIcon, type Fill } from "./parts"
-
-// El diálogo de «+ Agregar» es un chunk aparte: se pide recién la primera vez que se abre.
-const AddWidgetDialog = lazy(() => import("./home-add-dialog").then((mod) => ({ default: mod.AddWidgetDialog })))
 
 const FACTURAS = [
   { id: "0012", cliente: "Acme S.A.", fecha: "30/09" },
@@ -79,12 +76,12 @@ function Mas({ label }: { label: string }) {
 /**
  * Los widgets, en el orden de arriba. En modo edición («Editar», o mantener apretado uno) tiemblan,
  * se reordenan arrastrando (`SortableGrid`, la tarjeta entera) o con el teclado, se sacan con su «−»
- * y vuelven con «+ Agregar». El estado vive en la pantalla y se pierde al cambiar de pantalla.
+ * y vuelven con el «+» de la barra, al lado de «Listo». El estado vive en la pantalla y se pierde al cambiar de pantalla.
  */
 const WIDGETS: { id: string; title: string; icon: ReactNode; wide?: boolean; card: ReactNode }[] = [
   {
     id: "invoices",
-    icon: <AppIcon fill="brand" icon={FileTextIcon} />,
+    icon: <AppIcon fill="brand" icon={FileTextIcon} size="sm" />,
     title: "Facturas",
     card: (
       <WidgetCard
@@ -103,7 +100,7 @@ const WIDGETS: { id: string; title: string; icon: ReactNode; wide?: boolean; car
   },
   {
     id: "clients",
-    icon: <AppIcon fill="green" icon={UsersIcon} />,
+    icon: <AppIcon fill="green" icon={UsersIcon} size="sm" />,
     title: "Clientes",
     card: (
       <WidgetCard
@@ -122,7 +119,7 @@ const WIDGETS: { id: string; title: string; icon: ReactNode; wide?: boolean; car
   },
   {
     id: "calendar",
-    icon: <AppIcon fill="red" icon={CalendarIcon} />,
+    icon: <AppIcon fill="red" icon={CalendarIcon} size="sm" />,
     title: "Calendario",
     card: (
       <WidgetCard
@@ -149,7 +146,7 @@ const WIDGETS: { id: string; title: string; icon: ReactNode; wide?: boolean; car
   },
   {
     id: "files",
-    icon: <AppIcon fill="blue" icon={FolderIcon} />,
+    icon: <AppIcon fill="blue" icon={FolderIcon} size="sm" />,
     title: "Archivos",
     card: (
       <WidgetCard
@@ -175,7 +172,7 @@ const WIDGETS: { id: string; title: string; icon: ReactNode; wide?: boolean; car
   },
   {
     id: "collections",
-    icon: <AppIcon fill="purple" icon={TrendingUpIcon} />,
+    icon: <AppIcon fill="purple" icon={TrendingUpIcon} size="sm" />,
     title: "Cobranza",
     wide: true,
     card: (
@@ -213,10 +210,6 @@ const WIDGETS: { id: string; title: string; icon: ReactNode; wide?: boolean; car
 export function HomeShowcase() {
   const [widgets, setWidgets] = useState(WIDGETS)
   const [editing, setEditing] = useState(false)
-  const [adding, setAdding] = useState(false)
-  // El diálogo se monta la primera vez que se abre (y su chunk se pide recién ahí); después queda,
-  // para que cerrarlo anime.
-  const [addMounted, setAddMounted] = useState(false)
   const removed = WIDGETS.filter((widget) => !widgets.includes(widget))
   return (
     // El wallpaper (`bg-ambient`) es fijo a la ventana: lo mantiene adentro el `[contain:paint]` del marco.
@@ -228,13 +221,22 @@ export function HomeShowcase() {
             Facturación
           </span>
           <div className="flex items-center gap-1">
+            {/* En edición, el «+» con los widgets que se sacaron, al lado de «Listo». */}
+            {editing && (
+              <SortableAddButton
+                items={removed.map((widget) => ({ id: widget.id, label: widget.title, icon: widget.icon }))}
+                onSelect={(id) => setWidgets((all) => [...all, ...WIDGETS.filter((widget) => widget.id === id)])}
+                size="icon-sm"
+              />
+            )}
             {/* En edición, «Listo» es el único acento de la pantalla. */}
             <Button className="me-1" onClick={() => setEditing(!editing)} size="sm" variant={editing ? "default" : "secondary"}>
               {editing ? "Listo" : "Editar"}
             </Button>
             <Accion icon={SearchIcon} label="Buscar" />
             <Accion icon={BellIcon} label="Avisos" />
-            <Accion icon={PlusIcon} label="Crear" />
+            {/* En edición no: el único «+» es el de agregar widgets. */}
+            {!editing && <Accion icon={PlusIcon} label="Crear" />}
             <Avatar className="ms-1" size="sm">
               <AvatarFallback>AP</AvatarFallback>
             </Avatar>
@@ -261,28 +263,11 @@ export function HomeShowcase() {
           itemClassName={(widget) => (widget.wide ? "@2xl:col-span-2" : undefined)}
           editing={editing}
           items={widgets}
-          onAdd={() => {
-            setAddMounted(true)
-            setAdding(true)
-          }}
           onEditingChange={setEditing}
           onRemove={(id) => setWidgets((all) => all.filter((widget) => widget.id !== id))}
           onReorder={setWidgets}
           renderItem={(widget) => widget.card}
         />
-        {addMounted && (
-          <Suspense fallback={null}>
-            <AddWidgetDialog
-              onAdd={(id) => {
-                setWidgets((all) => [...all, ...WIDGETS.filter((widget) => widget.id === id)])
-                setAdding(false)
-              }}
-              onOpenChange={setAdding}
-              open={adding}
-              widgets={removed}
-            />
-          </Suspense>
-        )}
       </div>
     </div>
   )

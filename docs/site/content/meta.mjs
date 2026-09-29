@@ -2486,7 +2486,7 @@ export const COMPONENTS = {
     group: "contenido",
     description: "Una lista que en modo edición se reordena arrastrando la manija ⋮⋮ de cada fila, o con el teclado, con cada movimiento anunciado; y saca y agrega filas.",
     keyboard: [
-      ["Tab", "En edición, recorre los «−», las manijas y «Agregar»."],
+      ["Tab", "En edición, recorre los «−» y las manijas."],
       ["Espacio · Enter", "Toma la fila; con la fila tomada, la suelta en el lugar nuevo."],
       ["↑ / ↓", "Con la fila tomada, la mueven."],
       ["Escape", "Con una fila tomada, cancela: vuelve a su lugar. Si no, sale de la edición."],
@@ -2500,14 +2500,15 @@ export const COMPONENTS = {
       "Entrar y salir de la edición se anuncia: «Modo edición. Arrastrá para ordenar.» y «Listo.» (`labels.editing` y `labels.done`). Si se saca la última fila, el foco queda en la lista.",
     ],
     usage: [
-      "**Solo se ordena en modo edición**, como en iOS: `editing` + `onEditingChange` con un botón «Editar»/«Listo» de la app (o `defaultEditing`). **El botón es obligatorio para el teclado:** mantener apretado es solo de puntero, así que sin él quien usa teclado nunca entra en edición. También entra manteniendo apretada una fila ~0,5 s (mouse o dedo; un clic normal no), y sale con Esc o un clic afuera. En edición cada fila lleva el «−» adelante (con `onRemove`) y la manija al final; con `onAdd`, una fila «Agregar» al final, y la app decide qué abre.",
+      "**Solo se ordena en modo edición**, como en iOS: `editing` + `onEditingChange` con un botón «Editar»/«Listo» de la app (o `defaultEditing`). **El botón es obligatorio para el teclado:** mantener apretado es solo de puntero, así que sin él quien usa teclado nunca entra en edición. También entra manteniendo apretada una fila ~0,5 s (mouse o dedo; un clic normal no), y sale con Esc o un clic afuera. En edición cada fila lleva el «−» adelante (con `onRemove`) y la manija al final.",
+      "El «+» para agregar es `SortableAddButton` (del mismo subpath): va al lado del «Listo» de la app y abre un menú con lo que se puede agregar (`items: { id, label, icon? }[]`, `onSelect(id)`); vacío, queda deshabilitado y dice «No hay más para agregar». Si el id es la clave del ítem, al aparecer el foco va a su «−» y se anuncia «Se agregó …».",
       "`renderItem` devuelve **el contenido** de la fila, no un `<li>` (un `<li>` adentro de otro rompe la hidratación). Recibe `state.editing`.",
       "`onReorder` recibe los ítems en el orden nuevo, que se ve al soltar. **Optimista:** devolvé una promesa sin tocar `items`; si falla, vuelve el anterior y se anuncia «No se pudo guardar el orden». **Si la app aplica el orden ella** (cambia `items`), revertirlo y avisar si falla también es suyo: el componente no anuncia una vuelta atrás que no hizo.",
       "**`@dnd-kit/core`, `@dnd-kit/sortable` y `@dnd-kit/utilities` son peers opcionales:** `npm install @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities` en la app que lo usa. Solo por subpath (`sebs7n-ui/sortable-list`).",
     ],
     props: {
       SortableList: {
-        labels: "Textos: `handle`, `instructions`, `picked`, `dropped`, `canceled`, `position`, `of`, `failed`, `grabbed` (solo `SortableGrid` sin manija), `remove`, `removed`, `add`, `editing` y `done`. Los que vienen por defecto son `sortableLabels`.",
+        labels: "Textos: `handle`, `instructions`, `picked`, `dropped`, `canceled`, `position`, `of`, `failed`, `grabbed` (solo `SortableGrid` sin manija), `remove`, `removed`, `add` y `added` (el «+» de `SortableAddButton` y su anuncio), `nothingToAdd`, `editing` y `done`. Los que vienen por defecto son `sortableLabels`.",
         "aria-label": PROP_DESCRIPTIONS["aria-label"],
       },
     },
@@ -2516,9 +2517,9 @@ export const COMPONENTS = {
   "sortable-grid": {
     title: "SortableGrid",
     group: "contenido",
-    description: "Tarjetas en una grilla que, en modo edición, tiemblan y se reordenan arrastrando —las demás se corren— o con el teclado; se sacan con «−» y se agregan con «+ Agregar», como la pantalla de inicio de iOS.",
+    description: "Tarjetas en una grilla que, en modo edición, tiemblan y se reordenan arrastrando —las demás se corren— o con el teclado; se sacan con «−» y se agregan con el «+» de `SortableAddButton`, como la pantalla de inicio de iOS.",
     keyboard: [
-      ["Tab", "En edición, recorre las tarjetas (o las manijas, con `handle`), sus «−», lo interactivo de adentro y «+ Agregar»."],
+      ["Tab", "En edición, recorre las tarjetas (o las manijas, con `handle`), sus «−» y lo interactivo de adentro."],
       ["Espacio · Enter", "Sobre la tarjeta, la toma; tomada, la suelta. En un botón de adentro es del botón."],
       ["← → ↑ ↓", "Con la tarjeta tomada, la mueven en la grilla."],
       ["Escape", "Con una tarjeta tomada, cancela: vuelve a su lugar. Si no, sale de la edición."],
@@ -2532,7 +2533,7 @@ export const COMPONENTS = {
     ],
     usage: [
       "**Solo se ordena en modo edición:** `editing` + `onEditingChange` con un botón «Editar»/«Listo» de la app, o `defaultEditing`. **El botón es obligatorio para el teclado:** mantener apretado es solo de puntero. Se edita una grilla por vez: entrar en otra saca a la que estaba. También entra manteniendo apretada una tarjeta ~0,5 s (mouse o dedo; un clic normal no, y el clic que sigue no abre nada), y sale con Esc o un clic en un espacio vacío. En edición las tarjetas tiemblan (±1°, menos en las anchas para que el borde no se corra más de ~2 px; la que se arrastra no).",
-      "`onRemove(key)` pone en cada tarjeta el «−» de iOS, arriba a la izquierda: saca sin confirmar y la app la saca de `items`. `onAdd()` suma al final una celda «+ Agregar» punteada; la app decide qué abre (un `Dialog` con los widgets que faltan). Hay que dejar lugar arriba a la izquierda: el «−» sobresale 8 px.",
+      "`onRemove(key)` pone en cada tarjeta el «−» de iOS, arriba a la izquierda: saca sin confirmar y la app la saca de `items`. El «+» para agregar es `SortableAddButton` (del mismo subpath): va al lado del «Listo» de la app y abre un menú con lo que se puede agregar (`items: { id, label, icon? }[]`, `onSelect(id)`); vacío, queda deshabilitado y dice «No hay más para agregar». Si el id es la clave del ítem, al aparecer el foco va a su «−» y se anuncia «Se agregó …». Hay que dejar lugar arriba a la izquierda: el «−» sobresale 8 px.",
       "**Sin `handle` se arrastra la tarjeta entera:** con el mouse arranca a los 8 px, así un click en un botón de adentro sigue siendo un click; con el dedo, después de 250 ms apretado, así deslizar sigue scrolleando.",
       "Con `handle`, `renderItem` recibe la manija en `state.handle` y la pone donde vaya (en la cabecera de la tarjeta).",
       "`columns` fija las columnas; sin `columns`, las pone `className` (`@2xl:grid-cols-2`). `itemClassName` para una tarjeta más ancha (`col-span-2`).",

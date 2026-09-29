@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from "sebs7n-ui"
-import { SortableGrid } from "sebs7n-ui/sortable-grid"
+import { SortableAddButton, SortableGrid } from "sebs7n-ui/sortable-grid"
 
 type Widget = { id: string; title: string; value: string }
 
@@ -60,7 +60,7 @@ export function Widgets() {
 
 /**
  * Sacar y agregar
- * `onRemove` pone un «−» en cada tarjeta, que la saca sin confirmar; `onAdd`, una celda «+ Agregar» al final. Acá vuelve la última que sacaste.
+ * `onRemove` pone un «−» en cada tarjeta, que la saca sin confirmar. `SortableAddButton` es el «+» al lado de «Listo»: un menú con las que sacaste; la que elegís vuelve al final, con el foco en su «−».
  */
 export function EditMode() {
   const [widgets, setWidgets] = useState(WIDGETS)
@@ -68,7 +68,16 @@ export function EditMode() {
   const removed = WIDGETS.filter((widget) => !widgets.includes(widget))
   return (
     <div className="flex w-full max-w-lg flex-col gap-3">
-      <EditButton editing={editing} onEditingChange={setEditing} />
+      <div className="flex items-center justify-end gap-1">
+        {editing && (
+          <SortableAddButton
+            items={removed.map((widget) => ({ id: widget.id, label: widget.title }))}
+            onSelect={(id) => setWidgets([...widgets, ...WIDGETS.filter((widget) => widget.id === id)])}
+            size="icon-sm"
+          />
+        )}
+        <EditButton editing={editing} onEditingChange={setEditing} />
+      </div>
       <SortableGrid
         aria-label="Resumen editable"
         columns={2}
@@ -76,7 +85,6 @@ export function EditMode() {
         getKey={(widget) => widget.id}
         getLabel={(widget) => widget.title}
         items={widgets}
-        onAdd={removed.length > 0 ? () => setWidgets([...widgets, removed.at(-1)!]) : undefined}
         onEditingChange={setEditing}
         onRemove={(id) => setWidgets(widgets.filter((widget) => widget.id !== id))}
         onReorder={setWidgets}
