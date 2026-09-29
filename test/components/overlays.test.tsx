@@ -431,7 +431,9 @@ describe("Sheet, Popover al estilo iCloud (2.0)", () => {
     expect(screen.getByRole("button", { name: "Cerrar" })).toHaveClass("top-4.5", "right-4.5")
   })
 
-  it("Popover: más angosto y con menos aire, como un popover de macOS; título headline", async () => {
+  // iCloud (§2.8, «Show» en Home y «Apps» en Quick Access): radio 12, opaco, el filo de 1 px y la
+  // sombra de popover (los dos en `shadow-menu`) y el contenido a 16 px del borde.
+  it("Popover: el de iCloud, radio 12 y 16 px de aire; título headline", async () => {
     render(
       <Popover defaultOpen>
         <PopoverTrigger render={<Button variant="outline" />}>Filtros</PopoverTrigger>
@@ -443,9 +445,22 @@ describe("Sheet, Popover al estilo iCloud (2.0)", () => {
       </Popover>
     )
     const panel = (await screen.findByText("Rango")).closest("[data-slot=popover-content]")!
-    expect(panel).toHaveClass("w-64", "p-3", "gap-2", "text-callout")
-    expect(panel).not.toHaveClass("w-72", "p-4")
+    expect(panel).toHaveClass("w-64", "p-4", "gap-2", "text-callout", "rounded-menu", "bg-surface", "shadow-menu")
+    expect(panel).not.toHaveClass("p-3", "material-translucent")
     expect(screen.getByText("Rango")).toHaveClass("text-headline")
+  })
+
+  // El único popover translúcido de iCloud es el de acceso rápido (Quick Access, §1.5).
+  it("Popover translucent: el material translúcido en vez de la superficie opaca", async () => {
+    render(
+      <Popover defaultOpen>
+        <PopoverTrigger render={<Button variant="outline" />}>Apps</PopoverTrigger>
+        <PopoverContent translucent>accesos</PopoverContent>
+      </Popover>
+    )
+    const panel = (await screen.findByText("accesos")).closest("[data-slot=popover-content]")!
+    expect(panel).toHaveClass("material-translucent", "shadow-menu", "rounded-menu")
+    expect(panel).not.toHaveClass("bg-surface")
   })
 })
 

@@ -1110,14 +1110,18 @@ export const COMPONENTS = {
     usage: [
       "Si el contenido es una lista de acciones, es un `DropdownMenu`. Si es solo texto de ayuda, un `Tooltip`.",
       "En mobile un popover ancho se sale de la pantalla: usá `Sheet`.",
-      "Mide 256 px (`w-64`) con 12 de aire, como un popover de macOS. Si el contenido pide más —un formulario con fechas—, `className=\"w-72\"` o lo que haga falta; no más de 320.",
+      "Es el popover de iCloud: radio 12, opaco, con el filo de 1 px y la sombra de `shadow-menu`. Mide 256 px (`w-64`) con 16 de aire. Si el contenido pide más —un formulario con fechas—, `className=\"w-72\"` o lo que haga falta; no más de 320.",
+      "`translucent` solo sobre un wallpaper (`AppShell ambient`), como el acceso rápido de iCloud: adentro de una app el popover es opaco.",
     ],
     props: {
       Popover: {
         ...heredadas("open", "defaultOpen", "onOpenChange", "modal", "actionsRef"),
         modal: "Con `true`, mientras está abierto el resto de la página no recibe clicks ni foco. Con `\"trap-focus\"` atrapa el foco pero deja pasar los clicks de afuera.",
       },
-      PopoverContent: heredadas("initialFocus", "finalFocus"),
+      PopoverContent: {
+        translucent: "El material translúcido (`material-translucent`) en vez de la superficie opaca: el popover de acceso rápido de iCloud, sobre un wallpaper. Con «menos transparencia» del sistema se ve opaco.",
+        ...heredadas("initialFocus", "finalFocus"),
+      },
     },
     related: ["dropdown-menu", "tooltip", "dialog"],
   },

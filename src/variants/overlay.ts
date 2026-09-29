@@ -77,18 +77,21 @@ export const overlayCloseClassName = "absolute top-4.5 right-4.5"
  * `focus-visible:focus-ring` no es opcional: si adentro no hay nada tabulable, Base UI enfoca
  * el popup mismo, y con `outline-none` sin reemplazo eso era foco invisible (WCAG 2.4.7).
  *
- * Desde 2.0 mide `w-64` con `p-3` y `gap-2`: un popover de macOS es más angosto y más apretado
- * que el panel de 288 px y 16 de aire de 1.x, que se leía como una tarjeta suelta. Quien necesita
- * más ancho lo pide con `className` (ColorPicker, DatePicker y el chat ya lo hacen).
+ * Es el popover de iCloud (catálogo §2.8): radio 12 (`rounded-menu`), opaco (`bg-surface`) y
+ * `shadow-menu`, que ya trae el filo de 1 px que iCloud dibuja como borde (`rgba(116,116,128,.25)`
+ * en oscuro, `.08` en claro: el token `hairline`) además de la sombra `0 11 34`. Como sombra y no
+ * como `border`, el filo no le suma 2 px a la caja. Mide `w-64` con `p-4`: 16 px es el inset de
+ * los títulos de los popovers de iCloud («Show», «Apps»). Quien necesita más ancho lo pide con
+ * `className` (ColorPicker, DatePicker y el chat ya lo hacen).
  *
  * `NavigationMenu` comparte la superficie —`bg-surface shadow-menu
  * outline-none focus-visible:focus-ring`— pero no el resto: su panel mide lo que mide su
- * contenido (`--popup-width`/`--popup-height`), lleva `p-1` en vez de `p-3` y anima también
+ * contenido (`--popup-width`/`--popup-height`), lleva `p-1` en vez de `p-4` y anima también
  * la escala y el tamaño. No usa esta constante a propósito: forzarla pediría deshacer la
  * mitad con overrides, que es peor que repetir.
  */
 export const floatingPopupClassName =
-  "flex w-64 origin-(--transform-origin) flex-col gap-2 rounded-menu bg-surface p-3 text-callout text-label shadow-menu outline-none " +
+  "flex w-64 origin-(--transform-origin) flex-col gap-2 rounded-menu bg-surface p-4 text-callout text-label shadow-menu outline-none " +
   "focus-visible:focus-ring transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0"
 
 /**

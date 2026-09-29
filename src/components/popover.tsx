@@ -15,15 +15,22 @@ function PopoverTrigger(props: PopoverPrimitive.Trigger.Props) {
 }
 
 type PopoverContentProps = WithClassName<PopoverPrimitive.Popup.Props> &
-  Pick<PopoverPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset">
+  Pick<PopoverPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset"> & {
+    /**
+     * El material translúcido (`material-translucent`) en vez de la superficie opaca. Es el caso
+     * del popover de acceso rápido de iCloud (la grilla de apps sobre el wallpaper): el único
+     * popover translúcido que tiene. Los demás, adentro de una app, van opacos.
+     */
+    translucent?: boolean
+  }
 
-function PopoverContent({ className, align = "center", alignOffset = 0, side = "bottom", sideOffset = 6, ...props }: PopoverContentProps) {
+function PopoverContent({ className, align = "center", alignOffset = 0, side = "bottom", sideOffset = 6, translucent = false, ...props }: PopoverContentProps) {
   return (
     <PopoverPrimitive.Portal>
       <PopoverPrimitive.Positioner align={align} alignOffset={alignOffset} side={side} sideOffset={sideOffset} className="isolate z-50">
         <PopoverPrimitive.Popup
           data-slot="popover-content"
-          className={cn(floatingPopupClassName, className)}
+          className={cn(floatingPopupClassName, translucent && "material-translucent", className)}
           {...props}
         />
       </PopoverPrimitive.Positioner>
