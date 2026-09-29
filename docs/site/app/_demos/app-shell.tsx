@@ -1,6 +1,7 @@
 "use client"
 
 import { FileTextIcon, LogOutIcon, UsersIcon } from "lucide-react"
+import { useState } from "react"
 import { AppShell } from "sebs7n-ui/app-shell"
 import { AppShellContent } from "sebs7n-ui/app-shell-content"
 import { Button } from "sebs7n-ui/button"
@@ -13,8 +14,10 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupLabel,
+  SidebarHeader,
   SidebarItem,
 } from "sebs7n-ui/sidebar"
+import { SidebarToggle } from "sebs7n-ui/sidebar-toggle"
 import { Stat } from "sebs7n-ui/stat"
 import { UserMenu } from "sebs7n-ui/user-menu"
 
@@ -25,6 +28,7 @@ import { UserMenu } from "sebs7n-ui/user-menu"
  */
 export function Completo() {
   const usuario = { name: "Ana Pérez", email: "ana@acme.com" }
+  const [collapsed, setCollapsed] = useState(false)
   return (
     <div className="overflow-hidden rounded-surface border border-separator">
       <AppShell
@@ -46,7 +50,13 @@ export function Completo() {
           </>
         }
         sidebar={
-          <Sidebar>
+          <Sidebar collapsed={collapsed} id="shell-sidebar">
+            <SidebarHeader>
+              <div className="flex h-8 items-center gap-2 ps-1 group-data-collapsed/sidebar:h-auto group-data-collapsed/sidebar:flex-col group-data-collapsed/sidebar:ps-0">
+                <span className="text-callout font-semibold text-label-secondary group-data-collapsed/sidebar:hidden">Espacio de trabajo</span>
+                <SidebarToggle onCollapsedChange={setCollapsed} />
+              </div>
+            </SidebarHeader>
             <SidebarContent>
               <SidebarGroup>
                 <SidebarGroupLabel>Operación</SidebarGroupLabel>

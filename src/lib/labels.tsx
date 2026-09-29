@@ -354,6 +354,12 @@ export type Labels = {
     nav: string
     /** Placeholder del buscador del sidebar. */
     search: string
+    /**
+     * Opcionales (2.1): el nombre y el tooltip de `SidebarToggle` (solo por subpath), con el default en
+     * `sidebarToggleLabels` de `sebs7n-ui/sidebar-toggle`.
+     */
+    collapse?: string
+    expand?: string
   }
   /** Opcional: `SortableList` y `SortableGrid`; los textos por defecto son `sortableLabels` (ver `carousel`). */
   sortable?: {

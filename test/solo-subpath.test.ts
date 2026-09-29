@@ -39,6 +39,7 @@ const SOLO_SUBPATH = [
   "list-index",
   "marquee",
   "disclosure",
+  "sidebar-toggle",
 ]
 
 describe("componentes solo por subpath", () => {

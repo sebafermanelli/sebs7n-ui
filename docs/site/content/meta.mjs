@@ -2010,6 +2010,30 @@ export const COMPONENTS = {
     },
     related: ["tabs", "progress"],
   },
+  "sidebar-toggle": {
+    title: "SidebarToggle",
+    group: "navegacion",
+    description: "El botón que pliega y despliega el `Sidebar`, como el de la lista de fuentes de Drive y Mail de iCloud.",
+    keyboard: [["Enter · Espacio", "Pliega o despliega el sidebar."]],
+    a11y: [
+      "Es el botón de ícono `plain` de 28 con nombre y tooltip de `labels`: «Plegar barra lateral» / «Desplegar barra lateral».",
+      "`aria-expanded` dice si el sidebar está desplegado; `aria-controls` apunta al `id` del `Sidebar` que lo contiene (dale uno) o al que se pase.",
+      "Adentro del Sheet del teléfono no se dibuja: ahí no hay nada que plegar.",
+    ],
+    usage: [
+      "Va arriba, en el `SidebarHeader`, a la derecha de la marca; nunca en el pie junto al usuario. Plegado, queda primero y centrado en la columna de íconos.",
+      "Sin `collapsed`, lee el del `Sidebar` de afuera; `onCollapsedChange` avisa el estado nuevo. Guardarlo (una cookie para que el servidor dibuje igual) y escuchar ⌘B es de la app: pasale `aria-keyshortcuts=\"Meta+B\"` si lo tiene.",
+      "Solo por subpath (`sebs7n-ui/sidebar-toggle`): el barrel está en su tope.",
+    ],
+    props: {
+      SidebarToggle: {
+        "aria-controls": "El `id` del panel que pliega. Sin él, el del `Sidebar` que lo contiene, si tiene `id`.",
+        labels: "Textos: `collapse` y `expand`. Los que vienen por defecto son `sidebarToggleLabels`; también por `LabelsProvider` (`sidebar.collapse`, `sidebar.expand`).",
+        className: PROP_DESCRIPTIONS.className,
+      },
+    },
+    related: ["sidebar", "app-shell"],
+  },
   sidebar: {
     title: "Sidebar",
     group: "navegacion",
@@ -2029,6 +2053,7 @@ export const COMPONENTS = {
       "Una sección `collapsible` convierte su `SidebarGroupLabel` en un botón con `aria-expanded` y `aria-controls`; el grupo se sigue nombrando por ese título. `SidebarGroupAction` exige `aria-label` en el tipo: el «+» solo no dice qué crea.",
     ],
     usage: [
+      "Para plegarlo, `SidebarToggle` (`sebs7n-ui/sidebar-toggle`): va arriba, en el `SidebarHeader`, a la derecha de la marca; nunca en el pie junto al usuario. Plegado queda primero y centrado.",
       "**Sobre el wallpaper** (`AppShell ambient`) la columna pasa sola al cuerpo translúcido (`material-translucent-body`); adentro del Sheet del teléfono no pinta nada.",
       "**El paquete no guarda el estado de colapsado.** Guardalo en una cookie y pasá `defaultCollapsed` desde el layout: así el server ya renderiza el ancho correcto y no hay salto.",
       "`SidebarItem` es un `<a>`: con Next, `render={<Link href />}`.",
