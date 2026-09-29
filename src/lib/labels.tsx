@@ -370,6 +370,37 @@ export type Labels = {
     /** Opcional (2.1): el nombre fijo de `SidebarToggle` («Barra lateral»); el estado lo dice `aria-expanded`. */
     toggle?: string
   }
+  /** Opcional (2.1): `Rating`; los textos por defecto son `ratingLabels` de `sebs7n-ui/rating` (ver `carousel`). */
+  rating?: {
+    /** Una: «1 estrella». */
+    star: string
+    /** Varias: «4 estrellas», y el final de «4,5 de 5 estrellas». */
+    stars: string
+    /** Entre el valor y el máximo: «4,5 de 5». */
+    of: string
+    /** El idioma del número con decimales: «4,5». */
+    locale: string
+  }
+  /** Opcional (2.1): `SearchField`; los textos por defecto son `searchFieldLabels` de `sebs7n-ui/search-field` (ver `carousel`). */
+  searchField?: {
+    /** Lo que dice el campo vacío: «Buscar». */
+    placeholder: string
+    /** El botón que vacía el campo: «Borrar búsqueda». */
+    clear: string
+  }
+  /** Opcional (2.1): `TagsInput`; los textos por defecto son `tagsInputLabels` de `sebs7n-ui/tags-input` (ver `carousel`). */
+  tagsInput?: {
+    /** Antes de la etiqueta, en su botón ×: «Quitar urgente». */
+    remove: string
+    /** Lo que se anuncia al agregar: «Agregada: urgente». */
+    added: string
+    /** Lo que se anuncia al quitar. */
+    removed: string
+    /** Después de la etiqueta, si ya estaba: «urgente ya está». */
+    duplicate: string
+    /** Seguido de `max`: «c no entra: el máximo es 5». */
+    tooMany: string
+  }
   /** Opcional: `SortableList` y `SortableGrid`; los textos por defecto son `sortableLabels` (ver `carousel`). */
   sortable?: {
     /** Antes del nombre del ítem, en la manija: «Reordenar Factura 0012». */

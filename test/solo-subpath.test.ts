@@ -41,6 +41,9 @@ const SOLO_SUBPATH = [
   "disclosure",
   "sidebar-toggle",
   "footer",
+  "search-field",
+  "tags-input",
+  "rating",
 ]
 
 describe("componentes solo por subpath", () => {

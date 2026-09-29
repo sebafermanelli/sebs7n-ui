@@ -799,3 +799,18 @@ describe("Carousel overlay sobre la peor foto (WCAG 1.4.11)", () => {
     })
   }
 })
+
+// Rating (2.1): la estrella llena es `amber-900` y la vacía `label-tertiary` (un glifo). Las dos son la
+// información del campo: ≥ 3:1 sobre la página y sobre una card (WCAG 1.4.11).
+describe("Rating: las estrellas sobre la página y la card", () => {
+  for (const theme of ["light", "dark"] as const) {
+    for (const bg of ["--sf-background", "--sf-surface"] as const) {
+      for (const star of ["--sf-amber-900", "--sf-label-tertiary"] as const) {
+        it(`${theme} · ${star.slice(5)} sobre ${bg.slice(5)} llega a 3:1`, () => {
+          const fondo = paleta[theme][bg]!
+          expect(ratio(flattenAlpha(paleta[theme][star]!, fondo), fondo)).toBeGreaterThanOrEqual(3)
+        })
+      }
+    }
+  }
+})

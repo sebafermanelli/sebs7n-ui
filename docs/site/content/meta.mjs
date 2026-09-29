@@ -536,6 +536,7 @@ export const COMPONENTS = {
         onMouseDown: "Se llama antes de enfocar el campo. Con `event.preventDefault()`, el click no lo enfoca.",
       },
       InputGroupButton: {
+        onClick: "Se ignora mientras `loading` está activo.",
         variant: "`ghost` (default, neutro), `plain` (texto en el acento) o `default` (acento sólido).",
       },
     },
@@ -842,7 +843,7 @@ export const COMPONENTS = {
       "El valor es E.164 (`+5491155552002`) y viaja así con `name`: se guarda tal cual y sirve para un link de WhatsApp.",
       "`isValidPhone` y `parsePhone` están en `sebs7n-ui/lib/phone`, sin `\"use client\"`: validan igual en una Server Action. Miran el **largo** del número de cada país, no el tipo de línea.",
       "Datos viejos: un `value`/`defaultValue` sin «+» («011 5555-2002») se toma como número nacional del país de `defaultCountry` (o internacional si empieza con su código: «5491155552002»); si no es un número posible, queda el texto como estaba y el campo va en rojo recién después de tocarlo o de enviar. Hasta que se edite, ni `onValueChange` ni el form cambian: el `name` manda el valor original. Migrar los datos es de la app.",
-      "Para mostrar un teléfono guardado, `formatPhone(e164, { country })` de `sebs7n-ui/lib/phone`: «+54 9 11 5555-2002», o nacional («011 15-5555-2002») si es argentino y `country` es `"AR"`. No es el formato oficial de cada país: Argentina va con sus códigos de área; el resto, siempre internacional, en grupos desde la derecha sin grupos de un dígito. Lo que no es un teléfono válido (`isValidPhone`) vuelve tal cual, también un número a medio escribir.",
+      "Para mostrar un teléfono guardado, `formatPhone(e164, { country })` de `sebs7n-ui/lib/phone`: «+54 9 11 5555-2002», o nacional («011 15-5555-2002») si es argentino y `country` es `\"AR\"`. No es el formato oficial de cada país: Argentina va con sus códigos de área; el resto, siempre internacional, en grupos desde la derecha sin grupos de un dígito. Lo que no es un teléfono válido (`isValidPhone`) vuelve tal cual, también un número a medio escribir.",
       "El número se corta en el largo máximo del país. Pegar un número que empieza con «+» o «00» cambia el país solo; si el código no está en la tabla, el número no cambia y se anuncia «Código de país desconocido».",
       "El prefijo nacional no entra al E.164: «011 5555 2002» es `+541155552002` (Italia no tiene: su 0 se queda). En Argentina, el celular con 15 («11 15 5555 2002») pasa a la forma con 9, `+5491155552002`. `isValidPhone` rechaza un número que empieza con el prefijo nacional.",
       "Tiene 45 países (América, Europa y los más comunes); uno que falte se suma a la tabla de `lib/phone` con los largos de libphonenumber.",
@@ -1029,6 +1030,7 @@ export const COMPONENTS = {
     ],
     props: {
       DateTimePicker: {
+        "aria-describedby": "El `id` de una ayuda para el grupo. Dentro de un `Field`, la ayuda y el error del campo se suman solos.",
         defaultValue: "La fecha y hora al montar, sin controlar.",
         name: "El nombre en el formulario: `2026-09-29T09:30`, hora local sin zona horaria (como `datetime-local`).",
         disabled: "Apaga la fecha y la hora.",
@@ -1227,6 +1229,16 @@ export const COMPONENTS = {
       "`size`: 28 (el default, un chip), 36 o 40, los altos de `Button`, para un formulario que ya eligió ese tamaño.",
       "Como control de un formulario: con `name`, prendido manda `value` (o «on») y apagado nada, como un checkbox. Dentro de un `Field` se registra: `FieldLabel` lo nombra y `Form` manda el booleano con el `name` del campo.",
     ],
+    props: {
+      Toggle: {
+        pressed: "Prendido o no, controlado.",
+        defaultPressed: "Prendido al montar, sin controlar.",
+        onPressedChange: "Avisa el estado nuevo al apretarlo.",
+        id: "El `id` del botón, para un `<Label htmlFor>`. Dentro de un `Field`, el del campo.",
+        onFocus: "Corre después de marcar el campo del `Field` como enfocado.",
+        onBlur: "Corre después de marcar el campo del `Field` como tocado.",
+      },
+    },
     related: ["toggle-group", "switch", "button"],
   },
   "toggle-group": {
@@ -1250,6 +1262,100 @@ export const COMPONENTS = {
       ToggleGroup: heredadas("value", "defaultValue", "onValueChange", "multiple", "orientation", "loopFocus", "disabled"),
     },
     related: ["toggle", "radio-group", "tabs"],
+  },
+  "search-field": {
+    title: "SearchField",
+    group: "formularios",
+    description: "El buscador de una lista: la lupa adentro del campo, «Borrar búsqueda» cuando hay texto y Escape que vacía.",
+    keyboard: [
+      ["Escape", "Con texto, lo vacía; vacío, sigue de largo (cierra el diálogo de afuera)."],
+      ["Enter", "Lo del formulario: envía, si hay uno."],
+      ["Tab", "Del campo al botón de borrar, si hay texto."],
+    ],
+    a11y: [
+      "Es un `<input type=\"search\">`: el lector lo anuncia como campo de búsqueda. Nombralo con `aria-label` o metiéndolo en un `Field` (toma `FieldLabel` y `FieldDescription`, y el `name` del campo).",
+      "La lupa es decorativa; el botón de borrar se llama «Borrar búsqueda» (`labels.clear`) y, al vaciar, el foco vuelve al campo.",
+    ],
+    usage: [
+      "Para filtrar una lista o una tabla con lo que se escribe. No filtra ni busca: avisa el texto con `onValueChange` y la app decide (en memoria, o contra el servidor con su debounce).",
+      "Para sugerencias mientras se escribe, `Autocomplete` con `startIcon`.",
+      "`size` 28/36/40 como los campos. Es la superficie de `InputGroup`: reemplaza las copias a mano de `InputGroup` + lupa + ✕.",
+      "Solo por subpath (`sebs7n-ui/search-field`).",
+    ],
+    props: {
+      SearchField: {
+        placeholder: "Lo que dice el campo vacío. Por defecto, `labels.placeholder` («Buscar»).",
+        onKeyDown: "Corre antes que el Escape propio. Con `preventDefault()`, Escape no vacía el campo.",
+        className: "Clases del `<input>`. Las de la superficie van en `groupClassName`.",
+        disabled: "Apaga el campo y el botón de borrar.",
+      },
+    },
+    related: ["input-group", "autocomplete", "input"],
+  },
+  "tags-input": {
+    title: "TagsInput",
+    group: "formularios",
+    description: "Un campo de etiquetas libres: se escribe, Enter o coma la agrega como un `Tag`, y Backspace quita la última.",
+    keyboard: [
+      ["Enter · ,", "Agregan lo escrito como etiqueta (Enter vacío sigue enviando el formulario)."],
+      ["Backspace", "Con el campo vacío, quita la última etiqueta."],
+      ["Tab", "Del campo a los × de cada etiqueta."],
+    ],
+    a11y: [
+      "El campo de texto lleva el nombre (`aria-label` o `FieldLabel`); las etiquetas son una lista con el mismo nombre y cada × se llama «Quitar urgente».",
+      "Lo que no entra (repetida, `max`, `validate`) se muestra abajo con `role=\"alert\"`, el campo queda `aria-invalid` y el texto sigue en el campo para corregirlo. Agregar y quitar se anuncian por una región viva.",
+    ],
+    usage: [
+      "Texto libre: correos a copiar, palabras clave, etiquetas de un producto. Para elegir de una lista, `Combobox multiple`.",
+      "Pegar una lista la separa por comas, punto y coma, tabs y renglones.",
+      "`validate(tag, tags)` valida cada una antes de agregarla; `max` pone el tope. Las repetidas no entran.",
+      "Con `name` (o el del `Field`) cada etiqueta viaja como un campo del form, como un grupo de checkboxes; en `onFormSubmit` de `Form` llega la lista. `required` no deja enviar sin etiquetas.",
+      "Solo por subpath (`sebs7n-ui/tags-input`).",
+    ],
+    props: {
+      TagsInput: {
+        placeholder: "Lo que dice el campo vacío.",
+        disabled: "Apaga el campo y los × de las etiquetas.",
+        id: "El `id` del campo de texto, para un `<Label htmlFor>`.",
+        "aria-label": "Nombra el campo y la lista de etiquetas.",
+        "aria-labelledby": "El `id` del elemento que nombra el campo, si no es un `<label>`.",
+        "aria-describedby": "El `id` de una ayuda. Los errores se suman solos.",
+        className: "Clases de la superficie.",
+      },
+    },
+    related: ["tag", "combobox", "field"],
+  },
+  rating: {
+    title: "Rating",
+    group: "formularios",
+    description: "Una calificación con estrellas: de solo lectura, con fracciones, o como campo de un formulario.",
+    keyboard: [
+      ["Tab", "Entra en la estrella elegida (o en la primera) y sale del grupo."],
+      ["← → ↑ ↓", "Bajan o suben una estrella y la eligen."],
+      ["Inicio · Fin", "Eligen la primera o la última."],
+      ["Espacio · Enter", "Eligen la estrella enfocada."],
+    ],
+    a11y: [
+      "Como campo es un `radiogroup` (el patrón de ARIA): una estrella radio por valor, nombrada «4 estrellas», con un solo `tabindex=0`. Nombralo con `aria-label` o con un `FieldLabel`.",
+      "De solo lectura es una imagen con el valor en palabras («4,5 de 5 estrellas»); las estrellas son decorativas.",
+      "La estrella llena (`amber-900`) y la vacía (`label-tertiary`) llegan a 3:1 sobre la página y la card en los dos temas. Cada estrella tiene 24 de área de toque aunque mida 16.",
+    ],
+    usage: [
+      "`readOnly` para mostrar el promedio de una reseña, con fracciones (la estrella se llena en parte). Como entrada, solo valores enteros: media estrella es más precisión de la que alguien sabe dar.",
+      "Con `name` viaja en el form («4», vacío sin valor). Dentro de un `Field`, `Form` manda el número y, con `required`, no deja enviar sin valor y enfoca la estrella.",
+      "`size`: estrellas de 16, 20 (default) o 24; `max` cambia la escala.",
+      "Solo por subpath (`sebs7n-ui/rating`).",
+    ],
+    props: {
+      Rating: {
+        id: "El `id` del grupo.",
+        className: PROP_DESCRIPTIONS.className,
+        "aria-label": "Nombra el grupo; de solo lectura, reemplaza «4,5 de 5 estrellas».",
+        "aria-labelledby": "El `id` del elemento que nombra el grupo.",
+        "aria-describedby": "El `id` de una ayuda.",
+      },
+    },
+    related: ["radio-group", "field"],
   },
 
   slider: {
@@ -2942,6 +3048,7 @@ export const COMPONENTS = {
       Disclosure: {
         name: "Mismo `name` en varios: abrir uno cierra los otros (lo hace el navegador).",
         open: "Abierto, controlado: va con `onOpenChange` (en un Client Component). Sin `onOpenChange` es solo el estado inicial, como `defaultOpen`.",
+        onToggle: "El evento `toggle` nativo del `<details>`: corre antes que `onOpenChange`.",
         onOpenChange: "Avisa el estado nuevo (el evento `toggle` del `<details>`). Con `open`, si la app no lo cambia, la sección vuelve a como dice `open`. Solo desde un Client Component.",
       },
     },
