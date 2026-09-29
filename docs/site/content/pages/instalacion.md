@@ -27,6 +27,14 @@ Las `peerDependencies` van así para que haya **una sola copia** de React y de B
 | `next-themes` | `^0.4.6` |
 | `sonner` | `^2.0.7` |
 
+Cuatro subpaths traen un peer **opcional**: lo instala solo la app que usa ese componente, y el barrel (`from "sebs7n-ui"`) no lo importa nunca.
+
+| Subpath | Peer opcional |
+|---|---|
+| `sebs7n-ui/chart` | `recharts` `^3.10.0` |
+| `sebs7n-ui/sortable-list` · `sebs7n-ui/sortable-grid` | `@dnd-kit/core` `^6.3.1` · `@dnd-kit/sortable` `^10.0.0` · `@dnd-kit/utilities` `^3.2.2` |
+| `sebs7n-ui/carousel` | `embla-carousel-react` `^8.6.0` |
+
 La fuente es **Inter**, y la carga la app: el paquete no la trae ni la declara como peer. `--font-sans` lee `--font-inter`, que define el layout raíz (ver abajo); sin ella todo cae en `system-ui`. La mono es la del sistema (SF Mono, Consolas): no hay nada que cargar.
 
 El resto —`clsx`, `tailwind-merge`, `class-variance-authority`, `lucide-react`— viaja como dependencia normal del paquete: no las instalás vos.

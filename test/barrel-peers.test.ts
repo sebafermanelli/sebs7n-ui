@@ -17,7 +17,7 @@ describe("barrel y peers opcionales", () => {
     .map(([name]) => name)
 
   it("hay peers opcionales declarados (si no, este test no vigila nada)", () => {
-    expect(opcionales).toContain("recharts")
+    expect(opcionales).toEqual(expect.arrayContaining(["recharts", "@dnd-kit/core", "@dnd-kit/sortable", "@dnd-kit/utilities", "embla-carousel-react"]))
   })
 
   it("ningún módulo que el barrel re-exporta importa un peer opcional", () => {

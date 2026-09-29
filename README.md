@@ -17,8 +17,10 @@ variables CSS para el color de marca, en una sola dependencia.
 npm install sebs7n-ui @base-ui/react next-themes sonner
 ```
 
-Peers: `react` y `react-dom` `^19.2.0`, `@base-ui/react` `^1.8.0`, `next-themes` `^0.4.6`,
-`sonner` `^2.0.7` y, solo para `sebs7n-ui/chart`, `recharts` `^3.10.0`. Tailwind CSS v4, solo ESM.
+Peers: `react` y `react-dom` `^19.2.0`, `@base-ui/react` `^1.8.0`, `next-themes` `^0.4.6` y
+`sonner` `^2.0.7`. Opcionales, solo para su subpath: `recharts` `^3.10.0` (`chart`), `@dnd-kit/core`
+`^6.3.1`, `@dnd-kit/sortable` `^10.0.0` y `@dnd-kit/utilities` `^3.2.2` (`sortable-list`,
+`sortable-grid`) y `embla-carousel-react` `^8.6.0` (`carousel`). Tailwind CSS v4, solo ESM.
 
 ## CSS y fuentes
 
