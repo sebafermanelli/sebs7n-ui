@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { ViewTransition } from "react"
+import { Fragment, ViewTransition } from "react"
 import { Badge } from "sebs7n-ui/badge"
 
 import site from "@/.generated/site.json"
@@ -61,7 +61,17 @@ export default async function ComponentPage({ params }: Params) {
             <span>{grupo?.title}</span>
             {!component.useClient && <Badge size="sm">Server Component</Badge>}
           </div>
-          <h1 className="text-large-title text-label">{component.title}</h1>
+          {/* A 390 de ancho, «NavigationMenu» o «AppShellContent» en 48 no entran en una línea y la
+              página scrolleaba de costado: se permite cortar entre las palabras del nombre
+              (`<wbr>` antes de cada mayúscula) y, si ni así entra, donde sea. */}
+          <h1 className="text-large-title text-label wrap-break-word">
+            {component.title.split(/(?=[A-Z])/).map((part, index) => (
+              <Fragment key={index}>
+                {index > 0 && <wbr />}
+                {part}
+              </Fragment>
+            ))}
+          </h1>
           <p className="text-body text-label-secondary">
             <Inline text={component.description} />
           </p>
