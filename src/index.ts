@@ -49,7 +49,7 @@ export {
   commandItemIconClassName,
 } from "./variants/command.js"
 export { linkVariants } from "./variants/link.js"
-export { segmentedItemClassName, segmentedThumbClassName, segmentedTrackClassName } from "./variants/segmented.js"
+export { segmentedGroupClassName, segmentedItemClassName, segmentedThumbClassName, segmentedTrackClassName } from "./variants/segmented.js"
 export { sliderThumbClassName, sliderThumbDraggingClassName, sliderThumbPeerActiveClassName } from "./variants/slider.js"
 export {
   inputControlClassName,

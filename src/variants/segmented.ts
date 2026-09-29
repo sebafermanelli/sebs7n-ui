@@ -47,3 +47,9 @@ export const segmentedItemClassName =
   "after:absolute after:left-0 after:top-1 after:h-4 after:w-px after:bg-fill-3 pointer-coarse:after:top-3 first:after:hidden data-pressed:after:hidden [[data-pressed]+&]:after:hidden " +
   "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
 
+/**
+ * La pista de un `ToggleGroup`: la del segmentado, con los segmentos del mismo ancho (como los de
+ * Calendar) y la posibilidad de achicarse por debajo de su texto.
+ */
+export const segmentedGroupClassName =
+  "inline-grid grid-flow-col auto-cols-[minmax(0,1fr)] data-[orientation=vertical]:grid-flow-row data-[orientation=vertical]:auto-cols-auto"

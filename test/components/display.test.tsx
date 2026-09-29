@@ -58,6 +58,16 @@ describe("Toggle (chip)", () => {
     expect(b).toHaveClass("after:w-px", "after:bg-fill-3", "first:after:hidden", "data-pressed:after:hidden", "[[data-pressed]+&]:after:hidden")
   })
 
+  // Revisión de R4 (M8): los segmentos miden todos lo mismo, como los de Calendar.
+  it("ToggleGroup: segmentos del mismo ancho", () => {
+    render(
+      <ToggleGroup aria-label="Vista">
+        <ToggleGroupItem value="d">Día</ToggleGroupItem>
+        <ToggleGroupItem value="s">Semana</ToggleGroupItem>
+      </ToggleGroup>
+    )
+    expect(screen.getByRole("group", { name: "Vista" })).toHaveClass("inline-grid", "grid-flow-col", "auto-cols-[minmax(0,1fr)]", "data-[orientation=vertical]:grid-flow-row")
+  })
 })
 
 describe("Badge", () => {
