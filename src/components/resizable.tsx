@@ -234,7 +234,7 @@ function ResizableHandle({ className, withHandle = false, onKeyDown, onPointerDo
           data-slot="resizable-grip"
           aria-hidden="true"
           className={cn(
-            "z-10 rounded-full border border-separator-strong bg-surface shadow-segment transition-colors group-hover/separator:border-brand-700 group-data-dragging/separator:border-brand-700",
+            "z-10 shrink-0 rounded-full border border-separator-strong bg-surface shadow-segment transition-colors group-hover/separator:border-brand-700 group-data-dragging/separator:border-brand-700",
             group.orientation === "horizontal" ? "h-6 w-1.5" : "h-1.5 w-6"
           )}
         />

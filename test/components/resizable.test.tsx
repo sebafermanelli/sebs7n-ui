@@ -129,5 +129,7 @@ describe("Resizable", () => {
     )
     expect(html).toContain("flex-grow:25")
     expect(html).toContain('data-slot="resizable-grip"')
+    // En una línea de 1 px, la manija de 6 no se tiene que achicar (se veía como una raya).
+    expect(html).toMatch(/data-slot="resizable-grip"[^>]*class="[^"]*shrink-0/)
   })
 })
