@@ -198,5 +198,6 @@ export * from "./components/widget-card.js"
 //   `sortable-list`     sebs7n-ui/sortable-list
 //   `sortable-grid`     sebs7n-ui/sortable-grid
 //   `drop-zone`         sebs7n-ui/drop-zone
+//   `carousel`          sebs7n-ui/carousel
 // `lib/countries` y `lib/phone` tampoco entran: son los únicos de `lib/` solo por subpath (ver
 // `test/api-publica.test.ts`).
