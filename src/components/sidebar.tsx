@@ -157,7 +157,7 @@ function SidebarGroup({ className, children, collapsible = false, defaultOpen = 
       >
         {partir ? (
           <>
-            <div data-slot="sidebar-group-header" className="flex items-center gap-1 group-data-collapsed/sidebar:hidden">
+            <div data-slot="sidebar-group-header" className="flex items-center gap-1 group-data-collapsed/sidebar:hidden [&>[data-slot=sidebar-group-label]]:flex-1">
               {label}
               {actions}
             </div>
@@ -188,7 +188,7 @@ function SidebarGroupLabel({ className, id, children, ...props }: React.Componen
       data-slot="sidebar-group-label"
       id={id ?? group?.id ?? undefined}
       className={cn(
-        "flex h-7 min-w-0 flex-1 shrink-0 items-center px-1.5 text-callout font-semibold text-label-secondary group-data-collapsed/sidebar:hidden",
+        "flex h-7 min-w-0 shrink-0 items-center px-1.5 text-callout font-semibold text-label-secondary group-data-collapsed/sidebar:hidden",
         group?.collapsible && "px-0",
         className
       )}

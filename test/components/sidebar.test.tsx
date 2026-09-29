@@ -402,7 +402,10 @@ describe("Sidebar", () => {
         </SidebarGroup>
       </Sidebar>
     )
-    expect(screen.getByText("Carpetas")).toHaveClass("text-callout", "font-semibold", "text-label-secondary", "px-1.5")
+    expect(screen.getByText("Carpetas")).toHaveClass("text-callout", "font-semibold", "text-label-secondary", "px-1.5", "h-7")
+    // `flex-1` solo en la fila del título: en la columna del grupo le ganaba al alto (quedaba en 18).
+    expect(screen.getByText("Carpetas")).not.toHaveClass("flex-1")
+    expect(document.querySelector("[data-slot=sidebar-group-header]")).toHaveClass("[&>[data-slot=sidebar-group-label]]:flex-1")
     const mas = screen.getByRole("button", { name: "Nueva carpeta" })
     expect(mas).toHaveAttribute("type", "button")
     expect(mas).toHaveAttribute("data-slot", "sidebar-group-action")
