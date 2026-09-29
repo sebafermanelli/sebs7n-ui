@@ -354,6 +354,10 @@ R5 (Tree, ListRow, SplitView, WidgetCard, CalendarView, FileGrid, el Meter apila
 - **Skeleton: un brillo que cruza** en vez del pulso: gris parejo y una franja apenas más clara que
   pasa de izquierda a derecha en 1,5 s (2 s de ciclo), con `background-attachment: fixed` para que
   todos los bloques la muestren en la misma fase. Quieto con movimiento reducido.
+  - **Migración:** `animate-skeleton` ya no pone `position: relative` (en 1.x lo necesitaba para su
+    capa `::after`). Si adentro de un Skeleton había algo con `absolute`, sumale `relative`.
+  - Adentro de un ancestro con `transform` o `filter` (un Dialog animado) la fase deja de ser
+    compartida: `fixed` se ubica contra ese ancestro.
 - **Avatar:** tamaños de iCloud `sm` **28** (antes 24), `md` 32, `lg` 40 y **`xl` 80** (nuevo); el
   fallback es el **monograma**: iniciales blancas en 600 sobre un gradiente gris (#6e6e73 → #48484a,
   5,07:1 arriba), antes `gray-200` con texto 12 `gray-900`.

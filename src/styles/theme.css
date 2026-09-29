@@ -790,6 +790,13 @@
  *
  * Con movimiento reducido no hay brillo: gris parejo, quieto. (Safari en iOS trata `fixed` como
  * `scroll`: ahí cada bloque tiene su brillo, igual de lento.)
+ *
+ * Lo que cuesta: animar `background-position` repinta cada bloque en cada cuadro, en el hilo
+ * principal; el pulso de 1.x animaba la `opacity` de una capa y lo resolvía el compositor. Se acepta
+ * porque los bloques son chicos, el brillo es lento y la fase compartida no se puede lograr con una
+ * capa por bloque. Y `fixed` se ubica contra la ventana **salvo** adentro de un ancestro con
+ * `transform`, `filter` o `will-change: transform` (un Dialog que entra animado, un Sheet): ahí
+ * se ubica contra ese ancestro, y los bloques de adentro vuelven a tener cada uno su fase.
  */
 @keyframes skeleton {
   0% {
