@@ -8,7 +8,6 @@ import site from "@/.generated/site.json"
 import { CodeBlock } from "../../../_components/code-block"
 import { Example } from "../../../_components/example"
 import { Inline } from "../../../_components/inline"
-import { IssueLinks } from "../../../_components/issue-links"
 import { MdLink } from "../../../_components/md-link"
 import { PageNav } from "../../../_components/page-nav"
 import { PropsTable } from "../../../_components/props-table"
@@ -156,7 +155,6 @@ export default async function ComponentPage({ params }: Params) {
           </Section>
         )}
 
-        <IssueLinks component={component.slug} version={site.version} />
       </article>
       <PageNav items={indice} />
     </div>

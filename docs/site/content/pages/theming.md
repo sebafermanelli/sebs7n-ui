@@ -119,7 +119,7 @@ La luminosidad de cada tono está fija por tema y calibrada para que `text-label
 | `animate-skeleton` | El brillo lento del `Skeleton`, en la misma fase en todos los bloques. |
 | `focus-ring` | El anillo interior de iCloud (`inset 0 0 0 3px`), del color del foco. |
 
-`glass`, `glass-*`, `sheen`, `material-bar/popover/modal/group` y las variables `--glass` / `--glass-tint` se fueron en 2.0. Las reglas de cuándo va cada superficie están en [Reglas de uso](/docs/reglas).
+`glass`, `glass-*`, `sheen`, `material-bar/popover/modal/group` y las variables `--glass` / `--glass-tint` se fueron en 2.0.
 
 ## Claro y oscuro
 

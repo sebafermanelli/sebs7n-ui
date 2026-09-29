@@ -33,7 +33,6 @@ export const ROUTES = [
   "/docs/components/chart",
   "/docs/playground",
   "/docs/iconos",
-  "/docs/requests",
 ]
 
 /**

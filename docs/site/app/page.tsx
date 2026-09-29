@@ -70,9 +70,6 @@ export default function Home() {
             >
               Ver los componentes
             </Link>
-            <Link className={buttonVariants({ variant: "plain", size: "lg" })} href="/docs/migrating-to-2">
-              ¿Venís de 1.x? Migrar a 2.0
-            </Link>
           </div>
           <div className="w-full max-w-xl pt-2">
             <CodeBlock code={INSTALL} label="Copiar el comando de instalación" />

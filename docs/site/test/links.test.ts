@@ -24,7 +24,7 @@ const site = JSON.parse(read(".generated/site.json"))
 const SITIO = site.site as string
 
 /** Todo lo que el sitio sirve de verdad: rutas de Next + archivos de public/. */
-const validas = new Set<string>(["/", "/docs", "/docs/iconos", "/docs/playground", "/docs/requests"])
+const validas = new Set<string>(["/", "/docs", "/docs/iconos", "/docs/playground"])
 for (const page of site.pages) validas.add(`/docs/${page.slug}`)
 for (const component of site.components) validas.add(`/docs/components/${component.slug}`)
 
@@ -86,10 +86,4 @@ describe("links de lo generado", () => {
       expect([...links].filter((href) => !existe(href))).toEqual([])
     })
   }
-})
-
-describe("rutas propias", () => {
-  it("/docs/requests existe", () => {
-    expect(statSync(join(here, "app/docs/requests/page.tsx")).isFile()).toBe(true)
-  })
 })

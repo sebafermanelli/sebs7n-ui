@@ -1,6 +1,6 @@
 "use client"
 
-import { BookOpenIcon, FileTextIcon, PaletteIcon, ReceiptIcon, ShieldCheckIcon, UsersIcon } from "lucide-react"
+import { BookOpenIcon, FileTextIcon, PaletteIcon, ReceiptIcon, SlidersHorizontalIcon, UsersIcon } from "lucide-react"
 import { useId } from "react"
 import {
   NavigationMenu,
@@ -43,17 +43,17 @@ export function Basico() {
               </li>
               <li>
                 <NavigationMenuLink
-                  description="Lo que garantiza el paquete"
-                  href="/docs/accesibilidad"
-                  icon={<ShieldCheckIcon />}
-                  title="Accesibilidad"
+                  description="Cuatro variables de marca, claro y oscuro"
+                  href="/docs/theming"
+                  icon={<SlidersHorizontalIcon />}
+                  title="Theming"
                 />
               </li>
             </ul>
           </NavigationMenuContent>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <NavigationMenuLink href="/docs/changelog">Changelog</NavigationMenuLink>
+          <NavigationMenuLink href="/docs/iconos">Íconos</NavigationMenuLink>
         </NavigationMenuItem>
       </NavigationMenuList>
       <NavigationMenuViewport />

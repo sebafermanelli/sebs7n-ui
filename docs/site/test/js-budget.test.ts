@@ -53,7 +53,7 @@ describe("measure", () => {
 })
 
 describe("configuración", () => {
-  it("mide las siete rutas acordadas; 200 KB salvo Chart y Playground, que tienen el suyo", () => {
+  it("mide las seis rutas acordadas; 200 KB salvo Chart y Playground, que tienen el suyo", () => {
     expect(BUDGET_KB).toBe(200)
     expect(LIMITS).toEqual({ "/docs/components/chart": 325, "/docs/playground": 310 })
     expect(limitOf("/docs/components/chart")).toBe(325)
@@ -69,7 +69,6 @@ describe("configuración", () => {
       "/docs/components/chart",
       "/docs/playground",
       "/docs/iconos",
-      "/docs/requests",
     ])
   })
 })

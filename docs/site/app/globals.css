@@ -10,7 +10,7 @@
   --brand-contrast-dark: #fff;
 }
 
-/* Texto largo renderizado desde markdown: las páginas de sistema y el changelog.
+/* Texto largo renderizado desde markdown: las páginas de sistema.
    No es @tailwindcss/typography — son los tokens del paquete, que es de lo que
    habla el sitio. */
 @layer components {

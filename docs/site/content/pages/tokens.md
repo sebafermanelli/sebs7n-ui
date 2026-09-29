@@ -16,7 +16,7 @@ Desde 2.0 las superficies son las de iCloud web: **grises opacos en capas**, cad
 
 La paleta de Geist queda para la app (los componentes usan las superficies y los `label` de arriba). Diez pasos por familia, de `100` (el más claro en tema claro) a `1000`. La convención de Geist: **100–400 son fondos, 500–700 son bordes y elementos, 800–1000 son texto**. El contraste de `gray-900` sobre cualquier fondo de la misma familia llega a AA.
 
-**`gray-800` es la excepción y no se usa como texto**: sobre la superficie clara da 4,12:1, abajo del 4,5 de WCAG 1.4.3. Los componentes usan `text-label-secondary` para el texto tenue; en la paleta, el paso de texto tenue es `gray-900` (8,45:1 en claro, 7,57:1 en oscuro). Está en [Accesibilidad](/docs/accesibilidad).
+**`gray-800` es la excepción y no se usa como texto**: sobre la superficie clara da 4,12:1, abajo del 4,5 de WCAG 1.4.3. Los componentes usan `text-label-secondary` para el texto tenue; en la paleta, el paso de texto tenue es `gray-900` (8,45:1 en claro, 7,57:1 en oscuro).
 
 {{colores}}
 
@@ -42,7 +42,7 @@ La paleta de Geist queda para la app (los componentes usan las superficies y los
 
 **Existen para que un componente pegado de shadcn se vea bien sin tocarlo**, que es el caso real: el registry (`shadcn add`) funciona y tarde o temprano alguien copia un bloque de shadcn.io a una app que ya usa este paquete. Sin los alias, ese bloque saldría sin color; con ellos sale en la paleta de Geist. Los pares resuelven a combinaciones que pasan AA: `primary` 17,9:1 claro y 16,9:1 oscuro, `muted-foreground` sobre `muted` 7,55 y 6,66, `destructive` 4,75 y 4,79.
 
-**No los uses en código nuevo.** Los componentes del paquete no los tocan: usan `bg-surface`, `text-label-secondary`, `border-separator`. Dos vocabularios para lo mismo es exactamente lo que las [reglas](/docs/reglas) dicen que no queremos, así que el segundo es una compuerta de entrada, no una opción.
+**No los uses en código nuevo.** Los componentes del paquete no los tocan: usan `bg-surface`, `text-label-secondary`, `border-separator`. Dos vocabularios para lo mismo es justo lo que no queremos, así que el segundo es una compuerta de entrada, no una opción.
 
 ## Tipografía
 
@@ -61,7 +61,7 @@ La fuente es **Inter** (la carga la app, ver [Instalación](/docs/instalacion)) 
 | `text-footnote` · `text-caption` | Snippets, badges, contadores, pie legal. |
 | `text-mono-body` · `text-mono-callout` | Código, IDs, atajos. La mono es la del sistema. |
 
-Las clases de Geist (`text-copy-*`, `text-label-<n>`, `text-heading-*`, `text-button-*`) **siguen andando** y `cn()` las sigue fusionando, pero están obsoletas: el paquete ya no las usa y se van en 3.0. La equivalencia está en [Migrar a 2.0](/docs/migrating-to-2#tipografia).
+Las clases de Geist (`text-copy-*`, `text-label-<n>`, `text-heading-*`, `text-button-*`) **siguen andando** y `cn()` las sigue fusionando, pero están obsoletas: el paquete ya no las usa y se van en 3.0.
 
 ## Radios
 

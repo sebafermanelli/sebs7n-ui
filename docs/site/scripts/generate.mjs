@@ -161,12 +161,6 @@ function loadPage(slug) {
   return body.replace(/\{\{([a-z]+)\}\}/g, (match, key) => substitutions[key] ?? match)
 }
 
-/** CHANGELOG.md sale del repo: una sola copia, la del paquete. */
-function loadRepoDoc(file) {
-  const body = readFileSync(join(root, file), "utf8")
-  return body.replace(/^#\s+.*\n/, "").trim()
-}
-
 const pages = [
   {
     slug: "instalacion",
@@ -186,36 +180,6 @@ const pages = [
     description: "Cuatro variables de marca, claro y oscuro, radio y densidad.",
     body: loadPage("theming"),
   },
-  {
-    slug: "accesibilidad",
-    title: "Accesibilidad",
-    description: "Lo que garantiza el paquete y lo que le queda a la app.",
-    body: loadPage("accesibilidad"),
-  },
-  {
-    slug: "reglas",
-    title: "Reglas de uso",
-    description: "Las decisiones que no se ven en una tabla de props.",
-    body: loadPage("reglas"),
-  },
-  {
-    slug: "migrating-to-2",
-    title: "Migrar a 2.0",
-    description: "Qué cambia en el código de la app al pasar de 1.x a 2.0: Inter, tokens y componente por componente.",
-    body: loadPage("migrating-to-2"),
-  },
-  {
-    slug: "migracion",
-    title: "Migrar a 1.0",
-    description: "Qué cambia en el código de la app al pasar de 0.8 a 1.0, clase por clase.",
-    body: loadPage("migracion"),
-  },
-  {
-    slug: "changelog",
-    title: "Changelog",
-    description: `Todas las versiones, hasta la ${pkg.version}.`,
-    body: loadRepoDoc("CHANGELOG.md"),
-  },
 ]
 
 // ── 5. Navegación y búsqueda ─────────────────────────────────────────────────
@@ -232,13 +196,6 @@ const PLAYGROUND = {
   description: "Elegí el color de marca, el tema y el wallpaper, mirá los componentes cambiar y copiá el CSS.",
 }
 
-// Pedidos tampoco es una página .md: la arma app/docs/requests con los issues de GitHub.
-const REQUESTS = {
-  title: "Pedidos",
-  href: "/docs/requests",
-  description: "Los componentes que se pidieron, ordenados por votos, y los que ya salieron.",
-}
-
 const nav = [
   {
     id: "sistema",
@@ -247,7 +204,6 @@ const nav = [
       { title: PLAYGROUND.title, href: PLAYGROUND.href },
       ...pages.map((page) => ({ title: page.title, href: `/docs/${page.slug}` })),
       { title: ICONOS.title, href: ICONOS.href },
-      { title: REQUESTS.title, href: REQUESTS.href },
     ],
   },
   ...GROUPS.map((group) => ({
@@ -262,7 +218,6 @@ const nav = [
 const search = [
   { title: PLAYGROUND.title, href: PLAYGROUND.href, group: "Sistema", description: PLAYGROUND.description, keywords: "brand color picker theming wallpaper configurar" },
   { title: ICONOS.title, href: ICONOS.href, group: "Sistema", description: ICONOS.description, keywords: "icon lucide svg" },
-  { title: REQUESTS.title, href: REQUESTS.href, group: "Sistema", description: REQUESTS.description, keywords: "pedir componente request bug votar roadmap" },
   ...pages.map((page) => ({
     title: page.title,
     href: `/docs/${page.slug}`,
