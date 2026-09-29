@@ -11,7 +11,10 @@ import { SortableBase, sortableLabels, type SortableItemState, type SortableLabe
  *
  * **Solo en modo edición** (`editing`, o mantener apretada una fila ~0,5 s): la manija aparece al
  * final de cada fila, `onRemove` pone un «−» adelante y `onAdd` una fila «Agregar» al final. Se sale
- * con el «Listo» de la app, Esc o un clic afuera.
+ * con el «Listo» de la app, Esc o un clic afuera. Se edita una lista por vez.
+ *
+ * **Con teclado no hay «mantener apretado»:** la app tiene que dar su botón «Editar»/«Listo» y
+ * controlar `editing` (`onEditingChange`), si no quien no usa puntero nunca entra en edición.
  *
  * Cada fila es un `ListRow` con la manija a la izquierda: `renderItem` devuelve lo de adentro, no
  * un `<li>` (un `<li>` adentro de otro rompe la hidratación). Usa `@dnd-kit/core`,

@@ -12,7 +12,10 @@ import { SortableBase, sortableLabels, type SortableItemState, type SortableLabe
  * **Solo en modo edición**, como la pantalla de inicio de iOS: se entra con el botón de la app
  * (`editing`) o manteniendo apretada una tarjeta ~0,5 s, y se sale con «Listo», Esc o un clic en un
  * espacio vacío. En edición las tarjetas tiemblan, `onRemove` pone un «−» en cada una y `onAdd` una
- * celda «+ Agregar» al final.
+ * celda «+ Agregar» al final. Se edita una grilla por vez: entrar en otra saca a esta.
+ *
+ * **Con teclado no hay «mantener apretado»:** la app tiene que dar su botón «Editar»/«Listo» y
+ * controlar `editing` (`onEditingChange`), si no quien no usa puntero nunca entra en edición.
  *
  * Sin `handle` se arrastra la tarjeta entera: el mouse arranca a los 8 px (un click en un botón de
  * adentro sigue siendo un click) y el dedo después de 250 ms apretado (deslizar sigue scrolleando).

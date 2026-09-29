@@ -2497,16 +2497,17 @@ export const COMPONENTS = {
       "Tomar, mover, soltar y cancelar se anuncian en una región viva: «Tomaste Factura 0012, posición 2 de 5».",
       "El «−» es un `<button>` «Sacar Factura 0012»; al sacar se anuncia «Se sacó Factura 0012.» y el foco pasa al «−» que queda en su lugar.",
       "Con movimiento reducido las filas no se deslizan: saltan a su lugar.",
+      "Entrar y salir de la edición se anuncia: «Modo edición. Arrastrá para ordenar.» y «Listo.» (`labels.editing` y `labels.done`). Si se saca la última fila, el foco queda en la lista.",
     ],
     usage: [
-      "**Solo se ordena en modo edición**, como en iOS: `editing` + `onEditingChange` con un botón «Editar»/«Listo» de la app (o `defaultEditing`). También entra manteniendo apretada una fila ~0,5 s (mouse o dedo; un clic normal no), y sale con Esc o un clic afuera. En edición cada fila lleva el «−» adelante (con `onRemove`) y la manija al final; con `onAdd`, una fila «Agregar» al final, y la app decide qué abre.",
+      "**Solo se ordena en modo edición**, como en iOS: `editing` + `onEditingChange` con un botón «Editar»/«Listo» de la app (o `defaultEditing`). **El botón es obligatorio para el teclado:** mantener apretado es solo de puntero, así que sin él quien usa teclado nunca entra en edición. También entra manteniendo apretada una fila ~0,5 s (mouse o dedo; un clic normal no), y sale con Esc o un clic afuera. En edición cada fila lleva el «−» adelante (con `onRemove`) y la manija al final; con `onAdd`, una fila «Agregar» al final, y la app decide qué abre.",
       "`renderItem` devuelve **el contenido** de la fila, no un `<li>` (un `<li>` adentro de otro rompe la hidratación). Recibe `state.editing`.",
       "`onReorder` recibe los ítems en el orden nuevo, que se ve al soltar. **Optimista:** devolvé una promesa sin tocar `items`; si falla, vuelve el anterior y se anuncia «No se pudo guardar el orden». **Si la app aplica el orden ella** (cambia `items`), revertirlo y avisar si falla también es suyo: el componente no anuncia una vuelta atrás que no hizo.",
       "**`@dnd-kit/core`, `@dnd-kit/sortable` y `@dnd-kit/utilities` son peers opcionales:** `npm install @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities` en la app que lo usa. Solo por subpath (`sebs7n-ui/sortable-list`).",
     ],
     props: {
       SortableList: {
-        labels: "Textos: `handle`, `instructions`, `picked`, `dropped`, `canceled`, `position`, `of`, `failed`, `grabbed` (solo `SortableGrid` sin manija), `remove`, `removed` y `add`. Los que vienen por defecto son `sortableLabels`.",
+        labels: "Textos: `handle`, `instructions`, `picked`, `dropped`, `canceled`, `position`, `of`, `failed`, `grabbed` (solo `SortableGrid` sin manija), `remove`, `removed`, `add`, `editing` y `done`. Los que vienen por defecto son `sortableLabels`.",
         "aria-label": PROP_DESCRIPTIONS["aria-label"],
       },
     },
@@ -2527,9 +2528,10 @@ export const COMPONENTS = {
       "Fuera de edición la tarjeta no es parada de Tab ni tiene instrucciones: el arrastre no existe.",
       "Los anuncios son los de `SortableList`: «Tomaste Facturas, posición 1 de 4». El «−» es un `<button>` «Sacar Facturas» y al sacar se anuncia «Se sacó Facturas.».",
       "Con movimiento reducido las tarjetas no se deslizan ni tiemblan: en edición llevan un contorno punteado sutil.",
+      "Entrar y salir de la edición se anuncia («Modo edición. Arrastrá para ordenar.» · «Listo.»). Si la app saca una tarjeta tarde (después de guardar), el foco espera en su «−» y pasa al siguiente cuando se fue.",
     ],
     usage: [
-      "**Solo se ordena en modo edición:** `editing` + `onEditingChange` con un botón «Editar»/«Listo» de la app, o `defaultEditing`. También entra manteniendo apretada una tarjeta ~0,5 s (mouse o dedo; un clic normal no, y el clic que sigue no abre nada), y sale con Esc o un clic en un espacio vacío. En edición las tarjetas tiemblan (±1°, la que se arrastra no).",
+      "**Solo se ordena en modo edición:** `editing` + `onEditingChange` con un botón «Editar»/«Listo» de la app, o `defaultEditing`. **El botón es obligatorio para el teclado:** mantener apretado es solo de puntero. Se edita una grilla por vez: entrar en otra saca a la que estaba. También entra manteniendo apretada una tarjeta ~0,5 s (mouse o dedo; un clic normal no, y el clic que sigue no abre nada), y sale con Esc o un clic en un espacio vacío. En edición las tarjetas tiemblan (±1°, menos en las anchas para que el borde no se corra más de ~2 px; la que se arrastra no).",
       "`onRemove(key)` pone en cada tarjeta el «−» de iOS, arriba a la izquierda: saca sin confirmar y la app la saca de `items`. `onAdd()` suma al final una celda «+ Agregar» punteada; la app decide qué abre (un `Dialog` con los widgets que faltan). Hay que dejar lugar arriba a la izquierda: el «−» sobresale 8 px.",
       "**Sin `handle` se arrastra la tarjeta entera:** con el mouse arranca a los 8 px, así un click en un botón de adentro sigue siendo un click; con el dedo, después de 250 ms apretado, así deslizar sigue scrolleando.",
       "Con `handle`, `renderItem` recibe la manija en `state.handle` y la pone donde vaya (en la cabecera de la tarjeta).",
