@@ -1043,6 +1043,7 @@ export const COMPONENTS = {
     usage: [
       "**No sube nada:** la red es de la app. Pasale el progreso de cada archivo con `fileProgress` (de 0 a 100, `null` indeterminado) y un error de la subida con `fileError`.",
       "`accept`, `maxSize` (bytes) y `maxFiles` validan al agregar; lo que no entra queda afuera con su error en línea, no en un toast.",
+      "Los tamaños van en base 1024 (`maxSize={20 * 1024 * 1024}` dice «20 MB»); `formatSize` los escribe de otra forma, en la lista y en el error.",
       "Con `name`, los archivos viajan con el `<form>` en un `<input type=\"file\">`, también los que llegaron arrastrando: sirve igual para una Server Action. Necesita `DataTransfer` (todos los navegadores actuales): sin él, el input queda como lo dejó el diálogo.",
       "`scope=\"window\"`: mientras se arrastra un archivo, toda la ventana es la zona (una app de una sola tarea, como un conversor).",
       "Sin `multiple`, uno nuevo reemplaza al anterior; si se sueltan varios, entra el primero y el resto se avisa. `accept=\"*/*\"` acepta todo. Solo por subpath (`sebs7n-ui/drop-zone`): no está en el barrel, por peso.",

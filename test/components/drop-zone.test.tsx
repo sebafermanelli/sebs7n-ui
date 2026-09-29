@@ -51,7 +51,8 @@ describe("DropZone", () => {
     expect(onFilesChange).toHaveBeenLastCalledWith([file])
     expect(rows()).toHaveLength(1)
     expect(rows()[0]).toHaveTextContent("factura-0012.pdf")
-    expect(rows()[0]).toHaveTextContent("96 kB")
+    // En base 1024 (2.1): 96 000 B son 93,75 KiB.
+    expect(rows()[0]).toHaveTextContent("93,8 kB")
     expect(status()).toHaveTextContent("Archivos agregados: factura-0012.pdf")
   })
 
@@ -75,11 +76,27 @@ describe("DropZone", () => {
     await user.upload(input(), [pdf("a.pdf"), new File(["x"], "planilla.exe", { type: "application/x-msdownload" }), pdf("grande.pdf", 250_000), png("b.png"), pdf("c.pdf")])
     const alert = screen.getByRole("alert")
     expect(alert).toHaveTextContent("planilla.exe no es de un tipo permitido")
-    expect(alert).toHaveTextContent("grande.pdf pesa más de 100 kB")
+    expect(alert).toHaveTextContent("grande.pdf pesa más de 97,7 kB")
     expect(alert).toHaveTextContent("c.pdf no entra: el máximo es 2")
     expect(rows().map((row) => row.querySelector(".text-body")?.textContent)).toEqual(["a.pdf", "b.png"])
     expect(area()).toHaveAttribute("aria-invalid", "true")
     expect(area().getAttribute("aria-describedby")).toBe(alert.id)
+  })
+
+  it("los tamaños van en base 1024, coherentes con maxSize en bytes: 20 MiB dice «20 MB»", async () => {
+    const user = userEvent.setup({ applyAccept: false })
+    render(<DropZone aria-label="Adjuntos" maxSize={20 * 1024 * 1024} />)
+    await user.upload(input(), pdf("grande.pdf", 21 * 1024 * 1024))
+    expect(screen.getByRole("alert")).toHaveTextContent("grande.pdf pesa más de 20 MB")
+  })
+
+  it("formatSize reemplaza el texto de los tamaños, en la lista y en el error", async () => {
+    const user = userEvent.setup({ applyAccept: false })
+    const formatSize = (bytes: number) => `${Math.round(bytes / 1000)} KB`
+    render(<DropZone aria-label="Adjuntos" formatSize={formatSize} maxSize={100_000} multiple />)
+    await user.upload(input(), [pdf("a.pdf", 96_000), pdf("b.pdf", 200_000)])
+    expect(rows()[0]).toHaveTextContent("96 KB")
+    expect(screen.getByRole("alert")).toHaveTextContent("b.pdf pesa más de 100 KB")
   })
 
   it("sin multiple, uno nuevo reemplaza al anterior", async () => {
@@ -286,7 +303,7 @@ describe("DropZone", () => {
     expect(area()).toHaveTextContent("Drop files here")
     await user.upload(input(), pdf("a.pdf", 1_250_000))
     expect(screen.getByRole("button", { name: "Sacar a.pdf" })).toBeInTheDocument()
-    expect(rows()[0]).toHaveTextContent("1.3 MB")
+    expect(rows()[0]).toHaveTextContent("1.2 MB")
   })
 
   it("hidrata sin mismatch", async () => {

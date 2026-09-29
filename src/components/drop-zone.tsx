@@ -62,6 +62,11 @@ type DropZoneProps = Omit<React.ComponentProps<"div">, "children" | "onChange"> 
   onFilesChange?: (files: File[]) => void
   /** El progreso de cada archivo, de 0 a 100 (`null`, indeterminado). Sin valor, no hay barra. */
   fileProgress?: (file: File) => number | null | undefined
+  /**
+   * Cómo se escribe un tamaño, en la lista y en el error de `maxSize`. Por defecto, en base 1024 con
+   * las unidades de `Intl` en el idioma de `labels.locale`: «1,3 MB».
+   */
+  formatSize?: (bytes: number) => string
   /** Un error de la app para un archivo («No se pudo subir»), en rojo en su fila. */
   fileError?: (file: File) => React.ReactNode
   /** `"window"`: mientras se arrastra un archivo, toda la ventana es la zona. */
@@ -93,13 +98,16 @@ function accepts(file: File, accept: string | undefined): boolean {
 
 const UNITS = ["kilobyte", "megabyte", "gigabyte"] as const
 
-/** En base 1000, como el Finder: «96 kB», «1,3 MB». */
-function formatSize(bytes: number, locale: string): string {
-  if (bytes < 1000) return `${bytes} B`
-  let value = bytes / 1000
+/**
+ * En base 1024: los límites se escriben en MiB (`20 * 1024 * 1024`), y en base 1000 ese límite decía
+ * «21 MB». La unidad es la que escribe `Intl` («kB», «MB»), aunque el número sea binario.
+ */
+function formatBytes(bytes: number, locale: string): string {
+  if (bytes < 1024) return `${bytes} B`
+  let value = bytes / 1024
   let unit = 0
-  while (value >= 1000 && unit < UNITS.length - 1) {
-    value /= 1000
+  while (value >= 1024 && unit < UNITS.length - 1) {
+    value /= 1024
     unit++
   }
   return new Intl.NumberFormat(locale, { style: "unit", unit: UNITS[unit], unitDisplay: "short", maximumFractionDigits: 1 }).format(value)
@@ -129,6 +137,7 @@ function DropZone({
   onFilesChange,
   fileProgress,
   fileError,
+  formatSize,
   scope = "area",
   disabled = false,
   children,
@@ -141,6 +150,7 @@ function DropZone({
   ...props
 }: DropZoneProps) {
   const labels = { ...dropZoneLabels, ...useLabels().dropZone, ...defined(labelsProp) }
+  const sizeText = (bytes: number) => (formatSize ? formatSize(bytes) : formatBytes(bytes, labels.locale))
   const [ownFiles, setOwnFiles] = React.useState<File[]>([])
   const files = filesProp ?? ownFiles
   const [errors, setErrors] = React.useState<string[]>([])
@@ -163,7 +173,7 @@ function DropZone({
     const valid: File[] = []
     for (const file of incoming) {
       if (!accepts(file, accept)) problems.push(`${file.name} ${labels.invalidType}`)
-      else if (maxSize !== undefined && file.size > maxSize) problems.push(`${file.name} ${labels.tooLarge} ${formatSize(maxSize, labels.locale)}`)
+      else if (maxSize !== undefined && file.size > maxSize) problems.push(`${file.name} ${labels.tooLarge} ${sizeText(maxSize)}`)
       else if (!files.some((existing) => sameFile(existing, file)) && !valid.some((other) => sameFile(other, file))) valid.push(file)
     }
     let next: File[]
@@ -374,7 +384,7 @@ function DropZone({
               <ListRow key={`${file.name}-${file.size}-${file.lastModified}`} icon={file.type.startsWith("image/") ? <Thumbnail file={file} /> : <FileIcon />}>
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
                   <span className="truncate text-body text-label">{file.name}</span>
-                  <span className="text-callout text-label-secondary tabular-nums">{formatSize(file.size, labels.locale)}</span>
+                  <span className="text-callout text-label-secondary tabular-nums">{sizeText(file.size)}</span>
                   {progress !== undefined && <Progress aria-label={file.name} size="sm" value={progress} />}
                   {error != null && error !== false && <span className="text-callout text-red-ink">{error}</span>}
                 </div>

@@ -20,7 +20,7 @@ export function Attachments() {
       }}
     >
       <Label htmlFor="receipts">Comprobantes</Label>
-      <DropZone accept=".pdf,image/*" id="receipts" maxFiles={3} maxSize={5_000_000} multiple name="receipts" />
+      <DropZone accept=".pdf,image/*" id="receipts" maxFiles={3} maxSize={5 * 1024 * 1024} multiple name="receipts" />
       <Button className="self-start" type="submit">
         Enviar
       </Button>
