@@ -21,21 +21,15 @@ function useScrolled(threshold: number) {
 }
 
 type NavbarState = {
-  /** La ventana bajó más que el umbral: la barra ya tiene su fondo. */
+  /** La ventana bajó más que el umbral. */
   scrolled: boolean
-  /** Además de eso, es `floating`: está despegada. */
-  floating: boolean
 }
 
-const NavbarContext = React.createContext<NavbarState>({ scrolled: false, floating: false })
+const NavbarContext = React.createContext<NavbarState>({ scrolled: false })
 
 /**
  * El estado de la barra, para un hijo que tiene que cambiar con ella y no le alcanza con CSS
- * (`group-data-scrolled/navbar:…`): una segunda fila que arriba es su propia cápsula de vidrio
- * y, con la barra despegada, pasa a ser parte de ella —y entonces no puede llevar material,
- * porque sería vidrio sobre vidrio—.
- *
- * Afuera de un `Navbar` devuelve todo en `false`.
+ * (`group-data-scrolled/navbar:…`). Afuera de un `Navbar` devuelve `scrolled: false`.
  */
 function useNavbar(): NavbarState {
   return React.useContext(NavbarContext)
@@ -43,70 +37,46 @@ function useNavbar(): NavbarState {
 
 type NavbarProps = React.ComponentProps<"header"> & {
   /**
-   * `bar`: a todo el ancho; transparente arriba y, al scrollear, con el fondo de la barra global
-   * de iCloud (`bg-surface-header`) y un borde abajo. Sobre el wallpaper de `AppShell ambient`
-   * el fondo es `material-translucent`, como la barra de Home.
-   *
-   * `floating`: arranca igual que `bar`, pegada arriba y a todo el ancho, y al
-   * scrollear se despega: margen a los costados y arriba, borde redondeado y la
-   * sombra de un menú. La transición es de 300 ms sobre padding, radio y fondo, así
-   * que la barra se transforma en vez de saltar.
+   * @deprecated Desde 2.0 el Navbar es siempre la barra global de iCloud, fija a todo el ancho.
+   * `"bar"` se acepta y no hace nada; la cápsula despegada (`"floating"`) se fue. Se borra en 3.0.
    */
-  variant?: "bar" | "floating"
+  variant?: "bar"
   /**
    * `sticky` ocupa su alto en el flujo (el contenido empieza abajo). `fixed` se
    * superpone: para un hero que tiene que llegar hasta arriba de la ventana.
    */
   position?: "sticky" | "fixed"
-  /** Cuántos px de scroll la despegan. Por defecto, 12. */
+  /** Cuántos px de scroll prenden `data-scrolled`. Por defecto, 12. */
   scrollThreshold?: number
-  /**
-   * Clases de la superficie —la caja con fondo—, que es la que tiene el ancho y el radio de
-   * la barra despegada. `className` va al `<header>`, que es la franja entera.
-   *
-   * Para que `floating` mida el ancho del contenido de la app:
-   * `surfaceClassName="max-w-none"`, y el ancho se le da al `<header>`.
-   */
+  /** Clases de la superficie —la caja con fondo—. `className` va al `<header>`. */
   surfaceClassName?: string
 }
 
 /**
- * La barra de navegación de un sitio o de un portal: la superficie, la posición y
- * el comportamiento al scrollear. El contenido va en `NavbarContent`.
+ * La barra global de iCloud (catálogo §2.1): a todo el ancho, opaca (`surface-header`) con el borde
+ * entre paneles abajo, y `material-translucent` solo sobre el wallpaper de `AppShell ambient`, como
+ * la de Home. El contenido va en `NavbarContent` (44 de alto).
  *
- * Expone `data-scrolled` y `data-variant` en el `<header>`, para que un hijo
- * pueda cambiar con ella (`group-data-scrolled/navbar:…`).
+ * El borde es una sombra interior de 1 px y no un `border`: así la barra mide 44 con él adentro, lo
+ * mismo que en iCloud, sin que `NavbarContent` tenga que descontarlo.
  *
- * Con `prefers-reduced-motion` la barra cambia igual, pero sin transición: lo
- * corta el reset de `base.css`.
+ * Expone `data-scrolled` en el `<header>` para quien quiera cambiar algo al bajar
+ * (`group-data-scrolled/navbar:…`); la barra en sí no cambia.
  */
-function Navbar({ className, surfaceClassName, variant = "bar", position = "sticky", scrollThreshold = 12, children, ...props }: NavbarProps) {
+function Navbar({ className, surfaceClassName, variant: _variant, position = "sticky", scrollThreshold = 12, children, ...props }: NavbarProps) {
   const scrolled = useScrolled(scrollThreshold)
-  const floating = variant === "floating" && scrolled
-  const state = React.useMemo(() => ({ scrolled, floating }), [scrolled, floating])
+  const state = React.useMemo(() => ({ scrolled }), [scrolled])
   return (
     <header
       data-slot="navbar"
-      data-variant={variant}
       data-scrolled={scrolled ? "" : undefined}
-      className={cn(
-        "group/navbar top-0 z-50 w-full transition-[padding] duration-300 ease-out",
-        position === "fixed" ? "fixed inset-x-0" : "sticky",
-        floating ? "px-3 pt-3 sm:px-4" : "px-0 pt-0",
-        className
-      )}
+      className={cn("group/navbar top-0 z-50 w-full", position === "fixed" ? "fixed inset-x-0" : "sticky", className)}
       {...props}
     >
       <div
         data-slot="navbar-surface"
         className={cn(
-          "relative border border-transparent transition-[background-color,border-color,border-radius,box-shadow] duration-300 ease-out",
-          !scrolled && "rounded-none bg-transparent",
-          // Con scroll, la barra global de iCloud: opaca, y translúcida solo sobre el wallpaper.
-          scrolled && "bg-surface-header in-data-ambient:material-translucent",
-          scrolled && !floating && "rounded-none border-b-separator",
-          // Despegada lleva el radio del panel y la sombra de popover (R5 decide si queda).
-          floating && "mx-auto max-w-6xl rounded-panel border-separator shadow-menu",
+          "relative bg-surface-header text-label shadow-[inset_0_-1px_0_var(--color-separator-strong)] in-data-ambient:material-translucent",
           surfaceClassName
         )}
       >
@@ -116,12 +86,12 @@ function Navbar({ className, surfaceClassName, variant = "bar", position = "stic
   )
 }
 
-/** La fila de la barra: alto de 56px, ancho de contenido y los extremos separados. */
+/** La fila de la barra: 44 de alto, `0 6px 0 16px` como la de iCloud y los extremos separados. */
 function NavbarContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="navbar-content"
-      className={cn("mx-auto flex h-14 w-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-6", className)}
+      className={cn("flex h-11 w-full items-center justify-between gap-4 ps-4 pe-1.5", className)}
       {...props}
     />
   )
