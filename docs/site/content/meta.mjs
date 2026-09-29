@@ -1293,7 +1293,7 @@ export const COMPONENTS = {
       },
       CommandGroup: { heading: "El título de la sección, con el mismo estilo que los títulos de grupo de los menús. Un grupo sin resultados se esconde entero." },
       CommandItem: {
-        value: "Identifica el ítem y es lo que recibe `onSelect`. Único en toda la paleta.",
+        value: "Identifica el ítem y es lo que recibe `onSelect`. Puede repetirse (el mismo cliente en dos grupos): esconder uno al filtrar no afecta al otro.",
         keywords: "Palabras que también lo encuentran, además del título.",
         description: "El detalle en gris debajo del título; también sigue a « — » en la sugerencia en línea.",
         icon: "32×32 con radio 8. Un ícono de lucide va a 20 px.",

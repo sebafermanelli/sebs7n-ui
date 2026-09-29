@@ -265,6 +265,23 @@ describe("Command", () => {
     expect(abrir).toHaveBeenCalledWith("f-0012")
   })
 
+  it("dos ítems con el mismo value: esconder uno no borra al otro", async () => {
+    render(
+      <Command>
+        <CommandInput />
+        <CommandList>
+          <CommandItem value="dup">Factura A</CommandItem>
+          <CommandItem value="dup">Factura B</CommandItem>
+        </CommandList>
+        <CommandEmpty />
+      </Command>
+    )
+    await userEvent.type(screen.getByRole("combobox"), "factura b")
+    expect(screen.getAllByRole("option")).toHaveLength(1)
+    expect(screen.queryByText("Sin resultados")).toBeNull()
+    expect(screen.getByRole("option")).toHaveAttribute("data-highlighted")
+  })
+
   it("shouldFilter={false} deja los ítems como vienen, en su orden", async () => {
     render(
       <Command shouldFilter={false}>

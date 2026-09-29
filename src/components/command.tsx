@@ -59,29 +59,40 @@ type Result = { title: string; description?: string }
  * tiene que ser el de la fila que quedó en su lugar.
  */
 function createResults() {
-  const visible = new Map<string, { result: Result; element: Element }>()
+  // Por ítem y no por `value`: dos ítems con el mismo `value` (el mismo cliente en dos grupos)
+  // son dos entradas, y que uno se esconda al filtrar no borra al otro.
+  const visible = new Map<string, { value: string; result: Result; element: Element }>()
   const listeners = new Set<() => void>()
-  let ordered: string[] | null = null
+  let ordered: { value: string; result: Result }[] | null = null
+  let values: string[] = []
   const notify = () => {
     ordered = null
     listeners.forEach((listener) => listener())
   }
+  const inOrder = () => {
+    if (!ordered) {
+      ordered = [...visible.values()].sort((a, b) =>
+        a.element.compareDocumentPosition(b.element) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1
+      )
+      values = ordered.map((entry) => entry.value)
+    }
+    return ordered
+  }
   return {
-    add(value: string, result: Result, element: Element) {
-      visible.set(value, { result, element })
+    add(id: string, value: string, result: Result, element: Element) {
+      visible.set(id, { value, result, element })
       notify()
     },
-    remove(value: string) {
-      visible.delete(value)
+    remove(id: string) {
+      visible.delete(id)
       notify()
     },
-    get: (value: string | undefined) => (value === undefined ? undefined : visible.get(value)?.result),
+    /** El primero en pantalla con ese `value`. */
+    get: (value: string | undefined) => (value === undefined ? undefined : inOrder().find((entry) => entry.value === value)?.result),
     count: () => visible.size,
     values() {
-      ordered ??= [...visible]
-        .sort(([, a], [, b]) => (a.element.compareDocumentPosition(b.element) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1))
-        .map(([value]) => value)
-      return ordered
+      inOrder()
+      return values
     },
     subscribe(listener: () => void) {
       listeners.add(listener)
@@ -342,7 +353,7 @@ function CommandGroup({ heading, className, children, ...props }: CommandGroupPr
 }
 
 type CommandItemProps = Omit<WithClassName<AutocompletePrimitive.Item.Props>, "value" | "onSelect"> & {
-  /** Identifica el ítem; es lo que recibe `onSelect`. Único en toda la paleta. */
+  /** Identifica el ítem; es lo que recibe `onSelect`. Puede repetirse (el mismo cliente en dos grupos). */
   value: string
   /** Palabras que también lo encuentran, además del título. */
   keywords?: readonly string[]
@@ -358,6 +369,7 @@ type CommandItemProps = Omit<WithClassName<AutocompletePrimitive.Item.Props>, "v
 
 function CommandItem({ value, keywords, description, icon, textValue, onSelect, onClick, className, children, ref, ...props }: CommandItemProps) {
   const { query, shouldFilter, results, completion } = useCommand("CommandItem")
+  const id = React.useId()
   const element = React.useRef<HTMLDivElement | null>(null)
   // El registro necesita el elemento para ordenar por el DOM; la `ref` de la app sigue llegando.
   const setRef = React.useCallback(
@@ -374,9 +386,9 @@ function CommandItem({ value, keywords, description, icon, textValue, onSelect, 
 
   useIsoLayoutEffect(() => {
     if (!visible || !element.current) return
-    results.add(value, { title, description: detail || undefined }, element.current)
-    return () => results.remove(value)
-  }, [visible, value, title, detail, results])
+    results.add(id, value, { title, description: detail || undefined }, element.current)
+    return () => results.remove(id)
+  }, [visible, id, value, title, detail, results])
 
   if (!visible) return null
   return (
