@@ -36,7 +36,16 @@ export function subpaths(root) {
     filas.push([subpath, que])
   }
 
-  agregar(".", "`sebs7n-ui`", `El barrel: los ${componentes.length} componentes, las variantes y \`cn\`. Ver la nota de abajo antes de usarlo.`)
+  // Los que `src/index.ts` no re-exporta: `chart` (su peer opcional) y los que quedaron solo por
+  // subpath para que el barrel no pase su tope de peso (ver el comentario en `src/index.ts`).
+  const barrel = readFileSync(join(root, "src/index.ts"), "utf8")
+  const fuera = componentes.filter((nombre) => !barrel.includes(`export * from "./components/${nombre}.js"`))
+  const enBarrel = componentes.length - fuera.length
+  agregar(
+    ".",
+    "`sebs7n-ui`",
+    `El barrel: ${enBarrel} de los ${componentes.length} componentes (${lista(fuera)} solo por subpath), las variantes y \`cn\`. Ver la nota de abajo antes de usarlo.`
+  )
   agregar("./*", "`sebs7n-ui/<componente>`", `${componentes.length}, en kebab-case: ${lista(componentes)}`)
   agregar("./variants/*", "`sebs7n-ui/variants/<nombre>`", `Clases sin \`"use client"\`: ${lista(variantes)}`)
   agregar("./lib/*", "`sebs7n-ui/lib/<nombre>`", `Funciones puras: ${lista(libs)}`)

@@ -507,6 +507,14 @@ las fases R2–R5 rehacen diálogos, menús, controles y listas con las medidas 
   con `inline`), `trailing`, `dot` (8, paleta de `Badge`), `chevron`, `selected` (acento con foco, gris
   sin foco, `aria-current`), `onClick` (botón) o `render` (link). Separador interior desde el texto.
   Sin `"use client"`.
+- **`Tree`** (`sebs7n-ui/tree`, **solo por subpath**: no entra en el barrel por peso), árbol de
+  carpetas y archivos en el lenguaje de la lista de Drive (R5b): filas de 41 radio 10, disclosure que
+  gira, sangría de 20 por nivel, íconos de carpeta/archivo, `columns` alineadas con cabecera visual y
+  la selección de Drive. Patrón `tree` de WAI-ARIA con ítems planos (`aria-level/setsize/posinset`,
+  `aria-expanded`, `aria-selected`), foco itinerante, ↑↓ →← Home End Enter Espacio y type-ahead.
+  `expanded`/`selected` controlables, `onOpen`, y `hasChildren` + `onLoadChildren` para hijos
+  perezosos (`aria-busy`).
+- La tabla de subpaths del README dice qué componentes no están en el barrel (la lee de `src/index.ts`).
 - El variant `inside-selection` también mira las listas de filas (`group/list`: `List`, `Tree`,
   `FileGrid`), no solo la `Table`.
 

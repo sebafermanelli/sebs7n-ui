@@ -167,3 +167,9 @@ export * from "./components/toggle.js"
 export * from "./components/toolbar.js"
 export * from "./components/tooltip.js"
 export * from "./components/user-menu.js"
+
+// Solo por subpath, por peso (R5b): el barrel tiene un tope de 55 kB gzip (`.size-limit.js`)
+// que no se sube, y estos componentes grandes lo pasaban. No son peers opcionales como `chart`:
+// andan igual, pero se importan por su ruta. La tabla del README los nombra (la genera
+// scripts/subpaths.mjs leyendo este archivo).
+//   `tree`            sebs7n-ui/tree (+1,95 kB al barrel)
