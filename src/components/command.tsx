@@ -3,15 +3,16 @@
 import * as React from "react"
 import { Autocomplete as AutocompletePrimitive } from "@base-ui/react/autocomplete"
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
-import { ToggleGroup as ToggleGroupPrimitive } from "@base-ui/react/toggle-group"
+import { Radio as RadioPrimitive } from "@base-ui/react/radio"
+import { RadioGroup as RadioGroupPrimitive } from "@base-ui/react/radio-group"
 import { SearchIcon } from "lucide-react"
 
 import { useLabels, type Labels } from "../lib/labels.js"
 import { cn, type WithClassName } from "../lib/utils.js"
 import { commandDialogPopupClassName, commandItemClassName, commandItemIconClassName } from "../variants/command.js"
 import { menuLabelClassName } from "../variants/menu.js"
+import { toggleVariants } from "../variants/toggle.js"
 import { Kbd } from "./kbd.js"
-import { Toggle, type ToggleProps } from "./toggle.js"
 
 // La paleta de comandos estilo Spotlight (2.0).
 //
@@ -195,7 +196,7 @@ function Command({ value, defaultValue = "", onValueChange, shouldFilter = true,
     () => ({ query, setQuery, shouldFilter, results, completion, setOverflowing, labels: { ...provided, ...labels } }),
     // `labels` se compara por contenido: es un objeto literal en casi todos los usos.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [query, setQuery, shouldFilter, results, completion?.value, completion?.text, completion?.accepts, provided, labels?.placeholder, labels?.empty, labels?.dialog]
+    [query, setQuery, shouldFilter, results, completion?.value, completion?.text, completion?.accepts, provided, labels?.placeholder, labels?.empty, labels?.dialog, labels?.filters]
   )
 
   return (
@@ -306,39 +307,47 @@ function CommandInput({ className, wrapperClassName, placeholder, onKeyDown, ref
   )
 }
 
-type CommandFiltersProps = Omit<WithClassName<ToggleGroupPrimitive.Props>, "value" | "defaultValue" | "onValueChange" | "multiple"> & {
-  value?: string
-  defaultValue?: string
+type CommandFiltersProps = Omit<WithClassName<RadioGroupPrimitive.Props<string>>, "onValueChange"> & {
   /** El chip prendido. El componente no filtra por chips: la app decide qué ítems pasa. */
   onValueChange?: (value: string) => void
 }
 
 /**
- * Los chips de Spotlight: una fila de una sola opción, con scroll horizontal si no entran. Siempre
- * hay uno prendido —tocar el prendido no lo apaga—, porque «ninguno» es lo mismo que «Todo» y dos
- * formas de decir lo mismo confunden.
+ * Los chips de Spotlight: una fila de una sola opción, con scroll horizontal si no entran.
+ *
+ * Un `radiogroup` y no un grupo de toggles: siempre hay exactamente uno prendido —«ninguno» sería lo
+ * mismo que «Todo»—, y eso es lo que anuncia un grupo de radios («Facturas, radio, 2 de 3,
+ * marcado»). Las flechas recorren los chips y Tab sale del grupo, como en cualquier radiogroup.
+ * Se ven como los chips de `Toggle`. El nombre del grupo sale de `labels.filters` («Filtros»).
  */
-function CommandFilters({ value, defaultValue, onValueChange, className, ...props }: CommandFiltersProps) {
-  const [uncontrolled, setUncontrolled] = React.useState(defaultValue)
-  const current = value ?? uncontrolled
+function CommandFilters({ onValueChange, className, ...props }: CommandFiltersProps) {
+  const { labels } = useCommand("CommandFilters")
   return (
-    <ToggleGroupPrimitive
+    <RadioGroupPrimitive<string>
       data-slot="command-filters"
-      value={current === undefined ? [] : [current]}
-      onValueChange={(next) => {
-        const pressed = next.find((item) => item !== current) ?? next[0]
-        if (pressed === undefined) return
-        if (value === undefined) setUncontrolled(pressed)
-        onValueChange?.(pressed)
-      }}
+      aria-label={labels.filters}
+      onValueChange={(value) => onValueChange?.(value)}
       className={cn("flex shrink-0 items-center gap-2 overflow-x-auto px-4 pt-2.5 pb-1 [scrollbar-width:none]", className)}
       {...props}
     />
   )
 }
 
-function CommandFilter(props: ToggleProps) {
-  return <Toggle data-slot="command-filter" {...props} />
+type CommandFilterProps = WithClassName<RadioPrimitive.Root.Props>
+
+/** Un chip: el mismo dibujo que `Toggle`, con `data-checked` (el del radio) en lugar de `data-pressed`. */
+function CommandFilter({ className, ...props }: CommandFilterProps) {
+  return (
+    <RadioPrimitive.Root
+      data-slot="command-filter"
+      className={cn(
+        toggleVariants(),
+        "data-checked:border-gray-900 data-checked:bg-gray-alpha-200 data-checked:text-gray-1000 data-checked:hover:bg-gray-alpha-300",
+        className
+      )}
+      {...props}
+    />
+  )
 }
 
 type CommandListProps = WithClassName<AutocompletePrimitive.List.Props>
@@ -512,6 +521,7 @@ export {
   CommandItem,
   CommandList,
   type CommandDialogProps,
+  type CommandFilterProps,
   type CommandFiltersProps,
   type CommandGroupProps,
   type CommandInputProps,

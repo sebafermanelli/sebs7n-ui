@@ -364,7 +364,7 @@ describe("Command", () => {
     expect(screen.getByRole("combobox")).toHaveAccessibleName("Buscar en facturación")
   })
 
-  it("los chips exponen su valor y son de una sola opción", async () => {
+  it("los chips son un radiogroup con nombre: exponen su valor y siempre hay uno", async () => {
     const onValueChange = vi.fn()
     render(
       <Command>
@@ -376,14 +376,17 @@ describe("Command", () => {
         {items}
       </Command>
     )
-    const todo = screen.getByRole("button", { name: "Todo" })
-    expect(todo).toHaveAttribute("aria-pressed", "true")
-    await userEvent.click(screen.getByRole("button", { name: "Facturas" }))
+    expect(screen.getByRole("radiogroup", { name: "Filtros" })).toBeInTheDocument()
+    const todo = screen.getByRole("radio", { name: "Todo" })
+    expect(todo).toHaveAttribute("aria-checked", "true")
+    // Se ven como los chips de Toggle.
+    expect(todo).toHaveClass("rounded-full", "data-checked:bg-gray-alpha-200")
+    await userEvent.click(screen.getByRole("radio", { name: "Facturas" }))
     expect(onValueChange).toHaveBeenLastCalledWith("facturas")
-    expect(todo).toHaveAttribute("aria-pressed", "false")
+    expect(todo).toHaveAttribute("aria-checked", "false")
     // Volver a tocar el prendido no lo apaga: siempre hay un filtro.
-    await userEvent.click(screen.getByRole("button", { name: "Facturas" }))
-    expect(screen.getByRole("button", { name: "Facturas" })).toHaveAttribute("aria-pressed", "true")
+    await userEvent.click(screen.getByRole("radio", { name: "Facturas" }))
+    expect(screen.getByRole("radio", { name: "Facturas" })).toHaveAttribute("aria-checked", "true")
   })
 
   it("los textos salen del LabelsProvider y la prop labels le gana", async () => {

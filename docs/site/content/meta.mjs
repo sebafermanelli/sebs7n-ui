@@ -1268,6 +1268,7 @@ export const COMPONENTS = {
       "El campo es un `combobox` y la lista un `listbox` de Base UI (Autocomplete en modo `inline`): el lector anuncia el elegido mientras el foco se queda en el campo.",
       "La sugerencia en línea es `aria-hidden`: el valor del campo no cambia hasta aceptarla, así que el lector oye lo que se escribió y el elegido lo anuncia el listbox.",
       "La pista `tab` también es `aria-hidden` y no forma parte del nombre de la opción.",
+      "`CommandFilters` es un `radiogroup` nombrado con `labels.filters` («Filtros»): siempre hay un chip marcado, las flechas los recorren y Tab sale del grupo.",
       "`CommandEmpty` es una región `status` que queda siempre montada: si apareciera recién con el texto, varios lectores no lo anunciarían.",
       "`CommandDialog` se nombra con `labels.dialog` (o `LabelsProvider`, grupo `command`) y el foco inicial cae en el campo.",
     ],
