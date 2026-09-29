@@ -69,8 +69,7 @@ export {
 } from "./variants/menu.js"
 export { selectionSecondaryClassName } from "./variants/selection.js"
 export {
-  alertFooterClassName,
-  alertPopupClassName,
+  alertWidthClassName,
   backdropClassName,
   floatingPopupClassName,
   floatingSheetGapClassName,

@@ -1,6 +1,6 @@
 "use client"
 
-import { ArchiveIcon, CopyIcon, DownloadIcon, MoreHorizontalIcon, PencilIcon, TrashIcon, TriangleAlertIcon } from "lucide-react"
+import { ArchiveIcon, CopyIcon, DownloadIcon, MoreHorizontalIcon, PencilIcon, TrashIcon } from "lucide-react"
 import { useRef, useState } from "react"
 import {
   AlertDialog,
@@ -11,7 +11,6 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogIcon,
   AlertDialogTitle,
 } from "sebs7n-ui/alert-dialog"
 import { Button } from "sebs7n-ui/button"
@@ -85,9 +84,6 @@ export function Acciones() {
       </DropdownMenu>
       <AlertDialog onOpenChange={setConfirmar} open={confirmar}>
         <AlertDialogContent finalFocus={disparador}>
-          <AlertDialogIcon>
-            <TriangleAlertIcon className="size-12 text-amber-700" strokeWidth={1.5} />
-          </AlertDialogIcon>
           <AlertDialogHeader>
             <AlertDialogTitle>¿Eliminar la factura 0012?</AlertDialogTitle>
             <AlertDialogDescription>Se borra del listado y del resumen del mes. No se puede deshacer.</AlertDialogDescription>

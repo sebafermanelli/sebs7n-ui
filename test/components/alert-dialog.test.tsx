@@ -12,7 +12,6 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogIcon,
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../../src/components/alert-dialog"
@@ -43,7 +42,7 @@ describe("AlertDialog", () => {
     render(<Example />)
     await userEvent.click(screen.getByRole("button", { name: "Eliminar viaje" }))
     const dialog = await screen.findByRole("alertdialog")
-    expect(dialog).toHaveClass("shadow-modal", "rounded-panel", "p-5", "gap-3", "bg-surface")
+    expect(dialog).toHaveClass("shadow-modal", "rounded-panel", "p-5", "gap-4", "bg-surface")
     expect(dialog.className).not.toMatch(/\bborder\b/)
     expect(screen.getByText("¿Eliminar el viaje?")).toHaveClass("text-title-3", "text-label")
     expect(screen.getByText("Se borran también los pasajeros cargados.")).toHaveClass("text-callout", "text-label-secondary")
@@ -51,7 +50,7 @@ describe("AlertDialog", () => {
     // Sin botón X: un alert dialog exige respuesta.
     expect(screen.queryByRole("button", { name: "Cerrar" })).toBeNull()
     const cancel = screen.getByRole("button", { name: "Cancelar" })
-    // El push button gris de macOS, no el de vidrio con borde.
+    // El botón gris de iCloud, no uno con borde.
     expect(cancel).toHaveClass("bg-fill-2")
     expect(cancel).not.toHaveClass("border-separator-strong")
     await userEvent.click(cancel)
@@ -63,18 +62,17 @@ describe("AlertDialog", () => {
     render(<Example onAction={onAction} />)
     await userEvent.click(screen.getByRole("button", { name: "Eliminar viaje" }))
     const action = await screen.findByRole("button", { name: "Eliminar" })
-    expect(action).toHaveClass("text-red-ink", "bg-red-700/(--sf-tint-fill)")
-    expect(action).not.toHaveClass("bg-red-800")
+    expect(action).toHaveClass("bg-red-800")
     await userEvent.click(action)
     expect(onAction).toHaveBeenCalled()
   })
 
-  it("el footer es una grilla de botones iguales, sin borde superior", async () => {
+  it("el footer alinea los botones a la derecha, sin borde superior", async () => {
     render(<Example />)
     await userEvent.click(screen.getByRole("button", { name: "Eliminar viaje" }))
     const footer = (await screen.findByRole("button", { name: "Cancelar" })).parentElement!
     expect(footer).toHaveAttribute("data-slot", "alert-dialog-footer")
-    expect(footer).toHaveClass("grid", "auto-cols-fr", "grid-flow-col")
+    expect(footer).toHaveClass("sm:justify-end")
     expect(footer).not.toHaveClass("border-t")
     expect(footer.className).not.toMatch(/-mx-6/)
   })
@@ -113,14 +111,11 @@ describe("AlertDialog", () => {
   })
 })
 
-describe("alerta de macOS (2.0)", () => {
+describe("confirmación de iCloud (2.0, R2)", () => {
   function Alerta({ extra = false }: { extra?: boolean }) {
     return (
       <AlertDialog defaultOpen>
         <AlertDialogContent>
-          <AlertDialogIcon>
-            <svg data-testid="icono" />
-          </AlertDialogIcon>
           <AlertDialogHeader>
             <AlertDialogTitle>¿Eliminar la factura 0012?</AlertDialogTitle>
             <AlertDialogDescription>Se borra del listado y del resumen del mes.</AlertDialogDescription>
@@ -135,51 +130,39 @@ describe("alerta de macOS (2.0)", () => {
     )
   }
 
-  it("es compacta: 300 px como máximo", async () => {
+  it("es el diálogo de iCloud: radio 11, 20 de padding, opaco, 400 px como máximo", async () => {
     render(<Alerta />)
     const alerta = await screen.findByRole("alertdialog")
-    // Sin breakpoint: en una tablet (≥ 640 px) también mide 300, y en un celular el ancho menos 2rem.
-    expect(alerta).toHaveClass("max-w-[min(300px,calc(100%-2rem))]")
-    expect(alerta.className).not.toMatch(/sm:max-w|max-w-\[calc/)
+    expect(alerta).toHaveClass("rounded-panel", "p-5", "bg-surface", "shadow-modal", "max-w-[min(400px,calc(100%-2rem))]")
+    expect(alerta.className).not.toMatch(/300px|backdrop-blur/)
   })
 
-  it("el ícono va arriba, mide 48 y es decorativo", async () => {
+  it("título title-3 y cuerpo callout, alineados a la izquierda", async () => {
     render(<Alerta />)
-    const alerta = await screen.findByRole("alertdialog")
-    const icono = alerta.querySelector('[data-slot="alert-dialog-icon"]')!
-    expect(icono).toHaveAttribute("aria-hidden", "true")
-    expect(icono).toHaveClass("size-12")
-    expect(alerta.firstElementChild).toBe(icono)
-    expect(screen.getByTestId("icono").parentElement).toBe(icono)
+    const header = (await screen.findByRole("alertdialog")).querySelector('[data-slot="alert-dialog-header"]')!
+    expect(header).not.toHaveClass("text-center", "items-center")
+    expect(screen.getByRole("heading", { name: "¿Eliminar la factura 0012?" })).toHaveClass("text-title-3")
   })
 
-  it("los botones van iguales a lo ancho y sin línea arriba", async () => {
-    render(<Alerta />)
-    const pie = (await screen.findByRole("alertdialog")).querySelector('[data-slot="alert-dialog-footer"]')!
-    expect(pie).toHaveClass("grid", "auto-cols-fr", "grid-flow-col", "[&>*]:w-full")
-    expect(pie).not.toHaveClass("border-t")
-  })
-
-  it("con tres botones se apilan, y sin espacio también", async () => {
+  it("los botones van a la derecha, con su ancho y en el orden del DOM", async () => {
     render(<Alerta extra />)
     const pie = (await screen.findByRole("alertdialog")).querySelector('[data-slot="alert-dialog-footer"]')!
-    expect(pie.className).toMatch(/has-\[>:nth-child\(3\)\]:grid-flow-row/)
-    expect(pie.className).toMatch(/max-\[360px\]:grid-flow-row/)
-  })
-
-  it("apilados, el orden de Tab es el orden en pantalla: no se invierte nada", async () => {
-    render(<Alerta extra />)
-    const pie = (await screen.findByRole("alertdialog")).querySelector('[data-slot="alert-dialog-footer"]')!
-    expect(pie.className).not.toMatch(/reverse|order-/)
+    expect(pie).toHaveClass("flex", "sm:flex-row", "sm:justify-end")
+    expect(pie.className).not.toMatch(/grid|auto-cols-fr|w-full|reverse|order-/)
     expect([...pie.children].map((b) => b.textContent)).toEqual(["Cancelar", "Archivar", "Eliminar"])
   })
 
-  it("Cancelar es el gris de macOS y la acción destructiva va tintada", async () => {
+  it("no hay ícono de alerta: iCloud no lo pone", async () => {
+    const modulo = await import("../../src/components/alert-dialog")
+    expect("AlertDialogIcon" in modulo).toBe(false)
+  })
+
+  it("Cancelar es el gris de iCloud y la acción destructiva, el rojo sólido", async () => {
     render(<Alerta />)
     expect(await screen.findByRole("button", { name: "Cancelar" })).toHaveClass("bg-fill-2")
     const eliminar = screen.getByRole("button", { name: "Eliminar" })
-    expect(eliminar).toHaveClass("text-red-ink")
-    expect(eliminar).not.toHaveClass("bg-red-800")
+    expect(eliminar).toHaveClass("bg-red-800")
+    expect(eliminar.className).not.toMatch(/tint|red-ink/)
   })
 
   it("la acción por defecto es del acento", async () => {
@@ -197,7 +180,7 @@ describe("alerta de macOS (2.0)", () => {
     expect(await screen.findByRole("button", { name: "Emitir" })).toHaveClass("bg-brand-700")
   })
 
-  it("AlertDialogClose con render de la acción destructiva conserva el tintado", async () => {
+  it("AlertDialogClose con render de la acción destructiva conserva el rojo", async () => {
     render(
       <AlertDialog defaultOpen>
         <AlertDialogContent>
@@ -210,95 +193,14 @@ describe("alerta de macOS (2.0)", () => {
       </AlertDialog>
     )
     const eliminar = await screen.findByRole("button", { name: "Eliminar" })
-    expect(eliminar).toHaveClass("text-red-ink")
+    expect(eliminar).toHaveClass("bg-red-800")
     await userEvent.click(eliminar)
     await waitFor(() => expect(screen.queryByRole("alertdialog")).toBeNull())
   })
 })
 
-describe("etiquetas largas (revisión fase 2)", () => {
-  function Larga({ stacked }: { stacked?: boolean }) {
-    return (
-      <AlertDialog defaultOpen>
-        <AlertDialogContent>
-          <AlertDialogTitle>¿Salir sin guardar?</AlertDialogTitle>
-          <AlertDialogFooter stacked={stacked}>
-            <AlertDialogCancel />
-            <AlertDialogAction variant="destructive">Descartar cambios</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    )
-  }
-
-  // Cada celda mide ~126 px en 300: «Descartar cambios» con `whitespace-nowrap` se salía del botón.
-  // La red de seguridad deja que el texto baje de renglón y que el botón crezca en alto.
-  it("el pie deja que el texto de los botones baje de renglón, centrado", async () => {
-    render(<Larga />)
-    const pie = (await screen.findByRole("alertdialog")).querySelector('[data-slot="alert-dialog-footer"]')!
-    expect(pie).toHaveClass(
-      "[&>*]:whitespace-normal",
-      "[&>*]:h-auto",
-      "[&>*]:min-h-8",
-      "[&>*]:py-1.5",
-      "[&>*]:text-center"
-    )
-  })
-
-  it("`stacked` apila los botones aunque sean dos", async () => {
-    render(<Larga stacked />)
-    const pie = (await screen.findByRole("alertdialog")).querySelector('[data-slot="alert-dialog-footer"]')!
-    expect(pie).toHaveClass("grid-flow-row")
-    expect(pie).not.toHaveClass("grid-flow-col")
-    expect(pie).toHaveAttribute("data-stacked")
-    expect([...pie.children].map((b) => b.textContent)).toEqual(["Cancelar", "Descartar cambios"])
-  })
-
-  it("sin `stacked`, dos botones siguen lado a lado", async () => {
-    render(<Larga />)
-    const pie = (await screen.findByRole("alertdialog")).querySelector('[data-slot="alert-dialog-footer"]')!
-    expect(pie).toHaveClass("grid-flow-col")
-    expect(pie).not.toHaveAttribute("data-stacked")
-  })
-})
-
-// Con el dedo cada botón de 32 crece a 44 (`touch-target`). Apilados con 8 px de separación, las
-// áreas se pisan 4 px y gana el de abajo, que suele ser el destructivo. Con 12, 32 + 12 = 44.
-describe("apilados, las áreas táctiles no se pisan (revisión fase 2)", () => {
-  it("con tres botones o sin espacio, el gap sube a 12", async () => {
-    render(
-      <AlertDialog defaultOpen>
-        <AlertDialogContent>
-          <AlertDialogTitle>¿Guardar?</AlertDialogTitle>
-          <AlertDialogFooter>
-            <AlertDialogCancel />
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    )
-    const pie = (await screen.findByRole("alertdialog")).querySelector('[data-slot="alert-dialog-footer"]')!
-    expect(pie).toHaveClass("gap-2", "has-[>:nth-child(3)]:gap-3", "max-[360px]:gap-3")
-  })
-
-  it("con `stacked`, gap-3 y no gap-2", async () => {
-    render(
-      <AlertDialog defaultOpen>
-        <AlertDialogContent>
-          <AlertDialogTitle>¿Guardar?</AlertDialogTitle>
-          <AlertDialogFooter stacked>
-            <AlertDialogCancel />
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    )
-    const pie = (await screen.findByRole("alertdialog")).querySelector('[data-slot="alert-dialog-footer"]')!
-    expect(pie).toHaveClass("gap-3")
-    expect(pie).not.toHaveClass("gap-2")
-  })
-})
-
 // Lo que documenta meta.mjs para una alerta que no destruye nada: el foco inicial en la acción,
-// así Return la dispara como en macOS. Por defecto sigue arrancando en «Cancelar».
+// así Return la dispara. Por defecto sigue arrancando en «Cancelar».
 describe("foco inicial (revisión fase 2)", () => {
   function Emitir({ enAccion }: { enAccion: boolean }) {
     const emitir = useRef<HTMLButtonElement>(null)
@@ -333,11 +235,11 @@ describe("foco inicial (revisión fase 2)", () => {
   })
 })
 
-// Bug visto en el navegador: con `stacked` y la acción destructiva primero en el DOM, Base UI
-// enfocaba el primer tabulable —«Descartar cambios»— y un Return descartaba. macOS nunca arranca
-// en una acción destructiva: si hay `AlertDialogCancel`, el foco inicial es ese.
+// Bug visto en el navegador: con la acción destructiva primero en el DOM, Base UI enfocaba el
+// primer tabulable —«Descartar cambios»— y un Return descartaba. Nunca se arranca en una acción
+// destructiva: si hay `AlertDialogCancel`, el foco inicial es ese.
 describe("el foco inicial nunca cae en la acción destructiva", () => {
-  function Alerta({ destructivaPrimero, stacked }: { destructivaPrimero: boolean; stacked?: boolean }) {
+  function Alerta({ destructivaPrimero }: { destructivaPrimero: boolean }) {
     const accion = (
       <AlertDialogClose key="a" render={<AlertDialogAction variant="destructive" />}>
         Descartar cambios
@@ -349,20 +251,20 @@ describe("el foco inicial nunca cae en la acción destructiva", () => {
         <AlertDialogTrigger render={<Button />}>Abrir</AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogTitle>¿Salir sin guardar?</AlertDialogTitle>
-          <AlertDialogFooter stacked={stacked}>{destructivaPrimero ? [accion, cancelar] : [cancelar, accion]}</AlertDialogFooter>
+          <AlertDialogFooter>{destructivaPrimero ? [accion, cancelar] : [cancelar, accion]}</AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
     )
   }
 
-  it("apilada con la destructiva primero, el foco arranca en Cancelar", async () => {
-    render(<Alerta destructivaPrimero stacked />)
+  it("con la destructiva primero, el foco arranca en Cancelar", async () => {
+    render(<Alerta destructivaPrimero />)
     await userEvent.click(screen.getByRole("button", { name: "Abrir" }))
     await waitFor(() => expect(screen.getByRole("button", { name: "Seguir editando" })).toHaveFocus())
     expect(screen.getByRole("button", { name: "Descartar cambios" })).not.toHaveFocus()
   })
 
-  it("lado a lado con Cancelar primero, sigue arrancando en Cancelar", async () => {
+  it("con Cancelar primero, sigue arrancando en Cancelar", async () => {
     render(<Alerta destructivaPrimero={false} />)
     await userEvent.click(screen.getByRole("button", { name: "Abrir" }))
     await waitFor(() => expect(screen.getByRole("button", { name: "Seguir editando" })).toHaveFocus())

@@ -16,10 +16,11 @@ export const backdropClassName =
   "fixed inset-0 z-50 bg-backdrop transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0"
 
 /**
- * El popup centrado de Dialog: la hoja de macOS.
+ * El popup centrado de Dialog y AlertDialog.
  *
- * Hasta 1.x lo compartía AlertDialog, con otro ancho. Desde 2.0 la alerta es otro objeto
- * (`alertPopupClassName`): más chica y con los botones de otra forma.
+ * Es el contenedor de diálogo de iCloud (catálogo §2.15): radio 11 (`rounded-panel`), opaco
+ * (`bg-surface`), la sombra de popover con su filo (`shadow-modal`) y 20 px de padding. Lo
+ * comparten Dialog y AlertDialog; la alerta solo es más angosta (`alertWidthClassName`).
  * La entrada sube 8px mientras aparece: es la señal de que algo entró, no decoración.
  */
 export const modalPopupClassName =
@@ -27,37 +28,11 @@ export const modalPopupClassName =
   "transition-[opacity,translate] duration-150 data-ending-style:opacity-0 data-starting-style:translate-y-[calc(-50%+8px)] data-starting-style:opacity-0"
 
 /**
- * La alerta de macOS: compacta, con el ícono arriba y los botones iguales a lo ancho. Es otro
- * objeto que la hoja (`Dialog`): una alerta interrumpe para una sola pregunta, así que es chica
- * y no tiene un pie separado por una línea. 20 px de padding y 12 entre ícono, textos y botones.
- * El ancho es `min(300px, 100% − 2rem)` sin breakpoint: con `sm:` una pantalla de 400 a 639 px
- * (un celular acostado, una ventana angosta) la estiraba a todo el ancho.
+ * El ancho de la confirmación (AlertDialog): el mismo diálogo que Dialog, más angosto. 400 px es
+ * el diálogo chico de iCloud (el «Go To Date…» de Calendar mide 395) y deja una pregunta con dos o
+ * tres botones en un renglón. Sin breakpoint: en un celular es el ancho menos 2rem.
  */
-export const alertPopupClassName =
-  "fixed top-1/2 left-1/2 z-50 flex w-full max-w-[min(300px,calc(100%-2rem))] -translate-x-1/2 -translate-y-1/2 flex-col gap-3 rounded-panel bg-surface p-5 text-callout text-label shadow-modal outline-none " +
-  "transition-[opacity,translate] duration-150 data-ending-style:opacity-0 data-starting-style:translate-y-[calc(-50%+8px)] data-starting-style:opacity-0"
-
-/**
- * El pie de la alerta: botones del mismo ancho a lo ancho, el primero del DOM a la izquierda
- * (Cancelar a la izquierda y la acción a la derecha, como macOS).
- *
- * Con tres o más, o en una pantalla angosta, se apilan **en el orden del DOM**. macOS pone el
- * botón por defecto arriba, pero para eso habría que invertir la pila con CSS, y entonces Tab
- * recorrería los botones al revés de como se ven (WCAG 1.3.2 y 2.4.3). Quien quiera la acción
- * arriba la escribe primero.
- *
- * La última línea es una red de seguridad: en 300 px cada celda mide ~126, y un Button es
- * `whitespace-nowrap`, así que «Descartar cambios» se salía del botón. Acá el texto puede bajar
- * de renglón (centrado) y el botón crece en alto desde sus 32. Para etiquetas que se sabe que
- * son largas está `AlertDialogFooter stacked`, que se ve mejor que dos renglones.
- *
- * Apilados, la separación sube de 8 a 12: con el dedo cada botón de 32 crece a 44
- * (`touch-target`), y con 8 las áreas se pisaban 4 px y ganaba el de abajo, que suele ser el
- * destructivo. 32 + 12 = 44. Lado a lado no hace falta: el área crece en alto, no en ancho.
- */
-export const alertFooterClassName =
-  "grid auto-cols-fr grid-flow-col gap-2 pt-1 has-[>:nth-child(3)]:grid-flow-row has-[>:nth-child(3)]:gap-3 max-[360px]:grid-flow-row max-[360px]:gap-3 [&>*]:w-full " +
-  "[&>*]:h-auto [&>*]:min-h-8 [&>*]:py-1.5 [&>*]:text-center [&>*]:whitespace-normal"
+export const alertWidthClassName = "max-w-[min(400px,calc(100%-2rem))]"
 
 /**
  * El pie de la hoja (Dialog): los botones abajo a la derecha, sin línea arriba, como una hoja de

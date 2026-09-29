@@ -4,14 +4,14 @@ import * as React from "react"
 import { AlertDialog as AlertDialogPrimitive } from "@base-ui/react/alert-dialog"
 
 import { cn, type WithClassName } from "../lib/utils.js"
-import { alertFooterClassName, alertPopupClassName, backdropClassName } from "../variants/overlay.js"
+import { alertWidthClassName, backdropClassName, modalFooterClassName, modalPopupClassName } from "../variants/overlay.js"
 import type { ButtonTextSize } from "../variants/button.js"
 import { Button, type ButtonBaseProps } from "./button.js"
 
-// La alerta de macOS (2.0): el mismo velo y el mismo material que Dialog, pero otro objeto.
-// Compacta (300 px), con el ícono arriba y los botones iguales a lo ancho. Además:
-// role="alertdialog", no se cierra con click en el backdrop y no tiene botón X (exige una
-// respuesta).
+// La confirmación de iCloud (2.0, R2): el mismo diálogo que Dialog —radio 11, opaco, 20 px de
+// padding, el velo sin blur—, más angosto (400 px), con el título y el cuerpo a la izquierda y los
+// botones a la derecha. Además: role="alertdialog", no se cierra con click en el backdrop y no
+// tiene botón X (exige una respuesta).
 
 function AlertDialog(props: AlertDialogPrimitive.Root.Props) {
   return <AlertDialogPrimitive.Root {...props} />
@@ -43,9 +43,8 @@ type AlertDialogContentProps = WithClassName<AlertDialogPrimitive.Popup.Props>
 /**
  * El foco inicial por defecto: «Cancelar», si la alerta lo tiene.
  *
- * Base UI enfoca el primer tabulable, y en una alerta apilada con la acción destructiva arriba
- * (`stacked`, la acción primero en el DOM) eso era «Descartar cambios»: un Return y se perdía
- * todo. macOS nunca arranca en una acción destructiva. Sin `AlertDialogCancel`, o con el dedo
+ * Base UI enfoca el primer tabulable, y con la acción destructiva primero en el DOM eso era
+ * «Descartar cambios»: un Return y se perdía todo. Nunca se arranca en una acción destructiva. Sin `AlertDialogCancel`, o con el dedo
  * (donde Base UI enfoca el popup para no abrir el teclado), queda lo de Base UI. Un
  * `initialFocus` de la app gana siempre: es el caso de la alerta que no destruye nada.
  */
@@ -76,7 +75,7 @@ function AlertDialogContent({ className, ref, initialFocus, ...props }: AlertDia
       <AlertDialogOverlay />
       <AlertDialogPrimitive.Popup
         data-slot="alert-dialog-content"
-        className={cn(alertPopupClassName, className)}
+        className={cn(modalPopupClassName, alertWidthClassName, className)}
         ref={foco.mergedRef}
         initialFocus={initialFocus ?? foco.initialFocus}
         {...props}
@@ -85,47 +84,16 @@ function AlertDialogContent({ className, ref, initialFocus, ...props }: AlertDia
   )
 }
 
-/**
- * El ícono de la alerta, arriba a la izquierda: el de advertencia o el de la app, como en macOS.
- * Es decorativo —el título ya dice qué pasa—, así que va con `aria-hidden`. Un `<svg>` sin
- * tamaño propio, o una `<img>`, se lleva a 48 px.
- */
-function AlertDialogIcon({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      aria-hidden="true"
-      data-slot="alert-dialog-icon"
-      className={cn(
-        "flex size-12 shrink-0 items-center justify-center [&>img]:size-12 [&>svg:not([class*='size-'])]:size-12",
-        className
-      )}
-      {...props}
-    />
-  )
-}
-
 function AlertDialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   return <div data-slot="alert-dialog-header" className={cn("flex flex-col gap-1", className)} {...props} />
 }
 
-type AlertDialogFooterProps = React.ComponentProps<"div"> & {
-  /**
-   * Apila los botones aunque sean dos, en el orden en que se escribieron. Para etiquetas largas
-   * («Descartar cambios», «Eliminar definitivamente»), que lado a lado no entran en 300 px.
-   * Con tres o más botones, o en una pantalla angosta, el pie ya se apila solo.
-   */
-  stacked?: boolean
-}
-
-function AlertDialogFooter({ className, stacked = false, ...props }: AlertDialogFooterProps) {
-  return (
-    <div
-      data-slot="alert-dialog-footer"
-      data-stacked={stacked ? "" : undefined}
-      className={cn(alertFooterClassName, stacked && "grid-flow-row gap-3", className)}
-      {...props}
-    />
-  )
+/**
+ * Los botones abajo a la derecha, en el orden en que se escriben: «Cancelar» primero (a la
+ * izquierda) y la acción después. En mobile se apilan en ese mismo orden, sin invertir.
+ */
+function AlertDialogFooter({ className, ...props }: React.ComponentProps<"div">) {
+  return <div data-slot="alert-dialog-footer" className={cn(modalFooterClassName, className)} {...props} />
 }
 
 type AlertDialogTitleProps = WithClassName<AlertDialogPrimitive.Title.Props>
@@ -148,10 +116,10 @@ function AlertDialogDescription({ className, ...props }: AlertDialogDescriptionP
 
 type AlertDialogActionProps = Omit<ButtonBaseProps, "variant"> & {
   /**
-   * `default` es el botón por defecto de macOS: el acento (`accent`). `destructive` es el
-   * tintado (`destructive-tinted`): texto rojo sobre un tinte rojo.
+   * `default` es el botón principal de iCloud: el acento sólido (`accent`). `destructive` es el
+   * mismo botón en rojo (`destructive`).
    *
-   * **Cambió en 2.0**: hasta 1.x `default` era el negro y `destructive` el rojo sólido.
+   * **Cambió en 2.0**: hasta 1.x `default` era el negro.
    */
   variant?: "default" | "destructive"
   /** Los botones de un AlertDialog siempre llevan texto: los tamaños de ícono no aplican acá. */
@@ -161,9 +129,11 @@ type AlertDialogActionProps = Omit<ButtonBaseProps, "variant"> & {
 // No cierra solo (como shadcn base-nova): así sirve con `loading` mientras corre la acción.
 // Controlá `open` en AlertDialog y cerralo cuando termine, o envolvela en AlertDialogClose.
 //
-// `default` es el botón por defecto de macOS (acento) y `destructive` el tintado de las alertas:
-// en macOS la alerta ya advierte, el botón solo nombra la acción.
-const ACTION_VARIANT = { default: "accent", destructive: "destructive-tinted" } as const
+// `default` es el principal de iCloud (acento sólido) y `destructive` el mismo botón en rojo: el
+// catálogo solo tiene el «destructivo plain» (texto rojo) para menús y listas; en un diálogo la
+// acción es el botón lleno, que iCloud ya pinta del color de la app (el OK rojo de Calendar). Un
+// texto rojo sin fondo al lado de un Cancelar gris pesaría menos que Cancelar.
+const ACTION_VARIANT = { default: "accent", destructive: "destructive" } as const
 
 function AlertDialogAction({ variant = "default", ...props }: AlertDialogActionProps) {
   return <Button data-slot="alert-dialog-action" variant={ACTION_VARIANT[variant]} {...props} />
@@ -197,7 +167,6 @@ export {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogIcon,
   AlertDialogOverlay,
   AlertDialogTitle,
   AlertDialogTrigger,
@@ -205,7 +174,6 @@ export {
   type AlertDialogCancelProps,
   type AlertDialogContentProps,
   type AlertDialogDescriptionProps,
-  type AlertDialogFooterProps,
   type AlertDialogOverlayProps,
   type AlertDialogTitleProps,
 }
