@@ -578,6 +578,10 @@ las fases R2–R5 rehacen diálogos, menús, controles y listas con las medidas 
   el orden de las opciones), filtro sin tildes, el círculo de acento a la derecha, «Seleccionar todo»
   (las habilitadas que se ven), `max` (el resto se apaga y la lista lo dice), `showClear`, `size`,
   `name`. Labels `multiSelect: { selectAll, max }`.
+- **`Timeline`** (`sebs7n-ui/timeline`, **solo por subpath**), eventos en el tiempo (R6): `Timeline`
+  (`<ol>`), `TimelineGroup` (cabecera del día 19/600 que nombra su lista) y `TimelineItem` (punto de 8
+  de la paleta de `Badge` o ícono de 24, título 17, detalle 14 gris, `<time>` a la derecha, `actions`),
+  unidos por una línea de 1 px. Sin `"use client"`.
 - La tabla de subpaths del README dice qué componentes no están en el barrel (la lee de `src/index.ts`).
 - El variant `inside-selection` también mira las listas de filas (`group/list`: `List`, `Tree`,
   `FileGrid`), no solo la `Table`.

@@ -2159,6 +2159,37 @@ export const COMPONENTS = {
     },
     related: ["table", "card", "split-view"],
   },
+  timeline: {
+    title: "Timeline",
+    group: "contenido",
+    description: "Una lista de eventos en el tiempo con la fila de iCloud: título 17, detalle 14 gris, la hora a la derecha y el punto del color del evento unidos por una línea, agrupados por día.",
+    keyboard: [["Tab", "Solo recorre lo interactivo de adentro (las acciones): la lista en sí no es un control."]],
+    a11y: [
+      "Es una `<ol>`: **nombre obligatorio** con `aria-label` («Actividad de la factura A-0012»). El lector cuenta los eventos.",
+      "Cada día (`TimelineGroup`) tiene su propia lista, nombrada por la cabecera.",
+      "La hora es un `<time>` con `dateTime` en formato de máquina: pasalo, que «10:12» solo no dice de qué día.",
+      "El punto, el ícono y la línea son decorativos (`aria-hidden`): el tipo de evento tiene que estar en el título, no solo en el color.",
+    ],
+    usage: [
+      "**Para el historial de algo**: la actividad de una factura, los cambios de un cliente, los pagos de una cuenta. Para una lista que se elige o se abre, `List`.",
+      "El orden lo decide la app (lo más nuevo arriba es lo usual); la línea une los eventos en el orden del DOM.",
+      "`dot` con la paleta de `Badge` para el tipo de evento (verde pagado, rojo error), `icon` cuando el tipo se lee mejor con un glifo.",
+      "Sin estado: va en un Server Component. Solo por subpath (`sebs7n-ui/timeline`).",
+    ],
+    props: {
+      TimelineGroup: { title: "El día, en 19/600. Nombra la lista de adentro." },
+      TimelineItem: {
+        title: "Qué pasó, en 17.",
+        description: "El detalle, en 14 gris.",
+        time: "La hora o la fecha que se ve, a la derecha.",
+        dateTime: "La fecha en formato de máquina para el `<time>`.",
+        dot: "El color del punto (la paleta de `Badge`). Por defecto, gris.",
+        icon: "Un ícono en lugar del punto, en un círculo de 24.",
+        actions: "Botones o links debajo del detalle.",
+      },
+    },
+    related: ["list-row", "badge"],
+  },
   tree: {
     title: "Tree",
     group: "contenido",
