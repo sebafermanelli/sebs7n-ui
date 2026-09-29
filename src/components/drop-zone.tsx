@@ -4,6 +4,7 @@ import * as React from "react"
 import { createPortal } from "react-dom"
 import { CircleAlertIcon, FileIcon, UploadIcon, XIcon } from "lucide-react"
 
+import { defined } from "../internal/defined.js"
 import { useFormReset } from "../internal/form-reset.js"
 import { useLabels, type Labels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
@@ -139,7 +140,7 @@ function DropZone({
   className,
   ...props
 }: DropZoneProps) {
-  const labels = { ...dropZoneLabels, ...useLabels().dropZone, ...labelsProp }
+  const labels = { ...dropZoneLabels, ...useLabels().dropZone, ...defined(labelsProp) }
   const [ownFiles, setOwnFiles] = React.useState<File[]>([])
   const files = filesProp ?? ownFiles
   const [errors, setErrors] = React.useState<string[]>([])

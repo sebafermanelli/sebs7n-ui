@@ -2,6 +2,7 @@
 
 import * as React from "react"
 
+import { defined } from "../internal/defined.js"
 import { toISODate } from "../lib/dates.js"
 import { useLabels, type Labels } from "../lib/labels.js"
 import { useFormReset } from "../internal/form-reset.js"
@@ -82,7 +83,7 @@ function DateTimePicker({
   labels: labelsProp,
   ...aria
 }: DateTimePickerProps) {
-  const labels = { ...useLabels().dateTimePicker, ...labelsProp }
+  const labels = { ...useLabels().dateTimePicker, ...defined(labelsProp) }
   const [own, setOwn] = React.useState(defaultValue)
   const value = valueProp !== undefined ? valueProp : own
   const [pendingTime, setPendingTime] = React.useState<string | null>(null)

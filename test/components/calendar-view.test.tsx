@@ -264,7 +264,8 @@ describe("CalendarView · día", () => {
     expect(within(grilla).getAllByRole("columnheader")).toHaveLength(1)
     // El título va con el mes corto para que la cabecera siga en una línea a ~600 de ancho; la
     // fecha larga la dicen la grilla y el anuncio.
-    expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent(/^29 sept 2026$/)
+    const titulo = screen.getByRole("heading", { level: 2, name: "martes, 29 de septiembre de 2026" })
+    expect(titulo.querySelector("[aria-hidden=true]")).toHaveTextContent(/^29 sept 2026$/)
     expect(screen.getByRole("button", { name: "Día anterior" })).toBeInTheDocument()
     expect(screen.getByRole("button", { name: "Día siguiente" })).toBeInTheDocument()
   })
@@ -321,6 +322,17 @@ describe("CalendarView · día", () => {
     expect(screen.getByRole("tab", { name: "Day" })).toBeInTheDocument()
     expect(screen.getByRole("button", { name: "Previous day" })).toBeInTheDocument()
     expect(screen.getByRole("button", { name: "Mañana" })).toBeInTheDocument()
+  })
+
+  it("una clave en undefined (prop o provider) no pisa el texto por defecto", () => {
+    render(
+      <LabelsProvider value={{ calendarView: { previousDay: undefined } }}>
+        <CalendarView defaultDate={AHORA} defaultView="day" labels={{ day: undefined, nextDay: undefined }} locale="es-AR" now={AHORA} />
+      </LabelsProvider>
+    )
+    expect(screen.getByRole("tab", { name: "Día" })).toBeInTheDocument()
+    expect(screen.getByRole("button", { name: "Día anterior" })).toBeInTheDocument()
+    expect(screen.getByRole("button", { name: "Día siguiente" })).toBeInTheDocument()
   })
 
   it("hidrata sin mismatch en la vista Día", async () => {

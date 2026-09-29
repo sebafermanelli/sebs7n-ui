@@ -4,6 +4,7 @@ import * as React from "react"
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
 
 import { categoryChip, categoryFill } from "../internal/category-color.js"
+import { defined } from "../internal/defined.js"
 import { addDays, addMonths, isSameDay, isSameMonth, startOfDay, startOfWeek, weeksOfMonth, type WeekStart } from "../lib/dates.js"
 import { useLabels, type Labels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
@@ -162,7 +163,7 @@ function CalendarView({
   labels: labelsProp,
   ...props
 }: CalendarViewProps) {
-  const labels = { ...calendarViewDayLabels, ...useLabels().calendarView, ...labelsProp } as Required<Labels["calendarView"]>
+  const labels = { ...calendarViewDayLabels, ...useLabels().calendarView, ...defined(labelsProp) } as Required<Labels["calendarView"]>
   const now = useNow(nowProp)
   const [ownView, setOwnView] = React.useState(defaultView)
   const view = viewProp ?? ownView
@@ -524,8 +525,20 @@ function CalendarView({
     >
       <div className="flex min-h-14 flex-wrap items-center justify-between gap-x-4 gap-y-2 px-5 py-2.5">
         <h2 className="text-title-2 whitespace-nowrap">
-          {/* En el día, el mes corto («29 sept»): con el largo, la cabecera baja a dos líneas a ~680. */}
-          {view === "day" ? fmt({ day: "numeric", month: "short" }).format(date) : monthName} <span className="font-normal text-label-secondary">{year}</span>
+          {/* En el día, el mes corto («29 sept»): con el largo, la cabecera baja a dos líneas a ~680.
+              El lector recibe la fecha entera: «sept» abreviado y sin día de la semana se leía mal. */}
+          {view === "day" ? (
+            <>
+              <span aria-hidden="true">
+                {fmt({ day: "numeric", month: "short" }).format(date)} <span className="font-normal text-label-secondary">{year}</span>
+              </span>
+              <span className="sr-only">{fullDate.format(date)}</span>
+            </>
+          ) : (
+            <>
+              {monthName} <span className="font-normal text-label-secondary">{year}</span>
+            </>
+          )}
         </h2>
         <TabsList aria-label={labels.view} className="w-64" variant="segmented">
           <TabsTrigger value="day">{labels.day}</TabsTrigger>

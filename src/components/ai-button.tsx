@@ -3,6 +3,7 @@
 import type * as React from "react"
 import { SparklesIcon } from "lucide-react"
 
+import { defined } from "../internal/defined.js"
 import { useLabels, type Labels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
 import type { ButtonSize } from "../variants/button.js"
@@ -90,7 +91,7 @@ type AiLauncherProps = Omit<React.ComponentProps<"button">, "children"> & {
  * Como trigger de un `Popover` o un `Sheet`: `render={<AiLauncher />}`.
  */
 function AiLauncher({ className, label, labelVisible = false, labelSide = "left", active = false, labels: labelsProp, children, ...props }: AiLauncherProps) {
-  const labels = { ...useLabels().ai, ...labelsProp }
+  const labels = { ...useLabels().ai, ...defined(labelsProp) }
   const nombre = label ?? labels.launcher
   return (
     <button

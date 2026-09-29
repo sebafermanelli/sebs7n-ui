@@ -5,6 +5,7 @@ import { Autocomplete as AutocompletePrimitive } from "@base-ui/react/autocomple
 import { ClockIcon } from "lucide-react"
 import { flushSync } from "react-dom"
 
+import { defined } from "../internal/defined.js"
 import { useFormReset } from "../internal/form-reset.js"
 import { MenuCheck } from "../internal/menu-check.js"
 import { clampTime, matchesTime, parseTime, timeSlots } from "../internal/time.js"
@@ -68,7 +69,7 @@ function TimePicker({
   labels: labelsProp,
   ...aria
 }: TimePickerProps) {
-  const labels = { ...useLabels().timePicker, ...labelsProp }
+  const labels = { ...useLabels().timePicker, ...defined(labelsProp) }
   const [own, setOwn] = React.useState(defaultValue)
   const value = valueProp !== undefined ? valueProp : own
   const [draft, setDraft] = React.useState(value ?? "")

@@ -2472,7 +2472,7 @@ export const COMPONENTS = {
         available: "Las letras que tienen sección. Las demás se ven apagadas y no son links.",
         letters: "Todas las letras de la tira, en orden. Por defecto, A–Z.",
         getHref: "El destino de cada letra. Por defecto `#A`, `#B`…: la sección lleva ese `id`. Deslizar, mover solo la caja y pasar el foco con Enter necesitan un `#…` a un id de la página; con otro destino, la letra es un link común.",
-        labels: "Textos: `label` (el nombre del `nav`, «Índice alfabético»). El que viene por defecto es `listIndexLabels`.",
+        labels: "Textos: `label` (el nombre del `nav`, «Índice alfabético»). El que viene por defecto es `listIndexLabels`: un provider sin el grupo `listIndex` (es opcional) cae a ese texto en español.",
         onPointerDown: "Corre antes de empezar a deslizar: con `event.preventDefault()` la tira no se desliza.",
       },
     },
@@ -2701,7 +2701,7 @@ export const COMPONENTS = {
       "El título del mes es un `h2` con `aria-live=\"polite\"`: al cambiar de mes, el lector lo anuncia.",
       "Los eventos son botones (con `onEventClick`) **fuera del orden de Tab**: la grilla es una sola parada. Con teclado, Enter en el día llama a `onDayOpen`, que tiene que mostrar los eventos de ese día (un `Popover` con una `List`, por ejemplo).",
       "El color del calendario nunca es el único dato: el título del evento está siempre escrito.",
-      "‹ y › se llaman «Mes anterior»/«Mes siguiente» (o semana, o día), desde el `LabelsProvider` (`calendarView`). Los de la vista Día (`day`, `previousDay`, `nextDay`) son opcionales en el tipo: sus valores por defecto son `calendarViewDayLabels`.",
+      "‹ y › se llaman «Mes anterior»/«Mes siguiente» (o semana, o día), desde el `LabelsProvider` (`calendarView`). Los de la vista Día (`day`, `previousDay`, `nextDay`) son opcionales en el tipo: sus valores por defecto son `calendarViewDayLabels`. Un provider armado antes de R9, sin esas claves (o con ellas en `undefined`), no rompe nada: la vista Día cae al español por defecto hasta que las traduzcas. Lo mismo vale para cualquier clave en `undefined`, en el provider o en `labels`: no pisa el texto de abajo.",
     ],
     usage: [
       "**Con SSR, pasá `now` o `defaultDate`** (la fecha del request): sin ellas el calendario no puede saber qué día es hoy hasta montar, y se dibuja invisible hasta entonces para que el server y el cliente coincidan.",

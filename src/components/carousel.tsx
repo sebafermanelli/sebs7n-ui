@@ -4,6 +4,7 @@ import * as React from "react"
 import useEmblaCarousel, { type UseEmblaCarouselType } from "embla-carousel-react"
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
 
+import { defined } from "../internal/defined.js"
 import { useLabels, type Labels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
 import { Button } from "./button.js"
@@ -92,7 +93,7 @@ function Carousel({
   "aria-labelledby": ariaLabelledby,
   ...props
 }: CarouselProps) {
-  const labels = { ...carouselLabels, ...useLabels().carousel, ...labelsProp }
+  const labels = { ...carouselLabels, ...useLabels().carousel, ...defined(labelsProp) }
   const [carouselRef, api] = useEmblaCarousel({ ...opts, axis: orientation === "horizontal" ? "x" : "y" }, plugins)
   const [state, setState] = React.useState({ canScrollPrev: false, canScrollNext: false, selected: 0, snaps: 0 })
 

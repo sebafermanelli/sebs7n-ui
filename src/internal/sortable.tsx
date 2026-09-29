@@ -31,6 +31,7 @@ import { GripVerticalIcon } from "lucide-react"
 import { List, ListRow } from "../components/list-row.js"
 import { useLabels, type Labels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
+import { defined } from "./defined.js"
 
 /**
  * La base de `SortableList` y `SortableGrid`: dnd-kit con la estrategia de lista o de grilla, el
@@ -116,7 +117,7 @@ function SortableBase<T>({
   className,
   ...props
 }: SortableBaseProps<T>) {
-  const labels = { ...sortableLabels, ...useLabels().sortable, ...labelsProp }
+  const labels = { ...sortableLabels, ...useLabels().sortable, ...defined(labelsProp) }
   // El id de dnd-kit sale de `useId`: sin él, su `DndDescribedBy-N` es un contador de módulo y el
   // HTML del servidor no coincide con el del cliente.
   const id = React.useId()

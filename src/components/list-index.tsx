@@ -2,6 +2,7 @@
 
 import * as React from "react"
 
+import { defined } from "../internal/defined.js"
 import { useLabels, type Labels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
 
@@ -68,7 +69,7 @@ function ListIndex({
   onPointerCancel,
   ...props
 }: ListIndexProps) {
-  const labels = { ...listIndexLabels, ...useLabels().listIndex, ...labelsProp }
+  const labels = { ...listIndexLabels, ...useLabels().listIndex, ...defined(labelsProp) }
   const enabled = new Set(available)
   const [scrubbing, setScrubbing] = React.useState<string | null>(null)
 

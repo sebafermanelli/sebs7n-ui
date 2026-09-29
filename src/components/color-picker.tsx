@@ -3,6 +3,7 @@
 import * as React from "react"
 import { Popover as PopoverPrimitive } from "@base-ui/react/popover"
 
+import { defined } from "../internal/defined.js"
 import { isSameColor, oklchOfHex } from "../lib/color.js"
 import { hexOfOklch, type Oklch } from "../lib/contrast.js"
 import { useLabels, type Labels } from "../lib/labels.js"
@@ -104,7 +105,7 @@ function ColorPicker({
   disabled,
   ...props
 }: ColorPickerProps) {
-  const labels = { ...useLabels().colorPicker, ...labelsProp }
+  const labels = { ...useLabels().colorPicker, ...defined(labelsProp) }
   const [interno, setInterno] = React.useState(defaultValue)
   const color = valueProp ?? interno
   const hex = hexOfOklch(color)

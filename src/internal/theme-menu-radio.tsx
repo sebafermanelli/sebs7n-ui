@@ -7,6 +7,7 @@ import { cn } from "../lib/utils.js"
 // `../internal/` y no `./`: el registry de shadcn (`docs/site/scripts/lib/registry.mjs`) lee
 // `./x.js` como un componente de `components/` y reescribe el import a `@/components/ui/x`.
 import { groupClassName, itemClassName, Pastilla, useMounted, useThemeOptions } from "../internal/theme-options.js"
+import { defined } from "./defined.js"
 
 // `ThemeMenuRadio` vivía en `theme-switcher.tsx`, al lado de `ThemeSwitcher`. Ningún bundler
 // descartaba este export aunque nadie lo usara —ni con `sideEffects`, ni sacando el `"use client"`;
@@ -26,7 +27,7 @@ type ThemeMenuRadioProps = Omit<MenuPrimitive.RadioGroup.Props, "className" | "v
 function ThemeMenuRadio({ className, labels: labelsProp, ...props }: ThemeMenuRadioProps) {
   const { theme, setTheme, options, index } = useThemeOptions()
   const mounted = useMounted()
-  const labels = { ...useLabels().themeSwitcher, ...labelsProp }
+  const labels = { ...useLabels().themeSwitcher, ...defined(labelsProp) }
 
   return (
     <MenuPrimitive.RadioGroup

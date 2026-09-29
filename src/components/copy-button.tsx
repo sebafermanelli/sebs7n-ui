@@ -3,6 +3,7 @@
 import * as React from "react"
 import { CheckIcon, CopyIcon } from "lucide-react"
 
+import { defined } from "../internal/defined.js"
 import { useLabels, type Labels } from "../lib/labels.js"
 import { Button } from "./button.js"
 import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip.js"
@@ -35,7 +36,7 @@ const ICON_SIZE = { sm: "icon-sm", md: "icon-md", lg: "icon-lg" } as const
 const COPIED_MS = 1500
 
 function CopyButton({ value, children, size = "sm", onCopy, labels: labelsProp, disabled, className, ...props }: CopyButtonProps) {
-  const labels = { ...useLabels().copyButton, ...labelsProp }
+  const labels = { ...useLabels().copyButton, ...defined(labelsProp) }
   // Lo que pasó con el último click, mientras dura: «Copiado» o «No se pudo copiar».
   const [result, setResult] = React.useState<"copied" | "failed" | null>(null)
   const copied = result === "copied"

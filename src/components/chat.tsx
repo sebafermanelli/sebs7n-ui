@@ -3,6 +3,7 @@
 import * as React from "react"
 import { ArrowUpIcon, RotateCwIcon, SquareIcon } from "lucide-react"
 
+import { defined } from "../internal/defined.js"
 import { useLabels, type Labels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
 import { inputControlClassName, inputDisabledClassName, inputMultilineRadiusClassName } from "../variants/input.js"
@@ -118,7 +119,7 @@ const UMBRAL = 48
  */
 function ChatMessages({ className, busy: busyProp, labels: labelsProp, onScroll, ref, children, ...props }: ChatMessagesProps) {
   const busy = useBusy(busyProp)
-  const labels = { ...useLabels().chat, ...labelsProp }
+  const labels = { ...useLabels().chat, ...defined(labelsProp) }
   const lista = React.useRef<HTMLDivElement>(null)
   const abajo = React.useRef(true)
   // El `ref` del llamador y el de adentro apuntan al mismo nodo. Sin esto, pasarle un `ref` al
@@ -246,7 +247,7 @@ type ChatTypingProps = React.ComponentProps<"div"> & { labels?: Partial<ChatLabe
  * El dibujo es decoración; lo que se anuncia es el `role="status"` con su nombre.
  */
 function ChatTyping({ className, labels: labelsProp, ...props }: ChatTypingProps) {
-  const labels = { ...useLabels().chat, ...labelsProp }
+  const labels = { ...useLabels().chat, ...defined(labelsProp) }
   return (
     <div aria-label={labels.typing} data-slot="chat-typing" role="status" className={cn("flex w-full flex-col gap-2", className)} {...props}>
       <AiShimmer className="w-3/4" />
@@ -263,7 +264,7 @@ type ChatErrorProps = React.ComponentProps<"div"> & {
 
 /** La respuesta que no llegó. Se anuncia sola (`role="alert"`) y ofrece volver a intentar. */
 function ChatError({ className, onRetry, labels: labelsProp, children, ...props }: ChatErrorProps) {
-  const labels = { ...useLabels().chat, ...labelsProp }
+  const labels = { ...useLabels().chat, ...defined(labelsProp) }
   return (
     <div data-slot="chat-error" className={cn("flex flex-wrap items-center gap-2 text-callout text-red-900", className)} {...props}>
       <p role="alert">{children}</p>
@@ -341,7 +342,7 @@ function ChatInput({
   ...props
 }: ChatInputProps) {
   const busy = useBusy(busyProp)
-  const labels = { ...useLabels().chat, ...labelsProp }
+  const labels = { ...useLabels().chat, ...defined(labelsProp) }
   const id = React.useId()
   const [interno, setInterno] = React.useState(defaultValue)
   const texto = valueProp ?? interno

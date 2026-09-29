@@ -3,6 +3,7 @@
 import * as React from "react"
 import { MenuIcon } from "lucide-react"
 
+import { defined } from "../internal/defined.js"
 import { AppShellContext, SidebarInSheetContext, type AppShellContextValue } from "../internal/shell-context.js"
 import { useLabels, type Labels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
@@ -64,7 +65,7 @@ const cargarSheet = () => (sheetPromesa ??= import("./sheet.js").then((mod) => (
 function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido", ambient = false, header, variant: _variant, labels: labelsProp, children, ...props }: AppShellProps) {
   // El provider gana sobre el español; la prop `labels` gana sobre el provider, porque es la
   // excepción puntual de una pantalla y no una traducción.
-  const labels = { ...useLabels().appShell, ...labelsProp }
+  const labels = { ...useLabels().appShell, ...defined(labelsProp) }
   const [mobileOpen, setMobileOpen] = React.useState(false)
   const mainRef = React.useRef<HTMLElement>(null)
   const focusMainOnClose = React.useRef(false)

@@ -3,6 +3,7 @@
 import * as React from "react"
 import { EyeIcon, EyeOffIcon } from "lucide-react"
 
+import { defined } from "../internal/defined.js"
 import { useLabels, type Labels } from "../lib/labels.js"
 import { useFormReset } from "../internal/form-reset.js"
 import { cn } from "../lib/utils.js"
@@ -54,7 +55,7 @@ type PasswordInputProps = Omit<InputGroupInputProps, "type"> & {
  * Las props son las de `Input`; `className` va en el contenedor (el campo y la barra).
  */
 function PasswordInput({ className, size = "md", strength = false, labels: labelsProp, disabled, value, defaultValue, onChange, ...props }: PasswordInputProps) {
-  const labels = { ...useLabels().passwordInput, ...labelsProp }
+  const labels = { ...useLabels().passwordInput, ...defined(labelsProp) }
   const [visible, setVisible] = React.useState(false)
   const [own, setOwn] = React.useState(String(defaultValue ?? ""))
   const text = value !== undefined ? String(value) : own

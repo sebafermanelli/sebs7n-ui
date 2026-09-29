@@ -4,6 +4,7 @@ import * as React from "react"
 import { Select as SelectPrimitive } from "@base-ui/react/select"
 import { ChevronsUpDownIcon } from "lucide-react"
 
+import { defined } from "../internal/defined.js"
 import { countryFlag } from "../lib/countries.js"
 import { useLabels, type Labels } from "../lib/labels.js"
 import { nationalNumber, onlyDigits, parsePhone, PHONE_COUNTRIES, phoneCountry, type PhoneCountry } from "../lib/phone.js"
@@ -70,7 +71,7 @@ function PhoneInput({
   ...aria
 }: PhoneInputProps) {
   const all = useLabels()
-  const labels = { ...all.phoneInput, ...labelsProp }
+  const labels = { ...all.phoneInput, ...defined(labelsProp) }
   const locale = localeProp ?? all.countryPicker.locale
   const fallback = phoneCountry(defaultCountry) ?? PHONE_COUNTRIES[0]!
 

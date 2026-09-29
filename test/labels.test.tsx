@@ -68,6 +68,18 @@ describe("LabelsProvider", () => {
     expect(screen.getByRole("button", { name: "Decrease" })).toBeInTheDocument()
   })
 
+  it("una clave en undefined en el provider no pisa el texto de abajo", () => {
+    function Cerrar() {
+      return <span>{useLabels().dialog.close}</span>
+    }
+    render(
+      <LabelsProvider value={{ dialog: { close: undefined } }}>
+        <Cerrar />
+      </LabelsProvider>
+    )
+    expect(screen.getByText(defaultLabels.dialog.close)).toBeInTheDocument()
+  })
+
   it("sin provider, todo sigue en español", () => {
     render(<NumberField aria-label="Cantidad" />)
     expect(screen.getByRole("button", { name: "Aumentar" })).toBeInTheDocument()

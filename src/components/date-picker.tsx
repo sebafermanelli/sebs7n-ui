@@ -4,6 +4,7 @@ import * as React from "react"
 import { Popover as PopoverPrimitive } from "@base-ui/react/popover"
 import { CalendarIcon } from "lucide-react"
 
+import { defined } from "../internal/defined.js"
 import { toISODate, type DateRange, type WeekStart } from "../lib/dates.js"
 import { useLabels, type Labels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
@@ -124,7 +125,7 @@ function DatePicker(props: DatePickerProps) {
     onValueChange?: (value: never) => void
   }
   const todos = useLabels()
-  const labels = { ...todos.calendar, ...todos.datePicker, ...labelsProp }
+  const labels = { ...todos.calendar, ...todos.datePicker, ...defined(labelsProp) }
 
   const [interno, setInterno] = React.useState(defaultValue ?? (mode === "range" ? SIN_RANGO : null))
   const value = valueProp !== undefined ? valueProp : interno

@@ -2,6 +2,8 @@
 
 import * as React from "react"
 
+import { defined } from "../internal/defined.js"
+
 /**
  * Los textos que los componentes escriben solos.
  *
@@ -537,7 +539,7 @@ function mezclar(base: Labels, encima: PartialLabels | undefined): Labels {
   const salida: Record<string, unknown> = { ...base }
   for (const grupo of Object.keys(encima) as (keyof Labels)[]) {
     const parcial = encima[grupo]
-    if (parcial) salida[grupo] = { ...base[grupo], ...parcial }
+    if (parcial) salida[grupo] = { ...base[grupo], ...defined(parcial) }
   }
   // El `as` es porque TypeScript no puede seguir que cada grupo se mezcló contra
   // el suyo: el índice `grupo` es la unión de todas las claves y el valor, la

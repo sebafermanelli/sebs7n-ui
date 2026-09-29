@@ -2,6 +2,7 @@
 
 import * as React from "react"
 
+import { defined } from "../internal/defined.js"
 import { COUNTRY_CODES, countryFlag } from "../lib/countries.js"
 import { useLabels, type Labels } from "../lib/labels.js"
 import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from "./combobox.js"
@@ -57,7 +58,7 @@ function CountryPicker({
   labels: labelsProp,
   ...aria
 }: CountryPickerProps) {
-  const labels = { ...useLabels().countryPicker, ...labelsProp }
+  const labels = { ...useLabels().countryPicker, ...defined(labelsProp) }
   const locale = localeProp ?? labels.locale
   const [own, setOwn] = React.useState(defaultValue)
   const value = valueProp !== undefined ? valueProp : own

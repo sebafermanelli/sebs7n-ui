@@ -3,6 +3,7 @@
 import * as React from "react"
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
 
+import { defined } from "../internal/defined.js"
 import {
   addDays,
   addMonths,
@@ -118,7 +119,7 @@ function Calendar(props: CalendarProps) {
     defaultValue?: Date | null | DateRange
     onValueChange?: (value: never) => void
   }
-  const labels = { ...useLabels().calendar, ...labelsProp }
+  const labels = { ...useLabels().calendar, ...defined(labelsProp) }
   const titleId = React.useId()
   const raiz = React.useRef<HTMLDivElement>(null)
 

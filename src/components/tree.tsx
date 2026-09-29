@@ -4,6 +4,7 @@ import * as React from "react"
 import { ChevronRightIcon, FileIcon, FolderIcon, LoaderCircleIcon } from "lucide-react"
 
 import type { AccessibleName } from "../internal/accessible-name.js"
+import { defined } from "../internal/defined.js"
 import { isToggleModifier, useSelection, type SelectionProps } from "../internal/selection.js"
 import { useLabels, type Labels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
@@ -120,7 +121,7 @@ function Tree({
   labels: labelsProp,
   ...props
 }: TreeProps) {
-  const labels = { ...useLabels().tree, ...labelsProp }
+  const labels = { ...useLabels().tree, ...defined(labelsProp) }
   const [expandedList, setExpandedList] = useControllable(expandedProp, defaultExpanded, onExpandedChange)
   // La lista de ahora, para lo que termina después (una carga que falla cierra su carpeta).
   const expandedRef = React.useRef(expandedList)

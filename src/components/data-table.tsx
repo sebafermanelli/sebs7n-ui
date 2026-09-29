@@ -3,6 +3,7 @@
 import * as React from "react"
 import { ChevronDownIcon, ChevronUpIcon, SearchIcon } from "lucide-react"
 
+import { defined } from "../internal/defined.js"
 import { useLabels, type Labels } from "../lib/labels.js"
 import type { AccessibleName } from "../internal/accessible-name.js"
 import { cn } from "../lib/utils.js"
@@ -153,7 +154,7 @@ function DataTable<T>({
   ...props
 }: DataTableProps<T>) {
   const allLabels = useLabels()
-  const labels = { ...allLabels.dataTable, ...labelsProp }
+  const labels = { ...allLabels.dataTable, ...defined(labelsProp) }
   const [sort, setSort] = useControllable(sortProp, defaultSort, onSortChange)
   const [query, setQuery] = useControllable(queryProp, defaultQuery, onQueryChange)
   const [page, setPage] = useControllable(pageProp, defaultPage, onPageChange)

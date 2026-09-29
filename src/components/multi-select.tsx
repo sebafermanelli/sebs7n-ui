@@ -2,6 +2,7 @@
 
 import * as React from "react"
 
+import { defined } from "../internal/defined.js"
 import { MenuCheck } from "../internal/menu-check.js"
 import { useLabels, type Labels } from "../lib/labels.js"
 import { menuIndicatorClassName } from "../variants/menu.js"
@@ -86,7 +87,7 @@ function MultiSelect({
   labels: labelsProp,
   ...aria
 }: MultiSelectProps) {
-  const labels = { ...useLabels().multiSelect, ...labelsProp }
+  const labels = { ...useLabels().multiSelect, ...defined(labelsProp) }
   const [own, setOwn] = React.useState(defaultValue)
   const [query, setQuery] = React.useState("")
 

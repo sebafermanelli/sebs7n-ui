@@ -3,6 +3,7 @@
 import * as React from "react"
 import { CheckIcon } from "lucide-react"
 
+import { defined } from "../internal/defined.js"
 import { useLabels, type Labels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
 
@@ -53,7 +54,7 @@ function statusOf(step: StepperStep, index: number, current: number): StepperSta
 }
 
 function Stepper({ className, steps, current, orientation = "horizontal", onStepClick, labels: labelsProp, "aria-label": ariaLabel, ...props }: StepperProps) {
-  const labels = { ...useLabels().stepper, ...labelsProp }
+  const labels = { ...useLabels().stepper, ...defined(labelsProp) }
   const vertical = orientation === "vertical"
   const statuses = steps.map((step, index) => statusOf(step, index, current))
 

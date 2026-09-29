@@ -4,6 +4,7 @@ import type * as React from "react"
 import { Radio as RadioPrimitive } from "@base-ui/react/radio"
 import { RadioGroup as RadioGroupPrimitive } from "@base-ui/react/radio-group"
 
+import { defined } from "../internal/defined.js"
 import { useLabels, type Labels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
 import { groupClassName, itemClassName, Pastilla, stopMenuKeys, useMounted, useThemeOptions } from "../internal/theme-options.js"
@@ -23,7 +24,7 @@ type ThemeSwitcherProps = Omit<React.ComponentProps<"div">, "children" | "onChan
 function ThemeSwitcher({ className, labels: labelsProp, onKeyDown, ...props }: ThemeSwitcherProps) {
   const { theme, setTheme, options, index } = useThemeOptions()
   const mounted = useMounted()
-  const labels = { ...useLabels().themeSwitcher, ...labelsProp }
+  const labels = { ...useLabels().themeSwitcher, ...defined(labelsProp) }
 
   return (
     <div
