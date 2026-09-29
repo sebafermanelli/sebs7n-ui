@@ -81,7 +81,7 @@ zoom 200 % y 320 px sin scroll horizontal.
 - **Componentes solo por subpath:** los pesados y `chart` quedan fuera del barrel; la lista es
   `SOLO_SUBPATH` en `test/solo-subpath.test.ts` (más `lib/countries` y `lib/phone` en
   `test/api-publica.test.ts`). Componente nuevo y grande → a esa lista.
-- **Barrel ≤ 55 kB gzip** (`.size-limit.js`, `npm run size`); `button` por subpath ≤ 12,5 kB. Todo
+- **Barrel ≤ 56 kB gzip** (`.size-limit.js`, `npm run size`); `button` por subpath ≤ 12,5 kB. Todo
   salto se explica en el PR.
 - **Server Components:** sin `"use client"` donde no hay estado; `variants/*` nunca lo lleva.
 - **Labels:** todo texto interno pasa por `Labels` / `LabelsProvider` (español por defecto); la prop

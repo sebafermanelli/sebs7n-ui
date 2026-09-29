@@ -100,6 +100,16 @@ export type Labels = {
     previousMonth: string
     /** Nombre del botón que va al mes siguiente. */
     nextMonth: string
+    /** Lo que hace el título del mes: abre la grilla de meses. Va después del mes, «septiembre de 2026, Elegir mes y año». */
+    chooseMonthYear: string
+    /** Lo que hace el año en la grilla de meses: abre la de años. */
+    chooseYear: string
+    /** Las flechas de la grilla de meses. */
+    previousYear: string
+    nextYear: string
+    /** Las flechas de la grilla de años, que pasan de a doce. */
+    previousYears: string
+    nextYears: string
   }
   calendarView: {
     /** El botón que vuelve a hoy. */
@@ -325,6 +335,12 @@ export const defaultLabels: Labels = {
   calendar: {
     previousMonth: "Mes anterior",
     nextMonth: "Mes siguiente",
+    chooseMonthYear: "Elegir mes y año",
+    chooseYear: "Elegir año",
+    previousYear: "Año anterior",
+    nextYear: "Año siguiente",
+    previousYears: "Años anteriores",
+    nextYears: "Años siguientes",
   },
   calendarView: {
     today: "Hoy",

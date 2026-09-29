@@ -85,10 +85,10 @@ const SIN_RANGO: DateRange = { from: null, to: null }
  * Reemplaza a `<input type="date">`, cuyo calendario es del navegador: no toma el material,
  * ni la tipografía, ni el idioma de la app.
  *
- * El campo es un **botón**, no un input de texto: la fecha se elige, no se tipea. Si en tu
- * pantalla lo normal es tipearla —una fecha de nacimiento, un vencimiento que se copia de un
- * papel—, usá un `Input` con máscara: recorrer cuarenta años de a un mes es peor que escribir
- * ocho números.
+ * El campo es un **botón**, no un input de texto: la fecha se elige, no se tipea. Una fecha
+ * lejana no obliga a pasar mes por mes: el título del calendario abre la grilla de meses, y su
+ * año la de años. Si en tu pantalla lo normal es tipearla —un vencimiento que se copia de un
+ * papel—, usá un `Input` con máscara.
  *
  * **No valida.** No tiene `required` y no se registra en un `Field`: si la fecha es
  * obligatoria, lo chequea la app al enviar. Se dejó afuera a propósito en vez de aceptar la

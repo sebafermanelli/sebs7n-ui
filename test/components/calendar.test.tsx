@@ -277,3 +277,169 @@ describe("Calendar mode=range", () => {
     })
   })
 })
+
+// Ir de año en año con las flechas de mes es lento: para una fecha de alta de hace veinte años
+// son 240 clics. El título abre una grilla de meses, y el año de esa grilla, una de años.
+describe("Calendar: elegir mes y año", () => {
+  const tituloBoton = () => screen.getByRole("button", { name: /Elegir mes y año/ })
+  const celdas = () => [...document.querySelectorAll<HTMLButtonElement>("[data-slot=calendar-cell]")]
+  const celda = (texto: string) => celdas().find((c) => c.textContent === texto)!
+
+  it("el título es un botón con el mes a la vista, cerrado, y se alcanza con Tab", async () => {
+    render(<Calendar defaultValue={d("2026-09-27")} />)
+    expect(tituloBoton()).toHaveAccessibleName("septiembre de 2026, Elegir mes y año")
+    expect(tituloBoton()).toHaveAttribute("aria-expanded", "false")
+    // La grilla se sigue llamando por el mes, no por lo que hace el botón.
+    expect(screen.getByRole("grid", { name: "septiembre de 2026" })).toBeInTheDocument()
+    await userEvent.tab()
+    expect(tituloBoton()).toHaveFocus()
+  })
+
+  it("abre una grilla de doce meses con nombres cortos, el mes a la vista marcado y enfocado", async () => {
+    vi.useFakeTimers({ now: new Date(2026, 8, 27, 15, 0), toFake: ["Date"] })
+    render(<Calendar defaultValue={d("2026-03-10")} />)
+    vi.useRealTimers()
+    await userEvent.click(tituloBoton())
+    const grilla = screen.getByRole("grid", { name: "2026" })
+    expect(celdas().map((c) => c.textContent)).toEqual(["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sept", "oct", "nov", "dic"])
+    expect(within(grilla).getAllByRole("row")).toHaveLength(4)
+    expect(celda("mar")).toHaveAttribute("data-selected")
+    expect(celda("mar")).toHaveClass("data-selected:bg-brand-700")
+    expect(celda("mar")).toHaveFocus()
+    expect(celda("mar").closest("[role=gridcell]")).toHaveAttribute("aria-selected", "true")
+    expect(celda("mar")).toHaveAccessibleName("marzo de 2026")
+    // El mes de hoy, como el día de hoy: `aria-current` y el color de marca.
+    expect(celda("sept")).toHaveAttribute("aria-current", "date")
+    // El título sigue en su lugar, abierto, con el chevron girado.
+    const abierto = screen.getByRole("button", { name: /Elegir año/ })
+    expect(abierto).toHaveAttribute("aria-expanded", "true")
+    expect(abierto.querySelector("svg")).toHaveClass("rotate-90")
+  })
+
+  it("elegir un mes vuelve a los días en ese mes y avisa onMonthChange", async () => {
+    const onMonthChange = vi.fn()
+    render(<Calendar defaultValue={d("2026-09-27")} onMonthChange={onMonthChange} />)
+    await userEvent.click(tituloBoton())
+    await userEvent.click(screen.getByRole("button", { name: "Año anterior" }))
+    expect(screen.getByRole("grid", { name: "2025" })).toBeInTheDocument()
+    await userEvent.click(celda("feb"))
+    expect(toISODate(onMonthChange.mock.calls[0]![0])).toBe("2025-02-01")
+    expect(titulo()).toHaveTextContent("febrero de 2025")
+    expect(document.querySelector("[data-slot=calendar-picker]")).toBeNull()
+    // El foco vuelve a los días, al mismo número en el mes nuevo.
+    expect(dia("2025-02-27")).toHaveFocus()
+  })
+
+  it("teclado: flechas por la grilla, cruzan de año; Enter elige", async () => {
+    render(<Calendar defaultValue={d("2026-11-05")} />)
+    await userEvent.click(tituloBoton())
+    expect(celda("nov")).toHaveFocus()
+    await userEvent.keyboard("{ArrowRight}")
+    expect(celda("dic")).toHaveFocus()
+    await userEvent.keyboard("{ArrowUp}")
+    expect(celda("sept")).toHaveFocus()
+    await userEvent.keyboard("{ArrowDown}{ArrowDown}")
+    expect(screen.getByRole("grid", { name: "2027" })).toBeInTheDocument()
+    expect(celda("mar")).toHaveFocus()
+    // Una sola parada de tabulación en la grilla.
+    expect(celdas().filter((c) => c.tabIndex === 0)).toHaveLength(1)
+    await userEvent.keyboard("{PageDown}")
+    expect(screen.getByRole("grid", { name: "2028" })).toBeInTheDocument()
+    await userEvent.keyboard("{Enter}")
+    expect(titulo()).toHaveTextContent("marzo de 2028")
+    expect(dia("2028-03-05")).toHaveFocus()
+  })
+
+  it("Escape vuelve a los días sin cambiar nada y devuelve el foco al título", async () => {
+    const onMonthChange = vi.fn()
+    render(<Calendar defaultValue={d("2026-09-27")} onMonthChange={onMonthChange} />)
+    await userEvent.click(tituloBoton())
+    await userEvent.keyboard("{ArrowRight}{ArrowRight}{Escape}")
+    expect(document.querySelector("[data-slot=calendar-picker]")).toBeNull()
+    expect(titulo()).toHaveTextContent("septiembre de 2026")
+    expect(onMonthChange).not.toHaveBeenCalled()
+    expect(tituloBoton()).toHaveFocus()
+  })
+
+  it("el año abre una grilla de doce años que se pagina de a doce: una fecha de hace décadas está a pocos clics", async () => {
+    const onMonthChange = vi.fn()
+    render(<Calendar defaultValue={d("2026-09-27")} onMonthChange={onMonthChange} />)
+    await userEvent.click(tituloBoton())
+    await userEvent.click(screen.getByRole("button", { name: /Elegir año/ }))
+    expect(celdas().map((c) => c.textContent)).toEqual(Array.from({ length: 12 }, (_, i) => String(2016 + i)))
+    expect(screen.getByRole("grid", { name: "2016 – 2027" })).toBeInTheDocument()
+    expect(celda("2026")).toHaveFocus()
+    expect(celda("2026")).toHaveAttribute("data-selected")
+    await userEvent.click(screen.getByRole("button", { name: "Años anteriores" }))
+    await userEvent.click(screen.getByRole("button", { name: "Años anteriores" }))
+    expect(screen.getByRole("grid", { name: "1992 – 2003" })).toBeInTheDocument()
+    await userEvent.click(celda("1994"))
+    // Vuelve a los meses de ese año, con el mismo mes enfocado.
+    expect(screen.getByRole("grid", { name: "1994" })).toBeInTheDocument()
+    expect(celda("sept")).toHaveFocus()
+    await userEvent.click(celda("jun"))
+    expect(titulo()).toHaveTextContent("junio de 1994")
+    expect(toISODate(onMonthChange.mock.calls[0]![0])).toBe("1994-06-01")
+  })
+
+  it("min y max apagan meses y años y las flechas que llevan afuera", async () => {
+    const onMonthChange = vi.fn()
+    render(<Calendar defaultValue={d("2026-05-10")} max={d("2026-08-20")} min={d("2025-03-10")} onMonthChange={onMonthChange} />)
+    await userEvent.click(tituloBoton())
+    expect(celda("ago")).not.toHaveAttribute("aria-disabled")
+    expect(celda("sept")).toHaveAttribute("aria-disabled", "true")
+    expect(screen.getByRole("button", { name: "Año siguiente" })).toBeDisabled()
+    await userEvent.click(celda("oct"))
+    expect(onMonthChange).not.toHaveBeenCalled()
+    // Las flechas del teclado frenan en el borde, como en los días.
+    celda("may").focus()
+    await userEvent.keyboard("{ArrowDown}{ArrowDown}")
+    expect(celda("ago")).toHaveFocus()
+    await userEvent.click(screen.getByRole("button", { name: "Año anterior" }))
+    expect(celda("feb")).toHaveAttribute("aria-disabled", "true")
+    expect(celda("mar")).not.toHaveAttribute("aria-disabled")
+    expect(screen.getByRole("button", { name: "Año anterior" })).toBeDisabled()
+    await userEvent.click(screen.getByRole("button", { name: /Elegir año/ }))
+    expect(celda("2024")).toHaveAttribute("aria-disabled", "true")
+    expect(celda("2025")).not.toHaveAttribute("aria-disabled")
+    expect(celda("2027")).toHaveAttribute("aria-disabled", "true")
+    expect(screen.getByRole("button", { name: "Años anteriores" })).toBeDisabled()
+    expect(screen.getByRole("button", { name: "Años siguientes" })).toBeDisabled()
+  })
+
+  it("con varios meses, solo el título del primero abre la grilla, que tapa a todos", async () => {
+    const onMonthChange = vi.fn()
+    render(<Calendar defaultMonth={d("2026-09-01")} mode="range" numberOfMonths={2} onMonthChange={onMonthChange} />)
+    expect(screen.getAllByRole("button", { name: /Elegir mes y año/ })).toHaveLength(1)
+    await userEvent.click(tituloBoton())
+    // Los meses de días quedan en su lugar, invisibles: el tamaño no salta.
+    for (const mes of document.querySelectorAll("[data-slot=calendar-month]")) {
+      expect(mes).toHaveClass("invisible")
+      expect(mes).toHaveAttribute("aria-hidden", "true")
+    }
+    await userEvent.click(celda("dic"))
+    expect(toISODate(onMonthChange.mock.calls[0]![0])).toBe("2026-12-01")
+    const titulos = [...document.querySelectorAll("[data-slot=calendar-title]")].map((t) => t.textContent)
+    expect(titulos).toEqual(["diciembre de 2026", "enero de 2027"])
+  })
+
+  it("controlado: elegir un mes solo avisa; el mes lo pone quien controla", async () => {
+    const onMonthChange = vi.fn()
+    render(<Calendar month={d("2026-09-01")} onMonthChange={onMonthChange} />)
+    await userEvent.click(tituloBoton())
+    await userEvent.click(celda("ene"))
+    expect(toISODate(onMonthChange.mock.calls[0]![0])).toBe("2026-01-01")
+    expect(titulo()).toHaveTextContent("septiembre de 2026")
+  })
+
+  it("los nombres salen del LabelsProvider, y en inglés los meses también", async () => {
+    render(
+      <LabelsProvider value={{ calendar: { chooseMonthYear: "Choose month and year", previousYear: "Previous year" } }}>
+        <Calendar defaultMonth={d("2026-09-01")} locale="en-US" />
+      </LabelsProvider>
+    )
+    await userEvent.click(screen.getByRole("button", { name: /Choose month and year/ }))
+    expect(celdas()[8]).toHaveTextContent("Sep")
+    expect(screen.getByRole("button", { name: "Previous year" })).toBeInTheDocument()
+  })
+})

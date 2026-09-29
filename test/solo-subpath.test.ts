@@ -1,7 +1,7 @@
 // @vitest-environment node
 //
 // Los componentes que viven solo por subpath: `chart` (su peer opcional) y los que quedaron afuera
-// del barrel por peso (R5b y R6, con el barrel en su tope de 55 kB). Si uno entra al barrel sin
+// del barrel por peso (R5b y R6, con el barrel en su tope, hoy 56 kB). Si uno entra al barrel sin
 // querer, el tope se pasa; y si uno exporta un nombre que ya exporta el barrel, la app que importa
 // de los dos lados tiene dos cosas con el mismo nombre.
 import { readFileSync } from "node:fs"

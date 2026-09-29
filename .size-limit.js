@@ -55,6 +55,10 @@ export default [
     // para toda la 2.0: cubre Command y los componentes nuevos de las fases 4 y 5 (Tree,
     // GroupedList, SectionHeader, ColorSwatches, ImageChoice). Cada salto se sigue explicando en el
     // PR; el umbral del subpath no se mueve.
-    limit: "55 kB",
+    //
+    // 2.0 (fase macOS 2): 55,84 KB. El selector de mes y año de `Calendar` (+0,99 KB: la grilla de
+    // meses y la de años, sus seis textos en `labels`). Estaba en 54,85 de 55 y sin lugar; Sebastián
+    // aprobó subir a 56 solo por esto.
+    limit: "56 kB",
   },
 ]

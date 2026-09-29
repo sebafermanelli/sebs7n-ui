@@ -86,7 +86,8 @@ const SIN_RANGO: DateRange = { from: null, to: null }
  * Sigue el patrón de grilla de fechas de WAI-ARIA: una sola parada de tabulación, y adentro se
  * recorre con las flechas. Los días de los meses vecinos se ven para completar las semanas,
  * pero no se pueden elegir ni enfocar: para ir a otro mes están los botones, o `Re Pág` y
- * `Av Pág`.
+ * `Av Pág`. Para ir lejos, el título abre una grilla de meses —y su año, una de años—, como el
+ * selector de fecha de iOS.
  *
  * Con `numberOfMonths` mayor a 1 cada fecha aparece **una sola vez**: los huecos de un mes
  * quedan vacíos, porque esos días ya están en el mes de al lado. Dibujarlos dos veces hace que
@@ -119,7 +120,7 @@ function Calendar(props: CalendarProps) {
   }
   const labels = { ...useLabels().calendar, ...labelsProp }
   const titleId = React.useId()
-  const vista = React.useRef<HTMLDivElement>(null)
+  const raiz = React.useRef<HTMLDivElement>(null)
 
   const [interno, setInterno] = React.useState(defaultValue ?? (mode === "range" ? SIN_RANGO : null))
   const value = valueProp !== undefined ? valueProp : interno
@@ -153,13 +154,50 @@ function Calendar(props: CalendarProps) {
   // cambia por los botones, se corre al mismo número de día del primer mes nuevo.
   const [foco, setFoco] = React.useState(() => clampDay(ancla, min, max))
   const enfocable = aLaVista(foco) ? foco : clampDay(addMonths(foco, monthDiff(month, foco)), min, max)
-  const moverFoco = React.useRef(false)
+  // A dónde va el foco después del próximo render: un selector, o `""` para el día enfocable.
+  // Después y no en el momento, porque lo que hay que enfocar todavía no está dibujado.
+  const enfocar = React.useRef<string | null>(null)
 
   React.useEffect(() => {
-    if (!moverFoco.current) return
-    moverFoco.current = false
-    vista.current?.querySelector<HTMLButtonElement>(`[data-date="${toISODate(enfocable)}"]`)?.focus()
+    const selector = enfocar.current
+    if (selector == null) return
+    enfocar.current = null
+    raiz.current?.querySelector<HTMLElement>(selector || `[data-date="${toISODate(enfocable)}"]`)?.focus()
   })
+
+  // La grilla de meses o de años que tapa a los días; `null` son los días. `pos` es la celda con
+  // la parada de tabulación, como número: año·12 + mes en la de meses, el año en la de años. Así
+  // las dos se recorren con la misma cuenta, y una página son doce.
+  const [nivel, setNivel] = React.useState<"months" | "years" | null>(null)
+  const [pos, setPos] = React.useState(0)
+  const enMeses = nivel === "months"
+  const limitar = (i: number, meses = enMeses) => Math.min(Math.max(i, min ? aIndice(min, meses) : i), max ? aIndice(max, meses) : i)
+  const pagina = Math.floor(pos / 12) * 12
+  const abrir = (siguiente: typeof nivel, en: number) => {
+    setNivel(siguiente)
+    setPos(en)
+    enfocar.current = siguiente ? CELDA_CON_FOCO : "[data-slot=calendar-title-button]"
+  }
+  const elegirCelda = (i: number) => {
+    if (limitar(i) !== i) return
+    if (!enMeses) return abrir("months", limitar(i * 12 + month.getMonth(), true))
+    mostrar(new Date(Math.floor(i / 12), i % 12, 1))
+    setNivel(null)
+    enfocar.current = ""
+  }
+  const tecladoGrilla = (event: React.KeyboardEvent) => {
+    // Escape vuelve a los días sin tocar nada. No sigue de largo: adentro de un DatePicker
+    // cerraría el panel entero, y lo que se quería era volver un paso.
+    if (event.key === "Escape") {
+      event.stopPropagation()
+      return abrir(null, 0)
+    }
+    const salto = SALTOS[event.key]
+    if (!salto || (event.target as HTMLElement).dataset.cell == null) return
+    event.preventDefault()
+    enfocar.current = CELDA_CON_FOCO
+    setPos(limitar(pos + salto))
+  }
 
   const apagada = (date: Date) =>
     (min != null && compareDays(date, min) < 0) || (max != null && compareDays(date, max) > 0) || (isDateDisabled?.(date) ?? false)
@@ -199,7 +237,7 @@ function Calendar(props: CalendarProps) {
     if (!salto) return
     event.preventDefault()
     const destino = clampDay(salto(), min, max)
-    moverFoco.current = true
+    enfocar.current = ""
     setFoco(destino)
     irAlMes(destino)
   }
@@ -208,6 +246,7 @@ function Calendar(props: CalendarProps) {
     () => ({
       titulo: new Intl.DateTimeFormat(locale, { month: "long", year: "numeric" }),
       dia: new Intl.DateTimeFormat(locale, { dateStyle: "full" }),
+      mes: new Intl.DateTimeFormat(locale, { month: "short" }),
       corto: new Intl.DateTimeFormat(locale, { weekday: "short" }),
       largo: new Intl.DateTimeFormat(locale, { weekday: "long" }),
     }),
@@ -226,24 +265,51 @@ function Calendar(props: CalendarProps) {
     </Button>
   )
 
+  const cabecera = enMeses ? String(pagina / 12) : `${pagina} – ${pagina + 11}`
+  const flecha = (atras: boolean) => (
+    <Button
+      aria-label={enMeses ? (atras ? labels.previousYear : labels.nextYear) : atras ? labels.previousYears : labels.nextYears}
+      disabled={atras ? limitar(pagina - 1) !== pagina - 1 : limitar(pagina + 12) !== pagina + 12}
+      onClick={() => setPos(limitar(pos + (atras ? -12 : 12)))}
+      size="icon-sm"
+      variant="plain"
+    >
+      {atras ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+    </Button>
+  )
+
   return (
     <div data-slot="calendar" data-mode={mode} data-months={cuantos} className={cn("w-fit text-label", className)} {...rest}>
-      <div className="flex flex-wrap gap-x-6 gap-y-4" data-slot="calendar-months" onPointerLeave={() => setSobre(null)} ref={vista}>
+      <div className="relative flex flex-wrap gap-x-6 gap-y-4" data-slot="calendar-months" onPointerLeave={() => setSobre(null)} ref={raiz}>
         {meses.map((mes, indice) => {
           const id = `${titleId}-${indice}`
-          const titulo = (
-            // `aria-live`: al cambiar de mes con los botones, el lector dice a cuál se llegó. Con
-            // varios a la vista alcanza con el primero: leerlos todos es oír la misma noticia dos veces.
-            <div aria-live={indice === 0 ? "polite" : undefined} className="text-callout font-bold first-letter:uppercase" data-slot="calendar-title" id={id}>
-              {formatos.titulo.format(mes)}
-            </div>
+          const texto = formatos.titulo.format(mes)
+          // `aria-live`: al cambiar de mes con los botones, el lector dice a cuál se llegó. Con
+          // varios a la vista alcanza con el primero: leerlos todos es oír la misma noticia dos veces.
+          const nombre = (
+            <span aria-live={indice === 0 ? "polite" : undefined} className="text-callout font-bold first-letter:uppercase" data-slot="calendar-title" id={id}>
+              {texto}
+            </span>
           )
+          // Solo el título del primer mes abre la grilla de meses: `month` es el primero y los demás
+          // lo siguen, igual que las flechas mueven la vista entera. Uno por mes serían más paradas
+          // de tabulación para hacer lo mismo.
+          const titulo =
+            indice === 0 ? (
+              <TituloBoton aria-expanded={false} aria-label={`${texto}, ${labels.chooseMonthYear}`} data-slot="calendar-title-button" onClick={() => abrir("months", aIndice(month, true))}>
+                {nombre}
+              </TituloBoton>
+            ) : (
+              nombre
+            )
           return (
             // La clave es la posición y no el mes: al cambiar de mes el bloque se actualiza en vez
             // de montarse de nuevo, y el botón que se acaba de apretar conserva el foco.
-            <div className="flex flex-col gap-2" data-slot="calendar-month" key={indice}>
+            // Con la grilla de meses abierta, los días quedan en su lugar pero invisibles: son los
+            // que miden, y el panel de un DatePicker no salta al abrirla ni al volver.
+            <div aria-hidden={nivel ? true : undefined} className={cn("flex flex-col gap-2", nivel && "invisible")} data-slot="calendar-month" key={indice}>
               {cuantos === 1 ? (
-                <div className="flex items-center justify-between gap-2 pl-2">
+                <div className="flex items-center justify-between gap-2">
                   {titulo}
                   {/* En táctil 20 px entre flechas de 24: las áreas de 44 se tocan sin pisarse. */}
                   <div className="flex items-center gap-0.5 pointer-coarse:gap-5">
@@ -329,15 +395,8 @@ function Calendar(props: CalendarProps) {
                               aria-disabled={off || undefined}
                               aria-label={formatos.dia.format(dia)}
                               className={cn(
-                                "relative inline-flex size-7 pointer-coarse:size-10 cursor-pointer items-center justify-center rounded-full text-callout tabular-nums outline-none select-none transition-surface",
-                                "hover:bg-fill-2 focus-visible:focus-ring active:scale-95",
-                                // Hoy: el número en el color de marca y un punto debajo. El punto es lo que
-                                // lo distingue cuando además está elegido, que es cuando el color no alcanza.
-                                "aria-[current=date]:font-medium aria-[current=date]:text-brand-900",
-                                "aria-[current=date]:after:absolute aria-[current=date]:after:bottom-0.5 pointer-coarse:aria-[current=date]:after:bottom-1.5 aria-[current=date]:after:size-1 aria-[current=date]:after:rounded-full aria-[current=date]:after:bg-brand-700",
-                                "data-selected:bg-brand-700 data-selected:text-brand-contrast data-selected:hover:bg-brand-800 data-selected:focus-visible:focus-ring-inverse",
-                                "data-selected:aria-[current=date]:text-brand-contrast data-selected:aria-[current=date]:after:bg-brand-contrast",
-                                "aria-disabled:cursor-not-allowed aria-disabled:text-label-tertiary aria-disabled:hover:bg-transparent aria-disabled:active:scale-100"
+                                CELDA,
+                                "size-7 pointer-coarse:size-10 rounded-full aria-[current=date]:after:bottom-0.5 pointer-coarse:aria-[current=date]:after:bottom-1.5"
                               )}
                               data-date={iso}
                               data-selected={marcada ? "" : undefined}
@@ -360,10 +419,91 @@ function Calendar(props: CalendarProps) {
             </div>
           )
         })}
+        {nivel && (
+          // Encima de los días, del mismo tamaño que ellos.
+          <div className="absolute inset-0 flex flex-col gap-2" data-slot="calendar-picker" onKeyDown={tecladoGrilla}>
+            <div className="flex items-center justify-between gap-2">
+              {/* En la de meses, el año lleva a la de años; en la de años no hay más arriba. */}
+              <TituloBoton aria-expanded aria-label={enMeses ? `${cabecera}, ${labels.chooseYear}` : undefined} disabled={!enMeses} onClick={() => abrir("years", pagina / 12)}>
+                <span aria-live="polite" className="text-callout font-bold tabular-nums" id={`${titleId}-p`}>
+                  {cabecera}
+                </span>
+              </TituloBoton>
+              <div className="flex items-center gap-0.5 pointer-coarse:gap-5">
+                {flecha(true)}
+                {flecha(false)}
+              </div>
+            </div>
+            <div aria-labelledby={`${titleId}-p`} className="grid flex-1 grid-rows-4 gap-1" role="grid">
+              {[0, 3, 6, 9].map((fila) => (
+                <div className="grid grid-cols-3 gap-1" key={fila} role="row">
+                  {[0, 1, 2].map((columna) => {
+                    const i = pagina + fila + columna
+                    const fecha = enMeses ? new Date(Math.floor(i / 12), i % 12, 1) : new Date(i, 0, 1)
+                    const marcada = i === aIndice(month, enMeses)
+                    return (
+                      <div aria-selected={marcada} className="flex" key={columna} role="gridcell">
+                        <button
+                          aria-current={i === aIndice(hoy, enMeses) ? "date" : undefined}
+                          aria-disabled={limitar(i) !== i || undefined}
+                          aria-label={enMeses ? formatos.titulo.format(fecha) : undefined}
+                          // El punto de hoy, pegado debajo del texto y no contra el borde de una celda alta.
+                          className={cn(CELDA, "flex-1 rounded-control aria-[current=date]:after:bottom-[calc(50%-1rem)]")}
+                          data-cell=""
+                          data-selected={marcada ? "" : undefined}
+                          data-slot="calendar-cell"
+                          onClick={() => elegirCelda(i)}
+                          tabIndex={i === pos ? 0 : -1}
+                          type="button"
+                        >
+                          {enMeses ? formatos.mes.format(fecha).replace(".", "") : i}
+                        </button>
+                      </div>
+                    )
+                  })}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
 }
+
+/**
+ * El título que abre la grilla de meses —y, en esa, la de años—, con el chevron que gira hacia
+ * abajo mientras está abierta, como en el selector de fecha de iOS.
+ */
+function TituloBoton({ children, ...props }: React.ComponentProps<"button">) {
+  return (
+    <button
+      className="inline-flex h-7 cursor-pointer items-center gap-1 rounded-control px-2 outline-none transition-surface hover:bg-fill-2 focus-visible:focus-ring disabled:cursor-default disabled:hover:bg-transparent"
+      type="button"
+      {...props}
+    >
+      {children}
+      {!props.disabled && <ChevronRightIcon className={cn("size-4 text-brand-900 transition-transform", props["aria-expanded"] && "rotate-90")} />}
+    </button>
+  )
+}
+
+// Lo común a un día, un mes y un año: elegido, hoy y apagado se ven igual en las tres grillas.
+const CELDA = cn(
+  "relative inline-flex cursor-pointer items-center justify-center text-callout tabular-nums outline-none select-none transition-surface",
+  "hover:bg-fill-2 focus-visible:focus-ring active:scale-95",
+  // Hoy: el número en el color de marca y un punto debajo. El punto es lo que lo distingue cuando
+  // además está elegido, que es cuando el color no alcanza.
+  "aria-[current=date]:font-medium aria-[current=date]:text-brand-900",
+  "aria-[current=date]:after:absolute aria-[current=date]:after:size-1 aria-[current=date]:after:rounded-full aria-[current=date]:after:bg-brand-700",
+  "data-selected:bg-brand-700 data-selected:text-brand-contrast data-selected:hover:bg-brand-800 data-selected:focus-visible:focus-ring-inverse",
+  "data-selected:aria-[current=date]:text-brand-contrast data-selected:aria-[current=date]:after:bg-brand-contrast",
+  "aria-disabled:cursor-not-allowed aria-disabled:text-label-tertiary aria-disabled:hover:bg-transparent aria-disabled:active:scale-100"
+)
+const CELDA_CON_FOCO = '[data-cell][tabindex="0"]'
+const SALTOS: Record<string, number> = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -3, ArrowDown: 3, PageUp: -12, PageDown: 12 }
+/** La posición de una fecha en la grilla de meses (año·12 + mes) o en la de años (el año). */
+const aIndice = (date: Date, meses: boolean) => (meses ? date.getFullYear() * 12 + date.getMonth() : date.getFullYear())
 
 /** Cuántos meses hay de `desde` a `hasta`, con signo. */
 const monthDiff = (hasta: Date, desde: Date) => (hasta.getFullYear() - desde.getFullYear()) * 12 + hasta.getMonth() - desde.getMonth()

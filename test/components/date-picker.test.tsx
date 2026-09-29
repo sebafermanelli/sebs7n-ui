@@ -164,3 +164,19 @@ describe("DatePicker mode=range", () => {
     expect(datos.get("periodo-hasta")).toBe("2026-09-14")
   })
 })
+
+describe("DatePicker: elegir mes y año", () => {
+  it("Escape en la grilla de meses vuelve a los días sin cerrar el panel", async () => {
+    render(<DatePicker aria-label="Fecha de alta" defaultValue={d("2026-09-27")} />)
+    await userEvent.click(screen.getByRole("button", { name: "Fecha de alta" }))
+    await screen.findByRole("dialog")
+    await userEvent.click(screen.getByRole("button", { name: /Elegir mes y año/ }))
+    expect(document.querySelector("[data-slot=calendar-picker]")).not.toBeNull()
+    await userEvent.keyboard("{Escape}")
+    expect(document.querySelector("[data-slot=calendar-picker]")).toBeNull()
+    expect(screen.getByRole("dialog")).toBeInTheDocument()
+    // El segundo Escape, ya en los días, sí cierra.
+    await userEvent.keyboard("{Escape}")
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull())
+  })
+})
