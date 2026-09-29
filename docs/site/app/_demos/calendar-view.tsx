@@ -75,8 +75,8 @@ export function IdiomaGlobal() {
   const events = useSampleEvents()
   return (
     <LabelsProvider value={{ dates: { locale: "en-US", weekStartsOn: 0 } }}>
-      <div className="h-[34rem] w-full">
-        <CalendarView className="h-full" events={events} />
+      <div className="h-[640px] w-full overflow-hidden rounded-surface border border-separator">
+        <CalendarView events={events} />
       </div>
     </LabelsProvider>
   )

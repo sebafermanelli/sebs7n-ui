@@ -50,15 +50,15 @@ const contacts = [
  */
 export function Display() {
   return (
-    <dl className="grid w-full max-w-md grid-cols-[1fr_auto_auto] gap-x-4 gap-y-2 text-callout">
+    <dl className="grid w-full max-w-md grid-cols-[1fr_auto_auto] overflow-x-auto gap-x-4 gap-y-2 text-callout">
       <dt className="text-label-secondary">Cliente</dt>
       <dt className="text-label-secondary">Internacional</dt>
       <dt className="text-label-secondary">Desde Argentina</dt>
       {contacts.map((contact) => (
         <div className="contents" key={contact.client}>
           <dd className="text-label">{contact.client}</dd>
-          <dd className="tabular-nums text-label">{formatPhone(contact.phone)}</dd>
-          <dd className="tabular-nums text-label">{formatPhone(contact.phone, { country: "AR" })}</dd>
+          <dd className="whitespace-nowrap tabular-nums text-label">{formatPhone(contact.phone)}</dd>
+          <dd className="whitespace-nowrap tabular-nums text-label">{formatPhone(contact.phone, { country: "AR" })}</dd>
         </div>
       ))}
     </dl>
