@@ -161,7 +161,7 @@ describe("Tree", () => {
     )
     const cabecera = document.querySelector("[data-slot=tree-header]")!
     expect(cabecera).toHaveAttribute("aria-hidden", "true")
-    expect(within(cabecera as HTMLElement).getByText("Tamaño")).toHaveStyle({ width: "100px" })
+    expect(within(cabecera as HTMLElement).getByText("Tamaño")).toHaveStyle({ gridColumn: "2" })
     expect(item("Notas.txt")).toHaveTextContent("2 KB")
     expect(screen.getByText("2 KB")).toHaveClass("text-right", "tabular-nums")
   })
@@ -549,5 +549,70 @@ describe("Tree · hidratación", () => {
       errors.mockRestore()
       container.remove()
     }
+  })
+})
+
+describe("Tree · columnas en anchos chicos", () => {
+  const COLUMNAS = [{ header: "Tipo", width: 180 }, { header: "Tamaño", width: 100, numeric: true }, { header: "Fecha", width: 120 }]
+  const CON_COLUMNAS: TreeNode[] = [
+    { id: "facturas", label: "Facturas", columns: ["Carpeta", "—", "29/09/2026"], children: [{ id: "f-0012", label: "Factura 0012.pdf", columns: ["PDF", "128 KB", "29/09/2026"] }] },
+    { id: "notas", label: "Notas de cobranza del segundo semestre.txt", columns: ["Texto", "2 KB", "20/09/2026"] },
+  ]
+  const grilla = () => document.querySelector<HTMLElement>("[data-slot=tree-grid]")!
+  const reglas = () => document.querySelector("[data-slot=tree-container] style")?.textContent ?? ""
+
+  it("cabecera y filas comparten las pistas de una sola grilla: el nombre flexible y cada columna con su ancho", () => {
+    render(<Tree aria-label="Archivos" columns={COLUMNAS} defaultExpanded={["facturas"]} items={CON_COLUMNAS} nameHeader="Nombre" />)
+    expect(document.querySelector("[data-slot=tree-container]")).toHaveClass("@container", "overflow-x-auto")
+    expect(grilla().style.gridTemplateColumns).toBe("minmax(10rem, 1fr) var(--tree-column-0, 180px) var(--tree-column-1, 100px) var(--tree-column-2, 120px)")
+    const cabecera = document.querySelector("[data-slot=tree-header]")!
+    for (const fila of [cabecera, ...screen.getAllByRole("treeitem")]) {
+      expect(fila).toHaveClass("col-span-full", "grid", "grid-cols-subgrid")
+      expect([...fila.querySelectorAll("[data-column]")].map((el) => (el as HTMLElement).style.gridColumn)).toEqual(["2", "3", "4"])
+    }
+    expect(screen.getByRole("tree")).toHaveClass("col-span-full", "grid-cols-subgrid")
+  })
+
+  it("en un contenedor angosto se esconden las columnas de la derecha, con umbrales que salen de los anchos", () => {
+    render(<Tree aria-label="Archivos" columns={COLUMNAS} items={CON_COLUMNAS} />)
+    const id = grilla().dataset.tree!
+    expect(id).toBeTruthy()
+    // El nombre guarda 224 (64 de sangría, triángulo e ícono + 160 de texto); cada columna suma su ancho.
+    expect(reglas()).toContain(`@container (width < 404px){[data-tree="${id}"]{--tree-column-0:0px}[data-tree="${id}"] [data-column="0"]{display:none}}`)
+    expect(reglas()).toContain(`@container (width < 504px){[data-tree="${id}"]{--tree-column-1:0px}`)
+    expect(reglas()).toContain(`@container (width < 624px){[data-tree="${id}"]{--tree-column-2:0px}`)
+  })
+
+  it("hideBelow elige el umbral de cada columna; 0 no la esconde nunca (y el árbol se desplaza en su caja)", () => {
+    render(<Tree aria-label="Archivos" columns={[{ header: "Tipo", width: 180, hideBelow: 0 }, { header: "Fecha", width: 120, hideBelow: 900 }]} items={CON_COLUMNAS} />)
+    expect(reglas()).not.toContain("--tree-column-0:0px")
+    expect(reglas()).toContain("@container (width < 900px)")
+    expect(reglas()).toContain("--tree-column-1:0px")
+  })
+
+  it("el nombre se trunca y el completo queda en el title", () => {
+    render(<Tree aria-label="Archivos" columns={COLUMNAS} items={CON_COLUMNAS} />)
+    const nombre = screen.getByText("Notas de cobranza del segundo semestre.txt")
+    expect(nombre).toHaveClass("truncate", "min-w-0")
+    expect(nombre).toHaveAttribute("title", "Notas de cobranza del segundo semestre.txt")
+  })
+
+  it("treegrid: ←/→, Home y End saltean las columnas escondidas", async () => {
+    render(<Tree aria-label="Archivos" columns={COLUMNAS} grid items={CON_COLUMNAS} />)
+    const fila = (name: string) => screen.getByRole("row", { name: new RegExp(`^${name}`) })
+    const celdas = (name: string) => within(fila(name)).getAllByRole("gridcell")
+    // Lo que haría la container query: jsdom no las evalúa.
+    for (const row of screen.getAllByRole("row").slice(1)) {
+      within(row).getAllByRole("gridcell").slice(2).forEach((el) => (el.style.display = "none"))
+    }
+    await userEvent.tab()
+    await userEvent.keyboard("{ArrowDown}{ArrowRight}{ArrowRight}")
+    expect(celdas("Notas")[1]).toHaveFocus()
+    await userEvent.keyboard("{ArrowRight}")
+    expect(celdas("Notas")[1]).toHaveFocus()
+    await userEvent.keyboard("{Home}{End}")
+    expect(celdas("Notas")[1]).toHaveFocus()
+    await userEvent.keyboard("{ArrowUp}")
+    expect(celdas("Facturas")[1]).toHaveFocus()
   })
 })

@@ -42,6 +42,12 @@ type TreeColumn = {
   width?: number
   /** A la derecha y con cifras tabulares. */
   numeric?: boolean
+  /**
+   * Ancho del árbol en px por debajo del cual la columna se esconde, como Drive en una ventana
+   * angosta. Por defecto, cuando no entra junto al nombre (224) y las columnas de su izquierda: se
+   * van de derecha a izquierda. `0`: nunca se esconde (si no entra, el árbol se desplaza en su caja).
+   */
+  hideBelow?: number
 }
 
 type TreePropsBase = Omit<React.ComponentProps<"div">, "children" | "defaultValue" | "onSelect"> & {
@@ -79,6 +85,35 @@ type TreeGridMode =
     }
 
 type Visible = { node: TreeNode; level: number; setSize: number; posInSet: number; parent: string | null }
+
+// El nombre guarda 224 antes de ceder una columna: 64 de sangría, triángulo e ícono + 160 de texto.
+const NAME_MIN = 224
+
+/**
+ * Las columnas que no entran se esconden con container queries: cada una deja su pista en 0 (así la
+ * cabecera y las filas, que comparten la grilla, siguen alineadas) y sus celdas en `display: none`
+ * (fuera del lector y del teclado). Es CSS y no un ResizeObserver para que el primer pintado, el del
+ * servidor, ya salga bien en un teléfono.
+ */
+function hideRules(id: string, columns: TreeColumn[]) {
+  let needed = NAME_MIN
+  return columns
+    .map((column, index) => {
+      needed += column.width ?? 120
+      const below = column.hideBelow ?? needed
+      if (below <= 0) return ""
+      const scope = `[data-tree="${id}"]`
+      return `@container (width < ${below}px){${scope}{--tree-column-${index}:0px}${scope} [data-column="${index}"]{display:none}}`
+    })
+    .join("")
+}
+
+// Las celdas visibles de una fila del treegrid, por su índice en la fila (0 es el nombre).
+function shownCells(row: HTMLElement | undefined) {
+  return [...(row?.querySelectorAll<HTMLElement>('[role="gridcell"]') ?? [])].flatMap((element, index) =>
+    getComputedStyle(element).display === "none" ? [] : [index]
+  )
+}
 
 const isFolder = (node: TreeNode) => node.children != null || node.hasChildren === true
 const normalize = (text: string) => text.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase()
@@ -135,8 +170,9 @@ function Tree({
   const visibleNodes = React.useMemo(() => visible.map((row) => row.node), [visible])
   const rows = React.useRef(new Map<string, HTMLDivElement>())
   const typed = React.useRef({ text: "", at: 0 })
-  const isGrid = grid && columns != null && columns.length > 0
-  const cellCount = isGrid ? columns.length + 1 : 0
+  const hasColumns = columns != null && columns.length > 0
+  const isGrid = grid && hasColumns
+  const treeId = React.useId()
 
   // Todos los nodos, con su padre: para encontrar un ítem aunque su carpeta esté cerrada.
   const all = React.useMemo(() => {
@@ -169,6 +205,12 @@ function Tree({
     const row = rows.current.get(id)
     const target = cellIndex == null ? row : row?.querySelectorAll<HTMLElement>('[role="gridcell"]')[cellIndex]
     target?.focus()
+  }
+
+  // La celda visible siguiente o anterior a `from` en la fila: las columnas escondidas no cuentan.
+  const stepCell = (id: string, from: number, step: 1 | -1) => {
+    const shown = shownCells(rows.current.get(id))
+    return step === 1 ? shown.find((index) => index > from) : [...shown].reverse().find((index) => index < from)
   }
 
   // En `single` la selección sigue al foco. En `multiple` las flechas solas mueven el foco (y el
@@ -257,11 +299,13 @@ function Tree({
     } else if (activeCell != null) {
       // Treegrid, con el foco en una celda: ←/→ recorren la fila, ↑/↓ la misma celda en otra fila.
       switch (event.key) {
-        case "ArrowRight":
-          if (activeCell < cellCount - 1) moveTo(node, false, activeCell + 1)
+        case "ArrowRight": {
+          const next = stepCell(node.id, activeCell, 1)
+          if (next != null) moveTo(node, false, next)
           break
+        }
         case "ArrowLeft":
-          moveTo(node, false, activeCell > 0 ? activeCell - 1 : null)
+          moveTo(node, false, stepCell(node.id, activeCell, -1) ?? null)
           break
         case "ArrowDown":
           moveTo(visible[index + 1]?.node, extend, activeCell)
@@ -275,7 +319,7 @@ function Tree({
           break
         case "End":
           if (event.ctrlKey) moveTo(visible[visible.length - 1]?.node, extend, activeCell)
-          else moveTo(node, false, cellCount - 1)
+          else moveTo(node, false, shownCells(rows.current.get(node.id)).at(-1) ?? 0)
           break
         case "Enter":
           if (!node.disabled) onOpen?.(node)
@@ -352,22 +396,34 @@ function Tree({
     else select(node)
   }
 
-  const colsWidth = (column: TreeColumn) => (column.width != null ? { width: column.width } : undefined)
+  // Una sola grilla para la cabecera y las filas (subgrid): la columna N mide lo mismo en todas, a
+  // cualquier ancho. El nombre toma el resto y se trunca; una columna sin `width` mide su contenido.
+  const template = hasColumns
+    ? ["minmax(10rem, 1fr)", ...columns.map((column, index) => `var(--tree-column-${index}, ${column.width != null ? `${column.width}px` : "auto"})`)].join(" ")
+    : undefined
+  const columnStyle = (index: number): React.CSSProperties => ({ gridColumn: index + 2 })
+  const subgrid = "col-span-full grid grid-cols-subgrid"
 
-  const header = columns && columns.length > 0 && (
+  const header = hasColumns && (
     // Sin `grid` es visual: los valores se leen dentro de cada ítem. En el treegrid es su fila de
     // cabeceras, y el lector la usa para decir la columna de cada celda.
     <div
       data-slot="tree-header"
       role={isGrid ? "row" : undefined}
       aria-hidden={isGrid ? undefined : "true"}
-      className="flex h-11 shrink-0 items-center text-callout whitespace-nowrap text-label-secondary shadow-[inset_0_-1px_0_var(--color-separator)]"
+      className={cn(subgrid, "h-11 items-center text-callout whitespace-nowrap text-label-secondary shadow-[inset_0_-1px_0_var(--color-separator)]")}
     >
-      <span role={isGrid ? "columnheader" : undefined} className="min-w-40 flex-1 ps-16 pe-3">
+      <span role={isGrid ? "columnheader" : undefined} className="min-w-0 truncate ps-16 pe-3">
         {nameHeader}
       </span>
       {columns.map((column, index) => (
-        <span key={index} role={isGrid ? "columnheader" : undefined} className={cn("shrink-0 px-3", column.numeric && "text-right")} style={colsWidth(column)}>
+        <span
+          key={index}
+          role={isGrid ? "columnheader" : undefined}
+          data-column={index}
+          className={cn("min-w-0 truncate px-3", column.numeric && "text-right")}
+          style={columnStyle(index)}
+        >
           {column.header}
         </span>
       ))}
@@ -376,163 +432,180 @@ function Tree({
 
   const cellClassName = "rounded-item outline-none focus-visible:focus-ring in-data-[state=selected]:focus-visible:focus-ring-inverse"
 
-  return (
-    <div data-slot="tree-container" className={cn("group/list flex w-full min-w-0 flex-col overflow-x-auto", className)}>
-      {!isGrid && header}
-      <div
-        data-slot="tree"
-        role={isGrid ? "treegrid" : "tree"}
-        aria-multiselectable={selection.multiple || undefined}
-        onKeyDown={onKeyDown}
-        className="flex flex-col outline-none"
-        {...props}
-      >
-        {isGrid && header}
-        {visible.map(({ node, level, setSize, posInSet }) => {
-          const folder = isFolder(node)
-          const open = expanded.has(node.id)
-          const busy = loading.has(node.id)
-          const isSelected = selection.isSelected(node.id)
-          const isTabStop = node.id === tabStop
-          const cellTab = (index: number) => (isTabStop && activeCell === index ? 0 : -1)
-          const name = (
-            <>
-              <span aria-hidden="true" className="w-[calc(8px+var(--tree-depth)*20px)] shrink-0" />
-              <span
-                data-slot="tree-chevron"
-                aria-hidden="true"
-                onClick={(event) => {
-                  if (!folder || node.disabled) return
-                  event.stopPropagation()
-                  setFocused(node.id)
-                  setOpen(node, !open)
-                }}
-                className="flex size-5 shrink-0 items-center justify-center text-label-secondary inside-selection:text-on-selection"
-              >
-                {busy ? (
-                  <LoaderCircleIcon className="size-3.5 animate-spin motion-reduce:animate-none" />
-                ) : folder ? (
-                  <ChevronRightIcon
-                    className={cn("size-3.5 transition-transform duration-200 motion-reduce:transition-none", open && "rotate-90")}
-                    strokeWidth={2.5}
-                  />
-                ) : null}
-              </span>
-              <span
-                aria-hidden="true"
-                className={cn(
-                  "ms-1 me-2 flex size-6 shrink-0 items-center justify-center [&>svg]:size-5 inside-selection:text-on-selection",
-                  folder ? "text-brand-900" : "text-label-secondary"
-                )}
-              >
-                {node.icon ?? (folder ? <FolderIcon /> : <FileIcon />)}
-              </span>
-              <span
-                className={cn(
-                  "flex-1 truncate pe-3 text-body text-label group-data-[state=selected]/selectable:group-focus-within/list:text-on-selection",
-                  isGrid ? "min-w-0" : "min-w-40"
-                )}
-              >
-                {node.label}
-                {busy && <span className="sr-only">, {labels.loading}</span>}
-              </span>
-            </>
-          )
-          return (
-            <div
-              key={node.id}
-              ref={(element) => {
-                if (element) rows.current.set(node.id, element)
-                else rows.current.delete(node.id)
-              }}
-              role={isGrid ? "row" : "treeitem"}
-              aria-level={level}
-              aria-setsize={setSize}
-              aria-posinset={posInSet}
-              aria-expanded={folder ? open : undefined}
-              aria-selected={isSelected}
-              aria-disabled={node.disabled || undefined}
-              aria-busy={busy || undefined}
-              tabIndex={isTabStop && activeCell == null ? 0 : -1}
-              data-state={isSelected ? "selected" : undefined}
-              style={{ "--tree-depth": level - 1 } as React.CSSProperties}
-              onFocus={(event) => {
-                // En el treegrid, el foco de una celda sube hasta acá: esa la anota la celda.
-                if (event.target !== event.currentTarget) return
+  const tree = (
+    <div
+      data-slot="tree"
+      role={isGrid ? "treegrid" : "tree"}
+      aria-multiselectable={selection.multiple || undefined}
+      onKeyDown={onKeyDown}
+      className={cn("outline-none", hasColumns ? subgrid : "flex flex-col")}
+      {...props}
+    >
+      {isGrid && header}
+      {visible.map(({ node, level, setSize, posInSet }) => {
+        const folder = isFolder(node)
+        const open = expanded.has(node.id)
+        const busy = loading.has(node.id)
+        const isSelected = selection.isSelected(node.id)
+        const isTabStop = node.id === tabStop
+        const cellTab = (index: number) => (isTabStop && activeCell === index ? 0 : -1)
+        const name = (
+          <>
+            <span aria-hidden="true" className="w-[calc(8px+var(--tree-depth)*20px)] shrink-0" />
+            <span
+              data-slot="tree-chevron"
+              aria-hidden="true"
+              onClick={(event) => {
+                if (!folder || node.disabled) return
+                event.stopPropagation()
                 setFocused(node.id)
-                setCell(null)
+                setOpen(node, !open)
               }}
-              onClick={(event) => onRowClick(event, node)}
-              onDoubleClick={() => !node.disabled && onOpen?.(node)}
+              className="flex size-5 shrink-0 items-center justify-center text-label-secondary inside-selection:text-on-selection"
+            >
+              {busy ? (
+                <LoaderCircleIcon className="size-3.5 animate-spin motion-reduce:animate-none" />
+              ) : folder ? (
+                <ChevronRightIcon
+                  className={cn("size-3.5 transition-transform duration-200 motion-reduce:transition-none", open && "rotate-90")}
+                  strokeWidth={2.5}
+                />
+              ) : null}
+            </span>
+            <span
+              aria-hidden="true"
               className={cn(
-                "group/selectable relative flex h-[41px] shrink-0 cursor-default items-center rounded-item text-callout text-label-secondary outline-none select-none",
-                // El separador interior, desde el nombre; no va arriba de la primera, ni al lado de la
-                // fila con el puntero o la elegida, como en Drive.
-                "before:pointer-events-none before:absolute before:end-0 before:top-0 before:start-[calc(64px+var(--tree-depth)*20px)] before:h-px before:bg-separator",
-                "first:before:hidden hover:before:hidden data-[state=selected]:before:hidden [[role=treeitem]:hover+&]:before:hidden [[role=row]:hover+&]:before:hidden [[data-state=selected]+&]:before:hidden",
-                "not-data-[state=selected]:hover:bg-fill-1 data-[state=selected]:bg-selection-inactive",
-                "data-[state=selected]:group-focus-within/list:bg-selection data-[state=selected]:group-focus-within/list:text-on-selection",
-                // Varias elegidas seguidas son un solo bloque, como en el Finder: sin radio donde se tocan.
-                "data-[state=selected]:[[data-state=selected]+&]:rounded-t-none data-[state=selected]:has-[+[data-state=selected]]:rounded-b-none",
-                "focus-visible:focus-ring data-[state=selected]:focus-visible:focus-ring-inverse aria-disabled:opacity-40"
+                "ms-1 me-2 flex size-6 shrink-0 items-center justify-center [&>svg]:size-5 inside-selection:text-on-selection",
+                folder ? "text-brand-900" : "text-label-secondary"
               )}
             >
-              {isGrid ? (
-                <>
+              {node.icon ?? (folder ? <FolderIcon /> : <FileIcon />)}
+            </span>
+            <span
+              title={node.label}
+              className="min-w-0 flex-1 truncate pe-3 text-body text-label group-data-[state=selected]/selectable:group-focus-within/list:text-on-selection"
+            >
+              {node.label}
+              {busy && <span className="sr-only">, {labels.loading}</span>}
+            </span>
+          </>
+        )
+        return (
+          <div
+            key={node.id}
+            ref={(element) => {
+              if (element) rows.current.set(node.id, element)
+              else rows.current.delete(node.id)
+            }}
+            role={isGrid ? "row" : "treeitem"}
+            aria-level={level}
+            aria-setsize={setSize}
+            aria-posinset={posInSet}
+            aria-expanded={folder ? open : undefined}
+            aria-selected={isSelected}
+            aria-disabled={node.disabled || undefined}
+            aria-busy={busy || undefined}
+            tabIndex={isTabStop && activeCell == null ? 0 : -1}
+            data-state={isSelected ? "selected" : undefined}
+            style={{ "--tree-depth": level - 1 } as React.CSSProperties}
+            onFocus={(event) => {
+              // En el treegrid, el foco de una celda sube hasta acá: esa la anota la celda.
+              if (event.target !== event.currentTarget) return
+              setFocused(node.id)
+              setCell(null)
+            }}
+            onClick={(event) => onRowClick(event, node)}
+            onDoubleClick={() => !node.disabled && onOpen?.(node)}
+            className={cn(
+              "group/selectable relative h-[41px] shrink-0 cursor-default items-center rounded-item text-callout text-label-secondary outline-none select-none",
+              // El separador interior, desde el nombre; no va arriba de la primera, ni al lado de la
+              // fila con el puntero o la elegida, como en Drive.
+              "before:pointer-events-none before:absolute before:end-0 before:top-0 before:start-[calc(64px+var(--tree-depth)*20px)] before:h-px before:bg-separator",
+              "first:before:hidden hover:before:hidden data-[state=selected]:before:hidden [[role=treeitem]:hover+&]:before:hidden [[role=row]:hover+&]:before:hidden [[data-state=selected]+&]:before:hidden",
+              "not-data-[state=selected]:hover:bg-fill-1 data-[state=selected]:bg-selection-inactive",
+              "data-[state=selected]:group-focus-within/list:bg-selection data-[state=selected]:group-focus-within/list:text-on-selection",
+              // Varias elegidas seguidas son un solo bloque, como en el Finder: sin radio donde se tocan.
+              "data-[state=selected]:[[data-state=selected]+&]:rounded-t-none data-[state=selected]:has-[+[data-state=selected]]:rounded-b-none",
+              "focus-visible:focus-ring data-[state=selected]:focus-visible:focus-ring-inverse aria-disabled:opacity-40",
+              hasColumns ? subgrid : "flex"
+            )}
+          >
+            {isGrid ? (
+              <>
+                <div
+                  role="gridcell"
+                  data-slot="tree-cell"
+                  tabIndex={cellTab(0)}
+                  onFocus={() => {
+                    setFocused(node.id)
+                    setCell(0)
+                  }}
+                  className={cn("flex h-full min-w-0 items-center", cellClassName)}
+                >
+                  {name}
+                </div>
+                {columns.map((column, index) => (
                   <div
+                    key={index}
                     role="gridcell"
                     data-slot="tree-cell"
-                    tabIndex={cellTab(0)}
+                    data-column={index}
+                    tabIndex={cellTab(index + 1)}
                     onFocus={() => {
                       setFocused(node.id)
-                      setCell(0)
+                      setCell(index + 1)
                     }}
-                    className={cn("flex h-full min-w-40 flex-1 items-center", cellClassName)}
+                    className={cn(
+                      "flex h-full min-w-0 items-center truncate px-3 whitespace-nowrap inside-selection:text-on-selection",
+                      column.numeric && "justify-end text-right tabular-nums",
+                      cellClassName
+                    )}
+                    style={columnStyle(index)}
                   >
-                    {name}
+                    {node.columns?.[index]}
                   </div>
-                  {columns.map((column, index) => (
-                    <div
-                      key={index}
-                      role="gridcell"
-                      data-slot="tree-cell"
-                      tabIndex={cellTab(index + 1)}
-                      onFocus={() => {
-                        setFocused(node.id)
-                        setCell(index + 1)
-                      }}
-                      className={cn(
-                        "flex h-full shrink-0 items-center truncate px-3 whitespace-nowrap inside-selection:text-on-selection",
-                        column.numeric && "justify-end text-right tabular-nums",
-                        cellClassName
-                      )}
-                      style={colsWidth(column)}
-                    >
-                      {node.columns?.[index]}
-                    </div>
-                  ))}
-                </>
-              ) : (
-                <>
-                  {name}
-                  {columns?.map((column, index) => (
-                    <span
-                      key={index}
-                      className={cn(
-                        "shrink-0 truncate px-3 whitespace-nowrap inside-selection:text-on-selection",
-                        column.numeric && "text-right tabular-nums"
-                      )}
-                      style={colsWidth(column)}
-                    >
-                      {node.columns?.[index]}
-                    </span>
-                  ))}
-                </>
-              )}
-            </div>
-          )
-        })}
-      </div>
+                ))}
+              </>
+            ) : (
+              <>
+                {hasColumns ? <span className="flex h-full min-w-0 items-center">{name}</span> : name}
+                {columns?.map((column, index) => (
+                  <span
+                    key={index}
+                    data-column={index}
+                    className={cn(
+                      "min-w-0 truncate px-3 whitespace-nowrap inside-selection:text-on-selection",
+                      column.numeric && "text-right tabular-nums"
+                    )}
+                    style={columnStyle(index)}
+                  >
+                    {node.columns?.[index]}
+                  </span>
+                ))}
+              </>
+            )}
+          </div>
+        )
+      })}
+    </div>
+  )
+
+  return (
+    <div
+      data-slot="tree-container"
+      className={cn("group/list flex w-full min-w-0 flex-col", hasColumns && "@container overflow-x-auto", className)}
+    >
+      {hasColumns ? (
+        <>
+          <style>{hideRules(treeId, columns)}</style>
+          <div data-slot="tree-grid" data-tree={treeId} className="grid min-w-0" style={{ gridTemplateColumns: template }}>
+            {!isGrid && header}
+            {tree}
+          </div>
+        </>
+      ) : (
+        tree
+      )}
     </div>
   )
 }
