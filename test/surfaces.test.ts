@@ -93,7 +93,7 @@ describe("sin vidrio (2.0)", () => {
           .filter((linea) => !/^\s*(\/\/|\*|\/\*)/.test(linea))
           .join("\n")
         for (const m of codigo.matchAll(/(?<![\w-])(glass[\w-]*|material-(?:bar|popover|modal|group)|sheen|thumb-lens)(?![\w-])/g)) {
-          // La prop `variant="glass"` de Toolbar queda hasta R5: es un nombre, no la utilidad.
+          // `variant="glass"` de Toolbar queda como alias obsoleto de `bar` hasta 3.0: es un nombre, no la utilidad.
           if (file === "toolbar.tsx" && m[1] === "glass") continue
           usos.push(`${file}: ${m[1]}`)
         }

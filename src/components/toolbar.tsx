@@ -25,12 +25,17 @@ import { Button } from "./button.js"
  */
 type ToolbarProps = WithClassName<ToolbarPrimitive.Root.Props> & {
   /**
-   * `glass`: la barra con el fondo de las barras de herramientas de iCloud (`bg-surface-bar`,
-   * opaco desde 2.0: el nombre queda hasta que la Toolbar sea la barra fija de iCloud). `plain`:
-   * sin fondo, para una barra que vive ADENTRO de otra superficie —un `Navbar`, una `Card`, un
-   * `Dialog`—.
+   * `bar` (el default): la toolbar de una app de iCloud (catálogo §2.2) —a todo el ancho, 44 de alto,
+   * `surface-bar` y el separador abajo, sin radio—. Los botones de ícono de 28 van con el glifo en el
+   * acento y un cuadrado gris al pasar el puntero (`Button plain icon-sm`, el default de
+   * `ToolbarButton`).
+   *
+   * `plain`: sin fondo ni borde, para una barra que vive ADENTRO de otra superficie —un `Navbar`, una
+   * `Card`, un `Dialog`—.
+   *
+   * `glass`: **obsoleta**, alias de `bar` (el nombre venía del vidrio de 1.x). Se borra en 3.0.
    */
-  variant?: "glass" | "plain"
+  variant?: "bar" | "plain" | "glass"
 }
 
 /**
@@ -48,7 +53,8 @@ function rovingItems(root: HTMLElement) {
   return Array.from(root.querySelectorAll<HTMLElement>("[tabindex]")).filter((item) => item.checkVisibility?.() !== false)
 }
 
-function Toolbar({ className, onKeyDown, variant = "glass", ...props }: ToolbarProps) {
+function Toolbar({ className, onKeyDown, variant: variantProp = "bar", ...props }: ToolbarProps) {
+  const variant = variantProp === "glass" ? "bar" : variantProp
   return (
     <ToolbarPrimitive.Root
       data-slot="toolbar"
@@ -71,15 +77,16 @@ function Toolbar({ className, onKeyDown, variant = "glass", ...props }: ToolbarP
         target.focus()
       }}
       className={cn(
-        // `rounded-menu` (12) con `p-1`: los controles de adentro miden `rounded-control` (8) y
-        // 8 + 4 = 12, concéntrico. `relative` ancla lo que la app posicione adentro.
-        "relative flex items-center gap-1 rounded-menu p-1 text-label",
+        // 6 px entre controles, como la toolbar de iCloud. `relative` ancla lo que la app posicione adentro.
+        "relative flex items-center gap-1.5 text-label",
         // Con el dedo, 20 px entre controles: un botón de 28 + 20 = 48 entre centros, y las áreas
-        // de 44 de `touch-target` no se pisan. Con 4 px el toque caía en el vecino.
+        // de 44 de `touch-target` no se pisan. Con 6 px el toque caía en el vecino.
         "pointer-coarse:gap-5",
-        variant === "glass" && "bg-surface-bar",
-        "data-[orientation=vertical]:rounded-surface",
+        // La barra fija de iCloud: 44 con el borde adentro, sin radio ni cápsula.
+        variant === "bar" && "min-h-11 w-full border-b border-separator bg-surface-bar px-2.5",
         "data-[orientation=vertical]:w-fit data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-stretch",
+        variant === "bar" &&
+          "data-[orientation=vertical]:min-h-0 data-[orientation=vertical]:border-b-0 data-[orientation=vertical]:border-r data-[orientation=vertical]:px-1.5 data-[orientation=vertical]:py-2.5",
         className
       )}
       {...props}

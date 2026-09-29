@@ -124,6 +124,27 @@ describe("Toolbar", () => {
     expect(screen.getByRole("button", { name: "Negrita" })).toHaveClass("pointer-coarse:h-10", "pointer-coarse:min-w-11")
   })
 
+  it("`bar` (default) es la toolbar de iCloud: a todo el ancho, 44, surface-bar y borde abajo, sin cápsula", () => {
+    render(<Toolbar aria-label="Acciones" />)
+    const barra = screen.getByRole("toolbar")
+    expect(barra).toHaveAttribute("data-variant", "bar")
+    expect(barra).toHaveClass("w-full", "min-h-11", "bg-surface-bar", "border-b", "border-separator", "px-2.5", "gap-1.5")
+    expect(barra.className).not.toMatch(/(^|\s)(rounded-menu|rounded-surface|p-1)(\s|$)/)
+  })
+
+  it("`glass` (obsoleta) es un alias de `bar`", () => {
+    render(<Toolbar aria-label="Acciones" variant="glass" />)
+    const barra = screen.getByRole("toolbar")
+    expect(barra).toHaveAttribute("data-variant", "bar")
+    expect(barra).toHaveClass("bg-surface-bar", "border-b")
+  })
+
+  it("vertical: columna angosta con el borde a la derecha", () => {
+    render(<Toolbar aria-label="Herramientas" orientation="vertical" />)
+    const barra = screen.getByRole("toolbar")
+    expect(barra).toHaveClass("data-[orientation=vertical]:w-fit", "data-[orientation=vertical]:border-b-0", "data-[orientation=vertical]:border-r")
+  })
+
   it("`plain` no lleva material: es la barra que vive adentro de otra superficie", () => {
     const { rerender } = render(<Toolbar aria-label="Búsqueda" />)
     expect(screen.getByRole("toolbar")).toHaveClass("bg-surface-bar")
@@ -133,6 +154,7 @@ describe("Toolbar", () => {
     // es vidrio sobre la superficie que la contiene.
     expect(barra.className).not.toMatch(/\bbg-surface/)
     expect(barra).not.toHaveClass("shadow-card")
+    expect(barra).not.toHaveClass("border-b")
     expect(barra).toHaveAttribute("data-variant", "plain")
   })
 
