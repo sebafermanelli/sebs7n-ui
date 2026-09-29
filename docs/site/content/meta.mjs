@@ -1847,6 +1847,50 @@ export const COMPONENTS = {
     },
     related: ["list-row", "app-shell", "sidebar"],
   },
+  resizable: {
+    title: "Resizable",
+    group: "navegacion",
+    description: "Paneles que se reparten el espacio y se redimensionan arrastrando la línea entre paneles de Mail, que se vuelve acento al agarrarla; con teclado, mínimos, máximos y el reparto para guardar.",
+    keyboard: [
+      ["Tab", "Enfoca el separador (la línea pasa a la banda de foco de 3 px)."],
+      ["← → (lado a lado) · ↑ ↓ (apilados)", "Mueven la línea de a `keyboardStep` (5 %); con Shift, el doble. En RTL, ← agranda el panel de antes."],
+      ["Home / End", "Llevan el panel de antes a su mínimo o a su máximo."],
+    ],
+    a11y: [
+      "Cada `ResizableHandle` es el «window splitter» de WAI-ARIA: `role=\"separator\"` tabulable con `aria-orientation`, `aria-valuenow` (el tamaño del panel de antes, en %), `aria-valuemin`/`aria-valuemax` (los reales, sin romper al vecino) y `aria-controls` al panel que mueve.",
+      "**Nombralo por lo que cambia**: «Ancho de la lista» (`aria-label`). Sin él dice «Cambiar el tamaño», que con dos separadores no alcanza.",
+      "La manija (`withHandle`) es decorativa. El área para agarrar la línea mide 12 px (24 con el dedo) aunque la línea mida 1.",
+    ],
+    usage: [
+      "**Para que la persona decida cuánto lugar le da a cada parte**: una lista y su vista previa, un editor y su resultado. Si los anchos fijos alcanzan, `SplitView` sin redimensionar, como Mail.",
+      "Los tamaños son **porcentajes del grupo**: `defaultSize`, `minSize`, `maxSize` por panel. Los que no traen `defaultSize` se reparten el resto.",
+      "**Para recordar el reparto**: guardá lo que llega en `onLayout` (al soltar o con cada tecla) y devolvelo en `defaultLayout`.",
+      "El grupo toma el alto de su contenedor (`h-full`): ponele un alto al de afuera. Cada panel scrollea por su cuenta.",
+      "`SplitView resizable` usa la misma línea en px para el sidebar y la lista.",
+      "Solo por subpath (`sebs7n-ui/resizable`): no está en el barrel, por peso.",
+    ],
+    props: {
+      ResizablePanelGroup: {
+        orientation: "`horizontal` (default, lado a lado) o `vertical` (apilados).",
+        onLayout: "Se llama con los tamaños (en %, en el orden de los paneles) al soltar o con cada tecla.",
+        defaultLayout: "Los tamaños al arrancar (lo guardado con `onLayout`). Le gana al `defaultSize` de cada panel.",
+        keyboardStep: "Cuánto mueve una flecha, en %. Shift, el doble. Por defecto, 5.",
+      },
+      ResizablePanel: {
+        defaultSize: "El tamaño al arrancar, en %. Sin él, reparte el resto.",
+        minSize: "El mínimo, en %. Por defecto, 0.",
+        maxSize: "El máximo, en %. Por defecto, 100.",
+        id: "El `id` del panel (el `aria-controls` del separador). Por defecto, uno generado.",
+        style: "Se suma al `flex` que pone el reparto; no pises `flex-grow`.",
+      },
+      ResizableHandle: {
+        withHandle: "Una manija visible en el medio de la línea.",
+        onKeyDown: "Se llama antes de mover. Con `event.preventDefault()`, la tecla no mueve.",
+        onPointerDown: "Se llama antes de empezar a arrastrar. Con `event.preventDefault()`, no arrastra.",
+      },
+    },
+    related: ["split-view", "app-shell"],
+  },
   "app-shell": {
     title: "AppShell",
     group: "navegacion",

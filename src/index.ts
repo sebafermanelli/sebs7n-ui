@@ -184,3 +184,4 @@ export * from "./components/widget-card.js"
 //   `input-group`     sebs7n-ui/input-group
 //   `multi-select`    sebs7n-ui/multi-select
 //   `timeline`        sebs7n-ui/timeline
+//   `resizable`       sebs7n-ui/resizable

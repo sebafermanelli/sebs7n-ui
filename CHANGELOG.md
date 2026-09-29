@@ -582,6 +582,13 @@ las fases R2–R5 rehacen diálogos, menús, controles y listas con las medidas 
   (`<ol>`), `TimelineGroup` (cabecera del día 19/600 que nombra su lista) y `TimelineItem` (punto de 8
   de la paleta de `Badge` o ícono de 24, título 17, detalle 14 gris, `<time>` a la derecha, `actions`),
   unidos por una línea de 1 px. Sin `"use client"`.
+- **`Resizable`** (`sebs7n-ui/resizable`, **solo por subpath**), paneles que se redimensionan (R6):
+  `ResizablePanelGroup` (`orientation`, `onLayout` para guardar, `defaultLayout` para restaurar,
+  `keyboardStep`), `ResizablePanel` (`defaultSize`, `minSize`, `maxSize` en %) y `ResizableHandle`
+  (la línea `separator-strong` que pasa al acento; `withHandle`). Separador de WAI-ARIA: tabulable,
+  `aria-valuenow/min/max` reales, `aria-controls`, flechas de a 5 % (Shift el doble, RTL invertido),
+  Home/End, arrastre con captura del puntero. El HTML del servidor ya sale repartido. Labels
+  `resizable: { handle }`.
 - La tabla de subpaths del README dice qué componentes no están en el barrel (la lee de `src/index.ts`).
 - El variant `inside-selection` también mira las listas de filas (`group/list`: `List`, `Tree`,
   `FileGrid`), no solo la `Table`.

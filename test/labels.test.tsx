@@ -201,6 +201,7 @@ describe("LabelsProvider", () => {
       "multiSelect",
       "numberField",
       "pageHeader",
+      "resizable",
       "sheet",
       "sidebar",
       "stepper",

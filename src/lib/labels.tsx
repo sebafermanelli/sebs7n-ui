@@ -219,6 +219,10 @@ export type Labels = {
     /** Nombre del `<nav>` de las migas del encabezado. */
     breadcrumb: string
   }
+  resizable: {
+    /** El nombre de un separador sin `aria-label`. Mejor uno propio: «Ancho de la lista». */
+    handle: string
+  }
   sheet: { close: string }
   sidebar: {
     /** Nombre del `<nav>` del sidebar. */
@@ -344,6 +348,7 @@ export const defaultLabels: Labels = {
     roleDescription: "Campo numérico",
   },
   pageHeader: { breadcrumb: "Migas de pan" },
+  resizable: { handle: "Cambiar el tamaño" },
   sheet: { close: "Cerrar" },
   sidebar: {
     nav: "Navegación principal",
