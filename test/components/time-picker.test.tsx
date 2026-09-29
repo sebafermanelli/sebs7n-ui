@@ -74,6 +74,21 @@ describe("TimePicker", () => {
     expect(await screen.findByRole("option", { name: "08:15" })).toHaveAttribute("aria-selected", "true")
   })
 
+  it("al abrir, la lista arranca en la hora elegida y no en las 00:00", async () => {
+    const user = userEvent.setup()
+    // jsdom no tiene layout: cada opción mide 30 px y va una abajo de la otra, en el orden del día.
+    vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockImplementation(function (this: HTMLElement) {
+      const text = this.getAttribute("role") === "option" ? (this.textContent ?? "") : ""
+      const top = /^\d\d:\d\d/.test(text) ? (Number(text.slice(0, 2)) * 4 + Number(text.slice(3, 5)) / 15) * 30 : 0
+      return { top, bottom: top + 30, left: 0, right: 0, width: 0, height: 30, x: 0, y: top, toJSON: () => ({}) } as DOMRect
+    })
+    render(<TimePicker aria-label="Hora de envío" defaultValue="09:30" />)
+    await user.click(field())
+    const list = await screen.findByRole("listbox")
+    // 09:30 es la opción 38: queda arriba de todo en la lista (sin alto, no hay mitad que centrar).
+    expect(list.scrollTop).toBe(38 * 30)
+  })
+
   it("tipear filtra la lista y al salir se escribe como HH:MM", async () => {
     const user = userEvent.setup()
     const onValueChange = vi.fn()

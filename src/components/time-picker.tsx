@@ -80,6 +80,14 @@ function TimePicker({
     setDraft(value ?? "")
   }
   const highlighted = React.useRef<string | undefined>(undefined)
+  // Al abrir, la lista arranca en la hora elegida (centrada) y no en las 00:00. Ref estable: corre
+  // cuando la opción elegida se monta (al abrir o al cambiar de hora), no en cada render.
+  const revealSelected = React.useCallback((node: HTMLElement | null) => {
+    const list = node?.closest<HTMLElement>("[data-slot=combobox-list]")
+    if (!node || !list) return
+    const offset = node.getBoundingClientRect().top - list.getBoundingClientRect().top + list.scrollTop
+    list.scrollTop = Math.max(0, offset - (list.clientHeight - node.offsetHeight) / 2)
+  }, [])
 
   const slots = React.useMemo(() => timeSlots(step, min, max), [step, min, max])
   // Con la hora elegida en el campo se ven todas; mientras se tipea, las que empiezan igual.
@@ -152,7 +160,7 @@ function TimePicker({
         <AutocompleteContent>
           <AutocompleteList className="max-h-64 overflow-y-auto">
             {(slot: string) => (
-              <AutocompleteItem key={slot} aria-selected={slot === value} className={cn("tabular-nums", menuGutterClassName)} value={slot}>
+              <AutocompleteItem key={slot} ref={slot === value ? revealSelected : undefined} aria-selected={slot === value} className={cn("tabular-nums", menuGutterClassName)} value={slot}>
                 {slot}
                 {slot === value && (
                   <span data-slot="time-picker-indicator" className={menuIndicatorClassName}>
