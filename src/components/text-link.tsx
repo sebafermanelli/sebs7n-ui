@@ -45,6 +45,9 @@ function TextLink({
 }: TextLinkProps) {
   const external = trailing === "external"
   const Icono = external ? ArrowUpRightIcon : ChevronRightIcon
+  // El aviso solo si de verdad abre otra pestaña: con `target="_self"` el ↗ sigue diciendo «sale
+  // del sitio», pero «se abre en otra pestaña» sería mentira.
+  const pestanaNueva = external && (props.target ?? "_blank") === "_blank"
   return renderElement(render, "a", {
     "data-slot": "text-link",
     ...(external ? { target: "_blank", rel: "noopener noreferrer" } : {}),
@@ -57,7 +60,7 @@ function TextLink({
           <span data-slot="text-link-trailing" className="whitespace-nowrap">
             {" "}
             <Icono aria-hidden="true" className={cn("inline size-3 align-baseline", external ? "stroke-[2.5]" : "stroke-3")} />
-            {external && <span className="sr-only"> {externalLabel}</span>}
+            {pestanaNueva && <span className="sr-only"> {externalLabel}</span>}
           </span>
         )}
       </>

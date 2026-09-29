@@ -41,15 +41,29 @@ describe("TextLink", () => {
     expect(link.querySelector("[data-slot=text-link-trailing] svg")).toHaveAttribute("aria-hidden", "true")
   })
 
-  it("external respeta target, rel y el texto del aviso que pone la app", () => {
+  it("external respeta rel y el texto del aviso que pone la app", () => {
     render(
-      <TextLink href="https://example.com" trailing="external" target="_self" rel="nofollow" externalLabel="(opens in a new tab)">
+      <TextLink href="https://example.com" trailing="external" rel="nofollow" externalLabel="(opens in a new tab)">
         example.com
       </TextLink>
     )
     const link = screen.getByRole("link", { name: /^example\.com\s*\(opens in a new tab\)$/ })
-    expect(link).toHaveAttribute("target", "_self")
+    expect(link).toHaveAttribute("target", "_blank")
     expect(link).toHaveAttribute("rel", "nofollow")
+  })
+
+  // Revisión de R4 (M4): el aviso dice «se abre en otra pestaña»; si la app lo abre en la misma
+  // (target="_self"), el ↗ sigue diciendo «sale del sitio» pero el aviso sería mentira.
+  it("external con otro target: el ↗ queda y el aviso de pestaña nueva no", () => {
+    render(
+      <TextLink href="https://example.com" trailing="external" target="_self">
+        example.com
+      </TextLink>
+    )
+    const link = screen.getByRole("link", { name: "example.com" })
+    expect(link).toHaveAttribute("target", "_self")
+    expect(link.querySelector(".sr-only")).toBeNull()
+    expect(link.querySelector("[data-slot=text-link-trailing] svg")).not.toBeNull()
   })
 
   it("render: el <a> lo pone la app (next/link) y conserva el adorno", () => {
