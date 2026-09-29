@@ -759,6 +759,27 @@
 }
 
 /**
+ * La luz ambiente: el wallpaper opcional (2.0). En iCloud solo Home tiene wallpaper, y sobre él
+ * van la barra global y los widgets con `material-translucent`; adentro de una app la página es
+ * lisa. Por eso es opt-in (`AppShell ambient`), no el default.
+ *
+ * Son tres `radial-gradient` y no tres `div` con `filter: blur()`: el degradé lo resuelve el
+ * rasterizador una vez, y un blur de 90px sobre media pantalla se repinta en cada scroll.
+ * `fixed` para que la luz quede quieta y sea el contenido el que pasa por delante.
+ *
+ * El alfa se calcula acá, en el elemento, y no en los tokens de `:root`: por lo mismo que en
+ * una variable de `:root`, así `--ambient` responde donde la app lo pise.
+ */
+@utility bg-ambient {
+  background-color: var(--color-background);
+  background-image:
+    radial-gradient(60vmax 60vmax at 0% 0%, oklch(from var(--sf-ambient-1) l c h / calc(0.55 * var(--ambient) * var(--sf-ambient-gain))), transparent 70%),
+    radial-gradient(50vmax 50vmax at 100% 30%, oklch(from var(--sf-ambient-2) l c h / calc(0.5 * var(--ambient) * var(--sf-ambient-gain))), transparent 70%),
+    radial-gradient(55vmax 55vmax at 40% 110%, oklch(from var(--sf-ambient-3) l c h / calc(0.5 * var(--ambient) * var(--sf-ambient-gain))), transparent 70%);
+  background-attachment: fixed;
+}
+
+/**
  * El Skeleton (R5a): gris parejo con un brillo sutil que cruza de izquierda a derecha, lento y
  * continuo (pedido de Sebastián: el pulso de 1.x «late» y el cambio de color era brusco).
  *

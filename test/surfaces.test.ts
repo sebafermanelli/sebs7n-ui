@@ -139,6 +139,14 @@ describe("material-translucent: el único con blur", () => {
     expect(bloqueUtil).toMatch(/@media \(prefers-reduced-transparency: reduce\), \(prefers-contrast: more\) \{\s*background-color: var\(--sf-surface-header\);\s*-webkit-backdrop-filter: none;\s*backdrop-filter: none;/)
   })
 
+  // `AppShell ambient` pone `bg-ambient` y todo lo translúcido cuelga de eso. La utilidad se fue sin
+  // querer en el commit del Skeleton (R5a) y nada lo marcó: la clase que no existe no falla.
+  it("existe el wallpaper (bg-ambient) sobre el que va", () => {
+    expect(theme).toMatch(/@utility bg-ambient \{/)
+    expect(utility("bg-ambient")).toContain("radial-gradient")
+    expect(utility("bg-ambient")).toContain("background-attachment: fixed")
+  })
+
   it("lo usa la barra del Navbar sobre el wallpaper", () => {
     expect(read("../src/components/navbar.tsx")).toContain("in-data-ambient:material-translucent")
   })
