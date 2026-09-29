@@ -65,7 +65,7 @@ Ningún componente saca el anillo de foco sin reemplazarlo. `focus-visible:focus
 
 Los popups que pueden recibir el foco ellos mismos —Popover, HoverCard y NavigationMenu cuando no tienen nada tabulable adentro, y el panel de `Tabs`— también lo muestran. Es el caso que más fácil se cuela: el foco existe, el teclado funciona, y en la pantalla no se ve nada.
 
-El borde del campo enfocado es `brand-700` y llega a 3:1 en los dos temas. El halo de 4px que lo acompaña es énfasis, no el indicador, y **aparece solo si se llegó con el teclado**. Un `<input>` de texto cumple `:focus-visible` también con el clic —el navegador asume que lo que sigue es tipear—, así que con CSS no se distingue: el paquete anota en `<html data-sf-modality>` si lo último fue Tab o el puntero. Sin JavaScript, o antes de hidratar, el atributo no existe y el halo se ve: el default es el accesible.
+El campo enfocado lleva el anillo interior de 3 px del foco (`focus-border`), el mismo de la búsqueda de iCloud, y llega a 3:1 en los dos temas contra la página, las barras y el relleno del campo. **Se ve con el puntero y con el teclado**: en un campo el anillo dice dónde se escribe, no es un énfasis para quien tabula. Hasta 1.x el paquete anotaba en `<html data-sf-modality>` si lo último fue Tab o el puntero; desde 2.0 nada lo lee y ya no se escribe.
 
 ### Objetivos táctiles
 

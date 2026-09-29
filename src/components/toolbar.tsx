@@ -2,7 +2,6 @@
 
 import { Toolbar as ToolbarPrimitive } from "@base-ui/react/toolbar"
 
-import { useModality } from "../internal/modality.js"
 import { cn, type WithClassName } from "../lib/utils.js"
 import { inputControlClassName, inputDisabledClassName } from "../variants/input.js"
 import { Button } from "./button.js"
@@ -213,7 +212,6 @@ function ToolbarLink({ className, ...props }: ToolbarLinkProps) {
 type ToolbarInputProps = WithClassName<ToolbarPrimitive.Input.Props>
 
 function ToolbarInput({ className, ...props }: ToolbarInputProps) {
-  useModality()
   return (
     <ToolbarPrimitive.Input
       data-slot="toolbar-input"

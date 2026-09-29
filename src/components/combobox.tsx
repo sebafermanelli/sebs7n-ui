@@ -7,7 +7,6 @@ import { CheckIcon, ChevronsUpDownIcon, Loader2Icon, XIcon } from "lucide-react"
 import { nombreDeQuitar } from "../internal/remove-label.js"
 import { renderShellTrigger } from "../internal/shell-trigger.js"
 import { useLabels } from "../lib/labels.js"
-import { useModality } from "../internal/modality.js"
 import { cn, type WithClassName } from "../lib/utils.js"
 import { inputMultilineRadiusClassName, inputShellButtonClassName, inputShellClassName, inputShellInputClassName } from "../variants/input.js"
 import { menuGutterClassName, menuIndicatorClassName, menuItemClassName, menuLabelClassName, menuPopupClassName, menuSeparatorClassName } from "../variants/menu.js"
@@ -44,7 +43,6 @@ function ComboboxInput({
   disabled,
   ...props
 }: ComboboxInputProps) {
-  useModality()
   // El provider gana sobre el español; la prop `labels` gana sobre el provider, porque es la
   // excepción de una pantalla («Ver ciudades») y no una traducción.
   const l = useLabels().combobox
@@ -197,7 +195,6 @@ const ChipSizeContext = React.createContext<TagSize>("md")
 
 // Selección múltiple: superficie de Input que crece con los chips.
 function ComboboxChips({ className, size = "md", showTrigger = true, showClear = false, disabled, labels, ...props }: ComboboxChipsProps) {
-  useModality()
   const l = useLabels().combobox
   return (
     <ComboboxPrimitive.InputGroup

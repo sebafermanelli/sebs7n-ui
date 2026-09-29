@@ -3,7 +3,6 @@
 import type * as React from "react"
 import { Field as FieldPrimitive } from "@base-ui/react/field"
 
-import { useModality } from "../internal/modality.js"
 import { cn } from "../lib/utils.js"
 import { inputControlClassName, inputDisabledClassName, inputInvalidClassName, inputMultilineRadiusClassName } from "../variants/input.js"
 
@@ -21,7 +20,6 @@ import { inputControlClassName, inputDisabledClassName, inputInvalidClassName, i
 type TextareaProps = React.ComponentProps<"textarea">
 
 function Textarea({ className, ...props }: TextareaProps) {
-  useModality()
   return (
     <FieldPrimitive.Control
       data-slot="textarea"

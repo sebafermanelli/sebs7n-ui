@@ -3,7 +3,6 @@
 import * as React from "react"
 import { ArrowUpIcon, RotateCwIcon, SquareIcon } from "lucide-react"
 
-import { useModality } from "../internal/modality.js"
 import { useLabels, type Labels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
 import { inputControlClassName, inputDisabledClassName, inputMultilineRadiusClassName } from "../variants/input.js"
@@ -339,7 +338,6 @@ function ChatInput({
   labels: labelsProp,
   ...props
 }: ChatInputProps) {
-  useModality()
   const busy = useBusy(busyProp)
   const labels = { ...useLabels().chat, ...labelsProp }
   const id = React.useId()

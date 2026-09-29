@@ -6,7 +6,6 @@ import { ChevronDownIcon, XIcon } from "lucide-react"
 
 import { renderShellTrigger } from "../internal/shell-trigger.js"
 import { useLabels } from "../lib/labels.js"
-import { useModality } from "../internal/modality.js"
 import { cn, type WithClassName } from "../lib/utils.js"
 import { inputShellButtonClassName, inputShellClassName, inputShellInputClassName } from "../variants/input.js"
 import { menuItemClassName, menuLabelClassName, menuSeparatorClassName } from "../variants/menu.js"
@@ -51,7 +50,6 @@ function AutocompleteInput({
   disabled,
   ...props
 }: AutocompleteInputProps) {
-  useModality()
   // El provider gana sobre el español; la prop `labels` gana sobre el provider, porque es la
   // excepción de una pantalla y no una traducción.
   const l = useLabels().autocomplete

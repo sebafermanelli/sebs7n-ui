@@ -1,7 +1,7 @@
-import { readFileSync } from "node:fs"
+import { existsSync, readFileSync } from "node:fs"
 import { join } from "node:path"
 import { fireEvent, render, screen } from "@testing-library/react"
-import { afterEach, describe, expect, it } from "vitest"
+import { describe, expect, it } from "vitest"
 
 import { AppShell } from "../../src/components/app-shell"
 import { Input } from "../../src/components/input"
@@ -10,36 +10,23 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../src/components/t
 
 const theme = readFileSync(join(import.meta.dirname, "../../src/styles/theme.css"), "utf8")
 
-afterEach(() => {
-  delete document.documentElement.dataset.sfModality
-})
-
-// Un `<input>` de texto cumple `:focus-visible` también con el clic, así que el halo de 4px
-// aparecía cada vez que se tocaba un campo. El paquete anota cómo llegó el foco y la utilidad
-// `focus-border` guarda el halo para el teclado.
-describe("el halo de foco de un campo es del teclado", () => {
-  it("sin ninguna interacción no hay atributo: el default es el halo visible", () => {
+// Revisión de R1: desde 2.0 el anillo interior de un campo es el indicador y se ve también con el
+// puntero, así que nada lee `data-sf-modality`. El módulo que lo escribía (`internal/modality.ts`)
+// era código muerto de 1.x y se fue.
+describe("el foco de un campo no depende de la modalidad", () => {
+  it("un clic no escribe data-sf-modality", () => {
     render(<Input aria-label="Nombre" />)
+    fireEvent.pointerDown(screen.getByRole("textbox"))
+    fireEvent.keyDown(document.body, { key: "Tab" })
     expect(document.documentElement).not.toHaveAttribute("data-sf-modality")
   })
 
-  it("un puntero lo marca como pointer, y Tab lo devuelve a keyboard", () => {
-    render(<Input aria-label="Nombre" />)
-    fireEvent.pointerDown(screen.getByRole("textbox"))
-    expect(document.documentElement).toHaveAttribute("data-sf-modality", "pointer")
-    fireEvent.keyDown(document.body, { key: "Tab" })
-    expect(document.documentElement).toHaveAttribute("data-sf-modality", "keyboard")
-  })
-
-  it("tipear no cambia la modalidad: quien hizo clic y escribe sigue sin halo", () => {
-    render(<Input aria-label="Nombre" />)
-    fireEvent.pointerDown(screen.getByRole("textbox"))
-    fireEvent.keyDown(screen.getByRole("textbox"), { key: "a" })
-    expect(document.documentElement).toHaveAttribute("data-sf-modality", "pointer")
+  it("ningún componente importa el módulo de modalidad", () => {
+    expect(existsSync(join(import.meta.dirname, "../../src/internal/modality.ts"))).toBe(false)
   })
 
   // Desde 2.0 (iCloud) el anillo interior de un campo es el indicador y se ve también con el
-  // puntero: la modalidad ya no lo decide. El atributo se sigue escribiendo (R4 decide si queda).
+  // puntero: la modalidad ya no lo decide.
   it("focus-border es el anillo interior, con puntero y con teclado", () => {
     for (const name of ["focus-border", "focus-border-error"]) {
       const inicio = theme.indexOf(`@utility ${name} {`)
@@ -106,14 +93,3 @@ describe("Tabs: pista segmentada", () => {
   })
 })
 
-// El clic que abre un diálogo pasa antes de que exista el campo de adentro. Si la modalidad se
-// instalara recién al montar el primer campo, ese clic no lo anotaría nadie y el campo se
-// abriría con el halo de teclado para alguien que acaba de usar el mouse.
-describe("la modalidad se anota aunque no haya ningún campo montado", () => {
-  it("un clic en una página sin campos ya cuenta", () => {
-    render(<button type="button">Buscar</button>)
-    expect(document.querySelector("input")).toBeNull()
-    fireEvent.pointerDown(screen.getByRole("button", { name: "Buscar" }))
-    expect(document.documentElement).toHaveAttribute("data-sf-modality", "pointer")
-  })
-})
