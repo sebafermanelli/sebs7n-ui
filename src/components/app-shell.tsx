@@ -7,7 +7,6 @@ import { AppShellContext, SidebarInSheetContext, type AppShellContextValue } fro
 import { useLabels, type Labels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
 import { Button } from "./button.js"
-import { Navbar } from "./navbar.js"
 
 /**
  * Los textos viven una sola vez, en `sebs7n-ui/labels`. Acá queda el alias para
@@ -31,18 +30,23 @@ type AppShellProps = Omit<React.ComponentProps<"div">, "children"> & {
    */
   ambient?: boolean
   /**
-   * `floating` (el default): la barra del teléfono es el `Navbar` flotante —transparente arriba,
-   * con fondo al scrollear— y el `Sidebar` va despegado, en su propio panel.
-   * `bar`: las dos a ras de la ventana, como antes de 1.10. El `Sidebar` se elige con su propia
-   * prop `variant`; esta decide la barra.
+   * La barra global de iCloud (catálogo §2.1), a todo el ancho arriba del sidebar y del contenido
+   * (≥ lg): 44 px, `surface-header`, el borde entre paneles abajo y `0 6px 0 16px`. Adentro va lo que
+   * la app quiera —marca, búsqueda, botones de ícono de 36, avatar de 28—. En el teléfono manda
+   * `mobileBar`. Sobre el wallpaper (`ambient`) pasa a `material-translucent`.
    */
-  variant?: "floating" | "bar"
+  header?: React.ReactNode
+  /**
+   * @deprecated Desde 2.0 el shell es siempre el de iCloud: sidebar a ras y barras opacas. `"bar"` se
+   * acepta y no hace nada; la barra flotante (`"floating"`) se fue. Se borra en 3.0.
+   */
+  variant?: "bar"
   labels?: Partial<AppShellLabels>
   children?: React.ReactNode
 }
 
-// Layout de dashboard estilo Vercel.
-// ≥ lg: [sidebar sticky a todo el alto | main]. < lg: barra de 56px + main a todo el ancho;
+// El layout de una app de iCloud.
+// ≥ lg: [header opcional a todo el ancho] / [sidebar sticky | main]. < lg: barra de 44 + main a todo el ancho;
 // la hamburguesa abre el mismo sidebar en un Sheet izquierdo, que se cierra al navegar.
 // El alto sale de --app-shell-height (100dvh); para embeberlo en una caja, sobreescribilo.
 // Mismo corte que lg de Tailwind (64rem): desde ahí el sidebar está fijo y el Sheet sobra.
@@ -55,7 +59,7 @@ let sheetCargado: SheetModule | null = null
 let sheetPromesa: Promise<SheetModule> | null = null
 const cargarSheet = () => (sheetPromesa ??= import("./sheet.js").then((mod) => (sheetCargado = mod)))
 
-function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido", ambient = false, variant = "floating", labels: labelsProp, children, ...props }: AppShellProps) {
+function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido", ambient = false, header, variant: _variant, labels: labelsProp, children, ...props }: AppShellProps) {
   // El provider gana sobre el español; la prop `labels` gana sobre el provider, porque es la
   // excepción puntual de una pantalla y no una traducción.
   const labels = { ...useLabels().appShell, ...labelsProp }
@@ -89,8 +93,7 @@ function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido
 
   const value = React.useMemo<AppShellContextValue>(() => ({ mobileOpen, setMobileOpen, closeMobile }), [mobileOpen, closeMobile])
 
-  // Lo de la barra del teléfono: la hamburguesa con su Sheet y lo que pase la app. Lo mismo
-  // en las dos variantes; cambia la superficie que lo contiene.
+  // Lo de la barra del teléfono: la hamburguesa con su Sheet y lo que pase la app.
   // El Sheet (el Dialog de Base UI, con su focus trap y el bloqueo de scroll) se pide recién
   // cuando hace falta: en desktop nunca se abre, y en el teléfono recién al tocar la hamburguesa.
   // Importado de entrada pesaba ~13 KB gzip en cada página con AppShell (medido en el sitio de
@@ -182,6 +185,9 @@ function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido
           // La raíz pinta el fondo de página (el shell suele ocupar todo el viewport),
           // así que va con `bg-background`, no con la superficie `bg-surface`.
           "grid min-h-(--app-shell-height) grid-cols-1 bg-background [--app-shell-height:100dvh] lg:grid-cols-[auto_minmax(0,1fr)]",
+          // Lo que mide la barra global: el sidebar se pega debajo de ella y descuenta su alto.
+          // Con barra, la fila de arriba mide lo suyo y la de abajo se estira hasta el alto del shell.
+          header == null ? "[--app-shell-header:0px]" : "[--app-shell-header:2.75rem] lg:grid-rows-[auto_minmax(0,1fr)]",
           // `bg-ambient` pinta el mismo color de página y le suma los focos encima.
           ambient && "bg-ambient",
           className
@@ -194,31 +200,28 @@ function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido
         >
           {labels.skipToContent}
         </a>
-        <div data-slot="app-shell-sidebar" className="sticky top-0 hidden h-(--app-shell-height) lg:flex">
+        {header != null && (
+          <header
+            data-slot="app-shell-header"
+            className="sticky top-0 z-40 hidden h-11 min-w-0 items-center gap-2 border-b border-separator-strong bg-surface-header ps-4 pe-1.5 text-label in-data-ambient:material-translucent lg:col-span-2 lg:flex"
+          >
+            {header}
+          </header>
+        )}
+        <div
+          data-slot="app-shell-sidebar"
+          className="sticky top-(--app-shell-header) hidden h-[calc(var(--app-shell-height)-var(--app-shell-header))] lg:flex"
+        >
           {sidebar}
         </div>
         <div data-slot="app-shell-column" className="flex min-w-0 flex-col">
-          {variant === "floating" ? (
-            // El `Navbar` flotante del paquete: arriba es transparente y al scrollear se vuelve
-            // una píldora. El aire de arriba y de los costados es fijo, no solo al scrollear:
-            // la barra es sticky y ocupa su alto, y si el margen apareciera con el scroll el
-            // contenido saltaría 12px.
-            <Navbar
-              data-slot="app-shell-mobile-bar"
-              variant="floating"
-              className="z-40 px-3 pt-3 lg:hidden"
-              surfaceClassName="max-w-none"
-            >
-              <div className="flex h-14 items-center gap-2 px-4">{barContent}</div>
-            </Navbar>
-          ) : (
-            <header
-              data-slot="app-shell-mobile-bar"
-              className="sticky top-0 z-40 flex h-14 shrink-0 items-center gap-2 border-b border-separator-strong bg-surface-header px-4 lg:hidden"
-            >
-              {barContent}
-            </header>
-          )}
+          {/* La barra de una app de iCloud en el teléfono: 44, opaca y con el borde abajo. */}
+          <header
+            data-slot="app-shell-mobile-bar"
+            className="sticky top-0 z-40 flex h-11 shrink-0 items-center gap-2 border-b border-separator-strong bg-surface-header ps-4 pe-1.5 in-data-ambient:material-translucent lg:hidden"
+          >
+            {barContent}
+          </header>
           <main ref={mainRef} id={mainId} data-slot="app-shell-main" tabIndex={-1} className="min-w-0 flex-1 outline-none">
             {children}
           </main>

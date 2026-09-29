@@ -73,7 +73,8 @@ describe("AppShell", () => {
   it("grilla [sidebar | main]: sidebar sticky a todo el alto solo en desktop, main min-w-0", () => {
     render(<Example />)
     const desktop = document.querySelector("[data-slot=app-shell-sidebar]")!
-    expect(desktop).toHaveClass("hidden", "lg:flex", "sticky", "top-0", "h-(--app-shell-height)")
+    // Sin `header`, la barra global mide 0 y el sidebar va de arriba abajo, pegado al borde.
+    expect(desktop).toHaveClass("hidden", "lg:flex", "sticky", "top-(--app-shell-header)", "h-[calc(var(--app-shell-height)-var(--app-shell-header))]")
     expect(desktop.querySelector("[data-slot=sidebar]")).not.toBeNull()
     const main = screen.getByRole("main")
     expect(main).toHaveClass("min-w-0")
@@ -83,13 +84,37 @@ describe("AppShell", () => {
     expect(screen.getByRole("link", { name: "Ir al contenido" })).toHaveAttribute("href", `#${main.id}`)
   })
 
-  it("barra mobile h-14 con hamburguesa que abre el sidebar en un Sheet izquierdo; navegar lo cierra", async () => {
+  it("header: la barra global de iCloud a todo el ancho arriba del sidebar y el contenido", () => {
+    render(
+      <AppShell header={<span>Marca</span>} sidebar={<Sidebar />}>
+        <p>contenido</p>
+      </AppShell>
+    )
+    const header = document.querySelector("[data-slot=app-shell-header]")!
+    expect(header.tagName).toBe("HEADER")
+    expect(header).toHaveTextContent("Marca")
+    expect(header).toHaveClass("hidden", "lg:flex", "lg:col-span-2", "sticky", "top-0", "h-11", "bg-surface-header", "border-b", "border-separator-strong", "ps-4", "pe-1.5")
+    // Sobre el wallpaper, el material translúcido de la barra de Home.
+    expect(header).toHaveClass("in-data-ambient:material-translucent")
+    expect(document.querySelector("[data-slot=app-shell]")).toHaveClass("[--app-shell-header:2.75rem]")
+  })
+
+  it("variant=bar (obsoleta) no cambia nada y no llega al DOM", () => {
+    render(
+      <AppShell sidebar={<Sidebar />} variant="bar">
+        x
+      </AppShell>
+    )
+    expect(document.querySelector("[data-slot=app-shell]")).not.toHaveAttribute("variant")
+  })
+
+  it("barra mobile de 44 con hamburguesa que abre el sidebar en un Sheet izquierdo; navegar lo cierra", async () => {
     render(<Example />)
-    // Flotante por defecto: el Navbar del paquete, con la fila de 56px adentro.
+    // La barra de una app de iCloud: 44, opaca, con el borde entre paneles abajo. Sin cápsula.
     const bar = document.querySelector("[data-slot=app-shell-mobile-bar]")!
-    expect(bar).toHaveClass("lg:hidden", "pt-3")
-    expect(bar).toHaveAttribute("data-variant", "floating")
-    expect(bar.querySelector(".h-14")).not.toBeNull()
+    expect(bar.tagName).toBe("HEADER")
+    expect(bar).toHaveClass("lg:hidden", "sticky", "top-0", "h-11", "bg-surface-header", "border-b", "border-separator-strong", "in-data-ambient:material-translucent")
+    expect(bar).not.toHaveAttribute("data-variant")
     expect(bar).toHaveTextContent("Acme")
     await userEvent.click(screen.getByRole("button", { name: "Abrir menú" }))
     const sheet = await screen.findByRole("dialog")
