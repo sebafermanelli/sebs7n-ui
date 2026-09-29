@@ -101,6 +101,24 @@ export type Labels = {
     /** Nombre del botón que va al mes siguiente. */
     nextMonth: string
   }
+  calendarView: {
+    /** El botón que vuelve a hoy. */
+    today: string
+    /** Nombre del segmentado de la vista, y sus dos opciones. */
+    view: string
+    month: string
+    week: string
+    previousMonth: string
+    nextMonth: string
+    previousWeek: string
+    nextWeek: string
+    /** La fila de los eventos de todo el día, en la semana. */
+    allDay: string
+    /** Antes de la fecha del lunes, en el nombre de la grilla de la semana: «Semana del 28 de septiembre». */
+    weekOf: string
+    /** Después del número de eventos que no entran en un día del mes: «+2 más». */
+    more: string
+  }
   colorPicker: {
     /** Nombre del panel que se abre, para quien no lo ve. */
     popup: string
@@ -221,6 +239,19 @@ export const defaultLabels: Labels = {
   calendar: {
     previousMonth: "Mes anterior",
     nextMonth: "Mes siguiente",
+  },
+  calendarView: {
+    today: "Hoy",
+    view: "Vista",
+    month: "Mes",
+    week: "Semana",
+    previousMonth: "Mes anterior",
+    nextMonth: "Mes siguiente",
+    previousWeek: "Semana anterior",
+    nextWeek: "Semana siguiente",
+    allDay: "Todo el día",
+    weekOf: "Semana del",
+    more: "más",
   },
   colorPicker: {
     popup: "Selector de color",

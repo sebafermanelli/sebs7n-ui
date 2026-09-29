@@ -536,6 +536,13 @@ las fases R2–R5 rehacen diálogos, menús, controles y listas con las medidas 
   `listbox` con flechas en 2D según el layout real, Home/End, Enter/doble click (`onOpen`), selección que
   sigue al foco; `actions` para el «…» del puntero (el teclado usa un `ContextMenu`). Sin medir en
   iCloud: derivado de la lista de Drive y de Photos.
+- **`CalendarView`** (`sebs7n-ui/calendar-view`, **solo por subpath**), el calendario de iCloud en mes y
+  semana (R5b): cabecera mes 21/600 + año en gris, segmentado Semana/Mes y ‹ Hoy ›; mes con las semanas
+  justas, hoy en círculo de 30 del acento, chips de todo el día de 18 (color al 20 %, tinta 12/600) y
+  eventos con hora (punto 8 + título + hora); semana con fila «Todo el día», horas de 61, bloques con
+  borde izquierdo de 3 repartidos si se pisan y la línea roja de ahora. `role="grid"` con foco
+  itinerante (flechas, Home/End, PageUp/PageDown, Enter → `onDayOpen`), `view`/`date` controlables,
+  `now` inyectable, `hour12`, `onEventClick`. Labels `calendarView`.
 - La tabla de subpaths del README dice qué componentes no están en el barrel (la lee de `src/index.ts`).
 - El variant `inside-selection` también mira las listas de filas (`group/list`: `List`, `Tree`,
   `FileGrid`), no solo la `Table`.
