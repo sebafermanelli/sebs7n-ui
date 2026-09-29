@@ -7,7 +7,7 @@ import { cn } from "../lib/utils.js"
 // `../internal/` y no `./`: el registry de shadcn (`docs/site/scripts/lib/registry.mjs`) lee
 // `./x.js` como un componente de `components/` y reescribe el import a `@/components/ui/x`.
 import { groupClassName, itemClassName, Pastilla, useMounted, useThemeOptions } from "../internal/theme-options.js"
-import { defined } from "./defined.js"
+import { defined } from "../internal/defined.js"
 
 // `ThemeMenuRadio` vivía en `theme-switcher.tsx`, al lado de `ThemeSwitcher`. Ningún bundler
 // descartaba este export aunque nadie lo usara —ni con `sideEffects`, ni sacando el `"use client"`;

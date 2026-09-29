@@ -31,7 +31,7 @@ import { GripVerticalIcon } from "lucide-react"
 import { List, ListRow } from "../components/list-row.js"
 import { useLabels, type Labels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
-import { defined } from "./defined.js"
+import { defined } from "../internal/defined.js"
 
 /**
  * La base de `SortableList` y `SortableGrid`: dnd-kit con la estrategia de lista o de grilla, el
