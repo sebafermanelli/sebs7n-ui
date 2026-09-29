@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react"
+import { fireEvent, render, screen, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { describe, expect, it, vi } from "vitest"
 
@@ -99,6 +99,38 @@ describe("CalendarView · mes", () => {
     render(<CalendarView defaultDate={AHORA} events={EVENTOS} locale="es-AR" now={AHORA} onEventClick={onEventClick} />)
     await userEvent.click(screen.getByText("Reunión con Acme"))
     expect(onEventClick).toHaveBeenCalledWith(expect.objectContaining({ id: "acme" }))
+  })
+})
+
+describe("CalendarView · eventos con el teclado", () => {
+  const DOS: CalendarEvent[] = [
+    { id: "acme", title: "Reunión con Acme", start: new Date(2026, 8, 29, 18, 30), color: "amber" },
+    { id: "ruiz", title: "Llamar a Estudio Ruiz", start: new Date(2026, 8, 29, 19, 30), color: "blue" },
+  ]
+
+  it("F2 entra a los eventos del día; ↓ ↑ los recorren, Enter los abre y Escape vuelve al día", async () => {
+    const onEventClick = vi.fn()
+    const onDayOpen = vi.fn()
+    render(<CalendarView defaultDate={AHORA} events={DOS} locale="es-AR" now={AHORA} onDayOpen={onDayOpen} onEventClick={onEventClick} />)
+    celda(/29 de septiembre/).focus()
+    await userEvent.keyboard("{F2}")
+    expect(screen.getByRole("button", { name: /Reunión con Acme/ })).toHaveFocus()
+    await userEvent.keyboard("{ArrowDown}")
+    expect(screen.getByRole("button", { name: /Estudio Ruiz/ })).toHaveFocus()
+    await userEvent.keyboard("{ArrowUp}{Enter}")
+    expect(onEventClick).toHaveBeenCalledWith(expect.objectContaining({ id: "acme" }))
+    // Adentro de un evento, las flechas no cambian de día ni Enter abre el día.
+    expect(onDayOpen).not.toHaveBeenCalled()
+    expect(celda(/29 de septiembre/)).toHaveAttribute("aria-selected", "true")
+    await userEvent.keyboard("{Escape}")
+    expect(celda(/29 de septiembre/)).toHaveFocus()
+  })
+
+  it("en la semana, un click en un bloque no deja el foco adentro de lo que el lector no ve", () => {
+    render(<CalendarView defaultDate={AHORA} defaultView="week" events={DOS} locale="es-AR" now={AHORA} onEventClick={() => {}} />)
+    const bloque = screen.getByText("Reunión con Acme").closest("[data-slot=calendar-view-event]")!
+    expect(bloque.closest("[aria-hidden=true]")).not.toBeNull()
+    expect(fireEvent.mouseDown(bloque)).toBe(false)
   })
 })
 

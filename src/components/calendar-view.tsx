@@ -182,6 +182,30 @@ function CalendarView({
   }, [view, weekStart.getTime(), showsToday])
 
   const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    // Adentro de un evento (se entra con F2): ↓ ↑ recorren los del día, Escape o F2 vuelven a la
+    // celda, y Enter/Espacio son del botón. Nada de esto cambia de día.
+    const target = event.target as HTMLElement
+    if (target.dataset.slot === "calendar-view-event") {
+      const cell = target.closest<HTMLElement>('[role="gridcell"]')
+      const siblings = [...(cell?.querySelectorAll<HTMLElement>('button[data-slot="calendar-view-event"]') ?? [])]
+      const at = siblings.indexOf(target)
+      if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+        event.preventDefault()
+        siblings[at + (event.key === "ArrowDown" ? 1 : -1)]?.focus()
+      } else if (event.key === "Escape" || event.key === "F2") {
+        event.preventDefault()
+        cell?.focus()
+      }
+      return
+    }
+    if (event.key === "F2") {
+      const first = target.querySelector<HTMLElement>('button[data-slot="calendar-view-event"]')
+      if (first) {
+        event.preventDefault()
+        first.focus()
+      }
+      return
+    }
     const step: Record<string, () => Date> = {
       ArrowRight: () => addDays(date, 1),
       ArrowLeft: () => addDays(date, -1),
@@ -215,7 +239,16 @@ function CalendarView({
       <Tag
         key={item.id}
         data-slot="calendar-view-event"
-        {...(onEventClick ? { type: "button" as const, tabIndex: -1, onClick: () => onEventClick(item) } : {})}
+        {...(onEventClick
+          ? {
+              type: "button" as const,
+              tabIndex: -1,
+              onClick: () => onEventClick(item),
+              // Los bloques de la semana están en la parte que el lector no ve (`aria-hidden`: los
+              // eventos se leen en la fila «Todo el día»): un click no les deja el foco.
+              onMouseDown: variant === "block" ? (event: React.MouseEvent) => event.preventDefault() : undefined,
+            }
+          : {})}
         style={style}
         className={cn(
           "flex min-w-0 text-start text-footnote",
