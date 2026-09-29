@@ -6,6 +6,7 @@ import { describe, expect, it } from "vitest"
 import brands from "../tokens/brands.json"
 import { badgeVariants } from "../src/variants/badge.js"
 import { buttonVariants } from "../src/variants/button.js"
+import { menuItemExternalClassName } from "../src/variants/menu.js"
 import { sliderThumbClassName } from "../src/variants/slider.js"
 import { composite, contrastRatio, flattenAlpha, hexOfOklch, luminanceOfHex, type Oklch } from "../src/lib/contrast.js"
 
@@ -455,6 +456,44 @@ describe("El acento como texto y como glifo, en las cinco marcas (WCAG 1.4.3 y 1
         })
         it(`${theme} · ${marca} · glifo: brand-900 ${b900} sobre ${donde} ${bg} llega a 3:1`, () => {
           expect(ratio(b900, bg)).toBeGreaterThanOrEqual(3)
+        })
+      }
+    }
+  }
+})
+
+// El ítem externo de un menú (revisión de R3): el texto en el acento sobre el panel en reposo y sobre
+// el gris del resaltado (fill-2) y del apretado (fill-3). Con `brand-900` teal y emerald en claro
+// quedaban en 4,0–4,2:1 sobre el resaltado: va en `brand-ink`, como el texto del botón `plain`.
+describe("El ítem externo de un menú: acento sobre el panel y sobre el resaltado (WCAG 1.4.3)", () => {
+  it("menuItemExternalClassName escribe en brand-ink", () => {
+    expect(menuItemExternalClassName.split(" ")).toContain("text-brand-ink")
+    expect(menuItemExternalClassName).not.toMatch(/brand-900/)
+  })
+
+  const css = read("theme.css")
+  const cuerpo = (theme: "light" | "dark") => {
+    const inicio = css.indexOf(theme === "light" ? ":root {" : ".dark {")
+    return css.slice(inicio, css.indexOf("\n  }", inicio))
+  }
+  const paso = (theme: "light" | "dark", n: 900 | 1000, base: number[]) => {
+    const [, l, c] = new RegExp(`--sf-brand-${n}: oklch\\(from var\\(--sf-brand-src\\) ([\\d.]+) calc\\(c \\* ([\\d.]+)\\) h\\);`).exec(cuerpo(theme))!
+    return hexOfOklch([Number(l), base[1]! * Number(c), base[2]!] as unknown as Oklch)
+  }
+  const mezcla = Number(css.match(/--color-brand-ink: color-mix\(in srgb, var\(--sf-brand-900\) (\d+)%/)![1]) / 100
+  for (const [marca, temas] of Object.entries(brands as Record<string, Record<"light" | "dark", { base: number[] }>>)) {
+    for (const theme of ["light", "dark"] as const) {
+      const base = temas[theme].base
+      const tinta = composite(paso(theme, 900, base), mezcla, paso(theme, 1000, base))
+      const panel = paleta[theme]["--sf-surface"]!
+      const fondos = {
+        panel,
+        resaltado: flattenAlpha(paleta[theme]["--sf-fill-2"]!, panel),
+        apretado: flattenAlpha(paleta[theme]["--sf-fill-3"]!, panel),
+      }
+      for (const [estado, fondo] of Object.entries(fondos)) {
+        it(`${theme} · ${marca} · ${estado}: ${tinta} sobre ${fondo} llega a 4.5:1`, () => {
+          expect(ratio(tinta, fondo)).toBeGreaterThanOrEqual(4.5)
         })
       }
     }

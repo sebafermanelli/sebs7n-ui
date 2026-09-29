@@ -46,8 +46,12 @@ export const menuItemDestructiveClassName = "text-red-ink [&>svg:first-child:not
 /**
  * Un ítem que lleva a otro sitio (`external`): el texto en el acento y ↗ al final, como el «Manage
  * Apple Account ↗» del menú de cuenta de iCloud. La flecha es `menuItemExternalIconClassName`.
+ *
+ * El acento es `brand-ink` y no `brand-900`: el texto vive también sobre el resaltado (`fill-2`) y
+ * el apretado (`fill-3`), y ahí `brand-900` no llega a 4,5:1 en claro con todas las marcas (teal y
+ * emerald quedaban en 4,0–4,2). Es la misma regla que el botón `plain` (test/contrast.test.ts).
  */
-export const menuItemExternalClassName = "text-brand-900"
+export const menuItemExternalClassName = "text-brand-ink"
 export const menuItemExternalIconClassName = "ml-auto size-3.5"
 
 /**

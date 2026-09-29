@@ -193,7 +193,7 @@ describe("Menubar", () => {
     )
     await userEvent.click(titulo("Ayuda"))
     const item = await screen.findByRole("menuitem", { name: "Documentación" })
-    expect(item).toHaveClass("text-brand-900")
+    expect(item).toHaveClass("text-brand-ink")
     expect(item.querySelector("svg.lucide-arrow-up-right")).toHaveAttribute("data-slot", "menubar-external-icon")
   })
 

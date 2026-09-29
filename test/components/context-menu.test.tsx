@@ -174,7 +174,7 @@ describe("menú de iCloud (R3)", () => {
     )
     fireEvent.contextMenu(screen.getByText("Archivo"))
     const item = await screen.findByRole("menuitem", { name: "Abrir en el sitio" })
-    expect(item).toHaveClass("text-brand-900")
+    expect(item).toHaveClass("text-brand-ink")
     expect(item.querySelector("svg.lucide-arrow-up-right")).toHaveAttribute("data-slot", "context-menu-external-icon")
     expect(item.querySelector("svg.lucide-arrow-up-right")).toHaveAttribute("aria-hidden", "true")
   })

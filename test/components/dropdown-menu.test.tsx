@@ -309,7 +309,7 @@ describe("menú de macOS (2.0)", () => {
     const ayuda = await screen.findByRole("menuitem", { name: "Centro de ayuda" })
     expect(ayuda.tagName).toBe("A")
     expect(ayuda).toHaveAttribute("data-external")
-    expect(ayuda).toHaveClass("text-brand-900")
+    expect(ayuda).toHaveClass("text-brand-ink")
     const flecha = ayuda.querySelector("svg.lucide-arrow-up-right")!
     expect(flecha).toHaveAttribute("aria-hidden", "true")
     expect(flecha).toHaveClass("ml-auto")
