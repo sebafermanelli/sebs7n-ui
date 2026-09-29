@@ -4,6 +4,7 @@ import { join } from "node:path"
 import { describe, expect, it } from "vitest"
 
 import brands from "../tokens/brands.json"
+import { badgeVariants } from "../src/variants/badge.js"
 import { composite, contrastRatio, flattenAlpha, hexOfOklch, luminanceOfHex, luminanceOfOklch, type Oklch } from "../src/lib/contrast.js"
 
 /**
@@ -106,60 +107,6 @@ describe("Grises de texto sobre los tres fondos (WCAG 1.4.3)", () => {
   }
 })
 
-// El Badge `subtle` es el mismo cuerpo en las nueve paletas: la tinta de la paleta sobre su
-// propio `-700` en alfa, compuesto sobre lo que tenga debajo. Los tres números —cuánto de
-// `-900` lleva la tinta, cuánto tinte lleva el fondo en cada tema— se leen de theme.css: si
-// alguien sube el tinte para que «se note más», el contraste que pierde aparece acá.
-//
-// `-900` solo, que era el texto hasta 0.8, no aguanta un tinte visible: sobre el 12 % da
-// 4,23:1 con el rojo. Por eso existe la tinta.
-describe("Badge subtle: la tinta sobre su tinte (WCAG 1.4.3)", () => {
-  const css = read("theme.css")
-  const mezcla = Number(css.match(/--color-red-ink: color-mix\(in srgb, var\(--sf-red-900\) (\d+)%/)![1]) / 100
-  const marcas = brands as Record<string, Record<string, { base: number[] }>>
-  // Los mismos pasos de la escala de brand que declara theme.css: luminosidad fija y croma relativo.
-  const ESCALA = { light: { 900: [0.535, 0.945], 1000: [0.269, 0.433] }, dark: { 900: [0.717, 0.705], 1000: [0.968, 0.077] } } as const
-
-  it("la tinta de las ocho paletas de color sale de la misma mezcla", () => {
-    for (const color of PALETAS) {
-      if (color === "gray") continue
-      expect(css, color).toContain(`--color-${color}-ink: color-mix(in srgb, var(--sf-${color}-900) ${mezcla * 100}%, var(--sf-${color}-1000));`)
-    }
-  })
-
-  for (const theme of ["light", "dark"] as const) {
-    const inicio = css.indexOf(theme === "light" ? ":root {" : ".dark {")
-    const tinte = Number(css.slice(inicio, css.indexOf("\n  }", inicio)).match(/--sf-tint-fill: (\d+)%/)![1]) / 100
-    for (const [donde, token] of Object.entries(FONDOS)) {
-      const debajo = paleta[theme][token]!
-      for (const color of PALETAS) {
-        if (color === "gray" || color === "brand") continue
-        const tinta = composite(paleta[theme][`--sf-${color}-900`]!, mezcla, paleta[theme][`--sf-${color}-1000`]!)
-        const fondo = composite(paleta[theme][`--sf-${color}-700`]!, tinte, debajo)
-        it(`${theme} · ${color} sobre ${donde}: ${tinta} sobre ${fondo} llega a 4.5:1`, () => {
-          expect(ratio(tinta, fondo)).toBeGreaterThanOrEqual(4.5)
-        })
-      }
-      // `brand` no tenía test: «lo cubre brand-contrast.test.ts» decía el comentario, pero ese
-      // mide el texto sobre `brand-700` sólido, no el Badge. Con `-900` sobre `-100`, el verde
-      // de ejemplo estaba en 4,50:1 clavado.
-      for (const [marca, temas] of Object.entries(marcas)) {
-        const base = temas[theme]!.base
-        const paso = (n: 900 | 1000) => hexOfOklch([ESCALA[theme][n][0], base[1]! * ESCALA[theme][n][1], base[2]!] as unknown as Oklch)
-        const tinta = composite(paso(900), mezcla, paso(1000))
-        const fondo = composite(hexOfOklch(base as unknown as Oklch), tinte, debajo)
-        it(`${theme} · brand ${marca} sobre ${donde}: ${tinta} sobre ${fondo} llega a 4.5:1`, () => {
-          expect(ratio(tinta, fondo)).toBeGreaterThanOrEqual(4.5)
-        })
-      }
-    }
-    it(`${theme} · gray: gray-900 sobre gray-alpha-200 llega a 4.5:1`, () => {
-      const fondo = flattenAlpha(paleta[theme]["--sf-gray-alpha-200"]!, paleta[theme]["--sf-background-100"]!)
-      expect(ratio(paleta[theme]["--sf-gray-900"]!, fondo)).toBeGreaterThanOrEqual(4.5)
-    })
-  }
-})
-
 /**
  * El anillo de foco (`focus-ring`) es `0 0 0 2px background-100, 0 0 0 4px
  * brand-700`: el anillo de marca con un separador del color de la superficie
@@ -183,16 +130,37 @@ describe("Anillo de foco en las cuatro marcas (WCAG 2.4.11)", () => {
   }
 })
 
-// El Badge `solid` gris: el texto es el fondo de la superficie sobre el gris más
-// fuerte de la escala. Es el par que se invierte entre temas, y por eso vale
-// verificarlo aunque sea obvio mirándolo.
-describe("Badge solid gris (WCAG 1.4.3)", () => {
-  for (const theme of ["light", "dark"] as const) {
-    const fg = paleta[theme]["--sf-background-100"]!
-    const bg = paleta[theme]["--sf-gray-1000"]!
-    it(`${theme}: ${fg} sobre ${bg} llega a 4.5:1`, () => {
-      expect(ratio(fg, bg)).toBeGreaterThanOrEqual(4.5)
-    })
+// El Badge y el Tag (2.0) son sólidos, como las etiquetas del Finder: la tinta (blanca o negra
+// al 85 %) sobre el relleno del color, que es el mismo en los dos temas. Relleno y tinta se leen
+// de `badgeVariants`, no de una copia: si alguien pasa el rojo a `-700` «porque es más vivo», el
+// 4,05:1 aparece acá. El brand es el par `brand-700` / `brand-contrast` del botón `accent`, que
+// cubre `brand-contrast.test.ts` en las cuatro marcas.
+//
+// También el hover del botón de quitar del Tag: el velo (`--sf-tag-press`) va del lado contrario
+// a la tinta, y la X es un ícono (3:1), pero se le pide 4,5 porque es lo único que dice «quitar».
+describe("Badge y Tag sólidos: la tinta sobre su relleno (WCAG 1.4.3)", () => {
+  const rgba = (valor: string): [string, number] => {
+    const [r, g, b, a] = valor.split(/[\s/]+/).map(Number)
+    return [`#${[r, g, b].map((c) => c!.toString(16).padStart(2, "0")).join("")}`, a!]
+  }
+  for (const color of PALETAS) {
+    if (color === "brand") continue
+    const clases = badgeVariants({ color })
+    const [, familia, paso] = clases.match(/(?:^|\s)bg-([a-z]+)-(\d+)(?:\s|$)/)!
+    const tintaBlanca = /(?:^|\s)text-white(?:\s|$)/.test(clases)
+    const velo = rgba(clases.match(/\[--sf-tag-press:rgb\(([^)]+)\)\]/)![1]!.replaceAll("_", " "))
+    for (const theme of ["light", "dark"] as const) {
+      const relleno = paleta[theme][`--sf-${familia}-${paso}`]!
+      const tinta = tintaBlanca ? "#ffffff" : composite("#000000", 0.85, relleno)
+      it(`${theme} · ${color}: ${tintaBlanca ? "blanco" : "negro 85 %"} sobre ${familia}-${paso} (${relleno}) llega a 4.5:1`, () => {
+        expect(ratio(tinta, relleno)).toBeGreaterThanOrEqual(4.5)
+      })
+      const hover = composite(velo[0], velo[1], relleno)
+      const tintaHover = tintaBlanca ? "#ffffff" : composite("#000000", 0.85, hover)
+      it(`${theme} · ${color}: la X sobre el hover (${hover}) llega a 4.5:1`, () => {
+        expect(ratio(tintaHover, hover)).toBeGreaterThanOrEqual(4.5)
+      })
+    }
   }
 })
 
@@ -242,8 +210,8 @@ describe("Borde de foco de los campos (WCAG 2.4.11)", () => {
   })
 })
 
-// Los botones `tinted` y `destructive-tinted` (2.0): la tinta sobre el tinte de su color, igual
-// que el Badge, pero con tres estados —reposo, hover y apretado— porque un botón cambia de
+// Los botones `tinted` y `destructive-tinted` (2.0): la tinta sobre el tinte de su color (lo
+// que era el Badge `subtle` hasta la fase 3), pero con tres estados —reposo, hover y apretado— porque un botón cambia de
 // fondo bajo el texto. El apretado es el más oscuro en claro y el más claro en oscuro: es el
 // que decide. Los porcentajes se leen de theme.css, así que subirlos «para que se note» aparece
 // acá. Con `-900` en vez de la tinta no pasaba: 4,23:1 el rojo sobre el 12 % en claro.
@@ -252,6 +220,13 @@ describe("Botones tintados: la tinta sobre el tinte, en los tres estados (WCAG 1
   const mezcla = Number(css.match(/--color-red-ink: color-mix\(in srgb, var\(--sf-red-900\) (\d+)%/)![1]) / 100
   const marcas = brands as Record<string, Record<string, { base: number[] }>>
   const ESCALA = { light: { 900: [0.535, 0.945], 1000: [0.269, 0.433] }, dark: { 900: [0.717, 0.705], 1000: [0.968, 0.077] } } as const
+
+  it("la tinta de las ocho paletas de color sale de la misma mezcla", () => {
+    for (const color of PALETAS) {
+      if (color === "gray") continue
+      expect(css, color).toContain(`--color-${color}-ink: color-mix(in srgb, var(--sf-${color}-900) ${mezcla * 100}%, var(--sf-${color}-1000));`)
+    }
+  })
 
   for (const theme of ["light", "dark"] as const) {
     const inicio = css.indexOf(theme === "light" ? ":root {" : ".dark {")

@@ -67,7 +67,7 @@ describe("Tag", () => {
     expect(screen.getByRole("button", { name: "entfernen" })).toBeInTheDocument()
   })
 
-  it("comparte forma y paleta con el Badge subtle: una sola etiqueta en el sistema", () => {
+  it("comparte forma y paleta con el Badge: sólido, sin borde, radio de etiqueta", () => {
     render(
       <>
         <Tag color="blue">Tag</Tag>
@@ -75,8 +75,30 @@ describe("Tag", () => {
       </>
     )
     const tag = screen.getByText("Tag").closest("[data-slot=tag]")!
-    expect(tag).toHaveClass("bg-blue-700/(--sf-tint-fill)", "text-blue-ink", "border-blue-700/(--sf-tint-border)", "rounded-full", "h-6")
-    expect(screen.getByText("Badge")).toHaveClass("bg-blue-700/(--sf-tint-fill)", "text-blue-ink", "border-blue-700/(--sf-tint-border)", "rounded-full", "h-6")
+    for (const el of [tag, screen.getByText("Badge")]) {
+      expect(el).toHaveClass("bg-blue-800", "text-white", "rounded-tag", "h-6")
+      expect(el.className).not.toMatch(/(^|\s)border(\s|$|-)|sheen|shadow-|--sf-tint/)
+    }
+  })
+
+  // El hover del botón de quitar va del lado contrario a la tinta (oscurece bajo la X blanca,
+  // aclara bajo la negra): con el gris alfa del sistema, en oscuro aclaraba bajo la X blanca.
+  it("el hover del botón de quitar usa el velo de su color, no el gris del sistema", () => {
+    render(
+      <>
+        <Tag color="red" onRemove={() => {}}>
+          Urgente
+        </Tag>
+        <Tag color="amber" onRemove={() => {}}>
+          Pendiente
+        </Tag>
+      </>
+    )
+    expect(screen.getByText("Urgente").closest("[data-slot=tag]")).toHaveClass("[--sf-tag-press:rgb(0_0_0/0.25)]")
+    expect(screen.getByText("Pendiente").closest("[data-slot=tag]")).toHaveClass("[--sf-tag-press:rgb(255_255_255/0.3)]")
+    const quitar = screen.getByRole("button", { name: "Quitar Urgente" })
+    expect(quitar).toHaveClass("hover:bg-(--sf-tag-press)")
+    expect(quitar.className).not.toMatch(/gray-alpha/)
   })
 
   it("no recorta el anillo de foco del botón de quitar", () => {
@@ -115,7 +137,7 @@ describe("Tag", () => {
     render(<Tag className="h-8 rounded-md">React</Tag>)
     const tag = screen.getByText("React").closest("[data-slot=tag]")!
     expect(tag).toHaveClass("h-8", "rounded-md")
-    expect(tag).not.toHaveClass("h-6", "rounded-full")
-    expect(tagVariants({ className: "bg-gray-300" }).split(/\s+/)).not.toContain("bg-gray-alpha-200")
+    expect(tag).not.toHaveClass("h-6", "rounded-tag")
+    expect(tagVariants({ className: "bg-gray-300" }).split(/\s+/)).not.toContain("bg-gray-700")
   })
 })

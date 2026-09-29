@@ -3,7 +3,10 @@
 import { Badge } from "sebs7n-ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "sebs7n-ui/table"
 
-/** Colores */
+/**
+ * Colores
+ * Sólidos y sin borde, como las etiquetas del Finder. La tinta es blanca o negra según el relleno: la que llega a 4,5:1.
+ */
 export function Colores() {
   return (
     <div className="flex flex-wrap items-center gap-2">
@@ -21,16 +24,12 @@ export function Colores() {
 }
 
 /**
- * Sólido y con punto
- * `solid` solo existe en `gray` y `brand`: el resto no llega a 4,5:1.
+ * Con punto
+ * El punto va en la tinta del badge: del color del relleno no se vería.
  */
-export function SolidoYPunto() {
+export function ConPunto() {
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <Badge variant="solid">Admin</Badge>
-      <Badge variant="solid" color="brand">
-        Pro
-      </Badge>
       <Badge dot color="green">
         Activo
       </Badge>

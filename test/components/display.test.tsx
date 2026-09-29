@@ -39,36 +39,58 @@ describe("Toggle (chip)", () => {
 })
 
 describe("Badge", () => {
-  it("subtle por color: vidrio teñido, con la tinta de la paleta y el filo de luz", () => {
+  // 2.0: la etiqueta del Finder. Relleno sólido, sin borde, sin brillo ni vidrio, 4 px de radio.
+  it("sólido por color: relleno lleno, sin borde, sin brillo, radio de etiqueta", () => {
     render(<Badge color="amber">Pendiente</Badge>)
-    expect(screen.getByText("Pendiente")).toHaveClass(
-      "bg-amber-700/(--sf-tint-fill)",
-      "border-amber-700/(--sf-tint-border)",
-      "text-amber-ink",
-      "shadow-chip",
-      "rounded-full",
-      "text-callout",
-      "h-6"
-    )
+    const badge = screen.getByText("Pendiente")
+    expect(badge).toHaveClass("bg-amber-700", "text-black/85", "rounded-tag", "text-callout", "h-6")
+    expect(badge.className).not.toMatch(/(^|\s)border(\s|$|-)|sheen|shadow-|glass|material-|--sf-tint|rounded-full/)
+    expect(badge).toHaveAttribute("data-variant", "solid")
   })
 
-  it("solid gray y brand", () => {
+  it("los nueve colores son sólidos, con tinta blanca o negra según el relleno", () => {
+    const esperado = {
+      gray: ["bg-gray-700", "text-black/85"],
+      brand: ["bg-brand-700", "text-brand-contrast"],
+      red: ["bg-red-800", "text-white"],
+      amber: ["bg-amber-700", "text-black/85"],
+      green: ["bg-green-700", "text-black/85"],
+      blue: ["bg-blue-800", "text-white"],
+      teal: ["bg-teal-700", "text-black/85"],
+      purple: ["bg-purple-700", "text-white"],
+      pink: ["bg-pink-800", "text-white"],
+    } as const
+    for (const [color, clases] of Object.entries(esperado)) {
+      const { unmount } = render(<Badge color={color as keyof typeof esperado}>{color}</Badge>)
+      expect(screen.getByText(color), color).toHaveClass(...clases)
+      unmount()
+    }
+  })
+
+  // `subtle` queda por compatibilidad: se ve igual que `solid`.
+  it("subtle (obsoleto) se ve igual que solid", () => {
     render(
       <>
-        <Badge variant="solid">Nuevo</Badge>
-        <Badge variant="solid" color="brand">Pro</Badge>
+        <Badge color="red" variant="subtle">
+          Vencida
+        </Badge>
+        <Badge color="red" variant="solid">
+          Anulada
+        </Badge>
       </>
     )
-    // Sólidos de verdad: el color va en capa sólida, con el brillo de los botones de color.
-    expect(screen.getByText("Nuevo")).toHaveClass("bg-gray-1000", "text-background-100", "sheen")
-    expect(screen.getByText("Pro")).toHaveClass("bg-brand-700", "text-brand-contrast", "sheen")
-    expect(screen.getByText("Pro").className).not.toMatch(/--sf-tint/)
+    expect(screen.getByText("Vencida").className).toBe(screen.getByText("Anulada").className)
   })
 
-  it("dot agrega un punto 700 oculto al lector", () => {
-    render(<Badge color="green" dot>Listo</Badge>)
+  it("el punto va en el color de la tinta, así se lee sobre el relleno", () => {
+    render(
+      <Badge color="green" dot>
+        Listo
+      </Badge>
+    )
     const dot = screen.getByText("Listo").querySelector("[data-slot=badge-dot]")
-    expect(dot).toHaveClass("bg-green-700", "size-1.5")
+    expect(dot).toHaveClass("bg-current", "size-1.5")
+    expect(dot!.className).not.toMatch(/bg-green/)
     expect(dot).toHaveAttribute("aria-hidden", "true")
   })
 
@@ -85,7 +107,7 @@ describe("Badge", () => {
     expect(link).toHaveAttribute("href", "/planes")
     expect(link).toHaveAttribute("data-slot", "badge")
     expect(link).toHaveAttribute("data-color", "green")
-    expect(link).toHaveClass("bg-green-700/(--sf-tint-fill)", "underline")
+    expect(link).toHaveClass("bg-green-700", "underline")
     expect(link.querySelector("[data-slot=badge-dot]")).not.toBeNull()
   })
 })

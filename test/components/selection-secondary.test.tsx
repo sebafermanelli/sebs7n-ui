@@ -132,25 +132,19 @@ describe("selectionSecondaryClassName: lo que tiene color propio adentro de un �
 })
 
 describe("Badge adentro de un ítem seleccionado", () => {
-  // Un badge `subtle` es el tono de su color en alfa: sobre el acento sólido el texto `*-ink`
-  // queda sin contraste. Pasa solo a un contorno en el color de contraste, como las etiquetas
-  // del Finder en una fila seleccionada; la app no tiene que acordarse.
-  it("subtle pasa a contorno de contraste", () => {
+  // 2.0: el badge es sólido y trae su propia tinta, así que se lee igual sobre el acento: no se
+  // toca, como las etiquetas del Finder en una fila seleccionada. Lo único que se protege es el
+  // ícono de adentro, que el ítem resaltado pinta de `on-selection` con un selector más fuerte.
+  it("un color sólido conserva su relleno y su tinta", () => {
     render(<Badge color="red">Vencida</Badge>)
-    expect(screen.getByText("Vencida")).toHaveClass(
-      "inside-selection:bg-transparent",
-      "inside-selection:border-on-selection/60",
-      "inside-selection:text-on-selection"
-    )
+    const badge = screen.getByText("Vencida")
+    expect(badge.className).not.toMatch(/inside-selection:(bg|text|border)-/)
+    expect(badge).toHaveClass("inside-selection:[&>svg]:text-current!")
   })
 
   // El brand sólido es el mismo color que la selección: sin esto desaparece.
-  it("solid brand se invierte", () => {
-    render(
-      <Badge color="brand" variant="solid">
-        Nuevo
-      </Badge>
-    )
+  it("brand se invierte", () => {
+    render(<Badge color="brand">Nuevo</Badge>)
     expect(screen.getByText("Nuevo")).toHaveClass("inside-selection:bg-on-selection", "inside-selection:text-selection")
   })
 })

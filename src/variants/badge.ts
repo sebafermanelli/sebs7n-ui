@@ -6,58 +6,85 @@ export const BADGE_COLORS = ["gray", "brand", "red", "amber", "green", "blue", "
 export type BadgeColor = (typeof BADGE_COLORS)[number]
 
 /**
- * El cuerpo de una etiqueta: vidrio teñido.
+ * Las dos tintas de una etiqueta sólida, con el velo del hover de su botón de quitar.
  *
- * El fondo y el borde son el `-700` de la paleta en alfa, no un `-100` opaco: adentro de una
- * Card o de una fila de tabla, que son de vidrio, un relleno opaco quedaba como una calcomanía
- * pegada encima. En alfa deja pasar lo que tiene debajo y toma el tono del lugar donde está.
+ * Blanco sobre los rellenos oscuros y negro al 85 % (el `labelColor` de macOS) sobre los claros:
+ * ningún color de la paleta llega a 4,5:1 con las dos, así que cada uno usa la que pasa (los
+ * números están en `test/contrast.test.ts`).
  *
- * Sin blur: una etiqueta vive adentro de una superficie que ya lo tiene. Lo que la hace
- * material y no relleno es el filo de luz de arriba (`shadow-chip`).
+ * `--sf-tag-press` es el hover del botón de quitar del Tag, y va del lado contrario a la tinta:
+ * oscurece bajo la X blanca y aclara bajo la negra, así el contraste sube en vez de bajar. Con el
+ * `gray-alpha-300` del sistema, en oscuro aclaraba bajo la X blanca.
+ */
+const inkWhite = "text-white [--sf-tag-press:rgb(0_0_0/0.25)]"
+const inkBlack = "text-black/85 [--sf-tag-press:rgb(255_255_255/0.3)]"
+
+/**
+ * El cuerpo de una etiqueta (2.0): la etiqueta del Finder.
  *
- * El texto es la tinta de la paleta (`text-red-ink`), no su `-900`: ver el porqué en theme.css.
- * `solid` sigue sólido —el color que tiene que leerse igual en cualquier pantalla no depende
- * de lo que pase por debajo— y suma el brillo de los botones de color.
+ * Relleno sólido, sin borde, sin brillo y sin vidrio, con 4 px de radio (`rounded-tag`). Hasta la
+ * fase 3 el default era vidrio teñido con borde (`subtle`): adentro de una tabla densa se leía
+ * como un control más, y el color —que es lo que dice el estado— quedaba lavado.
+ *
+ * El relleno es el paso de la paleta donde el color se ve vivo y su tinta llega a 4,5:1, y es el
+ * mismo en los dos temas (los `-700` y `-800` de Geist casi no cambian entre claro y oscuro):
+ *
+ * | color  | relleno      | tinta     |
+ * | ------ | ------------ | --------- |
+ * | gray   | `gray-700`   | negra     |
+ * | brand  | `brand-700`  | `brand-contrast` (el par del botón `accent`) |
+ * | red    | `red-800`    | blanca    |
+ * | amber  | `amber-700`  | negra     |
+ * | green  | `green-700`  | negra     |
+ * | blue   | `blue-800`   | blanca    |
+ * | teal   | `teal-700`   | negra     |
+ * | purple | `purple-700` | blanca    |
+ * | pink   | `pink-800`   | blanca    |
+ *
+ * El rojo, el azul y el rosa van en `-800` porque en `-700` el blanco no llega (3,98, 4,47 y 3,88
+ * en el peor tema); el verde y el teal, en oscuro, no llegan con blanco en ningún paso, y van con
+ * tinta negra.
+ *
+ * `variant` quedó con un solo aspecto: `subtle` se acepta por compatibilidad y dibuja lo mismo
+ * que `solid`.
  */
 const badgeVariantsBase = cva(
-  "inline-flex w-fit shrink-0 items-center justify-center gap-1.5 overflow-hidden rounded-full border text-callout whitespace-nowrap [&>svg]:pointer-events-none [&>svg]:size-3",
+  // `inside-selection:[&>svg]:text-current!`: el ítem de menú resaltado pinta todo `svg` de adentro
+  // de `on-selection` con un selector más fuerte que el de acá, y un ícono blanco sobre un badge
+  // ámbar no se ve. El `!` solo vale adentro de una selección.
+  "inline-flex w-fit shrink-0 items-center justify-center gap-1.5 overflow-hidden rounded-tag text-callout whitespace-nowrap [&>svg]:pointer-events-none [&>svg]:size-3 inside-selection:[&>svg]:text-current!",
   {
     variants: {
-      // Adentro de un ítem seleccionado (`inside-selection`, ver theme.css) el tono en alfa queda
-      // sin contraste sobre el acento: el subtle pasa a contorno en el color de contraste, como
-      // las etiquetas del Finder en una fila seleccionada. Es automático para que la app no tenga
-      // que acordarse en cada fila.
-      variant: {
-        subtle:
-          "shadow-chip inside-selection:border-on-selection/60 inside-selection:bg-transparent inside-selection:text-on-selection inside-selection:shadow-none",
-        solid: "border-transparent sheen shadow-button",
-      },
+      variant: { solid: "", subtle: "" },
       color: {
-        gray: "", brand: "", red: "", amber: "", green: "", blue: "", teal: "", purple: "", pink: "",
+        gray: cn("bg-gray-700", inkBlack),
+        // El brand es el color de la selección: adentro de un ítem seleccionado se invierte, o
+        // desaparecería. Los demás colores traen su tinta y se leen igual sobre el acento, como
+        // las etiquetas del Finder en una fila seleccionada.
+        brand: "bg-brand-700 text-brand-contrast [--sf-tag-press:rgb(0_0_0/0.25)] inside-selection:bg-on-selection inside-selection:text-selection",
+        red: cn("bg-red-800", inkWhite),
+        amber: cn("bg-amber-700", inkBlack),
+        green: cn("bg-green-700", inkBlack),
+        blue: cn("bg-blue-800", inkWhite),
+        teal: cn("bg-teal-700", inkBlack),
+        purple: cn("bg-purple-700", inkWhite),
+        pink: cn("bg-pink-800", inkWhite),
       },
       size: { sm: "h-5 px-1.5", md: "h-6 px-2" },
     },
-    compoundVariants: [
-      { variant: "subtle", color: "gray", className: "border-gray-alpha-400 bg-gray-alpha-200 text-gray-900" },
-      { variant: "subtle", color: "brand", className: "border-brand-700/(--sf-tint-border) bg-brand-700/(--sf-tint-fill) text-brand-ink" },
-      { variant: "subtle", color: "red", className: "border-red-700/(--sf-tint-border) bg-red-700/(--sf-tint-fill) text-red-ink" },
-      { variant: "subtle", color: "amber", className: "border-amber-700/(--sf-tint-border) bg-amber-700/(--sf-tint-fill) text-amber-ink" },
-      { variant: "subtle", color: "green", className: "border-green-700/(--sf-tint-border) bg-green-700/(--sf-tint-fill) text-green-ink" },
-      { variant: "subtle", color: "blue", className: "border-blue-700/(--sf-tint-border) bg-blue-700/(--sf-tint-fill) text-blue-ink" },
-      { variant: "subtle", color: "teal", className: "border-teal-700/(--sf-tint-border) bg-teal-700/(--sf-tint-fill) text-teal-ink" },
-      { variant: "subtle", color: "purple", className: "border-purple-700/(--sf-tint-border) bg-purple-700/(--sf-tint-fill) text-purple-ink" },
-      { variant: "subtle", color: "pink", className: "border-pink-700/(--sf-tint-border) bg-pink-700/(--sf-tint-fill) text-pink-ink" },
-      { variant: "solid", color: "gray", className: "bg-gray-1000 text-background-100 shadow-button-inverted" },
-      // El brand sólido es el color de la selección: adentro de un ítem seleccionado desaparecía.
-      { variant: "solid", color: "brand", className: "bg-brand-700 text-brand-contrast inside-selection:bg-on-selection inside-selection:text-selection" },
-    ],
-    defaultVariants: { variant: "subtle", color: "gray", size: "md" },
+    defaultVariants: { variant: "solid", color: "gray", size: "md" },
   }
 )
 
 // Pasa por cn() (tailwind-merge): usada sobre <a>/<Link>, la clase de la variante tiene que ganarle a la base.
 export const badgeVariants = (props?: Parameters<typeof badgeVariantsBase>[0]) => cn(badgeVariantsBase(props))
 
+/**
+ * El `-700` de cada paleta, para un punto de estado suelto (fuera de un Badge).
+ *
+ * El `dot` del Badge ya no lo usa (2.0): sobre el relleno sólido, un punto del mismo color no se
+ * veía, y va en la tinta (`bg-current`).
+ */
 export const badgeDotColor: Record<BadgeColor, string> = {
   gray: "bg-gray-700",
   brand: "bg-brand-700",

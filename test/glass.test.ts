@@ -141,6 +141,8 @@ describe("radios semánticos", () => {
     expect(css).toMatch(/--radius-field:\s*9999px;/)
     // El resaltado de un ítem de menú (2.0): 6 px, como en macOS; el panel es 6 + 6.
     expect(css).toMatch(/--radius-menu-item:\s*6px;/)
+    // Badge y Tag (2.0): la etiqueta del Finder.
+    expect(css).toMatch(/--radius-tag:\s*4px;/)
   })
 
   it("tailwind-merge los conoce: el radio del llamador gana", () => {

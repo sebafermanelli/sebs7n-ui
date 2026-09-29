@@ -120,6 +120,11 @@
    * siguen siendo concéntricos.
    */
   --radius-menu-item: 6px;
+  /**
+   * El radio de Badge, Tag y el chip del Combobox (2.0): 4 px, la etiqueta del Finder. Una
+   * cápsula sólida de color se leía como un botón.
+   */
+  --radius-tag: 4px;
 
   /* Progress indeterminada: una franja del 40% que recorre la pista. */
   --animate-progress-indeterminate: progress-indeterminate 1.4s ease-in-out infinite;

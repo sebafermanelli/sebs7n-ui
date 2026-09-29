@@ -385,9 +385,7 @@ function Muestra() {
                   <Badge color="amber" dot>
                     Vencida
                   </Badge>
-                  <Badge color="brand" variant="solid">
-                    Nueva
-                  </Badge>
+                  <Badge color="blue">Nueva</Badge>
                   <Avatar size="sm">
                     <AvatarFallback>SF</AvatarFallback>
                   </Avatar>

@@ -266,7 +266,7 @@ describe("Combobox", () => {
     expect(chip()).toHaveClass("h-6")
   })
 
-  it("múltiple: chips con estilo Badge subtle que se quitan", async () => {
+  it("múltiple: chips con el cuerpo del Badge sólido que se quitan", async () => {
     const onValueChange = vi.fn()
     render(
       <Combobox items={COUNTRIES} multiple defaultValue={["Chile"]} onValueChange={onValueChange}>
@@ -294,7 +294,7 @@ describe("Combobox", () => {
       </Combobox>
     )
     const chip = screen.getByText("Chile").closest<HTMLElement>("[data-slot=combobox-chip]")!
-    expect(chip).toHaveClass("rounded-full", "border-gray-alpha-400", "bg-gray-alpha-200", "text-gray-900", "text-callout")
+    expect(chip).toHaveClass("rounded-tag", "bg-gray-700", "text-black/85", "text-callout")
     await userEvent.click(screen.getByRole("combobox", { name: "Países" }))
     await userEvent.keyboard("uru{ArrowDown}{Enter}")
     expect(onValueChange).toHaveBeenLastCalledWith(["Chile", "Uruguay"], expect.anything())

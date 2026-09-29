@@ -18,8 +18,9 @@ Qué cubre esa tabla:
 | Texto secundario sobre la selección (resaltado y apretado), en las cuatro marcas de ejemplo | 4,5:1 |
 | Texto principal y secundario sobre vidrio, sobre la página y sobre la luz ambiente | 4,5:1 |
 | `Button variant="destructive"`, en reposo, hover y active | 4,5:1 |
-| `Badge subtle`: la tinta sobre su tinte, en las nueve paletas y las cuatro marcas de ejemplo, sobre los tres fondos | 4,5:1 |
-| `Badge solid` gris | 4,5:1 |
+| `Badge` y `Tag` sólidos: la tinta (blanca o negra al 85 %) sobre el relleno, en las ocho paletas y los dos temas | 4,5:1 |
+| La X del `Tag` sobre el hover de su botón | 4,5:1 |
+| Botones `tinted` y `destructive-tinted`: la tinta sobre el tinte, en reposo, hover y apretado | 4,5:1 |
 | Contorno de Checkbox, Radio, Switch y Toggle sin marcar | 3:1 (1.4.11) |
 | Borde del campo enfocado | 3:1 (2.4.11) |
 | Anillo de foco en las cuatro marcas de ejemplo | 3:1 |
