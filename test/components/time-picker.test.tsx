@@ -4,6 +4,8 @@ import * as React from "react"
 import { renderToString } from "react-dom/server"
 import { afterEach, describe, expect, it, vi } from "vitest"
 
+import { Field, FieldDescription, FieldError, FieldLabel } from "../../src/components/field"
+import { Form } from "../../src/components/form"
 import { TimePicker } from "../../src/components/time-picker"
 import { clampTime, matchesTime, parseTime, timeSlots } from "../../src/internal/time"
 import { LabelsProvider } from "../../src/lib/labels"
@@ -281,5 +283,70 @@ describe("TimePicker required", () => {
     await user.clear(screen.getByRole("combobox", { name: "Apertura" }))
     await user.tab()
     expect(onValueChange).toHaveBeenCalledWith(null)
+  })
+})
+
+describe("TimePicker en Field", () => {
+  it("toma la etiqueta y la ayuda del campo", () => {
+    render(
+      <Field>
+        <FieldLabel>Apertura</FieldLabel>
+        <TimePicker />
+        <FieldDescription>Hora local del local.</FieldDescription>
+      </Field>
+    )
+    const input = screen.getByRole("combobox", { name: "Apertura" })
+    expect(input).toHaveAccessibleDescription("Hora local del local.")
+  })
+
+  it("required sin hora inicial: Form no envía, enfoca el campo y queda inválido", async () => {
+    const user = userEvent.setup()
+    const onFormSubmit = vi.fn()
+    render(
+      <Form onFormSubmit={onFormSubmit}>
+        <Field name="opens">
+          <FieldLabel>Apertura</FieldLabel>
+          <TimePicker required />
+          <FieldError />
+        </Field>
+        <button type="submit">Guardar</button>
+      </Form>
+    )
+    await user.click(screen.getByRole("button", { name: "Guardar" }))
+    expect(onFormSubmit).not.toHaveBeenCalled()
+    const input = screen.getByRole("combobox", { name: "Apertura" })
+    expect(input).toHaveFocus()
+    expect(input).toHaveAttribute("aria-invalid", "true")
+    await user.type(input, "930")
+    await user.tab()
+    await user.click(screen.getByRole("button", { name: "Guardar" }))
+    expect(onFormSubmit).toHaveBeenCalledTimes(1)
+    expect(onFormSubmit.mock.calls[0]![0]).toEqual({ opens: "09:30" })
+  })
+
+  it("con el name del Field viaja una sola vez en el form nativo", async () => {
+    const user = userEvent.setup()
+    const { container } = render(
+      <form>
+        <Field name="opens">
+          <FieldLabel>Apertura</FieldLabel>
+          <TimePicker defaultValue="09:00" name="ignored" />
+        </Field>
+      </form>
+    )
+    await user.click(screen.getByRole("combobox"))
+    const data = new FormData(container.querySelector("form")!)
+    expect(data.getAll("opens")).toEqual(["09:00"])
+    expect(data.getAll("ignored")).toEqual([])
+  })
+
+  it("required: vaciar y salir vuelve a la hora anterior y lo anuncia", async () => {
+    const user = userEvent.setup()
+    render(<TimePicker aria-label="Apertura" defaultValue="09:00" required />)
+    const input = screen.getByRole("combobox", { name: "Apertura" })
+    await user.clear(input)
+    await user.tab()
+    expect(input).toHaveValue("09:00")
+    await waitFor(() => expect(document.querySelector("[data-slot=time-picker-status]")).toHaveTextContent("La hora no puede quedar vacía"))
   })
 })

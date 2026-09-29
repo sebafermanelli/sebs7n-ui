@@ -18,6 +18,11 @@ type FieldControlOptions = {
   disabled?: boolean
   /** El elemento que `Form` enfoca cuando el campo queda inválido al enviar. */
   controlRef: React.RefObject<HTMLElement | null>
+  /**
+   * `false` para un control que no es «labelable» (un grupo): el `FieldLabel` no lleva `htmlFor` (que
+   * apuntaría a nada) y el control se nombra con `labelId` en su `aria-labelledby`.
+   */
+  labelable?: boolean
 }
 
 /**
@@ -29,11 +34,19 @@ type FieldControlOptions = {
  * eso el peer de Base UI está acotado a la versión probada y `test/base-ui-internals.test.tsx` rompe
  * si cambian. Afuera de un `Field` devuelven el contexto vacío y no hacen nada.
  */
-export function useFieldControl({ id, name, value, filled, disabled = false, controlRef }: FieldControlOptions) {
+export function useFieldControl({ id, name, value, filled, disabled = false, controlRef, labelable: forLabel = true }: FieldControlOptions) {
   const field = useFieldRootContext()
   const labelable = useLabelableContext()
   const form = useFormContext()
-  const controlId = useLabelableId({ id })
+  const controlId = useLabelableId({ id, enabled: forLabel })
+  const { registerControlId } = labelable
+  React.useLayoutEffect(() => {
+    if (forLabel) return
+    // `null` le dice al `FieldLabel` que no lleve `htmlFor`.
+    const source = Symbol()
+    registerControlId(source, null)
+    return () => registerControlId(source, undefined)
+  }, [forLabel, registerControlId])
   const off = disabled || field.disabled === true
   const fieldName = field.name ?? name
   useRegisterFieldControl(controlRef, controlId, value, undefined, !off, name)

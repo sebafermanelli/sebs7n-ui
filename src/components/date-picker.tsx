@@ -5,6 +5,8 @@ import { Popover as PopoverPrimitive } from "@base-ui/react/popover"
 import { CalendarIcon } from "lucide-react"
 
 import { defined } from "../internal/defined.js"
+import { useFieldControl } from "../internal/field-control.js"
+import { mergeRefs } from "../internal/merge-refs.js"
 import { toISODate, type DateRange, type WeekStart } from "../lib/dates.js"
 import { useLabels, type Labels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
@@ -56,6 +58,11 @@ type DatePickerBaseProps = Omit<React.ComponentProps<"button">, "value" | "defau
    * opcional, donde elegir una fecha no puede ser un camino sin vuelta.
    */
   clearable?: boolean
+  /**
+   * Sin fecha no se puede enviar: dentro de un `Form`, el campo queda inválido y `Form` lo enfoca. En
+   * `range`, hacen falta las dos puntas.
+   */
+  required?: boolean
 }
 
 type DatePickerSingleProps = DatePickerBaseProps & {
@@ -91,9 +98,10 @@ const SIN_RANGO: DateRange = { from: null, to: null }
  * año la de años. Si en tu pantalla lo normal es tipearla —un vencimiento que se copia de un
  * papel—, usá un `Input` con máscara.
  *
- * **No valida.** No tiene `required` y no se registra en un `Field`: si la fecha es
- * obligatoria, lo chequea la app al enviar. Se dejó afuera a propósito en vez de aceptar la
- * prop y no hacer nada con ella, que es lo que pasa con un control suelto adentro de un `Form`.
+ * Dentro de un `Field` se registra como su control (2.1): toma `FieldLabel` (el nombre queda
+ * «Vencimiento 27 sept 2026»), `FieldDescription`, `FieldError`, `disabled` e `invalid`; con el `name`
+ * del `Field` la fecha viaja con ese nombre, `Form` la manda en `onFormSubmit` (ISO) y la recibe el
+ * `validate` del `Field`. Con `required`, sin fecha `Form` no envía y enfoca el campo.
  */
 function DatePicker(props: DatePickerProps) {
   const {
@@ -116,7 +124,10 @@ function DatePicker(props: DatePickerProps) {
     open: openProp,
     onOpenChange,
     labels: labelsProp,
-    disabled,
+    disabled: disabledProp,
+    required = false,
+    id,
+    ref,
     ...rest
   } = props as DatePickerBaseProps & {
     mode?: "single" | "range"
@@ -169,9 +180,38 @@ function DatePicker(props: DatePickerProps) {
 
   const calendario = { min, max, isDateDisabled, locale, weekStartsOn, numberOfMonths, labels: labelsProp }
 
+  // El valor para el `Form` y el `validate` del `Field`: el ISO, como viaja en el form nativo.
+  const iso = fecha ? toISODate(fecha) : ""
+  const desde = rango.from ? toISODate(rango.from) : ""
+  const hasta = rango.to ? toISODate(rango.to) : ""
+  const valorDelCampo = React.useMemo(() => (mode === "range" ? { from: desde || null, to: hasta || null } : iso || null), [mode, iso, desde, hasta])
+  const trigger = React.useRef<HTMLButtonElement>(null)
+  const triggerRef = React.useMemo(() => mergeRefs(trigger, ref), [ref])
+  const field = useFieldControl({ id, name, value: valorDelCampo, filled: !vacio, disabled: disabledProp, controlRef: trigger })
+  const nombre = field.name
+  const disabled = field.disabled
+  const textoId = React.useId()
+  const completo = mode === "single" ? iso : desde && hasta ? `${desde}/${hasta}` : ""
+
   return (
     <PopoverPrimitive.Root onOpenChange={abrir} open={abierto}>
       <PopoverPrimitive.Trigger
+        {...rest}
+        ref={triggerRef}
+        id={field.controlId}
+        // Dentro de un Field, el nombre es la etiqueta y la fecha: con solo el `htmlFor`, el lector
+        // decía «Vencimiento» y no qué fecha tiene.
+        aria-labelledby={rest["aria-labelledby"] ?? (field.labelId && !rest["aria-label"] ? `${field.labelId} ${textoId}` : undefined)}
+        aria-describedby={cn(rest["aria-describedby"], field.messageIds.join(" ")) || undefined}
+        aria-invalid={rest["aria-invalid"] ?? (field.invalid || undefined)}
+        onFocus={(event) => {
+          field.onFocus()
+          rest.onFocus?.(event)
+        }}
+        onBlur={(event) => {
+          field.onBlur()
+          rest.onBlur?.(event)
+        }}
         data-slot="date-picker"
         data-size={size}
         data-placeholder={texto ? undefined : ""}
@@ -187,17 +227,31 @@ function DatePicker(props: DatePickerProps) {
           "[&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:text-label-secondary",
           className
         )}
-        {...rest}
       >
         <CalendarIcon aria-hidden="true" />
-        <span className="min-w-0 flex-1 truncate tabular-nums">{texto || (mode === "range" ? labels.rangePlaceholder : labels.placeholder)}</span>
+        <span className="min-w-0 flex-1 truncate tabular-nums" id={textoId}>{texto || (mode === "range" ? labels.rangePlaceholder : labels.placeholder)}</span>
       </PopoverPrimitive.Trigger>
-      {name && mode === "single" && <input name={name} type="hidden" value={fecha ? toISODate(fecha) : ""} />}
-      {name && mode === "range" && (
+      {nombre && mode === "single" && <input name={nombre} type="hidden" value={iso} />}
+      {nombre && mode === "range" && (
         <>
-          <input name={`${name}-desde`} type="hidden" value={rango.from ? toISODate(rango.from) : ""} />
-          <input name={`${name}-hasta`} type="hidden" value={rango.to ? toISODate(rango.to) : ""} />
+          <input name={`${nombre}-desde`} type="hidden" value={desde} />
+          <input name={`${nombre}-hasta`} type="hidden" value={hasta} />
         </>
+      )}
+      {required && (
+        // La validación nativa de `required` (un `type="hidden"` no valida): un input fuera de la vista
+        // y del orden de Tab, que devuelve el foco al campo.
+        <input
+          ref={field.inputRef}
+          aria-hidden="true"
+          className="sr-only"
+          disabled={disabled}
+          onChange={() => {}}
+          onFocus={() => trigger.current?.focus()}
+          required
+          tabIndex={-1}
+          value={completo}
+        />
       )}
       <PopoverPrimitive.Portal>
         <PopoverPrimitive.Positioner align="start" className="isolate z-50" side="bottom" sideOffset={6}>

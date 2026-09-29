@@ -5,6 +5,8 @@ import { renderToString } from "react-dom/server"
 import { afterEach, describe, expect, it, vi } from "vitest"
 
 import { DateTimePicker } from "../../src/components/date-time-picker"
+import { Field, FieldDescription, FieldLabel } from "../../src/components/field"
+import { Form } from "../../src/components/form"
 import { LabelsProvider } from "../../src/lib/labels"
 import { hidratar } from "../hidratar"
 
@@ -150,5 +152,55 @@ describe("DateTimePicker", () => {
     await hidratar(container, ui, { onRecoverableError: recoverable })
     expect(recoverable).not.toHaveBeenCalled()
     expect(errors.mock.calls.filter(([message]) => /hydrat|did not match/i.test(String(message)))).toEqual([])
+  })
+})
+
+describe("DateTimePicker en Field", () => {
+  it("el grupo toma la etiqueta y la ayuda; las partes no se registran por su cuenta", () => {
+    render(
+      <Field>
+        <FieldLabel>Envío</FieldLabel>
+        <DateTimePicker defaultValue={new Date(2026, 8, 29, 9, 30)} />
+        <FieldDescription>Hora local.</FieldDescription>
+      </Field>
+    )
+    const grupo = screen.getByRole("group", { name: "Envío" })
+    expect(grupo).toHaveAccessibleDescription("Hora local.")
+    // El FieldLabel no apunta a una parte suelta (un htmlFor a nada o solo a la fecha).
+    expect(document.querySelector("[data-slot=field-label]")).not.toHaveAttribute("for")
+  })
+
+  it("con Form manda fecha y hora con el name del Field", async () => {
+    const user = userEvent.setup()
+    const onFormSubmit = vi.fn()
+    const { container } = render(
+      <Form onFormSubmit={onFormSubmit}>
+        <Field name="sendAt">
+          <FieldLabel>Envío</FieldLabel>
+          <DateTimePicker defaultValue={new Date(2026, 8, 29, 9, 30)} />
+        </Field>
+        <button type="submit">Guardar</button>
+      </Form>
+    )
+    expect(new FormData(container.querySelector("form")!).getAll("sendAt")).toEqual(["2026-09-29T09:30"])
+    await user.click(screen.getByRole("button", { name: "Guardar" }))
+    expect(onFormSubmit.mock.calls[0]![0]).toEqual({ sendAt: "2026-09-29T09:30" })
+  })
+
+  it("required sin valor: Form no envía y enfoca la fecha", async () => {
+    const user = userEvent.setup()
+    const onFormSubmit = vi.fn()
+    render(
+      <Form onFormSubmit={onFormSubmit}>
+        <Field name="sendAt">
+          <FieldLabel>Envío</FieldLabel>
+          <DateTimePicker required />
+        </Field>
+        <button type="submit">Guardar</button>
+      </Form>
+    )
+    await user.click(screen.getByRole("button", { name: "Guardar" }))
+    expect(onFormSubmit).not.toHaveBeenCalled()
+    expect(within(screen.getByRole("group", { name: "Envío" })).getByRole("button")).toHaveFocus()
   })
 })

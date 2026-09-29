@@ -3,6 +3,8 @@
 import * as React from "react"
 
 import { defined } from "../internal/defined.js"
+import { useFieldControl } from "../internal/field-control.js"
+import { FieldIsolation } from "../internal/field-isolation.js"
 import { toISODate } from "../lib/dates.js"
 import { useLabels, type Labels } from "../lib/labels.js"
 import { useFormReset } from "../internal/form-reset.js"
@@ -37,10 +39,13 @@ type DateTimePickerProps = {
   /** 28, 36 (default) o 40, como los campos. */
   size?: "sm" | "md" | "lg"
   disabled?: boolean
+  /** Sin fecha no se puede enviar: dentro de un `Form`, el campo queda inválido y `Form` enfoca la fecha. */
+  required?: boolean
   /** El `id` de la parte de la fecha, para un `<Label htmlFor>`. */
   id?: string
   "aria-label"?: string
   "aria-labelledby"?: string
+  "aria-describedby"?: string
   /** Clases del contenedor. */
   className?: string
   labels?: Partial<Labels["dateTimePicker"]>
@@ -65,6 +70,10 @@ function withTime(date: Date, time: string) {
  * Fecha y hora en un solo campo: un `DatePicker` y un `TimePicker` pegados, con una línea entre los
  * dos, en un `role="group"` que lleva el nombre. Elegir el día conserva la hora; sin hora elegida,
  * el día arranca a las 00:00. Una hora elegida antes que el día se guarda hasta que haya día.
+ *
+ * Dentro de un `Field` se registra el grupo entero (2.1): `FieldLabel` lo nombra, `FieldDescription` y
+ * `FieldError` lo describen, y con el `name` del `Field` viaja «2026-09-29T09:30» (también en
+ * `onFormSubmit`). Las dos partes no se registran por separado.
  */
 function DateTimePicker({
   value: valueProp,
@@ -77,7 +86,8 @@ function DateTimePicker({
   max,
   locale,
   size = "md",
-  disabled,
+  disabled: disabledProp,
+  required = false,
   id,
   className,
   labels: labelsProp,
@@ -102,44 +112,80 @@ function DateTimePicker({
     setPendingTime(null)
   })
 
+  const local = value ? `${toISODate(value)}T${timeOf(value)}` : ""
+  const dateRef = React.useRef<HTMLButtonElement>(null)
+  const field = useFieldControl({ name, value: local || null, filled: value != null, disabled: disabledProp, controlRef: dateRef, labelable: false })
+  const disabled = field.disabled
+  const fieldName = field.name
+
   const commit = (next: Date | null) => {
     if (valueProp === undefined) setOwn(next)
     onValueChange?.(next)
   }
 
   return (
-    <div ref={formReset} role="group" data-slot="date-time-picker" className={cn("flex w-full min-w-0", className)} {...aria}>
-      <DatePicker
-        className="min-w-0 flex-1 rounded-e-none"
-        clearable={clearable}
-        disabled={disabled}
-        id={id}
-        locale={locale}
-        max={max}
-        min={min}
-        onValueChange={(date) => {
-          if (!date) {
-            setPendingTime(null)
-            return commit(null)
-          }
-          commit(withTime(date, time ?? "00:00"))
-        }}
-        size={size}
-        value={value}
-      />
-      <TimePicker
-        aria-label={labels.time}
-        className="shrink-0 rounded-s-none border-s-hairline"
-        disabled={disabled}
-        onValueChange={(next) => {
-          setPendingTime(next)
-          if (value) commit(withTime(value, next ?? "00:00"))
-        }}
-        size={size}
-        step={step}
-        value={time}
-      />
-      {name && <input name={name} type="hidden" value={value ? `${toISODate(value)}T${timeOf(value)}` : ""} />}
+    <div
+      ref={formReset}
+      role="group"
+      data-slot="date-time-picker"
+      className={cn("flex w-full min-w-0", className)}
+      {...aria}
+      aria-labelledby={aria["aria-labelledby"] ?? (aria["aria-label"] ? undefined : field.labelId)}
+      aria-describedby={cn(aria["aria-describedby"], field.messageIds.join(" ")) || undefined}
+      aria-invalid={field.invalid || undefined}
+      onFocus={field.onFocus}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) field.onBlur()
+      }}
+    >
+      <FieldIsolation>
+        <DatePicker
+          ref={dateRef}
+          className="min-w-0 flex-1 rounded-e-none"
+          clearable={clearable}
+          disabled={disabled}
+          id={id}
+          locale={locale}
+          max={max}
+          min={min}
+          onValueChange={(date) => {
+            if (!date) {
+              setPendingTime(null)
+              return commit(null)
+            }
+            commit(withTime(date, time ?? "00:00"))
+          }}
+          size={size}
+          value={value}
+        />
+        <TimePicker
+          aria-label={labels.time}
+          className="shrink-0 rounded-s-none border-s-hairline"
+          disabled={disabled}
+          onValueChange={(next) => {
+            setPendingTime(next)
+            if (value) commit(withTime(value, next ?? "00:00"))
+          }}
+          size={size}
+          step={step}
+          value={time}
+        />
+      </FieldIsolation>
+      {fieldName && <input name={fieldName} type="hidden" value={local} />}
+      {required && (
+        // La validación nativa de `required`: fuera de la vista y del Tab, devuelve el foco a la fecha.
+        <input
+          ref={field.inputRef}
+          aria-hidden="true"
+          className="sr-only"
+          disabled={disabled}
+          onChange={() => {}}
+          onFocus={() => dateRef.current?.focus()}
+          required
+          tabIndex={-1}
+          value={local}
+        />
+      )}
     </div>
   )
 }

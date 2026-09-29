@@ -3,6 +3,8 @@ import userEvent from "@testing-library/user-event"
 import { describe, expect, it, vi } from "vitest"
 
 import { DatePicker } from "../../src/components/date-picker"
+import { Field, FieldDescription, FieldError, FieldLabel } from "../../src/components/field"
+import { Form } from "../../src/components/form"
 import { fromISODate, toISODate, type DateRange } from "../../src/lib/dates"
 import { LabelsProvider } from "../../src/lib/labels"
 
@@ -64,10 +66,13 @@ describe("DatePicker", () => {
     expect(screen.queryByRole("dialog")).toBeNull()
   })
 
-  it("no acepta required: no valida, y no finge que sí", () => {
-    // @ts-expect-error `required` no existe en el tipo, a propósito.
-    render(<DatePicker aria-label="Vencimiento" required />)
+  it("required (2.1) valida de verdad: un input requerido fuera de la vista y del Tab, vacío sin fecha", () => {
+    const { container } = render(<DatePicker aria-label="Vencimiento" required />)
     expect(screen.getByRole("button", { name: "Vencimiento" })).toBeInTheDocument()
+    const validation = container.querySelector<HTMLInputElement>("input[required]")!
+    expect(validation).toHaveAttribute("tabindex", "-1")
+    expect(validation).toHaveAttribute("aria-hidden", "true")
+    expect(validation.validity.valueMissing).toBe(true)
   })
 
   it("sin clearable no hay forma de vaciarlo", async () => {
@@ -178,5 +183,68 @@ describe("DatePicker: elegir mes y año", () => {
     // El segundo Escape, ya en los días, sí cierra.
     await userEvent.keyboard("{Escape}")
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull())
+  })
+})
+
+describe("DatePicker en Field", () => {
+  it("toma la etiqueta (sin perder la fecha del nombre), la ayuda y el error del campo", () => {
+    render(
+      <Field invalid>
+        <FieldLabel>Vencimiento</FieldLabel>
+        <DatePicker defaultValue={d("2026-09-27")} />
+        <FieldDescription>El día que vence la factura.</FieldDescription>
+        <FieldError match>Falta la fecha.</FieldError>
+      </Field>
+    )
+    const campo = screen.getByRole("button", { name: "Vencimiento 27 sept 2026" })
+    expect(campo).toHaveAccessibleDescription(expect.stringContaining("El día que vence la factura."))
+    expect(campo).toHaveAttribute("aria-invalid", "true")
+  })
+
+  it("con Form: required sin fecha no envía y enfoca el campo; con fecha, manda el ISO con el name del Field", async () => {
+    const user = userEvent.setup()
+    const onFormSubmit = vi.fn()
+    render(
+      <Form onFormSubmit={onFormSubmit}>
+        <Field name="due">
+          <FieldLabel>Vencimiento</FieldLabel>
+          <DatePicker defaultValue={null} required />
+          <FieldError />
+        </Field>
+        <button type="submit">Guardar</button>
+      </Form>
+    )
+    await user.click(screen.getByRole("button", { name: "Guardar" }))
+    expect(onFormSubmit).not.toHaveBeenCalled()
+    const campo = screen.getByRole("button", { name: /^Vencimiento/ })
+    expect(campo).toHaveFocus()
+    expect(campo).toHaveAttribute("aria-invalid", "true")
+    await user.click(campo)
+    await user.click(document.querySelector<HTMLButtonElement>("[data-date]:not([data-outside])")!)
+    await user.click(screen.getByRole("button", { name: "Guardar" }))
+    expect(onFormSubmit).toHaveBeenCalledTimes(1)
+    expect(onFormSubmit.mock.calls[0]![0].due).toMatch(/^\d{4}-\d{2}-\d{2}$/)
+  })
+
+  it("el name del Field llega al input del form nativo", () => {
+    const { container } = render(
+      <form>
+        <Field name="due">
+          <FieldLabel>Vencimiento</FieldLabel>
+          <DatePicker defaultValue={d("2026-09-27")} />
+        </Field>
+      </form>
+    )
+    expect(new FormData(container.querySelector("form")!).get("due")).toBe("2026-09-27")
+  })
+
+  it("Field disabled apaga el campo", () => {
+    render(
+      <Field disabled>
+        <FieldLabel>Vencimiento</FieldLabel>
+        <DatePicker />
+      </Field>
+    )
+    expect(screen.getByRole("button", { name: /^Vencimiento/ })).toBeDisabled()
   })
 })

@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { Autocomplete as AutocompletePrimitive } from "@base-ui/react/autocomplete"
+import { useFieldRootContext } from "@base-ui/react/internals/field-root-context"
 import { ClockIcon } from "lucide-react"
 import { flushSync } from "react-dom"
 
@@ -29,7 +30,8 @@ type TimePickerProps = {
   max?: string
   /**
    * Una hora que no puede quedar vacía (la apertura de un horario): vaciar el texto y salir vuelve a la
-   * hora anterior y nunca avisa `null`. Pone `aria-required`.
+   * hora anterior (y se anuncia) y nunca avisa `null`. Pone `aria-required`. Sin hora inicial, dentro de
+   * un `Form` no deja enviar: el campo queda inválido y `Form` lo enfoca.
    */
   required?: boolean
   /** El nombre con el que la hora viaja en un formulario, como «09:30» (vacío sin hora). */
@@ -57,6 +59,10 @@ type TimePickerProps = {
  * Lo tipeado se toma al salir del campo o con Enter (sin una opción resaltada): se escribe como
  * «HH:MM» y se lleva a `min`/`max`. Si no es una hora, el campo vuelve a la anterior y se anuncia.
  * Con `name`, un `<input type="hidden">` lleva la hora para una Server Action.
+ *
+ * Dentro de un `Field` se engancha solo (es un `Autocomplete` de Base UI): toma `FieldLabel`,
+ * `FieldDescription` y `FieldError`, y con el `name` del `Field` la hora viaja con ese nombre (el
+ * `name` propio se ignora, para no mandarla dos veces).
  */
 function TimePicker({
   value: valueProp,
@@ -76,6 +82,8 @@ function TimePicker({
   ...aria
 }: TimePickerProps) {
   const labels = { ...useLabels().timePicker, ...defined(labelsProp) }
+  // Con el `name` del Field, el input de Base UI ya lleva la hora con ese nombre.
+  const fieldName = useFieldRootContext().name
   const [own, setOwn] = React.useState(defaultValue)
   const value = valueProp !== undefined ? valueProp : own
   const [draft, setDraft] = React.useState(value ?? "")
@@ -122,17 +130,21 @@ function TimePicker({
     setOpen(false)
     clearTimeout(announce.current)
     setStatus("")
-    // Con `required` vaciar no es una respuesta: vuelve la hora de antes, sin avisar nada.
-    if (draft.trim() === "") return required ? setDraft(value ?? "") : commit(null)
-    const parsed = parseTime(draft)
-    if (!parsed) {
+    // Vacía la región y la llena en el tick siguiente: un lector de pantalla no repite un texto
+    // que no cambió, y un segundo error igual quedaba mudo.
+    const revert = (message: string) => {
       setDraft(value ?? "")
-      // Vacía la región y la llena en el tick siguiente: un lector de pantalla no repite un texto
-      // que no cambió, y un segundo error igual quedaba mudo.
-      const invalid = labels.invalid
-      announce.current = setTimeout(() => setStatus(invalid))
+      announce.current = setTimeout(() => setStatus(message))
+    }
+    // Con `required` vaciar no es una respuesta: vuelve la hora de antes (si había) y se anuncia.
+    if (draft.trim() === "") {
+      if (!required) return commit(null)
+      if (value) revert(labels.required ?? "La hora no puede quedar vacía")
+      else setDraft("")
       return
     }
+    const parsed = parseTime(draft)
+    if (!parsed) return revert(labels.invalid)
     commit(clampTime(parsed, min, max))
   }
 
@@ -153,6 +165,7 @@ function TimePicker({
           if (details.reason !== "input-change" && parseTime(next)) commit(next)
         }}
         openOnInputClick
+        required={required}
         value={draft}
       >
         <AutocompletePrimitive.InputGroup
@@ -205,7 +218,7 @@ function TimePicker({
           </AutocompleteList>
         </AutocompleteContent>
       </AutocompletePrimitive.Root>
-      {name && <input name={name} type="hidden" value={value ?? ""} />}
+      {name && !fieldName && <input name={name} type="hidden" value={value ?? ""} />}
       <span className="sr-only" data-slot="time-picker-status" role="status">
         {status}
       </span>

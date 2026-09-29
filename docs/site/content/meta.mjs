@@ -945,14 +945,15 @@ export const COMPONENTS = {
     a11y: [
       "El campo es un botón: necesita `aria-label`, `aria-labelledby` o un `<Label htmlFor>` apuntando a su `id`.",
       "La fecha se escribe con `Intl` en el idioma que se le pasa (`locale`), no en el del navegador.",
-      "**No valida.** No tiene `required` y no se registra en un `Field`: si la fecha es obligatoria, lo chequea la app al enviar.",
+      "Dentro de un `Field` se registra como su control: `FieldLabel` lo nombra junto con la fecha («Vencimiento 27 sept 2026»), `FieldDescription` y `FieldError` lo describen y `Form` lo enfoca si queda inválido al enviar.",
     ],
     usage: [
       "Idioma y semana para toda la app: `<LabelsProvider value={{ dates: { locale: \"en-US\", weekStartsOn: 0 } }}>` (también `format` para el campo de `DatePicker`). Lo leen `Calendar`, `DatePicker`, `DateTimePicker` y `CalendarView`; la prop de cada uno gana.",
       "Para fechas que se eligen mirando un calendario: un turno, un vencimiento cercano, un período.",
       "Una fecha lejana no se recorre mes por mes: el título del calendario abre la grilla de meses, y su año la de años. Si lo normal es tipearla —un vencimiento que se copia de un papel—, va un `Input`.",
       "`mode=\"range\"` elige desde y hasta en el mismo calendario, y se cierra recién con el segundo clic.",
-      "Con `name`, la fecha viaja en el formulario como `2026-09-27`. En rango salen dos campos: `nombre-desde` y `nombre-hasta`.",
+      "Con `name` (o el `name` del `Field`), la fecha viaja en el formulario como `2026-09-27`. En rango salen dos campos: `nombre-desde` y `nombre-hasta`. En `onFormSubmit` de `Form` llega el ISO (en rango, `{ from, to }`).",
+      "`required`: sin fecha (en rango, sin las dos puntas) `Form` no envía, marca el campo inválido y lo enfoca.",
       "Con `clearable`, el pie del calendario ofrece «Limpiar» cuando hay fecha: para filtros y campos opcionales.",
     ],
     props: {
@@ -980,7 +981,8 @@ export const COMPONENTS = {
       "Si lo tipeado no es una hora, el campo vuelve a la anterior y una región viva dice «Hora no válida».",
     ],
     usage: [
-      "No depende del idioma: la hora es siempre de 24 h, «HH:MM», y no lee `dates` de `LabelsProvider`. Con `required`, vaciar el texto y salir vuelve a la hora anterior y nunca avisa `null` (una franja horaria sin hora no existe).",
+      "No depende del idioma: la hora es siempre de 24 h, «HH:MM», y no lee `dates` de `LabelsProvider`. Con `required`, vaciar el texto y salir vuelve a la hora anterior (y se anuncia) y nunca avisa `null` (una franja horaria sin hora no existe); sin hora inicial, `Form` no envía y enfoca el campo.",
+      "Dentro de un `Field` se engancha solo: `FieldLabel`, `FieldDescription`, `FieldError`, y con el `name` del `Field` la hora viaja con ese nombre (el `name` propio se ignora, para no mandarla dos veces).",
       "Para una hora suelta: un envío programado, un horario de débito. Con fecha, `DateTimePicker`.",
       "`step` arma la lista pero no limita lo tipeado: con `step={15}` se puede escribir 09:37. `min`/`max` sí: lo de afuera se lleva al borde.",
       "`value` es «HH:MM» o `null`; con `name`, un `<input type=\"hidden\">` lo manda a la Server Action.",
@@ -996,7 +998,7 @@ export const COMPONENTS = {
         "aria-labelledby": "El `id` del elemento que nombra el campo, si no es un `<label>`.",
         "aria-describedby": "El `id` de la ayuda o del error del campo.",
         "aria-invalid": "Marca el campo inválido (borde rojo).",
-        labels: "Textos: `placeholder` e `invalid` (lo que se anuncia cuando lo tipeado no es una hora).",
+        labels: "Textos: `placeholder`, `invalid` (lo que se anuncia cuando lo tipeado no es una hora) y `required` (cuando un campo obligatorio se vacía y vuelve a la hora anterior).",
       },
     },
     related: ["date-time-picker", "date-picker", "autocomplete"],
@@ -1015,6 +1017,7 @@ export const COMPONENTS = {
       "Con `id`, un `<Label htmlFor>` apunta a la fecha.",
     ],
     usage: [
+      "Dentro de un `Field` se registra el grupo entero: `FieldLabel` lo nombra, `FieldDescription` y `FieldError` lo describen y con el `name` del `Field` viaja «2026-09-29T09:30» (también en `onFormSubmit`). Con `required`, sin fecha `Form` no envía y enfoca la fecha.",
       "Para un momento: un vencimiento con hora, un recordatorio. Para una hora sola, `TimePicker`; para un día, `DatePicker`.",
       "Elegir el día conserva la hora; sin hora, el día arranca a las 00:00. Una hora elegida antes que el día espera al día.",
       "Con `name` viaja como `2026-09-29T09:30`, el formato de `<input type=\"datetime-local\">`: la hora local del navegador **sin zona horaria**. El servidor no sabe de qué zona es, y si corre en UTC `new Date(\"2026-09-29T09:30\")` ahí es otro instante. Para guardar un instante, mandá la zona en otro campo o usá `onValueChange` con `toISOString()`.",

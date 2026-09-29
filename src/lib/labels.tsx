@@ -425,6 +425,11 @@ export type Labels = {
     placeholder: string
     /** Lo que se anuncia cuando lo tipeado no es una hora y el campo vuelve a la anterior. */
     invalid: string
+    /**
+     * Opcional (2.1): lo que se anuncia cuando un `required` se vacía y vuelve a la hora anterior. El
+     * default («La hora no puede quedar vacía») vive en `TimePicker` (ver `carousel`).
+     */
+    required?: string
   }
   tree: {
     /** Lo que se lee en una carpeta mientras llegan sus hijos. */
