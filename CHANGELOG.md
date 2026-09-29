@@ -501,6 +501,14 @@ las fases R2–R5 rehacen diálogos, menús, controles y listas con las medidas 
 - **`TextLink`** (`sebs7n-ui/text-link`) y `linkVariants({ variant: "accent" })`.
 - `Button variant="plain"` y `"destructive-plain"`; `Badge variant="count"`; `Checkbox shape`
   (`square`, `circle`); `segmentedItemClassName` (`variants/segmented`, también en el barrel).
+- **`ListRow`** (`sebs7n-ui/list-row`), la fila de lista de iCloud (R5b): `List` (`<ul role="list">`,
+  `tabIndex={-1}` como la `Table`), `ListSection` (cabecera 19/600 con `total` a la derecha, que nombra
+  su lista) y `ListRow` con `icon` (32), `title` (17), `description` (14 gris debajo, o columna del medio
+  con `inline`), `trailing`, `dot` (8, paleta de `Badge`), `chevron`, `selected` (acento con foco, gris
+  sin foco, `aria-current`), `onClick` (botón) o `render` (link). Separador interior desde el texto.
+  Sin `"use client"`.
+- El variant `inside-selection` también mira las listas de filas (`group/list`: `List`, `Tree`,
+  `FileGrid`), no solo la `Table`.
 
 ## [1.13.1] - 2026-09-28
 
