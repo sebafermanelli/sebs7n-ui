@@ -73,6 +73,8 @@ function TimePicker({
   const value = valueProp !== undefined ? valueProp : own
   const [draft, setDraft] = React.useState(value ?? "")
   const [status, setStatus] = React.useState("")
+  const announce = React.useRef<ReturnType<typeof setTimeout>>(undefined)
+  React.useEffect(() => () => clearTimeout(announce.current), [])
   const [open, setOpen] = React.useState(false)
   // Un `value` nuevo de afuera pisa lo tipeado (el patrón de ajustar estado en el render).
   const [synced, setSynced] = React.useState(value)
@@ -84,6 +86,7 @@ function TimePicker({
   const formReset = useFormReset(() => {
     if (valueProp === undefined) setOwn(defaultValue)
     setDraft((valueProp !== undefined ? valueProp : defaultValue) ?? "")
+    clearTimeout(announce.current)
     setStatus("")
   })
   const highlighted = React.useRef<string | undefined>(undefined)
@@ -110,14 +113,18 @@ function TimePicker({
   // Al salir del campo la lista se cierra: sin esto, volver a la hora anterior la reabría.
   const commitDraft = () => {
     setOpen(false)
+    clearTimeout(announce.current)
+    setStatus("")
     if (draft.trim() === "") return commit(null)
     const parsed = parseTime(draft)
     if (!parsed) {
       setDraft(value ?? "")
-      setStatus(labels.invalid)
+      // Vacía la región y la llena en el tick siguiente: un lector de pantalla no repite un texto
+      // que no cambió, y un segundo error igual quedaba mudo.
+      const invalid = labels.invalid
+      announce.current = setTimeout(() => setStatus(invalid))
       return
     }
-    setStatus("")
     commit(clampTime(parsed, min, max))
   }
 

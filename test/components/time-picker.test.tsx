@@ -1,4 +1,4 @@
-import { act, render, screen, within } from "@testing-library/react"
+import { act, render, screen, waitFor, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import * as React from "react"
 import { renderToString } from "react-dom/server"
@@ -126,6 +126,26 @@ describe("TimePicker", () => {
     await user.tab()
     expect(field()).toHaveValue("10:00")
     expect(screen.getByRole("status")).toHaveTextContent("Hora no válida")
+  })
+
+  it("otro error igual se vuelve a anunciar: la región se vacía y se llena", async () => {
+    const user = userEvent.setup()
+    render(<TimePicker aria-label="Hora de envío" defaultValue="10:00" />)
+    const status = screen.getByRole("status")
+    await user.clear(field())
+    await user.type(field(), "25")
+    await user.tab()
+    await waitFor(() => expect(status).toHaveTextContent("Hora no válida"))
+    const texts: string[] = []
+    const observer = new MutationObserver(() => texts.push(status.textContent ?? ""))
+    observer.observe(status, { childList: true, characterData: true, subtree: true })
+    await user.clear(field())
+    await user.type(field(), "26")
+    await user.tab()
+    await waitFor(() => expect(status).toHaveTextContent("Hora no válida"))
+    observer.disconnect()
+    // Un lector de pantalla no repite un texto que no cambió: tiene que pasar por vacío.
+    expect(texts).toEqual(["", "Hora no válida"])
   })
 
   it("vaciar el campo es null", async () => {
