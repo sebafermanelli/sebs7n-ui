@@ -33,7 +33,7 @@ import { Toaster } from "../../src/components/sonner"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../src/components/tooltip"
 
 describe("Tooltip", () => {
-  it("aparece al enfocar el trigger, opaco", async () => {
+  it("aparece al enfocar el trigger: el gris oscuro de iCloud", async () => {
     render(
       <TooltipProvider delay={0}>
         <Tooltip>
@@ -44,9 +44,9 @@ describe("Tooltip", () => {
     )
     await userEvent.tab()
     const tip = await screen.findByText("Copiar al portapapeles")
-    expect(tip.closest("[data-slot=tooltip-content]")).toHaveClass("bg-surface", "text-label", "shadow-tooltip", "rounded-control")
-    // En claro el vidrio denso es casi blanco: sobre una página blanca, sin un filo no se separa.
-    expect(tip.closest("[data-slot=tooltip-content]")).toHaveClass("shadow-tooltip")
+    expect(tip.closest("[data-slot=tooltip-content]")).toHaveClass("bg-tooltip", "text-on-tooltip", "shadow-tooltip", "rounded-[6px]")
+    // Sin flecha.
+    expect(document.querySelector("[data-slot=tooltip-arrow]")).toBeNull()
     for (const clase of tooltipSurfaceClassName.split(" ")) expect(tip.closest("[data-slot=tooltip-content]")).toHaveClass(clase)
   })
 })

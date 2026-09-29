@@ -20,10 +20,8 @@ function TooltipTrigger(props: TooltipPrimitive.Trigger.Props) {
 type TooltipContentProps = WithClassName<TooltipPrimitive.Popup.Props> &
   Pick<TooltipPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset">
 
-// Opaco (`bg-surface`) desde 2.0, la superficie de los popovers de iCloud: texto principal a
-// 4,5:1 sin depender de lo que tenga detrás. iCloud no tiene tooltip propio (usa `title`), así que
-// se deriva de su popover: el filo de 1 px lo pone `shadow-tooltip`, porque en claro la
-// superficie es blanca y sobre una página blanca no se separaba de nada.
+// Gris oscuro con texto blanco de 12 en los dos temas (R5a, `tooltipSurfaceClassName`): el tooltip
+// de la captura de Sebastián. iCloud no tiene uno propio (usa `title`).
 //
 // Sin flecha desde 1.0. La cercanía al control ya dice de quién habla —son 6px—, y la flecha
 // era un rombo de 8px que en una cápsula redondeada quedaba colgando de la curva.

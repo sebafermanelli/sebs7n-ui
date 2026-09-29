@@ -115,12 +115,13 @@ export const floatingPopupClassName =
   "focus-visible:focus-ring transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0"
 
 /**
- * La superficie del Tooltip: opaca (`bg-surface`) con el filo de 1 px de `shadow-tooltip` —en
- * claro la superficie es blanca y sobre una página blanca no se separaba— y el texto normal.
+ * La superficie del Tooltip (R5a): chica, gris oscura con texto blanco de 12 en los dos temas
+ * (`bg-tooltip`), radio 6, sin flecha y con la sombra suave de `shadow-tooltip`. Es la de la
+ * captura de Sebastián; iCloud usa el `title` nativo y no tiene una propia.
  *
  * La usan `TooltipContent` y la etiqueta del `AiLauncher`, que se tiene que ver igual que un
  * Tooltip pero no puede ser uno (se muestra fija con `labelVisible`, y el lanzador ya es el
  * trigger de un Popover o un Sheet). Sin posición ni animación: eso lo pone cada uno.
  */
 export const tooltipSurfaceClassName =
-  "rounded-control bg-surface px-2 py-1 text-callout text-label shadow-tooltip"
+  "rounded-[6px] bg-tooltip px-2 py-1 text-footnote text-on-tooltip shadow-tooltip"

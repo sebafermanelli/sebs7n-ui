@@ -152,6 +152,8 @@
   --color-label-tertiary: var(--sf-label-tertiary);
   --color-label-quaternary: var(--sf-label-quaternary);
   --color-selection-inactive: var(--sf-selection-inactive);
+  --color-tooltip: var(--sf-tooltip);
+  --color-on-tooltip: var(--sf-on-tooltip);
   --color-segment: var(--sf-segment);
 
   /**
@@ -341,6 +343,13 @@
     --sf-label-tertiary: #0000007a;
     --sf-label-quaternary: #78788029;
     --sf-selection-inactive: #dcdce0;
+    /**
+     * El tooltip (R5a): gris oscuro con texto blanco en los dos temas, como el de la captura de
+     * Sebastián («Trash Message»). iCloud no tiene tooltip propio (usa `title`): se deriva de la
+     * escala de grises de iOS. En oscuro va un paso más claro que las superficies para despegarse.
+     */
+    --sf-tooltip: #3a3a3c;
+    --sf-on-tooltip: #ffffff;
     /* El segmento activo de un control segmentado: blanco en claro, el gris de Calendar en oscuro. */
     --sf-segment: #ffffff;
     /**
@@ -496,6 +505,8 @@
     --sf-label-tertiary: #ffffff80;
     --sf-label-quaternary: #7878805c;
     --sf-selection-inactive: #3c3c3e;
+    --sf-tooltip: #48484a;
+    --sf-on-tooltip: #ffffff;
     --sf-segment: #636366;
     --sf-translucent: #38383d99;
 

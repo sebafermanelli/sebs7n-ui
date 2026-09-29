@@ -11,7 +11,7 @@ import { contrastRatio, flattenAlpha, luminanceOfHex } from "../src/lib/contrast
 import { cn } from "../src/lib/utils.js"
 import { cardVariants } from "../src/variants/card.js"
 import { menuPopupClassName } from "../src/variants/menu.js"
-import { floatingPopupClassName, modalPopupClassName } from "../src/variants/overlay.js"
+import { floatingPopupClassName, modalPopupClassName, tooltipSurfaceClassName } from "../src/variants/overlay.js"
 
 const read = (path: string) => readFileSync(fileURLToPath(new URL(path, import.meta.url)), "utf8")
 const theme = read("../src/styles/theme.css")
@@ -179,6 +179,26 @@ describe("textos sobre las superficies (WCAG 1.4.3 y 1.4.11)", () => {
       expect(ratio(flattenAlpha(token(tema, "label"), bg), bg)).toBeGreaterThanOrEqual(4.5)
     })
   }
+})
+
+describe("tooltip (R5a): gris oscuro en los dos temas", () => {
+  for (const tema of ["light", "dark"] as const) {
+    it(`${tema}: fondo oscuro con texto claro a 4.5:1, y se despega de la página`, () => {
+      const fondo = token(tema, "tooltip")
+      expect(luminanceOfHex(fondo)).toBeLessThan(0.08)
+      expect(ratio(token(tema, "on-tooltip"), fondo)).toBeGreaterThanOrEqual(4.5)
+      // En oscuro la página ya es casi negra: el tooltip tiene que ser un gris más claro que ella.
+      expect(ratio(fondo, token(tema, "background"))).toBeGreaterThan(tema === "dark" ? 1.4 : 5)
+    })
+  }
+
+  it("la superficie: 12 px, radio 6, sin flecha, sombra suave", () => {
+    expect(tooltipSurfaceClassName.split(" ")).toEqual(
+      expect.arrayContaining(["rounded-[6px]", "bg-tooltip", "text-on-tooltip", "text-footnote", "shadow-tooltip", "px-2", "py-1"])
+    )
+    expect(theme).toContain("--color-tooltip: var(--sf-tooltip);")
+    expect(theme).toContain("--color-on-tooltip: var(--sf-on-tooltip);")
+  })
 })
 
 describe("touch-target-y", () => {
