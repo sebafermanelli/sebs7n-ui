@@ -68,7 +68,7 @@ describe("extractProps", () => {
   it("rescata las variantes de cva, que declaran en node_modules pero son props del componente", () => {
     expect(prop("button", "Button", "variant").type).toContain('"accent"')
     expect(prop("button", "Button", "size").type).toContain('"icon-lg"')
-    expect(prop("button", "Button", "shape").type).toBe('"rect" | "default" | "pill"')
+    expect(prop("button", "Button", "variant").type).toContain('"destructive-plain"')
   })
 
   it("lee el valor por defecto del patrón de desestructuración", () => {
