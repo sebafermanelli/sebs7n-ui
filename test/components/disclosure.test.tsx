@@ -1,10 +1,11 @@
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
 
-import { render, screen } from "@testing-library/react"
+import { act, render, screen } from "@testing-library/react"
+import * as React from "react"
 import userEvent from "@testing-library/user-event"
 import { renderToString } from "react-dom/server"
-import { describe, expect, it } from "vitest"
+import { describe, expect, it, vi } from "vitest"
 
 import { Disclosure, DisclosureContent, DisclosureGroup, DisclosureTrigger } from "../../src/components/disclosure"
 
@@ -85,5 +86,62 @@ describe("Disclosure", () => {
       </Disclosure>
     )
     expect(document.querySelector("summary svg")).toBeNull()
+  })
+})
+
+describe("Disclosure open controlado", () => {
+  it("onOpenChange avisa al abrir y cerrar (el toggle del <details>)", async () => {
+    const onOpenChange = vi.fn()
+    const { container } = render(
+      <Disclosure defaultOpen={false} onOpenChange={onOpenChange}>
+        <DisclosureTrigger>Plazos</DisclosureTrigger>
+        <DisclosureContent>30 días</DisclosureContent>
+      </Disclosure>
+    )
+    const details = container.querySelector("details")!
+    details.open = true
+    details.dispatchEvent(new Event("toggle"))
+    expect(onOpenChange).toHaveBeenLastCalledWith(true)
+  })
+
+  it("con open, el estado es de la app: si no lo cambia, el <details> vuelve a como dice open", () => {
+    const onOpenChange = vi.fn()
+    const { container } = render(
+      <Disclosure onOpenChange={onOpenChange} open={false}>
+        <DisclosureTrigger>Plazos</DisclosureTrigger>
+        <DisclosureContent>30 días</DisclosureContent>
+      </Disclosure>
+    )
+    const details = container.querySelector("details")!
+    details.open = true
+    details.dispatchEvent(new Event("toggle"))
+    expect(onOpenChange).toHaveBeenCalledWith(true)
+    expect(details.open).toBe(false)
+  })
+
+  it("controlado de verdad: la app lo abre y lo cierra con open", () => {
+    function Controlled() {
+      const [open, setOpen] = React.useState(false)
+      return (
+        <>
+          <button onClick={() => setOpen((value) => !value)} type="button">
+            Alternar
+          </button>
+          <Disclosure onOpenChange={setOpen} open={open}>
+            <DisclosureTrigger>Plazos</DisclosureTrigger>
+            <DisclosureContent>30 días</DisclosureContent>
+          </Disclosure>
+        </>
+      )
+    }
+    const { container, getByRole } = render(<Controlled />)
+    const details = container.querySelector("details")!
+    act(() => getByRole("button", { name: "Alternar" }).click())
+    expect(details.open).toBe(true)
+    act(() => {
+      details.open = false
+      details.dispatchEvent(new Event("toggle"))
+    })
+    expect(details.open).toBe(false)
   })
 })

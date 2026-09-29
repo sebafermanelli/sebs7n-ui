@@ -28,16 +28,39 @@ type DisclosureProps = React.ComponentProps<"details"> & {
    * línea, 14 y gris, sin separadores, para un filtro plegado arriba de una lista.
    */
   variant?: "row" | "inline"
-  /** Abierto al cargar. El navegador lo abre y lo cierra después; para controlarlo, `open`. */
+  /** Abierto al cargar. El navegador lo abre y lo cierra después. */
   defaultOpen?: boolean
+  /**
+   * Abierto o cerrado, controlado: va con `onOpenChange` (en un Client Component). Sin
+   * `onOpenChange` es solo el estado inicial, como `defaultOpen`: sin JS no hay quien lo controle.
+   */
+  open?: boolean
+  /**
+   * Avisa el estado nuevo cuando el navegador abre o cierra la sección (el evento `toggle` del
+   * `<details>`). Con `open`, si la app no lo cambia, la sección vuelve a como dice `open`. Es una
+   * función: solo desde un Client Component.
+   */
+  onOpenChange?: (open: boolean) => void
 }
 
-function Disclosure({ variant = "row", defaultOpen, open, className, ...props }: DisclosureProps) {
+function Disclosure({ variant = "row", defaultOpen, open, onOpenChange, onToggle, className, ...props }: DisclosureProps) {
+  // El handler va solo con `onOpenChange`: en un Server Component, una función en el `<details>` no se
+  // puede mandar al cliente, y sin JS no hay nada que avisar.
+  const toggle = onOpenChange
+    ? (event: React.ToggleEvent<HTMLDetailsElement>) => {
+        onToggle?.(event)
+        const now = event.currentTarget.open
+        onOpenChange(now)
+        // Controlado: el navegador ya lo cambió; si la app no lo acompaña, vuelve a `open`.
+        if (open !== undefined && now !== open) event.currentTarget.open = open
+      }
+    : onToggle
   return (
     <details
       data-slot="disclosure"
       data-variant={variant}
       open={open ?? defaultOpen}
+      onToggle={toggle}
       className={cn("group/disclosure", variant === "row" && "border-t border-separator", className)}
       {...props}
     />

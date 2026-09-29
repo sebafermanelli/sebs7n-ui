@@ -12,6 +12,10 @@ type FooterProps = React.ComponentProps<"footer">
  *
  * Server Component: sin estado. El contenido va en `FooterContent`; `FooterGroup` y `FooterBottom`
  * son opcionales.
+ *
+ * Es el landmark `contentinfo` solo si va afuera de `<main>` (y de `<article>`, `<section>`, `<aside>`
+ * y `<nav>`): adentro, el `<footer>` es el pie de esa sección y el lector no lo lista como pie de la
+ * página. Ponelo como hermano de `<main>`, no adentro.
  */
 function Footer({ className, ...props }: FooterProps) {
   return (
@@ -43,6 +47,11 @@ function FooterContent({ className, maxWidth, style, ...props }: FooterContentPr
 type FooterGroupProps = Omit<React.ComponentProps<"div">, "title"> & {
   /** El título del grupo («Producto»): nombra la lista para un lector de pantalla. */
   title: React.ReactNode
+  /**
+   * El nivel del título, para que encaje en el esquema de la página: `2` (el default) si el pie cuelga
+   * del `<h1>`; `3` si la página ya tiene sus `<h2>` y el pie va debajo de uno de ellos.
+   */
+  headingLevel?: 2 | 3 | 4 | 5 | 6
 }
 
 /**
@@ -50,13 +59,14 @@ type FooterGroupProps = Omit<React.ComponentProps<"div">, "title"> & {
  * `<a>` (o `Link`) toman el link secundario del paquete (`label-secondary`, sube a `label` con línea
  * al pasar), sin clases propias.
  */
-function FooterGroup({ title, className, children, ...props }: FooterGroupProps) {
+function FooterGroup({ title, headingLevel = 2, className, children, ...props }: FooterGroupProps) {
   const id = React.useId()
+  const Heading = `h${headingLevel}` as const
   return (
     <div data-slot="footer-group" className={cn("flex flex-col gap-3", className)} {...props}>
-      <h2 id={id} className="text-callout font-semibold text-label">
+      <Heading id={id} className="text-callout font-semibold text-label">
         {title}
-      </h2>
+      </Heading>
       <ul
         aria-labelledby={id}
         className="flex flex-col gap-2 text-callout [&_a]:rounded-tag [&_a]:text-label-secondary [&_a]:outline-none [&_a]:transition-control [&_a:hover]:text-label [&_a:hover]:underline [&_a:focus-visible]:focus-ring"

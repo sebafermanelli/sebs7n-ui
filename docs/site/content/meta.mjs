@@ -1792,8 +1792,8 @@ export const COMPONENTS = {
     description: "El pie de una página, la contraparte del `Navbar` abajo: a todo el ancho, con la línea arriba, opaco como la barra global y translúcido sobre el wallpaper.",
     keyboard: [["Tab", "Recorre los links en orden, grupo por grupo."]],
     a11y: [
-      "Es un `<footer>`: fuera de un `<article>` o `<section>` es el landmark `contentinfo`.",
-      "Cada `FooterGroup` es un `<h2>` y una lista nombrada por él (`aria-labelledby`); cada hijo va en su `<li>`.",
+      "Es un `<footer>`: es el landmark `contentinfo` solo afuera de `<main>`, `<article>`, `<section>`, `<aside>` y `<nav>`. Ponelo como hermano de `<main>`, no adentro, o el lector no lo lista como pie de la página.",
+      "Cada `FooterGroup` es un título (`<h2>` por defecto; `headingLevel` para encajar en el esquema de la página) y una lista nombrada por él (`aria-labelledby`); cada hijo va en su `<li>`.",
       "El texto es `label` y `label-secondary`, a 4,5:1 sobre `surface-header` y sobre el material translúcido en los cuatro tonos del wallpaper (`test/contrast.test.ts`). Los links tienen foco visible y subrayado al pasar: no dependen del color.",
     ],
     usage: [
@@ -1805,6 +1805,7 @@ export const COMPONENTS = {
     props: {
       FooterGroup: {
         title: "El título del grupo («Producto»); nombra la lista.",
+        headingLevel: "El nivel del título: `2` (el default) o más, si el pie va debajo de los `<h2>` de la página.",
         className: PROP_DESCRIPTIONS.className,
       },
       FooterContent: {
@@ -2933,7 +2934,8 @@ export const COMPONENTS = {
     props: {
       Disclosure: {
         name: "Mismo `name` en varios: abrir uno cierra los otros (lo hace el navegador).",
-        open: "Abierto, controlado por atributo: el navegador lo cambia al hacer clic y React no lo vuelve a poner si la prop no cambia.",
+        open: "Abierto, controlado: va con `onOpenChange` (en un Client Component). Sin `onOpenChange` es solo el estado inicial, como `defaultOpen`.",
+        onOpenChange: "Avisa el estado nuevo (el evento `toggle` del `<details>`). Con `open`, si la app no lo cambia, la sección vuelve a como dice `open`. Solo desde un Client Component.",
       },
     },
     related: ["accordion", "collapsible"],

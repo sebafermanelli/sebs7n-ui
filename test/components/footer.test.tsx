@@ -60,3 +60,23 @@ describe("Footer", () => {
     expect(renderToString(<Site />)).toContain("<footer")
   })
 })
+
+describe("FooterGroup headingLevel", () => {
+  it("por defecto h2; headingLevel lo cambia para encajar en el esquema de la página", () => {
+    render(
+      <Footer>
+        <FooterContent>
+          <FooterGroup title="Producto">
+            <a href="/precios">Precios</a>
+          </FooterGroup>
+          <FooterGroup headingLevel={3} title="Empresa">
+            <a href="/equipo">Equipo</a>
+          </FooterGroup>
+        </FooterContent>
+      </Footer>
+    )
+    expect(screen.getByRole("heading", { name: "Producto" }).tagName).toBe("H2")
+    expect(screen.getByRole("heading", { name: "Empresa" }).tagName).toBe("H3")
+    expect(screen.getByRole("list", { name: "Empresa" })).toBeInTheDocument()
+  })
+})
