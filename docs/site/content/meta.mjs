@@ -2274,6 +2274,7 @@ export const COMPONENTS = {
     ],
     props: {
       Tree: {
+        onKeyDown: "Se llama antes de la navegación por teclado. Con `event.preventDefault()`, la tecla no navega.",
         items: "Los nodos: `{ id, label, icon?, children?, hasChildren?, columns?, disabled? }`. Un `children` (aunque vacío) la hace carpeta.",
         columns: "Columnas a la derecha: `{ header, width?, numeric? }`. Los valores van en `node.columns`, en el mismo orden.",
         nameHeader: "El título de la columna del nombre, en la cabecera.",
@@ -2320,6 +2321,7 @@ export const COMPONENTS = {
     ],
     props: {
       FileGrid: {
+        onKeyDown: "Se llama antes de la navegación por teclado. Con `event.preventDefault()`, la tecla no navega.",
         items: "Los archivos: `{ id, name, kind?, thumbnail?, folder?, disabled? }`.",
         selected: "El id elegido. Pasarlo lo vuelve controlado.",
         defaultSelected: "El id elegido al arrancar.",

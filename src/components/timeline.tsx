@@ -1,6 +1,7 @@
 import * as React from "react"
 
 import { categoryFill } from "../internal/category-color.js"
+import type { AccessibleName } from "../internal/accessible-name.js"
 import { cn } from "../lib/utils.js"
 import type { BadgeColor } from "../variants/badge.js"
 
@@ -13,7 +14,7 @@ import type { BadgeColor } from "../variants/badge.js"
  * `Timeline` es la lista (`<ol>`), `TimelineGroup` un día con su propia lista nombrada por la
  * cabecera y `TimelineItem` cada evento. Sin estado: va en un Server Component.
  */
-type TimelineProps = React.ComponentProps<"ol">
+type TimelinePropsBase = React.ComponentProps<"ol">
 
 function Timeline({ className, ...props }: TimelineProps) {
   return <ol data-slot="timeline" role="list" className={cn("flex flex-col", className)} {...props} />
@@ -90,5 +91,8 @@ function TimelineItem({ className, title, description, time, dateTime, dot = "gr
     </li>
   )
 }
+
+
+type TimelineProps = TimelinePropsBase & AccessibleName
 
 export { Timeline, TimelineGroup, TimelineItem, type TimelineGroupProps, type TimelineItemProps, type TimelineProps }

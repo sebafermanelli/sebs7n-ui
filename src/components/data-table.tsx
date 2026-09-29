@@ -4,6 +4,7 @@ import * as React from "react"
 import { ChevronDownIcon, ChevronUpIcon, SearchIcon } from "lucide-react"
 
 import { useLabels, type Labels } from "../lib/labels.js"
+import type { AccessibleName } from "../internal/accessible-name.js"
 import { cn } from "../lib/utils.js"
 import { Button } from "./button.js"
 import { Checkbox } from "./checkbox.js"
@@ -41,7 +42,7 @@ type DataTableColumn<T> = {
 
 type DataTableSort = { id: string; direction: "asc" | "desc" } | null
 
-type DataTableProps<T> = Omit<TableProps, "children"> & {
+type DataTablePropsBase<T> = Omit<TableProps, "children"> & {
   data: T[]
   columns: DataTableColumn<T>[]
   /** El id estable de cada fila: la `key` y lo que guarda la selección. */
@@ -373,5 +374,8 @@ function DataTable<T>({
     </div>
   )
 }
+
+
+type DataTableProps<T> = DataTablePropsBase<T> & AccessibleName
 
 export { DataTable, type DataTableColumn, type DataTableProps, type DataTableSort, type DataTableValue }

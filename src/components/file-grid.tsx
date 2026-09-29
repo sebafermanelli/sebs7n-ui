@@ -3,6 +3,7 @@
 import * as React from "react"
 import { FileIcon, FolderIcon } from "lucide-react"
 
+import type { AccessibleName } from "../internal/accessible-name.js"
 import { cn } from "../lib/utils.js"
 
 /**
@@ -29,7 +30,7 @@ type FileGridItem = {
   disabled?: boolean
 }
 
-type FileGridProps = Omit<React.ComponentProps<"div">, "children" | "defaultValue" | "onSelect"> & {
+type FileGridPropsBase = Omit<React.ComponentProps<"div">, "children" | "defaultValue" | "onSelect"> & {
   items: FileGridItem[]
   /** El ítem elegido. Pasarlo lo vuelve controlado. */
   selected?: string | null
@@ -207,5 +208,8 @@ function FileGrid({
     </div>
   )
 }
+
+
+type FileGridProps = FileGridPropsBase & AccessibleName
 
 export { FileGrid, type FileGridItem, type FileGridProps }

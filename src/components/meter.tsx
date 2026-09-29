@@ -5,6 +5,7 @@ import { Meter as MeterPrimitive } from "@base-ui/react/meter"
 
 import { categoryFill } from "../internal/category-color.js"
 import { useLabels, type Labels } from "../lib/labels.js"
+import type { AccessibleName } from "../internal/accessible-name.js"
 import { cn } from "../lib/utils.js"
 import type { BadgeColor } from "../variants/badge.js"
 
@@ -97,7 +98,7 @@ type StackedMeterSegment = {
   color: BadgeColor
 }
 
-type StackedMeterProps = Omit<React.ComponentProps<"div">, "children"> & {
+type StackedMeterPropsBase = Omit<React.ComponentProps<"div">, "children"> & {
   /** Los segmentos, en el orden en que se apilan. Lo que sobra hasta `max` queda gris. */
   segments: StackedMeterSegment[]
   /** El total: el tamaño del plan. */
@@ -174,5 +175,8 @@ function StackedMeter({ className, segments, max, format, locale, total, labels,
     </div>
   )
 }
+
+
+type StackedMeterProps = StackedMeterPropsBase & AccessibleName
 
 export { Meter, StackedMeter, type MeterBaseProps, type MeterProps, type StackedMeterProps, type StackedMeterSegment }

@@ -5,7 +5,11 @@ import { describe, expect, it, vi } from "vitest"
 import { Avatar, AvatarImage } from "../src/components/avatar.js"
 import { Button } from "../src/components/button.js"
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "../src/components/dialog.js"
-import { Meter } from "../src/components/meter.js"
+import { DataTable } from "../src/components/data-table.js"
+import { FileGrid } from "../src/components/file-grid.js"
+import { Meter, StackedMeter } from "../src/components/meter.js"
+import { Timeline, TimelineItem } from "../src/components/timeline.js"
+import { Tree } from "../src/components/tree.js"
 import { Progress } from "../src/components/progress.js"
 import { Toolbar, ToolbarButton, ToolbarGroup } from "../src/components/toolbar.js"
 
@@ -73,6 +77,36 @@ describe("Los tipos exigen el nombre", () => {
       </Toolbar>
     )
     expect(screen.getByRole("group", { name: "Alineación" })).toBeInTheDocument()
+  })
+})
+
+describe("Los contenedores sin texto propio piden nombre", () => {
+  it("Tree, FileGrid, StackedMeter, DataTable y Timeline: aria-label o aria-labelledby", () => {
+    const columnas = [{ id: "n", header: "Nombre", value: (row: { id: string }) => row.id }]
+    render(
+      <>
+        {/* @ts-expect-error un árbol sin nombre se anuncia «árbol» y nada más */}
+        <Tree items={[]} />
+        <Tree aria-label="Comprobantes" items={[{ id: "a", label: "2026" }]} />
+        {/* @ts-expect-error la grilla es un listbox: sin nombre no se sabe de qué */}
+        <FileGrid items={[]} />
+        <FileGrid aria-labelledby="titulo" items={[]} />
+        {/* @ts-expect-error el grupo de meters sin nombre */}
+        <StackedMeter max={10} segments={[]} />
+        <StackedMeter aria-label="Espacio" max={10} segments={[]} />
+        {/* @ts-expect-error una tabla sin nombre */}
+        <DataTable columns={columnas} data={[]} getRowId={(row) => row.id} />
+        <DataTable aria-label="Facturas" columns={columnas} data={[]} getRowId={(row) => row.id} />
+        {/* @ts-expect-error una lista de eventos sin nombre */}
+        <Timeline />
+        <Timeline aria-label="Actividad">
+          <TimelineItem title="Emitida" />
+        </Timeline>
+      </>
+    )
+    expect(screen.getByRole("tree", { name: "Comprobantes" })).toBeInTheDocument()
+    expect(screen.getByRole("table", { name: "Facturas" })).toBeInTheDocument()
+    expect(screen.getByRole("list", { name: "Actividad" })).toBeInTheDocument()
   })
 })
 

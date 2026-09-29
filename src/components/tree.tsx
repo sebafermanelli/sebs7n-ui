@@ -3,6 +3,7 @@
 import * as React from "react"
 import { ChevronRightIcon, FileIcon, FolderIcon, LoaderCircleIcon } from "lucide-react"
 
+import type { AccessibleName } from "../internal/accessible-name.js"
 import { cn } from "../lib/utils.js"
 
 /**
@@ -38,7 +39,7 @@ type TreeColumn = {
   numeric?: boolean
 }
 
-type TreeProps = Omit<React.ComponentProps<"div">, "children" | "defaultValue" | "onSelect"> & {
+type TreePropsBase = Omit<React.ComponentProps<"div">, "children" | "defaultValue" | "onSelect"> & {
   items: TreeNode[]
   /** Columnas a la derecha del nombre, con una cabecera de 44 arriba. */
   columns?: TreeColumn[]
@@ -309,5 +310,8 @@ function Tree({
     </div>
   )
 }
+
+
+type TreeProps = TreePropsBase & AccessibleName
 
 export { Tree, type TreeColumn, type TreeNode, type TreeProps }
