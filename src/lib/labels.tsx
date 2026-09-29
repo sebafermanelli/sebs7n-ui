@@ -165,6 +165,12 @@ export type Labels = {
     /** Nombre del grupo de filtros de `CommandFilters`. */
     filters: string
   }
+  copyButton: {
+    /** Nombre del botón y texto del tooltip antes de copiar. */
+    copy: string
+    /** Lo que dice el tooltip y se anuncia después de copiar. */
+    copied: string
+  }
   dataTable: {
     /** El nombre y el placeholder de la búsqueda. */
     search: string
@@ -325,6 +331,7 @@ export const defaultLabels: Labels = {
     dialog: "Buscar",
     filters: "Filtros",
   },
+  copyButton: { copy: "Copiar", copied: "Copiado" },
   dataTable: {
     search: "Buscar",
     selectAll: "Seleccionar todas",

@@ -185,3 +185,5 @@ export * from "./components/widget-card.js"
 //   `multi-select`    sebs7n-ui/multi-select
 //   `timeline`        sebs7n-ui/timeline
 //   `resizable`       sebs7n-ui/resizable
+// Y los de R7 (campos), también nacidos afuera:
+//   `copy-button`       sebs7n-ui/copy-button
