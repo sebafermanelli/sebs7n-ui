@@ -554,7 +554,8 @@
  * rápido— y las apps son opacas en capas de gris. No va en menús, diálogos ni barras de una app:
  * ahí van `bg-surface`, `bg-surface-bar` y compañía.
  *
- * Quien pidió menos transparencia o más contraste lo ve opaco (la barra de herramientas), sin blur.
+ * Quien pidió menos transparencia o más contraste lo ve opaco, sin blur: en la barra global de
+ * iCloud (`surface-header`), que es lo que va translúcido sobre el wallpaper.
  */
 @utility material-translucent {
   background-color: var(--sf-translucent);
@@ -562,7 +563,7 @@
   backdrop-filter: blur(15px) saturate(0.86);
 
   @media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
-    background-color: var(--sf-surface-bar);
+    background-color: var(--sf-surface-header);
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }

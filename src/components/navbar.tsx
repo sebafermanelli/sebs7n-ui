@@ -100,12 +100,12 @@ function Navbar({ className, surfaceClassName, variant = "bar", position = "stic
       <div
         data-slot="navbar-surface"
         className={cn(
-          "relative border border-transparent transition-[background-color,border-color,border-radius,box-shadow,backdrop-filter] duration-300 ease-out",
+          "relative border border-transparent transition-[background-color,border-color,border-radius,box-shadow] duration-300 ease-out",
           !scrolled && "rounded-none bg-transparent",
-          // Una barra es de lo más grande que flota en una pantalla: material grueso.
+          // Con scroll, la barra global de iCloud: opaca, y translúcida solo sobre el wallpaper.
           scrolled && "bg-surface-header in-data-ambient:material-translucent",
           scrolled && !floating && "rounded-none border-b-separator",
-          // Despegada es cromo, y el cromo lleva el canto especular de las cápsulas de Safari.
+          // Despegada lleva el radio del panel y la sombra de popover (R5 decide si queda).
           floating && "mx-auto max-w-6xl rounded-panel border-separator shadow-menu",
           surfaceClassName
         )}

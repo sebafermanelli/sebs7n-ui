@@ -96,3 +96,15 @@ describe("Navbar", () => {
     expect(getByTestId("suelto")).toHaveTextContent("false")
   })
 })
+
+// Revisión de R1: sin vidrio no hay `backdrop-filter` que animar ni cantos de cápsula de Safari.
+describe("Navbar y Sidebar sin restos del vidrio", () => {
+  it("la superficie del Navbar no transiciona backdrop-filter", async () => {
+    const { readFileSync } = await import("node:fs")
+    const { join } = await import("node:path")
+    const navbar = readFileSync(join(import.meta.dirname, "../../src/components/navbar.tsx"), "utf8")
+    const sidebar = readFileSync(join(import.meta.dirname, "../../src/components/sidebar.tsx"), "utf8")
+    expect(navbar).not.toMatch(/backdrop-filter|canto especular|material grueso/)
+    expect(sidebar).not.toMatch(/backdrop-filter-none|after:hidden/)
+  })
+})

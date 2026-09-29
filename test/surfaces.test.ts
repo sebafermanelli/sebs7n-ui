@@ -123,9 +123,11 @@ describe("material-translucent: el único con blur", () => {
     expect(bloqueUtil).toContain("-webkit-backdrop-filter: blur(15px) saturate(0.86);")
   })
 
-  it("sin transparencia o con más contraste es opaco", () => {
+  // Revisión de R1: lo opaco es la barra global de iCloud (`surface-header`, rgb(50,50,54)), que es
+  // lo que va translúcido sobre el wallpaper; `surface-bar` es la barra de detalle de una app.
+  it("sin transparencia o con más contraste es opaco: la barra global", () => {
     const bloqueUtil = utility("material-translucent")
-    expect(bloqueUtil).toMatch(/@media \(prefers-reduced-transparency: reduce\), \(prefers-contrast: more\) \{\s*background-color: var\(--sf-surface-bar\);\s*-webkit-backdrop-filter: none;\s*backdrop-filter: none;/)
+    expect(bloqueUtil).toMatch(/@media \(prefers-reduced-transparency: reduce\), \(prefers-contrast: more\) \{\s*background-color: var\(--sf-surface-header\);\s*-webkit-backdrop-filter: none;\s*backdrop-filter: none;/)
   })
 
   it("lo usa la barra del Navbar sobre el wallpaper", () => {

@@ -42,7 +42,7 @@ function Sidebar({ className, collapsed: collapsedProp = false, variant = "float
           // la columna sticky del AppShell.
           variant === "floating" && "m-3 mr-0 h-[calc(100%-1.5rem)] overflow-hidden rounded-panel border border-separator shadow-menu",
           variant === "bar" && "border-r border-separator",
-          inSheet && "m-0 h-full w-full rounded-none border-0 bg-transparent shadow-none backdrop-filter-none after:hidden",
+          inSheet && "m-0 h-full w-full rounded-none border-0 bg-transparent shadow-none",
           className
         )}
         {...props}
