@@ -91,6 +91,34 @@ describe("MultiSelect", () => {
     expect(screen.getByText(/Máximo 1/).closest("[role=status]")).not.toBeNull()
   })
 
+  it("con todo elegido, quitar un chip quita ese y no otro", async () => {
+    const onValueChange = vi.fn()
+    render(<MultiSelect aria-label="Medios de pago" defaultValue={["transferencia", "tarjeta", "debito"]} onValueChange={onValueChange} options={MEDIOS} selectAll />)
+    await userEvent.click(screen.getByRole("button", { name: "Quitar Tarjeta de crédito" }))
+    expect(onValueChange).toHaveBeenLastCalledWith(["transferencia", "debito"])
+    expect(chips()).toEqual(["Transferencia", "Débito automático"])
+    await userEvent.click(screen.getByRole("button", { name: "Quitar Transferencia" }))
+    expect(onValueChange).toHaveBeenLastCalledWith(["debito"])
+  })
+
+  it("con todo elegido, Backspace con el campo vacío quita el último", async () => {
+    const onValueChange = vi.fn()
+    render(<MultiSelect aria-label="Medios de pago" defaultValue={["transferencia", "tarjeta", "debito"]} onValueChange={onValueChange} options={MEDIOS} selectAll />)
+    await abrir()
+    await userEvent.keyboard("{Escape}{Backspace}")
+    expect(onValueChange).toHaveBeenLastCalledWith(["transferencia", "tarjeta"])
+  })
+
+  it("en un form manda un valor por elegido, sin el de «Seleccionar todo»", () => {
+    render(
+      <form data-testid="form">
+        <MultiSelect aria-label="Medios de pago" defaultValue={["transferencia", "tarjeta", "debito"]} name="medios" options={MEDIOS} selectAll />
+      </form>
+    )
+    const datos = new FormData(screen.getByTestId("form") as HTMLFormElement)
+    expect(datos.getAll("medios")).toEqual(["transferencia", "tarjeta", "debito"])
+  })
+
   it("limpiar vacía la selección", async () => {
     const onValueChange = vi.fn()
     render(<MultiSelect aria-label="Medios de pago" defaultValue={["tarjeta", "debito"]} onValueChange={onValueChange} options={MEDIOS} />)

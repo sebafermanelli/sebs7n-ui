@@ -2,7 +2,9 @@
 
 import * as React from "react"
 
+import { MenuCheck } from "../internal/menu-check.js"
 import { useLabels, type Labels } from "../lib/labels.js"
+import { menuIndicatorClassName } from "../variants/menu.js"
 import {
   Combobox,
   ComboboxChip,
@@ -58,9 +60,10 @@ type MultiSelectProps = {
   labels?: Partial<Labels["multiSelect"]>
 }
 
-// El valor centinela de «Seleccionar todo»: va en la lista como una opción más y en el valor de Base
-// UI cuando todas las que se ven están elegidas (así su círculo de acento y `aria-selected` salen
-// solos), pero nunca llega a `onValueChange`.
+// El valor centinela de «Seleccionar todo»: va en la lista como una opción más, pero **nunca** en el
+// valor de Base UI. Ahí descalabraba los chips (Base UI quita un chip por índice: con todo elegido,
+// quitar «Beta» quitaba otro) y los `<input hidden>` del form. Su círculo y `aria-selected` se dibujan
+// a mano, y nunca llega a `onValueChange`.
 const ALL = "\u0000all"
 
 /** Sin tildes ni mayúsculas: «debito» encuentra «Débito automático». */
@@ -108,18 +111,16 @@ function MultiSelect({
   const offerAll = selectAll && enabledMatches.length > 1 && (max === undefined || max >= enabledMatches.length)
   const allChosen = offerAll && enabledMatches.every((option) => selected.has(option.value))
   const items = offerAll ? [ALL, ...matches.map((option) => option.value)] : matches.map((option) => option.value)
-  const rootValue = allChosen ? [ALL, ...value] : value
 
   const handleChange = (next: string[]) => {
-    const hadAll = rootValue.includes(ALL)
-    const hasAll = next.includes(ALL)
-    if (!next.length) return commit([])
-    if (hasAll && !hadAll) return commit([...value, ...enabledMatches.map((option) => option.value)])
-    if (hadAll && !hasAll && next.length === rootValue.length - 1) {
-      const visible = new Set(enabledMatches.map((option) => option.value))
-      return commit(value.filter((item) => !visible.has(item)))
+    // Base UI suma el centinela al elegir «Seleccionar todo» (nunca está en su valor): marca las que se
+    // ven, o las desmarca si ya estaban todas.
+    if (next.includes(ALL)) {
+      const visible = enabledMatches.map((option) => option.value)
+      if (allChosen) return commit(value.filter((item) => !visible.includes(item)))
+      return commit([...value, ...visible])
     }
-    const real = next.filter((item) => item !== ALL)
+    const real = next
     // El tope también vale para lo que no pasa por la lista (un valor controlado de más no se recorta).
     if (max !== undefined && real.length > max && real.length > value.length) return
     commit(real)
@@ -138,7 +139,7 @@ function MultiSelect({
       name={name}
       onInputValueChange={(next) => setQuery(next)}
       onValueChange={(next) => handleChange(next as string[])}
-      value={rootValue}
+      value={value}
     >
       <ComboboxChips className={className} disabled={disabled} showClear={showClear && value.length > 0} size={size}>
         {value.map((item) => (
@@ -153,14 +154,20 @@ function MultiSelect({
         {full && <ComboboxStatus>{`${labels.max} ${max}`}</ComboboxStatus>}
         <ComboboxList>
           {(item: string) => (
-            <ComboboxItem
-              key={item}
-              className={item === ALL ? "font-semibold" : undefined}
-              disabled={item === ALL ? false : byValue.get(item)?.disabled || (full && !selected.has(item))}
-              value={item}
-            >
-              {label(item)}
-            </ComboboxItem>
+            item === ALL ? (
+              <ComboboxItem key={item} aria-selected={allChosen} className="font-semibold" value={item}>
+                {label(item)}
+                {allChosen && (
+                  <span data-slot="combobox-item-indicator" className={menuIndicatorClassName}>
+                    <MenuCheck />
+                  </span>
+                )}
+              </ComboboxItem>
+            ) : (
+              <ComboboxItem key={item} disabled={byValue.get(item)?.disabled || (full && !selected.has(item))} value={item}>
+                {label(item)}
+              </ComboboxItem>
+            )
           )}
         </ComboboxList>
       </ComboboxContent>
