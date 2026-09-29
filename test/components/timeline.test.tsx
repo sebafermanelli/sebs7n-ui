@@ -31,6 +31,17 @@ describe("Timeline", () => {
     expect(hora).toHaveClass("text-callout", "text-label-secondary", "tabular-nums")
   })
 
+  it("sin dateTime la hora va en un <span>: un <time> tiene que traer una fecha válida", () => {
+    render(
+      <Timeline aria-label="Actividad">
+        <TimelineItem time="Ayer" title="Enviada" />
+      </Timeline>
+    )
+    const hora = screen.getByText("Ayer")
+    expect(hora.tagName).toBe("SPAN")
+    expect(hora).toHaveClass("text-callout", "text-label-secondary", "tabular-nums")
+  })
+
   it("el punto de 8 en el color de la categoría, o un ícono en su lugar; decorativos", () => {
     render(
       <Timeline aria-label="Actividad">

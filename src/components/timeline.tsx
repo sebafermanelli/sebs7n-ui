@@ -74,11 +74,9 @@ function TimelineItem({ className, title, description, time, dateTime, dot = "gr
       <div className="flex min-w-0 flex-1 flex-col pb-5 group-last/timeline-item:pb-0">
         <div className="flex items-baseline gap-3">
           <span className="min-w-0 flex-1 text-body text-label">{title}</span>
-          {time != null && (
-            <time dateTime={dateTime} className="shrink-0 text-callout text-label-secondary tabular-nums">
-              {time}
-            </time>
-          )}
+          {/* Un <time> sin `dateTime` tiene que tener una fecha válida como texto («Ayer» no lo es). */}
+          {time != null &&
+            React.createElement(dateTime ? "time" : "span", { dateTime, className: "shrink-0 text-callout text-label-secondary tabular-nums" }, time)}
         </div>
         {description != null && <span className="text-callout text-label-secondary">{description}</span>}
         {children}
