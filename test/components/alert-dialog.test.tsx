@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from "@testing-library/react"
-import { useRef } from "react"
+import { StrictMode, useRef } from "react"
 import userEvent from "@testing-library/user-event"
 import { describe, expect, it, vi } from "vitest"
 
@@ -392,4 +392,57 @@ describe("textos largos en la alerta", () => {
     const { alertFooterClassName } = await import("../../src/variants/overlay")
     expect(alertFooterClassName.split(" ")).toEqual(expect.arrayContaining(["[&>*]:min-w-0", "[&>*]:break-words"]))
   })
+})
+
+// Revisión de R3: el registro de destructivas es un contador (`register` suma y su limpieza resta).
+// En StrictMode React monta, desmonta y vuelve a montar los efectos: si la limpieza no restara, el
+// contador quedaría en 2 y al sacar la destructiva la alerta seguiría creyendo que tiene una.
+describe("AlertDialog en StrictMode", () => {
+  function Alerta({ destructiva }: { destructiva: boolean }) {
+    return (
+      <StrictMode>
+        <AlertDialog defaultOpen>
+          <AlertDialogContent>
+            <AlertDialogTitle>¿Salir sin guardar?</AlertDialogTitle>
+            <AlertDialogFooter>
+              <AlertDialogCancel />
+              {destructiva && <AlertDialogAction variant="destructive">Descartar</AlertDialogAction>}
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </StrictMode>
+    )
+  }
+
+  it("el doble montaje cuenta la destructiva una vez, y al sacarla Cancelar vuelve al gris", async () => {
+    const { rerender } = render(<Alerta destructiva />)
+    const cancelar = await screen.findByRole("button", { name: "Cancelar" })
+    await waitFor(() => expect(cancelar).toHaveClass("bg-brand-700"))
+    rerender(<Alerta destructiva={false} />)
+    await waitFor(() => expect(screen.getByRole("button", { name: "Cancelar" })).toHaveClass("bg-fill-2"))
+    expect(screen.getByRole("button", { name: "Cancelar" }).className).not.toMatch(/bg-brand-700/)
+  })
+})
+
+// Destructiva y común sin «Cancelar»: no queda ningún acento (la común pasa al gris porque hay una
+// destructiva, y no hay Cancelar que tome el acento) y el foco inicial es el popup.
+it("destructiva y común sin Cancelar: todo gris y el foco en el popup", async () => {
+  render(
+    <AlertDialog>
+      <AlertDialogTrigger render={<Button />}>Abrir</AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogTitle>¿Salir sin guardar?</AlertDialogTitle>
+        <AlertDialogFooter>
+          <AlertDialogAction>Guardar</AlertDialogAction>
+          <AlertDialogAction variant="destructive">Descartar</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  )
+  await userEvent.click(screen.getByRole("button", { name: "Abrir" }))
+  const alerta = await screen.findByRole("alertdialog")
+  await waitFor(() => expect(alerta).toHaveFocus())
+  expect(screen.getByRole("button", { name: "Guardar" })).toHaveClass("bg-fill-2")
+  expect(screen.getByRole("button", { name: "Descartar" })).toHaveClass("bg-fill-2", "text-red-ink")
+  expect(alerta.querySelector(".bg-brand-700")).toBeNull()
 })

@@ -184,6 +184,9 @@ type AlertDialogActionProps = Omit<ButtonBaseProps, "variant"> & {
    * temas), y con ella el botón por defecto pasa a ser «Cancelar» y las `default` van en gris.
    * Solo cuenta esta prop: un `<Button variant="destructive">` suelto no se detecta.
    *
+   * Con una destructiva y **sin** `AlertDialogCancel` no queda ningún acento (la destructiva es gris
+   * con texto rojo y una `default` al lado también pasa al gris) y el foco inicial es el popup.
+   *
    * **Cambió en 2.0**: hasta 1.x `default` era el negro y `destructive` el rojo sólido.
    */
   variant?: "default" | "destructive"
