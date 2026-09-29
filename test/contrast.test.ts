@@ -407,3 +407,68 @@ describe("El ítem destructivo de un menú: rojo sobre el panel y sobre el resal
     }
   }
 })
+
+// El acento como texto (R4): el link de iCloud («Find Devices ›», «account.apple.com ↗») y el botón
+// `plain` (texto en el acento, hover `fill-2`, apretado `highlight`). Medido con las cinco marcas:
+// `brand-900` sobre la página da 4,85–5,53:1, pero sobre un relleno baja a 4,0–4,5 en claro (teal,
+// emerald). La regla del sistema:
+//
+// - texto de acento **sobre la página** (link) → `brand-900`;
+// - texto de acento **sobre un relleno** (el `plain` con el puntero, barras, ítems resaltados) →
+//   `brand-ink`, la tinta de la marca (900 mezclado con 1000), que pasa en todos los fondos;
+// - **glifos** de acento (el ícono de un botón de la toolbar) → `brand-900`, a 3:1 (WCAG 1.4.11).
+//
+// Los pasos de la marca salen de theme.css (`--sf-brand-900`/`-1000` con `oklch(from …)`), no de
+// una copia.
+describe("El acento como texto y como glifo, en las cinco marcas (WCAG 1.4.3 y 1.4.11)", () => {
+  const css = read("theme.css")
+  const cuerpo = (theme: "light" | "dark") => {
+    const inicio = css.indexOf(theme === "light" ? ":root {" : ".dark {")
+    return css.slice(inicio, css.indexOf("\n  }", inicio))
+  }
+  const pasoDe = (theme: "light" | "dark", n: 900 | 1000) => {
+    const [, l, c] = new RegExp(`--sf-brand-${n}: oklch\\(from var\\(--sf-brand-src\\) ([\\d.]+) calc\\(c \\* ([\\d.]+)\\) h\\);`).exec(cuerpo(theme))!
+    return (base: number[]) => hexOfOklch([Number(l), base[1]! * Number(c), base[2]!] as unknown as Oklch)
+  }
+  const mezcla = Number(css.match(/--color-brand-ink: color-mix\(in srgb, var\(--sf-brand-900\) (\d+)%, var\(--sf-brand-1000\)\);/)![1]) / 100
+  const tinte = (theme: "light" | "dark") => Number(/--sf-highlight: color-mix\(in srgb, var\(--sf-brand-700\) (\d+)%/.exec(cuerpo(theme))![1]) / 100
+  const [, l, c, h] = css.match(/--brand-base: oklch\(([\d.]+) ([\d.]+) ([\d.]+)\);/) ?? []
+  const porDefecto = [l, c, h].map(Number)
+  const marcas: Record<string, Record<"light" | "dark", number[]>> = {
+    "por defecto": { light: porDefecto, dark: porDefecto },
+    ...Object.fromEntries(
+      Object.entries(brands as Record<string, Record<"light" | "dark", { base: number[] }>>).map(([m, t]) => [m, { light: t.light.base, dark: t.dark.base }])
+    ),
+  }
+
+  for (const theme of ["light", "dark"] as const) {
+    const p = paleta[theme]
+    const superficie = p["--sf-surface"]!
+    const pagina = { página: p["--sf-background"]!, superficie, sidebar: p["--sf-surface-secondary"]! }
+    const rellenos = {
+      "fill-1": flattenAlpha(p["--sf-fill-1"]!, superficie),
+      "fill-2 (hover)": flattenAlpha(p["--sf-fill-2"]!, superficie),
+      "fill-3": flattenAlpha(p["--sf-fill-3"]!, superficie),
+      "surface-bar": p["--sf-surface-bar"]!,
+    }
+    for (const [marca, temas] of Object.entries(marcas)) {
+      const base = temas[theme]
+      const b900 = pasoDe(theme, 900)(base)
+      const tinta = composite(b900, mezcla, pasoDe(theme, 1000)(base))
+      const resaltado = composite(hexOfOklch(base as unknown as Oklch), tinte(theme), superficie)
+      for (const [donde, bg] of Object.entries(pagina)) {
+        it(`${theme} · ${marca} · link: brand-900 ${b900} sobre ${donde} ${bg} llega a 4.5:1`, () => {
+          expect(ratio(b900, bg)).toBeGreaterThanOrEqual(4.5)
+        })
+      }
+      for (const [donde, bg] of Object.entries({ ...rellenos, "highlight (apretado)": resaltado })) {
+        it(`${theme} · ${marca} · plain: brand-ink ${tinta} sobre ${donde} ${bg} llega a 4.5:1`, () => {
+          expect(ratio(tinta, bg)).toBeGreaterThanOrEqual(4.5)
+        })
+        it(`${theme} · ${marca} · glifo: brand-900 ${b900} sobre ${donde} ${bg} llega a 3:1`, () => {
+          expect(ratio(b900, bg)).toBeGreaterThanOrEqual(3)
+        })
+      }
+    }
+  }
+})
