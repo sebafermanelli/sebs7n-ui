@@ -33,7 +33,7 @@ import {
 
 /**
  * Acciones de una fila
- * «Eliminar» es un ítem más, sin rojo, como en Mail: el peligro lo avisa la alerta que confirma. `DropdownMenuLabel` va dentro de `DropdownMenuGroup`: suelto, Base UI tira la página abajo.
+ * Como el menú de un archivo de iCloud Drive: íconos en el acento, grupos separados y «Eliminar» al final en rojo (`variant="destructive"`), que abre la alerta que confirma. `DropdownMenuLabel` va dentro de `DropdownMenuGroup`: suelto, Base UI tira la página abajo.
  */
 export function Acciones() {
   const [confirmar, setConfirmar] = useState(false)
@@ -46,7 +46,7 @@ export function Acciones() {
         <DropdownMenuTrigger ref={disparador} render={<Button aria-label="Acciones de la factura 0012" size="icon-md" variant="ghost" />}>
           <MoreHorizontalIcon />
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56">
+        <DropdownMenuContent>
           <DropdownMenuGroup>
             <DropdownMenuLabel>Factura 0012</DropdownMenuLabel>
             <DropdownMenuItem>
@@ -75,11 +75,15 @@ export function Acciones() {
               <ArchiveIcon />
               Archivar
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setConfirmar(true)}>
+            <DropdownMenuItem onClick={() => setConfirmar(true)} variant="destructive">
               <TrashIcon />
               Eliminar…
             </DropdownMenuItem>
           </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem external render={<a href="/docs" rel="noopener noreferrer" target="_blank" />}>
+            Centro de ayuda
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
       <AlertDialog onOpenChange={setConfirmar} open={confirmar}>
@@ -100,23 +104,23 @@ export function Acciones() {
 
 /**
  * Checks y radios
- * Ninguno de los dos cierra el menú: se recorren con las flechas. El tilde va a la izquierda, como en macOS, y los títulos llevan `inset` para alinear con el texto.
+ * Ninguno de los dos cierra el menú: se recorren con las flechas. El tilde es el círculo de acento a la derecha, como el «View as» de iCloud Drive; los títulos son filas de 14/600.
  */
 export function ChecksYRadios() {
   const [orden, setOrden] = useState("fecha")
   return (
     <DropdownMenu>
       <DropdownMenuTrigger render={<Button variant="outline" />}>Vista</DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56">
+      <DropdownMenuContent>
         <DropdownMenuGroup>
-          <DropdownMenuLabel inset>Columnas</DropdownMenuLabel>
+          <DropdownMenuLabel>Columnas</DropdownMenuLabel>
           <DropdownMenuCheckboxItem defaultChecked>Cliente</DropdownMenuCheckboxItem>
           <DropdownMenuCheckboxItem defaultChecked>Importe</DropdownMenuCheckboxItem>
           <DropdownMenuCheckboxItem>CUIT</DropdownMenuCheckboxItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuLabel inset>Ordenar por</DropdownMenuLabel>
+          <DropdownMenuLabel>Ordenar por</DropdownMenuLabel>
           <DropdownMenuRadioGroup onValueChange={setOrden} value={orden}>
             <DropdownMenuRadioItem value="fecha">Fecha</DropdownMenuRadioItem>
             <DropdownMenuRadioItem value="importe">Importe</DropdownMenuRadioItem>

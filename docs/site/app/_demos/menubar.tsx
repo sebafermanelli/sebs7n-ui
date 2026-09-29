@@ -51,7 +51,7 @@ export function Editor() {
             </MenubarSubContent>
           </MenubarSub>
           <MenubarSeparator />
-          <MenubarItem>
+          <MenubarItem variant="destructive">
             Descartar borrador…
             <MenubarShortcut>⌘⌫</MenubarShortcut>
           </MenubarItem>
@@ -81,7 +81,7 @@ export function Editor() {
         <MenubarTrigger>Ver</MenubarTrigger>
         <MenubarContent>
           <MenubarGroup>
-            <MenubarLabel inset>Paneles</MenubarLabel>
+            <MenubarLabel>Paneles</MenubarLabel>
             <MenubarCheckboxItem defaultChecked>
               Barra lateral
               <MenubarShortcut>⌘B</MenubarShortcut>
@@ -90,7 +90,7 @@ export function Editor() {
           </MenubarGroup>
           <MenubarSeparator />
           <MenubarGroup>
-            <MenubarLabel inset>Tema</MenubarLabel>
+            <MenubarLabel>Tema</MenubarLabel>
             <MenubarRadioGroup onValueChange={setTema} value={tema}>
               <MenubarRadioItem value="claro">Claro</MenubarRadioItem>
               <MenubarRadioItem value="oscuro">Oscuro</MenubarRadioItem>

@@ -1,7 +1,22 @@
 "use client"
 
-import { CopyIcon, DownloadIcon, LinkIcon, MoreVerticalIcon, PencilIcon, TrashIcon } from "lucide-react"
-import { useState } from "react"
+import {
+  CloudDownloadIcon,
+  CopyIcon,
+  EyeIcon,
+  FileSpreadsheetIcon,
+  FileTextIcon,
+  FolderIcon,
+  FolderInputIcon,
+  FolderOpenIcon,
+  InfoIcon,
+  MailIcon,
+  MoreHorizontalIcon,
+  PencilIcon,
+  ShareIcon,
+  TrashIcon,
+} from "lucide-react"
+import { Fragment, useState, type ReactNode } from "react"
 import { Button } from "sebs7n-ui/button"
 import {
   ContextMenu,
@@ -14,91 +29,98 @@ import {
   ContextMenuRadioItem,
   ContextMenuSeparator,
   ContextMenuShortcut,
-  ContextMenuSub,
-  ContextMenuSubContent,
-  ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from "sebs7n-ui/context-menu"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "sebs7n-ui/dropdown-menu"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "sebs7n-ui/dropdown-menu"
+
+type Accion = { label: string; icon: ReactNode; destructive?: boolean }
+
+// El menú de un archivo de iCloud Drive, en el mismo orden y con los mismos cortes.
+const ACCIONES: Accion[][] = [
+  [
+    { label: "Abrir", icon: <FolderOpenIcon /> },
+    { label: "Vista previa", icon: <EyeIcon /> },
+    { label: "Información", icon: <InfoIcon /> },
+  ],
+  [{ label: "Descargar una copia…", icon: <CloudDownloadIcon /> }],
+  [
+    { label: "Compartir…", icon: <ShareIcon /> },
+    { label: "Enviar una copia…", icon: <MailIcon /> },
+  ],
+  [
+    { label: "Duplicar", icon: <CopyIcon /> },
+    { label: "Cambiar nombre", icon: <PencilIcon /> },
+    { label: "Mover a carpeta…", icon: <FolderInputIcon /> },
+  ],
+  [{ label: "Eliminar", icon: <TrashIcon />, destructive: true }],
+]
+
+const ARCHIVOS = [
+  { nombre: "Logos", tipo: "Carpeta", peso: "—", icon: <FolderIcon className="text-brand-900" /> },
+  { nombre: "Factura-0012.pdf", tipo: "Documento PDF", peso: "84 KB", icon: <FileTextIcon className="text-red-900" /> },
+  { nombre: "Presupuesto marzo.xlsx", tipo: "Planilla", peso: "36 KB", icon: <FileSpreadsheetIcon className="text-green-900" /> },
+]
 
 /**
- * Un archivo de la biblioteca
- * Las mismas acciones en dos lugares: el botón de la esquina, que se ve, y el click derecho, que es el atajo. Con foco en la tarjeta, la tecla de menú contextual o Shift+F10 también lo abren.
+ * Archivos de una biblioteca
+ * Como la lista de iCloud Drive: el mismo menú desde el click derecho sobre la fila y desde el botón «…» de la derecha, que es el que se ve. Con foco en la fila, la tecla de menú contextual o Shift+F10 también lo abren. «Eliminar» va al final, en rojo.
  */
-export function Archivo() {
+export function Archivos() {
   return (
-    <div className="relative w-64">
-      <ContextMenu>
-        <ContextMenuTrigger className="block w-full rounded-control border border-separator bg-surface p-3 text-left">
-          <div className="h-24 rounded-control bg-fill-2" />
-          <p className="mt-2 text-copy-14 text-label">portada-marzo.jpg</p>
-          <p className="text-copy-13 text-label-secondary">JPG · 2,4 MB</p>
-        </ContextMenuTrigger>
-        <ContextMenuContent className="w-56">
-          <ContextMenuGroup>
-            <ContextMenuLabel>portada-marzo.jpg</ContextMenuLabel>
-            <ContextMenuItem>
-              <PencilIcon />
-              Renombrar
-              <ContextMenuShortcut>F2</ContextMenuShortcut>
-            </ContextMenuItem>
-            <ContextMenuItem>
-              <LinkIcon />
-              Copiar enlace
-              <ContextMenuShortcut>⌘⇧C</ContextMenuShortcut>
-            </ContextMenuItem>
-            <ContextMenuSub>
-              <ContextMenuSubTrigger>
-                <DownloadIcon />
-                Descargar como
-              </ContextMenuSubTrigger>
-              <ContextMenuSubContent>
-                <ContextMenuItem>Original</ContextMenuItem>
-                <ContextMenuItem>WebP 1200px</ContextMenuItem>
-                <ContextMenuItem>Miniatura 320px</ContextMenuItem>
-              </ContextMenuSubContent>
-            </ContextMenuSub>
-          </ContextMenuGroup>
-          <ContextMenuSeparator />
-          <ContextMenuItem>
-            <TrashIcon />
-            Mover a la papelera
-            <ContextMenuShortcut>⌫</ContextMenuShortcut>
-          </ContextMenuItem>
-        </ContextMenuContent>
-      </ContextMenu>
+    <ul aria-label="Archivos" className="flex w-full max-w-xl flex-col">
+      {ARCHIVOS.map((archivo) => (
+        <li key={archivo.nombre} className="relative">
+          <ContextMenu>
+            <ContextMenuTrigger className="flex h-10 w-full items-center gap-3 rounded-item pr-12 pl-3 text-left hover:bg-fill-1">
+              <span aria-hidden="true" className="flex size-6 shrink-0 items-center justify-center [&_svg]:size-5">
+                {archivo.icon}
+              </span>
+              <span className="min-w-0 flex-1 truncate text-body text-label">{archivo.nombre}</span>
+              <span className="hidden w-32 text-callout text-label-secondary sm:block">{archivo.tipo}</span>
+              <span className="w-14 text-right text-callout text-label-secondary">{archivo.peso}</span>
+            </ContextMenuTrigger>
+            <ContextMenuContent>
+              {ACCIONES.map((grupo, i) => (
+                <Fragment key={grupo[0]!.label}>
+                  {i > 0 && <ContextMenuSeparator />}
+                  <ContextMenuGroup>
+                    {grupo.map((accion) => (
+                      <ContextMenuItem key={accion.label} variant={accion.destructive ? "destructive" : "default"}>
+                        {accion.icon}
+                        {accion.label}
+                      </ContextMenuItem>
+                    ))}
+                  </ContextMenuGroup>
+                </Fragment>
+              ))}
+            </ContextMenuContent>
+          </ContextMenu>
 
-      <DropdownMenu>
-        <DropdownMenuTrigger
-          render={<Button aria-label="Acciones de portada-marzo.jpg" size="icon-sm" variant="ghost" />}
-          className="absolute top-4 right-4"
-        >
-          <MoreVerticalIcon />
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-56">
-          <DropdownMenuGroup>
-            <DropdownMenuItem>
-              <PencilIcon />
-              Renombrar
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <LinkIcon />
-              Copiar enlace
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <DownloadIcon />
-              Descargar
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={<Button aria-label={`Acciones de ${archivo.nombre}`} size="icon-sm" variant="ghost" />}
+              className="absolute top-1.5 right-1.5"
+            >
+              <MoreHorizontalIcon />
+            </DropdownMenuTrigger>
+            {/* Como en Drive: el menú se abre al costado del botón, alineado con la fila. */}
+            <DropdownMenuContent align="start" side="left">
+              {ACCIONES.map((grupo, i) => (
+                <Fragment key={grupo[0]!.label}>
+                  {i > 0 && <DropdownMenuSeparator />}
+                  {grupo.map((accion) => (
+                    <DropdownMenuItem key={accion.label} variant={accion.destructive ? "destructive" : "default"}>
+                      {accion.icon}
+                      {accion.label}
+                    </DropdownMenuItem>
+                  ))}
+                </Fragment>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </li>
+      ))}
+    </ul>
   )
 }
 
@@ -110,19 +132,19 @@ export function Lienzo() {
   const [zoom, setZoom] = useState("100")
   return (
     <ContextMenu>
-      <ContextMenuTrigger className="flex h-40 w-full max-w-md items-center justify-center rounded-control border border-dashed border-separator bg-gray-100 text-copy-13 text-label-secondary">
+      <ContextMenuTrigger className="flex h-40 w-full max-w-md items-center justify-center rounded-control border border-dashed border-separator bg-fill-1 text-callout text-label-secondary">
         Click derecho sobre el lienzo
       </ContextMenuTrigger>
-      <ContextMenuContent className="w-56">
+      <ContextMenuContent>
         <ContextMenuGroup>
-          <ContextMenuLabel inset>Mostrar</ContextMenuLabel>
+          <ContextMenuLabel>Mostrar</ContextMenuLabel>
           <ContextMenuCheckboxItem defaultChecked>Grilla</ContextMenuCheckboxItem>
           <ContextMenuCheckboxItem defaultChecked>Guías</ContextMenuCheckboxItem>
           <ContextMenuCheckboxItem>Reglas</ContextMenuCheckboxItem>
         </ContextMenuGroup>
         <ContextMenuSeparator />
         <ContextMenuGroup>
-          <ContextMenuLabel inset>Zoom</ContextMenuLabel>
+          <ContextMenuLabel>Zoom</ContextMenuLabel>
           <ContextMenuRadioGroup onValueChange={setZoom} value={zoom}>
             <ContextMenuRadioItem value="50">50 %</ContextMenuRadioItem>
             <ContextMenuRadioItem value="100">100 %</ContextMenuRadioItem>
@@ -130,7 +152,7 @@ export function Lienzo() {
           </ContextMenuRadioGroup>
         </ContextMenuGroup>
         <ContextMenuSeparator />
-        <ContextMenuItem inset>
+        <ContextMenuItem>
           <CopyIcon />
           Duplicar selección
           <ContextMenuShortcut>⌘D</ContextMenuShortcut>
