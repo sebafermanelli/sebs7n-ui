@@ -59,7 +59,9 @@ describe("Badge", () => {
   it("sólido por color: relleno lleno, sin borde, sin brillo, radio de etiqueta", () => {
     render(<Badge color="amber">Pendiente</Badge>)
     const badge = screen.getByText("Pendiente")
-    expect(badge).toHaveClass("bg-amber-700", "text-black/85", "rounded-tag", "text-footnote", "h-6")
+    // R4: 20 de alto (16 en sm) y texto 12: un Badge nunca mide más que un botón sm (28) ni que
+    // la fila de menú (30) donde vive.
+    expect(badge).toHaveClass("bg-amber-700", "text-black/85", "rounded-tag", "text-footnote", "h-5")
     expect(badge.className).not.toMatch(/(^|\s)border(\s|$|-)|sheen|shadow-|glass|material-|--sf-tint|rounded-full/)
     expect(badge).toHaveAttribute("data-variant", "solid")
   })
@@ -96,6 +98,25 @@ describe("Badge", () => {
       </>
     )
     expect(screen.getByText("Vencida").className).toBe(screen.getByText("Anulada").className)
+  })
+
+  it("sm mide 16", () => {
+    render(<Badge size="sm">Nuevo</Badge>)
+    expect(screen.getByText("Nuevo")).toHaveClass("h-4", "text-footnote")
+  })
+
+  // El badge de app de iCloud (§2.18): un círculo de 20, 11 px, con la sombra de badge. Para un
+  // número (no leídos, pendientes), no para un estado.
+  it("count es el badge de app de iCloud: círculo de 20 con 11 px y sombra", () => {
+    render(
+      <Badge color="red" variant="count">
+        3
+      </Badge>
+    )
+    const badge = screen.getByText("3")
+    expect(badge).toHaveAttribute("data-variant", "count")
+    expect(badge).toHaveClass("h-5", "min-w-5", "rounded-full", "text-caption", "tabular-nums", "shadow-badge", "bg-red-800", "text-white")
+    expect(badge).not.toHaveClass("rounded-tag", "text-footnote")
   })
 
   it("el punto va en el color de la tinta, así se lee sobre el relleno", () => {

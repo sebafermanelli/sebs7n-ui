@@ -18,7 +18,8 @@ function Kbd({ className, size = "md", ...props }: KbdProps) {
       data-slot="kbd"
       data-size={size}
       className={cn(
-        "inline-flex shrink-0 items-center justify-center gap-0.5 rounded-xs border border-separator bg-fill-1 px-1 text-label-secondary select-none",
+        // R4: con los tokens de iCloud, el gris de un relleno sin borde y el radio de etiqueta (4).
+        "inline-flex shrink-0 items-center justify-center gap-0.5 rounded-tag bg-fill-2 px-1 text-label-secondary select-none",
         size === "sm" ? "h-[18px] min-w-[18px] text-caption" : "h-5 min-w-5 text-mono-callout",
         className
       )}

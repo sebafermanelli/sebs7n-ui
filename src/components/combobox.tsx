@@ -187,8 +187,8 @@ type ComboboxChipsProps = WithClassName<ComboboxPrimitive.Chips.Props> & {
 }
 
 /**
- * El tamaño de chip que corresponde al campo. Un chip `md` mide 24: en un campo `sm` (24) lo
- * estiraba a 30. Va por contexto y no por CSS porque el chip es el `Tag` del sistema, y su tamaño
+ * El tamaño de chip que corresponde al campo: `sm` (16) en un campo `sm` (28), `md` (20) en los
+ * demás. Va por contexto y no por CSS porque el chip es el `Tag` del sistema, y su tamaño
  * ya es una prop de `tagVariants` (alto, padding y el aire del botón de quitar).
  */
 const ChipSizeContext = React.createContext<TagSize>("md")
@@ -206,8 +206,8 @@ function ComboboxChips({ className, size = "md", showTrigger = true, showClear =
         inputShellClassName,
         // Los chips pueden ocupar varias filas.
         inputMultilineRadiusClassName,
-        // Un chip mide 24 y el `md` 36: con `py-1` y el borde quedan 4 px arriba y abajo. En `sm`
-        // el chip mide 20 y el campo 28: `py-0.5`, y el `self-center` de los chips reparte el aire.
+        // Un chip mide 20 y el `md` 36: con `py-1` y el borde el `self-center` reparte el aire. En
+        // `sm` el chip mide 16 y el campo 28: `py-0.5`.
         "h-auto! data-[size=sm]:min-h-7 data-[size=md]:min-h-9 data-[size=lg]:min-h-10 pointer-coarse:data-[size=sm]:min-h-9 pointer-coarse:data-[size=md]:min-h-11 items-start py-1 data-[size=sm]:py-0.5 pr-1 pl-1",
         className
       )}

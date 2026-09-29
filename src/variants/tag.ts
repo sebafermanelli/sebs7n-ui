@@ -33,7 +33,7 @@ export const tagVariants = ({ color = "gray", size = "md", removable = false, cl
     // El anillo de foco del botón de quitar es un box-shadow: con el
     // overflow-hidden del badge quedaría cortado justo donde importa.
     "max-w-full overflow-visible",
-    removable && (size === "sm" ? "gap-0.5 pr-0.5" : "gap-1 pr-1"),
+    removable && (size === "sm" ? "gap-0.5 pr-0.5" : "gap-1 pr-0.5"),
     className
   )
 
@@ -42,8 +42,8 @@ export const tagVariants = ({ color = "gray", size = "md", removable = false, cl
  * `badgeVariants` pone del lado contrario a esa tinta (2.0): con el `gray-alpha-300` de antes,
  * sobre un relleno sólido en oscuro, el hover aclaraba bajo la X blanca y le bajaba el contraste.
  *
- * El círculo mide 4px menos que el alto del tag, así el aire que le queda arriba
- * y abajo (2px en `sm`, 4px en `md`) es el mismo que el `pr` del cuerpo. Con un
+ * El círculo mide 4px menos que el alto del tag (12 en `sm` de 16, 16 en `md` de 20, desde R4), así
+ * el aire que le queda arriba y abajo (2px) es el mismo que el `pr` del cuerpo. Con un
  * círculo más grande el hover se lee aplastado contra los bordes aunque esté
  * centrado: lo que se compara no es el centro sino los tres espacios.
  *
@@ -56,8 +56,8 @@ export const tagVariants = ({ color = "gray", size = "md", removable = false, cl
  */
 export const tagRemoveClassName: Record<TagSize, string> = {
   sm: cn(
-    "relative inline-flex size-4 shrink-0 cursor-pointer items-center justify-center rounded-full outline-none transition-control after:absolute after:-inset-1",
-    "hover:bg-(--sf-tag-press) focus-visible:focus-ring-inverse [--sf-focus-inverse:currentColor] [&_svg]:pointer-events-none [&_svg]:size-3"
+    "relative inline-flex size-3 shrink-0 cursor-pointer items-center justify-center rounded-full outline-none transition-control after:absolute after:-inset-1.5",
+    "hover:bg-(--sf-tag-press) focus-visible:focus-ring-inverse [--sf-focus-inverse:currentColor] [&_svg]:pointer-events-none [&_svg]:size-2.5"
   ),
   md: cn(
     "relative inline-flex size-4 shrink-0 cursor-pointer items-center justify-center rounded-full outline-none transition-control after:absolute after:-inset-1",

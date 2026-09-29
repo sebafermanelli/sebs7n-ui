@@ -10,7 +10,11 @@ type BadgeTone = {
    * compatibilidad, pero dibuja lo mismo. Hasta 1.x `solid` solo existía en `gray` y `brand`; ahora
    * los nueve colores tienen su relleno y su tinta con 4,5:1.
    */
-  variant?: "solid" | /** @deprecated Desde 2.0 dibuja lo mismo que `solid`; se va en la próxima major. */ "subtle"
+  variant?:
+    | "solid"
+    | /** @deprecated Desde 2.0 dibuja lo mismo que `solid`; se va en la próxima major. */ "subtle"
+    /** El badge de app de iCloud: un círculo con un número (no leídos, pendientes). */
+    | "count"
   color?: BadgeColor
 }
 

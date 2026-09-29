@@ -260,13 +260,13 @@ describe("Combobox", () => {
     )
     const chip = () => screen.getByText("Chile").closest<HTMLElement>("[data-slot=combobox-chip]")!
     const { rerender } = render(<Campo size="sm" />)
-    expect(chip()).toHaveClass("h-5")
-    expect(chip()).not.toHaveClass("h-6")
-    // 20 del chip + 2 del borde + 2 × 2 de padding: 26, adentro de los 28 del `sm`.
+    expect(chip()).toHaveClass("h-4")
+    expect(chip()).not.toHaveClass("h-5")
+    // 16 del chip (R4) + 2 del borde + 2 × 2 de padding: 22, adentro de los 28 del `sm`.
     expect(chip().closest("[data-slot=combobox-chips-group]")).toHaveClass("data-[size=sm]:py-0.5")
     expect(screen.getByRole("button", { name: "Quitar Chile" })).toHaveClass(...tagRemoveClassName.sm.split(" "))
     rerender(<Campo />)
-    expect(chip()).toHaveClass("h-6")
+    expect(chip()).toHaveClass("h-5")
   })
 
   it("múltiple: chips con el cuerpo del Badge sólido que se quitan", async () => {

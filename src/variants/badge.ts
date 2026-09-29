@@ -45,8 +45,12 @@ const inkBlack = "text-black/85 [--sf-tag-press:rgb(255_255_255/0.3)]"
  * en el peor tema); el verde y el teal, en oscuro, no llegan con blanco en ningún paso, y van con
  * tinta negra.
  *
- * `variant` quedó con un solo aspecto: `subtle` se acepta por compatibilidad y dibuja lo mismo
- * que `solid`.
+ * `variant`: `solid` es la etiqueta; `subtle` se acepta por compatibilidad y dibuja lo mismo que
+ * `solid`; `count` (R4) es el badge de app de iCloud (§2.18): un círculo de 20 (16 en `sm`), 11 px
+ * con cifras tabulares y la sombra de badge, para un número —no leídos, pendientes—.
+ *
+ * Tamaños (R4): `md` 20, `sm` 16, texto 12 en los dos. Un Badge nunca mide más que un botón `sm`
+ * (28) ni que la fila de menú (30) donde vive.
  */
 const badgeVariantsBase = cva(
   // `inside-selection:[&>svg]:text-current!`: el ítem de menú resaltado pinta todo `svg` de adentro
@@ -55,7 +59,7 @@ const badgeVariantsBase = cva(
   "inline-flex w-fit shrink-0 items-center justify-center gap-1.5 overflow-hidden rounded-tag text-footnote whitespace-nowrap [&>svg]:pointer-events-none [&>svg]:size-3 inside-selection:[&>svg]:text-current!",
   {
     variants: {
-      variant: { solid: "", subtle: "" },
+      variant: { solid: "", subtle: "", count: "rounded-full text-caption tabular-nums shadow-badge" },
       color: {
         gray: cn("bg-gray-700", inkBlack),
         // El brand es el color de la selección: adentro de un ítem seleccionado se invierte, o
@@ -70,8 +74,12 @@ const badgeVariantsBase = cva(
         purple: cn("bg-purple-700", inkWhite),
         pink: cn("bg-pink-800", inkWhite),
       },
-      size: { sm: "h-5 px-1.5", md: "h-6 px-2" },
+      size: { sm: "h-4 px-1", md: "h-5 px-1.5" },
     },
+    compoundVariants: [
+      { variant: "count", size: "md", className: "min-w-5" },
+      { variant: "count", size: "sm", className: "min-w-4" },
+    ],
     defaultVariants: { variant: "solid", color: "gray", size: "md" },
   }
 )

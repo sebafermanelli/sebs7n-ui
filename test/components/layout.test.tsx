@@ -10,11 +10,14 @@ import { PageHeader, PageHeaderActions, PageHeaderDescription, PageHeaderTitle }
 import { Stat } from "../../src/components/stat"
 
 describe("Kbd", () => {
-  it("es un <kbd> mono con borde gris y radio xs", () => {
+  // R4: la tecla con los tokens de iCloud: el gris de un relleno (`fill-2`) sin borde y el radio de
+  // etiqueta (4), como un chip de Calendar.
+  it("es un <kbd> mono gris, sin borde y con radio de etiqueta", () => {
     render(<Kbd>⌘K</Kbd>)
     const kbd = screen.getByText("⌘K")
     expect(kbd.tagName).toBe("KBD")
-    expect(kbd).toHaveClass("text-mono-callout", "bg-fill-1", "border", "border-separator", "rounded-xs", "px-1", "h-5", "text-label-secondary")
+    expect(kbd).toHaveClass("text-mono-callout", "bg-fill-2", "rounded-tag", "px-1", "h-5", "text-label-secondary")
+    expect(kbd.className).not.toMatch(/(^|\s)border(\s|-)/)
     expect(kbd).toHaveAttribute("data-size", "md")
   })
 

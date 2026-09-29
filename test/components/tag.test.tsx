@@ -76,7 +76,7 @@ describe("Tag", () => {
     )
     const tag = screen.getByText("Tag").closest("[data-slot=tag]")!
     for (const el of [tag, screen.getByText("Badge")]) {
-      expect(el).toHaveClass("bg-blue-800", "text-white", "rounded-tag", "h-6")
+      expect(el).toHaveClass("bg-blue-800", "text-white", "rounded-tag", "h-5")
       expect(el.className).not.toMatch(/(^|\s)border(\s|$|-)|sheen|shadow-|--sf-tint/)
     }
   })
@@ -112,16 +112,16 @@ describe("Tag", () => {
   // El botón mide 4px menos que el tag en los dos tamaños: ese es el aire que le
   // queda arriba y abajo, y tiene que coincidir con el `pr` del cuerpo (2px en
   // `sm`, 4px en `md`) o el círculo del hover se lee descentrado.
-  it("tamaños: 20px y 24px, con su botón proporcional", () => {
+  it("tamaños: 16px y 20px (R4), con su botón proporcional", () => {
     const { rerender } = render(
       <Tag onRemove={() => {}} size="sm">
         React
       </Tag>
     )
-    expect(screen.getByText("React").closest("[data-slot=tag]")).toHaveClass("h-5", "pr-0.5")
-    expect(screen.getByRole("button")).toHaveClass("size-4")
+    expect(screen.getByText("React").closest("[data-slot=tag]")).toHaveClass("h-4", "pr-0.5")
+    expect(screen.getByRole("button")).toHaveClass("size-3", "after:-inset-1.5")
     rerender(<Tag onRemove={() => {}}>React</Tag>)
-    expect(screen.getByText("React").closest("[data-slot=tag]")).toHaveClass("h-6", "pr-1")
+    expect(screen.getByText("React").closest("[data-slot=tag]")).toHaveClass("h-5", "pr-0.5")
     expect(screen.getByRole("button")).toHaveClass("size-4")
   })
 
@@ -137,7 +137,7 @@ describe("Tag", () => {
     render(<Tag className="h-8 rounded-md">React</Tag>)
     const tag = screen.getByText("React").closest("[data-slot=tag]")!
     expect(tag).toHaveClass("h-8", "rounded-md")
-    expect(tag).not.toHaveClass("h-6", "rounded-tag")
+    expect(tag).not.toHaveClass("h-5", "rounded-tag")
     expect(tagVariants({ className: "bg-gray-300" }).split(/\s+/)).not.toContain("bg-gray-700")
   })
 })
