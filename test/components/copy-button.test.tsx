@@ -142,6 +142,11 @@ describe("CopyButton variant=inline", () => {
     expect(button.querySelector("svg.lucide-check")).not.toBeNull()
   })
 
+  it("sin aria-label se llama «Copiar» y el valor: dice qué hace, no solo el dato", () => {
+    render(<CopyButton value="F-0012" variant="inline" />)
+    expect(screen.getByRole("button")).toHaveAccessibleName("Copiar F-0012")
+  })
+
   it("sin children muestra el valor, y adentro de una fila clickeable no la abre", async () => {
     const user = userEvent.setup()
     const onRow = vi.fn()
@@ -150,7 +155,7 @@ describe("CopyButton variant=inline", () => {
         <CopyButton value="F-0012" variant="inline" />
       </div>
     )
-    const button = screen.getByRole("button", { name: "F-0012" })
+    const button = screen.getByRole("button", { name: "Copiar F-0012" })
     await user.click(button)
     expect(onRow).not.toHaveBeenCalled()
   })

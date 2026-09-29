@@ -73,6 +73,9 @@ function CopyButton({ value, children, size = "sm", variant = "button", onCopy, 
     // Un `<button>` propio y no `Button`: el más chico mide 28 y en una fila de tabla empuja el alto.
     // 24 de alto es el mínimo de WCAG 2.5.8; con el dedo, `touch-target-y` lo lleva a 44 sin ensanchar.
     <button
+      // Sin `aria-label`, «Copiar F-0012»: el valor solo dice el dato, no qué hace el botón. Empieza
+      // con el verbo y sigue con el texto visible (2.5.3). El de la app, si lo hay, le gana.
+      aria-label={`${labels.copy} ${value}`}
       data-variant="inline"
       type="button"
       disabled={disabled || !value}
