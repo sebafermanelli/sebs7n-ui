@@ -270,7 +270,7 @@ describe("Table", () => {
     expect(head).toHaveClass("h-11", "text-callout", "font-normal", "text-label-secondary", "shadow-[inset_0_-1px_0_var(--color-separator)]")
     expect(screen.getByRole("table").querySelector("thead")!.className).not.toMatch(/bg-/)
     const fila = screen.getByText("Ana").closest("tr")!
-    expect(fila).toHaveClass("h-[41px]", "hover:[&>td]:bg-fill-1", "[&>:first-child]:rounded-s-item", "[&>:last-child]:rounded-e-item")
+    expect(fila).toHaveClass("h-[41px]", "hover:[&>td]:bg-fill-1", "[&>td:first-child]:rounded-s-item", "[&>td:last-child]:rounded-e-item")
     // Separador interior: una línea de 1 px arriba de cada celda, que arranca a 10 del borde.
     expect(fila).toHaveClass("[&>td]:bg-[length:100%_1px]", "[&>td:first-child]:bg-[length:calc(100%-10px)_1px]", "first:[&>td]:bg-none")
     // La primera celda es el nombre (17, principal); el resto, metadatos en 14 secundario.

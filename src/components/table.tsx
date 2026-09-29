@@ -58,7 +58,7 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
         "group/table-row group/selectable h-[41px] group-data-[density=compact]/table:h-8 [&>*]:transition-control",
         // Radio 10 en los extremos: la fila elegida (o con el puntero) es una píldora de Drive. El
         // fondo va en las celdas porque un `<tr>` no dibuja radio.
-        "[&>:first-child]:rounded-s-item [&>:last-child]:rounded-e-item",
+        "[&>td:first-child]:rounded-s-item [&>td:last-child]:rounded-e-item",
         // El separador: 1 px arriba de cada celda, que en la primera arranca a 10 del borde (donde
         // empieza el texto). No va en la primera fila, ni al lado de la fila con el puntero o la
         // elegida, ni después de un título de grupo, como en Drive.
