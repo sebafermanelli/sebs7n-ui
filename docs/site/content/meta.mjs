@@ -578,6 +578,7 @@ export const COMPONENTS = {
       "Renderiza a través de `Field.Control`, no un `<textarea>` suelto: es lo que hace que reciba el `name` del campo y quede nombrada por su etiqueta.",
     ],
     usage: [
+      "`rows` es el alto mínimo (de 1 a 12 filas) y el campo sigue creciendo con el texto. Sin `rows`, arranca en 80. Lo resuelve `theme.css` y manda sobre un `min-h-*` propio.",
       "`rows` define el alto inicial. Para que crezca solo hace falta JS de la app: el paquete no lo trae.",
       "Si el texto tiene formato (markdown, código), decilo en la ayuda debajo del campo.",
     ],

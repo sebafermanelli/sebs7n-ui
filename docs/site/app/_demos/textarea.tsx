@@ -15,3 +15,11 @@ export function Basico() {
     </div>
   )
 }
+
+/**
+ * Con filas
+ * `rows={6}`: arranca con seis líneas de alto y sigue creciendo con el texto.
+ */
+export function Filas() {
+  return <Textarea aria-label="Condiciones de pago" className="max-w-md" placeholder="Condiciones que salen al pie de cada factura" rows={6} />
+}

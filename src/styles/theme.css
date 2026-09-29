@@ -1251,3 +1251,50 @@
  * Los caros son combobox, autocomplete, los tres menús, drawer y user-menu.
  */
 @source "../../dist";
+
+/* Textarea rows */
+/*
+ * `Textarea` crece con el texto (`field-sizing: content`), y con eso el navegador ignora `rows`: el campo
+ * arrancaba siempre en `min-h-20`. Con `rows`, el mínimo pasa a ser esas filas (el alto de línea, `1lh`,
+ * más el `py-3` y el borde) y sigue creciendo. Es CSS y no JS porque el barrel está en su tope; en
+ * `@layer utilities` y con dos atributos para ganarle a `min-h-20`. De 1 a 12 filas: más que eso ya no es
+ * un mínimo razonable. `rows` manda sobre un `min-h-*` propio.
+ */
+@layer utilities {
+  [data-slot="textarea"][rows="1"] {
+    min-height: calc(1 * 1lh + 1.5rem + 2px);
+  }
+  [data-slot="textarea"][rows="2"] {
+    min-height: calc(2 * 1lh + 1.5rem + 2px);
+  }
+  [data-slot="textarea"][rows="3"] {
+    min-height: calc(3 * 1lh + 1.5rem + 2px);
+  }
+  [data-slot="textarea"][rows="4"] {
+    min-height: calc(4 * 1lh + 1.5rem + 2px);
+  }
+  [data-slot="textarea"][rows="5"] {
+    min-height: calc(5 * 1lh + 1.5rem + 2px);
+  }
+  [data-slot="textarea"][rows="6"] {
+    min-height: calc(6 * 1lh + 1.5rem + 2px);
+  }
+  [data-slot="textarea"][rows="7"] {
+    min-height: calc(7 * 1lh + 1.5rem + 2px);
+  }
+  [data-slot="textarea"][rows="8"] {
+    min-height: calc(8 * 1lh + 1.5rem + 2px);
+  }
+  [data-slot="textarea"][rows="9"] {
+    min-height: calc(9 * 1lh + 1.5rem + 2px);
+  }
+  [data-slot="textarea"][rows="10"] {
+    min-height: calc(10 * 1lh + 1.5rem + 2px);
+  }
+  [data-slot="textarea"][rows="11"] {
+    min-height: calc(11 * 1lh + 1.5rem + 2px);
+  }
+  [data-slot="textarea"][rows="12"] {
+    min-height: calc(12 * 1lh + 1.5rem + 2px);
+  }
+}
