@@ -136,6 +136,8 @@ export type Labels = {
    * El provider y la prop `labels` los cambian igual que al resto.
    */
   carousel?: {
+    /** El nombre de la región si el `Carousel` no trae `aria-label` ni `aria-labelledby`. */
+    label: string
     /** `aria-roledescription` del carrusel: lo que el lector dice en vez de «región». */
     carousel: string
     /** `aria-roledescription` de cada diapositiva. */
@@ -144,7 +146,7 @@ export type Labels = {
     next: string
     /** Entre la posición y el total, en el nombre de cada diapositiva: «2 de 5». */
     of: string
-    /** Antes del número, en el nombre de cada punto: «Ir a la diapositiva 2». */
+    /** Antes del número, en el nombre de cada punto (una parada, que puede tener varias diapositivas): «Ir a la página 2 de 3». */
     goTo: string
   }
   colorPicker: {

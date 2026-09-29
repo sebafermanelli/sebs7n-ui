@@ -60,7 +60,7 @@ afterEach(() => {
 })
 
 const slides = () => screen.getAllByRole("group")
-const dots = () => screen.getAllByRole("button", { name: /Ir a la diapositiva/ })
+const dots = () => screen.getAllByRole("button", { name: /Ir a la página/ })
 
 describe("Carousel", () => {
   it("región «carrusel» y cada diapositiva un grupo «2 de 5»", () => {
@@ -84,7 +84,7 @@ describe("Carousel", () => {
     const user = userEvent.setup()
     let api: CarouselApi
     render(<Plans setApi={(value) => (api = value)} />)
-    expect(await screen.findAllByRole("button", { name: /Ir a la diapositiva/ })).toHaveLength(5)
+    expect(await screen.findAllByRole("button", { name: /Ir a la página/ })).toHaveLength(5)
     expect(dots()[0]).toHaveAttribute("aria-current", "true")
     await user.click(screen.getByRole("button", { name: "Diapositiva siguiente" }))
     expect(api!.selectedScrollSnap()).toBe(1)
@@ -100,7 +100,7 @@ describe("Carousel", () => {
     const user = userEvent.setup()
     let api: CarouselApi
     render(<Plans setApi={(value) => (api = value)} />)
-    await screen.findAllByRole("button", { name: /Ir a la diapositiva/ })
+    await screen.findAllByRole("button", { name: /Ir a la página/ })
     dots()[0]!.focus()
     await user.keyboard("{ArrowRight}{ArrowRight}")
     expect(api!.selectedScrollSnap()).toBe(2)
@@ -108,12 +108,83 @@ describe("Carousel", () => {
     expect(api!.selectedScrollSnap()).toBe(1)
   })
 
+  it("las flechas dentro de un control que las usa (slider, radiogroup, listbox, combobox, campo) no mueven el carrusel", async () => {
+    const user = userEvent.setup()
+    let api: CarouselApi
+    const onSliderKey = vi.fn()
+    render(
+      <Carousel aria-label="Planes" setApi={(value) => (api = value)}>
+        <CarouselContent>
+          <CarouselItem>
+            <div aria-label="Cantidad" aria-valuenow={1} onKeyDown={onSliderKey} role="slider" tabIndex={0} />
+            <div aria-label="Plan" role="radiogroup">
+              <button role="radio" aria-checked="true" type="button">Mensual</button>
+            </div>
+            <input aria-label="Nota" />
+          </CarouselItem>
+          <CarouselItem>Dos</CarouselItem>
+        </CarouselContent>
+        <CarouselDots />
+      </Carousel>
+    )
+    await screen.findAllByRole("button", { name: /Ir a la página/ })
+    screen.getByRole("slider").focus()
+    await user.keyboard("{ArrowRight}")
+    expect(onSliderKey).toHaveBeenCalled()
+    screen.getByRole("radio").focus()
+    await user.keyboard("{ArrowRight}")
+    screen.getByRole("textbox").focus()
+    await user.keyboard("{ArrowRight}")
+    expect(api!.selectedScrollSnap()).toBe(0)
+  })
+
+  it("si un control de adentro ya usó la flecha (preventDefault), el carrusel no se mueve", async () => {
+    const user = userEvent.setup()
+    let api: CarouselApi
+    render(
+      <Carousel aria-label="Planes" setApi={(value) => (api = value)}>
+        <CarouselContent>
+          <CarouselItem>
+            <button onKeyDown={(event) => event.preventDefault()} type="button">
+              Propio
+            </button>
+          </CarouselItem>
+          <CarouselItem>Dos</CarouselItem>
+        </CarouselContent>
+        <CarouselDots />
+      </Carousel>
+    )
+    await screen.findAllByRole("button", { name: /Ir a la página/ })
+    screen.getByRole("button", { name: "Propio" }).focus()
+    await user.keyboard("{ArrowRight}")
+    expect(api!.selectedScrollSnap()).toBe(0)
+  })
+
+  it("sin aria-label la región se llama «Carrusel»; aria-label y aria-labelledby le ganan", () => {
+    const { rerender } = render(<Plans aria-label={undefined} />)
+    expect(screen.getByRole("region", { name: "Carrusel" })).toBeInTheDocument()
+    rerender(
+      <>
+        <h2 id="titulo-planes">Nuestros planes</h2>
+        <Plans aria-label={undefined} aria-labelledby="titulo-planes" />
+      </>
+    )
+    expect(screen.getByRole("region", { name: "Nuestros planes" })).toBeInTheDocument()
+  })
+
+  it("los puntos son páginas: «Ir a la página 2 de 3» cuenta paradas, no diapositivas", async () => {
+    render(<Plans opts={{ slidesToScroll: 2 }} />)
+    const pages = await screen.findAllByRole("button", { name: /Ir a la página/ })
+    expect(pages).toHaveLength(3)
+    expect(pages[1]).toHaveAccessibleName("Ir a la página 2 de 3")
+  })
+
   it("con movimiento reducido salta en vez de deslizar", async () => {
     const user = userEvent.setup()
     vi.stubGlobal("matchMedia", media(true))
     let api: CarouselApi
     render(<Plans setApi={(value) => (api = value)} />)
-    await screen.findAllByRole("button", { name: /Ir a la diapositiva/ })
+    await screen.findAllByRole("button", { name: /Ir a la página/ })
     const scrollNext = vi.spyOn(api!, "scrollNext")
     await user.click(screen.getByRole("button", { name: "Diapositiva siguiente" }))
     expect(scrollNext).toHaveBeenCalledWith(true)

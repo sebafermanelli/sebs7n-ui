@@ -15,12 +15,13 @@ type CarouselLabels = NonNullable<Labels["carousel"]>
  * `Labels`).
  */
 const carouselLabels: CarouselLabels = {
+  label: "Carrusel",
   carousel: "carrusel",
   slide: "diapositiva",
   previous: "Diapositiva anterior",
   next: "Diapositiva siguiente",
   of: "de",
-  goTo: "Ir a la diapositiva",
+  goTo: "Ir a la página",
 }
 
 type CarouselApi = UseEmblaCarouselType[1]
@@ -61,6 +62,10 @@ function useCarousel() {
   return context
 }
 
+/** Lo que ya usa ←/→ por su cuenta: ahí las flechas no son del carrusel. */
+const ARROW_OWNERS =
+  "input, textarea, select, [contenteditable]:not([contenteditable=false]), [role=slider], [role=radiogroup], [role=listbox], [role=combobox], [role=tablist], [role=menu], [role=menubar], [role=grid], [role=tree], [role=spinbutton]"
+
 /** Con movimiento reducido, Embla salta en vez de deslizar (`jump`). Se lee al click: no hay SSR. */
 const reducedMotion = () => typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches === true
 
@@ -69,10 +74,24 @@ const reducedMotion = () => typeof window !== "undefined" && window.matchMedia?.
  * flechas (`CarouselPrevious`, `CarouselNext`: botón de ícono de 28 y radio 8 sobre el material
  * translúcido) y los puntos (`CarouselDots`).
  *
- * Es una región con `aria-roledescription` «carrusel» y cada diapositiva un grupo «2 de 5». ←/→
- * (↑/↓ vertical) pasan de a una. Usa `embla-carousel-react`, peer opcional: lo instala la app.
+ * Es una región con `aria-roledescription` «carrusel» (y nombre `labels.label` si no trae
+ * `aria-label` ni `aria-labelledby`) y cada diapositiva un grupo «2 de 5». ←/→ (↑/↓ vertical) pasan
+ * de a una parada, salvo dentro de un control que ya usa las flechas. Usa `embla-carousel-react`,
+ * peer opcional: lo instala la app.
  */
-function Carousel({ orientation = "horizontal", opts, setApi, plugins, labels: labelsProp, className, children, onKeyDownCapture, ...props }: CarouselProps) {
+function Carousel({
+  orientation = "horizontal",
+  opts,
+  setApi,
+  plugins,
+  labels: labelsProp,
+  className,
+  children,
+  onKeyDown,
+  "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledby,
+  ...props
+}: CarouselProps) {
   const labels = { ...carouselLabels, ...useLabels().carousel, ...labelsProp }
   const [carouselRef, api] = useEmblaCarousel({ ...opts, axis: orientation === "horizontal" ? "x" : "y" }, plugins)
   const [state, setState] = React.useState({ canScrollPrev: false, canScrollNext: false, selected: 0, snaps: 0 })
@@ -93,11 +112,13 @@ function Carousel({ orientation = "horizontal", opts, setApi, plugins, labels: l
   const scrollNext = React.useCallback(() => api?.scrollNext(reducedMotion()), [api])
   const scrollTo = React.useCallback((index: number) => api?.scrollTo(index, reducedMotion()), [api])
 
+  // En burbujeo y no en captura: el control enfocado adentro recibe la flecha primero y, si la usó
+  // (`preventDefault`) o es de los que viven de las flechas (slider, radios, listas, campos), el
+  // carrusel no se mueve.
   const keyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    onKeyDownCapture?.(event)
-    // Las flechas adentro de un campo mueven el cursor, no el carrusel.
+    onKeyDown?.(event)
     const target = event.target as HTMLElement
-    if (event.defaultPrevented || target.closest("input, textarea, select, [contenteditable=true]")) return
+    if (event.defaultPrevented || target.closest(ARROW_OWNERS)) return
     const back = orientation === "horizontal" ? "ArrowLeft" : "ArrowUp"
     const forward = orientation === "horizontal" ? "ArrowRight" : "ArrowDown"
     if (event.key === back) {
@@ -116,7 +137,9 @@ function Carousel({ orientation = "horizontal", opts, setApi, plugins, labels: l
         data-orientation={orientation}
         data-slot="carousel"
         role="region"
-        onKeyDownCapture={keyDown}
+        aria-label={ariaLabel ?? (ariaLabelledby ? undefined : labels.label)}
+        aria-labelledby={ariaLabelledby}
+        onKeyDown={keyDown}
         className={cn("relative", className)}
         {...props}
       >
@@ -205,7 +228,11 @@ function CarouselNext({ className, variant = "ghost", ...props }: CarouselArrowP
   )
 }
 
-/** Un punto por cada parada; el actual lleva `aria-current`. Con una sola parada no se dibuja. */
+/**
+ * Un punto por cada parada (página); el actual lleva `aria-current`. Con `slidesToScroll` > 1 una
+ * parada tiene varias diapositivas, por eso el nombre es «Ir a la página 2 de 3» y no habla de
+ * diapositivas. Con una sola parada no se dibuja.
+ */
 function CarouselDots({ className, ...props }: React.ComponentProps<"div">) {
   const { snaps, selected, scrollTo, labels } = useCarousel()
   if (snaps < 2) return null
@@ -214,7 +241,7 @@ function CarouselDots({ className, ...props }: React.ComponentProps<"div">) {
       {Array.from({ length: snaps }, (_, index) => (
         <button
           aria-current={index === selected ? "true" : undefined}
-          aria-label={`${labels.goTo} ${index + 1}`}
+          aria-label={`${labels.goTo} ${index + 1} ${labels.of} ${snaps}`}
           data-slot="carousel-dot"
           key={index}
           onClick={() => scrollTo(index)}
