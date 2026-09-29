@@ -29,7 +29,21 @@
 import { readdirSync, readFileSync } from "node:fs"
 import { basename, extname, join } from "node:path"
 
-const NPM = new Set(["@base-ui/react", "class-variance-authority", "clsx", "lucide-react", "next-themes", "react", "recharts", "sonner", "tailwind-merge"])
+const NPM = new Set([
+  "@base-ui/react",
+  "@dnd-kit/core",
+  "@dnd-kit/sortable",
+  "@dnd-kit/utilities",
+  "class-variance-authority",
+  "clsx",
+  "embla-carousel-react",
+  "lucide-react",
+  "next-themes",
+  "react",
+  "recharts",
+  "sonner",
+  "tailwind-merge",
+])
 
 /** `pagination` → `pagination-helpers`; `utils` se queda con el alias estándar de shadcn. */
 const libFile = (name) => (name === "utils" ? "utils" : `${name}-helpers`)
@@ -45,6 +59,8 @@ export function rewriteImports(source) {
     // pide el Tooltip desde `internal/`, con `../components/`.
     .replace(/import\("\.\/([a-z0-9-]+)\.js"\)/g, 'import("@/components/ui/$1")')
     .replace(/import\("\.\.\/components\/([a-z0-9-]+)\.js"\)/g, 'import("@/components/ui/$1")')
+    // Estático desde `internal/` (R8): la base de SortableList y SortableGrid usa `ListRow`.
+    .replace(/from "\.\.\/components\/([a-z0-9-]+)\.js"/g, 'from "@/components/ui/$1"')
 }
 
 /** Dependencias npm: el paquete raíz de cada import externo. */
@@ -71,7 +87,7 @@ function registryDependencies(source, site) {
   }
   for (const [, name] of source.matchAll(/from "\.\.\/variants\/([a-z0-9-]+)\.js"/g)) deps.add(`${site}/r/variants-${name}.json`)
   for (const [, name] of source.matchAll(/(?:from "|import\(")\.\/([a-z0-9-]+)\.js"/g)) deps.add(`${site}/r/${name}.json`)
-  for (const [, name] of source.matchAll(/import\("\.\.\/components\/([a-z0-9-]+)\.js"\)/g)) deps.add(`${site}/r/${name}.json`)
+  for (const [, name] of source.matchAll(/(?:from "|import\(")\.\.\/components\/([a-z0-9-]+)\.js"/g)) deps.add(`${site}/r/${name}.json`)
   return [...deps].sort()
 }
 

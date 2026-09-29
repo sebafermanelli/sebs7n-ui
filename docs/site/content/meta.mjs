@@ -1026,6 +1026,39 @@ export const COMPONENTS = {
     },
     related: ["date-picker", "time-picker", "calendar"],
   },
+  "drop-zone": {
+    title: "DropZone",
+    group: "formularios",
+    description: "Un recuadro para soltar o elegir archivos, con la lista abajo: miniatura, nombre, tamaño, el progreso que pase la app y quitar.",
+    keyboard: [
+      ["Tab", "Entra al recuadro y después a cada «Quitar»."],
+      ["Enter · Espacio", "En el recuadro, abren el selector de archivos del sistema."],
+    ],
+    a11y: [
+      "El recuadro es un `<button>`: nombralo con `aria-label` o con un `<Label htmlFor>` al `id`. El `<input type=\"file\">` de adentro está fuera del orden de Tab.",
+      "Los errores de tipo, tamaño y cantidad aparecen abajo con `role=\"alert\"` y el recuadro queda `aria-invalid`, con el error en su `aria-describedby`.",
+      "Agregar y quitar se anuncian por una región viva («Archivos agregados: factura.pdf»). Al quitar, el foco vuelve al recuadro.",
+      "El botón de quitar se llama «Quitar factura.pdf»; la miniatura es decorativa (`alt=\"\"`). Cada barra de progreso se llama como su archivo.",
+    ],
+    usage: [
+      "**No sube nada:** la red es de la app. Pasale el progreso de cada archivo con `fileProgress` (de 0 a 100, `null` indeterminado) y un error de la subida con `fileError`.",
+      "`accept`, `maxSize` (bytes) y `maxFiles` validan al agregar; lo que no entra queda afuera con su error en línea, no en un toast.",
+      "Con `name`, los archivos viajan con el `<form>` en un `<input type=\"file\">`, también los que llegaron arrastrando: sirve igual para una Server Action.",
+      "`scope=\"window\"`: mientras se arrastra un archivo, toda la ventana es la zona (una app de una sola tarea, como un conversor).",
+      "Sin `multiple`, uno nuevo reemplaza al anterior. Solo por subpath (`sebs7n-ui/drop-zone`): no está en el barrel, por peso.",
+    ],
+    props: {
+      DropZone: {
+        disabled: "Apaga el recuadro y los botones de quitar.",
+        id: "El `id` del recuadro, para un `<Label htmlFor>`.",
+        "aria-label": PROP_DESCRIPTIONS["aria-label"],
+        "aria-labelledby": "El `id` del elemento que nombra el recuadro, si no es un `<label>`.",
+        "aria-describedby": "El `id` de una ayuda («PDF o imagen, hasta 5 MB»). Los errores se suman solos.",
+        labels: "Textos: `prompt`, `drop`, `remove`, `added`, `removed`, `invalidType`, `tooLarge`, `tooMany` y `locale` (el de los tamaños). Los que vienen por defecto son `dropZoneLabels`.",
+      },
+    },
+    related: ["progress", "list-row", "field"],
+  },
   "color-picker": {
     title: "ColorPicker",
     group: "formularios",
@@ -2411,6 +2444,65 @@ export const COMPONENTS = {
     },
     related: ["table", "card", "split-view"],
   },
+  "sortable-list": {
+    title: "SortableList",
+    group: "contenido",
+    description: "Una lista que se reordena arrastrando la manija ⋮⋮ de cada fila, o con el teclado, con cada movimiento anunciado.",
+    keyboard: [
+      ["Tab", "Recorre las manijas."],
+      ["Espacio · Enter", "Toma la fila; con la fila tomada, la suelta en el lugar nuevo."],
+      ["↑ / ↓", "Con la fila tomada, la mueven."],
+      ["Escape", "Cancela: la fila vuelve a su lugar."],
+    ],
+    a11y: [
+      "Cada fila es un `ListRow` de un `<ul role=\"list\">`: nombrá la lista con `aria-label`.",
+      "La manija es un `<button>` «Reordenar Factura 0012» (`getLabel` da el nombre) con las instrucciones en su `aria-describedby`.",
+      "Tomar, mover, soltar y cancelar se anuncian en una región viva: «Tomaste Factura 0012, posición 2 de 5».",
+      "Con movimiento reducido las filas no se deslizan: saltan a su lugar.",
+    ],
+    usage: [
+      "`renderItem` devuelve **el contenido** de la fila, no un `<li>` (un `<li>` adentro de otro rompe la hidratación).",
+      "`onReorder` recibe los ítems en el orden nuevo, que se ve al soltar. Si devuelve una promesa que falla, vuelve el anterior y se anuncia «No se pudo guardar el orden».",
+      "**`@dnd-kit/core`, `@dnd-kit/sortable` y `@dnd-kit/utilities` son peers opcionales:** `npm install @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities` en la app que lo usa. Solo por subpath (`sebs7n-ui/sortable-list`).",
+    ],
+    props: {
+      SortableList: {
+        labels: "Textos: `handle`, `instructions`, `picked`, `dropped`, `canceled`, `position`, `of` y `failed`. Los que vienen por defecto son `sortableLabels`.",
+        "aria-label": PROP_DESCRIPTIONS["aria-label"],
+      },
+    },
+    related: ["sortable-grid", "list-row"],
+  },
+  "sortable-grid": {
+    title: "SortableGrid",
+    group: "contenido",
+    description: "Tarjetas en una grilla que se reordenan arrastrando —las demás se corren mientras tanto—, o con el teclado en las dos direcciones.",
+    keyboard: [
+      ["Tab", "Recorre las tarjetas (o las manijas, con `handle`) y lo interactivo de adentro."],
+      ["Espacio · Enter", "Sobre la tarjeta, la toma; tomada, la suelta. En un botón de adentro es del botón."],
+      ["← → ↑ ↓", "Con la tarjeta tomada, la mueven en la grilla."],
+      ["Escape", "Cancela: la tarjeta vuelve a su lugar."],
+    ],
+    a11y: [
+      "Es un `<ul role=\"list\">` de `<li>`: sin `handle`, cada `<li>` es la parada de Tab (con el anillo de foco por fuera) y lleva las instrucciones en `aria-describedby`.",
+      "Los anuncios son los de `SortableList`: «Tomaste Facturas, posición 1 de 4».",
+      "Con movimiento reducido las tarjetas no se deslizan: saltan a su lugar.",
+    ],
+    usage: [
+      "**Sin `handle` se arrastra la tarjeta entera:** con el mouse arranca a los 8 px, así un click en un botón de adentro sigue siendo un click; con el dedo, después de 250 ms apretado, así deslizar sigue scrolleando.",
+      "Con `handle`, `renderItem` recibe la manija en `state.handle` y la pone donde vaya (en la cabecera de la tarjeta).",
+      "`columns` fija las columnas; sin `columns`, las pone `className` (`@2xl:grid-cols-2`). `itemClassName` para una tarjeta más ancha (`col-span-2`).",
+      "`onReorder` es optimista, con vuelta atrás si su promesa falla. Peers opcionales `@dnd-kit/*`, como `SortableList`. Solo por subpath (`sebs7n-ui/sortable-grid`).",
+    ],
+    props: {
+      SortableGrid: {
+        labels: "Los mismos textos que `SortableList` (`sortableLabels`).",
+        style: "Se fusiona con el `gridTemplateColumns` que pone `columns`.",
+        "aria-label": PROP_DESCRIPTIONS["aria-label"],
+      },
+    },
+    related: ["sortable-list", "widget-card", "card"],
+  },
   timeline: {
     title: "Timeline",
     group: "contenido",
@@ -2674,6 +2766,39 @@ export const COMPONENTS = {
       PromoCardLink: { render: "El elemento del link (el `Link` de Next). Recibe el contenido y las clases." },
     },
     related: ["card", "list-row", "app-shell"],
+  },
+  carousel: {
+    title: "Carousel",
+    group: "contenido",
+    description: "Un carrusel sobre Embla con la API de shadcn: flechas de 28 sobre el material translúcido, puntos y «2 de 5» para el lector.",
+    keyboard: [
+      ["← / →", "Con el foco adentro, la anterior y la siguiente (↑/↓ si es vertical)."],
+      ["Tab", "Recorre lo de adentro, las flechas y los puntos."],
+      ["Enter · Espacio", "En una flecha o un punto, mueven el carrusel."],
+    ],
+    a11y: [
+      "Es una región con `aria-roledescription` «carrusel»: nombrala con `aria-label` («Planes»).",
+      "Cada diapositiva es un `group` «diapositiva» llamado «2 de 5»; las flechas, «Diapositiva anterior» y «Diapositiva siguiente»; cada punto, «Ir a la diapositiva 3», y el actual lleva `aria-current`.",
+      "En la punta, la flecha que no lleva a ningún lado se apaga y se esconde (salvo con `loop`).",
+      "Con movimiento reducido salta en vez de deslizar.",
+    ],
+    usage: [
+      "Para mirar de a uno algo que se compara poco: planes, fotos de un comprobante. Si hay que comparar, es una grilla.",
+      "`opts` y `plugins` van derecho a Embla (`loop`, `align`, autoplay); `setApi` da su API. `basis-1/2` en `CarouselItem` para ver dos.",
+      "No pasa solo: un carrusel que rota necesita un botón de pausa, y eso es de la app con el plugin de autoplay.",
+      "**`embla-carousel-react` es un peer opcional:** `npm install embla-carousel-react` en la app que lo usa. Solo por subpath (`sebs7n-ui/carousel`).",
+    ],
+    props: {
+      Carousel: {
+        orientation: "`horizontal` (por defecto) o `vertical`.",
+        onKeyDownCapture: "Corre antes que ←/→: con `event.preventDefault()` el carrusel no se mueve.",
+        labels: "Textos: `carousel`, `slide`, `previous`, `next`, `of` y `goTo`. Los que vienen por defecto son `carouselLabels`.",
+        "aria-label": PROP_DESCRIPTIONS["aria-label"],
+      },
+      CarouselPrevious: { variant: "La variante del botón. Por defecto `ghost`, sobre el material translúcido." },
+      CarouselNext: { variant: "La variante del botón. Por defecto `ghost`, sobre el material translúcido." },
+    },
+    related: ["card", "widget-card"],
   },
   alert: {
     title: "Alert",

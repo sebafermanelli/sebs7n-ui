@@ -2,7 +2,7 @@
 
 Una línea por versión, la más nueva arriba. Versionado [SemVer 2.0.0](https://semver.org/lang/es/).
 
-- **2.0.0** (sin publicar) — Lenguaje visual de iCloud web: superficies opacas, Inter, radios de 8 a 12 sin cápsula, foco interior; 20 módulos de componentes nuevos (los grandes solo por subpath); **Breaking**: API y defaults visuales (`glass*`, `outline`, `shape`, alturas, Tabs, Card, Table).
+- **2.0.0** (sin publicar) — Lenguaje visual de iCloud web: superficies opacas, Inter, radios de 8 a 12 sin cápsula, foco interior; 24 módulos de componentes nuevos (los grandes solo por subpath; `sortable-*` y `carousel` con peers opcionales); **Breaking**: API y defaults visuales (`glass*`, `outline`, `shape`, alturas, Tabs, Card, Table).
 - **1.13.1** (2026-09-28) — Cuatro componentes dejan de cargar partes de Base UI que no usan.
 - **1.13.0** (2026-09-28) — `DatePicker clearable`.
 - **1.12.1** (2026-09-27) — `BreadcrumbList` ya no duplica los separadores.
