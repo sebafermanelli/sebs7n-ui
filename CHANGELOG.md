@@ -7,596 +7,360 @@ la versión cero y acá todavía se mueven APIs. Cuando eso pasa, la entrada va 
 **Breaking** con qué se rompe y cómo se migra. De 1.0 en adelante, los incompatibles esperan al
 major.
 
-## [Unreleased]
+## [Unreleased] — 2.0.0
 
-### Breaking (2.0)
+Borrador de la 2.0.0: sin versión ni fecha hasta que salga. Todos los «antes» son contra **1.13.1**,
+la última publicada. Guía paso a paso con el antes y el después de cada componente:
+[`/docs/migrating-to-2`](https://ui.sebastianfermanelli.com/docs/migrating-to-2).
 
-La 2.0 se reorientó a **iCloud web** (icloud.com) después de las fases 1–3, que iban hacia macOS:
-lo de esas fases que iCloud no hace se corrigió acá y no quedó escrito dos veces. Sin versión
-todavía; la 2.0.0 sale al final de todas las fases, y con ella la guía de migración
-(`/docs/migrating-to-2`), que `theme.css` ya enlaza.
+### Resumen
 
-**Tokens globales (R1).** Valores medidos en icloud.com, claro y oscuro.
+La 2.0 cambia el lenguaje visual entero: de las superficies de vidrio y las cápsulas de la 1.x al
+de **iCloud web** (icloud.com), con valores medidos en claro y oscuro. Superficies opacas en capas
+de gris, **Inter** con una escala de base 17, radios de 8–12 sin cápsula, foco interior de 3 px,
+menús de 30 px con el tilde en un círculo de acento, barras fijas a todo el ancho y un sidebar de
+lista de fuentes. Lo que iCloud no tiene (Switch, Tooltip, toasts, Tree, Stepper…) se deriva de
+esos tokens. Suma 14 módulos de componentes nuevos; los grandes van solo por subpath para que el
+barrel no pase de 55 kB gzip.
 
-- **Escala tipográfica de iCloud.** Los roles conservan el nombre y cambian el valor (base 17):
+La API es la misma en casi todo: lo que se rompe es sobre todo **visual** (alturas, radios,
+colores, defaults). Lo que cambia en el código de la app está marcado **Migración**.
 
-  | rol | 1.x → 2.0 (px / peso / interlineado) | en iCloud |
+### Breaking
+
+#### Tokens
+
+- **Tipografía: Inter y roles con la escala de iCloud.** `--font-sans` pasa de Geist a
+  `var(--font-inter)` (con `Inter Variable`, `Inter` y `system-ui` de respaldo) y la mono a la del
+  sistema. **`geist` deja de ser peer**: la app carga Inter con `next/font/google`
+  (`variable: "--font-inter"`) o `@fontsource-variable/inter`. Los componentes dejan las clases de
+  Geist (`text-copy-14`, `text-label-12`, `text-heading-20`…) por **roles nuevos**:
+
+  | rol | px / peso / interlineado | en iCloud |
   |---|---|---|
-  | `text-large-title` | 26 → **48** / 600 / 52, −0,005em | título grande de página |
-  | `text-title-1` | 22 → **28** / 600 / 34 | título de modal, detalle |
-  | `text-title-2` | 17 → **21** / 600 / 25 | título de lista, de sidebar, de widget |
-  | `text-title-3` | 15 → **19** / 600 / 24 | título de grupo, de diálogo |
-  | `text-headline` | 13 → **17** / 600 / 22 | título de una fila |
-  | `text-body` | 13 → **17** / 400 / 22 | lo que se lee: celdas, párrafos |
-  | `text-subheadline` | 11 → **15** / 400 / 20 | ítems del sidebar |
-  | `text-callout` | 12 → **14** / 400 / 18 | el chrome: menús, campos, botones, metadatos |
-  | `text-footnote` | 10 → **12** / 400 / 16 | snippets, ticks de gráfico |
-  | `text-caption` | 10/500 → **11** / 400 / 13 | badge, pie legal |
-  | `text-mono-body` · `text-mono-callout` | 13 · 12 → **14** · 12 | código, atajos |
+  | `text-large-title` | 48 / 600 / 52, −0,005em | título grande de página |
+  | `text-title-1` | 28 / 600 / 34 | título de modal, detalle |
+  | `text-title-2` | 21 / 600 / 25 | título de lista, de sidebar, de widget |
+  | `text-title-3` | 19 / 600 / 24 | título de grupo, de diálogo |
+  | `text-headline` | 17 / 600 / 22 | título de una fila |
+  | `text-body` | 17 / 400 / 22 | lo que se lee: párrafos, celdas de nombre |
+  | `text-subheadline` | 15 / 400 / 20 | ítems del sidebar, mensajes del Chat |
+  | `text-callout` | 14 / 400 / 18 | el chrome: menús, campos, botones, metadatos |
+  | `text-footnote` | 12 / 400 / 16 | snippets, badges, ticks de gráfico |
+  | `text-caption` | 11 / 400 / 13 | contador, pie legal |
+  | `text-mono-body` · `text-mono-callout` | 14 · 12 | código, atajos |
 
-  Los componentes cambiaron de rol donde hacía falta: el chrome que usaba `text-body` (13) usa
-  `text-callout` (14), el ítem del Sidebar `text-subheadline` y el título de grupo de un menú
-  `text-callout font-semibold`. **Si la app usaba `text-body` para chrome, ahora le sale a 17:
-  pasalo a `text-callout`.** `text-body-large` queda como alias de `text-body` (antes 15) y se va
-  en 3.0. Inter se queda (SF no se puede servir); las clases de Geist siguen obsoletas.
+  `text-body-large` es alias de `text-body`. Las clases de Geist (`text-copy-*`, `text-label-*`,
+  `text-heading-*`, `text-button-*`) **siguen andando** y `cn()` las sigue fusionando, pero quedan
+  obsoletas y se van en 3.0. **Migración:** la prosa de la app pasa a `text-body` (17) y el chrome a
+  `text-callout` (14).
 - **Radios de iCloud, sin cápsula.** `--radius-control` 10 → **8** (botones, toggles, segmentado),
-  `--radius-field` 9999 → **10** (campos: dejan de ser cápsula), `--radius-surface` 20 → **11**
-  (cards), `--radius-panel` 26 → **11** (diálogos, hojas), `--radius-menu-item` 6 → **8**, y dos
-  nuevos: `--radius-item` **10** (ítems del Sidebar, filas) y `--radius-menu` **12** (menús y
-  popovers). Botones, chips (Toggle, filtros de Command), el segmentado y los botoncitos de los
-  campos dejan la cápsula; el segmento activo mide `control − 2` (6). El panel de menú pasa a
-  `rounded-menu` (12; en 1.x, `control + 4` = 14): el padding y las medidas de adentro están en
-  «Menús (R3)». Popover, HoverCard y el toast pasan a `rounded-menu`. `shape="rect"` ya es igual al
-  default.
+  `--radius-field` 9999 → **10** (los campos dejan de ser cápsula), `--radius-surface` 20 → **11**
+  (cards) y `--radius-panel` 26 → **11** (diálogos, hojas). Nuevos: `item` 10 (sidebar, filas),
+  `menu` 12 (menús, popovers, toast), `menu-item` 8, `tag` 4, `tooltip` 6, `meter` 6,
+  `menu-header` 7 y `thumb` 5, con sus `rounded-*` (y `cn()` los fusiona). Botones, chips, el
+  segmentado, las pistas y los botoncitos de los campos dejan `rounded-full`.
 - **Se va el vidrio.** Desaparecen `--glass`, `--glass-tint`, todas las `--sf-glass-*`, las
   utilidades `glass`, `glass-thin`, `glass-thick`, `glass-dense`, `glass-control`, `glass-rim`,
-  `sheen` y `thumb-lens`, las `material-bar`, `material-popover`, `material-modal` y
-  `material-group` de la fase 1, y `glassAlpha`/`glassSurface` del barrel. Una clase que ya no
-  existe no falla: el elemento queda sin fondo. Reemplazos:
+  `sheen` y `thumb-lens`, y `glassAlpha`/`glassSurface` del barrel. Una clase que ya no existe no
+  falla: el elemento queda sin fondo. **Migración:**
 
-  | antes | 2.0 |
+  | 1.13.1 | 2.0 |
   |---|---|
-  | `glass`, `material-popover`, `material-modal` | `bg-surface` (+ `shadow-menu`) |
-  | `material-bar` (Sidebar) | `bg-surface-secondary` |
-  | `material-bar` (barras) | `bg-surface-bar` · `bg-surface-header` |
-  | `material-group` | `bg-grouped` |
-  | `glass-control` (campos) | `bg-fill-1` |
+  | `glass`, `glass-thick` (popover, modal, card) | `bg-surface` (+ `shadow-menu` / `shadow-modal`) |
+  | `glass` en barras y sidebar | `bg-surface-bar` · `bg-surface-header` · `bg-surface-secondary` |
+  | `glass-control` (campos, chips) | `bg-fill-1` |
+  | `glass-dense`, grupos | `bg-grouped` |
+  | `glass-rim`, `sheen`, `thumb-lens` | nada (la sombra ya trae el filo) |
   | vidrio sobre un wallpaper | `material-translucent` |
 
 - **Superficies opacas en capas.** Tokens nuevos (`--sf-*` y su color de Tailwind): `surface`,
   `surface-secondary`, `surface-bar`, `surface-header`, `grouped`, `fill-1/2/3`, `separator`,
-  `separator-strong`, `hairline`, `label`, `label-secondary`, `label-tertiary`, `label-quaternary`,
-  `selection-inactive` y `segment`. **La página oscura pasa de negro a `#1C1C1E`.** Los componentes
-  dejaron `text-gray-1000/900/700` por `text-label`/`-secondary`/`-tertiary`,
+  `separator-strong`, `hairline`, `label`, `label-secondary/-tertiary/-quaternary`,
+  `selection-inactive`, `segment`, `tooltip`/`on-tooltip`. **La página oscura pasa de `#000000` a
+  `#1C1C1E`.** Los componentes dejan `text-gray-1000/900/700` por `text-label*`,
   `bg-gray-alpha-100/200/300` por `bg-fill-1/2/3` y `border-gray-alpha-400` por
-  `border-separator`; lo que la app pase con la paleta de Geist sigue andando. Los campos son
-  `bg-fill-1` sin borde visible (sin hover de borde); la Card es `bg-grouped`, plana y sin borde;
-  la Table, `bg-surface` con borde. `bg-ambient` queda como wallpaper opcional (`AppShell ambient`),
-  y sobre él la barra del `Navbar` usa `material-translucent`, el único material con blur.
+  `border-separator`; la paleta de Geist sigue disponible para la app. `bg-ambient` queda como
+  wallpaper opcional (`AppShell ambient`).
 - **Sombras de iCloud.** `shadow-menu` y `shadow-modal` son `0 11px 34px` (16 % en claro, 65 % en
-  oscuro) con el filo del popover; entran `shadow-widget`, `shadow-segment`, `shadow-badge` y
-  `shadow-thumbnail`; `shadow-card` es plana. Se van `shadow-button`, `shadow-button-inverted`,
-  `shadow-button-accent`, `shadow-chip` y `shadow-track`. En claro iCloud solo mostró la de menú
-  y la de widget; las otras son la oscura por 16/65. Botones, campos, chips, casillas y
-  pistas son planos y **ya no se hunden al apretar** (`active:translate-y-px`).
-- **Foco interior.** `focus-ring` pasa del anillo de Geist por fuera a `inset 0 0 0 3px` del color
-  de foco (`--sf-focus`, la marca). iCloud lo pinta al 70 %; con las marcas de ejemplo eso no
-  llega a 3:1 en claro, así que el default es la marca plena y `--sf-focus-alpha: 70%` queda para
-  la app cuya marca lo aguante (se pisa en `:root` y `.dark`). **En oscuro el foco sale de
-  `brand-900`**: sobre las barras, los campos (`fill-1`) y el resaltado (`fill-2`), `brand-700`
-  no llegaba a 3:1 con las marcas oscuras. `focus-border` (campos) es el mismo anillo y **se ve
-  también con el puntero** (ya no hay halo solo de teclado): se va `data-sf-modality`, que ya
-  nadie leía. El anillo va en `--tw-inset-ring-shadow` y **se compone con la sombra** del
-  elemento: un panel enfocado conserva su `shadow-menu`. `cn()` fusiona `focus-ring`,
-  `focus-ring-inverse`, `focus-border` y `focus-border-error`. Sobre un fondo de color va
-  `focus-ring-inverse`: botón `accent`, casilla marcada o indeterminada, día elegido del Calendar,
-  la X de un Tag sólido (en su tinta) y el AiButton sólido (blanco). El Switch lleva el anillo
-  **por fuera** de la pista (`outline` de 2 px con 2 de separación): sobre la pista gris el
-  interior daba 1,3:1.
-- **Selección de iCloud** (reemplaza la de la fase 1, que era acento sólido en todos lados). El
-  ítem resaltado de un menú (también Select y Combobox) va en `fill-2` y **el texto no cambia de
-  color**; el activo del Sidebar y el link actual de NavigationMenu, en `fill-1`. El acento sólido
-  (`bg-selection` + `text-on-selection`) queda solo para la fila elegida de una `Table` **con el
-  foco adentro**; sin foco la fila es `bg-selection-inactive`. `inside-selection` y
-  `selectionSecondaryClassName` miran solo ese caso: un color propio adentro de un ítem de menú o
-  del Sidebar ya no pasa a blanco, y no hace falta. `menuItemSecondaryClassName` es
-  `text-label-secondary`. El contenedor de la `Table` lleva `tabIndex={-1}`: un click en una celda
-  común le deja el foco y la fila elegida no parpadea a gris.
-- **Playground del sitio:** sin los controles de vidrio, tinte y radios; quedan marca, tema y
-  wallpaper (apagado por defecto).
+  oscuro) con el filo de 1 px; `shadow-card` es plana. **Se van** `shadow-button`,
+  `shadow-button-inverted`, `shadow-button-accent`, `shadow-chip` y `shadow-track`. Botones, campos,
+  chips, casillas y pistas son planos y **ya no se hunden al apretar** (`active:translate-y-px`).
+- **Foco interior.** `focus-ring` pasa del anillo de Geist por fuera (`0 0 0 2px` fondo +
+  `0 0 0 4px` marca) a **`inset 0 0 0 3px`** del color de foco (`--sf-focus`: `brand-700` en claro,
+  `brand-900` en oscuro; `--sf-focus-alpha` lo baja al 70 % de iCloud si la marca aguanta 3:1).
+  Va en `--tw-inset-ring-shadow` y se compone con la sombra del elemento. `focus-border` (campos)
+  es el mismo anillo, **se ve también con el puntero** y **saca el relleno** del campo (la búsqueda
+  de iCloud). Se va `data-sf-modality`. Sobre un fondo de color va `focus-ring-inverse` (nuevo).
+  Switch y Slider llevan el foco **por fuera** (sobre la pista gris el interior daba 1,3:1).
+- **Selección de iCloud.** El ítem resaltado de un menú (también Select, Combobox y Command) va en
+  **`fill-2`** y el activo del Sidebar y de NavigationMenu en **`fill-1`**, sin cambiar el color
+  del texto; en 1.13.1 era el tinte de la marca (`bg-highlight`). El acento sólido
+  (`bg-selection` + `text-on-selection`) queda para la fila elegida de una lista **con el foco
+  adentro** (`Table`, `List`, `Tree`, `FileGrid`); sin foco, `bg-selection-inactive`.
+- **Una sola escala de alturas** para campos y botones (la del search field y el botón de iCloud):
 
-**Diálogos (R2).** Como los diálogos, hojas y popovers de iCloud (catálogo §2.8, §2.12, §2.13,
-§2.15). Lo de las fases 1–3 para estos componentes (la alerta compacta de macOS, las hojas
-flotantes, la paleta de Spotlight, los botones teñidos) no llega a publicarse.
+  | tamaño | 1.13.1 | 2.0 | con el dedo |
+  |---|---|---|---|
+  | `sm` | 32 | **28** | 36 (campos) / 44 (botones) |
+  | `md` | 40 | **36** | 44 |
+  | `lg` | 48 | **40** | 44 |
+  | `icon-sm` · `icon-md` · `icon-lg` | 32 · 40 · 48 | **28 · 36 · 40** | 44 |
 
-- **Un solo contenedor de diálogo** para Dialog y AlertDialog (`modalPopupClassName`):
-  `rounded-panel` (11), `bg-surface`, `shadow-modal`, 20 px de padding, el velo sin blur.
-- **AlertDialog es la alerta de iCloud.** 450 px (`alertWidthClassName`), 24 px de aire y todo
-  centrado: `AlertDialogIcon` arriba (opcional, en la marca, un `<svg>` a 36 px), título
-  `text-headline`, detalle `text-callout` secundario y **dos botones iguales a todo el ancho**
-  (`alertFooterClassName`: grilla de columnas iguales, 10 px; con tres o más, o en 360 px o menos,
-  se apilan en el orden del DOM). **El botón por defecto es el seguro y va en el acento**: con una
-  `AlertDialogAction variant="destructive"`, «Cancelar» pasa a acento sólido y es el foco inicial,
-  y la acción que destruye es gris (`secondary`) con el texto en `text-red-ink` (4,5:1 sobre el gris
-  en los dos temas); sin destructiva, la acción es el acento, «Cancelar» el gris y **el foco inicial
-  va a la acción** (Return la dispara). Hasta 1.x `default` era el negro y `destructive` el rojo
-  sólido. **Se van** `AlertDialogFooter stacked` (con tres botones se apila solo) y
-  `alertPopupClassName`.
-- **Dialog con la X arriba a la izquierda** (`dialogCloseClassName`) y el título centrado:
-  `DialogHeader` es `px-8 text-center`. La X de Dialog, Sheet y Drawer mide **28 × 28** con glifo
-  de 14 (`closeButtonClassName`). El pie (`modalFooterClassName`) es
-  `flex flex-col gap-3 pt-1 sm:flex-row sm:justify-end sm:gap-2`; para un único CTA centrado,
+  Input, Textarea, NumberField, OTPField, DatePicker, ColorPicker, Select, Combobox, Autocomplete,
+  InputGroup y Button comparten la escala. Texto 14 e íconos 16 en los tres (el `lg` ya no sube a
+  16/20); con el dedo el texto de los campos sube a 17 para que iOS no haga zoom. **Revisá los
+  layouts que contaban con el `lg` de 48.** Deshabilitado = **opacidad .4** en botones y campos
+  (antes gris con texto terciario).
+
+#### Diálogos
+
+- **Dialog y AlertDialog comparten el contenedor** (`modalPopupClassName`): radio 11, `bg-surface`
+  opaco, `shadow-modal`, **20 px** de padding (antes 24, vidrio) y el velo sin blur. El pie ya no
+  tiene línea arriba ni márgenes negativos (`modalFooterClassName`).
+- **AlertDialog es la alerta de iCloud:** **450 px** (antes 448), **todo centrado** (antes a la
+  izquierda), título `text-headline`, detalle `text-callout` secundario y **dos botones iguales a
+  todo el ancho** (antes a la derecha); con tres o más, o en 360 px o menos, se apilan en el orden
+  del DOM. **El botón por defecto es el seguro:** con una `AlertDialogAction variant="destructive"`,
+  «Cancelar» pasa a acento sólido y es el foco inicial, y la acción que destruye es gris con texto
+  rojo; sin destructiva, la acción es el acento y el foco inicial (Return la dispara). En 1.13.1 la
+  acción `default` era negra, `destructive` rojo sólido y el foco lo elegía Base UI. Un `<Button
+  variant="destructive">` suelto en el pie no se detecta.
+- **Dialog con la X arriba a la izquierda** (antes a la derecha), de 28 × 28 con glifo de 14, y el
+  título centrado (`DialogHeader` `px-8 text-center`). Pie a la derecha; un único CTA centrado con
   `<DialogFooter className="sm:justify-center">`.
-- **Sheet y Drawer pegados al borde.** Sin margen, con `rounded-panel` solo en las esquinas de
-  adentro (`rounded-l-panel` del lado derecho, `rounded-t-panel` abajo…), el área segura como
-  padding del lado de la pantalla, y cerrados salen su tamaño entero (`translate-x-full`,
-  `translateY(100%)`). La X sigue arriba a la derecha. El gesto del Drawer no cambia. **Se va**
-  `floatingSheetGapClassName` con las variables `--sheet-gap-*`: si la app los usaba, `inset-y-0
-  right-0` y `translate-x-full`.
-- **Popover y HoverCard**: `floatingPopupClassName` se queda en **`p-4`**, como en 1.x (el inset de
-  16 de los popovers de iCloud); pasan a `rounded-menu` (en 1.x `rounded-surface`), opacos (en 1.x
-  vidrio) y con `shadow-menu`, que ya trae el filo de 1 px medido como borde. `PopoverContent translucent` usa `material-translucent`, para el popover
-  de acceso rápido sobre un wallpaper.
-- **Command es la búsqueda de iCloud**, no la paleta de Spotlight. `CommandInput` es el search
-  field (36 px, radio 10, `fill-1`, lupa de 16, texto `text-callout`; con el foco pierde el
-  relleno y queda el anillo interior; `commandInputClassName`). Las filas son las de un menú:
-  **30 px** (`min-h-7.5`), `rounded-menu-item`, título `text-callout` regular (sin
-  `font-medium`), detalle `text-footnote`, ícono en una caja de 30 con el glifo de 16 en el
-  acento (`commandItemClassName`, `commandItemIconClassName`). `CommandDialog` es la superficie de
-  un popover: `rounded-menu`, `shadow-menu`, 560 px, con el padding del panel de menú (`p-1.25`,
-  «Menús (R3)»). Command es nuevo en 2.0: no hay valores de 1.x. Los filtros quedan como los tokens de búsqueda de iCloud: gris, y el
-  marcado en el acento sólido (`commandFilterClassName`). **Se van** la sugerencia en línea, `Tab`
-  y `→` para aceptarla y la pista `tab`: Tab sale del campo. La API, el filtrado, el teclado, los
-  grupos y el vacío no cambian.
-- **Revisión de R2.** La X de Sheet y Drawer suma el área segura (`--sf-safe-top`,
-  `--sf-safe-right`: ya no queda debajo de la isla), el Drawer lateral lleva el área segura arriba,
-  abajo y del lado de la pantalla, y las hojas de arriba y abajo los costados (iPhone apaisado). Las
-  filas y el campo de Command miden 44 con el dedo. AlertDialog: con una destructiva y sin
-  «Cancelar» el foco inicial es el diálogo; sin destructiva, la acción `default`; con una
-  destructiva, una acción `default` al lado también es gris (un solo acento). Un `<Button
-  variant="destructive">` suelto no se detecta. `AlertDialogDescription align="start"` para textos
-  largos, y el pie corta una palabra más larga que la columna (`min-w-0`, `break-words`); el `size`
-  de sus botones no cambia el alto en el pie.
-- **Se van `Button variant="tinted"` y `"destructive-tinted"`** (y `--sf-tint-hover`,
-  `--sf-tint-active`): iCloud no tiene botón teñido. Eran de la fase 2 y no llegaron a publicarse.
+- **Sheet y Drawer** siguen pegados al borde, ahora opacos (antes vidrio) con `rounded-panel` (11)
+  en las esquinas de adentro (el Sheet antes sin radio, el Drawer con 26), el área segura como
+  padding y la X de 28 arriba a la derecha.
+- **Popover y HoverCard**: `rounded-menu` (12, antes `rounded-surface` 20), opacos y con
+  `shadow-menu`, 256 de ancho (antes 288) y `gap-2` (antes 3); `p-4` como antes.
 
-**Menús (R3).** Medidos en los menús de iCloud Drive (menú de fila y «View as»). Es la única fuente
-de las medidas de los menús: lo que las fases 1–3 decían (ítems de 24, tilde a la izquierda,
-destructivo sin rojo) no llega a publicarse. Los «antes» son los de 1.x (1.13.1). Vale para
-DropdownMenu, ContextMenu, Menubar, Select, Combobox, Autocomplete y las filas de Command, que
-comparten `variants/menu`.
+#### Menús
 
-- **Panel** (`menuPopupClassName`): `rounded-menu` (12, antes 14) con **5 px** de padding
-  (`p-1.25`, antes `p-1`) y `min-w-52` (208, antes 160); opaco (antes vidrio), con `shadow-menu` y
-  su filo de 1 px. La lista de Select, el contenido de NavigationMenu y `CommandDialog` usan el
-  mismo `p-1.25`.
-- **Ítem** (`menuItemClassName`): **30 px** (`h-7.5`, antes 32), `px-2.5` (antes `px-2`),
-  `gap-2.5` (antes `gap-2`), radio 8 (antes 10), 14/400, íconos de 16 y **el primero en el acento**
-  (`text-brand-900`; los íconos del paquete —chevron del submenú, flecha externa— llevan
-  `data-slot` y quedan afuera). Resaltado `fill-2` (antes el tinte de la marca, `bg-highlight`),
-  apretado `fill-3`, el texto no cambia. **Deshabilitado al 30 %** (`opacity-30`, antes el texto en
-  `gray-700`). Vacío y «Cargando» de Combobox, a 30.
-- **Título de grupo** (`menuLabelClassName`): una fila de 30, `px-2.5`, **14/600 en `text-label`**
-  (antes 12 en `gray-900`, `px-2 py-1.5`).
-- **Separador** (`menuSeparatorClassName`): `mx-2.75 my-1 h-px bg-fill-2` — 9 px de alto con la
-  línea al medio y 11 de margen (antes de borde a borde, `-mx-1`, en `gray-alpha-400`).
-- **El tilde es el círculo de acento a la derecha** (el «View as» de Drive, que es el Select de
-  iCloud); en 1.x era un tilde suelto a la derecha (`right-2`). `menuGutterClassName` (nuevo)
-  reserva la columna del tilde (`pr-9`) en todo ítem marcable y en todas las opciones de Select y
-  Combobox, `menuIndicatorClassName` (nuevo) la ubica a `right-2.5`, y el círculo es
-  `menuCheckClassName` (nuevo): `brand-900` con el tilde en el color de la superficie. El tilde se
-  renderiza después del contenido del ítem (es absoluto): así el primer ícono no cambia de color al
-  marcar. **`inset`** pasa de `pl-8` a `data-inset:pl-9`, alineado con el texto de los ítems
-  **con ícono**. En Menubar el atajo queda antes del tilde.
-- **`variant="destructive"`** (DropdownMenuItem, ContextMenuItem, MenubarItem): texto e ícono en
-  `text-red-ink` (`menuItemDestructiveClassName`; antes `red-900`), 4,5:1 sobre el panel, `fill-2` y
-  `fill-3` en los dos temas; el resaltado es **el mismo gris** que el resto (antes `red-100`).
-- **Atajo**: `text-callout` gris a la derecha (antes 12 mono en `gray-900`).
-- **Menubar**: títulos de **28** (`h-7`, antes 32), `px-2.5`, como un botón de la toolbar de
-  iCloud; deshabilitado al 30 %.
-- **NavigationMenu: el link suelto de la barra es idéntico al trigger** (28 px, 14/400
-  `label-secondary` que sube a `label`; activo con `active` o `aria-current`). Antes
-  `NavigationMenuLink` sin `title` solo traía radio y foco y heredaba el texto de la página. El
-  trigger pasa de `px-2 py-1.5` (14 en `gray-900`) a `h-7 px-2.5`. El contenido con `keepMounted` cerrado lleva
-  `[&[hidden]]:hidden`, para que una grilla en su `className` no le gane al `hidden`.
-- **Revisión de R3.** El ítem `external` escribe en `brand-ink` (con `brand-900` quedaba en
-  4,0–4,4:1 sobre el resaltado en claro). `inset` también en `CheckboxItem` y `RadioItem` de los tres
-  menús. El submenú de DropdownMenu abre hacia `inline-end` (antes `right`), como el de Menubar.
-  Las opciones con ícono de Select y Combobox llevan el gap y el acento de un ítem de menú
-  (`menuItemContentClassName`, nuevo).
+DropdownMenu, ContextMenu, Menubar, Select, Combobox, Autocomplete y las filas de Command comparten
+`variants/menu`.
 
-**Controles (R4).** Medidos en el CSS de los botones de iCloud (`ui-button`), las pestañas de
-Settings, el segmentado de Calendar y el slider de Photos. Reemplaza lo que las fases 1–3 decían de
-estos controles (Toggle con borde, perilla en cápsula, botón `outline`), que no llega a publicarse.
+| | 1.13.1 | 2.0 |
+|---|---|---|
+| panel | radio 14, `p-1`, `min-w` 160, vidrio | **radio 12, `p-1.25` (5), `min-w-52` (208), opaco** + `shadow-menu` |
+| ítem | 32, `px-2`, radio 10, 14 `gray-1000` | **30**, `px-2.5`, radio 8, 14/400 `label`; el primer ícono en el acento |
+| resaltado | tinte de marca (`bg-highlight`) | **`fill-2`**, apretado `fill-3`; el texto no cambia |
+| deshabilitado | texto `gray-700` | **`opacity-30`** |
+| título de grupo | 12 `gray-900`, `px-2 py-1.5` | **fila de 30, 14/600 `label`** |
+| separador | borde a borde (`-mx-1`) | **`mx-2.75 my-1`**, línea `fill-2` |
+| tilde | suelto a la derecha (`right-2`) | **círculo de acento a la derecha** (`right-2.5`); columna reservada `pr-9` |
+| `inset` | `pl-8` | **`data-inset:pl-9`** (alinea con los ítems con ícono) |
+| destructivo | `red-900`, resaltado `red-100` | **`text-red-ink`**, resaltado gris como el resto |
+| atajo | 12 mono `gray-900` | **14 `label-secondary`** |
 
-- **Button, solo las variantes de iCloud.** La jerarquía es acento sólido → gris → texto de acento →
-  ícono; no hay botón con borde ni rojo sólido.
+- **Menubar**: títulos de 28 (antes 32), `px-2.5`, abierto en `fill-2`.
+- **NavigationMenu**: el link suelto de la barra es igual al trigger (28, 14 `label-secondary` →
+  `label`); antes heredaba el texto de la página. Con `keepMounted` cerrado no ocupa lugar.
+- **Select** lleva ⌃⌄ y `alignItemWithTrigger` pasa a `true` por defecto (para el de 1.x,
+  `alignItemWithTrigger={false}`). **Combobox** lleva ⌃⌄. El submenú de DropdownMenu abre hacia
+  `inline-end`.
 
-  | 1.x | 2.0 | en iCloud |
-  |---|---|---|
-  | `default` (negro) | **`default` = acento sólido** (`bg-brand-700`) | `block.primary` |
-  | `accent` | `default` (`accent` queda como alias **obsoleto**, se va en 3.0) | |
-  | `outline` | **se va** → `secondary` | no existe |
-  | `secondary` | `secondary` (gris `fill-2`) | `block.secondary` |
-  | `ghost` | `ghost` (texto `label`, hover `fill-2`) | `push.neutral` |
-  | — | **`plain`** (nuevo): texto semibold de acento, hover `fill-2`, apretado `highlight` | `push` |
-  | `destructive` (rojo sólido) | **`destructive` = gris con texto rojo** (`text-red-ink`) | `block.secondary.destructive` |
-  | — | **`destructive-plain`** (nuevo): texto rojo sin fondo | `push.destructive` |
-  | `link` | `link` | |
+#### Controles
 
-  **Migración:** `variant="outline"` → `"secondary"`; `variant="accent"` → sin `variant`; donde
-  la app usaba el negro a propósito, `className="bg-label text-surface hover:bg-label/85"`. Un
-  `default` que convivía con un `accent` en la misma pantalla ahora son dos acentos: pasá el que no
-  es la acción principal a `secondary` o `plain`. **Deshabilitado = opacidad .4** (antes gris
-  `fill-1` con texto terciario). `plain` escribe en `brand-ink` y dibuja el glifo en `brand-900`:
-  sobre el `fill-2` del hover `brand-900` no llega a 4,5:1 en claro con todas las marcas (lo mide un
-  test nuevo con las cinco). Botones de ícono: glifo 16 en `icon-sm` (28), **18 en `icon-md`** (36),
-  20 en `icon-lg`. La Toolbar (botón por defecto), las flechas del Calendar y el disparador del
-  Sidebar pasan a `plain` (el glifo azul de la toolbar de Drive); «Limpiar» del DatePicker a
-  `plain`; «Reintentar» del Chat a `secondary`. `AlertDialogAction variant="destructive"` usa la
-  variante `destructive`. `AiButton variant="outline"` conserva su borde (ahora sobre `ghost`).
-- **`TextLink`** (nuevo, `sebs7n-ui/text-link`) y **`linkVariants({ variant: "accent" })`**: el link
-  de Settings de iCloud, semibold en `brand-900`, subraya con el puntero y no pinta fondo.
-  `trailing="chevron"` (›) o `"external"` (↗, con `target="_blank"`, `rel="noopener noreferrer"` y
-  el aviso `sr-only` «(se abre en otra pestaña)», `externalLabel`). Sin `"use client"`.
-- **Tabs: `line` es el default** (antes `segmented`) y es la de Settings: 17 px en
-  `label-secondary`, la activa en `label` con **subrayado de 1 px** del ancho del texto sobre la
-  línea base `fill-3`, 60 de alto, 46 de texto a texto (antes: línea de Geist de 2 px, 32 de alto,
-  14 px). **Si la app usaba el default, ahora es la línea: para el segmentado, `variant="segmented"`.**
-  El segmentado es el de Calendar: pista de **28** (antes 32), segmentos de 24 **del mismo ancho**,
-  activo en semibold y separadores de 1 × 16 entre los que no tocan al activo; la pista ya no tiene
-  espacio entre segmentos (`segmentedTrackClassName` sin `gap-0.5`). ThemeSwitcher igual: segmentos
-  de 24 × 32 (antes 28 × 28), 40 × 44 con el dedo. **La lista ya no lleva `group/tabs-list`:** una
-  app que pintaba las pestañas con `group-data-[…]/tabs-list:` pasa a mirar el `data-variant` de la
-  lista (`in-data-[variant=line]:…`). La de línea scrollea de costado con muchas pestañas y se sale
-  8 px de cada lado (`-mx-2`); el segmentado recorta con «…» el texto que no entra.
-- **ToggleGroup es el segmentado** (antes una fila de chips con `flex-wrap gap-2`): la pista de
-  `segmentedTrackClassName` con segmentos del mismo ancho (`segmentedGroupClassName`) y cada ítem
-  prendido en el **acento sólido** (`segmentedItemClassName`, nuevo; en oscuro `brand-900` con el
-  texto oscuro, para llegar a 3:1 contra la pista); admite varios prendidos. **Ya no envuelve en
-  varias filas:** para filtros sueltos que envuelven, `Toggle` de a uno en un
-  `<div className="flex flex-wrap gap-2">`. **Toggle** suelto es el token de la
-  búsqueda de iCloud: `fill-1` sin borde, `fill-2` con el puntero y **el acento sólido prendido**
-  (antes borde gris lleno que se oscurecía).
-- **Checkbox y Radio** marcados sin borde (el relleno es el contorno) y **deshabilitados a .4**;
-  **`Checkbox shape="circle"`** (nuevo) es el check de Reminders, 22 px con borde de 1,5. Switch
-  deshabilitado a .4.
-- **Slider = el de Photos**: pista de **2 px** (antes 4/6) en `label/32`, progreso en el **label**
-  (antes `brand-700`), perilla **círculo de 14** con borde de 2 px en el label y centro `surface`
-  (antes cápsula blanca de 20 × 28), que crece al arrastrar; área de toque por `::after` (34, 46
-  con el dedo); **el foco va por fuera** (como el Switch). Sus estados salen de
-  `sliderThumbDraggingClassName` (`data-dragging:scale-125`) y `sliderThumbPeerActiveClassName`
-  (`peer-active:scale-125`), que cambiaron de valor junto con la perilla: si una app los usaba en un
-  slider propio, ahora escalan la perilla de 14. `sliderThumbClassName` cambia y el matiz
-  del ColorPicker lo sigue. Deshabilitado a .4.
-- **Campos: con el foco pierden el relleno.** `focus-border` y `focus-border-error` ponen
-  `background-color: transparent` y queda solo el anillo interior, como la búsqueda de iCloud.
-  `inputDisabledClassName` pasa a **opacidad .4** (Input, Textarea, NumberField, OTPField,
-  DatePicker, ColorPicker, Select, Combobox, Autocomplete, el campo del Chat).
-- **Badge y Tag: 20 / 16** (antes 24 / 20), texto 12; siguen rectangulares con radio 4 (una
-  etiqueta de estado, como los chips de evento de Calendar). **`Badge variant="count"`** (nuevo) es
-  el badge de app de iCloud: círculo de 20 (16 en `sm`), 11 px, cifras tabulares y `shadow-badge`.
-  El botón de quitar del Tag `sm` mide 12 (área 24). Los chips de Combobox siguen al campo (16 en
-  `sm`, 20 en los demás).
-- **Kbd**: `bg-fill-2` sin borde y radio 4 (antes `fill-1` con borde y radio 2).
+- **Button, solo las variantes de iCloud:**
 
-**Navegación y componentes existentes (R5a).** Medidos en Mail, Drive, Home y Settings de iCloud
-(catálogo §2.1–§2.5, §2.7, §2.18–§2.23). Los «antes» son contra 1.13.1. Los componentes nuevos de
-R5 (Tree, ListRow, SplitView, WidgetCard, CalendarView, FileGrid, el Meter apilado) vienen en R5b.
+  | 1.13.1 | 2.0 |
+  |---|---|
+  | `default` (negro) | **`default` = acento sólido** |
+  | `accent` | `default` (`accent` queda como alias **obsoleto**) |
+  | `outline` | **se va** → `secondary` |
+  | `secondary` | `secondary` (gris `fill-2`) |
+  | `ghost` | `ghost` (texto `label`, hover `fill-2`) |
+  | `destructive` (rojo sólido) | **`destructive` = gris con texto rojo** |
+  | — | **`plain`** (texto semibold de acento) y **`destructive-plain`** (texto rojo) |
+  | `link` | `link` (ya no agranda su área con el dedo) |
 
-- **Sin flotantes ni cápsulas en la navegación.** `Sidebar`, `AppShell` y `Navbar` pierden
-  `variant="floating"` (el default de 1.x en los tres); la prop queda como `variant?: "bar"`
-  **obsoleta y sin efecto** (se borra en 3.0), así una app que ya pedía `bar` no se rompe.
-  **Migración:** borrá `variant="floating"`; si usabas `useNavbar().floating`, ya no existe.
-  `Sidebar` y `Navbar` **ya no ponen `data-variant`** en su elemento: un estilo de la app colgado de
-  `[data-variant=floating]` (o de `group-data-[variant=…]`) deja de aplicarse; pasalo a `data-slot`.
-- **Sidebar = la lista de fuentes de iCloud.** A ras arriba, a la izquierda y abajo (antes panel
-  despegado de vidrio con margen de 12, radio 26 y sombra), `surface-secondary` con borde derecho
-  `separator-strong`, 10 de inset a cada lado del ítem.
+  **Migración:** `outline` → `secondary`; `accent` → sin `variant`; el negro a propósito →
+  `className="bg-label text-surface hover:bg-label/85"`. Si en una pantalla convivían `default` y
+  `accent`, ahora son dos acentos: pasá el secundario a `secondary` o `plain`.
+- **Tabs: `line` es el default** (antes `segmented`) y es la de Settings: 17 `label-secondary` →
+  `label`, subrayado de **1 px** del ancho del texto sobre la línea base `fill-3`, 60 de alto (antes
+  14 px, 40 de alto y 2 px de línea). **Para el segmentado, `variant="segmented"`.** El segmentado:
+  pista de **28** (antes cápsula de 32 con la pastilla que se deslizaba), segmentos de 24 del mismo
+  ancho, radio 6, activo en semibold. La lista ya no lleva `group/tabs-list`: se mira su
+  `data-variant` (`in-data-[variant=line]:…`). ThemeSwitcher igual.
+- **ToggleGroup es el segmentado** (antes chips con `flex-wrap gap-2`); cada ítem prendido va en el
+  acento sólido y admite varios. **Ya no envuelve:** para filtros que envuelven, `Toggle` de a uno en
+  un `<div className="flex flex-wrap gap-2">`. **Toggle** suelto es el token de búsqueda de iCloud:
+  `fill-1` sin borde y acento sólido prendido (antes borde punteado que pasaba a sólido).
+- **Checkbox y Radio** marcados sin borde, sin sombra y deshabilitados a .4. **Switch**
+  deshabilitado a .4, foco por fuera.
+- **Slider = el de Photos:** pista de **2 px** (antes 4/6) en `label/32`, progreso en `label` (antes
+  `brand-700`), perilla de **14** con borde de 2 en `label` y centro `surface` (antes círculo blanco
+  de 16/20 que se estiraba como lente). `sliderThumbClassName` y sus estados cambian de valor; el
+  ColorPicker los sigue.
+- **Badge y Tag: etiquetas sólidas rectangulares.** Radio 4 (antes cápsula con borde), altos
+  **20 / 16** (antes 24 / 20), texto 12, relleno lleno con tinta blanca o negra que llega a 4,5:1.
+  **El default pasa de `subtle` a `solid`**: `subtle` se acepta y dibuja lo mismo (obsoleto). `solid`
+  `gray` ya no es el negro invertido (`className="bg-gray-1000 text-background-100"` para el de
+  antes). El punto de `dot` va en la tinta. `--sf-tint-border` ya no lo usa ningún componente.
+- **Kbd**: `fill-2` sin borde ni sombra, radio 4 (antes borde, radio 2, mono 12).
+- **NumberField mide lo que el número** (`w-fit`, `field-sizing: content`): `className="w-full"`
+  para el ancho entero.
+- **Calendar**: días de 28 (antes 36), 40 con el dedo.
+- **Chat**: mensajes a 15, campo de 36 (17 con el dedo), «Reintentar» en `secondary`.
 
-  | | 1.13.1 | 2.0 |
-  |---|---|---|
-  | ítem | 32 · radio 10 · 14 `gray-900` | **32 · radio 10 · 15/400 `label`** (el texto no se apaga) |
-  | ícono | 16 en el color del texto (brand solo el activo) | **18 en el acento** (`brand-900`) siempre |
-  | activo | tinte de marca (`highlight`) + `gray-1000` | **`fill-1`**, el texto no cambia |
-  | contador | 12 `gray-900` | 14 secundario, sin pill |
-  | título de sección | 12 `gray-900` | **14/600 secundario a 16 del borde** |
-  | búsqueda | cápsula de 32 con borde y vidrio | **campo de iCloud**: 32, radio 10, `fill-1`, sin relleno con el foco |
-  | colapsado | 64 de ancho, cuadrados de 32 | igual |
+#### Navegación y listas
 
-  **Nuevo:** `SidebarGroup collapsible` (`defaultOpen`, `open`, `onOpenChange`): el título pasa a ser
-  un botón con un chevron que gira y `aria-expanded`/`aria-controls`; **`SidebarGroupAction`**, el
-  «+» gris de una sección (fuera del panel, `aria-label` obligatorio). Colapsado, una sección
-  cerrada sigue mostrando sus íconos.
-- **AppShell.** Nueva prop **`header`**: la barra global a todo el ancho arriba del sidebar y del
-  contenido (≥ lg), 44, `surface-header`, borde `separator-strong`, `0 6px 0 16px`,
-  `material-translucent` sobre el wallpaper. El sidebar se pega debajo (`--app-shell-header`). La
-  barra del teléfono es siempre esa barra de **44** (antes el `Navbar` flotante de 56 con 12 de
-  aire); AppShell ya no importa `Navbar`.
-- **Navbar = la barra global de iCloud.** A todo el ancho, **44** (antes 56), opaca desde arriba
-  (antes transparente hasta scrollear) con el borde abajo, y translúcida solo sobre el wallpaper.
-  `NavbarContent` sin `max-w-6xl` y con `0 6px 0 16px`. `data-scrolled` sigue, pero la barra ya no
-  cambia al bajar.
-- **Toolbar = la de una app de iCloud.** `variant="bar"` (nuevo default) va a todo el ancho, 44 con
-  el borde abajo, `surface-bar`, 10 de padding y 6 entre controles (antes cápsula de vidrio de
-  ancho de contenido, `rounded-full`, `p-1`). **`glass` queda como alias obsoleto de `bar`**; `plain` sigue.
-- **Card = el widget de iCloud.** Radio 11, cuerpo `surface` con **`shadow-widget`** (antes vidrio
-  con borde y `shadow-card`), `overflow-hidden`, padding 20 en `md` (antes 24).
-  - `CardHeader` es una **franja** de otro tono (`surface-bar`, 80 de alto en `md`) con **`icon`**
-    (caja de 40), `CardTitle` 21/600 y `CardDescription` 14 secundario; `CardAction` arriba a la
-    derecha, haya o no ícono.
-  - **Nuevo `CardRow`** (60, radio 8, `title`/`description`/`trailing` o hijos) con separador
-    interior, y **`CardContent columns={2}`** con regla vertical.
-  - **`CardFooter` sin línea ni franja**: la fila del «…». Antes `border-t` con el padding de la card.
-  - `selected` pasa a un anillo de 2 por fuera; la interactiva ya no cambia de sombra al pasar.
-  - En `variant="subtle"` la cabecera va sin franja (la banda de otro tono es del widget). La
-    Card lleva `data-variant`.
-  - **Migración:** el uso simple sigue andando y se ve como widget. Si querías el grupo plano, usá
-    `variant="subtle"` o `className="bg-grouped shadow-none"`. Un pie con botones con borde pasa a
-    un botón de ícono (`Button plain size="icon-sm"`).
-- **Table = la vista de lista de Drive.** Sin caja (antes borde, radio y fondo), cabecera de 44 en 14
-  secundario **sin fondo** (antes una banda de 40) con una línea abajo, filas de **41** (antes
-  48; `compact` 32) con separador interior que arranca a 10 del borde y se esconde al lado de la fila
-  con el puntero o la elegida, **selección redondeada** (radio 10) en el acento con foco y gris sin
-  foco. El fondo de hover y selección pasa del `<tr>` a las celdas (`border-separate`). La primera
-  celda es el nombre (17, `label`) y el resto metadatos en 14 secundario; padding de celda 10 (antes
-  16). **Nuevo `TableGroupHeader`** (58, 19/600 con el contador inline): un `<th scope="rowgroup">`, así que
-  va **un `TableBody` por grupo**, y `colSpan` es obligatorio (las columnas de la tabla: el lector lo
-  anuncia como su ancho). `TableFooter` sin fondo.
-  - **Migración:** la tabla es `border-separate` (si no, el radio de las celdas no se dibuja), así
-    que **un borde en el `<tr>` no se ve**: un `border-b` de fila pasa a las celdas
-    (`[&>td]:border-b`) o a una sombra interior (`[&>td]:shadow-[inset_0_-1px_0_var(--color-separator)]`).
-    Y el fondo de hover y selección está en las celdas: un `bg-*` o `hover:bg-*` propio en el `<tr>`
-    queda tapado; va como `[&>td]:bg-*` / `hover:[&>td]:bg-*`.
-- **Accordion y Collapsible, el disclosure de iCloud.** Filas de 44 con separador a todo el ancho, el
-  título ya no se apaga con el puntero y el chevron es **› que gira 90° a ⌄** (antes ⌄ que giraba
-  180°); el contenido baja a 14. `CollapsibleTrigger chevron` (nuevo) suma el mismo disclosure.
-- **Tooltip gris oscuro en los dos temas** (la captura de Sebastián): `bg-tooltip` (`#3a3a3c` claro,
-  `#48484a` oscuro) con texto blanco de **12**, radio **6**, sin flecha y sombra suave (antes
-  `gray-1000` invertido —negro en claro, blanco en oscuro—, 13 y radio 10). Lo comparte la etiqueta
-  del `AiLauncher`.
-- **Skeleton: un brillo que cruza** en vez del pulso: gris parejo y una franja apenas más clara que
-  pasa de izquierda a derecha en 1,5 s (2 s de ciclo), con `background-attachment: fixed` para que
-  todos los bloques la muestren en la misma fase. Quieto con movimiento reducido.
-  - **Migración:** `animate-skeleton` ya no pone `position: relative` (en 1.x lo necesitaba para su
-    capa `::after`). Si adentro de un Skeleton había algo con `absolute`, sumale `relative`.
-  - Adentro de un ancestro con `transform` o `filter` (un Dialog animado) la fase deja de ser
-    compartida: `fixed` se ubica contra ese ancestro.
-- **Avatar:** tamaños de iCloud `sm` **28** (antes 24), `md` 32, `lg` 40 y **`xl` 80** (nuevo); el
-  fallback es el **monograma**: iniciales blancas en 600 sobre un gradiente gris (#6e6e73 → #48484a,
-  5,07:1 arriba), antes `gray-200` con texto 12 `gray-900`.
-- **UserMenu:** la cabecera del menú es la de la cuenta de iCloud: 72, `fill-2` con el radio de
-  arriba del panel, nombre 17/600 y mail 14 secundario.
-- **Breadcrumb** en 12 secundario con chevrons de 10 y 4 entre partes (antes 13, 14 y 6), el de
-  Settings. **PageHeaderDescription** con ancho de lectura de 650.
-- **EmptyState `placeholder`** (nuevo): el panel vacío de iCloud, solo el título en 28/600
-  `label-tertiary` centrado en todo el alto. `EmptyState` ya no sale de `cardVariants`: sigue siendo
-  el grupo plano aunque la Card ahora sea un widget.
-- **Meter `size="lg"`** (nuevo): la barra de almacenamiento, 16 con radio 6. El valor de Meter y
-  Progress pasa de mono a 14 con cifras tabulares.
-- **Sonner:** título en 600 y la acción en el acento (antes el botón invertido `gray-1000`).
-- **Sin cambios, a propósito:** la paleta de gráficos (azul, ámbar, rosa, violeta y verde en ese
-  orden pasa el validador de daltonismo; los colores de categoría de iCloud no), las burbujas del
-  Chat (iCloud no tiene chat: se sigue derivando del tinte de marca), Stat, Spinner y Pagination (ya
-  estaban en los tokens de R1–R4).
+- **Sin flotantes ni cápsulas.** `Sidebar` y `AppShell` pierden `variant="floating"` (su default en
+  1.13.1) y `Navbar` también; la prop queda como `variant?: "bar"` **obsoleta y sin efecto** (se va
+  en 3.0). `Sidebar` y `Navbar` ya no ponen `data-variant`. `useNavbar()` pierde `floating`.
+  **Migración:** borrá `variant="floating"`; un estilo colgado de `[data-variant=floating]` pasa a
+  `data-slot`.
+- **Sidebar = lista de fuentes:** a ras (antes panel de vidrio con margen 12, radio 26 y sombra),
+  `surface-secondary` con borde derecho; ítem 32 radio 10 en **15/400 `label`** (antes 14
+  `gray-900`), ícono de 18 siempre en el acento, activo `fill-1`, contador en texto 14 sin pill,
+  título de sección 14/600. `SidebarSearch` es el campo de iCloud (32, radio 10, `fill-1`; antes
+  cápsula con borde y vidrio).
+- **AppShell:** barra del teléfono de **44** (antes el `Navbar` flotante de 56); ya no importa
+  `Navbar`.
+- **Navbar = la barra global:** a todo el ancho, **44** (antes 56), opaca desde arriba con borde
+  abajo (antes transparente hasta scrollear), translúcida solo sobre el wallpaper. `NavbarContent`
+  sin `max-w-6xl`, padding `0 6px 0 16px`.
+- **Toolbar:** `variant="bar"` es el nuevo default (antes `glass`, cápsula de vidrio del ancho del
+  contenido): a todo el ancho, 44, `surface-bar`, borde abajo, gap 6. `glass` queda como alias
+  obsoleto de `bar`. El botón por defecto de la Toolbar es `plain`.
+- **Card = widget de iCloud:** radio 11, cuerpo `surface`, `shadow-widget`, `overflow-hidden`,
+  padding 20 en `md` (antes 24, vidrio con borde). `CardHeader` es una **franja** `surface-bar` con
+  `CardTitle` 21/600; `CardFooter` sin línea (antes `border-t`); `selected` es un anillo de 2 por
+  fuera. **Migración:** para el grupo plano, `variant="subtle"` o
+  `className="bg-grouped shadow-none"`.
+- **Table = lista de Drive:** sin caja (antes borde, radio y fondo), cabecera 14 secundaria sin
+  fondo, filas de **41** (antes 48; `compact` 32, antes 40), celdas con padding 10 (antes 16), primera celda
+  17 `label` y el resto 14 secundario, selección redondeada. La tabla es `border-separate` y el
+  fondo de hover y selección está en las celdas. **Migración:** un `border-b` o un `bg-*` en el `<tr>`
+  no se ve: pasalo a las celdas (`[&>td]:border-b`, `[&>td]:bg-*`). Con grupos, **un `TableBody` por
+  grupo**, cada uno con su `TableGroupHeader`.
+- **Accordion y Collapsible:** filas de 44 con separador, chevron › que gira a ⌄ (antes ⌄ que
+  giraba 180°), contenido a 14.
+- **Tooltip gris oscuro en los dos temas** (`bg-tooltip`), 12 px, radio 6, sin flecha (antes
+  `gray-1000` invertido, 13 px, radio 10).
+- **Skeleton:** brillo que cruza en vez del pulso; `animate-skeleton` ya no pone `position:
+  relative` (si adentro había algo `absolute`, sumale `relative`).
+- **Avatar:** `sm` 28 (antes 24), `md` 32, `lg` 40, `xl` 80 (nuevo); fallback = monograma blanco
+  sobre gradiente gris (antes `gray-200` con texto 12).
+- **Breadcrumb** en 12 secundario con chevrons de 10; **UserMenu** con la cabecera de cuenta (72,
+  `fill-2`); **Sonner** con título 600 y la acción en el acento (antes el botón invertido);
+  **Meter/Progress** con el valor en 14 tabular (antes mono).
 
-**Lo que sigue de las fases 1–3.** Los números de alto y de radio que cambió R1 ya están arriba;
-las fases R2–R5 rehacen diálogos, menús, controles y listas con las medidas de iCloud.
+#### Command
 
-- **Inter en vez de Geist.** `--font-sans` es `var(--font-inter)`, con `system-ui` de respaldo, y
-  la mono es la del sistema. `geist` deja de ser peer: la app carga Inter con `next/font/google`
-  (`variable: "--font-inter"`) o `@fontsource-variable/inter`.
-- **Las clases tipográficas de Geist quedan obsoletas.** `text-copy-*`, `text-label-*`,
-  `text-heading-*` y `text-button-*` siguen andando y `cn()` las sigue fusionando, pero el paquete
-  ya no las usa; se van en la próxima major.
-- **Alturas: una sola escala para campos y botones** (revisión visual de R1), la del search field y
-  el botón de modal de iCloud:
+Command es nuevo en 2.0 (no hay antes contra 1.13.1): es la **búsqueda de iCloud**, no una paleta
+de Spotlight. Ver «Added».
 
-  | tamaño | 1.x | 2.0 |
-  |---|---|---|
-  | `sm` | 32 | **28** |
-  | `md` | 40 | **36** |
-  | `lg` | 48 | **40** |
-  | `icon-sm` · `icon-md` · `icon-lg` | 32 · 40 · 48 | **28 · 36 · 40** |
+#### Componentes solo por subpath
 
-  Input, Textarea, NumberField, OTPField (casillas de 28/36/40), DatePicker, ColorPicker, Select,
-  Combobox, Autocomplete y Button comparten `inputSizeClassName`/los tamaños del Button. **El `lg`
-  es el que más baja (48 → 40)**: un layout que contaba con él para un CTA grande, un campo alineado
-  con una imagen o una fila de alto fijo cambia de alto; revisalo. **Texto 14 e íconos 16 en los tres
-  tamaños**: el `lg` ya no sube a 17. El chip (Toggle), el campo y el link de la Toolbar van en el
-  escalón `sm`. Con el dedo, `sm` y `md` de los campos suben a 36 y 44, **su texto sube a 17** (con
-  menos de 16 iOS hace zoom al enfocar; también el campo de Command) y los botones crecen a 44 por
-  `touch-target`. Los ítems de menú miden 30 (R3) y los del Sidebar 32 (R5a). Un botón
-  al lado de un campo lleva el mismo `size`. Los «…» de Pagination miden lo mismo que un número.
-- **Chat a la escala de un panel:** los mensajes a 15 (`text-subheadline`), el campo, los avisos y
-  las sugerencias a 14, la cabecera `text-headline`; el campo mide 36 como el botón de enviar (17 con
-  el dedo, para que iOS no haga zoom).
-- **`Button variant="link"` no agranda su área con el dedo**: es texto adentro de un párrafo.
-- **NumberField mide lo que el número**: el grupo pasa a `w-fit` y el input usa
-  `field-sizing: content`. Si la app contaba con que ocupara todo el ancho, pasale `className="w-full"`.
-- **SidebarSearch mide 32** (`h-8`, antes 28) y el atajo va en `Kbd size="sm"`.
-- **Con el dedo** las pestañas llegan a 44, los días del Calendar miden 40 (antes 44: no entraban
-  en 320 px), y la Toolbar, sus grupos, las flechas del Calendar y el ToggleGroup se separan 20 px
-  para que las áreas de 44 no se pisen.
-- **Select y Combobox (fase 3).** Select lleva ⌃⌄ y `alignItemWithTrigger` en `true` (para 1.x,
-  `false`); el scroll de una lista larga es de `SelectPrimitive.List`, no del panel. Combobox lleva
-  ⌃⌄ y no gira. El resto de lo que la fase 3 hizo en los menús lo reemplaza «Menús (R3)».
-- **Badge y Tag sólidos, como las etiquetas del Finder.** Relleno lleno, sin borde, sin brillo y
-  con 4 px de radio (`rounded-tag`), texto `text-footnote` (los altos, en «Controles (R4)»). La
-  tinta es blanca o negra al 85 %, la que llega a 4,5:1 en los dos temas:
+Todos los componentes de 1.13.1 siguen en el barrel. Los nuevos grandes van **solo por su ruta**
+para no pasar el tope de 55 kB gzip del barrel (sus textos de `labels` sí entran):
 
-  | color | relleno | tinta | claro | oscuro |
-  |---|---|---|---|---|
-  | `gray` | `gray-700` | negra | 5,65:1 | 5,65:1 |
-  | `brand` | `brand-700` | `brand-contrast` | el par del botón `accent` | |
-  | `red` | `red-800` | blanca | 4,75:1 | 4,79:1 |
-  | `amber` | `amber-700` | negra | 9,38:1 | 9,38:1 |
-  | `green` | `green-700` | negra | 5,96:1 | 5,99:1 |
-  | `blue` | `blue-800` | blanca | 5,78:1 | 5,79:1 |
-  | `teal` | `teal-700` | negra | 5,98:1 | 6,04:1 |
-  | `purple` | `purple-700` | blanca | 5,55:1 | 5,31:1 |
-  | `pink` | `pink-800` | blanca | 4,57:1 | 4,58:1 |
+`sebs7n-ui/chart` (como en 1.x, por el peer `recharts`), `sebs7n-ui/tree`, `sebs7n-ui/split-view`,
+`sebs7n-ui/file-grid`, `sebs7n-ui/calendar-view`, `sebs7n-ui/stepper`, `sebs7n-ui/data-table`,
+`sebs7n-ui/input-group`, `sebs7n-ui/multi-select`, `sebs7n-ui/timeline`, `sebs7n-ui/resizable`.
 
-  - `variant="subtle"` (el default de 1.x) **se ve igual que `solid`** y queda obsoleto. El default
-    pasa a `solid`; cada badge que era tenue ahora es lleno.
-  - `variant="solid"` vale en los nueve colores. `solid` `gray` deja de ser el negro invertido; para
-    el de antes: `className="bg-gray-1000 text-background-100"`.
-  - El punto de `dot` va en la tinta (`bg-current`). `badgeDotColor` sigue exportado.
-  - Adentro de una fila elegida sobre el acento el badge conserva su relleno y su tinta; solo
-    `brand` se invierte.
-  - `Tag` y `ComboboxChip` salen de `tagVariants`. El hover del botón de quitar es `--sf-tag-press`,
-    un velo del lado contrario a la tinta. `--sf-tint-border` ya no lo usa ningún componente.
+#### Nombres accesibles obligatorios en el tipo
 
-### Added (2.0)
+- `Tree`, `FileGrid`, `StackedMeter`, `DataTable` y `Timeline` exigen `aria-label` o
+  `aria-labelledby` (no compila sin uno).
+- `SidebarGroupAction` exige `aria-label` (el «+» solo no dice qué crea).
+- `TableGroupHeader` exige `colSpan` (el lector lo anuncia como el ancho del grupo).
+- Siguen como en 1.x: Button de solo ícono, `ToolbarButton`, `Progress` y `Meter` sin `label`.
 
-- **`Command`**, la búsqueda de iCloud (`sebs7n-ui/command`): `Command` (incrustado),
-  `CommandDialog` (anclado arriba, con la superficie de un popover, sin X ni velo, Escape cierra),
-  `CommandInput` (el search field), `CommandFilters`/`CommandFilter` (tokens en un `radiogroup`
-  nombrado «Filtros», que exponen su valor), `CommandList`, `CommandGroup` (título con
-  `menuLabelClassName`), `CommandItem` (fila de menú de 30 px con ícono y detalle; `keywords`,
-  `onSelect`) y `CommandEmpty`. Teclado y ARIA de Base UI Autocomplete en modo `inline`; el
-  filtrado es propio: título y `keywords`, sin mayúsculas ni tildes.
-  - El elegido va en el gris del resaltado de menú (`fill-2`), no en el acento: el primer
-    resultado está elegido desde la primera tecla.
-  - Ítems que llegan tarde (un índice async, con `shouldFilter={false}`) quedan con el primero
-    elegido, y dos ítems con el mismo `value` no se pisan.
-  - `CommandEmpty` va al lado de `CommandList`, no adentro: un listbox solo admite opciones y
-    grupos.
-  - `shouldFilter={false}` para ítems que la app ya filtró y ordenó (es lo que usa el buscador del
-    sitio de docs).
-- Labels `command: { placeholder, empty, dialog, filters }` («Buscar», «Sin resultados», «Buscar»,
-  «Filtros»). El nombre del campo es su `placeholder` cuando lo trae.
-- `commandDialogPopupClassName`, `commandInputClassName`, `commandFilterClassName`,
-  `commandItemClassName` y `commandItemIconClassName` (`variants/command`, también en el barrel).
-- `alertWidthClassName`, `alertFooterClassName`, `closeButtonClassName` y `dialogCloseClassName` (`variants/overlay`,
-  también en el barrel).
-- `PopoverContent translucent`.
-- `menuGutterClassName`, `menuInsetClassName`, `menuIndicatorClassName` y `menuCheckClassName`
-  (`variants/menu`): la columna del tilde a la derecha, el círculo de acento e `inset`.
-- **`external`** en `DropdownMenuItem`, `ContextMenuItem` y `MenubarItem`: texto en el acento
-  (`brand-ink`, que llega a 4,5:1 también sobre el resaltado) y ↗ al final, como «Manage Apple Account ↗» de iCloud. Es una prop y no se deduce de
-  `target="_blank"`, porque el `<a>` llega por `render`. Con `menuItemExternalClassName` y
-  `menuItemExternalIconClassName`.
-- `menuItemDestructiveClassName` (el rojo del ítem que borra).
-- Tokens `--radius-item` (10), `--radius-menu` (12), `--radius-menu-item` (8) y `--radius-tag` (4), con sus utilidades `rounded-item`, `rounded-menu`, `rounded-menu-item`
-  y `rounded-tag`; `cn()` los fusiona como los otros radios.
-- `touch-target` (área de 44 con el dedo, sin cambiar lo que se ve) y `touch-target-y` (solo en
-  alto, para controles en fila que no se pueden separar; con `cn()` reemplaza al otro).
-- `menuItemSecondaryClassName` (el atajo de un ítem de menú) y `selectionSecondaryClassName` (un
-  color propio adentro de la fila elegida de una `Table` con foco, que es la única selección en
-  acento desde R1), con el variant `inside-selection:` que sostiene al segundo. `MenuItem`,
-  `SidebarItem`, `TableRow` y `NavigationMenuLink` (el de tarjeta) llevan `group/selectable`.
-- Tokens `--sf-selection`, `--sf-on-selection` y `--sf-selection-inactive` (utilidades
-  `bg-selection`, `text-on-selection`, `bg-selection-inactive`), y las superficies de iCloud:
-  `bg-surface`, `bg-surface-secondary`, `bg-surface-bar`, `bg-surface-header`, `bg-grouped`,
-  `bg-fill-1/2/3`, `border-separator`, `border-separator-strong`, `hairline`, `text-label*` y
-  `bg-segment`.
-- `material-translucent`, el único material con blur, para lo que va sobre un wallpaper. Con menos
-  transparencia o más contraste es la barra global opaca (`surface-header`).
-- Sombras `shadow-widget`, `shadow-segment`, `shadow-badge` y `shadow-thumbnail`.
-- `focus-ring-inverse` (el anillo sobre un fondo de marca) y `--sf-focus`/`--sf-focus-alpha`.
-- Los roles tipográficos con la escala de iCloud y `text-body-large` (alias de `text-body`).
-- `EmptyState variant`: `default`, `subtle`, `plain` (sin superficie, adentro de una Card o Table) y
-  `placeholder` (el panel vacío de iCloud).
-- R5a: `SidebarGroup collapsible`/`defaultOpen`/`open`/`onOpenChange` y `SidebarGroupAction`;
-  `AppShell header`; `CardHeader icon`, `CardRow`, `CardContent columns`; `TableGroupHeader`;
-  `CollapsibleTrigger chevron`; `Avatar size="xl"`; `Meter size="lg"`; `Toolbar variant="bar"`;
-  tokens `tooltip`/`on-tooltip` (`bg-tooltip`, `text-on-tooltip`) y `--sf-skeleton-shine`.
-- Radios `--radius-tooltip` (6), `--radius-meter` (6) y `--radius-menu-header` (7: el 12 del menú
-  menos su padding) y `--radius-thumb` (5: el logo de 32 de una fila y la píldora del nombre de
-  `FileGrid`), con `rounded-tooltip`, `rounded-meter`, `rounded-menu-header` y `rounded-thumb`, que `cn()` fusiona;
-  y los colores del monograma `monogram-top`/`monogram-bottom`. Reemplazan valores sueltos del
-  Tooltip, el Meter `lg`, la cabecera del UserMenu y el Avatar.
-- `Kbd size`: `md` (20 px) y `sm` (18 px).
-- `sliderThumbClassName` y sus estados (`variants/slider`), y `tooltipSurfaceClassName`
-  (`variants/overlay`), que comparten el Slider con el ColorPicker y el Tooltip con la etiqueta
-  del `AiLauncher`.
-- **`TextLink`** (`sebs7n-ui/text-link`) y `linkVariants({ variant: "accent" })`.
-- `Button variant="plain"` y `"destructive-plain"`; `Badge variant="count"`; `Checkbox shape`
-  (`square`, `circle`); `segmentedItemClassName` (`variants/segmented`, también en el barrel).
-- **`ListRow`** (`sebs7n-ui/list-row`), la fila de lista de iCloud (R5b): `List` (`<ul role="list">`,
-  `tabIndex={-1}` como la `Table`), `ListSection` (cabecera 19/600 con `total` a la derecha, que nombra
-  su lista) y `ListRow` con `icon` (32), `title` (17), `description` (14 gris debajo, o columna del medio
-  con `inline`), `trailing`, `dot` (8, paleta de `Badge`), `chevron`, `selected` (acento con foco, gris
-  sin foco, `aria-current`), `onClick` (botón) o `render` (link). Separador interior desde el texto.
-  Sin `"use client"`.
-- **`Tree`** (`sebs7n-ui/tree`, **solo por subpath**: no entra en el barrel por peso), árbol de
-  carpetas y archivos en el lenguaje de la lista de Drive (R5b): filas de 41 radio 10, disclosure que
-  gira, sangría de 20 por nivel, íconos de carpeta/archivo, `columns` alineadas con cabecera visual y
-  la selección de Drive. Patrón `tree` de WAI-ARIA con ítems planos (`aria-level/setsize/posinset`,
-  `aria-expanded`, `aria-selected`), foco itinerante, ↑↓ →← Home End Enter Espacio y type-ahead.
-  `expanded`/`selected` controlables, `onOpen`, y `hasChildren` + `onLoadChildren` para hijos
-  perezosos (`aria-busy` y «Cargando…» para el lector, una carga a la vez, `onLoadError` cierra la
-  carpeta si falla). Labels `tree: { loading }`.
-- **`SplitView`** (`sebs7n-ui/split-view`, **solo por subpath**), el master-detail de Mail (R5b):
-  `SplitViewSidebar` (230), `SplitViewList` (380; 320 en mediano) y `SplitViewDetail`, `<section>`
-  opacos separados por `separator-strong`. Por container query: angosto un panel (`pane`/`defaultPane`/
-  `onPaneChange`, `useSplitView()`), mediano lista + detalle, ancho los tres. `SplitViewBack` («‹
-  Facturas») vuelve al anterior y solo se ve cuando hace falta. Sin redimensionar (va a ser `Resizable`).
-- **`WidgetCard`** (`sebs7n-ui/widget-card`), el widget de iCloud Home armado de una sobre las partes de
-  `Card` (R5b): `icon`, `title`, `subtitle`, `action`, `more`, `filter`, `columns`; región nombrada por el
-  título. Sobre el wallpaper (`AppShell ambient`) la franja va en `material-translucent` y el cuerpo en
-  negro al 75 % con blur (oscuro). **`PromoCard`** + **`PromoCardLink`**: la card promocional de Ajustes
-  (degradado de marca, radio 24, título 48/700, links 17/600 con chevron, chip translúcido radio 12), en
-  el color de contraste de la marca.
-- **`StackedMeter`** (`sebs7n-ui/meter`), la barra de almacenamiento de iCloud (R5b): segmentos de color
-  (paleta de `Badge`) apilados en una pista de 16 radio 6 a 1 px, el resto gris, «Libre · Usado» en
-  21/600 (libre en gris), chip del total (blanco, radio 10, 28/700) y `legend` opcional. Un `group`
-  nombrado con un `meter` por segmento (`aria-valuetext` formateado con `format`/`locale`). Labels
-  `meter: { free, used }` («Libre», «Usado»).
-- **`FileGrid`** (`sebs7n-ui/file-grid`, **solo por subpath**), la vista de íconos de Drive (R5b):
-  miniatura en caja de 96 con `shadow-thumbnail` y radio 4, nombre 14 (dos líneas) y tipo 12 gris; la
-  elegida con la caja en `fill-2` y el nombre en la píldora del acento con foco (gris sin foco).
-  `listbox` con flechas en 2D según el layout real, Home/End, Enter/doble click (`onOpen`), selección que
-  sigue al foco; `actions` para el «…» del puntero (el teclado usa un `ContextMenu`). Sin medir en
-  iCloud: derivado de la lista de Drive y de Photos.
-- **`CalendarView`** (`sebs7n-ui/calendar-view`, **solo por subpath**), el calendario de iCloud en mes y
-  semana (R5b): cabecera mes 21/600 + año en gris, segmentado Semana/Mes (el gris de `Tabs variant="segmented"`,
-  un `tablist` con el cuerpo como panel; R6) y ‹ Hoy ›; mes con las semanas
-  justas, hoy en círculo de 30 del acento, chips de todo el día de 18 (color al 20 %, tinta 12/600) y
-  eventos con hora (punto 8 + título + hora); semana con fila «Todo el día», horas de 61, bloques con
-  borde izquierdo de 3 repartidos si se pisan y la línea roja de ahora. `role="grid"` con foco
-  itinerante (flechas, Home/End, PageUp/PageDown, Enter → `onDayOpen`), `view`/`date` controlables,
-  `now` inyectable, `hour12`, `onEventClick`. Labels `calendarView`.
-- **`Stepper`** (`sebs7n-ui/stepper`, **solo por subpath**), los pasos de un asistente (R6): `<ol>`
-  nombrada, círculo de 24 (completo = acento con tilde, actual = aro de acento con el número y
-  `aria-current="step"`, pendiente = `fill-2`, error = rojo con «!»), conector de 1 px en el acento
-  después de un completo, `horizontal`/`vertical`, `icon` por paso y `onStepClick` para volver a un
-  paso completo. Estado en texto para el lector. Labels `stepper: { label, complete, upcoming, error }`.
-- **`DataTable`** (`sebs7n-ui/data-table`, **solo por subpath**), una tabla de datos sobre `Table` (R6):
-  genérica (`DataTable<T>`), `columns` con `value`/`cell`/`sortable`/`numeric`, orden con la cabecera
-  (`aria-sort`, asc → desc → sin orden; números, fechas y texto con `Intl.Collator`), búsqueda sin
-  tildes con el total en una región `status`, `pageSize` con `Pagination` o «Cargar más», selección con
-  `Checkbox` (la de todas en `mixed`, la fila elegida en el acento), `empty`, `loading` con esqueletos y
-  `aria-busy`, y `groupBy` con `TableGroupHeader`. Orden, búsqueda, página y selección controlables.
-  Labels `dataTable`.
-- **`InputGroup`** (`sebs7n-ui/input-group`, **solo por subpath**), un campo con addons (R6):
-  `InputGroup` (la superficie de campo de iCloud con el foco y el inválido en el grupo; `size`
-  28/36/40, `disabled`), `InputGroupAddon` (texto, ícono, `Kbd`; un click enfoca el campo),
-  `InputGroupInput` (transparente, se integra con `Field`) e `InputGroupButton` (`ghost`, `plain`,
-  `default`, a escala del campo).
-- **`MultiSelect`** (`sebs7n-ui/multi-select`, **solo por subpath**), varias opciones con chips (R6):
-  `Combobox multiple` de Base UI armado por datos (`options`, `value`/`defaultValue`/`onValueChange` en
-  el orden de las opciones), filtro sin tildes, el círculo de acento a la derecha, «Seleccionar todo»
-  (las habilitadas que se ven), `max` (el resto se apaga y la lista lo dice), `showClear`, `size`,
-  `name`. Labels `multiSelect: { selectAll, max }`.
-- **`Timeline`** (`sebs7n-ui/timeline`, **solo por subpath**), eventos en el tiempo (R6): `Timeline`
-  (`<ol>`), `TimelineGroup` (cabecera del día 19/600 que nombra su lista) y `TimelineItem` (punto de 8
-  de la paleta de `Badge` o ícono de 24, título 17, detalle 14 gris, `<time>` a la derecha, `actions`),
-  unidos por una línea de 1 px. Sin `"use client"`.
-- **`Resizable`** (`sebs7n-ui/resizable`, **solo por subpath**), paneles que se redimensionan (R6):
-  `ResizablePanelGroup` (`orientation`, `onLayout` para guardar, `defaultLayout` para restaurar,
-  `keyboardStep`), `ResizablePanel` (`defaultSize`, `minSize`, `maxSize` en %) y `ResizableHandle`
-  (la línea `separator-strong` que pasa al acento; `withHandle`). Separador de WAI-ARIA: tabulable,
-  `aria-valuenow/min/max` reales, `aria-controls`, flechas de a 5 % (Shift el doble, RTL invertido),
-  Home/End, arrastre con captura del puntero. El HTML del servidor ya sale repartido. Labels
-  `resizable: { handle }`.
-- `SplitView resizable` (R6): el sidebar (180–360 px) y la lista (260–560 px) llevan en su borde el
-  separador de `Resizable` (arrastre, ← → de a 10 px, Shift 40, Home/End), con `defaultWidths` y
-  `onWidthsChange` para guardar los anchos. Sin la prop sigue fijo, como Mail.
-- La tabla de subpaths del README dice qué componentes no están en el barrel (la lee de `src/index.ts`).
-- El variant `inside-selection` también mira las listas de filas (`group/list`: `List`, `Tree`,
-  `FileGrid`), no solo la `Table`.
+### Added
+
+- **Componentes nuevos:**
+  - **`Command`** (`sebs7n-ui/command`, también en el barrel): la búsqueda de iCloud. `Command`,
+    `CommandDialog` (anclado arriba, superficie de popover, sin X ni velo), `CommandInput` (search
+    field de 36, radio 10, `fill-1`), `CommandFilters`/`CommandFilter` (tokens en un `radiogroup`),
+    `CommandList`, `CommandGroup`, `CommandItem` (fila de 30 con ícono en el acento y detalle;
+    `keywords`, `onSelect`) y `CommandEmpty`. Filtrado propio sin mayúsculas ni tildes;
+    `shouldFilter={false}` para resultados ya filtrados.
+  - **`TextLink`**: el link de Settings, semibold en el acento, `trailing="chevron" | "external"`
+    (↗ con `target="_blank"`, `rel` y aviso `sr-only` por `externalLabel`). Sin `"use client"`.
+  - **`List`, `ListSection`, `ListRow`** (`sebs7n-ui/list-row`): la fila de lista de iCloud (ícono
+    32, título 17, detalle 14, `trailing`, `dot`, `chevron`, `selected`, `render`). Sin `"use client"`.
+  - **`WidgetCard`** y **`PromoCard`**/`PromoCardLink` (`sebs7n-ui/widget-card`): el widget de Home
+    armado sobre `Card`, y la card promocional de Ajustes.
+  - **`StackedMeter`** (`sebs7n-ui/meter`): la barra de almacenamiento, un `meter` por segmento.
+  - **`Tree`** (subpath): árbol de carpetas en el lenguaje de Drive, patrón `tree` de WAI-ARIA
+    completo, hijos perezosos (`onLoadChildren`), columnas.
+  - **`SplitView`** (subpath): el master-detail de Mail (230 · 380 · detalle), un panel en angosto
+    con `SplitViewBack`; `resizable` con `defaultWidths`/`onWidthsChange`.
+  - **`FileGrid`** (subpath): la vista de íconos de Drive, `listbox` con flechas en 2D.
+  - **`CalendarView`** (subpath): mes y semana de Calendar, `role="grid"` con foco itinerante,
+    `now` inyectable.
+  - **`Stepper`** (subpath): pasos de un asistente en una `<ol>` nombrada, `aria-current="step"`.
+  - **`DataTable`** (subpath): tabla genérica sobre `Table` con orden (`aria-sort`), búsqueda,
+    páginas o «Cargar más», selección por id (sigue aunque la búsqueda o la página la escondan, y la
+    región viva dice cuántas hay), vacío, carga y `groupBy`; fechas con el `locale` de la tabla.
+  - **`InputGroup`** (subpath): campo con addons (texto, ícono, `Kbd`, botón) y el foco en el grupo.
+  - **`MultiSelect`** (subpath): `Combobox multiple` por datos con chips, «Seleccionar todo» y `max`.
+  - **`Timeline`** (subpath): eventos agrupados por día unidos por una línea de 1 px.
+  - **`Resizable`** (subpath): `ResizablePanelGroup`/`ResizablePanel`/`ResizableHandle`, separador
+    de WAI-ARIA con teclado y puntero, `onLayout`/`defaultLayout`. El HTML del servidor ya sale
+    repartido (con los paneles como hijos directos del grupo).
+- **Props nuevas:** `AlertDialogIcon` y `AlertDialogDescription align`; `PopoverContent
+  translucent`; `external` en los ítems de DropdownMenu, ContextMenu y Menubar;
+  `Button variant="plain" | "destructive-plain"`; `Badge variant="count"`; `Checkbox shape="circle"`;
+  `Kbd size`; `SidebarGroup collapsible`/`defaultOpen`/`open`/`onOpenChange` y
+  `SidebarGroupAction`; `AppShell header`; `CardHeader icon`, `CardRow`, `CardContent columns`;
+  `TableGroupHeader`; `CollapsibleTrigger chevron`; `Avatar size="xl"`; `Meter size="lg"`;
+  `EmptyState variant` (`default`, `subtle`, `plain`, `placeholder`); `Toolbar variant="bar"`;
+  `linkVariants({ variant: "accent" })`.
+- **Tokens y utilidades:** los roles tipográficos; los radios nuevos (ver Breaking); las superficies,
+  fills, separadores y labels; `--sf-selection`/`--sf-on-selection`/`--sf-selection-inactive`;
+  `--sf-focus`/`--sf-focus-alpha`; `focus-ring-inverse`; `material-translucent` (el único material
+  con blur, opaco con `prefers-reduced-transparency`); `shadow-widget`, `shadow-segment`,
+  `shadow-badge`, `shadow-thumbnail`; `touch-target` y `touch-target-y`; el variant
+  `inside-selection`; `--sf-skeleton-shine`; `monogram-top`/`monogram-bottom`.
+- **Clases compartidas** (`variants/*`, también en el barrel): `menuGutterClassName`,
+  `menuInsetClassName`, `menuIndicatorClassName`, `menuCheckClassName`, `menuItemContentClassName`,
+  `menuItemDestructiveClassName`, `menuItemExternalClassName`, `menuItemExternalIconClassName`,
+  `menuItemSecondaryClassName`, `selectionSecondaryClassName`, `commandDialogPopupClassName`,
+  `commandInputClassName`, `commandFilterClassName`, `commandItemClassName`,
+  `commandItemIconClassName`, `alertWidthClassName`, `alertFooterClassName`,
+  `closeButtonClassName`, `dialogCloseClassName`, `tooltipSurfaceClassName`,
+  `segmentedItemClassName`, `sliderThumbClassName` y sus estados.
+- **Labels nuevos:** `command`, `tree`, `meter` (`free`, `used`), `calendarView`, `stepper`,
+  `dataTable`, `multiSelect`, `resizable`.
+- La tabla de subpaths del README dice qué componentes no están en el barrel (la lee de
+  `src/index.ts`).
+
+### Changed
+
+- Los íconos de Button crecen con el tamaño: 16 en `icon-sm`, **18 en `icon-md`**, 20 en `icon-lg`.
+- `Badge variant="subtle"` y `Button variant="accent"` quedan obsoletos (siguen andando; se van en 3.0).
+- `Toolbar variant="glass"` y `variant="bar"` de Sidebar/AppShell/Navbar quedan como alias obsoletos.
+- Con el dedo, pestañas, filas de Command y botones llegan a 44; Toolbar, Calendar y ToggleGroup
+  separan sus controles 20 px para que las áreas no se pisen.
+- La paleta de gráficos, las burbujas del Chat, Stat, Spinner y Pagination solo cambian por los
+  tokens (sin cambios de API).
+
+### Removed
+
+- El vidrio: `--glass`, `--glass-tint`, `--sf-glass-*`, `glass`, `glass-thin`, `glass-thick`,
+  `glass-dense`, `glass-control`, `glass-rim`, `sheen`, `thumb-lens`, `glassAlpha`, `glassSurface`.
+- Sombras `shadow-button`, `shadow-button-inverted`, `shadow-button-accent`, `shadow-chip`,
+  `shadow-track`.
+- `Button variant="outline"`; `variant="floating"` de Sidebar, AppShell y Navbar;
+  `useNavbar().floating`; `data-sf-modality`.
+- El peer opcional `geist`.
+
+### Migración
+
+Paso a paso, con el antes y el después de cada componente y una lista para revisar una app:
+**[`/docs/migrating-to-2`](https://ui.sebastianfermanelli.com/docs/migrating-to-2)**. Lo mínimo:
+
+1. Cargar Inter (`next/font/google` con `variable: "--font-inter"`, o `@fontsource-variable/inter`)
+   y sacar `geist`.
+2. Reemplazar `glass*` y `shadow-button*` propios por las superficies y sombras de la tabla.
+3. `Button variant="outline"` → `"secondary"`; borrar `variant="floating"`.
+4. Tabs que dependían del segmentado por defecto → `variant="segmented"`.
+5. Revisar alturas (`lg` 48 → 40), la Table (bordes y fondos en celdas) y las alertas.
 
 ## [1.13.1] - 2026-09-28
 
