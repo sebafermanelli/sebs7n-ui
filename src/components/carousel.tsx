@@ -156,7 +156,13 @@ function CarouselContent({ className, children, ...props }: React.ComponentProps
   const { carouselRef, orientation } = useCarousel()
   const slides = React.Children.toArray(children).filter(React.isValidElement)
   return (
-    <div ref={carouselRef} data-slot="carousel-content" className="overflow-hidden rounded-surface">
+    // La vista recorta (si no, se verían las otras diapositivas), pero con aire para la sombra de las
+    // cards. Al costado, un margen negativo de 16 (el espacio entre diapositivas, así la vecina no
+    // asoma) que la máscara funde a transparente: sin corte duro. Arriba y abajo el aire es lugar
+    // reservado, sin margen negativo: la máscara arma un contexto de apilamiento y una vista que se
+    // metiera debajo del carrusel se quedaría con los clicks de lo que haya ahí. Embla mide el
+    // contenedor de adentro, no la vista: el padding no le cambia las paradas.
+    <div ref={carouselRef} data-slot="carousel-content" className="-mx-4 overflow-hidden px-4 pt-4 pb-10 [mask-image:linear-gradient(to_right,transparent,#000_16px,#000_calc(100%-16px),transparent)]">
       <div className={cn("flex", orientation === "horizontal" ? "-ms-4" : "-mt-4 flex-col", className)} {...props}>
         {slides.map((slide, index) => (
           <SlideContext.Provider key={slide.key ?? index} value={{ index, count: slides.length }}>
@@ -237,7 +243,8 @@ function CarouselDots({ className, ...props }: React.ComponentProps<"div">) {
   const { snaps, selected, scrollTo, labels } = useCarousel()
   if (snaps < 2) return null
   return (
-    <div data-slot="carousel-dots" className={cn("flex items-center justify-center pt-2", className)} {...props}>
+    // `relative` y hacia arriba: los puntos suben al aire de la sombra y quedan encima de la vista.
+    <div data-slot="carousel-dots" className={cn("relative -mt-9 flex items-center justify-center pt-2", className)} {...props}>
       {Array.from({ length: snaps }, (_, index) => (
         <button
           aria-current={index === selected ? "true" : undefined}

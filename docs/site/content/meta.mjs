@@ -2792,6 +2792,7 @@ export const COMPONENTS = {
       Carousel: {
         orientation: "`horizontal` (por defecto) o `vertical`.",
         onKeyDown: "Corre antes que ←/→: con `event.preventDefault()` el carrusel no se mueve. Un control de adentro que haga `preventDefault` también lo frena.",
+        "aria-labelledby": "El `id` del título que nombra la región («Nuestros planes»). Le gana a `labels.label`.",
         labels: "Textos: `label` (el nombre de la región sin `aria-label`), `carousel`, `slide`, `previous`, `next`, `of` y `goTo`. Los que vienen por defecto son `carouselLabels`.",
         "aria-label": PROP_DESCRIPTIONS["aria-label"],
       },
