@@ -65,7 +65,7 @@ describe("selección de iCloud (2.0)", () => {
   it("inside-selection solo mira la fila elegida de una tabla o una lista con foco", () => {
     const variante = /@custom-variant inside-selection \((.+)\);/.exec(theme)![1]!
     expect(variante).toContain('.group\\/table:focus-within .group\\/selectable[data-state="selected"] *')
-    // R5b: las listas de filas (`List`, `Tree`, `FileGrid`) son `group/list`.
+    // R5b: las listas de filas (`List`, `Tree`) son `group/list`. `FileGrid` ya no: su elegida es gris.
     expect(variante).toContain('.group\\/list:focus-within .group\\/selectable[data-state="selected"] *')
     expect(variante).not.toMatch(/data-highlighted|data-active|aria-current/)
   })

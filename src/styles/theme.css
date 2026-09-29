@@ -11,7 +11,7 @@
  * texto no cambia (menú resaltado, sidebar activo); el acento sólido es solo la fila elegida de
  * una lista que tiene el foco, y ahí lo que adentro tiene color propio —una fecha en gris, un
  * ícono— tiene que pasar al color de contraste, como en Drive. La lista es la `Table`
- * (`group/table`) o una lista de filas —`List`, `Tree`, `FileGrid`— (`group/list`), con el foco
+ * (`group/table`) o una lista de filas —`List`, `Tree`— (`group/list`; `FileGrid` no: su elegida es la caja gris de Drive), con el foco
  * adentro y la fila con `data-state="selected"`; sin foco la fila es gris y no cuenta. La app escribe `inside-selection:text-on-selection`, o
  * `selectionSecondaryClassName`. `:where()` deja la especificidad en la de la clase.
  */

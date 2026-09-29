@@ -1,17 +1,19 @@
 "use client"
 
 import * as React from "react"
-import { FileIcon, FolderIcon } from "lucide-react"
+import { EllipsisIcon, FileIcon, FolderIcon } from "lucide-react"
 
 import type { AccessibleName } from "../internal/accessible-name.js"
 import { isToggleModifier, useSelection, type SelectionProps } from "../internal/selection.js"
 import { cn } from "../lib/utils.js"
+import { ContextMenu, ContextMenuContent, ContextMenuTrigger } from "./context-menu.js"
 
 /**
  * La vista de íconos de iCloud Drive: cada archivo es una miniatura en una caja de 96 (con el filo de
  * 1 px y radio 4 de las miniaturas de Drive, catálogo §1.6), el nombre en 14 hasta dos líneas y el tipo
- * en 12 gris. La elegida lleva la caja en `fill-2` y el nombre en la píldora del acento mientras la
- * grilla tiene el foco (gris sin foco), como el Finder.
+ * en 12 gris. Con el puntero encima y en la elegida, una sola caja gris de radio 12 envuelve miniatura,
+ * nombre y tipo, como Drive: el nombre sigue en `label` (sin la píldora del acento del Finder), y con
+ * el foco se le suma el anillo.
  *
  * Drive web no se midió en esta vista (cambiarla escribe la preferencia de la cuenta): las medidas
  * salen de la lista de Drive y de la grilla de Photos (§2.6).
@@ -39,11 +41,22 @@ type FileGridPropsBase = Omit<React.ComponentProps<"div">, "children" | "default
   /** Enter o doble click: abrir el archivo, entrar en la carpeta. */
   onOpen?: (item: FileGridItem) => void
   /**
-   * El «…» de cada ítem, arriba a la derecha de la miniatura (se ve en la elegida y con el puntero).
-   * Es para el puntero: sale del orden de Tab y del árbol de accesibilidad. Con teclado, las mismas
-   * acciones van en un `ContextMenu` alrededor de la grilla (Shift+F10 o la tecla de menú).
+   * Las acciones de un ítem: los ítems de un menú (`ContextMenuItem`, o `DropdownMenuItem`, que es el
+   * mismo componente de Base UI), sin el `ContextMenuContent`. Un solo juego que abren el click
+   * derecho, Shift+F10 o la tecla de menú sobre el ítem enfocado, y el click en el «…» que la grilla
+   * pone arriba a la derecha de la caja (en la elegida y con el puntero; fuera del orden de Tab y del
+   * lector, porque el teclado ya tiene el menú contextual).
+   *
+   * Como Drive, abrirlo sobre un ítem que no estaba elegido lo elige. `selected` son los ítems sobre
+   * los que actúa: en `multiple`, sobre uno de los elegidos, todos los elegidos; si no, ese solo.
    */
-  actions?: (item: FileGridItem) => React.ReactNode
+  menu?: (item: FileGridItem, selected: FileGridItem[]) => React.ReactNode
+}
+
+// Shift+F10 o la tecla de menú: el `contextmenu` que el navegador no manda bien (llega con las
+// coordenadas en 0), sintetizado sobre el elemento. Mismo motivo que en `ContextMenuTrigger`.
+function openMenuAt(element: HTMLElement, x: number, y: number) {
+  element.dispatchEvent(new MouseEvent("contextmenu", { bubbles: true, cancelable: true, clientX: Math.round(x), clientY: Math.round(y) }))
 }
 
 function FileGrid({
@@ -54,7 +67,7 @@ function FileGrid({
   defaultSelected,
   onSelectedChange,
   onOpen,
-  actions,
+  menu,
   onKeyDown: onKeyDownProp,
   ...props
 }: FileGridProps) {
@@ -71,6 +84,8 @@ function FileGrid({
   })
 
   const refs = React.useRef(new Map<string, HTMLDivElement>())
+  // El ítem del menú abierto (o del último: queda durante la animación de salida).
+  const [target, setTarget] = React.useState<{ item: FileGridItem; selected: FileGridItem[] } | null>(null)
   const typed = React.useRef({ text: "", at: 0 })
 
   const tabStop =
@@ -104,6 +119,17 @@ function FileGrid({
     else selection.only(item)
   }
 
+  // Antes de abrir el menú de un ítem: como Drive, si no estaba elegido pasa a ser el único elegido.
+  // Con el dedo (`choose` en `false`) solo se anota: un scroll que arranca sobre un ítem no lo elige.
+  const prepareMenu = (item: FileGridItem, choose = true) => {
+    const inSelection = selection.multiple && selection.isSelected(item.id)
+    if (choose) {
+      setFocused(item.id)
+      if (!inSelection) selection.only(item)
+    }
+    setTarget({ item, selected: inSelection ? items.filter((candidate) => selection.isSelected(candidate.id)) : [item] })
+  }
+
   // Cuántos ítems hay en la fila del actual, según el layout: los que comparten su `top`.
   const rowStep = (index: number, direction: 1 | -1) => {
     const top = (i: number) => refs.current.get(items[i]!.id)?.getBoundingClientRect().top ?? 0
@@ -127,6 +153,16 @@ function FileGrid({
     const index = items.findIndex((item) => item.id === tabStop)
     const item = items[index]
     if (!item) return
+    if (menu && (event.key === "ContextMenu" || (event.key === "F10" && event.shiftKey))) {
+      // Siempre se cancela: si no, el `ContextMenuTrigger` lo abriría anclado a la grilla entera.
+      event.preventDefault()
+      const element = refs.current.get(item.id)
+      if (element && !item.disabled) {
+        const rect = element.getBoundingClientRect()
+        openMenuAt(element, rect.left + 8, rect.top + 8)
+      }
+      return
+    }
     if (selection.multiple && isToggleModifier(event) && event.key.toLowerCase() === "a") {
       event.preventDefault()
       selection.all(items)
@@ -178,79 +214,109 @@ function FileGrid({
     if (next !== undefined) moveTo(items[next], event.shiftKey && event.key.length > 1)
   }
 
-  return (
-    <div data-slot="file-grid-container" className={cn("group/list w-full", className)}>
-      <div
-        data-slot="file-grid"
-        role="listbox"
-        aria-multiselectable={selection.multiple || undefined}
-        onKeyDown={onKeyDown}
-        className="grid grid-cols-[repeat(auto-fill,minmax(8.5rem,1fr))] gap-x-2 gap-y-4 outline-none"
-        {...props}
-      >
-        {items.map((item) => {
-          const isSelected = selection.isSelected(item.id)
-          const action = actions?.(item)
-          return (
+  const grid = (
+    <div
+      data-slot="file-grid"
+      role="listbox"
+      aria-multiselectable={selection.multiple || undefined}
+      onKeyDown={onKeyDown}
+      // El click derecho en el espacio vacío no abre el menú de nadie.
+      onContextMenu={(event) => {
+        if (!(event.target as Element).closest("[role=option]")) event.stopPropagation()
+      }}
+      className="grid grid-cols-[repeat(auto-fill,minmax(8.5rem,1fr))] gap-x-2 gap-y-4 outline-none"
+      {...props}
+    >
+      {items.map((item) => {
+        const isSelected = selection.isSelected(item.id)
+        return (
+          <div
+            key={item.id}
+            ref={(element) => {
+              if (element) refs.current.set(item.id, element)
+              else refs.current.delete(item.id)
+            }}
+            role="option"
+            aria-selected={isSelected}
+            aria-disabled={item.disabled || undefined}
+            tabIndex={item.id === tabStop ? 0 : -1}
+            data-state={isSelected ? "selected" : undefined}
+            onFocus={() => setFocused(item.id)}
+            onClick={(event) => onItemClick(event, item)}
+            onDoubleClick={() => !item.disabled && onOpen?.(item)}
+            onContextMenu={(event) => {
+              if (item.disabled) event.stopPropagation()
+              else if (menu) prepareMenu(item)
+            }}
+            onTouchStart={menu && !item.disabled ? () => prepareMenu(item, false) : undefined}
+            // La caja gris de Drive: una sola, radio 12, alrededor de miniatura, nombre y tipo.
+            className="group/selectable relative flex min-w-0 cursor-default flex-col items-center gap-1 rounded-menu p-1.5 pb-2 outline-none select-none hover:bg-fill-1 focus-visible:focus-ring aria-disabled:opacity-40 aria-disabled:hover:bg-transparent data-[state=selected]:bg-selection-inactive"
+          >
             <div
-              key={item.id}
-              ref={(element) => {
-                if (element) refs.current.set(item.id, element)
-                else refs.current.delete(item.id)
-              }}
-              role="option"
-              aria-selected={isSelected}
-              aria-disabled={item.disabled || undefined}
-              tabIndex={item.id === tabStop ? 0 : -1}
-              data-state={isSelected ? "selected" : undefined}
-              onFocus={() => setFocused(item.id)}
-              onClick={(event) => onItemClick(event, item)}
-              onDoubleClick={() => !item.disabled && onOpen?.(item)}
-              className="group/selectable relative flex min-w-0 cursor-default flex-col items-center gap-1 rounded-item p-1.5 outline-none select-none focus-visible:focus-ring aria-disabled:opacity-40"
+              data-slot="file-grid-thumbnail"
+              className={cn(
+                "relative flex size-24 items-center justify-center p-2",
+                "[&>img]:max-h-full [&>img]:max-w-full [&>img]:rounded-tag [&>img]:object-contain [&>img]:shadow-thumbnail"
+              )}
             >
-              <div
-                data-slot="file-grid-thumbnail"
-                className={cn(
-                  "relative flex size-24 items-center justify-center rounded-item p-2 group-data-[state=selected]/selectable:bg-fill-2",
-                  "[&>img]:max-h-full [&>img]:max-w-full [&>img]:rounded-tag [&>img]:object-contain [&>img]:shadow-thumbnail"
-                )}
-              >
-                {item.thumbnail ??
-                  (item.folder ? (
-                    <FolderIcon aria-hidden="true" className="size-14 fill-brand-700/20 text-brand-900" strokeWidth={1.25} />
-                  ) : (
-                    <FileIcon aria-hidden="true" className="size-14 text-label-secondary" strokeWidth={1.25} />
-                  ))}
-                {action != null && (
-                  <span
-                    data-slot="file-grid-actions"
-                    aria-hidden="true"
-                    onDoubleClick={(event) => event.stopPropagation()}
-                    // Está fuera de lo que lee el lector (`aria-hidden`): un click no le deja el foco.
-                    onMouseDown={(event) => event.preventDefault()}
-                    className="absolute -end-1 -top-1 opacity-0 transition-opacity group-hover/selectable:opacity-100 group-data-[state=selected]/selectable:opacity-100 motion-reduce:transition-none"
-                  >
-                    {React.isValidElement<{ tabIndex?: number }>(action) ? React.cloneElement(action, { tabIndex: -1 }) : action}
-                  </span>
-                )}
-              </div>
-              <span
-                className={cn(
-                  "line-clamp-2 max-w-full rounded-thumb px-1.5 text-center text-callout break-words text-label",
-                  "group-data-[state=selected]/selectable:bg-selection-inactive group-data-[state=selected]/selectable:group-focus-within/list:bg-selection group-data-[state=selected]/selectable:group-focus-within/list:text-on-selection"
-                )}
-              >
-                {item.name}
-              </span>
-              {item.kind != null && <span className="text-footnote text-label-secondary">{item.kind}</span>}
+              {item.thumbnail ??
+                (item.folder ? (
+                  <FolderIcon aria-hidden="true" className="size-14 fill-brand-700/20 text-brand-900" strokeWidth={1.25} />
+                ) : (
+                  <FileIcon aria-hidden="true" className="size-14 text-label-secondary" strokeWidth={1.25} />
+                ))}
             </div>
-          )
-        })}
-      </div>
+            {menu && !item.disabled && (
+              // El «…» de Drive: un círculo gris translúcido de 24 en la esquina de la caja. Es del
+              // puntero (el teclado tiene Shift+F10): fuera del lector y del orden de Tab.
+              <span
+                data-slot="file-grid-more"
+                aria-hidden="true"
+                className="absolute end-1.5 top-1.5 opacity-0 transition-opacity group-hover/selectable:opacity-100 group-data-[state=selected]/selectable:opacity-100 motion-reduce:transition-none"
+              >
+                <button
+                  type="button"
+                  tabIndex={-1}
+                  // Un click no le deja el foco a lo que el lector no ve.
+                  onMouseDown={(event) => event.preventDefault()}
+                  onDoubleClick={(event) => event.stopPropagation()}
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    const rect = event.currentTarget.getBoundingClientRect()
+                    openMenuAt(event.currentTarget, rect.left, rect.bottom + 4)
+                  }}
+                  className="flex size-6 items-center justify-center rounded-full bg-fill-3 text-label transition-control hover:bg-fill-2"
+                >
+                  <EllipsisIcon className="size-4" />
+                </button>
+              </span>
+            )}
+            <span className="line-clamp-2 max-w-full px-1.5 text-center text-callout break-words text-label">{item.name}</span>
+            {item.kind != null && <span className="text-footnote text-label-secondary">{item.kind}</span>}
+          </div>
+        )
+      })}
     </div>
   )
-}
 
+  if (!menu) {
+    return (
+      <div data-slot="file-grid-container" className={cn("w-full", className)}>
+        {grid}
+      </div>
+    )
+  }
+  return (
+    <ContextMenu>
+      <ContextMenuTrigger data-slot="file-grid-container" focusable={false} className={cn("w-full rounded-none", className)}>
+        {grid}
+      </ContextMenuTrigger>
+      <ContextMenuContent finalFocus={() => (target && refs.current.get(target.item.id)) ?? true}>
+        {target && menu(target.item, target.selected)}
+      </ContextMenuContent>
+    </ContextMenu>
+  )
+}
 
 type FileGridProps = FileGridPropsBase & SelectionProps<FileGridItem> & AccessibleName
 

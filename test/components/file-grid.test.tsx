@@ -1,9 +1,10 @@
-import { fireEvent, render, screen, within } from "@testing-library/react"
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { useState } from "react"
 import { renderToString } from "react-dom/server"
 import { describe, expect, it, vi } from "vitest"
 
+import { ContextMenuItem } from "../../src/components/context-menu"
 import { FileGrid, type FileGridItem } from "../../src/components/file-grid"
 import { hidratar } from "../hidratar"
 
@@ -32,7 +33,6 @@ describe("FileGrid", () => {
     expect(opcion("Factura 0012.pdf")).toHaveAttribute("aria-selected", "false")
     expect(screen.getByText("Factura 0012.pdf")).toHaveClass("text-callout", "line-clamp-2")
     expect(screen.getAllByText("PDF")[0]).toHaveClass("text-footnote", "text-label-secondary")
-    expect(lista.parentElement).toHaveClass("group/list")
   })
 
   it("la miniatura lleva el filo de 1 px y radio 4; sin miniatura, el ícono de archivo o carpeta", () => {
@@ -77,22 +77,96 @@ describe("FileGrid", () => {
     expect(opcion("Notas.txt")).toHaveAttribute("aria-selected", "true")
   })
 
-  it("la elegida: caja en fill 2 y el nombre en la píldora del acento con foco (gris sin foco)", () => {
+  it("hover y elegida: una sola caja gris de radio 12 que cubre miniatura, nombre y tipo (sin píldora de acento)", () => {
     render(<FileGrid aria-label="Archivos" defaultSelected="a" items={ITEMS} />)
     const elegida = opcion("Factura 0012.pdf")
     expect(elegida).toHaveAttribute("data-state", "selected")
-    expect(elegida).toHaveClass("group/selectable")
+    expect(elegida).toHaveClass("group/selectable", "rounded-menu", "hover:bg-fill-1", "data-[state=selected]:bg-selection-inactive", "focus-visible:focus-ring")
     const nombre = screen.getByText("Factura 0012.pdf")
-    expect(nombre.className).toContain("group-data-[state=selected]/selectable:bg-selection-inactive")
-    expect(nombre.className).toContain("group-data-[state=selected]/selectable:group-focus-within/list:bg-selection")
-    expect(elegida.querySelector("[data-slot=file-grid-thumbnail]")!.className).toContain("group-data-[state=selected]/selectable:bg-fill-2")
+    expect(nombre).toHaveClass("text-label")
+    expect(nombre.className).not.toMatch(/bg-selection|text-on-selection/)
+    expect(elegida.querySelector("[data-slot=file-grid-thumbnail]")!.className).not.toContain("bg-fill-2")
+    // Sin `group/list`: la caja gris no es la selección de acento de una lista con foco, y lo de
+    // adentro no pasa a `text-on-selection` (ver `inside-selection`).
+    expect(screen.getByRole("listbox").parentElement).not.toHaveClass("group/list")
+  })
+})
+
+describe("FileGrid · menu", () => {
+  const menu = vi.fn((item: FileGridItem, selected: FileGridItem[]) => (
+    <>
+      <ContextMenuItem>Abrir {item.name}</ContextMenuItem>
+      <ContextMenuItem>Descargar {selected.length}</ContextMenuItem>
+    </>
+  ))
+  const mas = (name: string) => opcion(name).querySelector<HTMLButtonElement>("[data-slot=file-grid-more] button")!
+
+  it("sin menu no hay «…»", () => {
+    render(<FileGrid aria-label="Archivos" items={ITEMS} />)
+    expect(document.querySelector("[data-slot=file-grid-more]")).toBeNull()
   })
 
-  it("actions: el «…» del ítem, fuera del árbol de accesibilidad (el teclado usa el menú contextual)", () => {
-    render(<FileGrid actions={(item) => <button type="button">Acciones de {item.name}</button>} aria-label="Archivos" items={ITEMS} />)
-    const slot = opcion("Notas.txt").querySelector("[data-slot=file-grid-actions]")!
+  it("el «…» es un círculo gris de 24 adentro de la caja, fuera del orden de Tab y del lector", () => {
+    render(<FileGrid aria-label="Archivos" items={ITEMS} menu={menu} />)
+    const slot = opcion("Notas.txt").querySelector("[data-slot=file-grid-more]")!
     expect(slot).toHaveAttribute("aria-hidden", "true")
-    expect(within(slot as HTMLElement).getByText(/Acciones de Notas/).closest("button")).toHaveAttribute("tabindex", "-1")
+    expect(slot).toHaveClass("absolute", "top-1.5", "end-1.5")
+    const boton = mas("Notas.txt")
+    expect(boton).toHaveAttribute("tabindex", "-1")
+    expect(boton).toHaveClass("size-6", "rounded-full", "bg-fill-3", "text-label")
+    // Un click no le deja el foco a lo que el lector no ve.
+    expect(fireEvent.mouseDown(boton)).toBe(false)
+  })
+
+  it("click derecho: elige el ítem y abre su menú", async () => {
+    const onSelectedChange = vi.fn()
+    render(<FileGrid aria-label="Archivos" items={ITEMS} menu={menu} onSelectedChange={onSelectedChange} />)
+    fireEvent.contextMenu(screen.getByText("Notas.txt"), { clientX: 10, clientY: 10 })
+    expect(await screen.findByRole("menuitem", { name: "Abrir Notas.txt" })).toBeInTheDocument()
+    expect(screen.getByRole("menuitem", { name: "Descargar 1" })).toBeInTheDocument()
+    expect(onSelectedChange).toHaveBeenLastCalledWith("e", expect.objectContaining({ id: "e" }))
+  })
+
+  it("click en el «…»: el mismo menú, sin doble click ni otro click en el ítem", async () => {
+    const onOpen = vi.fn()
+    render(<FileGrid aria-label="Archivos" items={ITEMS} menu={menu} onOpen={onOpen} />)
+    await userEvent.click(mas("Contratos"))
+    expect(await screen.findByRole("menuitem", { name: "Abrir Contratos" })).toBeInTheDocument()
+    expect(screen.getByText("Contratos").closest("[role=option]")).toHaveAttribute("aria-selected", "true")
+    expect(onOpen).not.toHaveBeenCalled()
+  })
+
+  it("Shift+F10 y la tecla de menú abren el menú del ítem enfocado", async () => {
+    render(<FileGrid aria-label="Archivos" items={ITEMS} menu={menu} />)
+    opcion("Logo.png").focus()
+    await userEvent.keyboard("{Shift>}{F10}{/Shift}")
+    expect(await screen.findByRole("menuitem", { name: "Abrir Logo.png" })).toBeInTheDocument()
+    await userEvent.keyboard("{Escape}")
+    await waitFor(() => expect(screen.queryByRole("menu")).toBeNull())
+    // Al cerrar, el foco vuelve al ítem.
+    await waitFor(() => expect(opcion("Logo.png")).toHaveFocus())
+    await userEvent.keyboard("{ArrowRight}{ContextMenu}")
+    expect(await screen.findByRole("menuitem", { name: "Abrir Notas.txt" })).toBeInTheDocument()
+  })
+
+  it("en múltiple, sobre un elegido actúa sobre la selección; sobre otro, lo elige solo", async () => {
+    render(<FileGrid aria-label="Archivos" defaultSelected={["a", "b", "c"]} items={ITEMS} menu={menu} selectionMode="multiple" />)
+    fireEvent.contextMenu(screen.getByText("Factura 0013.pdf"), { clientX: 10, clientY: 10 })
+    expect(await screen.findByRole("menuitem", { name: "Descargar 3" })).toBeInTheDocument()
+    expect(menu).toHaveBeenLastCalledWith(expect.objectContaining({ id: "b" }), [expect.objectContaining({ id: "a" }), expect.objectContaining({ id: "b" }), expect.objectContaining({ id: "c" })])
+    fireEvent.keyDown(screen.getByRole("menu"), { key: "Escape" })
+    await waitFor(() => expect(screen.queryByRole("menu")).toBeNull())
+    fireEvent.contextMenu(screen.getByText("Notas.txt"), { clientX: 10, clientY: 10 })
+    expect(await screen.findByRole("menuitem", { name: "Descargar 1" })).toBeInTheDocument()
+    // Con el menú abierto lo de afuera queda inerte: se busca por texto.
+    expect(screen.getByText("Notas.txt").closest("[role=option]")).toHaveAttribute("aria-selected", "true")
+    expect(screen.getByText("Factura 0012.pdf").closest("[role=option]")).toHaveAttribute("aria-selected", "false")
+  })
+
+  it("el click derecho en el espacio vacío no abre el menú", () => {
+    render(<FileGrid aria-label="Archivos" items={ITEMS} menu={menu} />)
+    fireEvent.contextMenu(screen.getByRole("listbox"), { clientX: 10, clientY: 10 })
+    expect(screen.queryByRole("menu")).toBeNull()
   })
 })
 
@@ -140,11 +214,6 @@ describe("FileGrid · revisión de R5b", () => {
     expect(screen.getByRole("option", { name: /Alfa/ })).toHaveFocus()
   })
 
-  it("un click en el «…» no le deja el foco a lo que el lector no ve", () => {
-    render(<FileGrid actions={() => <button type="button">Más</button>} aria-label="Archivos" items={ARCHIVOS} />)
-    const envoltura = document.querySelector("[data-slot=file-grid-actions]")!
-    expect(fireEvent.mouseDown(envoltura)).toBe(false)
-  })
 })
 
 describe("FileGrid · selección múltiple", () => {
