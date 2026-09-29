@@ -209,6 +209,17 @@ describe("Select como pop-up button de macOS (2.0)", () => {
     expect(lista.closest("[data-slot=select-content]")).toHaveClass("min-w-(--anchor-width)")
   })
 
+  it("el scroll es de la lista y no del panel: Base UI desplaza la lista para alinear la elegida", async () => {
+    render(<Moneda />)
+    await userEvent.click(screen.getByRole("combobox", { name: "Moneda" }))
+    const lista = await screen.findByRole("listbox")
+    const panel = lista.closest("[data-slot=select-content]")!
+    expect(lista).toHaveAttribute("data-slot", "select-list")
+    expect(lista).toHaveClass("overflow-y-auto", "max-h-(--available-height)", "scroll-py-6", "p-1.5")
+    expect(panel).toHaveClass("overflow-hidden", "p-0")
+    expect(panel.className).not.toMatch(/overflow-y-auto/)
+  })
+
   it("con alignItemWithTrigger={false} vuelve a bajar como un menú", async () => {
     render(<Moneda alignItemWithTrigger={false} />)
     await userEvent.click(screen.getByRole("combobox", { name: "Moneda" }))

@@ -52,6 +52,9 @@ function SelectValue({ className, ...props }: SelectValueProps) {
 type SelectContentProps = WithClassName<SelectPrimitive.Popup.Props> &
   Pick<SelectPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset" | "alignItemWithTrigger">
 
+// Las flechas de desplazamiento de una lista larga: una franja de vidrio encima del borde de la lista.
+const scrollArrowClassName = "absolute inset-x-0 z-10 flex h-5 cursor-default items-center justify-center glass-control text-gray-900"
+
 function SelectContent({
   className,
   children,
@@ -76,12 +79,22 @@ function SelectContent({
         alignItemWithTrigger={alignItemWithTrigger}
         className="isolate z-50"
       >
-        <SelectPrimitive.Popup data-slot="select-content" className={cn(menuPopupClassName, "min-w-(--anchor-width)", className)} {...props}>
-          <SelectPrimitive.ScrollUpArrow className="flex w-full cursor-default items-center justify-center glass-control py-1 text-gray-900">
+        {/* El scroll va en la lista y no en el panel (como en los ejemplos de Base UI): para
+            alinear la opción elegida con el disparador, Base UI desplaza `listElement ?? popupElement`,
+            y con el scroll en el panel la lista larga abría con la elegida fuera de lugar. El panel
+            recorta (`overflow-hidden`) y las flechas flotan arriba y abajo de la lista. */}
+        <SelectPrimitive.Popup
+          data-slot="select-content"
+          className={cn(menuPopupClassName, "relative max-h-none min-w-(--anchor-width) overflow-hidden p-0", className)}
+          {...props}
+        >
+          <SelectPrimitive.ScrollUpArrow className={cn(scrollArrowClassName, "top-0")}>
             <ChevronUpIcon className="size-4" />
           </SelectPrimitive.ScrollUpArrow>
-          <SelectPrimitive.List>{children}</SelectPrimitive.List>
-          <SelectPrimitive.ScrollDownArrow className="flex w-full cursor-default items-center justify-center glass-control py-1 text-gray-900">
+          <SelectPrimitive.List data-slot="select-list" className="max-h-(--available-height) scroll-py-6 overflow-y-auto p-1.5">
+            {children}
+          </SelectPrimitive.List>
+          <SelectPrimitive.ScrollDownArrow className={cn(scrollArrowClassName, "bottom-0")}>
             <ChevronDownIcon className="size-4" />
           </SelectPrimitive.ScrollDownArrow>
         </SelectPrimitive.Popup>

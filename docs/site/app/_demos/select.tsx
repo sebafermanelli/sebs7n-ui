@@ -63,6 +63,39 @@ export function PopUpButton() {
   )
 }
 
+/**
+ * Lista larga
+ * Treinta países con uno del final elegido: la lista se abre con esa opción encima del disparador
+ * y el resto se desplaza adentro del panel, con flechas arriba y abajo.
+ */
+export function ListaLarga() {
+  const id = useId()
+  const paises = Object.fromEntries(
+    [
+      "Alemania", "Argentina", "Australia", "Bolivia", "Brasil", "Canadá", "Chile", "China", "Colombia", "Costa Rica",
+      "Ecuador", "España", "Estados Unidos", "Francia", "Guatemala", "India", "Italia", "Japón", "México", "Nicaragua",
+      "Países Bajos", "Panamá", "Paraguay", "Perú", "Portugal", "Reino Unido", "República Dominicana", "Suecia", "Uruguay", "Venezuela",
+    ].map((nombre) => [nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "-"), nombre])
+  )
+  return (
+    <div className="flex w-full max-w-sm flex-col gap-2">
+      <Label htmlFor={id}>País de facturación</Label>
+      <Select defaultValue="uruguay" items={paises} name="pais">
+        <SelectTrigger id={id}>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {Object.entries(paises).map(([value, label]) => (
+            <SelectItem key={value} value={value}>
+              {label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  )
+}
+
 /** Con grupos */
 export function Grupos() {
   const monedas = { ars: "Peso argentino", usd: "Dólar", eur: "Euro", brl: "Real" }
