@@ -83,7 +83,8 @@ function Toolbar({ className, onKeyDown, variant: variantProp = "bar", ...props 
         // de 44 de `touch-target` no se pisan. Con 6 px el toque caía en el vecino.
         "pointer-coarse:gap-5",
         // La barra fija de iCloud: 44 con el borde adentro, sin radio ni cápsula.
-        variant === "bar" && "min-h-11 w-full border-b border-separator bg-surface-bar px-2.5",
+        // Sobre el wallpaper (W), el material de la barra global: translúcida con blur.
+        variant === "bar" && "min-h-11 w-full border-b border-separator bg-surface-bar px-2.5 in-data-ambient:material-translucent",
         "data-[orientation=vertical]:w-fit data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-stretch",
         variant === "bar" &&
           "data-[orientation=vertical]:min-h-0 data-[orientation=vertical]:border-b-0 data-[orientation=vertical]:border-r data-[orientation=vertical]:px-1.5 data-[orientation=vertical]:py-2.5",

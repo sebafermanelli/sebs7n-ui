@@ -16,6 +16,7 @@ import {
   SidebarSearch,
 } from "../../src/components/sidebar"
 import { TooltipProvider } from "../../src/components/tooltip"
+import { SidebarInSheetContext } from "../../src/internal/shell-context"
 import { sidebarItemVariants } from "../../src/variants/sidebar"
 import { hidratar } from "../hidratar"
 
@@ -53,6 +54,20 @@ function Example({
 }
 
 describe("Sidebar", () => {
+  it("sobre el wallpaper (W) la columna es el cuerpo translúcido; adentro del Sheet no pinta nada", () => {
+    const { unmount } = render(<Sidebar aria-label="Principal" />)
+    expect(screen.getByRole("complementary")).toHaveClass("bg-surface-secondary", "in-data-ambient:material-translucent-body")
+    unmount()
+    render(
+      <SidebarInSheetContext.Provider value={true}>
+        <Sidebar aria-label="Principal" />
+      </SidebarInSheetContext.Provider>
+    )
+    const enSheet = screen.getByRole("complementary")
+    expect(enSheet).toHaveClass("bg-transparent", "in-data-ambient:bg-transparent")
+    expect(enSheet.className).not.toContain("material-translucent-body")
+  })
+
   it("lista de fuentes de iCloud: a ras, w-60, fondo de sidebar y borde derecho; colapsado w-16 sin animar el ancho", () => {
     const { rerender } = render(<Example />)
     const aside = screen.getByRole("complementary")

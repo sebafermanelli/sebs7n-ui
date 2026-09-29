@@ -24,9 +24,11 @@ type AppShellProps = Omit<React.ComponentProps<"div">, "children"> & {
   /** id del <main> (destino del skip link). */
   mainId?: string
   /**
-   * El wallpaper: tres focos de color que salen del brand, fijos detrás de todo, como el fondo
-   * de Home en iCloud. Sobre él la barra (`header`) y la franja de `WidgetCard` pasan a `material-translucent`. Es opt-in
-   * porque cambia el fondo de la app entera, y esa decisión es de la app.
+   * El wallpaper: ondas del color del brand, fijas detrás de todo, como la home de iCloud. Sobre
+   * él la barra (`header` y la del teléfono) y la `Toolbar` pasan a `material-translucent`, y
+   * `Card`, `WidgetCard` y el `Sidebar` al cuerpo translúcido (`material-translucent-body`); menús,
+   * diálogos y campos siguen opacos. Es opt-in porque cambia el fondo de la app entera, y esa
+   * decisión es de la app.
    */
   ambient?: boolean
   /**

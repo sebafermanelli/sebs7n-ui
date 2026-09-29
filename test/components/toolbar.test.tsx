@@ -132,6 +132,14 @@ describe("Toolbar", () => {
     expect(barra.className).not.toMatch(/(^|\s)(rounded-menu|rounded-surface|p-1)(\s|$)/)
   })
 
+  it("`bar` sobre el wallpaper (W) pasa al material translúcido; `plain` no", () => {
+    const { unmount } = render(<Toolbar aria-label="Acciones" />)
+    expect(screen.getByRole("toolbar")).toHaveClass("bg-surface-bar", "in-data-ambient:material-translucent")
+    unmount()
+    render(<Toolbar aria-label="Acciones" variant="plain" />)
+    expect(screen.getByRole("toolbar").className).not.toContain("material-translucent")
+  })
+
   it("`glass` (obsoleta) es un alias de `bar`", () => {
     render(<Toolbar aria-label="Acciones" variant="glass" />)
     const barra = screen.getByRole("toolbar")
