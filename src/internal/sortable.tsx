@@ -440,6 +440,16 @@ function useEditMode({ editingProp, defaultEditing, onEditingChange, disabled, c
   return { editing, press: handlers }
 }
 
+/**
+ * La fase del temblor de cada tarjeta (un `animation-delay` negativo): sale de su clave, así no
+ * cambia cuando la tarjeta cambia de lugar, y las vecinas no tiemblan al unísono.
+ */
+function jiggleDelay(key: string) {
+  let hash = 0
+  for (const char of key) hash = (hash * 31 + char.charCodeAt(0)) % 997
+  return `${-(hash % 6) * 0.05}s`
+}
+
 // La grilla no corre a nadie con transformaciones (el orden ya cambió en el DOM)…
 const inPlace: SortingStrategy = () => null
 // …y cada tarjeta que cambió de lugar se desliza desde donde estaba, no salta.
@@ -515,7 +525,7 @@ function SortableItem({ id, press, editing, draggable, index, label, labels, var
         setNodeRef(node)
         if (!handle) setActivatorNodeRef(node)
       }}
-      style={style}
+      style={editing ? { ...style, animationDelay: jiggleDelay(id) } : style}
       data-dragging={isDragging ? "" : undefined}
       data-slot="sortable-grid-item"
       {...press}
@@ -523,6 +533,8 @@ function SortableItem({ id, press, editing, draggable, index, label, labels, var
       className={cn(
         "relative min-w-0 rounded-surface [-webkit-touch-callout:none] data-dragging:z-10 data-dragging:[&>*]:shadow-modal",
         wholeItem && "cursor-grab outline-none active:cursor-grabbing focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(color:--sf-focus)",
+        // En edición tiembla, salvo la que se arrastra (ver `animate-jiggle` en theme.css).
+        editing && !isDragging && "animate-jiggle",
         motion,
         className
       )}

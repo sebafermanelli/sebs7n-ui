@@ -1,5 +1,7 @@
 import { act, fireEvent, render, screen, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
+import { readFileSync } from "node:fs"
+import { join } from "node:path"
 import * as React from "react"
 import { renderToString } from "react-dom/server"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
@@ -378,6 +380,38 @@ describe("SortableGrid", () => {
     it("con handle, fuera de edición renderItem no recibe manija", () => {
       render(<Widgets defaultEditing={false} handle />)
       expect(screen.queryByRole("button", { name: /Reordenar/ })).toBeNull()
+    })
+
+    it("en edición las tarjetas tiemblan, cada una con su fase, menos la que se arrastra", async () => {
+      const user = userEvent.setup()
+      const { rerender } = render(<Widgets editing={false} />)
+      expect(document.querySelectorAll(".animate-jiggle")).toHaveLength(0)
+      rerender(<Widgets editing />)
+      const cards = screen.getAllByRole("listitem")
+      for (const card of cards) {
+        expect(card).toHaveClass("animate-jiggle")
+        expect(parseFloat(card.style.animationDelay)).toBeLessThanOrEqual(0)
+      }
+      // La fase sale de la clave: no todas arrancan juntas.
+      expect(new Set(cards.map((card) => card.style.animationDelay)).size).toBeGreaterThan(1)
+      cards[0]!.focus()
+      await user.keyboard(" ")
+      expect(document.querySelector("[data-dragging]")).not.toHaveClass("animate-jiggle")
+      expect(document.querySelectorAll(".animate-jiggle")).toHaveLength(3)
+      await user.keyboard("{Escape}")
+    })
+
+    it("theme.css: el temblor gira con rotate (se suma al transform de dnd-kit) y con movimiento reducido es un contorno punteado", () => {
+      const css = readFileSync(join(process.cwd(), "src/styles/theme.css"), "utf8")
+      const keyframes = css.slice(css.indexOf("@keyframes sf-jiggle"), css.indexOf("}\n}", css.indexOf("@keyframes sf-jiggle")))
+      expect(keyframes).toMatch(/rotate: -1deg/)
+      expect(keyframes).toMatch(/rotate: 1deg/)
+      expect(keyframes).not.toMatch(/transform/)
+      const utility = css.slice(css.indexOf("@utility animate-jiggle {"), css.indexOf("\n}", css.indexOf("@utility animate-jiggle {")))
+      expect(utility).toMatch(/animation: sf-jiggle 0\.3s ease-in-out infinite alternate/)
+      const reduced = utility.slice(utility.indexOf("prefers-reduced-motion: reduce"))
+      expect(reduced).toMatch(/animation: none/)
+      expect(reduced).toMatch(/&::after \{[^}]*border: 1px dashed var\(--color-label-tertiary\)/)
     })
 
     it("controlado: editing manda y renderItem recibe state.editing", () => {
