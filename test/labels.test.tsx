@@ -224,20 +224,20 @@ describe("LabelsProvider", () => {
     expect(defaultLabels).not.toHaveProperty("carousel")
     expect(defaultLabels).not.toHaveProperty("dropZone")
     expect(defaultLabels).not.toHaveProperty("sortable")
-    let leidos: ReturnType<typeof useLabels> | undefined
-    function Lector() {
-      leidos = useLabels()
+    let received: ReturnType<typeof useLabels> | undefined
+    function Reader() {
+      received = useLabels()
       return null
     }
     render(
       <LabelsProvider value={{ dropZone: { remove: "Remove" } }}>
         <LabelsProvider value={{ sortable: { handle: "Reorder" } }}>
-          <Lector />
+          <Reader />
         </LabelsProvider>
       </LabelsProvider>
     )
-    expect(leidos?.dropZone).toEqual({ remove: "Remove" })
-    expect(leidos?.sortable).toEqual({ handle: "Reorder" })
-    expect(leidos?.carousel).toBeUndefined()
+    expect(received?.dropZone).toEqual({ remove: "Remove" })
+    expect(received?.sortable).toEqual({ handle: "Reorder" })
+    expect(received?.carousel).toBeUndefined()
   })
 })

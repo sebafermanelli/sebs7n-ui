@@ -332,6 +332,8 @@ export type Labels = {
     of: string
     /** Lo que se anuncia cuando `onReorder` falla y vuelve el orden anterior. */
     failed: string
+    /** En la descripción de la tarjeta tomada de `SortableGrid` sin manija (lo que es `aria-pressed` en la manija). */
+    grabbed: string
   }
   stepper: {
     /** Nombre de la lista de pasos, si no trae `aria-label`. */

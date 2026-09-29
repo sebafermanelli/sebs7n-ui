@@ -92,8 +92,8 @@ describe("SortableGrid", () => {
     await user.keyboard(" {ArrowRight}")
     // Todavía sin soltar: el DOM ya está en el orden nuevo y ninguna tarjeta quieta va corrida.
     expect(order()).toEqual(["Clientes", "Facturas", "Calendario", "Archivos"])
-    const quietas = screen.getAllByRole("listitem").filter((item) => !item.hasAttribute("data-dragging"))
-    expect(quietas.map((item) => item.style.transform || "none")).toEqual(["none", "none", "none"])
+    const resting = screen.getAllByRole("listitem").filter((item) => !item.hasAttribute("data-dragging"))
+    expect(resting.map((item) => item.style.transform || "none")).toEqual(["none", "none", "none"])
     expect(onReorder).not.toHaveBeenCalled()
     await user.keyboard("{Escape}")
     expect(order()).toEqual(["Facturas", "Clientes", "Calendario", "Archivos"])
@@ -134,6 +134,71 @@ describe("SortableGrid", () => {
     await act(async () => fail())
     expect(order()).toEqual(["Facturas", "Clientes", "Calendario", "Archivos"])
     expect(status()).toHaveTextContent("No se pudo guardar el orden: volvió el anterior.")
+  })
+
+  it("si la app manda items nuevos a mitad del arrastre, onReorder recibe los de ahora, no una copia vieja", async () => {
+    const user = userEvent.setup()
+    const onReorder = vi.fn()
+    let setItems!: React.Dispatch<React.SetStateAction<Widget[]>>
+    function Live() {
+      const [items, set] = React.useState(WIDGETS)
+      setItems = set
+      return (
+        <SortableGrid
+          aria-label="Widgets"
+          columns={2}
+          getKey={(widget) => widget.id}
+          getLabel={(widget) => widget.title}
+          items={items}
+          onReorder={onReorder}
+          renderItem={(widget) => <section aria-label={widget.title}>{widget.title}</section>}
+        />
+      )
+    }
+    render(<Live />)
+    screen.getAllByRole("listitem")[0]!.focus()
+    await user.keyboard(" {ArrowRight}")
+    await act(async () => setItems((items) => [...items, { id: "reports", title: "Informes" }]))
+    // El que llegó ya se ve mientras arrastrás.
+    expect(order()).toEqual(["Clientes", "Facturas", "Calendario", "Archivos", "Informes"])
+    await user.keyboard(" ")
+    expect(onReorder).toHaveBeenCalledWith([WIDGETS[1], WIDGETS[0], WIDGETS[2], WIDGETS[3], { id: "reports", title: "Informes" }])
+  })
+
+  it("sin handle, la tarjeta tomada lo dice en su descripción (como aria-pressed en la manija de la lista)", async () => {
+    const user = userEvent.setup()
+    render(<Widgets />)
+    const card = screen.getAllByRole("listitem")[0]!
+    card.focus()
+    expect(card).not.toHaveAccessibleDescription(/En movimiento/)
+    await user.keyboard(" ")
+    expect(card).toHaveAccessibleDescription(/^En movimiento/)
+    await user.keyboard("{Escape}")
+    expect(card).not.toHaveAccessibleDescription(/En movimiento/)
+  })
+
+  it("si la app ya aplicó el orden y la promesa falla, no anuncia una vuelta atrás que no pasó", async () => {
+    const user = userEvent.setup()
+    let fail!: () => void
+    function Applied() {
+      const [items, setItems] = React.useState(WIDGETS)
+      return (
+        <Widgets
+          items={items}
+          onReorder={(next) => {
+            setItems(next)
+            return new Promise<void>((_, reject) => (fail = () => reject(new Error("sin red"))))
+          }}
+        />
+      )
+    }
+    render(<Applied />)
+    screen.getAllByRole("listitem")[0]!.focus()
+    await user.keyboard(" {ArrowRight} ")
+    await act(async () => fail())
+    // El orden es de la app: lo revierte ella. El componente no dice «volvió el anterior».
+    expect(order()).toEqual(["Clientes", "Facturas", "Calendario", "Archivos"])
+    expect(status()?.textContent).toBe("")
   })
 
   it("los textos salen de LabelsProvider y la prop labels le gana", async () => {

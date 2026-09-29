@@ -55,6 +55,7 @@ const sortableLabels: SortableLabels = {
   position: "posición",
   of: "de",
   failed: "No se pudo guardar el orden: volvió el anterior.",
+  grabbed: "En movimiento",
 }
 
 type SortableItemState = {
@@ -75,8 +76,13 @@ type SortableProps<T> = {
   /** El contenido de cada ítem. Recibe la manija, si está arrastrando y su posición. */
   renderItem: (item: T, state: SortableItemState) => React.ReactNode
   /**
-   * Recibe los ítems en el orden nuevo. El orden cambia en pantalla al soltar; si devuelve una
-   * promesa que falla, vuelve el anterior y se anuncia `labels.failed`.
+   * Recibe los ítems en el orden nuevo. El orden cambia en pantalla al soltar.
+   *
+   * - **Optimista:** devolvé una promesa y no toques `items` hasta que se resuelva. Si falla, el
+   *   componente vuelve al orden anterior y anuncia `labels.failed`.
+   * - **La app lo aplica:** si cambiás `items` vos (con o sin promesa), el orden es tuyo. Si después
+   *   falla, revertilo y avisá vos: el componente no puede deshacer lo que ya es tu estado y no
+   *   anuncia una vuelta atrás que no pasó.
    */
   onReorder: (items: T[]) => void | Promise<unknown>
   /** Apaga el arrastre: la lista se ve igual y no se mueve. */
@@ -123,14 +129,25 @@ function SortableBase<T>({
   // con tarjetas de distinto ancho (una `col-span-2`), correr cada una al lugar de la vecina las
   // encimaba y dejaba huecos. Así la grilla de CSS reacomoda todo y lo que ves es lo que queda.
   // dnd-kit compensa que el nodo arrastrado cambie de lugar en el DOM (sigue bajo el puntero).
+  //
+  // Se guarda qué ítem se arrastra y a qué índice, no una copia del orden: si la app manda `items`
+  // nuevos a mitad del arrastre (llegó uno del servidor), se ven y el orden que se entrega al soltar
+  // sale de ellos, no de una foto vieja.
   const live = variant === "grid"
-  const dragOrder = React.useRef<T[] | null>(null)
-  const [dragShown, setDragShown] = React.useState<T[] | null>(null)
-  const setDragOrder = (order: T[] | null) => {
-    dragOrder.current = order
-    setDragShown(order)
+  const [drag, setDrag] = React.useState<{ key: string; index: number } | null>(null)
+  const dragRef = React.useRef(drag)
+  const setDragTarget = (next: { key: string; index: number } | null) => {
+    dragRef.current = next
+    setDrag(next)
   }
-  const shown = dragShown ?? settled
+  const indexIn = (order: readonly T[], key: UniqueIdentifier) => order.findIndex((item) => getKey(item) === String(key))
+  const placed = (target: { key: string; index: number } | null): readonly T[] => {
+    if (!target) return settled
+    const from = indexIn(settled, target.key)
+    if (from < 0) return settled
+    return arrayMove([...settled], from, Math.min(target.index, settled.length - 1))
+  }
+  const shown = placed(drag)
   const keys = shown.map(getKey)
 
   // Con manija, el puntero toma al toque (la manija es `touch-none`). Sin manija, la tarjeta entera:
@@ -164,37 +181,49 @@ function SortableBase<T>({
     onDragCancel: ({ active }) => `${labels.canceled} ${nameOf(active.id)}.`,
   }
 
-  const indexIn = (order: readonly T[], key: UniqueIdentifier) => order.findIndex((item) => getKey(item) === String(key))
-
   const move = ({ active, over }: DragOverEvent) => {
     if (!live || !over || active.id === over.id) return
-    const order = dragOrder.current ?? settled
-    const from = indexIn(order, active.id)
-    const to = indexIn(order, over.id)
-    if (from < 0 || to < 0) return
-    setDragOrder(arrayMove([...order], from, to))
+    const to = indexIn(placed(dragRef.current), over.id)
+    if (to < 0 || indexIn(settled, active.id) < 0) return
+    setDragTarget({ key: String(active.id), index: to })
   }
 
   const reorder = ({ active, over }: DragEndEvent) => {
     if (live) {
-      const next = dragOrder.current
-      setDragOrder(null)
+      const target = dragRef.current
+      setDragTarget(null)
       // Soltada afuera de la grilla: vuelve a donde estaba, como Escape.
-      if (over && next && next.some((item, index) => item !== settled[index])) commit(next)
+      if (!over || !target) return
+      const from = indexIn(settled, active.id)
+      const to = Math.min(target.index, settled.length - 1)
+      if (from >= 0 && from !== to) commit(arrayMove([...settled], from, to))
       return
     }
     if (!over || active.id === over.id) return
     commit(arrayMove([...shown], keys.indexOf(String(active.id)), keys.indexOf(String(over.id))))
   }
 
+  // Lo último que mandó la app y el último orden optimista, para decidir al fallar la promesa.
+  const latestItems = React.useRef(items)
+  const latestNext = React.useRef<T[] | null>(null)
+  React.useEffect(() => {
+    latestItems.current = items
+  })
+
   const commit = (next: T[]) => {
-    setOptimistic({ base: items, next })
+    const base = items
+    setOptimistic({ base, next })
+    latestNext.current = next
     setStatus("")
     const result = onReorder(next)
     if (isPromise(result)) {
       result.catch(() => {
-        // Solo si nadie reordenó después: un fallo viejo no deshace un orden más nuevo.
-        setOptimistic((current) => (current?.next === next ? null : current))
+        // Solo se vuelve atrás (y se anuncia) si el orden en pantalla sigue siendo el optimista: si
+        // la app ya cambió `items` (lo aplicó ella, o llegó otro), el orden es suyo; y un fallo viejo
+        // no deshace un orden más nuevo.
+        if (latestItems.current !== base || latestNext.current !== next) return
+        latestNext.current = null
+        setOptimistic(null)
         setStatus(labels.failed)
       })
     }
@@ -207,7 +236,7 @@ function SortableBase<T>({
         accessibility={{ announcements, screenReaderInstructions: { draggable: labels.instructions } }}
         collisionDetection={closestCenter}
         id={id}
-        onDragCancel={() => setDragOrder(null)}
+        onDragCancel={() => setDragTarget(null)}
         onDragEnd={reorder}
         onDragOver={move}
         sensors={sensors}
@@ -271,6 +300,9 @@ function SortableItem({ id, index, label, labels, variant, handle, className, ch
   // `<button>` con nombre; el ítem entero es un `listitem` con botones adentro, y un botón no puede
   // tener otros adentro. Las instrucciones llegan por `aria-describedby`.
   const { role: _role, "aria-roledescription": _roleDescription, "aria-pressed": pressed, ...a11y } = attributes
+  // Sin manija, el `<li>` no puede llevar `aria-pressed` (un `listitem` no es un botón): que está
+  // tomada se dice en su descripción, antes de las instrucciones.
+  const grabbedId = React.useId()
   // `Translate` y no `Transform`: en una grilla con tarjetas de distinto ancho, dnd-kit escala la que
   // pasa por encima y el contenido se deforma.
   const style: React.CSSProperties = { transform: CSS.Translate.toString(transform), transition }
@@ -316,7 +348,9 @@ function SortableItem({ id, index, label, labels, variant, handle, className, ch
       style={style}
       data-dragging={isDragging ? "" : undefined}
       data-slot="sortable-grid-item"
-      {...(handle ? {} : { ...a11y, ...listeners })}
+      {...(handle
+        ? {}
+        : { ...a11y, ...listeners, "aria-describedby": cn(pressed && grabbedId, a11y["aria-describedby"]) || undefined })}
       className={cn(
         "relative min-w-0 rounded-surface data-dragging:z-10 data-dragging:[&>*]:shadow-modal",
         !handle && "cursor-grab outline-none active:cursor-grabbing focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(color:--sf-focus)",
@@ -325,6 +359,11 @@ function SortableItem({ id, index, label, labels, variant, handle, className, ch
       )}
     >
       {content}
+      {!handle && pressed && (
+        <span hidden id={grabbedId}>
+          {labels.grabbed}
+        </span>
+      )}
     </li>
   )
 }
