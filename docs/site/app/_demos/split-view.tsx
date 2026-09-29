@@ -43,12 +43,24 @@ function Facturas({ elegida, onElegir }: { elegida: string; onElegir: (id: strin
  * El master-detail de Mail: se acomoda al ancho que le toca. Ancho, los tres paneles; mediano, lista y detalle; angosto (el teléfono), un panel por vez y «‹ Atrás» vuelve al anterior. Achicá la ventana para verlo.
  */
 export function Basico() {
+  return <Correo />
+}
+
+/**
+ * Redimensionable
+ * Con `resizable`, el sidebar y la lista llevan el separador de `Resizable` en su borde: se arrastra o se enfoca con Tab y se mueve con las flechas (10 px, Shift 40). Por defecto no, como Mail.
+ */
+export function Redimensionable() {
+  return <Correo resizable />
+}
+
+function Correo({ resizable = false }: { resizable?: boolean }) {
   const [carpeta, setCarpeta] = useState("emitidas")
   const [elegida, setElegida] = useState("0012")
   const factura = FACTURAS.find((item) => item.id === elegida)!
   return (
     <div className="h-[440px] w-full overflow-hidden rounded-surface border border-separator-strong">
-      <SplitView>
+      <SplitView resizable={resizable}>
         <SplitViewSidebar aria-label="Carpetas">
           <List aria-label="Carpetas" className="p-2.5">
             {CARPETAS.map(({ id, nombre, icono: Icono, total }) => (

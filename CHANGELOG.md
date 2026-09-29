@@ -589,6 +589,9 @@ las fases R2–R5 rehacen diálogos, menús, controles y listas con las medidas 
   `aria-valuenow/min/max` reales, `aria-controls`, flechas de a 5 % (Shift el doble, RTL invertido),
   Home/End, arrastre con captura del puntero. El HTML del servidor ya sale repartido. Labels
   `resizable: { handle }`.
+- `SplitView resizable` (R6): el sidebar (180–360 px) y la lista (260–560 px) llevan en su borde el
+  separador de `Resizable` (arrastre, ← → de a 10 px, Shift 40, Home/End), con `defaultWidths` y
+  `onWidthsChange` para guardar los anchos. Sin la prop sigue fijo, como Mail.
 - La tabla de subpaths del README dice qué componentes no están en el barrel (la lee de `src/index.ts`).
 - El variant `inside-selection` también mira las listas de filas (`group/list`: `List`, `Tree`,
   `FileGrid`), no solo la `Table`.

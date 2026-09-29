@@ -82,3 +82,56 @@ describe("SplitView", () => {
     expect(screen.getByRole("region", { name: "Factura" })).toHaveAttribute("data-active")
   })
 })
+
+describe("SplitView resizable", () => {
+  it("por defecto no se redimensiona, como Mail", () => {
+    render(<Mail />)
+    expect(screen.queryByRole("separator")).toBeNull()
+  })
+
+  it("con resizable, el sidebar y la lista llevan un separador en su borde, nombrado por el panel", () => {
+    render(<Mail resizable />)
+    const lista = screen.getByRole("region", { name: "Facturas" })
+    const separador = screen.getByRole("separator", { name: "Cambiar el tamaño: Facturas" })
+    expect(separador).toHaveAttribute("aria-orientation", "vertical")
+    expect(separador).toHaveAttribute("aria-controls", lista.id)
+    expect(separador).toHaveAttribute("aria-valuenow", "380")
+    expect(separador).toHaveAttribute("aria-valuemin", "260")
+    expect(separador).toHaveAttribute("aria-valuemax", "560")
+    expect(screen.getByRole("separator", { name: "Cambiar el tamaño: Carpetas" })).toHaveAttribute("aria-valuenow", "230")
+    // El ancho va por una variable, y solo manda desde que se ven dos paneles.
+    expect(lista.style.getPropertyValue("--split-pane-width")).toBe("380px")
+    expect(lista.className).toContain("@2xl/split:group-data-resizable/split:w-(--split-pane-width)")
+    // En angosto (un panel) el separador no se ve.
+    expect(separador.className).toContain("hidden")
+  })
+
+  it("teclado: → de a 10 px, Shift de a 40, Home/End a los extremos; avisa el ancho", async () => {
+    const onWidthsChange = vi.fn()
+    render(<Mail onWidthsChange={onWidthsChange} resizable />)
+    const separador = screen.getByRole("separator", { name: /Facturas/ })
+    separador.focus()
+    await userEvent.keyboard("{ArrowRight}")
+    expect(separador).toHaveAttribute("aria-valuenow", "390")
+    expect(onWidthsChange).toHaveBeenLastCalledWith({ sidebar: 230, list: 390 })
+    await userEvent.keyboard("{Shift>}{ArrowLeft}{/Shift}")
+    expect(separador).toHaveAttribute("aria-valuenow", "350")
+    await userEvent.keyboard("{End}")
+    expect(separador).toHaveAttribute("aria-valuenow", "560")
+    await userEvent.keyboard("{Home}")
+    expect(screen.getByRole("region", { name: "Facturas" }).style.getPropertyValue("--split-pane-width")).toBe("260px")
+  })
+
+  it("con el puntero, en píxeles; defaultWidths arranca con lo guardado", async () => {
+    const { fireEvent } = await import("@testing-library/react")
+    const onWidthsChange = vi.fn()
+    render(<Mail defaultWidths={{ sidebar: 250 }} onWidthsChange={onWidthsChange} resizable />)
+    const separador = screen.getByRole("separator", { name: /Carpetas/ })
+    expect(separador).toHaveAttribute("aria-valuenow", "250")
+    fireEvent.pointerDown(separador, { button: 0, clientX: 250, pointerId: 1 })
+    fireEvent.pointerMove(separador, { clientX: 290, pointerId: 1 })
+    expect(separador).toHaveAttribute("aria-valuenow", "290")
+    fireEvent.pointerUp(separador, { pointerId: 1 })
+    expect(onWidthsChange).toHaveBeenCalledWith({ sidebar: 290, list: 380 })
+  })
+})

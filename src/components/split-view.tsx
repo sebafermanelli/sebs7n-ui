@@ -3,6 +3,8 @@
 import * as React from "react"
 import { ChevronLeftIcon } from "lucide-react"
 
+import { dragSeparator, separatorKey } from "../internal/separator.js"
+import { useLabels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
 
 /**
@@ -11,11 +13,24 @@ import { cn } from "../lib/utils.js"
  *
  * Se acomoda al ancho que **le toca** (container query, no el de la ventana): angosto (< 672) muestra
  * un solo panel —el activo— y `SplitViewBack` vuelve al anterior; mediano muestra lista y detalle; ancho
- * (≥ 1024), los tres. Sin manijas para redimensionar, como iCloud: eso va a ser `Resizable` (R6).
+ * (≥ 1024), los tres. Sin manijas para redimensionar, como iCloud; con `resizable`, el sidebar y la
+ * lista llevan en su borde el separador de `Resizable` (en px, con mínimo y máximo).
  */
 type SplitViewPane = "sidebar" | "list" | "detail"
+type SplitViewWidths = { sidebar: number; list: number }
 
 type SplitViewContextValue = { pane: SplitViewPane; setPane: (pane: SplitViewPane) => void }
+
+type ResizeContextValue = {
+  widths: SplitViewWidths
+  setWidth: (pane: keyof SplitViewWidths, width: number) => void
+  commit: () => void
+}
+
+/** Los anchos de Mail y hasta dónde se pueden mover. */
+const WIDTHS: SplitViewWidths = { sidebar: 230, list: 380 }
+const LIMITS: Record<keyof SplitViewWidths, [number, number]> = { sidebar: [180, 360], list: [260, 560] }
+const ResizeContext = React.createContext<ResizeContextValue | null>(null)
 
 const SplitViewContext = React.createContext<SplitViewContextValue | null>(null)
 const PaneContext = React.createContext<SplitViewPane | null>(null)
@@ -33,9 +48,27 @@ type SplitViewProps = React.ComponentProps<"div"> & {
   /** El panel activo al arrancar. Por defecto la lista, como Mail en el teléfono. */
   defaultPane?: SplitViewPane
   onPaneChange?: (pane: SplitViewPane) => void
+  /**
+   * El sidebar y la lista se redimensionan con un separador en su borde (arrastre o flechas), entre
+   * 180–360 y 260–560 px. Por defecto no, como Mail.
+   */
+  resizable?: boolean
+  /** Los anchos al arrancar, en px (lo guardado con `onWidthsChange`). Por defecto, los de Mail: 230 y 380. */
+  defaultWidths?: Partial<SplitViewWidths>
+  /** Se llama con los anchos al soltar un separador o con cada tecla. Para guardarlos. */
+  onWidthsChange?: (widths: SplitViewWidths) => void
 }
 
-function SplitView({ className, pane: paneProp, defaultPane = "list", onPaneChange, ...props }: SplitViewProps) {
+function SplitView({
+  className,
+  pane: paneProp,
+  defaultPane = "list",
+  onPaneChange,
+  resizable = false,
+  defaultWidths,
+  onWidthsChange,
+  ...props
+}: SplitViewProps) {
   const [own, setOwn] = React.useState(defaultPane)
   const pane = paneProp ?? own
   const setPane = React.useCallback(
@@ -46,35 +79,117 @@ function SplitView({ className, pane: paneProp, defaultPane = "list", onPaneChan
     [paneProp, onPaneChange]
   )
   const value = React.useMemo(() => ({ pane, setPane }), [pane, setPane])
+
+  const [widths, setWidths] = React.useState<SplitViewWidths>(() => ({ ...WIDTHS, ...defaultWidths }))
+  const widthsRef = React.useRef(widths)
+  widthsRef.current = widths
+  const resize = React.useMemo<ResizeContextValue>(
+    () => ({
+      widths,
+      setWidth: (name, width) => {
+        const [min, max] = LIMITS[name]
+        const next = { ...widthsRef.current, [name]: Math.round(Math.min(max, Math.max(min, width))) }
+        widthsRef.current = next
+        setWidths(next)
+      },
+      commit: () => onWidthsChange?.(widthsRef.current),
+    }),
+    [widths, onWidthsChange]
+  )
+
   return (
     <SplitViewContext.Provider value={value}>
-      <div
-        data-slot="split-view"
-        data-pane={pane}
-        className={cn("group/split @container/split flex h-full min-h-0 w-full overflow-hidden bg-surface text-label", className)}
-        {...props}
-      />
+      <ResizeContext.Provider value={resizable ? resize : null}>
+        <div
+          data-slot="split-view"
+          data-pane={pane}
+          data-resizable={resizable ? "" : undefined}
+          className={cn("group/split @container/split flex h-full min-h-0 w-full overflow-hidden bg-surface text-label", className)}
+          {...props}
+        />
+      </ResizeContext.Provider>
     </SplitViewContext.Provider>
   )
 }
 
 type SplitViewPaneProps = React.ComponentProps<"section">
 
-function makePane(name: SplitViewPane, slot: string, paneClassName: string) {
-  function Pane({ className, ...props }: SplitViewPaneProps) {
+function makePane(name: SplitViewPane, slot: string, paneClassName: string, handleClassName?: string) {
+  function Pane({ className, id: idProp, style, ...props }: SplitViewPaneProps) {
     const { pane } = useSplitView()
+    const resize = React.useContext(ResizeContext)
+    const autoId = React.useId()
+    const id = idProp ?? autoId
+    const width = resize && name !== "detail" ? resize.widths[name] : undefined
     return (
       <PaneContext.Provider value={name}>
         <section
+          id={id}
           data-slot={slot}
           data-active={pane === name ? "" : undefined}
-          className={cn("hidden min-h-0 w-full min-w-0 flex-col overflow-y-auto data-active:flex", paneClassName, className)}
+          className={cn(
+            "hidden min-h-0 w-full min-w-0 flex-col overflow-y-auto data-active:flex",
+            paneClassName,
+            // Redimensionable: el ancho de Mail pasa a una variable, desde que se ven dos paneles.
+            width !== undefined && "@2xl/split:group-data-resizable/split:w-(--split-pane-width) @5xl/split:group-data-resizable/split:w-(--split-pane-width)",
+            className
+          )}
+          style={width !== undefined ? ({ "--split-pane-width": `${width}px`, ...style } as React.CSSProperties) : style}
           {...props}
         />
+        {width !== undefined && handleClassName && (
+          <PaneHandle name={name as keyof SplitViewWidths} paneId={id} paneLabel={props["aria-label"]} className={handleClassName} />
+        )}
       </PaneContext.Provider>
     )
   }
   return Pane
+}
+
+/**
+ * El separador de un panel: un elemento de ancho 0 pegado a su borde derecho, que dibuja encima de la
+ * línea entre paneles el acento al agarrarla y la banda de foco de 3 px. Es el de `Resizable`, en px.
+ */
+function PaneHandle({ name, paneId, paneLabel, className }: { name: keyof SplitViewWidths; paneId: string; paneLabel?: string; className: string }) {
+  const resize = React.useContext(ResizeContext)!
+  const labels = useLabels().resizable
+  const [min, max] = LIMITS[name]
+  const width = resize.widths[name]
+  return (
+    <div
+      role="separator"
+      tabIndex={0}
+      data-slot="split-view-handle"
+      aria-label={paneLabel ? `${labels.handle}: ${paneLabel}` : labels.handle}
+      aria-orientation="vertical"
+      aria-controls={paneId}
+      aria-valuenow={width}
+      aria-valuemin={min}
+      aria-valuemax={max}
+      className={cn(
+        "relative z-10 hidden w-0 shrink-0 cursor-col-resize touch-none outline-none select-none",
+        "after:absolute after:inset-y-0 after:-start-1.5 after:w-3 pointer-coarse:after:-start-3 pointer-coarse:after:w-6",
+        "before:absolute before:inset-y-0 before:-start-px before:w-px before:transition-colors hover:before:bg-brand-700 data-dragging:before:bg-brand-700",
+        "focus-visible:before:-start-0.5 focus-visible:before:w-[3px] focus-visible:before:bg-(--sf-focus)",
+        className
+      )}
+      onKeyDown={(event) => {
+        const change = separatorKey(event, "x", event.currentTarget.closest("[dir]")?.getAttribute("dir") === "rtl", 10, 40)
+        if (change === null) return
+        event.preventDefault()
+        resize.setWidth(name, change === "min" ? min : change === "max" ? max : width + change)
+        resize.commit()
+      }}
+      onPointerDown={(event) =>
+        dragSeparator(
+          event,
+          "x",
+          (delta) => resize.setWidth(name, width + delta),
+          () => resize.commit()
+        )
+      }
+    />
+  )
 }
 
 // Angosto: solo el activo. Mediano: la lista y el detalle (el sidebar solo si es el activo, y
@@ -82,13 +197,18 @@ function makePane(name: SplitViewPane, slot: string, paneClassName: string) {
 const SplitViewSidebar = makePane(
   "sidebar",
   "split-view-sidebar",
-  "bg-surface-secondary @2xl/split:w-[230px] @2xl/split:shrink-0 @2xl/split:border-e @2xl/split:border-separator-strong @5xl/split:flex @5xl/split:w-[230px]"
+  "bg-surface-secondary @2xl/split:w-[230px] @2xl/split:shrink-0 @2xl/split:border-e @2xl/split:border-separator-strong @5xl/split:flex @5xl/split:w-[230px]",
+  // El del sidebar, solo con los tres paneles: en mediano el sidebar abierto tapa al detalle y la
+  // lista toma el resto, no hay nada que repartir.
+  "@5xl/split:block"
 )
 const SplitViewList = makePane(
   "list",
   "split-view-list",
   // Con el sidebar abierto en mediano el detalle sale, y la lista toma su lugar.
-  "@2xl/split:flex @2xl/split:w-[320px] @2xl/split:shrink-0 @2xl/split:border-e @2xl/split:border-separator-strong @2xl/split:group-data-[pane=sidebar]/split:flex-1 @2xl/split:group-data-[pane=sidebar]/split:border-e-0 @5xl/split:w-[380px] @5xl/split:group-data-[pane=sidebar]/split:flex-none @5xl/split:group-data-[pane=sidebar]/split:border-e"
+  "@2xl/split:flex @2xl/split:w-[320px] @2xl/split:shrink-0 @2xl/split:border-e @2xl/split:border-separator-strong @2xl/split:group-data-[pane=sidebar]/split:flex-1 @2xl/split:group-data-[pane=sidebar]/split:border-e-0 @5xl/split:w-[380px] @5xl/split:group-data-[pane=sidebar]/split:flex-none @5xl/split:group-data-[pane=sidebar]/split:border-e",
+  // El de la lista, desde que se ven lista y detalle (no con el sidebar abierto en mediano).
+  "@2xl/split:block @2xl/split:group-data-[pane=sidebar]/split:hidden @5xl/split:group-data-[pane=sidebar]/split:block"
 )
 const SplitViewDetail = makePane(
   "detail",
@@ -140,4 +260,5 @@ export {
   type SplitViewPane,
   type SplitViewPaneProps,
   type SplitViewProps,
+  type SplitViewWidths,
 }
