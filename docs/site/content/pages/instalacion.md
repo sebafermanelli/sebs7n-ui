@@ -66,7 +66,7 @@ Eso es todo. `theme.css` trae los tokens (colores, tipografía, radios, sombras)
 
 ### Achicar el CSS: `@source not`
 
-El `@source` del paquete escanea los 58 componentes, así que el CSS final trae utilidades de componentes que tu app no importa. Se pueden excluir uno por uno:
+El `@source` del paquete escanea los 80 módulos de componentes, así que el CSS final trae utilidades de componentes que tu app no importa. Se pueden excluir uno por uno:
 
 ```css
 @import "sebs7n-ui/theme.css";
@@ -92,7 +92,7 @@ Inter con `next/font/google` y su `.variable` en `<html>`, el `ThemeProvider` de
 import { Inter } from "next/font/google"
 import { ThemeProvider } from "next-themes"
 // Por subpath, no por el barrel: el layout raíz envuelve TODAS las páginas, así
-// que un `from "sebs7n-ui"` acá le suma los 58 componentes a cada una.
+// que un `from "sebs7n-ui"` acá le suma los 69 módulos del barrel a cada una.
 import { Toaster } from "sebs7n-ui/sonner"
 import { TooltipProvider } from "sebs7n-ui/tooltip"
 import "./globals.css"
@@ -167,7 +167,7 @@ import { cn } from "sebs7n-ui/lib/utils"
 
 {{subpaths}}
 
-Por qué: el barrel hace `export *` de los 58 componentes, y **42** llevan `"use client"`. Next no puede podar referencias cliente a través de ese barrel (tampoco con `optimizePackageImports`), así que una página con `Button` + `Card` + `ThemeSwitcher` se lleva también Sonner, Sidebar, Select, AlertDialog y el resto. Medido en Next 16.3 (Turbopack) con esa página: **297,5 KB → 234,8 KB** de JS cliente gzip (−21 %).
+Por qué: el barrel hace `export *` de 69 módulos, y **49** llevan `"use client"` (los otros 11, los más pesados, van solo por subpath: están en la tabla de arriba). Next no puede podar referencias cliente a través de ese barrel (tampoco con `optimizePackageImports`), así que una página con `Button` + `Card` + `ThemeSwitcher` se lleva también Sonner, Sidebar, Select, AlertDialog y el resto. Medido en Next 16.3 (Turbopack) con esa página, en 1.x: **297,5 KB → 234,8 KB** de JS cliente gzip (−21 %).
 
 No mezcles barrel y subpaths en la misma página: el barrel vuelve a traer todo.
 
@@ -261,5 +261,5 @@ Tiene que verse **con el fondo del color de marca y texto blanco**, con 8px de r
 Después, tres cosas más:
 
 1. `bg-slate-500` **no** tiene que compilar: la paleta de Tailwind está reseteada y solo existen los tokens del paquete. Ojo con el ejemplo: `bg-blue-500` **sí** compila, porque Geist tiene su propia escala `blue` en pasos 100–1000. Lo que no existe son las escalas de Tailwind que el paquete no repone (`slate`, `zinc`, `sky`…) ni los pasos que Geist no tiene (`bg-blue-50`).
-2. En oscuro —con la clase `.dark` en `<html>`; ver [Theming](/docs/theming)—, un `Input` tiene que verse **más claro** que el fondo de la página (`#0a0a0a` sobre `#000`). Si son el mismo negro, hay algo pisando `--sf-background-100`. Si no cambia nada al prender el tema oscuro, lo más probable es que `next-themes` esté con `attribute="data-theme"`: el paquete solo mira la clase.
+2. En oscuro —con la clase `.dark` en `<html>`; ver [Theming](/docs/theming)—, la página tiene que ser gris muy oscuro (`#1C1C1E`, no negro) y un `Input` un poco más claro, por su relleno gris. Si no cambia nada al prender el tema oscuro, lo más probable es que `next-themes` esté con `attribute="data-theme"`: el paquete solo mira la clase.
 3. Tabulá: la primera parada de un `AppShell` es «Ir al contenido».

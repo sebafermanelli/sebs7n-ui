@@ -44,8 +44,8 @@ describe("la marca llega a AA", () => {
 
 | Token | Dónde |
 |---|---|
-| `brand-700` | `Button` (el default, acento sólido), anillo de foco y borde del campo enfocado, borde de `Card selected`, franja de `Alert variant="brand"`, `Badge solid color="brand"`. Y **todo lo que está prendido**: `Checkbox` y `Radio` marcados, `Switch`, el relleno de `Slider`, `Progress` y `Meter`. |
-| `brand-700` como selección | Desde 2.0, la selección es el acento sólido, como en macOS: el ítem de menú resaltado (puntero o flechas) de `DropdownMenu`, `ContextMenu`, `Menubar`, `Select`, `Combobox` y `Autocomplete`, el ítem activo del `Sidebar`, la fila elegida de `Table`, la página actual de `NavigationMenu`. Es `bg-selection`, con texto e íconos en `text-on-selection` (`brand-contrast`). |
+| `brand-700` | `Button` (el default, acento sólido), el anillo de foco interior (en claro), el anillo de `Card selected`, franja de `Alert variant="brand"`, `Badge color="brand"`. Y **todo lo que está prendido**: `Checkbox` y `Radio` marcados, `Switch`, `Toggle` y el segmento prendido de `ToggleGroup`, el relleno de `Progress` y `Meter`. El `Slider` no: su progreso va en el color del texto, como el de Photos. |
+| `brand-700` como selección | La fila elegida de una lista **con el foco adentro**: `Table`, `List`, `Tree`, `FileGrid`. Es `bg-selection`, con texto e íconos en `text-on-selection` (`brand-contrast`); sin foco, `bg-selection-inactive` (gris). El ítem resaltado de un menú y el activo del `Sidebar` o de `NavigationMenu` **no** van en el acento: son grises (`fill-2`, `fill-1`), como en iCloud. |
 | `brand-700` en tinte | Lo que se marca sin ser la selección: el tramo del medio de un rango en `Calendar`, la burbuja del usuario en `Chat` (14 % en claro, 22 % en oscuro). Es `bg-highlight`. |
 | `brand-800` | Hover del acento. |
 | `brand-900` | `Button variant="link"`, ícono de `Alert variant="brand"`. |
@@ -183,9 +183,9 @@ No hay una variable global de densidad, y es deliberado: una app con la mitad de
 
 | Dónde | Cómo |
 |---|---|
-| Controles | `size="sm"` (32px) en vez de `md` (40px). Elegilo una vez por formulario, no por campo. |
-| Tablas | `<Table density="compact">`. |
-| Tarjetas | `size="sm"` baja el `--card-spacing` de 24px a 16px. |
+| Controles | `size="sm"` (28px) en vez de `md` (36px). Elegilo una vez por formulario, no por campo. Con el dedo crecen solos (36 y 44). |
+| Tablas | `<Table density="compact">` (filas de 32 en vez de 41). |
+| Tarjetas | `size="sm"` baja el `--card-spacing` de 20px a 16px. |
 | Sidebar | `<Sidebar collapsed>` deja solo los íconos (64px). |
 | Página | `AppShellContent size="wide"` (1600px) o `"full"`. |
 

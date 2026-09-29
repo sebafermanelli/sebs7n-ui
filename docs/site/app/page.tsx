@@ -52,19 +52,23 @@ export default function Home() {
             El design system de una sola dependencia.
           </h1>
           <p className="max-w-2xl text-body text-label-secondary">
-            El estilo de macOS sobre las primitivas de shadcn/ui <code>base-nova</code> (Base UI).{" "}
-            {site.components.length} componentes accesibles, tokens de color, tipografía, radios y sombras, y cuatro
-            variables para el color de marca.
+            El lenguaje visual de iCloud web —superficies opacas en capas de gris, Inter, radios chicos y barras
+            fijas— sobre las primitivas de shadcn/ui <code>base-nova</code> (Base UI). {site.components.length}{" "}
+            componentes accesibles, tokens de superficies, tipografía, radios y sombras, y cuatro variables para el
+            color de marca.
           </p>
           <div className="flex flex-wrap items-center gap-3">
-            <Link className={buttonVariants({ size: "lg", shape: "pill" })} href="/docs/instalacion">
+            <Link className={buttonVariants({ size: "lg" })} href="/docs/instalacion">
               Empezar
             </Link>
             <Link
-              className={buttonVariants({ variant: "secondary", size: "lg", shape: "pill" })}
+              className={buttonVariants({ variant: "secondary", size: "lg" })}
               href="/docs/components/button"
             >
               Ver los componentes
+            </Link>
+            <Link className={buttonVariants({ variant: "plain", size: "lg" })} href="/docs/migrating-to-2">
+              ¿Venís de 1.x? Migrar a 2.0
             </Link>
           </div>
           <div className="w-full max-w-xl pt-2">

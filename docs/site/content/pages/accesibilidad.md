@@ -52,7 +52,7 @@ Qué hacer:
 
 ### Foco visible siempre
 
-Ningún componente saca el anillo de foco sin reemplazarlo. `focus-visible:focus-ring` en los controles, `focus:focus-border` en los campos, y el anillo usa `brand-700`. El reset define además un `:focus-visible` por defecto, así que un `<a>` suelto de la app tampoco queda sin foco.
+Ningún componente saca el anillo de foco sin reemplazarlo. `focus-visible:focus-ring` en los controles, `focus:focus-border` en los campos: un anillo **interior** de 3 px en la marca (`brand-700` en claro, `brand-900` en oscuro). Switch y Slider lo llevan por fuera, porque sobre su pista gris el interior no llegaba a 3:1. El reset define además un `:focus-visible` por defecto, así que un `<a>` suelto de la app tampoco queda sin foco.
 
 Los popups que pueden recibir el foco ellos mismos —Popover, HoverCard y NavigationMenu cuando no tienen nada tabulable adentro, y el panel de `Tabs`— también lo muestran. Es el caso que más fácil se cuela: el foco existe, el teclado funciona, y en la pantalla no se ve nada.
 
@@ -86,6 +86,9 @@ Lo que se puede verificar en TypeScript se verifica ahí, no en esta página: un
 | `Progress` y `Meter` | `label` visible, `aria-label` o `aria-labelledby` |
 | `AvatarImage` | `alt`, incluso `""` |
 | `ToolbarGroup` | `aria-label` o `aria-labelledby` |
+| `Tree`, `FileGrid`, `StackedMeter`, `DataTable`, `Timeline` (2.0) | `aria-label` o `aria-labelledby` |
+| `SidebarGroupAction` (2.0) | `aria-label`: el «+» solo no dice qué crea |
+| `TableGroupHeader` (2.0) | `colSpan`: el lector lo anuncia como el ancho del grupo |
 
 Dos casos donde el nombre ya está y el tipo lo pide igual, porque ningún tipo puede mirar adentro de `children`: cuando lo pone un texto `sr-only`, y cuando lo pone un envoltorio (`<DropdownMenuTrigger aria-label="Menú" render={<Button size="icon-sm" />} />`). En los dos se escribe en el `aria-label` del `Button`, que es el que termina en el DOM.
 

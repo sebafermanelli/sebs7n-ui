@@ -18,9 +18,10 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "sw
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html className={inter.variable} lang="es" suppressHydrationWarning>
-      {/* La luz ambiente viene prendida: el sitio muestra el material, y sobre una página lisa
-          el vidrio no tiene nada que desenfocar. El Playground la puede apagar. */}
-      <body className="bg-ambient">
+      {/* Lisa, como las apps de iCloud: el wallpaper (`bg-ambient`) es opcional y lo prende el
+          Playground (glass-config lo pone en el body). Con la clase acá, la página arrancaba con el
+          wallpaper y lo sacaba al hidratar. */}
+      <body>
         {/* El header propio vive en el home; /docs usa el AppShell del paquete. */}
         <Providers>{children}</Providers>
       </body>

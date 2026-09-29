@@ -2,9 +2,9 @@ Las decisiones que no se ven en una tabla de props. Cada una existe porque rompe
 
 ## Jerarquía
 
-**Un solo acento sólido por pantalla.** El `Button` por defecto es el primario de iCloud, el acento sólido: va en la acción principal, y las demás son `secondary` (gris) o `plain` (texto de acento). Dos acentos compitiendo no son dos acciones importantes: son ninguna. Los estados prendidos —un `Checkbox` marcado, un `Switch`, el relleno de un `Slider`— llevan el brand y no cuentan: dicen «esto está activo», no «apretá acá».
+**Un solo acento sólido por pantalla.** El `Button` por defecto es el primario de iCloud, el acento sólido: va en la acción principal, y las demás son `secondary` (gris) o `plain` (texto de acento). Dos acentos compitiendo no son dos acciones importantes: son ninguna. Los estados prendidos —un `Checkbox` marcado, un `Switch`, un `Toggle`— llevan el brand y no cuentan: dicen «esto está activo», no «apretá acá».
 
-**Sin cápsulas.** Desde 2.0 nada es una píldora: botones y controles con radio 8, campos e ítems de lista con 10, cards y diálogos con 11, menús y popovers con 12 (los de iCloud). `shape="pill"` queda aceptada y sin efecto hasta 3.0.
+**Sin cápsulas.** Desde 2.0 nada es una píldora: botones y controles con radio 8, campos e ítems de lista con 10, cards y diálogos con 11, menús y popovers con 12 (los de iCloud). `shape="pill"` ya no redondea: solo suma un escalón de padding horizontal, para el CTA de un hero.
 
 **`variant="destructive"` solo cuando la acción borra algo**, y siempre detrás de un `AlertDialog`.
 
@@ -108,8 +108,8 @@ La regla: si el elemento **es** la página, `bg-background`; si flota **sobre** 
 
 No llevan `"use client"` y se pueden usar desde un Server Component:
 
-- **Los once módulos de `sebs7n-ui/variants/*`**, sin excepción: `badge`, `button`, `card`, `input`, `link`, `menu`, `overlay`, `segmented`, `sidebar`, `tag` y `toggle`. Ninguno lleva `"use client"`, y todos salen también por el barrel.
-- **Los dieciséis componentes sin estado**: `Alert`, `AppShellContent`, `Badge`, `Breadcrumb`, `Card`, `EmptyState`, `Kbd`, `Label`, `PageHeader`, `Pagination`, `Separator`, `Skeleton`, `Spinner`, `Stat`, `Table` y `Tag`. Los otros 42 son `"use client"`, que es lo que corresponde: un `DropdownMenu` necesita estado.
+- **Los catorce módulos de `sebs7n-ui/variants/*`**, sin excepción: `badge`, `button`, `card`, `command`, `input`, `link`, `menu`, `overlay`, `segmented`, `selection`, `sidebar`, `slider`, `tag` y `toggle`. Ninguno lleva `"use client"`, y todos salen también por el barrel.
+- **Los veinte componentes sin estado**: `Alert`, `AppShellContent`, `Badge`, `Breadcrumb`, `Card`, `EmptyState`, `Kbd`, `Label`, `ListRow` (con `List` y `ListSection`), `PageHeader`, `Pagination`, `Separator`, `Skeleton`, `Spinner`, `Stat`, `Table`, `Tag`, `TextLink`, `Timeline` y `WidgetCard`. Los otros 59 módulos son `"use client"`, que es lo que corresponde: un `DropdownMenu` necesita estado.
 
 `PageHeader` está en esa lista aunque el `<nav>` de sus migas lea el `LabelsProvider`: ese `<nav>` es un subcomponente de cliente interno, y un Server Component puede renderizar uno de cliente. Lo que no puede es llamar un hook, y `PageHeader` no llama ninguno. Es la forma de que un texto salga traducido sin que el llamador tenga que acordarse de pasarlo.
 

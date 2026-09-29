@@ -1,6 +1,6 @@
 // Las tablas de tokens salen de los archivos del paquete, no de una copia a mano:
-// tokens/geist.json para el color, src/styles/theme.css para la tipografía y las
-// sombras, src/styles/reset.css para los radios. Si cambia un valor, cambia la página.
+// tokens/geist.json para la paleta, src/styles/theme.css para las superficies, la tipografía,
+// las sombras y los radios, src/styles/reset.css para la escala de radios de la app. Si cambia un valor, cambia la página.
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
 
@@ -35,53 +35,44 @@ export function readTypography(root) {
 }
 
 export function readRadii(root) {
-  // Primero los tres semánticos de theme.css, que son los que usan los componentes; después
+  // Primero los semánticos de theme.css, que son los que usan los componentes; después
   // la escala de reset.css, que queda para el código de la app.
   const css = ["theme", "reset"].map((file) => readFileSync(join(root, `src/styles/${file}.css`), "utf8")).join("\n")
-  return [...css.matchAll(/--radius-([a-z0-9]+):\s*([^;]+);/g)].map(([, name, value]) => ({ name, value: value.trim() }))
+  return [...css.matchAll(/--radius-([a-z0-9-]+):\s*([^;]+);/g)].map(([, name, value]) => ({ name, value: value.trim() }))
 }
 
-/** Los tres fondos con su rol y sus valores por tema. */
+/** Las superficies de iCloud (2.0) con su rol y su valor claro y oscuro, leídos de theme.css. */
 export function readBackgrounds(root) {
-  const colors = readColors(root)
   const theme = readFileSync(join(root, "src/styles/theme.css"), "utf8")
-  const page = [...theme.matchAll(/--sf-background:\s*([^;]+);/g)].map(([, value]) => value.trim())
+  const values = (variable) => [...theme.matchAll(new RegExp(`--sf-${variable}:\\s*([^;]+);`, "g"))].map(([, value]) => value.trim())
   return [
-    {
-      token: "bg-background",
-      rol: "La página. `body` (ya lo pone el paquete) y la raíz del `AppShell`.",
-      light: page[0],
-      dark: page[1],
-    },
-    {
-      token: "bg-background-100",
-      rol: "La superficie: lo que flota sobre la página. Input, Select, Textarea, popup de menú, Popover, Dialog, Sheet, Card, Alert, Toast, barra mobile del shell.",
-      light: colors.light.background["100"],
-      dark: colors.dark.background["100"],
-    },
-    {
-      token: "bg-background-200",
-      rol: "El fondo sutil / banda: Sidebar, `thead`/`tfoot` de Table, `Card variant=\"subtle\"`, `EmptyState`.",
-      light: colors.light.background["200"],
-      dark: colors.dark.background["200"],
-    },
-  ]
+    ["background", "background", "La página. `body` (ya lo pone el paquete), el contenido de una lista o de un detalle."],
+    ["surface", "surface", "Lo que flota: menú, popover, diálogo, hoja, toast, el cuerpo de una Card."],
+    ["surface-secondary", "surface-secondary", "La columna del `Sidebar` y el panel de `SplitViewSidebar`."],
+    ["surface-bar", "surface-bar", "La `Toolbar` de una app y la franja de `CardHeader`."],
+    ["surface-header", "surface-header", "La barra global: `Navbar`, `AppShell header`, la barra del teléfono."],
+    ["grouped", "group", "Un grupo plano: `Card variant=\"subtle\"`, `EmptyState`."],
+    ["fill-1", "fill-1", "Relleno neutro: campos, activo del Sidebar, Toggle suelto."],
+    ["fill-2", "fill-2", "Hover y resaltado de un menú, `secondary`, pista del segmentado."],
+    ["fill-3", "fill-3", "Apretado; la línea base de las pestañas."],
+  ].map(([token, variable, rol]) => {
+    const [light, dark] = values(variable)
+    return { token: `bg-${token}`, rol, light, dark }
+  })
 }
 
 export function readShadows(root) {
   const css = readFileSync(join(root, "src/styles/theme.css"), "utf8")
-  return ["tooltip", "menu", "modal", "card", "card-hover", "button", "button-inverted", "track"].map((name) => ({
-    name: `shadow-${name}`,
-    uso: {
-      tooltip: "Tooltip.",
-      menu: "DropdownMenu, Select, Combobox, Popover, el tooltip de un Chart.",
-      modal: "Dialog, AlertDialog, Sheet.",
-      card: "Lo que flota en reposo: Card `default`, Button `outline` y `secondary`, los controles de formulario, Toggle, Kbd, Toolbar, ThemeSwitcher, Alert, Table, SidebarSearch y la barra mobile del AppShell.",
-      "card-hover": "Card `interactive` al pasar el puntero: sube un pixel y la sombra crece.",
-      button: "Lo sólido de color que se aprieta: Button `accent` y `destructive`. Filo claro arriba, 1px abajo.",
-      "button-inverted": "Lo sólido en gray-1000: Button `default`, Checkbox y Radio marcados. En claro es el mismo filo claro; en oscuro (superficie blanca) el filo es gris.",
-      track: "Lo hundido: la pista de Switch, Slider, Progress y Meter, y la Card `subtle`. Sombra interior de 1px.",
-    }[name],
-    presente: css.includes(`--sf-shadow-${name}:`),
-  }))
+  const uso = {
+    menu: "DropdownMenu, ContextMenu, Menubar, Select, Combobox, Popover, HoverCard, Command, el toast. `0 11px 34px` con el filo de 1 px.",
+    modal: "Dialog, AlertDialog, Sheet, Drawer: la misma que el menú.",
+    tooltip: "Tooltip y la etiqueta del AiLauncher.",
+    widget: "La Card (el widget de iCloud) y `WidgetCard`.",
+    segment: "El segmento activo del segmentado (Tabs, ThemeSwitcher, ToggleGroup).",
+    badge: "`Badge variant=\"count\"`.",
+    thumbnail: "El filo de una miniatura: `FileGrid`, el chip del total de `StackedMeter`.",
+    card: "Plana (sin sombra): queda para la app.",
+    "card-hover": "Card `interactive` al pasar el puntero.",
+  }
+  return Object.entries(uso).map(([name, text]) => ({ name: `shadow-${name}`, uso: text, presente: css.includes(`--sf-shadow-${name}:`) }))
 }

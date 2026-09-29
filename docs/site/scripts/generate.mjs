@@ -29,7 +29,7 @@ const root = join(here, "..", "..")
 const SITE = "https://ui.sebastianfermanelli.com"
 const AUTHOR = "sebafermanelli <https://github.com/sebafermanelli>"
 const BLURB =
-  "Design system para React: Geist (el lenguaje visual de Vercel) sobre las primitivas de shadcn/ui base-nova (Base UI), empaquetado como una sola dependencia. Tailwind v4, Base UI, React 19, Next 15/16."
+  "Design system para React con el lenguaje visual de iCloud web sobre las primitivas de shadcn/ui base-nova (Base UI), empaquetado como una sola dependencia. Tailwind v4, Base UI, React 19, Next 15/16."
 
 const pkg = JSON.parse(readFileSync(join(root, "package.json"), "utf8"))
 
@@ -131,7 +131,10 @@ const backgroundsTable = table(
 
 const typographyTable = table(
   ["Utilidad", "Tamaño", "Interlineado", "Peso", "Tracking"],
-  typography.map((entry) => [`\`${entry.name}\``, entry.size, entry.leading, entry.weight, entry.tracking])
+  // Solo los roles de 2.0: las clases de Geist siguen andando pero están obsoletas (se van en 3.0).
+  typography
+    .filter((entry) => !/^text-(heading|button|label|copy)-\d/.test(entry.name))
+    .map((entry) => [`\`${entry.name}\``, entry.size, entry.leading, entry.weight, entry.tracking])
 )
 
 const radiiTable = table(
@@ -174,7 +177,7 @@ const pages = [
   {
     slug: "tokens",
     title: "Tokens",
-    description: "Color, tipografía, radios y sombras. Los valores salen de `tokens/geist.json` y de `theme.css`.",
+    description: "Superficies, color, tipografía, radios y sombras. Los valores salen de `theme.css` y de `tokens/geist.json`.",
     body: loadPage("tokens"),
   },
   {
