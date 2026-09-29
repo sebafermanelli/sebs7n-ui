@@ -103,7 +103,12 @@ function SplitView({
       incoming
     // Una fila marcada puede ser el `<li>`: el foco va a lo enfocable de adentro.
     const focusable = target.matches("a, button, input, [tabindex]") ? target : (target.querySelector<HTMLElement>("a, button, input, [tabindex]") ?? target)
-    if (!focusable.matches("a, button, input, select, textarea, [tabindex]")) focusable.setAttribute("tabindex", "-1")
+    // Un tabindex puesto solo para llevar el foco se saca al irse: si no, el título queda para siempre
+    // enfocable con el click.
+    if (!focusable.matches("a, button, input, select, textarea, [tabindex]")) {
+      focusable.setAttribute("tabindex", "-1")
+      focusable.addEventListener("blur", () => focusable.removeAttribute("tabindex"), { once: true })
+    }
     focusable.focus()
   }, [pane])
 
@@ -166,7 +171,13 @@ function makePane(name: SplitViewPane, slot: string, paneClassName: string, hand
           {...props}
         />
         {width !== undefined && handleClassName && (
-          <PaneHandle name={name as keyof SplitViewWidths} paneId={id} paneLabel={props["aria-label"]} className={handleClassName} />
+          <PaneHandle
+            name={name as keyof SplitViewWidths}
+            paneId={id}
+            paneLabel={props["aria-label"]}
+            paneLabelledBy={props["aria-labelledby"]}
+            className={handleClassName}
+          />
         )}
       </PaneContext.Provider>
     )
@@ -178,8 +189,21 @@ function makePane(name: SplitViewPane, slot: string, paneClassName: string, hand
  * El separador de un panel: un elemento de ancho 0 pegado a su borde derecho, que dibuja encima de la
  * línea entre paneles el acento al agarrarla y la banda de foco de 3 px. Es el de `Resizable`, en px.
  */
-function PaneHandle({ name, paneId, paneLabel, className }: { name: keyof SplitViewWidths; paneId: string; paneLabel?: string; className: string }) {
+function PaneHandle({
+  name,
+  paneId,
+  paneLabel,
+  paneLabelledBy,
+  className,
+}: {
+  name: keyof SplitViewWidths
+  paneId: string
+  paneLabel?: string
+  paneLabelledBy?: string
+  className: string
+}) {
   const resize = React.useContext(ResizeContext)!
+  const id = React.useId()
   const labels = useLabels().resizable
   const [min, max] = LIMITS[name]
   const width = resize.widths[name]
@@ -188,7 +212,10 @@ function PaneHandle({ name, paneId, paneLabel, className }: { name: keyof SplitV
       role="separator"
       tabIndex={0}
       data-slot="split-view-handle"
+      id={id}
       aria-label={paneLabel ? `${labels.handle}: ${paneLabel}` : labels.handle}
+      // Un panel nombrado por su título: el separador se nombra con su propio texto y ese título.
+      aria-labelledby={!paneLabel && paneLabelledBy ? `${id} ${paneLabelledBy}` : undefined}
       aria-orientation="vertical"
       aria-controls={paneId}
       aria-valuenow={width}

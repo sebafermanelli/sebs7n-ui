@@ -106,6 +106,34 @@ describe("SplitView resizable", () => {
     expect(separador.className).toContain("hidden")
   })
 
+  it("el separador de un panel nombrado con aria-labelledby también lleva su nombre", () => {
+    render(
+      <SplitView resizable>
+        <SplitViewSidebar aria-labelledby="titulo-carpetas">
+          <h2 id="titulo-carpetas">Carpetas</h2>
+        </SplitViewSidebar>
+        <SplitViewList aria-label="Facturas">Lista</SplitViewList>
+        <SplitViewDetail aria-label="Factura">Detalle</SplitViewDetail>
+      </SplitView>
+    )
+    expect(screen.getByRole("separator", { name: "Cambiar el tamaño Carpetas" })).toBeInTheDocument()
+  })
+
+  it("si el arrastre pierde la captura del puntero, termina y avisa", async () => {
+    const { fireEvent } = await import("@testing-library/react")
+    const onWidthsChange = vi.fn()
+    render(<Mail onWidthsChange={onWidthsChange} resizable />)
+    const separador = screen.getByRole("separator", { name: /Carpetas/ })
+    fireEvent.pointerDown(separador, { button: 0, clientX: 230, pointerId: 1 })
+    fireEvent.pointerMove(separador, { clientX: 260, pointerId: 1 })
+    fireEvent(separador, new Event("lostpointercapture"))
+    expect(onWidthsChange).toHaveBeenCalledTimes(1)
+    expect(separador).not.toHaveAttribute("data-dragging")
+    // Un pointerup después ya no hace nada.
+    fireEvent.pointerUp(separador, { pointerId: 1 })
+    expect(onWidthsChange).toHaveBeenCalledTimes(1)
+  })
+
   it("teclado: → de a 10 px, Shift de a 40, Home/End a los extremos; avisa el ancho", async () => {
     const onWidthsChange = vi.fn()
     render(<Mail onWidthsChange={onWidthsChange} resizable />)
@@ -180,6 +208,15 @@ describe("SplitView · el foco al cambiar de panel", () => {
     expect(screen.getByRole("heading", { name: "Factura 0012" })).toHaveFocus()
     await userEvent.click(screen.getByRole("button", { name: "Facturas" }))
     expect(screen.getByRole("button", { name: "Acme S.A." })).toHaveFocus()
+  })
+
+  it("el tabindex que se pone para llevar el foco se saca al irse", async () => {
+    render(<Correo />)
+    await userEvent.click(screen.getByRole("button", { name: "Acme S.A." }))
+    const titulo = screen.getByRole("heading", { name: "Factura 0012" })
+    expect(titulo).toHaveFocus()
+    await userEvent.tab()
+    expect(titulo).not.toHaveAttribute("tabindex")
   })
 
   it("si el panel de antes sigue a la vista (ancho), el foco no se mueve", async () => {
