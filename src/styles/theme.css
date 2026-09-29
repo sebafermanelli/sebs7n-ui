@@ -187,7 +187,7 @@
    * 7,55 y 6,66, destructive 4,75 y 4,79), así que no hay que retocar nada.
    *
    * En código nuevo va el vocabulario de arriba, no este: dos nombres para el
-   * mismo color es lo que `reglas.md` dice que no queremos. Está documentado en
+   * mismo color es lo que `AGENTS.md` dice que no queremos. Está documentado en
    * la página de Tokens del sitio.
    */
   --color-foreground: var(--sf-gray-1000);
@@ -1082,7 +1082,7 @@
 @utility text-mono-body { font-family: var(--font-mono); font-size: 14px; line-height: 18px; font-weight: 400; }
 @utility text-mono-callout { font-family: var(--font-mono); font-size: 12px; line-height: 16px; font-weight: 400; }
 
-/* Escala de Geist: OBSOLETA desde 2.0. Queda con los mismos valores para que las apps migren a su ritmo (ver /docs/migrating-to-2); ningún componente del paquete la usa. Se borra en 3.0. */
+/* Escala de Geist: OBSOLETA desde 2.0. Queda con los mismos valores para que las apps migren a su ritmo; ningún componente del paquete la usa. Se borra en 3.0. */
 
 /**
  * Corrección óptica del peso de los títulos.

@@ -4,9 +4,9 @@
 
 Los issues entran por tres formularios (`.github/ISSUE_TEMPLATE/`): bug, pedido de componente y
 mejora. No hay issues en blanco; las preguntas van a Discussions. Un pedido que se empieza a
-construir lleva la etiqueta `in-progress`; al publicarse se cierra como *completed* y pasa a
-«Publicados» en `/docs/requests`. Si cambiás el `id` de un campo, `docs/site/test/issue-forms.test.ts`
-te lo marca: el sitio precarga esos campos por URL.
+construir lleva la etiqueta `in-progress`; al publicarse se cierra como *completed*.
+
+Las reglas de diseño, de accesibilidad y las convenciones del repo están en [`AGENTS.md`](AGENTS.md).
 
 ## Correr los tests
 
@@ -109,7 +109,8 @@ rompía, por qué esta forma y no la obvia.
 [Conventional Commits](https://www.conventionalcommits.org/es/v1.0.0/): `feat(drawer): …`,
 `fix(tabs): …`, `docs: …`, `chore(deps): …`. Un commit por unidad lógica, y el cuerpo con el
 porqué —mismo criterio que los comentarios—. Versionado [SemVer 2.0.0](https://semver.org/lang/es/);
-mientras el paquete sea `0.x`, un minor puede traer cambios incompatibles, siempre marcados
-**Breaking** en el `CHANGELOG.md`.
+un cambio incompatible espera al major.
 
-Cada PR suma su entrada al `CHANGELOG.md` bajo `## [Unreleased]`.
+El `CHANGELOG.md` es corto a propósito: **una línea por versión**, la más nueva arriba. El PR que
+cambia algo para quien usa el paquete ajusta la línea «sin publicar»; el detalle va en el
+cuerpo de los commits.

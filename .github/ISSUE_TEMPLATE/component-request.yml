@@ -5,7 +5,7 @@ labels: ["request"]
 body:
   - type: markdown
     attributes:
-      value: Los pedidos se ven en https://ui.sebastianfermanelli.com/docs/requests. Si ya está pedido, votalo con 👍 en vez de abrir otro.
+      value: Los pedidos se ven en https://github.com/sebafermanelli/sebs7n-ui/issues?q=label%3Arequest. Si ya está pedido, votalo con 👍 en vez de abrir otro.
   - type: input
     id: component
     attributes:
