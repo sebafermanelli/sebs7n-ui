@@ -1,8 +1,9 @@
 "use client"
 
 import { Select as SelectPrimitive } from "@base-ui/react/select"
-import { CheckIcon, ChevronDownIcon, ChevronsUpDownIcon, ChevronUpIcon } from "lucide-react"
+import { ChevronDownIcon, ChevronsUpDownIcon, ChevronUpIcon } from "lucide-react"
 
+import { MenuCheck } from "../internal/menu-check.js"
 import { cn, type WithClassName } from "../lib/utils.js"
 import { inputControlClassName, inputDisabledClassName, inputPaddingClassName, inputSizeClassName } from "../variants/input.js"
 import { menuGutterClassName, menuIndicatorClassName, menuItemClassName, menuLabelClassName, menuPopupClassName, menuSeparatorClassName } from "../variants/menu.js"
@@ -105,13 +106,13 @@ function SelectContent({
 
 type SelectItemProps = WithClassName<SelectPrimitive.Item.Props>
 
-// Todas las opciones reservan la canaleta del tilde, esté elegida o no: así el texto no salta
-// al cambiar de opción y la lista se lee como una columna (el pop-up menu de macOS).
+// Todas las opciones reservan la columna del tilde (a la derecha, el círculo de acento del
+// «View as» de iCloud), esté elegida o no: el ancho de la lista no cambia al elegir.
 function SelectItem({ className, children, ...props }: SelectItemProps) {
   return (
     <SelectPrimitive.Item data-slot="select-item" className={cn(menuItemClassName, "w-full", className, menuGutterClassName)} {...props}>
       <SelectPrimitive.ItemIndicator data-slot="select-item-indicator" className={menuIndicatorClassName}>
-        <CheckIcon />
+        <MenuCheck />
       </SelectPrimitive.ItemIndicator>
       <SelectPrimitive.ItemText className="flex flex-1 items-center gap-2 whitespace-nowrap">{children}</SelectPrimitive.ItemText>
     </SelectPrimitive.Item>
@@ -127,8 +128,7 @@ function SelectGroup({ className, ...props }: SelectGroupProps) {
 type SelectLabelProps = WithClassName<SelectPrimitive.GroupLabel.Props>
 
 function SelectLabel({ className, ...props }: SelectLabelProps) {
-  // Alinea con el texto de las opciones, después de la canaleta.
-  return <SelectPrimitive.GroupLabel data-slot="select-label" className={cn(menuLabelClassName, className, menuGutterClassName)} {...props} />
+  return <SelectPrimitive.GroupLabel data-slot="select-label" className={cn(menuLabelClassName, className)} {...props} />
 }
 
 type SelectSeparatorProps = WithClassName<SelectPrimitive.Separator.Props>

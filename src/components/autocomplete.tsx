@@ -83,8 +83,7 @@ function AutocompleteItem({ className, ...props }: AutocompleteItemProps) {
   return <AutocompletePrimitive.Item data-slot="autocomplete-item" className={cn(menuItemClassName, "w-full", className)} {...props} />
 }
 
-// Propio y no el de Combobox: las sugerencias no llevan tilde, así que no hay canaleta con la
-// que alinear y el título se queda en `px-2`, como ellas.
+// Propio y no el de Combobox: el mismo título, con el nombre de parte de Autocomplete.
 function AutocompleteLabel({ className, ...props }: ComboboxLabelProps) {
   return <AutocompletePrimitive.GroupLabel data-slot="autocomplete-label" className={cn(menuLabelClassName, className)} {...props} />
 }

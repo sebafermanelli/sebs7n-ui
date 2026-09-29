@@ -57,7 +57,10 @@ function Editor({ onGuardar = () => {} }: { onGuardar?: () => void } = {}) {
         <MenubarContent>
           <MenubarGroup>
             <MenubarLabel>Paneles</MenubarLabel>
-            <MenubarCheckboxItem defaultChecked>Barra lateral</MenubarCheckboxItem>
+            <MenubarCheckboxItem defaultChecked>
+              Barra lateral
+              <MenubarShortcut>⌘B</MenubarShortcut>
+            </MenubarCheckboxItem>
           </MenubarGroup>
         </MenubarContent>
       </MenubarMenu>
@@ -152,15 +155,16 @@ describe("Menubar", () => {
     await waitFor(() => expect(titulo("Editar")).toHaveFocus())
   })
 
-  it("el tilde va a la izquierda, del lado contrario al atajo", async () => {
+  it("el tilde va a la derecha, después del atajo", async () => {
     render(<Editor />)
     await userEvent.click(titulo("Ver"))
 
-    const check = await screen.findByRole("menuitemcheckbox", { name: "Barra lateral" })
+    const check = await screen.findByRole("menuitemcheckbox", { name: /Barra lateral/ })
     expect(check).toHaveAttribute("aria-checked", "true")
-    expect(check).toHaveClass("pl-7")
-    expect(check.className).not.toMatch(/\bpr-8\b/)
-    expect(check.querySelector("[data-slot=menubar-item-indicator]")).toHaveClass("left-2")
+    // El tilde va en la columna de la derecha, después del atajo, que conserva su lugar.
+    expect(check).toHaveClass("pr-9")
+    expect(check.querySelector("[data-slot=menubar-item-indicator]")).toHaveClass("right-2.5")
+    expect(check.querySelector("[data-slot=menubar-shortcut]")).toHaveClass("ml-auto")
   })
 
   it("el título abierto se marca con fondo y comparte la pastilla del sistema", async () => {

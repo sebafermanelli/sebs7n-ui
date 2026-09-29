@@ -63,6 +63,7 @@ export {
   inputSizeClassName,
 } from "./variants/input.js"
 export {
+  menuCheckClassName,
   menuGutterClassName,
   menuIndicatorClassName,
   menuInsetClassName,

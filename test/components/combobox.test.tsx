@@ -351,7 +351,7 @@ describe("Autocomplete", () => {
 })
 
 describe("menús de macOS (2.0)", () => {
-  it("Combobox: el tilde de la elegida va a la izquierda y todas las opciones reservan la canaleta", async () => {
+  it("Combobox: el tilde de la elegida va a la derecha y todas las opciones reservan su columna", async () => {
     render(
       <Combobox items={COUNTRIES} defaultValue="Chile" defaultOpen>
         <ComboboxInput aria-label="País" />
@@ -373,11 +373,12 @@ describe("menús de macOS (2.0)", () => {
     )
     const listbox = await screen.findByRole("listbox")
     const elegida = within(listbox).getByRole("option", { name: "Chile" })
-    expect(elegida).toHaveClass("pl-7")
-    expect(elegida.className).not.toMatch(/\bpr-8\b/)
-    expect(elegida.querySelector("[data-slot=combobox-item-indicator]")).toHaveClass("left-2")
-    expect(within(listbox).getByRole("option", { name: "Argentina" })).toHaveClass("pl-7")
-    expect(screen.getByText("Sudamérica")).toHaveClass("pl-7")
+    expect(elegida).toHaveClass("pr-9")
+    expect(elegida.querySelector("[data-slot=combobox-item-indicator]")).toHaveClass("right-2.5")
+    // Todas reservan la columna del tilde: el ancho de la lista no cambia al elegir.
+    expect(within(listbox).getByRole("option", { name: "Argentina" })).toHaveClass("pr-9")
+    // El título alinea con el texto de las opciones, que arranca en el mismo px-2.5.
+    expect(screen.getByText("Sudamérica").className).not.toMatch(/(^|\s)pl-7\b/)
   })
 
   it("Combobox: el botón que abre la lista es ⌃⌄, como el de Select, también con chips", () => {
@@ -411,7 +412,7 @@ describe("menús de macOS (2.0)", () => {
     expect(grupo.querySelector("[data-slot=autocomplete-trigger]")).toBeNull()
   })
 
-  it("Autocomplete: sin tilde no hay canaleta, ni en las sugerencias ni en el título", async () => {
+  it("Autocomplete: sin tilde no hay columna, ni en las sugerencias ni en el título", async () => {
     render(
       <Autocomplete items={["Rosario", "Rafaela"]} defaultOpen>
         <AutocompleteInput aria-label="Ciudad" />
@@ -426,8 +427,8 @@ describe("menús de macOS (2.0)", () => {
       </Autocomplete>
     )
     const sugerencia = await screen.findByRole("option", { name: "Rosario" })
-    expect(sugerencia.className).not.toMatch(/(^|\s)pl-7\b/)
-    expect(screen.getByText("Santa Fe").className).not.toMatch(/(^|\s)pl-7\b/)
+    expect(sugerencia.className).not.toMatch(/(^|\s)pr-9\b/)
+    expect(screen.getByText("Santa Fe").className).not.toMatch(/(^|\s)pr-9\b/)
   })
 })
 

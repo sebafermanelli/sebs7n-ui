@@ -2,8 +2,9 @@
 
 import * as React from "react"
 import { Combobox as ComboboxPrimitive } from "@base-ui/react/combobox"
-import { CheckIcon, ChevronsUpDownIcon, Loader2Icon, XIcon } from "lucide-react"
+import { ChevronsUpDownIcon, Loader2Icon, XIcon } from "lucide-react"
 
+import { MenuCheck } from "../internal/menu-check.js"
 import { nombreDeQuitar } from "../internal/remove-label.js"
 import { renderShellTrigger } from "../internal/shell-trigger.js"
 import { useLabels } from "../lib/labels.js"
@@ -103,13 +104,13 @@ function ComboboxList({ className, ...props }: ComboboxListProps) {
 
 type ComboboxItemProps = WithClassName<ComboboxPrimitive.Item.Props>
 
-// menuItemClassName + tilde a la izquierda si está elegido. Todas las opciones reservan la
-// canaleta, como en Select: el texto no salta al elegir.
+// menuItemClassName + el círculo de acento a la derecha si está elegido. Todas las opciones
+// reservan esa columna, como en Select: el ancho no cambia al elegir.
 function ComboboxItem({ className, children, ...props }: ComboboxItemProps) {
   return (
     <ComboboxPrimitive.Item data-slot="combobox-item" className={cn(menuItemClassName, "w-full", className, menuGutterClassName)} {...props}>
       <ComboboxPrimitive.ItemIndicator data-slot="combobox-item-indicator" className={menuIndicatorClassName}>
-        <CheckIcon />
+        <MenuCheck />
       </ComboboxPrimitive.ItemIndicator>
       <span className="flex min-w-0 flex-1 items-center gap-2 truncate">{children}</span>
     </ComboboxPrimitive.Item>
@@ -125,9 +126,8 @@ function ComboboxGroup({ className, ...props }: ComboboxGroupProps) {
 type ComboboxLabelProps = WithClassName<ComboboxPrimitive.GroupLabel.Props>
 
 function ComboboxLabel({ className, ...props }: ComboboxLabelProps) {
-  // Alinea con el texto de las opciones, después de la canaleta. Autocomplete tiene el suyo sin
-  // canaleta, porque sus sugerencias no llevan tilde.
-  return <ComboboxPrimitive.GroupLabel data-slot="combobox-label" className={cn(menuLabelClassName, className, menuGutterClassName)} {...props} />
+  // Alinea con el texto de las opciones: el tilde va a la derecha y no corre nada.
+  return <ComboboxPrimitive.GroupLabel data-slot="combobox-label" className={cn(menuLabelClassName, className)} {...props} />
 }
 
 type ComboboxSeparatorProps = WithClassName<ComboboxPrimitive.Separator.Props>

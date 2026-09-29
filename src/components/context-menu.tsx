@@ -2,8 +2,9 @@
 
 import type * as React from "react"
 import { ContextMenu as ContextMenuPrimitive } from "@base-ui/react/context-menu"
-import { CheckIcon, ChevronRightIcon } from "lucide-react"
+import { ChevronRightIcon } from "lucide-react"
 
+import { MenuCheck } from "../internal/menu-check.js"
 import { cn, type WithClassName } from "../lib/utils.js"
 import {
   menuGutterClassName,
@@ -174,7 +175,7 @@ function ContextMenuCheckboxItem({ className, children, ...props }: ContextMenuC
   return (
     <ContextMenuPrimitive.CheckboxItem data-slot="context-menu-checkbox-item" className={cn(menuItemClassName, className, menuGutterClassName)} {...props}>
       <ContextMenuPrimitive.CheckboxItemIndicator data-slot="context-menu-item-indicator" className={menuIndicatorClassName}>
-        <CheckIcon />
+        <MenuCheck />
       </ContextMenuPrimitive.CheckboxItemIndicator>
       {children}
     </ContextMenuPrimitive.CheckboxItem>
@@ -191,7 +192,7 @@ function ContextMenuRadioItem({ className, children, ...props }: ContextMenuRadi
   return (
     <ContextMenuPrimitive.RadioItem data-slot="context-menu-radio-item" className={cn(menuItemClassName, className, menuGutterClassName)} {...props}>
       <ContextMenuPrimitive.RadioItemIndicator data-slot="context-menu-item-indicator" className={menuIndicatorClassName}>
-        <CheckIcon />
+        <MenuCheck />
       </ContextMenuPrimitive.RadioItemIndicator>
       {children}
     </ContextMenuPrimitive.RadioItem>

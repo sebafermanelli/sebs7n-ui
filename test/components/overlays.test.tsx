@@ -143,7 +143,7 @@ describe("Select", () => {
     expect(onValueChange).toHaveBeenCalledWith("usd", expect.anything())
   })
 
-  it("macOS (2.0): el tilde de la opción elegida va a la izquierda y todas reservan la canaleta", async () => {
+  it("iCloud (R3): el tilde de la opción elegida es el círculo de la derecha y todas reservan su columna", async () => {
     render(
       <Select defaultValue="ars" defaultOpen items={{ ars: "Pesos", usd: "Dólares" }}>
         <SelectTrigger aria-label="Moneda">
@@ -160,12 +160,13 @@ describe("Select", () => {
     )
     const elegida = await screen.findByRole("option", { name: "Pesos" })
     const otra = screen.getByRole("option", { name: "Dólares" })
-    expect(elegida).toHaveClass("pl-7")
-    expect(otra).toHaveClass("pl-7")
-    expect(elegida.className).not.toMatch(/\bpr-8\b/)
-    expect(elegida.querySelector("[data-slot=select-item-indicator]")).toHaveClass("left-2")
-    // El título alinea con el texto de las opciones, no con el tilde.
-    expect(screen.getByText("Monedas")).toHaveClass("pl-7")
+    expect(elegida).toHaveClass("pr-9")
+    expect(otra).toHaveClass("pr-9")
+    expect(elegida.querySelector("[data-slot=select-item-indicator]")).toHaveClass("right-2.5")
+    expect(elegida.querySelector("[data-slot=menu-check]")).toHaveClass("rounded-full", "bg-brand-900")
+    // El título alinea con el texto de las opciones: los dos arrancan en px-2.5.
+    expect(screen.getByText("Monedas")).toHaveClass("px-2.5")
+    expect(screen.getByText("Monedas").className).not.toMatch(/(^|\s)pl-7\b/)
   })
 })
 
@@ -226,7 +227,7 @@ describe("Select como pop-up button de macOS (2.0)", () => {
     expect(panel.className).not.toMatch(/overflow-y-auto/)
   })
 
-  it("un px-* de la app no se come la canaleta de las opciones", async () => {
+  it("un px-* de la app no se come la columna del tilde", async () => {
     render(
       <Select defaultOpen defaultValue="ars" items={{ ars: "Pesos" }}>
         <SelectTrigger aria-label="Moneda">
@@ -242,8 +243,8 @@ describe("Select como pop-up button de macOS (2.0)", () => {
         </SelectContent>
       </Select>
     )
-    expect(await screen.findByRole("option", { name: "Pesos" })).toHaveClass("px-3", "pl-7")
-    expect(screen.getByText("Monedas")).toHaveClass("px-3", "pl-7")
+    expect(await screen.findByRole("option", { name: "Pesos" })).toHaveClass("px-3", "pr-9")
+    expect(screen.getByText("Monedas")).toHaveClass("px-3")
   })
 
   it("con alignItemWithTrigger={false} vuelve a bajar como un menú", async () => {

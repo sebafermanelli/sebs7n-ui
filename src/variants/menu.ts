@@ -4,8 +4,8 @@
 // Autocomplete. Todo lo que se abre como una lista de opciones se ve igual porque sale de acá.
 
 /**
- * `inset` corre el contenido a la izquierda para que alinee con los ítems que tienen tilde
- * (la canaleta de `menuGutterClassName`). Estaba declarado tres veces con el mismo nombre —uno por menú—, y como los tres
+ * `inset` corre el contenido a la derecha para que alinee con el texto de los ítems que llevan
+ * ícono (`menuInsetClassName`). Estaba declarado tres veces con el mismo nombre —uno por menú—, y como los tres
  * son `export *` del barrel, no se podían exportar sin chocar entre sí.
  */
 export type MenuInsetProps = { inset?: boolean }
@@ -48,26 +48,27 @@ export const menuPopupClassName =
   "max-h-(--available-height) min-w-52 origin-(--transform-origin) overflow-y-auto rounded-menu bg-surface p-1.25 text-label shadow-menu outline-none transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0"
 
 /**
- * La canaleta del tilde (2.0). En macOS el tilde de un ítem marcable va a la **izquierda**, en
- * una canaleta de 24 px, y el texto de todo el menú arranca después de ella. Tres piezas:
+ * El tilde (R3): el **círculo de acento a la derecha** del «View as» de Drive, que es el Select de
+ * iCloud. Reemplaza la canaleta izquierda de la fase 3 (la del menú de macOS). Cuatro piezas:
  *
- * - `menuGutterClassName` (`pl-7`) va en todo ítem que puede llevar tilde: `CheckboxItem`,
- *   `RadioItem` y las opciones de Select y Combobox (elegida o no: todas reservan el lugar).
- * - `menuInsetClassName` (`data-inset:pl-7`) es lo que hace `inset` en un ítem común o un título:
- *   en un menú que mezcla ítems con tilde y sin él, los alinea a todos.
- * - `menuIndicatorClassName` ubica el tilde en la canaleta: 8 px de borde, 16 de ícono, 4 de aire.
+ * - `menuGutterClassName` (`pr-9`) va en todo ítem que puede llevar tilde: `CheckboxItem`,
+ *   `RadioItem` y las opciones de Select y Combobox (elegida o no: todas reservan el lugar, así el
+ *   ancho del menú no cambia al marcar). El atajo, con su `ml-auto`, queda antes de esa columna.
+ * - `menuIndicatorClassName` ubica el tilde en la columna: 10 px del borde, 16 de círculo.
+ * - `menuCheckClassName` es el círculo: `brand-900` (la tinta de link) con el tilde en el color de
+ *   la superficie; claro sobre oscuro en claro, oscuro sobre claro en oscuro, como el día elegido
+ *   del calendario de iCloud.
+ * - `menuInsetClassName` (`data-inset:pl-9`) es lo que hace `inset` en un ítem común o un título:
+ *   lo alinea con el texto de los ítems que llevan ícono (10 + 16 + 10).
  *
- * Un menú sin nada marcable no reserva canaleta y sus ítems se quedan en `px-2`, como los menús
- * de macOS que no tienen tildes. El `pl-7` le gana al `px-2` del ítem porque Tailwind v4 emite
- * `padding-left` después de `padding-inline` (verificado con el compilador 4.3).
- *
- * Los componentes lo ponen **después** del `className` de la app en el `cn()`: un `px-3` de la app
- * (más aire a la derecha, por un atajo largo) haría que tailwind-merge descarte el `pl-7` si fuera
- * antes, y el texto se metería en la canaleta del tilde.
+ * Los componentes ponen el `pr-9` **después** del `className` de la app en el `cn()`: un `px-3` de
+ * la app haría que tailwind-merge descarte el `pr-9` si fuera antes, y el texto se metería debajo
+ * del tilde. Tailwind v4 emite `padding-right` después de `padding-inline`, así que le gana al `px-*`.
  */
-export const menuGutterClassName = "pl-7"
-export const menuInsetClassName = "data-inset:pl-7"
-export const menuIndicatorClassName = "pointer-events-none absolute left-2 flex items-center"
+export const menuGutterClassName = "pr-9"
+export const menuInsetClassName = "data-inset:pl-9"
+export const menuIndicatorClassName = "pointer-events-none absolute right-2.5 flex items-center"
+export const menuCheckClassName = "flex size-4 items-center justify-center rounded-full bg-brand-900 text-surface"
 
 /**
  * El título de un grupo de ítems: DropdownMenu, ContextMenu, Menubar, Select, Combobox,

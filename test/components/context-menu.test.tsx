@@ -163,15 +163,14 @@ describe("ContextMenu", () => {
 })
 
 describe("menú de macOS (2.0)", () => {
-  it("el tilde va a la izquierda y el texto alinea después de la canaleta", async () => {
+  it("el tilde va a la derecha, en el círculo de acento", async () => {
     render(<Archivo />)
     abrirConClickDerecho()
 
     const tildado = await screen.findByRole("menuitemcheckbox", { name: "Marcada como favorita" })
-    expect(tildado).toHaveClass("pl-7")
-    expect(tildado.className).not.toMatch(/\bpr-8\b/)
-    expect(tildado.querySelector("[data-slot=context-menu-item-indicator]")).toHaveClass("left-2")
-    expect(screen.getByRole("menuitem", { name: /Renombrar/ })).toHaveClass("data-inset:pl-7")
-    expect(screen.getByText("portada-marzo.jpg", { selector: "[data-slot=context-menu-label]" })).toHaveClass("data-inset:pl-7")
+    expect(tildado).toHaveClass("pr-9")
+    expect(tildado.querySelector("[data-slot=context-menu-item-indicator]")).toHaveClass("right-2.5")
+    expect(screen.getByRole("menuitem", { name: /Renombrar/ })).toHaveClass("data-inset:pl-9")
+    expect(screen.getByText("portada-marzo.jpg", { selector: "[data-slot=context-menu-label]" })).toHaveClass("data-inset:pl-9")
   })
 })

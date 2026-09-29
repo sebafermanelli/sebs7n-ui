@@ -3,8 +3,9 @@
 import type * as React from "react"
 import { Menu as MenuPrimitive } from "@base-ui/react/menu"
 import { Menubar as MenubarPrimitive } from "@base-ui/react/menubar"
-import { CheckIcon, ChevronRightIcon } from "lucide-react"
+import { ChevronRightIcon } from "lucide-react"
 
+import { MenuCheck } from "../internal/menu-check.js"
 import { cn, type WithClassName } from "../lib/utils.js"
 import {
   menuGutterClassName,
@@ -135,12 +136,9 @@ function MenubarItem({ className, inset, variant = "default", ...props }: Menuba
 }
 
 /**
- * El tilde va a la **izquierda**, en la canaleta de `menuGutterClassName`, igual que en
- * `DropdownMenu` y `ContextMenu` desde 2.0.
- *
- * Es la convención de los menús de aplicación de macOS, y acá importa además porque la
- * derecha ya está ocupada por el atajo (`MenubarShortcut`): un tilde y un `⌘B` peleando
- * por el mismo borde se leen como una sola columna de ruido.
+ * El tilde va a la **derecha**, en el círculo de acento de iCloud, igual que en `DropdownMenu` y
+ * `ContextMenu`. El atajo (`MenubarShortcut`) queda antes, pegado a la columna del tilde, y conserva
+ * su lugar en un ítem sin marcar.
  */
 type MenubarCheckboxItemProps = WithClassName<MenuPrimitive.CheckboxItem.Props>
 
@@ -148,7 +146,7 @@ function MenubarCheckboxItem({ className, children, ...props }: MenubarCheckboxI
   return (
     <MenuPrimitive.CheckboxItem data-slot="menubar-checkbox-item" className={cn(menuItemClassName, className, menuGutterClassName)} {...props}>
       <MenuPrimitive.CheckboxItemIndicator data-slot="menubar-item-indicator" className={menuIndicatorClassName}>
-        <CheckIcon />
+        <MenuCheck />
       </MenuPrimitive.CheckboxItemIndicator>
       {children}
     </MenuPrimitive.CheckboxItem>
@@ -165,7 +163,7 @@ function MenubarRadioItem({ className, children, ...props }: MenubarRadioItemPro
   return (
     <MenuPrimitive.RadioItem data-slot="menubar-radio-item" className={cn(menuItemClassName, className, menuGutterClassName)} {...props}>
       <MenuPrimitive.RadioItemIndicator data-slot="menubar-item-indicator" className={menuIndicatorClassName}>
-        <CheckIcon />
+        <MenuCheck />
       </MenuPrimitive.RadioItemIndicator>
       {children}
     </MenuPrimitive.RadioItem>

@@ -187,7 +187,7 @@ describe("DropdownMenu", () => {
 })
 
 describe("menú de macOS (2.0)", () => {
-  it("un px-* de la app no se come la canaleta del tilde", async () => {
+  it("un px-* de la app no se come la columna del tilde", async () => {
     render(
       <DropdownMenu defaultOpen>
         <DropdownMenuTrigger>Ver</DropdownMenuTrigger>
@@ -204,11 +204,11 @@ describe("menú de macOS (2.0)", () => {
       </DropdownMenu>
     )
     const tildado = await screen.findByRole("menuitemcheckbox", { name: "Mostrar vencidas" })
-    expect(tildado).toHaveClass("px-3", "pl-7")
-    expect(screen.getByRole("menuitemradio", { name: "Por mes" })).toHaveClass("px-3", "pl-7")
+    expect(tildado).toHaveClass("px-3", "pr-9")
+    expect(screen.getByRole("menuitemradio", { name: "Por mes" })).toHaveClass("px-3", "pr-9")
   })
 
-  it("el tilde va a la izquierda y el texto alinea después de la canaleta", async () => {
+  it("el tilde es el círculo de acento a la derecha, como el «View as» de iCloud", async () => {
     render(
       <DropdownMenu defaultOpen>
         <DropdownMenuTrigger>Ver</DropdownMenuTrigger>
@@ -223,15 +223,18 @@ describe("menú de macOS (2.0)", () => {
       </DropdownMenu>
     )
     const tildado = await screen.findByRole("menuitemcheckbox", { name: "Mostrar vencidas" })
-    expect(tildado).toHaveClass("pl-7")
-    expect(tildado.className).not.toMatch(/\bpr-8\b/)
-    expect(tildado.querySelector("[data-slot=dropdown-menu-item-indicator]")).toHaveClass("left-2")
+    expect(tildado).toHaveClass("pr-9")
+    expect(tildado.className).not.toMatch(/(^|\s)pl-7\b/)
+    const indicador = tildado.querySelector("[data-slot=dropdown-menu-item-indicator]")!
+    expect(indicador).toHaveClass("right-2.5")
+    expect(indicador.firstElementChild).toHaveClass("size-4", "rounded-full", "bg-brand-900", "text-surface")
     const radio = screen.getByRole("menuitemradio", { name: "Por mes" })
-    expect(radio).toHaveClass("pl-7")
-    expect(radio.querySelector("[data-slot=dropdown-menu-item-indicator]")).toHaveClass("left-2")
-    expect(screen.getByRole("menuitem", { name: "Exportar" })).toHaveClass("data-inset:pl-7")
-    // Un menú sin tildes no reserva la canaleta: el ítem común se queda en `px-2`.
-    expect(screen.getByRole("menuitem", { name: "Imprimir" }).className).not.toMatch(/(^|\s)pl-7\b/)
+    expect(radio).toHaveClass("pr-9")
+    expect(radio.querySelector("[data-slot=dropdown-menu-item-indicator]")).toHaveClass("right-2.5")
+    // `inset` alinea con el texto de los ítems que llevan ícono: 10 + 16 + 10.
+    expect(screen.getByRole("menuitem", { name: "Exportar" })).toHaveClass("data-inset:pl-9")
+    // Un ítem sin tilde no reserva la columna.
+    expect(screen.getByRole("menuitem", { name: "Imprimir" }).className).not.toMatch(/(^|\s)pr-9\b/)
   })
 
   it("el título de grupo es una fila de 30, 14/600 en el color del texto (el «View as» de iCloud)", async () => {

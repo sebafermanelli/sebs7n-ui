@@ -2,8 +2,9 @@
 
 import type * as React from "react"
 import { Menu as MenuPrimitive } from "@base-ui/react/menu"
-import { CheckIcon, ChevronRightIcon } from "lucide-react"
+import { ChevronRightIcon } from "lucide-react"
 
+import { MenuCheck } from "../internal/menu-check.js"
 import { cn, type WithClassName } from "../lib/utils.js"
 import {
   menuGutterClassName,
@@ -90,7 +91,7 @@ function DropdownMenuCheckboxItem({ className, children, ...props }: DropdownMen
   return (
     <MenuPrimitive.CheckboxItem data-slot="dropdown-menu-checkbox-item" className={cn(menuItemClassName, className, menuGutterClassName)} {...props}>
       <MenuPrimitive.CheckboxItemIndicator data-slot="dropdown-menu-item-indicator" className={menuIndicatorClassName}>
-        <CheckIcon />
+        <MenuCheck />
       </MenuPrimitive.CheckboxItemIndicator>
       {children}
     </MenuPrimitive.CheckboxItem>
@@ -107,7 +108,7 @@ function DropdownMenuRadioItem({ className, children, ...props }: DropdownMenuRa
   return (
     <MenuPrimitive.RadioItem data-slot="dropdown-menu-radio-item" className={cn(menuItemClassName, className, menuGutterClassName)} {...props}>
       <MenuPrimitive.RadioItemIndicator data-slot="dropdown-menu-item-indicator" className={menuIndicatorClassName}>
-        <CheckIcon />
+        <MenuCheck />
       </MenuPrimitive.RadioItemIndicator>
       {children}
     </MenuPrimitive.RadioItem>
