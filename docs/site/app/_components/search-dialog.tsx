@@ -48,7 +48,8 @@ export default function SearchDialog({ open, onOpenChange }: { open: boolean; on
       shouldFilter={false}
       value={consulta}
     >
-      <CommandInput placeholder="Button, tokens, aria-invalid…" />
+      {/* El placeholder es un ejemplo, no un nombre: el nombre va aparte. */}
+      <CommandInput aria-label="Buscar en la documentación" placeholder="Button, tokens, aria-invalid…" />
       <CommandList>
         {grupos.map(([grupo, entries]) => (
           <CommandGroup heading={grupo} key={grupo}>
@@ -60,13 +61,15 @@ export default function SearchDialog({ open, onOpenChange }: { open: boolean; on
           </CommandGroup>
         ))}
       </CommandList>
-      <CommandEmpty>
-        {index === null
-          ? "Cargando…"
-          : consulta.trim()
-            ? `Sin resultados para «${consulta}».`
-            : "Buscá un componente, un token o una regla."}
-      </CommandEmpty>
+      {/* El vacío es una región `status`: su texto se anuncia cada vez que cambia. Por eso dice
+          «Sin resultados» a secas y la consulta va afuera, solo a la vista; con «Sin resultados
+          para «butt»» el lector lo repetía en cada tecla. */}
+      <CommandEmpty>{index === null ? "Cargando…" : consulta.trim() ? "Sin resultados" : "Buscá un componente, un token o una regla."}</CommandEmpty>
+      {index !== null && consulta.trim() && !grupos.length && (
+        <p aria-hidden="true" className="-mt-5 truncate px-4 pb-6 text-center text-callout text-gray-700">
+          «{consulta}»
+        </p>
+      )}
     </CommandDialog>
   )
 }
