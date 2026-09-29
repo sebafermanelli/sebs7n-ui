@@ -252,6 +252,8 @@ export type Labels = {
   phoneInput: {
     /** Antes del país elegido, en el nombre del selector: «Código de país: Argentina (+54)». */
     country: string
+    /** Lo que se anuncia al pegar un número con «+» o «00» y un código que no está en la lista. */
+    unknownCode: string
   }
   resizable: {
     /** El nombre de un separador sin `aria-label`. Mejor uno propio: «Ancho de la lista». */
@@ -405,7 +407,7 @@ export const defaultLabels: Labels = {
     good: "Buena",
     strong: "Fuerte",
   },
-  phoneInput: { country: "Código de país" },
+  phoneInput: { country: "Código de país", unknownCode: "Código de país desconocido" },
   resizable: { handle: "Cambiar el tamaño" },
   sheet: { close: "Cerrar" },
   sidebar: {

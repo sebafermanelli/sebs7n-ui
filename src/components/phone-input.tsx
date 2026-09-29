@@ -6,7 +6,7 @@ import { ChevronsUpDownIcon } from "lucide-react"
 
 import { countryFlag } from "../lib/countries.js"
 import { useLabels, type Labels } from "../lib/labels.js"
-import { onlyDigits, parsePhone, PHONE_COUNTRIES, phoneCountry, toE164, type PhoneCountry } from "../lib/phone.js"
+import { nationalNumber, onlyDigits, parsePhone, PHONE_COUNTRIES, phoneCountry, type PhoneCountry } from "../lib/phone.js"
 import { cn } from "../lib/utils.js"
 import { InputGroup, InputGroupAddon, InputGroupInput } from "./input-group.js"
 import { SelectContent, SelectItem } from "./select.js"
@@ -42,7 +42,11 @@ type PhoneInputProps = {
  * Un teléfono: a la izquierda, adentro del campo, un selector compacto con la bandera y el código
  * («🇦🇷 +54»); a la derecha, el número, solo dígitos y con el largo máximo del país. El valor es
  * E.164 y un `<input type="hidden">` con `name` lo lleva al formulario. Pegar un número que empieza
- * con «+» cambia el país solo.
+ * con «+» o «00» cambia el país solo; si el código no está en la lista, el número no cambia y se
+ * anuncia.
+ *
+ * El prefijo nacional no entra al E.164: «011 5555 2002» es +54 11 5555 2002. En Argentina, el
+ * celular escrito con el 15 («11 15 5555 2002») pasa a la forma con 9 (+54 9 11 5555 2002).
  *
  * No formatea mientras se escribe ni valida el tipo de línea (eso es libphonenumber). Para validar
  * al enviar, `isValidPhone` de `sebs7n-ui/lib/phone`, que también corre en el servidor.
@@ -69,6 +73,7 @@ function PhoneInput({
 
   const [own, setOwn] = React.useState(defaultValue)
   const value = valueProp !== undefined ? valueProp : own
+  const [status, setStatus] = React.useState("")
   const [chosen, setChosen] = React.useState(() => parsePhone(value, defaultCountry)?.country ?? fallback)
   // El país sale del valor; con un código compartido (+1) o sin número, el que se eligió.
   const parsed = parsePhone(value, chosen.code)
@@ -86,7 +91,10 @@ function PhoneInput({
 
   const commit = (nextCountry: PhoneCountry, nextNational: string) => {
     setChosen(nextCountry)
-    const next = toE164(nextCountry, nextNational.slice(0, nextCountry.max))
+    setStatus("")
+    // Sin el prefijo nacional y con el 15 argentino ya pasado a 9, y recién ahí se corta en el máximo.
+    const digits = nationalNumber(nextCountry, nextNational).slice(0, nextCountry.max)
+    const next = digits ? `+${nextCountry.dial}${digits}` : ""
     if (next === value) return
     if (valueProp === undefined) setOwn(next)
     onValueChange?.(next)
@@ -132,11 +140,17 @@ function PhoneInput({
         id={id}
         inputMode="tel"
         onChange={(event) => {
-          const text = event.currentTarget.value
-          // Pegado con el código («+54 9 11 …»): el país sale del número.
-          const pasted = parsePhone(text, country.code)
-          if (pasted) return commit(pasted.country, pasted.national)
-          commit(country, onlyDigits(text))
+          const text = event.currentTarget.value.trim()
+          // Pegado con el código («+54 9 11 …», «0054 9 11 …»): el país sale del número. Si el código
+          // no está en la tabla, el número queda como estaba: tomar esos dígitos como nacionales
+          // guardaría otro teléfono.
+          if (/^(\+|00)/.test(text)) {
+            const pasted = parsePhone(text.replace(/^00/, "+"), country.code)
+            if (pasted) return commit(pasted.country, pasted.national)
+            if (onlyDigits(text).replace(/^00/, "")) setStatus(labels.unknownCode)
+            return
+          }
+          commit(country, text)
         }}
         placeholder={placeholder}
         type="tel"
@@ -144,6 +158,9 @@ function PhoneInput({
         {...aria}
       />
       {name && <input name={name} type="hidden" value={value} />}
+      <span className="sr-only" data-slot="phone-input-status" role="status">
+        {status}
+      </span>
     </InputGroup>
   )
 }
