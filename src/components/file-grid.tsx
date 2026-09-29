@@ -84,8 +84,27 @@ function FileGrid({
   })
 
   const refs = React.useRef(new Map<string, HTMLDivElement>())
-  // El ítem del menú abierto (o del último: queda durante la animación de salida).
-  const [target, setTarget] = React.useState<{ item: FileGridItem; selected: FileGridItem[] } | null>(null)
+  // Un callback estable por ítem: uno nuevo en cada render hace que React saque y vuelva a poner todos
+  // los refs en cada commit, y lo que corre en el medio (el foco que devuelve el menú al cerrar) veía
+  // el mapa vacío.
+  const refCallbacks = React.useRef(new Map<string, (element: HTMLDivElement | null) => void>())
+  const refFor = (id: string) => {
+    let callback = refCallbacks.current.get(id)
+    if (!callback) {
+      callback = (element) => {
+        if (element) refs.current.set(id, element)
+        else {
+          refs.current.delete(id)
+          refCallbacks.current.delete(id)
+        }
+      }
+      refCallbacks.current.set(id, callback)
+    }
+    return callback
+  }
+  // El ítem del menú abierto (o del último: queda durante la animación de salida) y su lugar, para
+  // devolverle el foco a la vecina si la acción lo saca.
+  const [target, setTarget] = React.useState<{ item: FileGridItem; index: number; selected: FileGridItem[] } | null>(null)
   const typed = React.useRef({ text: "", at: 0 })
 
   const tabStop =
@@ -120,14 +139,31 @@ function FileGrid({
   }
 
   // Antes de abrir el menú de un ítem: como Drive, si no estaba elegido pasa a ser el único elegido.
-  // Con el dedo (`choose` en `false`) solo se anota: un scroll que arranca sobre un ítem no lo elige.
+  // Con el dedo (`choose` en `false`) solo se anota: un scroll que arranca sobre un ítem no lo elige;
+  // se elige cuando el menú de verdad se abre (`onOpenChange`).
   const prepareMenu = (item: FileGridItem, choose = true) => {
     const inSelection = selection.multiple && selection.isSelected(item.id)
-    if (choose) {
-      setFocused(item.id)
-      if (!inSelection) selection.only(item)
-    }
-    setTarget({ item, selected: inSelection ? items.filter((candidate) => selection.isSelected(candidate.id)) : [item] })
+    if (choose) chooseForMenu(item)
+    setTarget({
+      item,
+      index: items.findIndex((candidate) => candidate.id === item.id),
+      selected: inSelection ? items.filter((candidate) => selection.isSelected(candidate.id)) : [item],
+    })
+  }
+  const chooseForMenu = (item: FileGridItem) => {
+    setFocused(item.id)
+    if (!(selection.multiple ? selection.isSelected(item.id) : selection.ids[0] === item.id)) selection.only(item)
+  }
+
+  // Al cerrar, el foco vuelve al ítem del menú; si la acción lo sacó, a la que quedó en su lugar (o a
+  // la última), y si no queda ninguna, a donde Base UI lo deje. El disparador no es enfocable: sin
+  // esto el foco caía en el <body>.
+  const menuReturnFocus = () => {
+    if (!target) return true
+    const own = refs.current.get(target.item.id)
+    if (own) return own
+    const neighbor = items[Math.min(target.index, items.length - 1)]
+    return (neighbor && refs.current.get(neighbor.id)) || (tabStop && refs.current.get(tabStop)) || true
   }
 
   // Cuántos ítems hay en la fila del actual, según el layout: los que comparten su `top`.
@@ -224,6 +260,15 @@ function FileGrid({
       onContextMenu={(event) => {
         if (!(event.target as Element).closest("[role=option]")) event.stopPropagation()
       }}
+      // Tampoco mantener apretado el espacio vacío o un deshabilitado: el long-press de Base UI escucha
+      // todo el contenedor y abriría el menú del último ítem anotado.
+      onTouchStart={
+        menu
+          ? (event) => {
+              if (!(event.target as Element).closest("[role=option]:not([aria-disabled])")) event.stopPropagation()
+            }
+          : undefined
+      }
       className="grid grid-cols-[repeat(auto-fill,minmax(8.5rem,1fr))] gap-x-2 gap-y-4 outline-none"
       {...props}
     >
@@ -232,21 +277,23 @@ function FileGrid({
         return (
           <div
             key={item.id}
-            ref={(element) => {
-              if (element) refs.current.set(item.id, element)
-              else refs.current.delete(item.id)
-            }}
+            ref={refFor(item.id)}
             role="option"
             aria-selected={isSelected}
             aria-disabled={item.disabled || undefined}
+            // Un área sin botón visible: el atajo es lo único que dice que hay menú.
+            aria-keyshortcuts={menu && !item.disabled ? "Shift+F10 ContextMenu" : undefined}
             tabIndex={item.id === tabStop ? 0 : -1}
             data-state={isSelected ? "selected" : undefined}
             onFocus={() => setFocused(item.id)}
             onClick={(event) => onItemClick(event, item)}
             onDoubleClick={() => !item.disabled && onOpen?.(item)}
             onContextMenu={(event) => {
-              if (item.disabled) event.stopPropagation()
-              else if (menu) prepareMenu(item)
+              if (item.disabled) {
+                // Ni el de la grilla ni el nativo del navegador.
+                event.preventDefault()
+                event.stopPropagation()
+              } else if (menu) prepareMenu(item)
             }}
             onTouchStart={menu && !item.disabled ? () => prepareMenu(item, false) : undefined}
             // La caja gris de Drive: una sola, radio 12, alrededor de miniatura, nombre y tipo. Con el
@@ -315,11 +362,15 @@ function FileGrid({
     )
   }
   return (
-    <ContextMenu>
+    <ContextMenu
+      onOpenChange={(open) => {
+        if (open && target) chooseForMenu(target.item)
+      }}
+    >
       <ContextMenuTrigger data-slot="file-grid-container" focusable={false} className={cn("w-full rounded-none", className)}>
         {grid}
       </ContextMenuTrigger>
-      <ContextMenuContent finalFocus={() => (target && refs.current.get(target.item.id)) ?? true}>
+      <ContextMenuContent finalFocus={menuReturnFocus}>
         {target && menu(target.item, target.selected)}
       </ContextMenuContent>
     </ContextMenu>

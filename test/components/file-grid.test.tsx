@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor, within } from "@testing-library/react"
+import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { useState } from "react"
 import { renderToString } from "react-dom/server"
@@ -194,6 +194,84 @@ describe("FileGrid · menu", () => {
     render(<FileGrid aria-label="Archivos" items={ITEMS} menu={menu} />)
     fireEvent.contextMenu(screen.getByRole("listbox"), { clientX: 10, clientY: 10 })
     expect(screen.queryByRole("menu")).toBeNull()
+  })
+
+  it("cada opción con menú dice con qué teclas se abre (aria-keyshortcuts); sin menú, no", () => {
+    const { rerender } = render(<FileGrid aria-label="Archivos" items={[...ITEMS, { id: "x", name: "Viejo.pdf", disabled: true }]} menu={menu} />)
+    expect(opcion("Notas.txt")).toHaveAttribute("aria-keyshortcuts", "Shift+F10 ContextMenu")
+    // El deshabilitado no abre nada: no anuncia un atajo que no hace nada.
+    expect(opcion("Viejo.pdf")).not.toHaveAttribute("aria-keyshortcuts")
+    rerender(<FileGrid aria-label="Archivos" items={ITEMS} />)
+    expect(opcion("Notas.txt")).not.toHaveAttribute("aria-keyshortcuts")
+  })
+
+  it("click derecho en un deshabilitado: ni el menú de la grilla ni el nativo", () => {
+    render(<FileGrid aria-label="Archivos" items={[...ITEMS, { id: "x", name: "Viejo.pdf", disabled: true }]} menu={menu} />)
+    expect(fireEvent.contextMenu(opcion("Viejo.pdf"), { clientX: 10, clientY: 10 })).toBe(false)
+    expect(screen.queryByRole("menu")).toBeNull()
+  })
+})
+
+describe("FileGrid · menú con el dedo y foco al cerrar", () => {
+  const menu = (item: FileGridItem, selected: FileGridItem[]) => (
+    <>
+      <ContextMenuItem>Abrir {item.name}</ContextMenuItem>
+      <ContextMenuItem>Descargar {selected.length}</ContextMenuItem>
+    </>
+  )
+  // El long-press de Base UI: `touchstart` con un dedo y 500 ms quieto.
+  const mantener = async (element: Element) => {
+    fireEvent.touchStart(element, { touches: [{ clientX: 20, clientY: 20 }] })
+    await act(() => new Promise((resolve) => setTimeout(resolve, 600)))
+    fireEvent.touchEnd(element, { touches: [] })
+  }
+
+  it("mantener apretado un espacio vacío o un deshabilitado no abre el menú (ni el del último ítem)", async () => {
+    render(<FileGrid aria-label="Archivos" items={[...ITEMS, { id: "x", name: "Viejo.pdf", disabled: true }]} menu={menu} />)
+    // Un menú anterior deja anotado su ítem.
+    fireEvent.contextMenu(screen.getByText("Notas.txt"), { clientX: 10, clientY: 10 })
+    await screen.findByRole("menu")
+    fireEvent.keyDown(screen.getByRole("menu"), { key: "Escape" })
+    await waitFor(() => expect(screen.queryByRole("menu")).toBeNull())
+    await mantener(screen.getByRole("listbox"))
+    expect(screen.queryByRole("menu")).toBeNull()
+    await mantener(opcion("Viejo.pdf"))
+    expect(screen.queryByRole("menu")).toBeNull()
+  })
+
+  it("mantener apretado un ítem abre su menú y lo elige, como el click derecho", async () => {
+    render(<FileGrid aria-label="Archivos" defaultSelected="a" items={ITEMS} menu={menu} />)
+    await mantener(screen.getByText("Notas.txt"))
+    expect(await screen.findByRole("menuitem", { name: "Abrir Notas.txt" })).toBeInTheDocument()
+    expect(screen.getByText("Notas.txt").closest("[role=option]")).toHaveAttribute("aria-selected", "true")
+    expect(screen.getByText("Factura 0012.pdf").closest("[role=option]")).toHaveAttribute("aria-selected", "false")
+  })
+
+  it("en múltiple, mantener apretado un elegido conserva la selección entera", async () => {
+    render(<FileGrid aria-label="Archivos" defaultSelected={["a", "b"]} items={ITEMS} menu={menu} selectionMode="multiple" />)
+    await mantener(screen.getByText("Factura 0013.pdf"))
+    expect(await screen.findByRole("menuitem", { name: "Descargar 2" })).toBeInTheDocument()
+    expect(screen.getByText("Factura 0012.pdf").closest("[role=option]")).toHaveAttribute("aria-selected", "true")
+  })
+
+  it("si la acción saca el ítem, el foco va al vecino y no al <body>", async () => {
+    function Carpeta() {
+      const [items, setItems] = useState(ITEMS)
+      return (
+        <FileGrid
+          aria-label="Archivos"
+          items={items}
+          menu={(item) => <ContextMenuItem onClick={() => setItems((list) => list.filter((candidate) => candidate.id !== item.id))}>Borrar {item.name}</ContextMenuItem>}
+        />
+      )
+    }
+    render(<Carpeta />)
+    opcion("Contratos").focus()
+    await userEvent.keyboard("{Shift>}{F10}{/Shift}")
+    await userEvent.click(await screen.findByRole("menuitem", { name: "Borrar Contratos" }))
+    await waitFor(() => expect(screen.queryByRole("menu")).toBeNull())
+    expect(screen.queryByText("Contratos")).toBeNull()
+    await waitFor(() => expect(opcion("Logo.png")).toHaveFocus())
   })
 })
 
