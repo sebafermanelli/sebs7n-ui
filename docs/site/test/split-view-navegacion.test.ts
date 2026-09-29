@@ -3,6 +3,7 @@ import { act, createElement, type ComponentType } from "react"
 import { createRoot, type Root } from "react-dom/client"
 import { afterEach, describe, expect, it } from "vitest"
 
+import { FilesShowcase } from "../app/_components/showcase/files"
 import { MailShowcase } from "../app/_components/showcase/mail"
 import { Basico } from "../app/_demos/split-view"
 
@@ -47,5 +48,40 @@ describe("SplitView en angosto: tocar una fila avanza de panel", () => {
     expect(panel()).toBe("list")
     tocar(fila)
     expect(panel()).toBe("detail")
+  })
+})
+
+// Archivos en el teléfono, como Archivos de iOS: primero las ubicaciones, después las carpetas y
+// después lo que hay adentro; «‹» vuelve con el nombre de lo anterior. Antes el sidebar se abría como
+// Sheet con la hamburguesa y el árbol no se veía.
+describe("Archivos del Playground en angosto: paneles como Archivos de iOS", () => {
+  const fila = (texto: string) => [...document.querySelectorAll<HTMLElement>("[role=treeitem]")].find((el) => el.textContent?.trim() === texto)
+  const titulo = () => document.querySelector("[data-slot=split-view-detail] h3")?.textContent
+  const atras = (pane: "list" | "detail") => document.querySelector<HTMLElement>(`[data-slot=split-view-${pane}] [data-slot=split-view-back]`)
+
+  it("ubicaciones → carpetas → archivos, y «‹» vuelve con el nombre de lo anterior", () => {
+    render(createElement(FilesShowcase))
+    expect(panel()).toBe("sidebar")
+    // Sin hamburguesa ni Sheet: las ubicaciones son el primer panel.
+    expect(document.querySelector("[data-slot=sheet-trigger]")).toBeNull()
+    tocar("Mis archivos")
+    expect(panel()).toBe("list")
+    expect(atras("list")?.textContent).toBe("Archivos")
+    // Tocar la carpeta, aunque ya sea la elegida, abre lo de adentro.
+    click(fila("Septiembre")!)
+    expect(panel()).toBe("detail")
+    expect(titulo()).toBe("Septiembre")
+    expect(atras("detail")?.textContent).toBe("2026")
+    click(atras("detail")!)
+    expect(panel()).toBe("detail")
+    expect(titulo()).toBe("2026")
+    expect(atras("detail")?.textContent).toBe("Facturas")
+    click(atras("detail")!)
+    expect(titulo()).toBe("Facturas")
+    expect(atras("detail")?.textContent).toBe("Mis archivos")
+    click(atras("detail")!)
+    expect(panel()).toBe("list")
+    click(atras("list")!)
+    expect(panel()).toBe("sidebar")
   })
 })

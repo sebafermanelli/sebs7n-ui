@@ -15,8 +15,8 @@ import {
   UploadIcon,
   UsersIcon,
 } from "lucide-react"
+import type * as React from "react"
 import { useMemo, useState } from "react"
-import { AppShell } from "sebs7n-ui/app-shell"
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage } from "sebs7n-ui/breadcrumb"
 import {
   ContextMenu,
@@ -39,6 +39,7 @@ import {
   SidebarItemBadge,
   SidebarSearch,
 } from "sebs7n-ui/sidebar"
+import { SplitView, SplitViewBack, SplitViewDetail, SplitViewList, SplitViewSidebar, type SplitViewPane } from "sebs7n-ui/split-view"
 import { ToggleGroup, ToggleGroupItem } from "sebs7n-ui/toggle-group"
 import { Toolbar, ToolbarButton, ToolbarGroup, ToolbarSeparator } from "sebs7n-ui/toolbar"
 import { Tree, type TreeNode } from "sebs7n-ui/tree"
@@ -143,118 +144,171 @@ function Acciones({ item, selected }: { item: FileGridItem; selected: FileGridIt
   )
 }
 
-/** iCloud Drive: la lista de fuentes, la barra con la vista y las acciones, las carpetas y los archivos. */
+type Fuente = { id: string; label: string; icon: React.ComponentType; badge?: React.ReactNode }
+
+const FUENTES: Fuente[] = [
+  { id: "recientes", label: "Recientes", icon: ClockIcon },
+  { id: "mis-archivos", label: "Mis archivos", icon: FolderIcon },
+  { id: "compartidos", label: "Compartidos", icon: UsersIcon, badge: <SidebarItemBadge label="3 nuevos">3</SidebarItemBadge> },
+  { id: "papelera", label: "Papelera", icon: Trash2Icon, badge: <SidebarItemBadge>12</SidebarItemBadge> },
+]
+
+/**
+ * iCloud Drive: las ubicaciones, las carpetas y lo que hay adentro, en los paneles de `SplitView`. En
+ * ancho se ven los tres; en el teléfono uno por vez, como Archivos de iOS: tocar una ubicación lleva a
+ * sus carpetas, tocar una carpeta a su contenido, y «‹» vuelve con el nombre de lo anterior.
+ */
 export function FilesShowcase() {
   const [carpeta, setCarpeta] = useState("septiembre")
+  const [fuente, setFuente] = useState("mis-archivos")
+  // En el teléfono arranca en las ubicaciones, como Archivos de iOS. En ancho se ven los tres paneles
+  // y el activo no cambia nada a la vista.
+  const [pane, setPane] = useState<SplitViewPane>("sidebar")
   // Varios elegidos, como en Drive: ⌘/Ctrl+click, ⇧+click y ⌘A, en la grilla y en la lista.
   const [selected, setSelected] = useState<string[]>(["f-0013"])
   const [vista, setVista] = useState<"grid" | "list">("grid")
   const ruta = rutaDe(carpeta) ?? []
+  const padre = ruta.at(-2)
   const items = useMemo(() => contenidoDe(carpeta), [carpeta])
+  const irA = (id: string) => {
+    setCarpeta(id)
+    setSelected([])
+  }
   const abrir = (item: FileGridItem) => {
-    if (item.folder) {
-      setCarpeta(item.id)
-      setSelected([])
-    }
+    if (item.folder) irA(item.id)
+  }
+  const elegirFuente = (id: string) => {
+    setFuente(id)
+    setPane("list")
   }
   const hasSelection = selected.length > 0
-
-  const sidebar = (
-    <Sidebar>
-      <SidebarHeader>
-        <SidebarSearch placeholder="Buscar en Archivos" />
-      </SidebarHeader>
-      <SidebarContent aria-label="Ubicaciones">
-        <SidebarGroup>
-          <SidebarGroupLabel>Archivos</SidebarGroupLabel>
-          <SidebarItem icon={<ClockIcon />} render={<button type="button" />}>
-            Recientes
-          </SidebarItem>
-          <SidebarItem active icon={<FolderIcon />} render={<button type="button" />}>
-            Mis archivos
-          </SidebarItem>
-          <SidebarItem icon={<UsersIcon />} render={<button type="button" />}>
-            Compartidos
-            <SidebarItemBadge label="3 nuevos">3</SidebarItemBadge>
-          </SidebarItem>
-          <SidebarItem icon={<Trash2Icon />} render={<button type="button" />}>
-            Papelera
-            <SidebarItemBadge>12</SidebarItemBadge>
-          </SidebarItem>
-        </SidebarGroup>
-        <SidebarGroup collapsible>
-          <SidebarGroupLabel>Favoritos</SidebarGroupLabel>
-          <SidebarGroupAction aria-label="Agregar a favoritos" />
-          <SidebarItem icon={<FileTextIcon />} render={<button type="button" />}>
-            Facturas
-          </SidebarItem>
-          <SidebarItem icon={<FileSpreadsheetIcon />} render={<button type="button" />}>
-            Informes
-          </SidebarItem>
-        </SidebarGroup>
-      </SidebarContent>
-    </Sidebar>
-  )
+  const nombreFuente = [...FUENTES, { id: "informes", label: "Informes" }].find((item) => item.id === fuente)?.label
 
   return (
-    <AppShell
-      // El alto del marco (`--showcase-height`, lo pone `index.tsx`): el shell se mide con él.
-      className="[--app-shell-height:var(--showcase-height)]"
-      header={
-        <span className="flex items-center gap-2 text-headline text-label">
-          <AppIcon fill="blue" icon={FolderIcon} size="sm" />
-          Archivos
-        </span>
-      }
-      mainId="muestra-archivos"
-      mobileBar={<span className="text-headline text-label">Archivos</span>}
-      sidebar={sidebar}
-    >
-      {/* El alto de la columna menos la barra (44): la grilla scrollea adentro y la barra queda fija. */}
-      <div className="@container flex h-[calc(var(--app-shell-height)-2.75rem)] min-h-0 flex-col">
-        <Toolbar aria-label="Acciones de archivos">
-          <ToggleGroup
-            aria-label="Vista"
-            className="gap-0.5"
-            onValueChange={(valor) => valor[0] && setVista(valor[0] as "grid" | "list")}
-            value={[vista]}
-          >
-            <ToolbarButton aria-label="Íconos" render={<ToggleGroupItem value="grid" />}>
-              <LayoutGridIcon />
-            </ToolbarButton>
-            <ToolbarButton aria-label="Lista" render={<ToggleGroupItem value="list" />}>
-              <ListIcon />
-            </ToolbarButton>
-          </ToggleGroup>
-          <ToolbarSeparator />
-          <ToolbarGroup aria-label="Selección" className="mx-auto flex items-center gap-1.5">
-            <ToolButton disabled={!hasSelection} icon={ShareIcon} label="Compartir" />
-            <ToolButton disabled={!hasSelection} icon={DownloadIcon} label="Descargar" />
-            <ToolButton disabled={!hasSelection} icon={Trash2Icon} label="Eliminar" />
-          </ToolbarGroup>
-          <ToolButton icon={SearchIcon} label="Buscar" shortcut={<Kbd>⌘F</Kbd>} />
-          <ToolButton icon={FolderPlusIcon} label="Nueva carpeta" />
-          <ToolButton icon={UploadIcon} label="Subir archivos" />
-        </Toolbar>
+    <div className="flex h-full min-h-0 flex-col">
+      {/* La barra de la app, a todo el ancho y también en el teléfono (sin hamburguesa: las
+          ubicaciones son el primer panel). */}
+      <header className="flex h-11 shrink-0 items-center gap-2 border-b border-separator-strong bg-surface-header ps-4 pe-1.5 text-headline text-label">
+        <AppIcon fill="blue" icon={FolderIcon} size="sm" />
+        Archivos
+      </header>
+      {/* Tres paneles desde 896 (el marco del Playground mide ~990 en escritorio), no desde 1024 como
+          Mail: las carpetas son una columna angosta de 240 y no la lista de 380. */}
+      <SplitView className="h-auto min-h-0 flex-1" onPaneChange={setPane} pane={pane}>
+        <SplitViewSidebar aria-label="Ubicaciones" className="@4xl/split:flex">
+          <Sidebar className="w-full border-r-0">
+            <SidebarHeader>
+              <SidebarSearch placeholder="Buscar en Archivos" />
+            </SidebarHeader>
+            <SidebarContent aria-label="Ubicaciones">
+              <SidebarGroup>
+                <SidebarGroupLabel>Archivos</SidebarGroupLabel>
+                {FUENTES.map(({ id, label, icon: Icono, badge }) => (
+                  <SidebarItem active={fuente === id} icon={<Icono />} key={id} onClick={() => elegirFuente(id)} render={<button type="button" />}>
+                    {label}
+                    {badge}
+                  </SidebarItem>
+                ))}
+              </SidebarGroup>
+              <SidebarGroup collapsible>
+                <SidebarGroupLabel>Favoritos</SidebarGroupLabel>
+                <SidebarGroupAction aria-label="Agregar a favoritos" />
+                <SidebarItem
+                  icon={<FileTextIcon />}
+                  onClick={() => {
+                    setFuente("mis-archivos")
+                    irA("facturas")
+                    setPane("detail")
+                  }}
+                  render={<button type="button" />}
+                >
+                  Facturas
+                </SidebarItem>
+                <SidebarItem active={fuente === "informes"} icon={<FileSpreadsheetIcon />} onClick={() => elegirFuente("informes")} render={<button type="button" />}>
+                  Informes
+                </SidebarItem>
+              </SidebarGroup>
+            </SidebarContent>
+          </Sidebar>
+        </SplitViewSidebar>
 
-        <div className="flex min-h-0 flex-1">
-          <div className="hidden w-60 shrink-0 overflow-y-auto border-e border-separator p-2 @3xl:block">
-            <Tree
-              aria-label="Carpetas"
-              defaultExpanded={["facturas", "facturas-2026"]}
-              items={CARPETAS}
-              onSelectedChange={(id) => {
-                if (!id) return
-                setCarpeta(id)
-                setSelected([])
+        <SplitViewList
+          aria-label="Carpetas"
+          className="@4xl/split:w-60 @4xl/split:group-data-[pane=sidebar]/split:flex-none @4xl/split:group-data-[pane=sidebar]/split:border-e @5xl/split:w-60"
+        >
+          <header className="flex flex-col gap-0.5 px-4 pt-3 pb-1 @4xl/split:hidden">
+            <SplitViewBack>Archivos</SplitViewBack>
+            <h3 className="text-title-1 text-label">{nombreFuente}</h3>
+          </header>
+          {fuente === "mis-archivos" ? (
+            // Tocar una carpeta abre lo de adentro aunque ya sea la elegida (`onSelectedChange` no
+            // llega si no cambió). El chevron solo abre y cierra: corta el click antes de acá.
+            <div
+              className="p-2"
+              onClick={(event) => {
+                const fila = (event.target as Element).closest("[role=treeitem]")
+                if (fila && fila.getAttribute("aria-disabled") !== "true") setPane("detail")
               }}
-              selected={carpeta}
-            />
-          </div>
+            >
+              <Tree
+                aria-label="Carpetas"
+                defaultExpanded={["facturas", "facturas-2026"]}
+                items={CARPETAS}
+                onOpen={(nodo) => {
+                  irA(nodo.id)
+                  setPane("detail")
+                }}
+                onSelectedChange={(id) => id && irA(id)}
+                selected={carpeta}
+              />
+            </div>
+          ) : (
+            <p className="px-4 py-3 text-callout text-label-secondary">Nada por acá en esta muestra.</p>
+          )}
+        </SplitViewList>
 
-          <div className="flex min-w-0 flex-1 flex-col gap-4 overflow-y-auto p-5">
+        <SplitViewDetail aria-label="Contenido de la carpeta" className="@4xl/split:group-data-[pane=sidebar]/split:flex">
+          <Toolbar aria-label="Acciones de archivos" className="sticky top-0 z-10">
+            <ToggleGroup
+              aria-label="Vista"
+              className="shrink-0 gap-0.5"
+              onValueChange={(valor) => valor[0] && setVista(valor[0] as "grid" | "list")}
+              value={[vista]}
+            >
+              <ToolbarButton aria-label="Íconos" render={<ToggleGroupItem value="grid" />}>
+                <LayoutGridIcon />
+              </ToolbarButton>
+              <ToolbarButton aria-label="Lista" render={<ToggleGroupItem value="list" />}>
+                <ListIcon />
+              </ToolbarButton>
+            </ToggleGroup>
+            <ToolbarSeparator />
+            <ToolbarGroup aria-label="Selección" className="mx-auto flex items-center gap-1.5">
+              <ToolButton disabled={!hasSelection} icon={ShareIcon} label="Compartir" />
+              <ToolButton disabled={!hasSelection} icon={DownloadIcon} label="Descargar" />
+              <ToolButton disabled={!hasSelection} icon={Trash2Icon} label="Eliminar" />
+            </ToolbarGroup>
+            {/* En el teléfono no entran todas: Buscar y Nueva carpeta quedan para cuando hay lugar. */}
+            <span className="hidden @2xl/split:contents">
+              <ToolButton icon={SearchIcon} label="Buscar" shortcut={<Kbd>⌘F</Kbd>} />
+              <ToolButton icon={FolderPlusIcon} label="Nueva carpeta" />
+            </span>
+            <ToolButton icon={UploadIcon} label="Subir archivos" />
+          </Toolbar>
+
+          <div className="flex min-w-0 flex-col gap-4 p-5">
             <div className="flex flex-col gap-1">
-              <Breadcrumb aria-label="Ruta de la carpeta">
+              {/* «‹ 2026»: sube a la carpeta de arriba; desde una de primer nivel, vuelve a las carpetas. */}
+              <SplitViewBack
+                onClick={(event) => {
+                  if (!padre) return
+                  event.preventDefault()
+                  irA(padre.id)
+                }}
+              >
+                {padre?.label ?? "Mis archivos"}
+              </SplitViewBack>
+              <Breadcrumb aria-label="Ruta de la carpeta" className="hidden @2xl/split:block">
                 <BreadcrumbList>
                   <BreadcrumbItem>
                     <BreadcrumbLink render={<button type="button" />}>Mis archivos</BreadcrumbLink>
@@ -264,7 +318,7 @@ export function FilesShowcase() {
                       {indice === ruta.length - 1 ? (
                         <BreadcrumbPage>{nodo.label}</BreadcrumbPage>
                       ) : (
-                        <BreadcrumbLink onClick={() => setCarpeta(nodo.id)} render={<button type="button" />}>
+                        <BreadcrumbLink onClick={() => irA(nodo.id)} render={<button type="button" />}>
                           {nodo.label}
                         </BreadcrumbLink>
                       )}
@@ -324,8 +378,8 @@ export function FilesShowcase() {
               </ContextMenu>
             )}
           </div>
-        </div>
-      </div>
-    </AppShell>
+        </SplitViewDetail>
+      </SplitView>
+    </div>
   )
 }
