@@ -205,6 +205,7 @@ describe("LabelsProvider", () => {
       "numberField",
       "pageHeader",
       "passwordInput",
+      "phoneInput",
       "resizable",
       "sheet",
       "sidebar",

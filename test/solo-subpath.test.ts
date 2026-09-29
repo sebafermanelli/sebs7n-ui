@@ -31,6 +31,7 @@ const SOLO_SUBPATH = [
   "time-picker",
   "date-time-picker",
   "country-picker",
+  "phone-input",
 ]
 
 describe("componentes solo por subpath", () => {
