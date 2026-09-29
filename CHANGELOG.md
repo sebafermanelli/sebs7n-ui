@@ -160,9 +160,18 @@ las fases R2–R5 rehacen diálogos, menús, controles y listas con las medidas 
 - **Las clases tipográficas de Geist quedan obsoletas.** `text-copy-*`, `text-label-*`,
   `text-heading-*` y `text-button-*` siguen andando y `cn()` las sigue fusionando, pero el paquete
   ya no las usa; se van en la próxima major.
-- **Alturas.** El `md` pasa de 40 a 32 px (`sm` 24, `lg` 40); los ítems de menú miden 24 y los del
-  Sidebar 28 (iCloud usa 30 y 32: R3 y R5). Con el dedo el área crece a 44 por `touch-target`, sin
-  cambiar lo que se ve.
+- **Alturas: una sola escala para campos y botones** (revisión visual de R1). `sm` **28**, `md`
+  **36** (antes 40 en 1.x), `lg` **40**, el search field y el botón de modal de iCloud. Input,
+  Textarea, NumberField, OTPField (casillas de 28/36/40), DatePicker, ColorPicker, Select, Combobox,
+  Autocomplete y Button comparten `inputSizeClassName`/los tamaños del Button; los botones de ícono
+  miden 28, 36 y 40. **Texto 14 e íconos 16 en los tres tamaños**: el `lg` ya no sube a 17. El chip
+  (Toggle), el campo y el link de la Toolbar van en el escalón `sm`. Con el dedo, `sm` y `md` de los
+  campos suben a 36 y 44, y los botones crecen a 44 por `touch-target`. Los ítems de menú miden 24 y
+  los del Sidebar 28 (iCloud usa 30 y 32: R3 y R5). Un botón al lado de un campo lleva el mismo
+  `size`.
+- **Chat a la escala de un panel:** los mensajes a 15 (`text-subheadline`), el campo, los avisos y
+  las sugerencias a 14, la cabecera `text-headline`; el campo mide 36 como el botón de enviar (17 con
+  el dedo, para que iOS no haga zoom).
 - **`Button variant="link"` no agranda su área con el dedo**: es texto adentro de un párrafo.
 - **Toggle con borde lleno** en los dos estados (antes, punteado sin apretar).
 - **La perilla del Slider es una cápsula** de 20 × 28 (provisorio: R4 la lleva a la de iCloud), la
