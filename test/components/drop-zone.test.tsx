@@ -163,6 +163,89 @@ describe("DropZone", () => {
     expect(set.mock.lastCall?.[0].map((file: File) => file.name)).toEqual(["b.pdf"])
   })
 
+  it("con name, si el diálogo trae solo archivos rechazados, el input vuelve a la lista (no manda el inválido)", () => {
+    const set = vi.fn()
+    vi.stubGlobal(
+      "DataTransfer",
+      class {
+        private list: File[] = []
+        items = { add: (file: File) => void this.list.push(file) }
+        get files() {
+          return this.list
+        }
+      }
+    )
+    vi.spyOn(HTMLInputElement.prototype, "files", "set").mockImplementation(set)
+    render(
+      <form>
+        <DropZone accept=".pdf" aria-label="Adjuntos" multiple name="attachments" />
+      </form>
+    )
+    drop(area(), [pdf("a.pdf")])
+    set.mockClear()
+    // El diálogo deja en el input lo que se eligió: un .exe que no pasa `accept`.
+    const exe = new File(["x"], "planilla.exe", { type: "application/x-msdownload" })
+    Object.defineProperty(input(), "files", { configurable: true, get: () => [exe], set })
+    fireEvent.change(input())
+    expect(screen.getByRole("alert")).toHaveTextContent("planilla.exe no es de un tipo permitido")
+    expect(set.mock.lastCall?.[0].map((file: File) => file.name)).toEqual(["a.pdf"])
+  })
+
+  it("sin multiple, soltar varios toma el primero y avisa que sobran", () => {
+    render(<DropZone aria-label="Comprobante" />)
+    drop(area(), [pdf("uno.pdf"), pdf("dos.pdf")])
+    expect(rows()).toHaveLength(1)
+    expect(rows()[0]).toHaveTextContent("uno.pdf")
+    expect(screen.getByRole("alert")).toHaveTextContent("dos.pdf no entra: el máximo es 1")
+  })
+
+  it("accept=\"*/*\" acepta cualquier archivo", () => {
+    render(<DropZone accept="*/*" aria-label="Adjuntos" multiple />)
+    drop(area(), [new File(["x"], "datos.zip", { type: "application/zip" }), new File(["x"], "sin-tipo", { type: "" })])
+    expect(rows()).toHaveLength(2)
+    expect(screen.queryByRole("alert")).toBeNull()
+  })
+
+  it("dos errores iguales se muestran los dos (sin claves repetidas)", () => {
+    const errors = vi.spyOn(console, "error").mockImplementation(() => {})
+    render(<DropZone accept=".pdf" aria-label="Adjuntos" multiple />)
+    const exe = () => new File(["x"], "planilla.exe", { type: "application/x-msdownload", lastModified: 1 })
+    drop(area(), [exe(), exe()])
+    expect(screen.getByRole("alert").querySelectorAll("p")).toHaveLength(2)
+    expect(errors.mock.calls.filter(([message]) => /same key/i.test(String(message)))).toEqual([])
+  })
+
+  it("el recuadro sigue prendido al cruzar sus hijos: cuenta entradas y salidas", () => {
+    render(<DropZone aria-label="Adjuntos" multiple />)
+    const icon = area().querySelector("svg")!
+    fireEvent.dragEnter(area(), { dataTransfer: { types: ["Files"] } })
+    fireEvent.dragEnter(icon, { dataTransfer: { types: ["Files"] } })
+    fireEvent.dragLeave(area(), { dataTransfer: { types: ["Files"] } })
+    expect(area()).toHaveAttribute("data-dragging")
+    fireEvent.dragLeave(icon, { dataTransfer: { types: ["Files"] } })
+    expect(area()).not.toHaveAttribute("data-dragging")
+  })
+
+  it("scope=window: si se deshabilita a mitad del arrastre, la zona de ventana se apaga", () => {
+    const { rerender } = render(<DropZone aria-label="Adjuntos" scope="window" />)
+    fireEvent.dragEnter(window, { dataTransfer: { types: ["Files"] } })
+    expect(document.querySelector("[data-slot=drop-zone-overlay]")).not.toBeNull()
+    rerender(<DropZone aria-label="Adjuntos" disabled scope="window" />)
+    expect(document.querySelector("[data-slot=drop-zone-overlay]")).toBeNull()
+    rerender(<DropZone aria-label="Adjuntos" scope="window" />)
+    expect(document.querySelector("[data-slot=drop-zone-overlay]")).toBeNull()
+  })
+
+  it("scope=window: al desmontar saca sus listeners de la ventana", () => {
+    const add = vi.spyOn(window, "addEventListener")
+    const remove = vi.spyOn(window, "removeEventListener")
+    const { unmount } = render(<DropZone aria-label="Adjuntos" scope="window" />)
+    const added = add.mock.calls.filter(([type]) => ["dragenter", "dragover", "dragleave", "drop"].includes(type))
+    expect(added).toHaveLength(4)
+    unmount()
+    for (const [type, listener] of added) expect(remove).toHaveBeenCalledWith(type, listener)
+  })
+
   it("el reset del form vacía la lista", async () => {
     const user = userEvent.setup()
     render(

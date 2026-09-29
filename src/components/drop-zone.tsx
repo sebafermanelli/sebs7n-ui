@@ -46,7 +46,14 @@ type DropZoneProps = Omit<React.ComponentProps<"div">, "children" | "onChange"> 
   maxSize?: number
   /** Cuántos archivos como mucho, con `multiple`. */
   maxFiles?: number
-  /** El nombre del campo en el `<form>`: los archivos viajan en un `<input type="file">`. */
+  /**
+   * El nombre del campo en el `<form>`: los archivos viajan en un `<input type="file">`.
+   *
+   * Para que el input tenga los archivos de la lista (y no los del último diálogo) hace falta
+   * `DataTransfer`, el único modo de armar un `FileList`. Donde no existe (navegadores muy viejos,
+   * algunos entornos de test), el input queda como lo dejó el diálogo: ahí, mandá `files` a mano con
+   * `onFilesChange` en vez de confiar en el `<form>`.
+   */
   name?: string
   /** Los archivos, controlado. Sin `files`, el componente los guarda. */
   files?: File[]
@@ -76,6 +83,7 @@ function accepts(file: File, accept: string | undefined): boolean {
   return accept.split(",").some((raw) => {
     const rule = raw.trim().toLowerCase()
     if (!rule) return false
+    if (rule === "*/*" || rule === "*") return true
     if (rule.startsWith(".")) return name.endsWith(rule)
     if (rule.endsWith("/*")) return type.startsWith(rule.slice(0, -1))
     return type === rule
@@ -163,6 +171,8 @@ function DropZone({
       for (const file of valid.slice(room)) problems.push(`${file.name} ${labels.tooMany} ${maxFiles}`)
       next = [...files, ...valid.slice(0, room)]
     } else {
+      // Uno solo: entra el primero y los demás se avisan, como con `maxFiles`.
+      for (const file of valid.slice(1)) problems.push(`${file.name} ${labels.tooMany} 1`)
       next = valid.length ? [valid[0]!] : files
     }
     setErrors(problems)
@@ -184,11 +194,15 @@ function DropZone({
   // `name`: el `<input type="file">` tiene que tener los mismos archivos que la lista, que no son
   // los que eligió en el diálogo (se sumaron arrastrando, se quitaron, se validaron). `DataTransfer`
   // es la única forma de armar un `FileList`.
-  React.useEffect(() => {
+  const syncInput = (list: readonly File[]) => {
     if (!name || !input.current || typeof DataTransfer !== "function") return
     const transfer = new DataTransfer()
-    for (const file of files) transfer.items.add(file)
+    for (const file of list) transfer.items.add(file)
     input.current.files = transfer.files
+  }
+  React.useEffect(() => {
+    syncInput(files)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- `syncInput` solo lee `name` e `input`
   }, [files, name])
 
   const resetRef = useFormReset(() => {
@@ -241,7 +255,19 @@ function DropZone({
       window.removeEventListener("dragover", overWindow)
       window.removeEventListener("dragleave", leave)
       window.removeEventListener("drop", drop)
+      // Si se deshabilita (o cambia de scope) a mitad de un arrastre, el `dragleave` que la apagaba
+      // ya no llega a nadie.
+      setWindowDrag(false)
     }
+  }, [scope, disabled])
+
+  // En el recuadro, también un contador: `relatedTarget` viene `null` en Safari y en varios casos
+  // de `dragleave`, y la zona se apagaba con el puntero todavía adentro.
+  const areaDepth = React.useRef(0)
+  React.useEffect(() => {
+    if (scope === "area" && !disabled) return
+    areaDepth.current = 0
+    setOver(false)
   }, [scope, disabled])
 
   // En `window` la ventana ya maneja todo: el recuadro solo se pinta.
@@ -251,6 +277,7 @@ function DropZone({
           onDragEnter: (event: React.DragEvent) => {
             if (!hasFiles(event)) return
             event.preventDefault()
+            areaDepth.current++
             setOver(true)
           },
           onDragOver: (event: React.DragEvent) => {
@@ -259,11 +286,14 @@ function DropZone({
             event.dataTransfer.dropEffect = "copy"
           },
           onDragLeave: (event: React.DragEvent) => {
-            if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setOver(false)
+            if (!hasFiles(event)) return
+            areaDepth.current = Math.max(0, areaDepth.current - 1)
+            if (areaDepth.current === 0) setOver(false)
           },
           onDrop: (event: React.DragEvent) => {
             if (!hasFiles(event)) return
             event.preventDefault()
+            areaDepth.current = 0
             setOver(false)
             add(event.dataTransfer.files)
           },
@@ -288,9 +318,11 @@ function DropZone({
         onChange={(event) => {
           const picked = Array.from(event.currentTarget.files ?? [])
           // Sin `name`, se vacía: elegir el mismo archivo de nuevo vuelve a disparar `change`. Con
-          // `name`, el efecto de arriba lo vuelve a llenar con la lista.
+          // `name`, se vuelve a llenar con la lista de ahora aunque no entre nada (todo rechazado),
+          // así el form no manda lo que eligió el diálogo; si entró algo, el efecto pone la nueva.
           if (!name) event.currentTarget.value = ""
           add(picked)
+          syncInput(files)
         }}
       />
       <button
@@ -323,8 +355,9 @@ function DropZone({
       </button>
       {errors.length > 0 && (
         <div id={errorsId} data-slot="drop-zone-errors" role="alert" className="flex flex-col gap-1 text-footnote text-red-ink">
-          {errors.map((error) => (
-            <p key={error} className="flex items-start gap-1.5">
+          {errors.map((error, index) => (
+            // Por índice: el mismo archivo rechazado dos veces da dos mensajes iguales.
+            <p key={index} className="flex items-start gap-1.5">
               <CircleAlertIcon aria-hidden="true" className="mt-px size-3.5 shrink-0" />
               {error}
             </p>
