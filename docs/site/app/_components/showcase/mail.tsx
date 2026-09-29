@@ -17,8 +17,8 @@ import {
 } from "lucide-react"
 import { useState } from "react"
 import { Avatar, AvatarFallback } from "sebs7n-ui/avatar"
-import { Badge } from "sebs7n-ui/badge"
-import { List, ListRow, ListSection } from "sebs7n-ui/list-row"
+import { List, ListRow } from "sebs7n-ui/list-row"
+import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarHeader, SidebarItem, SidebarItemBadge, SidebarSearch } from "sebs7n-ui/sidebar"
 import { SplitView, SplitViewBack, SplitViewDetail, SplitViewList, SplitViewSidebar, useSplitView } from "sebs7n-ui/split-view"
 import { Toolbar, ToolbarGroup } from "sebs7n-ui/toolbar"
 
@@ -88,7 +88,8 @@ const MENSAJES = [
   },
 ]
 
-const contador = (n: number) => (n > 0 ? <Badge label={`${n} sin leer`} variant="count">{n}</Badge> : undefined)
+// El contador de no leídos, como los de Archivos: texto gris al final de la fila, leído con contexto.
+const contador = (n: number) => (n > 0 ? <SidebarItemBadge label={`${n} sin leer`}>{n}</SidebarItemBadge> : null)
 
 function Mensajes({ elegido, onElegir }: { elegido: string; onElegir: (id: string) => void }) {
   const { setPane } = useSplitView()
@@ -122,17 +123,33 @@ export function MailShowcase() {
   return (
     <SplitView>
       <SplitViewSidebar aria-label="Buzones">
-        <div className="flex h-11 shrink-0 items-center px-5 text-headline text-label">Correo</div>
-        <List aria-label="Buzones" className="px-2.5 pb-2.5">
-          {BUZONES.map(({ id, nombre, icono: Icono, sinLeer }) => (
-            <ListRow icon={<Icono />} key={id} onClick={() => setBuzon(id)} selected={buzon === id} title={nombre} trailing={contador(sinLeer)} />
-          ))}
-          <ListSection title="Carpetas">
-            {CARPETAS.map(({ id, nombre, sinLeer }) => (
-              <ListRow icon={<FolderIcon />} key={id} onClick={() => setBuzon(id)} selected={buzon === id} title={nombre} trailing={contador(sinLeer)} />
-            ))}
-          </ListSection>
-        </List>
+        {/* El mismo `Sidebar` que Archivos: filas de 32, rótulos chicos en gris y el activo en gris.
+            El panel del SplitView ya pone el ancho, el fondo y el borde. */}
+        <Sidebar className="w-full border-r-0">
+          <SidebarHeader>
+            <SidebarSearch placeholder="Buscar en Correo" />
+          </SidebarHeader>
+          <SidebarContent aria-label="Buzones y carpetas">
+            <SidebarGroup>
+              <SidebarGroupLabel>Buzones</SidebarGroupLabel>
+              {BUZONES.map(({ id, nombre, icono: Icono, sinLeer }) => (
+                <SidebarItem active={buzon === id} icon={<Icono />} key={id} onClick={() => setBuzon(id)} render={<button type="button" />}>
+                  {nombre}
+                  {contador(sinLeer)}
+                </SidebarItem>
+              ))}
+            </SidebarGroup>
+            <SidebarGroup>
+              <SidebarGroupLabel>Carpetas</SidebarGroupLabel>
+              {CARPETAS.map(({ id, nombre, sinLeer }) => (
+                <SidebarItem active={buzon === id} icon={<FolderIcon />} key={id} onClick={() => setBuzon(id)} render={<button type="button" />}>
+                  {nombre}
+                  {contador(sinLeer)}
+                </SidebarItem>
+              ))}
+            </SidebarGroup>
+          </SidebarContent>
+        </Sidebar>
       </SplitViewSidebar>
 
       <SplitViewList aria-label="Mensajes">
