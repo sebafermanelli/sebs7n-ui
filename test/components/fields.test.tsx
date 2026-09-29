@@ -49,11 +49,13 @@ describe("Input", () => {
     expect(input).toHaveClass("aria-invalid:border-red-800", "aria-invalid:focus:focus-border-error")
   })
 
-  it("disabled: data-disabled + estilo Vercel", () => {
+  // R4: apagado a .4, como todo control de iCloud: el campo se sigue viendo como el mismo campo.
+  it("disabled: data-disabled y opacidad .4", () => {
     render(<Input disabled placeholder="X" />)
     const input = screen.getByPlaceholderText("X")
     expect(input).toHaveAttribute("data-disabled")
-    expect(input).toHaveClass("data-disabled:bg-fill-1", "data-disabled:text-label-tertiary")
+    expect(input).toHaveClass("data-disabled:opacity-40")
+    expect(input.className).not.toMatch(/data-disabled:(bg|text|border)-/)
   })
 
   it.each([
@@ -79,7 +81,7 @@ describe("Textarea", () => {
     expect(screen.getByPlaceholderText("Notas")).toHaveClass(
       "border-transparent",
       "focus:focus-border",
-      "disabled:bg-fill-1",
+      "disabled:opacity-40",
       "aria-invalid:border-red-800"
     )
   })

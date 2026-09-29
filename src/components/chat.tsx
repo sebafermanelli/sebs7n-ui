@@ -390,7 +390,7 @@ function ChatInput({
           // una línea con scroll.
           "field-sizing-content max-h-36 min-h-9 min-w-0 flex-1 resize-none overflow-y-auto px-3 py-2 placeholder:text-label-secondary focus:focus-border",
           "pointer-coarse:min-h-11 pointer-coarse:py-2.5 pointer-coarse:text-body-large",
-          "disabled:cursor-not-allowed disabled:border-separator disabled:bg-fill-1 disabled:text-label-tertiary"
+          "disabled:cursor-not-allowed disabled:opacity-40"
         )}
         onChange={(evento) => cambiar(evento.target.value)}
         onKeyDown={(evento) => {

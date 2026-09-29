@@ -52,9 +52,10 @@ export const inputSizeClassName =
 /**
  * Deshabilitado por `data-disabled`, que es el que pone Base UI —y también un `Fieldset`
  * deshabilitado sobre sus hijos—. El `disabled:` nativo lo agrega aparte el que lo necesite.
+ *
+ * Opacidad .4 (R4), como todo control de iCloud: el campo apagado es el mismo campo, más tenue.
  */
-export const inputDisabledClassName =
-  "data-disabled:cursor-not-allowed data-disabled:border-separator data-disabled:bg-fill-1 data-disabled:text-label-tertiary"
+export const inputDisabledClassName = "data-disabled:cursor-not-allowed data-disabled:opacity-40"
 
 /**
  * Inválido: borde rojo y, al enfocar, el halo rojo.

@@ -34,6 +34,8 @@ describe("el foco de un campo no depende de la modalidad", () => {
       expect(cuerpo, name).toContain("border-color:")
       expect(cuerpo, name).toContain("--tw-inset-ring-shadow: inset 0 0 0 2px")
       expect(cuerpo, name).not.toContain("data-sf-modality")
+      // R4: la búsqueda de iCloud pierde el relleno con el foco y queda solo el anillo.
+      expect(cuerpo, name).toContain("background-color: transparent;")
     }
   })
 })

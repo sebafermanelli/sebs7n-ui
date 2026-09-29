@@ -73,7 +73,7 @@ describe("Combobox", () => {
       "rounded-field", "border", "border-transparent", "bg-fill-1", "transition-control",
       "data-[size=sm]:h-7", "data-[size=md]:h-9", "data-[size=lg]:h-10",
       "has-[input:focus]:focus-border",
-      "has-[input[aria-invalid=true]]:border-red-800", "data-disabled:bg-fill-1"
+      "has-[input[aria-invalid=true]]:border-red-800", "data-disabled:opacity-40"
     )
     expect(group(md)).toHaveClass("text-callout")
     // 17 solo con el dedo (el zoom de iOS); con el mouse, 14.

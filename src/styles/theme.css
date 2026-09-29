@@ -901,9 +901,12 @@
  * que la banda mida 3 desde el filo como en la búsqueda de iCloud (el borde transparente del
  * campo dejaría 1 px de relleno por fuera del anillo). Se ve con el puntero y con el teclado: en
  * un campo el anillo es el indicador de dónde se escribe, no un énfasis para quien tabula.
+ *
+ * Y el relleno se va (R4): la búsqueda de iCloud enfocada es transparente con el anillo solo.
  */
 @utility focus-border {
   outline: none;
+  background-color: transparent;
   border-color: var(--sf-focus);
   --tw-inset-ring-shadow: inset 0 0 0 2px var(--sf-focus);
   box-shadow: var(--tw-inset-shadow, 0 0 #0000), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow, 0 0 #0000);
@@ -911,6 +914,7 @@
 
 @utility focus-border-error {
   outline: none;
+  background-color: transparent;
   border-color: var(--color-red-800);
   --tw-inset-ring-shadow: inset 0 0 0 2px var(--color-red-800);
   box-shadow: var(--tw-inset-shadow, 0 0 #0000), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow, 0 0 #0000);

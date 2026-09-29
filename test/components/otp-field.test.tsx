@@ -148,12 +148,12 @@ describe("OTPField", () => {
     }
   })
 
-  it("deshabilitado: data-disabled y el estilo de Geist, igual que Input", () => {
+  it("deshabilitado: data-disabled y opacidad .4, igual que Input", () => {
     render(<OTPField aria-label="Código" disabled />)
 
     for (const casilla of casillas()) {
       expect(casilla).toHaveAttribute("data-disabled")
-      expect(casilla).toHaveClass("data-disabled:bg-fill-1", "data-disabled:text-label-tertiary")
+      expect(casilla).toHaveClass("data-disabled:opacity-40")
     }
   })
 
