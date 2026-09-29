@@ -18,7 +18,8 @@ describe("Toggle size", () => {
         <Toggle aria-label="Subrayado" size="lg" />
       </>
     )
-    expect(screen.getByRole("button", { name: "Negrita" })).toHaveClass("h-7", "px-2.5")
+    // `w-fit`: en la columna de un Field no se estira a todo el ancho.
+    expect(screen.getByRole("button", { name: "Negrita" })).toHaveClass("h-7", "px-2.5", "w-fit")
     expect(screen.getByRole("button", { name: "Cursiva" })).toHaveClass("h-9", "px-3")
     expect(screen.getByRole("button", { name: "Subrayado" })).toHaveClass("h-10", "px-3.5")
   })
