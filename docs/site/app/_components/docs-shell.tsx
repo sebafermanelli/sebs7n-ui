@@ -89,7 +89,9 @@ export function DocsShell({ nav, version, children }: { nav: Grupo[]; version: s
           <Marca version={version} />
           <span className="ml-auto" />
           <GitHub />
-          <ThemeSwitcher />
+          {/* La barra deja 6 a la derecha, para un botón de ícono; el segmentado suma 10 y queda a
+              16 del borde, lo mismo que la marca del otro lado. */}
+          <ThemeSwitcher className="me-2.5" />
         </>
       }
       mainId="contenido"
@@ -98,7 +100,7 @@ export function DocsShell({ nav, version, children }: { nav: Grupo[]; version: s
           <Marca version={version} />
           <span className="ml-auto" />
           <SearchButton compact />
-          <ThemeSwitcher />
+          <ThemeSwitcher className="me-2.5" />
         </>
       }
       pathname={pathname}
