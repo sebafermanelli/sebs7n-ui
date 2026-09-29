@@ -3,7 +3,7 @@
 import { ArchiveIcon, FileTextIcon, InboxIcon, SendIcon } from "lucide-react"
 import { useState } from "react"
 import { List, ListRow } from "sebs7n-ui/list-row"
-import { SplitView, SplitViewBack, SplitViewDetail, SplitViewList, SplitViewSidebar, useSplitView } from "sebs7n-ui/split-view"
+import { SplitView, SplitViewBack, SplitViewDetail, SplitViewList, SplitViewSidebar, useSplitView, type SplitViewPane } from "sebs7n-ui/split-view"
 
 const CARPETAS = [
   { id: "emitidas", nombre: "Emitidas", icono: SendIcon, total: 3 },
@@ -57,14 +57,19 @@ export function Redimensionable() {
 function Correo({ resizable = false }: { resizable?: boolean }) {
   const [carpeta, setCarpeta] = useState("emitidas")
   const [elegida, setElegida] = useState("0012")
+  // Tocar una carpeta, aunque ya sea la elegida, avanza a la lista (en angosto se ve un panel por vez).
+  const [pane, setPane] = useState<SplitViewPane>("list")
   const factura = FACTURAS.find((item) => item.id === elegida)!
   return (
     <div className="h-[440px] w-full overflow-hidden rounded-surface border border-separator-strong">
-      <SplitView resizable={resizable}>
+      <SplitView onPaneChange={setPane} pane={pane} resizable={resizable}>
         <SplitViewSidebar aria-label="Carpetas">
           <List aria-label="Carpetas" className="p-2.5">
             {CARPETAS.map(({ id, nombre, icono: Icono, total }) => (
-              <ListRow icon={<Icono />} key={id} onClick={() => setCarpeta(id)} selected={carpeta === id} title={nombre} trailing={total || undefined} />
+              <ListRow icon={<Icono />} key={id} onClick={() => {
+                  setCarpeta(id)
+                  setPane("list")
+                }} selected={carpeta === id} title={nombre} trailing={total || undefined} />
             ))}
           </List>
         </SplitViewSidebar>

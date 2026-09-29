@@ -19,7 +19,7 @@ import { useState } from "react"
 import { Avatar, AvatarFallback } from "sebs7n-ui/avatar"
 import { List, ListRow } from "sebs7n-ui/list-row"
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarHeader, SidebarItem, SidebarItemBadge, SidebarSearch } from "sebs7n-ui/sidebar"
-import { SplitView, SplitViewBack, SplitViewDetail, SplitViewList, SplitViewSidebar, useSplitView } from "sebs7n-ui/split-view"
+import { SplitView, SplitViewBack, SplitViewDetail, SplitViewList, SplitViewSidebar, useSplitView, type SplitViewPane } from "sebs7n-ui/split-view"
 import { Toolbar, ToolbarGroup } from "sebs7n-ui/toolbar"
 
 import { ToolButton } from "./parts"
@@ -117,11 +117,18 @@ function Mensajes({ elegido, onElegir }: { elegido: string; onElegir: (id: strin
 export function MailShowcase() {
   const [buzon, setBuzon] = useState("entrada")
   const [elegido, setElegido] = useState("m1")
+  // El panel lo lleva la pantalla: tocar un buzón (aunque ya sea el elegido) avanza a la lista, como
+  // Mail en el teléfono. En ancho se ven los tres y el panel activo no cambia nada a la vista.
+  const [pane, setPane] = useState<SplitViewPane>("list")
+  const abrirBuzon = (id: string) => {
+    setBuzon(id)
+    setPane("list")
+  }
   const mensaje = MENSAJES.find((item) => item.id === elegido)!
   const nombreBuzon = [...BUZONES, ...CARPETAS].find((item) => item.id === buzon)?.nombre
 
   return (
-    <SplitView>
+    <SplitView onPaneChange={setPane} pane={pane}>
       <SplitViewSidebar aria-label="Buzones">
         {/* El mismo `Sidebar` que Archivos: filas de 32, rótulos chicos en gris y el activo en gris.
             El panel del SplitView ya pone el ancho, el fondo y el borde. */}
@@ -133,7 +140,7 @@ export function MailShowcase() {
             <SidebarGroup>
               <SidebarGroupLabel>Buzones</SidebarGroupLabel>
               {BUZONES.map(({ id, nombre, icono: Icono, sinLeer }) => (
-                <SidebarItem active={buzon === id} icon={<Icono />} key={id} onClick={() => setBuzon(id)} render={<button type="button" />}>
+                <SidebarItem active={buzon === id} icon={<Icono />} key={id} onClick={() => abrirBuzon(id)} render={<button type="button" />}>
                   {nombre}
                   {contador(sinLeer)}
                 </SidebarItem>
@@ -142,7 +149,7 @@ export function MailShowcase() {
             <SidebarGroup>
               <SidebarGroupLabel>Carpetas</SidebarGroupLabel>
               {CARPETAS.map(({ id, nombre, sinLeer }) => (
-                <SidebarItem active={buzon === id} icon={<FolderIcon />} key={id} onClick={() => setBuzon(id)} render={<button type="button" />}>
+                <SidebarItem active={buzon === id} icon={<FolderIcon />} key={id} onClick={() => abrirBuzon(id)} render={<button type="button" />}>
                   {nombre}
                   {contador(sinLeer)}
                 </SidebarItem>
