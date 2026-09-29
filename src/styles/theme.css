@@ -934,18 +934,19 @@
 
 /**
  * El temblor del modo edición de `SortableGrid`, como los widgets de iOS: ±1° de ida y vuelta en
- * 0,3 s. Anima `rotate` y no `transform`: el `transform` va inline (el de dnd-kit al arrastrar) y
+ * 0,3 s; menos en las tarjetas anchas (`--sf-jiggle-angle`, que pone cada una según su ancho), así
+ * el borde no se corre más de ~2 px. Anima `rotate` y no `transform`: el `transform` va inline (el de dnd-kit al arrastrar) y
  * los dos se suman. La fase de cada tarjeta la da su `animation-delay`, inline.
- * Con movimiento reducido no tiembla: un contorno punteado sutil a 4 px dice que está en edición.
+ * Con movimiento reducido no tiembla: un contorno punteado sutil a 3 px dice que está en edición.
  * Va en un `::after` (la tarjeta está posicionada) y no en `outline`, que es del foco y de
  * `outline-none`.
  */
 @keyframes sf-jiggle {
   from {
-    rotate: -1deg;
+    rotate: calc(-1 * var(--sf-jiggle-angle, 1deg));
   }
   to {
-    rotate: 1deg;
+    rotate: var(--sf-jiggle-angle, 1deg);
   }
 }
 
@@ -958,9 +959,9 @@
     &::after {
       content: "";
       position: absolute;
-      inset: -4px;
+      inset: -3px;
       border: 1px dashed var(--color-label-tertiary);
-      border-radius: calc(var(--radius-surface) + 4px);
+      border-radius: calc(var(--radius-surface) + 3px);
       pointer-events: none;
     }
   }

@@ -666,3 +666,18 @@ function distanciaOklab(a: string, b: string) {
   const [x, y] = [lab(a), lab(b)]
   return 100 * Math.hypot(x[0]! - y[0]!, x[1]! - y[1]!, x[2]! - y[2]!)
 }
+
+describe("El «−» de SortableGrid/SortableList en edición (revisión R10)", () => {
+  // Va medio sobre la cabecera de la card (`surface-bar`) y medio afuera (página o superficie): un
+  // gris fijo, `gray-800`, que en los dos temas llega a 3:1 contra todos, con el «−» en blanco.
+  for (const theme of ["light", "dark"] as const) {
+    it(`${theme}: gray-800 ≥ 3:1 contra surface-bar, surface y la página; el «−» blanco ≥ 3:1`, () => {
+      const circulo = paleta[theme]["--sf-gray-800"]!
+      for (const fondo of ["--sf-surface-bar", "--sf-surface", "--sf-background"]) {
+        expect(ratio(circulo, paleta[theme][fondo]!), fondo).toBeGreaterThanOrEqual(3)
+      }
+      expect(ratio("#ffffff", circulo)).toBeGreaterThanOrEqual(3)
+    })
+  }
+})
+

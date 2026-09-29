@@ -495,6 +495,16 @@ function jiggleDelay(key: string) {
   return `${-(hash % 6) * 0.05}s`
 }
 
+/**
+ * Cuánto gira una tarjeta de este ancho al temblar: 1° hasta 250 px y después 250/ancho, así el
+ * borde se corre ~2 px en cualquier tarjeta (con 1° fijo, una de 900 px se corría 8). Piso 0,3°: por
+ * debajo ya no se ve que tiembla.
+ */
+function jiggleAngle(width: number) {
+  if (width <= 250) return 1
+  return Math.max(0.3, 250 / width)
+}
+
 // La grilla no corre a nadie con transformaciones (el orden ya cambió en el DOM)…
 const inPlace: SortingStrategy = () => null
 // …y cada tarjeta que cambió de lugar se desliza desde donde estaba, no salta.
@@ -530,6 +540,12 @@ function SortableItem({ id, onRemove, press, editing, draggable, index, label, l
   // `Translate` y no `Transform`: en una grilla con tarjetas de distinto ancho, dnd-kit escala la que
   // pasa por encima y el contenido se deforma.
   const style: React.CSSProperties = { transform: CSS.Translate.toString(transform), transition }
+  // El ángulo del temblor según el ancho, medido al entrar en edición. Va directo al nodo (no en
+  // `style`): React no toca una propiedad que no maneja, y así no hay un render más.
+  const node = React.useRef<HTMLLIElement | null>(null)
+  React.useLayoutEffect(() => {
+    if (editing && node.current) node.current.style.setProperty("--sf-jiggle-angle", `${jiggleAngle(node.current.offsetWidth)}deg`)
+  }, [editing])
   // Con movimiento reducido no se desliza: salta. `!` porque el `transition` de dnd-kit va inline.
   const motion = "motion-reduce:transition-none!"
 
@@ -549,8 +565,10 @@ function SortableItem({ id, onRemove, press, editing, draggable, index, label, l
   ) : null
   const content = children({ handle: variant === "list" ? null : grip, dragging: isDragging, index, editing })
   const wholeItem = !handle && draggable
-  // El «−» de iOS: un círculo gris de 22 (el área de toque la agranda `touch-target`). No va en la
-  // que se arrastra.
+  // El «−» de iOS: un círculo gris oscuro de 22 con el «−» blanco (el área de toque la agranda
+  // `touch-target`). `gray-800` y no `surface-bar`: ese es el color de la cabecera de la card y el
+  // círculo no se veía; este llega a 3:1 contra cabecera, superficie y página en los dos temas
+  // (`contrast.test.ts`). No va en la que se arrastra.
   const remove =
     onRemove && !isDragging ? (
       <button
@@ -559,7 +577,7 @@ function SortableItem({ id, onRemove, press, editing, draggable, index, label, l
         data-slot="sortable-remove"
         onClick={onRemove}
         className={cn(
-          "relative z-10 flex size-[22px] shrink-0 items-center justify-center rounded-full bg-surface-bar text-label shadow-menu outline-none transition-control touch-target hover:bg-fill-3 focus-visible:focus-ring",
+          "relative z-10 flex size-[22px] shrink-0 items-center justify-center rounded-full bg-gray-800 text-white shadow-menu outline-none transition-control touch-target hover:brightness-90 focus-visible:focus-ring",
           variant === "grid" && "absolute -top-2 -left-2"
         )}
       >
@@ -586,9 +604,10 @@ function SortableItem({ id, onRemove, press, editing, draggable, index, label, l
   }
   return (
     <li
-      ref={(node) => {
-        setNodeRef(node)
-        if (!handle) setActivatorNodeRef(node)
+      ref={(element) => {
+        node.current = element
+        setNodeRef(element)
+        if (!handle) setActivatorNodeRef(element)
       }}
       style={editing ? { ...style, animationDelay: jiggleDelay(id) } : style}
       data-dragging={isDragging ? "" : undefined}
@@ -615,4 +634,4 @@ function SortableItem({ id, onRemove, press, editing, draggable, index, label, l
   )
 }
 
-export { SortableBase, sortableLabels, type SortableItemState, type SortableLabels, type SortableProps }
+export { jiggleAngle, SortableBase, sortableLabels, type SortableItemState, type SortableLabels, type SortableProps }

@@ -7,6 +7,7 @@ import { renderToString } from "react-dom/server"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 import { SortableGrid } from "../../src/components/sortable-grid"
+import { jiggleAngle } from "../../src/internal/sortable"
 import { Dialog, DialogContent, DialogTitle } from "../../src/components/dialog"
 import { LabelsProvider } from "../../src/lib/labels"
 import { hidratar } from "../hidratar"
@@ -404,14 +405,16 @@ describe("SortableGrid", () => {
     it("theme.css: el temblor gira con rotate (se suma al transform de dnd-kit) y con movimiento reducido es un contorno punteado", () => {
       const css = readFileSync(join(process.cwd(), "src/styles/theme.css"), "utf8")
       const keyframes = css.slice(css.indexOf("@keyframes sf-jiggle"), css.indexOf("}\n}", css.indexOf("@keyframes sf-jiggle")))
-      expect(keyframes).toMatch(/rotate: -1deg/)
-      expect(keyframes).toMatch(/rotate: 1deg/)
+      // El ángulo lo pone cada tarjeta según su ancho (`--sf-jiggle-angle`); 1° si no hay.
+      expect(keyframes).toMatch(/rotate: calc\(-1 \* var\(--sf-jiggle-angle, 1deg\)\)/)
+      expect(keyframes).toMatch(/rotate: var\(--sf-jiggle-angle, 1deg\)/)
       expect(keyframes).not.toMatch(/transform/)
       const utility = css.slice(css.indexOf("@utility animate-jiggle {"), css.indexOf("\n}", css.indexOf("@utility animate-jiggle {")))
       expect(utility).toMatch(/animation: sf-jiggle 0\.3s ease-in-out infinite alternate/)
       const reduced = utility.slice(utility.indexOf("prefers-reduced-motion: reduce"))
       expect(reduced).toMatch(/animation: none/)
       expect(reduced).toMatch(/&::after \{[^}]*border: 1px dashed var\(--color-label-tertiary\)/)
+      expect(reduced).toMatch(/inset: -3px/)
     })
 
     it("onRemove: en edición cada tarjeta trae un «−» con su nombre que la saca directo, lo anuncia y deja el foco en el siguiente", async () => {
@@ -424,6 +427,9 @@ describe("SortableGrid", () => {
       const remove = screen.getByRole("button", { name: "Sacar Clientes" })
       expect(remove).toHaveAttribute("data-slot", "sortable-remove")
       expect(remove).toHaveClass("absolute", "-top-2", "-left-2", "size-[22px]", "rounded-full", "touch-target")
+      // Gris oscuro como el de iOS (≥ 3:1 contra la cabecera de la card, ver contrast.test.ts).
+      expect(remove).toHaveClass("bg-gray-800", "text-white")
+      expect(remove).not.toHaveClass("bg-surface-bar")
       await user.click(remove)
       expect(order()).toEqual(["Facturas", "Calendario", "Archivos"])
       expect(status()).toHaveTextContent("Se sacó Clientes.")
@@ -490,5 +496,26 @@ describe("SortableGrid", () => {
       expect(seen.at(-1)).toBe(true)
       expect(screen.getAllByRole("listitem")[0]).toHaveAttribute("tabindex", "0")
     })
+  })
+})
+
+describe("SortableGrid · el temblor según el ancho", () => {
+  it("jiggleAngle: 1° hasta 250 px y después menos, para que el borde no se corra más de ~2 px (piso 0,3°)", () => {
+    expect(jiggleAngle(160)).toBe(1)
+    expect(jiggleAngle(250)).toBe(1)
+    expect(jiggleAngle(500)).toBeCloseTo(0.5)
+    expect(jiggleAngle(2000)).toBe(0.3)
+    expect(jiggleAngle(0)).toBe(1)
+  })
+
+  it("en edición, cada tarjeta lleva --sf-jiggle-angle según su ancho medido", () => {
+    vi.spyOn(HTMLElement.prototype, "offsetWidth", "get").mockImplementation(function (this: HTMLElement) {
+      return this.textContent?.includes("Facturas") ? 600 : 200
+    })
+    const { rerender } = render(<Widgets editing={false} />)
+    rerender(<Widgets editing />)
+    const [wide, narrow] = screen.getAllByRole("listitem")
+    expect(parseFloat(wide!.style.getPropertyValue("--sf-jiggle-angle"))).toBeCloseTo(250 / 600)
+    expect(narrow!.style.getPropertyValue("--sf-jiggle-angle")).toBe("1deg")
   })
 })
