@@ -16,7 +16,7 @@ import {
   UsersIcon,
   type LucideIcon,
 } from "lucide-react"
-import { useState, type ReactNode } from "react"
+import { lazy, Suspense, useState, type ReactNode } from "react"
 import { Avatar, AvatarFallback } from "sebs7n-ui/avatar"
 import { Badge } from "sebs7n-ui/badge"
 import { Button } from "sebs7n-ui/button"
@@ -29,6 +29,9 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "sebs7n-ui/tooltip"
 import { WidgetCard } from "sebs7n-ui/widget-card"
 
 import { AppIcon, type Fill } from "./parts"
+
+// El diálogo de «+ Agregar» es un chunk aparte: se pide recién la primera vez que se abre.
+const AddWidgetDialog = lazy(() => import("./home-add-dialog").then((mod) => ({ default: mod.AddWidgetDialog })))
 
 const FACTURAS = [
   { id: "0012", cliente: "Acme S.A.", fecha: "30/09" },
@@ -74,12 +77,14 @@ function Mas({ label }: { label: string }) {
 }
 
 /**
- * Los widgets, en el orden de arriba. Se reordenan arrastrando (`SortableGrid`, la tarjeta entera) o
- * con el teclado; el orden vive en el estado de la pantalla y se pierde al cambiar de pantalla.
+ * Los widgets, en el orden de arriba. En modo edición («Editar», o mantener apretado uno) tiemblan,
+ * se reordenan arrastrando (`SortableGrid`, la tarjeta entera) o con el teclado, se sacan con su «−»
+ * y vuelven con «+ Agregar». El estado vive en la pantalla y se pierde al cambiar de pantalla.
  */
-const WIDGETS: { id: string; title: string; wide?: boolean; card: ReactNode }[] = [
+const WIDGETS: { id: string; title: string; icon: ReactNode; wide?: boolean; card: ReactNode }[] = [
   {
     id: "invoices",
+    icon: <AppIcon fill="brand" icon={FileTextIcon} />,
     title: "Facturas",
     card: (
       <WidgetCard
@@ -98,6 +103,7 @@ const WIDGETS: { id: string; title: string; wide?: boolean; card: ReactNode }[] 
   },
   {
     id: "clients",
+    icon: <AppIcon fill="green" icon={UsersIcon} />,
     title: "Clientes",
     card: (
       <WidgetCard
@@ -116,6 +122,7 @@ const WIDGETS: { id: string; title: string; wide?: boolean; card: ReactNode }[] 
   },
   {
     id: "calendar",
+    icon: <AppIcon fill="red" icon={CalendarIcon} />,
     title: "Calendario",
     card: (
       <WidgetCard
@@ -142,6 +149,7 @@ const WIDGETS: { id: string; title: string; wide?: boolean; card: ReactNode }[] 
   },
   {
     id: "files",
+    icon: <AppIcon fill="blue" icon={FolderIcon} />,
     title: "Archivos",
     card: (
       <WidgetCard
@@ -167,6 +175,7 @@ const WIDGETS: { id: string; title: string; wide?: boolean; card: ReactNode }[] 
   },
   {
     id: "collections",
+    icon: <AppIcon fill="purple" icon={TrendingUpIcon} />,
     title: "Cobranza",
     wide: true,
     card: (
@@ -203,6 +212,12 @@ const WIDGETS: { id: string; title: string; wide?: boolean; card: ReactNode }[] 
 /** La home de iCloud: el wallpaper, la barra translúcida y la grilla de widgets, que se reordena. */
 export function HomeShowcase() {
   const [widgets, setWidgets] = useState(WIDGETS)
+  const [editing, setEditing] = useState(false)
+  const [adding, setAdding] = useState(false)
+  // El diálogo se monta la primera vez que se abre (y su chunk se pide recién ahí); después queda,
+  // para que cerrarlo anime.
+  const [addMounted, setAddMounted] = useState(false)
+  const removed = WIDGETS.filter((widget) => !widgets.includes(widget))
   return (
     // El wallpaper (`bg-ambient`) es fijo a la ventana: lo mantiene adentro el `[contain:paint]` del marco.
     <div className="@container h-full overflow-y-auto bg-ambient" data-ambient="">
@@ -213,6 +228,10 @@ export function HomeShowcase() {
             Facturación
           </span>
           <div className="flex items-center gap-1">
+            {/* En edición, «Listo» es el único acento de la pantalla. */}
+            <Button className="me-1" onClick={() => setEditing(!editing)} size="sm" variant={editing ? "default" : "secondary"}>
+              {editing ? "Listo" : "Editar"}
+            </Button>
             <Accion icon={SearchIcon} label="Buscar" />
             <Accion icon={BellIcon} label="Avisos" />
             <Accion icon={PlusIcon} label="Crear" />
@@ -240,10 +259,30 @@ export function HomeShowcase() {
           getKey={(widget) => widget.id}
           getLabel={(widget) => widget.title}
           itemClassName={(widget) => (widget.wide ? "@2xl:col-span-2" : undefined)}
+          editing={editing}
           items={widgets}
+          onAdd={() => {
+            setAddMounted(true)
+            setAdding(true)
+          }}
+          onEditingChange={setEditing}
+          onRemove={(id) => setWidgets((all) => all.filter((widget) => widget.id !== id))}
           onReorder={setWidgets}
           renderItem={(widget) => widget.card}
         />
+        {addMounted && (
+          <Suspense fallback={null}>
+            <AddWidgetDialog
+              onAdd={(id) => {
+                setWidgets((all) => [...all, ...WIDGETS.filter((widget) => widget.id === id)])
+                setAdding(false)
+              }}
+              onOpenChange={setAdding}
+              open={adding}
+              widgets={removed}
+            />
+          </Suspense>
+        )}
       </div>
     </div>
   )

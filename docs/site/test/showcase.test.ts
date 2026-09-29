@@ -30,6 +30,12 @@ describe("Playground: pantallas", () => {
     expect(html).toContain(texto)
   })
 
+  it("Inicio arranca fuera de edición, con «Editar» en la barra", () => {
+    const html = renderToString(createElement(HomeShowcase))
+    expect(html).toMatch(/<button[^>]*data-slot="button"[^>]*>(?:<[^>]+>)*Editar</)
+    expect(html).not.toContain("animate-jiggle")
+  })
+
   it("cada opción tiene su pantalla", () => {
     expect(SHOWCASES.map((showcase) => showcase.id)).toEqual(pantallas.map(([id]) => id))
   })
