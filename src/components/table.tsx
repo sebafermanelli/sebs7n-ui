@@ -9,7 +9,12 @@ function Table({ className, density = "default", ...props }: TableProps) {
     <div
       data-slot="table-container"
       data-density={density}
-      className="group/table relative w-full overflow-x-auto rounded-surface border border-separator bg-surface"
+      // La fila elegida va en acento solo con el foco adentro (`group-focus-within/table`). Un
+      // click en una celda común no enfocaba nada —y en Safari un click no enfoca botones—, así
+      // que la fila parpadeaba a gris. Con `tabIndex={-1}` el contenedor toma el foco del click:
+      // no entra en el orden de Tab y no muestra anillo (un click no es `focus-visible`).
+      tabIndex={-1}
+      className="group/table relative w-full overflow-x-auto rounded-surface border border-separator bg-surface outline-none"
     >
       <table data-slot="table" className={cn("w-full caption-bottom border-collapse text-body", className)} {...props} />
     </div>

@@ -1800,6 +1800,7 @@ export const COMPONENTS = {
       "`TableCaption` es el nombre de la tabla. Si el título ya está arriba en un `PageHeader`, asocialo con `aria-labelledby`.",
       "`TableHead` con `numeric` alinea a la derecha y usa cifras tabulares: las columnas de plata se comparan de un vistazo.",
       "Una tabla sin `<thead>` no es una tabla: es una lista.",
+      "El contenedor lleva `tabIndex={-1}`: un click en una celda común le deja el foco a la tabla (sin entrar en el orden de Tab ni mostrar anillo), así la fila elegida sigue en el acento. Sin foco adentro, la elegida es gris, como una lista de Drive que pierde el foco.",
     ],
     usage: [
       "**Números a la derecha con `numeric`, texto a la izquierda.** Nunca centrado.",

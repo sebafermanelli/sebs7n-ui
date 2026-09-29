@@ -180,6 +180,28 @@ describe("Table", () => {
     expect(screen.getByText("$1.200")).toHaveClass("text-right", "tabular-nums")
   })
 
+  // Revisión de R1: la fila elegida va en acento mientras la tabla tiene el foco. Un click en una
+  // celda común (sin nada enfocable) no enfocaba nada, y la fila parpadeaba a gris; en Safari un
+  // click nunca enfoca un botón. Con `tabIndex={-1}` el contenedor toma el foco del click, sin
+  // entrar en el orden de Tab y sin anillo (el click no es `focus-visible`).
+  it("un click en una celda común deja el foco en la tabla, y la fila elegida sigue en acento", async () => {
+    render(
+      <Table>
+        <TableBody>
+          <TableRow data-state="selected">
+            <TableCell>Factura 0012</TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
+    )
+    const container = screen.getByRole("table").parentElement!
+    expect(container).toHaveAttribute("tabindex", "-1")
+    expect(container).toHaveClass("outline-none")
+    await userEvent.click(screen.getByText("Factura 0012"))
+    expect(container).toHaveFocus()
+    expect(container.matches(":focus-within")).toBe(true)
+  })
+
   it("density compact", () => {
     render(<Table density="compact"><tbody /></Table>)
     expect(screen.getByRole("table").parentElement).toHaveAttribute("data-density", "compact")
