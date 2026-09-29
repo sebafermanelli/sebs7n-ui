@@ -46,7 +46,7 @@ const contacts = [
 
 /**
  * Para mostrar
- * `formatPhone` de `sebs7n-ui/lib/phone`: internacional legible, o nacional si el teléfono es del país de quien lo lee (`country`).
+ * `formatPhone` de `sebs7n-ui/lib/phone`: internacional legible, o nacional si el teléfono es argentino y quien lo lee también (`country: "AR"`).
  */
 export function Display() {
   return (

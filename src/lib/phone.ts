@@ -156,25 +156,34 @@ export function isValidPhone(value: string, country?: string): boolean {
 /** «55552002» → «5555-2002»: el abonado argentino con el guion antes de los últimos cuatro. */
 const subscriber = (digits: string) => `${digits.slice(0, -4)}-${digits.slice(-4)}`
 
-/** Grupos de tres desde la izquierda y los últimos cuatro juntos: «2025550143» → «202 555 0143». */
+/**
+ * Los últimos cuatro juntos y el resto en grupos de tres **desde la derecha**; si adelante sobra un solo
+ * dígito, se suma al grupo siguiente: «2025550143» → «202 555 0143», «99123456» → «9912 3456». Nunca un
+ * grupo de un dígito («991 2 3456» era el de antes).
+ */
 function grouped(digits: string): string {
   if (digits.length <= 4) return digits
-  const head = digits.slice(0, -4).match(/.{1,3}/g)!.join(" ")
-  return `${head} ${digits.slice(-4)}`
+  const head = digits.slice(0, -4)
+  const groups: string[] = []
+  for (let end = head.length; end > 0; end -= 3) groups.unshift(head.slice(Math.max(0, end - 3), end))
+  if (groups.length > 1 && groups[0]!.length === 1) groups.splice(0, 2, groups[0]! + groups[1]!)
+  return [...groups, digits.slice(-4)].join(" ")
 }
 
 /**
- * Un E.164 para mostrar: internacional legible («+54 9 11 5555-2002») o, si el teléfono es del país
- * de `country` (el de quien lo lee), nacional («011 15-5555-2002»).
+ * Un E.164 para mostrar: internacional legible («+54 9 11 5555-2002») o, si el teléfono es argentino y
+ * `country` es `"AR"` (el país de quien lo lee), nacional («011 15-5555-2002»).
  *
  * No es el formato oficial de cada país (eso es libphonenumber): Argentina va con sus códigos de área
- * y el 15 del celular; el resto, en grupos de tres con los últimos cuatro juntos y, en nacional, con
- * el prefijo nacional adelante (salvo +1, donde el 1 se marca y no se escribe). Lo que no es un E.164
- * de la tabla vuelve tal cual: los datos viejos se muestran sin perderse.
+ * y el 15 del celular; el resto, siempre internacional, en grupos desde la derecha con los últimos
+ * cuatro juntos. El formato nacional solo existe donde hay un patrón definido (hoy, AR): inventarlo
+ * para otros países daba grupos que nadie escribe. Lo que no es un teléfono válido (`isValidPhone`:
+ * un E.164 de la tabla con el largo de su país) vuelve tal cual: los datos viejos y los números a
+ * medio escribir se muestran sin romperse.
  */
 export function formatPhone(value: string, options: { country?: string } = {}): string {
-  const phone = parsePhone(value, options.country)
-  if (!phone) return value
+  if (!isValidPhone(value, options.country)) return value
+  const phone = parsePhone(value, options.country)!
   const { country, national } = phone
   const local = options.country?.toUpperCase() === country.code
   if (country.code === "AR") {
@@ -185,6 +194,5 @@ export function formatPhone(value: string, options: { country?: string } = {}): 
     if (local) return mobile ? `0${area} 15-${number}` : `0${area} ${number}`
     return `+54 ${mobile ? "9 " : ""}${area} ${number}`
   }
-  if (local) return `${country.dial === "1" ? "" : country.trunk}${grouped(national)}`
   return `+${country.dial} ${grouped(national)}`
 }
