@@ -196,6 +196,12 @@ const pages = [
     body: loadPage("reglas"),
   },
   {
+    slug: "migrating-to-2",
+    title: "Migrar a 2.0",
+    description: "Qué cambia en el código de la app al pasar de 1.x a 2.0: Inter, tokens y componente por componente.",
+    body: loadPage("migrating-to-2"),
+  },
+  {
     slug: "migracion",
     title: "Migrar a 1.0",
     description: "Qué cambia en el código de la app al pasar de 0.8 a 1.0, clase por clase.",
