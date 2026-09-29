@@ -46,3 +46,16 @@ export function Semana() {
     </div>
   )
 }
+
+/**
+ * Día
+ * La semana con una sola columna: la fila «Todo el día», las horas de 61, los eventos con su borde de color y la línea de ahora. ‹ › pasan de a un día y el teclado es el mismo.
+ */
+export function Dia() {
+  const eventos = useEventos()
+  return (
+    <div className="h-[560px] w-full overflow-hidden rounded-surface border border-separator">
+      <CalendarView defaultView="day" events={eventos} hour12={false} locale="es-AR" />
+    </div>
+  )
+}

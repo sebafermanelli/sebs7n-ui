@@ -1,6 +1,7 @@
 "use client"
 
 import { EllipsisIcon } from "lucide-react"
+import { useState } from "react"
 import { Button } from "sebs7n-ui/button"
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "sebs7n-ui/context-menu"
 import { FileGrid, type FileGridItem } from "sebs7n-ui/file-grid"
@@ -45,5 +46,21 @@ export function Basico() {
         <ContextMenuItem>Compartir…</ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>
+  )
+}
+
+/**
+ * Varios elegidos
+ * `selectionMode="multiple"`: ⌘ (o Ctrl) + click suma o saca, ⇧ + click elige el rango y ⌘A todos. Con el teclado, las flechas mueven sin elegir, Espacio suma o saca y ⇧ + flechas extiende en el orden de la grilla.
+ */
+export function Varios() {
+  const [elegidos, setElegidos] = useState<string[]>(["f-0012", "f-0013"])
+  return (
+    <div className="flex w-full flex-col gap-3">
+      <FileGrid aria-label="Archivos" items={ARCHIVOS} onSelectedChange={(ids) => setElegidos(ids)} selected={elegidos} selectionMode="multiple" />
+      <p className="text-callout text-label-secondary" role="status">
+        {elegidos.length === 1 ? "1 elegido" : `${elegidos.length} elegidos`}
+      </p>
+    </div>
   )
 }
