@@ -2644,7 +2644,7 @@ export const COMPONENTS = {
     title: "FileGrid",
     group: "contenido",
     detallado: true,
-    description: "La vista de íconos de iCloud Drive: miniaturas con el filo de 1 px, nombre y tipo abajo, una caja gris en la elegida, el «…» con el menú del ítem y flechas en dos dimensiones.",
+    description: "La vista de íconos de iCloud Drive: miniaturas con el filo de 1 px, nombre y tipo abajo, una caja gris con el puntero y la misma caja con un borde del acento en la elegida, el «…» con el menú del ítem y flechas en dos dimensiones.",
     keyboard: [
       ["a–z", "Salta al siguiente cuyo nombre empieza con lo tipeado (medio segundo entre teclas); la misma letra repetida recorre los que empiezan con ella."],
       ["Tab", "Entra a la grilla en el elegido (o en el primero) y sale de una: la grilla es una sola parada."],
@@ -2660,10 +2660,10 @@ export const COMPONENTS = {
     ],
     a11y: [
       "`role=\"listbox\"` con `option`s y `aria-selected`: **nombre obligatorio** (`aria-label` o `aria-labelledby`).",
-      "Foco itinerante: una sola opción tiene `tabIndex=0`. El anillo es el interior de iCloud, alrededor del ítem entero.",
+      "Foco itinerante: una sola opción tiene `tabIndex=0`. En una no elegida, el anillo interior de iCloud alrededor del ítem entero; en una elegida el borde ya es del acento, y el foco lo duplica (de 2 a 4 px), así en `multiple` la enfocada se distingue de las otras elegidas.",
       "El nombre accesible de cada opción es su nombre y su tipo («Factura 0012.pdf, 128 KB»). La miniatura es decorativa: `<img alt=\"\">`.",
-      "El «…» es para el puntero: sale del orden de Tab y del árbol de accesibilidad, porque un botón adentro de una opción no se puede anunciar. Abre el mismo menú que Shift+F10 o la tecla de menú sobre el ítem enfocado, así que el teclado llega a las mismas acciones. Al cerrar el menú, el foco vuelve al ítem.",
-      "La elegida es una caja gris (`selection-inactive`) con o sin foco, como Drive; el foco suma el anillo interior. El nombre sigue en `label`: no depende del color para leerse.",
+      "El «…» aparece en el ítem con el puntero o con el foco, no en cada elegido. Es para el puntero: sale del orden de Tab y del árbol de accesibilidad, porque un botón adentro de una opción no se puede anunciar. Abre el mismo menú que Shift+F10 o la tecla de menú sobre el ítem enfocado, así que el teclado llega a las mismas acciones. Al cerrar el menú, el foco vuelve al ítem.",
+      "Con el puntero, una caja gris sin borde; la elegida (una o varias), la misma caja (`selection-inactive`) más un borde de 2 px del acento por dentro (`selection-border`), como Drive. El borde llega a 3:1 contra la caja, la página y el wallpaper en los dos temas (WCAG 1.4.11; en oscuro es el paso claro de la marca). El nombre sigue en `label`: no depende del color para leerse.",
       "Con `selectionMode=\"multiple\"`, el listbox lleva `aria-multiselectable=\"true\"`; las flechas mueven sin elegir (el modelo recomendado de WAI-ARIA) y Espacio suma o saca.",
     ],
     usage: [
