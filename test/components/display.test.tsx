@@ -37,9 +37,11 @@ describe("Toggle (chip)", () => {
   })
 
   // R4: un ToggleGroup es el segmentado de iCloud (los B/I/U de Notes, el Día/Semana/Mes de
-  // Calendar): la pista gris y cada ítem prendido es un segmento elevado. Admite varios prendidos,
-  // así que no hay pastilla que se deslice: cada ítem se eleva solo.
-  it("ToggleGroup es el segmentado: pista fill-2 y el prendido elevado en semibold", () => {
+  // Calendar): la pista gris y cada ítem prendido se marca solo (admite varios prendidos, así que no
+  // hay pastilla que se deslice). Revisión de R4 (I4): el prendido era la pastilla blanca sobre la
+  // pista gris (1,16:1 en claro); ahora es el acento sólido, como un toggle de ícono de iCloud, que
+  // llega a 3:1 contra la pista (lo mide contrast.test.ts). En oscuro, el paso 900 de la marca.
+  it("ToggleGroup es el segmentado: pista fill-2 y el prendido en el acento sólido", () => {
     render(
       <ToggleGroup aria-label="Estilo" defaultValue={["a"]}>
         <ToggleGroupItem value="a">A</ToggleGroupItem>
@@ -48,10 +50,14 @@ describe("Toggle (chip)", () => {
     )
     expect(screen.getByRole("group", { name: "Estilo" })).toHaveClass("rounded-control", "bg-fill-2", "p-0.5", "w-fit")
     const b = screen.getByRole("button", { name: "B" })
-    expect(b).toHaveClass("h-6", "text-callout", "text-label", "data-pressed:bg-segment", "data-pressed:shadow-segment", "data-pressed:font-semibold")
+    expect(b).toHaveClass("h-6", "text-callout", "text-label", "data-pressed:font-semibold")
+    expect(b).toHaveClass("data-pressed:bg-brand-700", "data-pressed:text-brand-contrast", "dark:data-pressed:bg-brand-900", "dark:data-pressed:text-background")
+    expect(b.className).not.toMatch(/data-pressed:(bg-segment|shadow-segment)/)
+    // El anillo de foco sobre el acento va en el color del texto, que ya llega a 4,5:1 sobre él.
+    expect(b).toHaveClass("data-pressed:focus-visible:focus-ring-inverse", "[--sf-focus-inverse:currentColor]")
     expect(b).toHaveClass("after:w-px", "after:bg-fill-3", "first:after:hidden", "data-pressed:after:hidden", "[[data-pressed]+&]:after:hidden")
-    expect(b.className).not.toMatch(/brand/)
   })
+
 })
 
 describe("Badge", () => {

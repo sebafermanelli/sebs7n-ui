@@ -462,6 +462,37 @@ describe("El acento como texto y como glifo, en las cinco marcas (WCAG 1.4.3 y 1
   }
 })
 
+// Revisión de R4 (I4): el ítem prendido de un ToggleGroup se tiene que distinguir de la pista (WCAG
+// 1.4.11, estado). La pastilla blanca daba 1,16:1 en claro. Ahora es el acento sólido: `brand-700`
+// con `brand-contrast` en claro y, en oscuro, `brand-900` (L fija 0,717) con el texto oscuro de la
+// página, porque `brand-700` en oscuro quedaba en 2,27–2,6:1 contra la pista con terracotta y blue.
+describe("ToggleGroup: el prendido contra la pista y su texto (WCAG 1.4.11 y 1.4.3)", () => {
+  const css = read("theme.css")
+  const cuerpo = (theme: "light" | "dark") => {
+    const inicio = css.indexOf(theme === "light" ? ":root {" : ".dark {")
+    return css.slice(inicio, css.indexOf("\n  }", inicio))
+  }
+  const paso900 = (theme: "light" | "dark", base: number[]) => {
+    const [, l, c] = new RegExp(`--sf-brand-900: oklch\\(from var\\(--sf-brand-src\\) ([\\d.]+) calc\\(c \\* ([\\d.]+)\\) h\\);`).exec(cuerpo(theme))!
+    return hexOfOklch([Number(l), base[1]! * Number(c), base[2]!] as unknown as Oklch)
+  }
+  for (const [marca, temas] of Object.entries(brands as Record<string, Record<"light" | "dark", { base: number[]; contrast: string }>>)) {
+    for (const theme of ["light", "dark"] as const) {
+      const p = paleta[theme]
+      const pista = flattenAlpha(p["--sf-fill-2"]!, p["--sf-background"]!)
+      const { base, contrast } = temas[theme]
+      const relleno = theme === "light" ? hexOfOklch(base as unknown as Oklch) : paso900(theme, base)
+      const texto = theme === "light" ? contrast : p["--sf-background"]!
+      it(`${theme} · ${marca}: el prendido ${relleno} contra la pista ${pista} llega a 3:1`, () => {
+        expect(ratio(relleno, pista)).toBeGreaterThanOrEqual(3)
+      })
+      it(`${theme} · ${marca}: el texto ${texto} sobre el prendido llega a 4.5:1`, () => {
+        expect(ratio(texto, relleno)).toBeGreaterThanOrEqual(4.5)
+      })
+    }
+  }
+})
+
 // El ítem externo de un menú (revisión de R3): el texto en el acento sobre el panel en reposo y sobre
 // el gris del resaltado (fill-2) y del apretado (fill-3). Con `brand-900` teal y emerald en claro
 // quedaban en 4,0–4,2:1 sobre el resaltado: va en `brand-ink`, como el texto del botón `plain`.

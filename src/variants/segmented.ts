@@ -32,12 +32,18 @@ export const segmentedThumbClassName =
 /**
  * Un ítem de `ToggleGroup`: el segmento de iCloud cuando cada opción se prende sola (los B/I/U del
  * formato de Notes). No hay pastilla que se deslice —puede haber varios prendidos—: el ítem
- * prendido se eleva él mismo con el color y la sombra de la pastilla. 24 de alto (28 con la pista),
- * 14 en `label` y semibold prendido; con el dedo 40. Lleva el separador de 1 × 16 del segmentado,
- * escondido en el prendido y en el que le sigue.
+ * prendido se marca él mismo con el acento sólido, como un toggle de ícono de iCloud (el de Calendar,
+ * fondo del acento con el glifo blanco). La pastilla blanca de antes se distinguía de la pista gris
+ * a 1,16:1 (revisión de R4); el acento llega a 3:1 en las cinco marcas. En oscuro va el paso 900 de
+ * la marca (L fija) con el texto oscuro de la página: el 700 quedaba en 2,3:1 contra la pista.
+ *
+ * 24 de alto (28 con la pista), 14 en `label` y semibold prendido; con el dedo 40. Lleva el
+ * separador de 1 × 16 del segmentado, escondido en el prendido y en el que le sigue. El anillo de
+ * foco sobre el acento va en el color del texto (`[--sf-focus-inverse:currentColor]`).
  */
 export const segmentedItemClassName =
   "relative inline-flex h-6 min-w-8 pointer-coarse:h-10 pointer-coarse:min-w-11 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-[calc(var(--radius-control)-2px)] px-3 text-callout whitespace-nowrap text-label outline-none select-none transition-surface " +
-  "focus-visible:focus-ring data-pressed:bg-segment data-pressed:font-semibold data-pressed:shadow-segment data-disabled:cursor-not-allowed data-disabled:opacity-40 " +
+  "focus-visible:focus-ring data-pressed:bg-brand-700 data-pressed:text-brand-contrast dark:data-pressed:bg-brand-900 dark:data-pressed:text-background data-pressed:font-semibold data-pressed:focus-visible:focus-ring-inverse [--sf-focus-inverse:currentColor] data-disabled:cursor-not-allowed data-disabled:opacity-40 " +
   "after:absolute after:left-0 after:top-1 after:h-4 after:w-px after:bg-fill-3 pointer-coarse:after:top-3 first:after:hidden data-pressed:after:hidden [[data-pressed]+&]:after:hidden " +
   "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+

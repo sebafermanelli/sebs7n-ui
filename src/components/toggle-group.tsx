@@ -10,8 +10,8 @@ import type { ToggleProps } from "./toggle.js"
 type ToggleGroupProps = WithClassName<ToggleGroupPrimitive.Props>
 
 /**
- * Un grupo de opciones que se prenden: el segmentado de iCloud (R4). La pista gris del segmentado y
- * cada ítem prendido es un segmento elevado; con `multiple` pueden ser varios. Para filtros sueltos
+ * Un grupo de opciones que se prenden: el segmentado de iCloud (R4). La pista gris del segmentado,
+ * cada ítem prendido en el acento sólido; con `multiple` pueden ser varios. Para filtros sueltos
  * que envuelven en varias filas, `Toggle` de a uno (el token gris que se prende en el acento).
  */
 function ToggleGroup({ className, ...props }: ToggleGroupProps) {
