@@ -27,6 +27,7 @@ import {
 } from "../../src/components/dropdown-menu"
 import { Popover, PopoverContent, PopoverHeader, PopoverTitle, PopoverTrigger } from "../../src/components/popover"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../../src/components/select"
+import { menuItemContentClassName } from "../../src/variants/menu"
 import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "../../src/components/sheet"
 import { Toaster } from "../../src/components/sonner"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../src/components/tooltip"
@@ -140,6 +141,27 @@ describe("Select", () => {
     await userEvent.click(trigger)
     await userEvent.click(await screen.findByRole("option", { name: "USD" }))
     expect(onValueChange).toHaveBeenCalledWith("usd", expect.anything())
+  })
+
+  // Revisión de R3: una opción con ícono se dibuja como un ítem de DropdownMenu (10 px entre ícono y
+  // texto, el primer ícono en el acento). El ícono vive adentro del ItemText, así que la regla va ahí.
+  it("una opción con ícono lleva el gap y el acento de un ítem de menú", async () => {
+    render(
+      <Select defaultOpen>
+        <SelectTrigger aria-label="Moneda">
+          <SelectValue placeholder="Elegí" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="ars">
+            <svg data-testid="icono" />
+            Pesos
+          </SelectItem>
+        </SelectContent>
+      </Select>
+    )
+    const texto = (await screen.findByTestId("icono")).parentElement!
+    expect(texto).toHaveClass(...menuItemContentClassName.split(" "))
+    expect(menuItemContentClassName.split(" ")).toEqual(expect.arrayContaining(["gap-2.5", "[&>svg:first-child:not([data-slot])]:text-brand-900"]))
   })
 
   it("iCloud (R3): el tilde de la opción elegida es el círculo de la derecha y todas reservan su columna", async () => {

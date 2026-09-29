@@ -55,6 +55,13 @@ export const menuItemExternalClassName = "text-brand-ink"
 export const menuItemExternalIconClassName = "ml-auto size-3.5"
 
 /**
+ * El envoltorio del contenido de una opción de Select o Combobox. Ahí el ícono no es hijo directo
+ * del ítem (vive adentro del texto de la opción), así que el gap y el acento del primer ícono de
+ * `menuItemClassName` se repiten acá: una opción con ícono se ve como un ítem de DropdownMenu.
+ */
+export const menuItemContentClassName = "gap-2.5 [&>svg:first-child:not([data-slot])]:text-brand-900"
+
+/**
  * El texto secundario de un ítem —el atajo de teclado—: `label-secondary`, también resaltado.
  * Con el resaltado gris de iCloud el texto no cambia de color, y sobre `fill-2` el secundario
  * sigue arriba de 4,5:1 (`test/surfaces.test.ts`).

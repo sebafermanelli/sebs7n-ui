@@ -70,6 +70,7 @@ export {
   menuItemClassName,
   menuItemDestructiveClassName,
   menuItemExternalClassName,
+  menuItemContentClassName,
   menuItemExternalIconClassName,
   menuItemSecondaryClassName,
   menuLabelClassName,

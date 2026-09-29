@@ -30,7 +30,7 @@ import {
   ComboboxStatus,
   ComboboxValue,
 } from "../../src/components/combobox"
-import { menuItemClassName, menuPopupClassName } from "../../src/variants/menu"
+import { menuItemClassName, menuItemContentClassName, menuPopupClassName } from "../../src/variants/menu"
 import { tagRemoveClassName } from "../../src/variants/tag"
 import { hidratar } from "../hidratar"
 
@@ -484,4 +484,13 @@ describe("SSR", () => {
     expect(serverIds.length).toBeGreaterThan(0)
     expect(ids(container.innerHTML)).toEqual(ids(before))
   })
+})
+
+// Revisión de R3: la opción con ícono se dibuja como un ítem de DropdownMenu.
+it("ComboboxItem envuelve el contenido con el gap y el acento de un ítem de menú", async () => {
+  const { readFileSync } = await import("node:fs")
+  const { join } = await import("node:path")
+  const fuente = readFileSync(join(import.meta.dirname, "../../src/components/combobox.tsx"), "utf8")
+  expect(fuente).toMatch(/className=\{cn\("flex min-w-0 flex-1 items-center truncate", menuItemContentClassName\)\}/)
+  expect(menuItemContentClassName).toContain("gap-2.5")
 })

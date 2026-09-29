@@ -10,7 +10,7 @@ import { renderShellTrigger } from "../internal/shell-trigger.js"
 import { useLabels } from "../lib/labels.js"
 import { cn, type WithClassName } from "../lib/utils.js"
 import { inputMultilineRadiusClassName, inputShellButtonClassName, inputShellClassName, inputShellInputClassName } from "../variants/input.js"
-import { menuGutterClassName, menuIndicatorClassName, menuItemClassName, menuLabelClassName, menuPopupClassName, menuSeparatorClassName } from "../variants/menu.js"
+import { menuGutterClassName, menuIndicatorClassName, menuItemClassName, menuItemContentClassName, menuLabelClassName, menuPopupClassName, menuSeparatorClassName } from "../variants/menu.js"
 import { tagRemoveClassName, tagVariants, type TagSize } from "../variants/tag.js"
 
 type InputSize = "sm" | "md" | "lg"
@@ -112,7 +112,7 @@ function ComboboxItem({ className, children, ...props }: ComboboxItemProps) {
       <ComboboxPrimitive.ItemIndicator data-slot="combobox-item-indicator" className={menuIndicatorClassName}>
         <MenuCheck />
       </ComboboxPrimitive.ItemIndicator>
-      <span className="flex min-w-0 flex-1 items-center gap-2 truncate">{children}</span>
+      <span className={cn("flex min-w-0 flex-1 items-center truncate", menuItemContentClassName)}>{children}</span>
     </ComboboxPrimitive.Item>
   )
 }

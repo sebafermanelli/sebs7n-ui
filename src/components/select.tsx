@@ -6,7 +6,7 @@ import { ChevronDownIcon, ChevronsUpDownIcon, ChevronUpIcon } from "lucide-react
 import { MenuCheck } from "../internal/menu-check.js"
 import { cn, type WithClassName } from "../lib/utils.js"
 import { inputControlClassName, inputDisabledClassName, inputPaddingClassName, inputSizeClassName } from "../variants/input.js"
-import { menuGutterClassName, menuIndicatorClassName, menuItemClassName, menuLabelClassName, menuPopupClassName, menuSeparatorClassName } from "../variants/menu.js"
+import { menuGutterClassName, menuIndicatorClassName, menuItemClassName, menuItemContentClassName, menuLabelClassName, menuPopupClassName, menuSeparatorClassName } from "../variants/menu.js"
 
 const Select = SelectPrimitive.Root
 
@@ -114,7 +114,7 @@ function SelectItem({ className, children, ...props }: SelectItemProps) {
       <SelectPrimitive.ItemIndicator data-slot="select-item-indicator" className={menuIndicatorClassName}>
         <MenuCheck />
       </SelectPrimitive.ItemIndicator>
-      <SelectPrimitive.ItemText className="flex flex-1 items-center gap-2 whitespace-nowrap">{children}</SelectPrimitive.ItemText>
+      <SelectPrimitive.ItemText className={cn("flex flex-1 items-center whitespace-nowrap", menuItemContentClassName)}>{children}</SelectPrimitive.ItemText>
     </SelectPrimitive.Item>
   )
 }
