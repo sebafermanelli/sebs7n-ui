@@ -190,7 +190,7 @@ function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido
           // Lo que mide la barra global: el sidebar se pega debajo de ella y descuenta su alto.
           // Con barra, la fila de arriba mide lo suyo y la de abajo se estira hasta el alto del shell.
           header == null ? "[--app-shell-header:0px]" : "[--app-shell-header:2.75rem] lg:grid-rows-[auto_minmax(0,1fr)]",
-          // `bg-ambient` pinta el mismo color de página y le suma los focos encima.
+          // `bg-ambient` pinta el mismo color de página y le suma las ondas del wallpaper detrás.
           ambient && "bg-ambient",
           className
         )}
