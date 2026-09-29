@@ -2,6 +2,7 @@
 
 import { BoldIcon, ItalicIcon, StrikethroughIcon, UnderlineIcon } from "lucide-react"
 import { useState } from "react"
+import { Field, FieldLabel } from "sebs7n-ui/field"
 import { ToggleGroup, ToggleGroupItem } from "sebs7n-ui/toggle-group"
 
 /**
@@ -39,5 +40,22 @@ export function Varios() {
         <StrikethroughIcon />
       </ToggleGroupItem>
     </ToggleGroup>
+  )
+}
+
+/**
+ * Tamaño de formulario
+ * `size="md"` para que la pista mida 36 como los campos de al lado; en un `Field` con `name`, manda cada valor prendido.
+ */
+export function EnFormulario() {
+  return (
+    <Field name="status">
+      <FieldLabel>Estados</FieldLabel>
+      <ToggleGroup defaultValue={["paid"]} multiple size="md">
+        <ToggleGroupItem value="paid">Pagadas</ToggleGroupItem>
+        <ToggleGroupItem value="due">Vencidas</ToggleGroupItem>
+        <ToggleGroupItem value="draft">Borradores</ToggleGroupItem>
+      </ToggleGroup>
+    </Field>
   )
 }

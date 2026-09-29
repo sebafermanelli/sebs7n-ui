@@ -1,5 +1,6 @@
 "use client"
 
+import { MapPinIcon } from "lucide-react"
 import {
   Autocomplete,
   AutocompleteContent,
@@ -22,6 +23,31 @@ export function Basico() {
       <Label htmlFor="ciudad">Ciudad</Label>
       <Autocomplete items={CIUDADES}>
         <AutocompleteInput id="ciudad" placeholder="Escribí o elegí" />
+        <AutocompleteContent>
+          <AutocompleteEmpty />
+          <AutocompleteList>
+            {(item: string) => (
+              <AutocompleteItem key={item} value={item}>
+                {item}
+              </AutocompleteItem>
+            )}
+          </AutocompleteList>
+        </AutocompleteContent>
+      </Autocomplete>
+    </div>
+  )
+}
+
+/**
+ * Con ícono adelante
+ * `startIcon` pone el ícono adentro del campo y corre el texto: sin `pl-10` ni íconos absolutos a mano.
+ */
+export function ConIcono() {
+  return (
+    <div className="flex w-full max-w-sm flex-col gap-2">
+      <Label htmlFor="ciudad-icono">Ciudad de entrega</Label>
+      <Autocomplete items={CIUDADES}>
+        <AutocompleteInput id="ciudad-icono" placeholder="Escribí o elegí" startIcon={<MapPinIcon />} />
         <AutocompleteContent>
           <AutocompleteEmpty />
           <AutocompleteList>

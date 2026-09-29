@@ -3,6 +3,10 @@
 import { useId, useState } from "react"
 import { Calendar } from "sebs7n-ui/calendar"
 import { DatePicker } from "sebs7n-ui/date-picker"
+import { Field, FieldDescription, FieldError, FieldLabel } from "sebs7n-ui/field"
+import { Form } from "sebs7n-ui/form"
+import { TimePicker } from "sebs7n-ui/time-picker"
+import { Button } from "sebs7n-ui/button"
 import { DateTimePicker } from "sebs7n-ui/date-time-picker"
 import { Label } from "sebs7n-ui/label"
 import { LabelsProvider } from "sebs7n-ui/labels"
@@ -101,5 +105,32 @@ export function IdiomaGlobal() {
         <Calendar className="self-start" defaultMonth={new Date(2026, 9, 1)} />
       </div>
     </LabelsProvider>
+  )
+}
+
+/**
+ * En un Field
+ * `FieldLabel`, ayuda y error se enganchan solos; con `required`, sin fecha u hora `Form` no envía y enfoca el campo.
+ */
+export function EnField() {
+  const [sent, setSent] = useState<string | null>(null)
+  return (
+    <Form className="flex w-full max-w-sm flex-col gap-4" onFormSubmit={(values) => setSent(JSON.stringify(values))}>
+      <Field name="due">
+        <FieldLabel>Vencimiento</FieldLabel>
+        <DatePicker required />
+        <FieldDescription>El día que vence la factura.</FieldDescription>
+        <FieldError>Elegí una fecha.</FieldError>
+      </Field>
+      <Field name="sendAt">
+        <FieldLabel>Hora de envío</FieldLabel>
+        <TimePicker required />
+        <FieldError>Elegí una hora.</FieldError>
+      </Field>
+      <Button className="self-start" type="submit">
+        Programar
+      </Button>
+      {sent && <p className="text-footnote text-label-secondary">{sent}</p>}
+    </Form>
   )
 }

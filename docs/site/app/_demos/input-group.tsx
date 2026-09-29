@@ -1,6 +1,7 @@
 "use client"
 
-import { CopyIcon, SearchIcon } from "lucide-react"
+import { CopyIcon, SearchIcon, TicketIcon } from "lucide-react"
+import { useState } from "react"
 import { Field, FieldLabel, Kbd } from "sebs7n-ui"
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "sebs7n-ui/input-group"
 
@@ -78,6 +79,36 @@ export function Tamanos() {
           </InputGroupAddon>
         </InputGroup>
       ))}
+    </div>
+  )
+}
+
+/**
+ * Botón esperando
+ * `loading` en `InputGroupButton`: el spinner en el lugar del texto, el ancho no salta y el clic no pasa.
+ */
+export function Cargando() {
+  const [loading, setLoading] = useState(false)
+  return (
+    <div className="w-full max-w-sm">
+      <InputGroup>
+        <InputGroupAddon>
+          <TicketIcon />
+        </InputGroupAddon>
+        <InputGroupInput aria-label="Cupón" defaultValue="BIENVENIDA" />
+        <InputGroupAddon>
+          <InputGroupButton
+            loading={loading}
+            onClick={() => {
+              setLoading(true)
+              setTimeout(() => setLoading(false), 1500)
+            }}
+            variant="plain"
+          >
+            Aplicar
+          </InputGroupButton>
+        </InputGroupAddon>
+      </InputGroup>
     </div>
   )
 }
