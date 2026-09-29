@@ -143,6 +143,13 @@ describe("StackedMeter (R5b): la barra de almacenamiento de iCloud", () => {
     expect(meters[0]).toHaveClass("bg-amber-700")
   })
 
+  it("un segmento negativo dice lo mismo que mide: 0", () => {
+    render(<StackedMeter aria-label="Espacio" format={GB} locale="es-AR" max={50} segments={[{ label: "Ajuste", value: -2, color: "gray" }]} />)
+    const meter = screen.getByRole("meter", { name: "Ajuste" })
+    expect(meter).toHaveAttribute("aria-valuenow", "0")
+    expect(meter).toHaveAttribute("aria-valuetext", "0 GB")
+  })
+
   it("pista de 16 con radio 6, segmentos a 1 px, y el resto queda gris", () => {
     render(<StackedMeter aria-label="Espacio" max={50} segments={SEGMENTOS} />)
     const pista = document.querySelector("[data-slot=stacked-meter-track]")!

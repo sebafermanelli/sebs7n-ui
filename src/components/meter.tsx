@@ -155,7 +155,7 @@ function StackedMeter({ className, segments, max, format, locale, total, labels,
             aria-valuemin={0}
             aria-valuemax={scale}
             aria-valuenow={value(segment)}
-            aria-valuetext={formatter.format(segment.value)}
+            aria-valuetext={formatter.format(value(segment))}
             className={cn("h-full shrink-0 transition-[width] duration-300 ease-out motion-reduce:transition-none", categoryFill[segment.color])}
             style={{ width: pct(value(segment)) }}
           />
