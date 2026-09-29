@@ -637,8 +637,9 @@
  * de cabecera va encima sin blur propio (`bg-translucent-strip`): un blur adentro de otro solo
  * ve el fondo del de afuera, y cuesta otro pase de GPU.
  *
- * Con menos transparencia o más contraste es la superficie opaca (`surface`), y la franja
- * encima queda del tono de `surface-bar`.
+ * Con menos transparencia o más contraste es la superficie opaca de cada uno:
+ * `--translucent-body-fallback`, que por defecto es `surface` (la card, y la franja encima queda
+ * del tono de `surface-bar`) y el Sidebar pisa con `surface-secondary`.
  */
 @utility material-translucent-body {
   background-color: var(--sf-translucent-body);
@@ -646,7 +647,7 @@
   backdrop-filter: blur(15px);
 
   @media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
-    background-color: var(--sf-surface);
+    background-color: var(--translucent-body-fallback, var(--sf-surface));
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }

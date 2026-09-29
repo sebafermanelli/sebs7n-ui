@@ -291,6 +291,15 @@ describe("wallpaper (W)", () => {
     expect(u).toContain("background-color: var(--sf-translucent-body);")
     expect(u).toContain("-webkit-backdrop-filter: blur(15px);")
     expect(u).toContain("backdrop-filter: blur(15px);")
-    expect(u).toMatch(/@media \(prefers-reduced-transparency: reduce\), \(prefers-contrast: more\) \{\s*background-color: var\(--sf-surface\);\s*-webkit-backdrop-filter: none;\s*backdrop-filter: none;/)
+    expect(u).toMatch(
+      /@media \(prefers-reduced-transparency: reduce\), \(prefers-contrast: more\) \{\s*background-color: var\(--translucent-body-fallback, var\(--sf-surface\)\);\s*-webkit-backdrop-filter: none;\s*backdrop-filter: none;/
+    )
+  })
+
+  // Sin transparencia cada uno vuelve a SU superficie opaca: la card a `surface`, la columna del
+  // Sidebar a `surface-secondary` (no a blanco, que la pegaba al contenido).
+  it("el Sidebar sin transparencia vuelve a surface-secondary", () => {
+    const sidebar = read("../src/components/sidebar.tsx")
+    expect(sidebar).toContain("[--translucent-body-fallback:var(--color-surface-secondary)]")
   })
 })

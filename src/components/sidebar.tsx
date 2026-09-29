@@ -38,8 +38,9 @@ function Sidebar({ className, collapsed: collapsedProp = false, variant: _varian
         className={cn(
           "group/sidebar relative flex h-full w-60 shrink-0 flex-col border-r border-separator-strong bg-surface-secondary text-label data-collapsed:w-16",
           // Sobre el wallpaper (W) la columna es el cuerpo translúcido de los widgets: el sidebar es
-          // texto denso, y el cuerpo es el material que más contraste deja.
-          "in-data-ambient:material-translucent-body",
+          // texto denso, y el cuerpo es el material que más contraste deja. Sin transparencia vuelve
+          // a su gris de columna y no al blanco de la card.
+          "in-data-ambient:material-translucent-body [--translucent-body-fallback:var(--color-surface-secondary)]",
           // Adentro del Sheet del teléfono el fondo es el del Sheet (opaco), haya wallpaper o no.
           inSheet && "w-full border-0 bg-transparent in-data-ambient:bg-transparent",
           className
