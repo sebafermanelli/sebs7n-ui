@@ -57,6 +57,9 @@ const sortableLabels: SortableLabels = {
   of: "de",
   failed: "No se pudo guardar el orden: volvió el anterior.",
   grabbed: "En movimiento",
+  remove: "Sacar",
+  removed: "Se sacó",
+  add: "Agregar",
 }
 
 type SortableItemState = {

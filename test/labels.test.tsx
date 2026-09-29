@@ -253,6 +253,20 @@ describe("LabelsProvider", () => {
     expect(received?.carousel).toBeUndefined()
   })
 
+  it("los textos del modo edición de sortable (R10) viajan en el grupo opcional", () => {
+    let received: ReturnType<typeof useLabels> | undefined
+    function Reader() {
+      received = useLabels()
+      return null
+    }
+    render(
+      <LabelsProvider value={{ sortable: { remove: "Remove", removed: "Removed", add: "Add" } }}>
+        <Reader />
+      </LabelsProvider>
+    )
+    expect(received?.sortable).toEqual({ remove: "Remove", removed: "Removed", add: "Add" })
+  })
+
   it("los textos de R9 (vista Día y ListIndex) tampoco están en defaultLabels, y el provider los lleva igual", () => {
     expect(defaultLabels.calendarView).not.toHaveProperty("day")
     expect(defaultLabels).not.toHaveProperty("listIndex")

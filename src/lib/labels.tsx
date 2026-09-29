@@ -351,6 +351,12 @@ export type Labels = {
     failed: string
     /** En la descripción de la tarjeta tomada de `SortableGrid` sin manija (lo que es `aria-pressed` en la manija). */
     grabbed: string
+    /** Antes del nombre, en el «−» de cada ítem en modo edición: «Sacar Clientes». */
+    remove: string
+    /** Lo que se anuncia al sacar uno, antes del nombre: «Se sacó Clientes.» */
+    removed: string
+    /** La celda del final en modo edición, cuando hay `onAdd`. */
+    add: string
   }
   stepper: {
     /** Nombre de la lista de pasos, si no trae `aria-label`. */
