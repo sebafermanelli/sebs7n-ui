@@ -117,7 +117,7 @@ export const floatingSheetGapClassName =
  * mitad con overrides, que es peor que repetir.
  */
 export const floatingPopupClassName =
-  "flex w-64 origin-(--transform-origin) flex-col gap-2 rounded-surface material-popover p-3 text-callout text-gray-1000 shadow-menu outline-none " +
+  "flex w-64 origin-(--transform-origin) flex-col gap-2 rounded-menu material-popover p-3 text-callout text-gray-1000 shadow-menu outline-none " +
   "focus-visible:focus-ring transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0"
 
 /**

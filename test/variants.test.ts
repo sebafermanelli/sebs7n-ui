@@ -55,13 +55,13 @@ describe("variantes exportadas pasan por cn()", () => {
    * La cadena entera del botón por defecto, copiada acá a mano. Son cuatro apps llamando a
    * `buttonVariants` sin argumentos: una clase de más o de menos les cambia el botón en
    * todas las pantallas, y este test lo dice con el diff, no con una captura que alguien
-   * mire tres semanas después. En 1.0 cambió una sola: `rounded-md` pasó a `rounded-full`.
+   * mire tres semanas después. En 1.0 cambió una sola: `rounded-md` pasó a `rounded-full`; en 2.0 (iCloud) volvió al rectángulo, `rounded-control`.
    * En 2.0, la densidad de macOS: `h-10 px-4` pasó a `h-8 px-3`, y se sumó `touch-target`,
    * que va al final porque lo pone una variante compuesta: el `link` no lo lleva.
    */
   const SIN_SHAPE = {
     "default/md":
-      "relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full border border-transparent whitespace-nowrap outline-none select-none transition-surface focus-visible:focus-ring data-disabled:cursor-not-allowed data-disabled:border-gray-alpha-400 data-disabled:bg-gray-alpha-100 data-disabled:text-gray-700 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 bg-gray-1000 text-background-100 shadow-button-inverted hover:bg-button-primary-hover active:translate-y-px active:shadow-none data-disabled:shadow-none h-8 px-3 text-callout touch-target",
+      "relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-control border border-transparent whitespace-nowrap outline-none select-none transition-surface focus-visible:focus-ring data-disabled:cursor-not-allowed data-disabled:border-gray-alpha-400 data-disabled:bg-gray-alpha-100 data-disabled:text-gray-700 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 bg-gray-1000 text-background-100 shadow-button-inverted hover:bg-button-primary-hover active:translate-y-px active:shadow-none data-disabled:shadow-none h-8 px-3 text-callout touch-target",
   } as const
 
   it("sin shape, buttonVariants emite la cadena fijada", () => {
@@ -70,14 +70,14 @@ describe("variantes exportadas pasan por cn()", () => {
     expect(buttonVariants({ shape: "default" })).toBe(SIN_SHAPE["default/md"])
     // Y el botón es una cápsula en todos los tamaños, los de ícono incluidos.
     for (const size of ["sm", "md", "lg", "icon-sm", "icon-md", "icon-lg"] as const) {
-      expect(classes(buttonVariants({ size })), size).toContain("rounded-full")
+      expect(classes(buttonVariants({ size })), size).toContain("rounded-control")
     }
   })
 
   it("shape pill suma aire horizontal y no toca el radio", () => {
     for (const size of ["sm", "md", "lg"] as const) {
       const out = classes(buttonVariants({ size, shape: "pill" }))
-      expect(out.filter((c) => c.startsWith("rounded-")), size).toEqual(["rounded-full"])
+      expect(out.filter((c) => c.startsWith("rounded-")), size).toEqual(["rounded-control"])
     }
     // Un escalón más de padding por tamaño, y uno solo.
     const padding = (size: "sm" | "md" | "lg") =>

@@ -226,7 +226,7 @@ describe("ChatInput", () => {
     expect(campo()).toHaveClass("glass-control", "rounded-[min(var(--radius-field),--spacing(4))]", "field-sizing-content", "focus:focus-border", "resize-none")
     expect(campo()).toHaveAttribute("maxlength", "2000")
     expect(campo()).toHaveAttribute("rows", "1")
-    expect(screen.getByRole("button", { name: "Enviar" })).toHaveClass("bg-ai-solid", "size-8", "rounded-full")
+    expect(screen.getByRole("button", { name: "Enviar" })).toHaveClass("bg-ai-solid", "size-8", "rounded-control")
   })
 
   it("los textos salen del LabelsProvider, y la prop le gana", () => {

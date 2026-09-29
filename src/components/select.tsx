@@ -91,7 +91,7 @@ function SelectContent({
           <SelectPrimitive.ScrollUpArrow className={cn(scrollArrowClassName, "top-0")}>
             <ChevronUpIcon className="size-4" />
           </SelectPrimitive.ScrollUpArrow>
-          <SelectPrimitive.List data-slot="select-list" className="max-h-(--available-height) scroll-py-6 overflow-y-auto p-1.5">
+          <SelectPrimitive.List data-slot="select-list" className="max-h-(--available-height) scroll-py-6 overflow-y-auto p-1">
             {children}
           </SelectPrimitive.List>
           <SelectPrimitive.ScrollDownArrow className={cn(scrollArrowClassName, "bottom-0")}>

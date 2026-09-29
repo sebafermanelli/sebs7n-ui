@@ -3,7 +3,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "../lib/utils.js"
 
 const buttonVariantsBase = cva(
-  "relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full border border-transparent whitespace-nowrap outline-none select-none transition-surface focus-visible:focus-ring data-disabled:cursor-not-allowed data-disabled:border-gray-alpha-400 data-disabled:bg-gray-alpha-100 data-disabled:text-gray-700 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-control border border-transparent whitespace-nowrap outline-none select-none transition-surface focus-visible:focus-ring data-disabled:cursor-not-allowed data-disabled:border-gray-alpha-400 data-disabled:bg-gray-alpha-100 data-disabled:text-gray-700 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
@@ -52,12 +52,11 @@ const buttonVariantsBase = cva(
       /**
        * La forma del botón.
        *
-       * Desde 1.0 el botón es una cápsula: es la forma de los controles de vidrio, y con un
-       * radio de 6px el material se leía como un efecto pegado sobre un rectángulo de Geist.
+       * Desde 2.0 el botón es el rectángulo de iCloud (`rounded-control`, 8 px) en todas las
+       * formas: de 1.0 a 1.x era una cápsula, y en iCloud no hay controles en cápsula.
        *
-       * `pill` suma un escalón de padding horizontal, para los CTA de un hero. `rect` devuelve
-       * el rectángulo (`rounded-control`) para donde una cápsula no entra: una celda de tabla
-       * densa, un botón a todo el ancho de un formulario angosto.
+       * `pill` suma un escalón de padding horizontal, para los CTA de un hero. `rect` queda por
+       * compatibilidad: ya es lo mismo que `default`.
        */
       shape: {
         default: "",
@@ -88,7 +87,7 @@ export const buttonVariants = (props?: Parameters<typeof buttonVariantsBase>[0])
 
 export type ButtonVariantProps = VariantProps<typeof buttonVariants>
 
-/** La forma del botón: cápsula del sistema, píldora de marketing o rectángulo. */
+/** La forma del botón: la del sistema, con más aire (`pill`) o `rect` (igual que la del sistema). */
 export type ButtonShape = NonNullable<ButtonVariantProps["shape"]>
 
 export type ButtonSize = NonNullable<ButtonVariantProps["size"]>

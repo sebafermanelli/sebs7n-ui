@@ -19,7 +19,7 @@ describe("Checkbox", () => {
   it("tiene los estados de la tabla del spec", () => {
     render(<Checkbox aria-label="x" />)
     expect(screen.getByRole("checkbox")).toHaveClass(
-      "rounded-xs",
+      "rounded-sm",
       "border-gray-700",
       "hover:border-gray-800",
       "focus-visible:focus-ring",

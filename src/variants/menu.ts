@@ -15,8 +15,7 @@ export type MenuInsetProps = { inset?: boolean }
  * `touch-target`: los ítems están pegados, y un `::after` de 44 taparía la mitad del de al lado
  * (el que va después en el DOM se pinta encima y se queda con el toque).
  *
- * `rounded-menu-item` (6 px, 2.0) y no `rounded-control` (10): es la curva del resaltado en los
- * menús de macOS. Con 10 en una fila de 24, el resaltado se leía como una píldora.
+ * `rounded-menu-item` (8, como los ítems de menú de Mail y Drive en iCloud).
  *
  * El resaltado es la selección de macOS (2.0): acento sólido con texto e íconos de contraste.
  * Base UI pone `data-highlighted` tanto con el puntero como con las flechas, igual que macOS. Un
@@ -39,17 +38,15 @@ export const menuItemSecondaryClassName =
   "text-gray-900 group-data-highlighted/menu-item:group-not-data-disabled/menu-item:text-on-selection"
 
 /**
- * El radio del panel es el del ítem más el `p-1.5` que los separa: 6 + 6 = 12, el del menú
- * contextual de Mail (2.0; hasta la fase 3 era `control` + 6 = 16). Así las dos curvas son
- * concéntricas. Con un radio fijo, la esquina del ítem resaltado se ve más cerrada o más
- * abierta que la del panel, según cuál de los dos tokens haya pisado la app.
+ * `rounded-menu` (12, el de los menús de iCloud) con `p-1`: el ítem mide `rounded-menu-item` (8)
+ * y 8 + 4 = 12, así que las dos curvas son concéntricas. iCloud usa 5 de padding; con 4 el
+ * resaltado queda paralelo al borde, que es lo que se ve. Si la app pisa uno de los dos radios,
+ * tiene que pisar el otro.
  *
- * `material-popover` (vidrio denso): un menú es una lista que se lee y flota sobre lo que haya.
- * `p-1.5` y `min-w-48` (2.0) son los del menú de macOS: el resaltado no toca el borde del vidrio
- * y un menú de dos palabras no queda más angosto que su propio atajo.
+ * `min-w-48`: un menú de dos palabras no queda más angosto que su propio atajo.
  */
 export const menuPopupClassName =
-  "max-h-(--available-height) min-w-48 origin-(--transform-origin) overflow-y-auto rounded-[calc(var(--radius-menu-item)+--spacing(1.5))] material-popover p-1.5 text-gray-1000 shadow-menu outline-none transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0"
+  "max-h-(--available-height) min-w-48 origin-(--transform-origin) overflow-y-auto rounded-menu material-popover p-1 text-gray-1000 shadow-menu outline-none transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0"
 
 /**
  * La canaleta del tilde (2.0). En macOS el tilde de un ítem marcable va a la **izquierda**, en

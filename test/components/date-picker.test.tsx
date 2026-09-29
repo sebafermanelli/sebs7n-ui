@@ -30,7 +30,7 @@ describe("DatePicker", () => {
     render(<DatePicker aria-label="Vencimiento" defaultValue={d("2026-09-27")} onValueChange={onValueChange} />)
     await userEvent.click(screen.getByRole("button", { name: "Vencimiento" }))
     const panel = await screen.findByRole("dialog", { name: "Calendario" })
-    expect(panel).toHaveClass("material-popover", "rounded-surface", "shadow-menu")
+    expect(panel).toHaveClass("material-popover", "rounded-menu", "shadow-menu")
     await userEvent.click(dia("2026-09-15"))
     expect(toISODate(onValueChange.mock.calls[0]![0])).toBe("2026-09-15")
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull())

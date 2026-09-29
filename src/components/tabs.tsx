@@ -57,7 +57,7 @@ function TabsTrigger({ className, ...props }: TabsTriggerProps) {
         "relative isolate inline-flex cursor-pointer items-center justify-center gap-1.5 px-3 text-callout whitespace-nowrap text-gray-900 outline-none select-none transition-control",
         // Segmentado: 28 + los 2 px de la pista de cada lado = 32, el alto de un botón `md` y el del
         // ThemeSwitcher, que es el mismo objeto. Línea: 32, el alto de los controles.
-        "group-data-[variant=line]/tabs-list:h-8 group-data-[variant=segmented]/tabs-list:h-7 group-data-[variant=segmented]/tabs-list:rounded-full",
+        "group-data-[variant=line]/tabs-list:h-8 group-data-[variant=segmented]/tabs-list:h-7 group-data-[variant=segmented]/tabs-list:rounded-control",
         // Con el dedo crecen de verdad y no con `touch-target`: el `::after` ya es el subrayado,
         // y van pegadas. La de línea a 44; la segmentada a 40, que con el `p-0.5` de la pista da 44.
         "pointer-coarse:group-data-[variant=line]/tabs-list:h-11 pointer-coarse:group-data-[variant=segmented]/tabs-list:h-10",
@@ -66,7 +66,7 @@ function TabsTrigger({ className, ...props }: TabsTriggerProps) {
         // activo lo marca la línea de abajo (`after`) o la pastilla de la pista.
         "before:absolute before:inset-x-0 before:-z-10 before:transition-control",
         "group-data-[variant=line]/tabs-list:before:inset-y-1 group-data-[variant=line]/tabs-list:before:rounded-control",
-        "group-data-[variant=segmented]/tabs-list:before:inset-y-0 group-data-[variant=segmented]/tabs-list:before:rounded-full",
+        "group-data-[variant=segmented]/tabs-list:before:inset-y-0 group-data-[variant=segmented]/tabs-list:before:rounded-[calc(var(--radius-control)-2px)]",
         "hover:text-gray-1000 focus-visible:before:focus-ring",
         "after:absolute after:inset-x-3 after:-bottom-px after:h-0.5 after:bg-gray-1000 after:opacity-0",
         "data-active:text-gray-1000 group-data-[variant=line]/tabs-list:data-active:after:opacity-100",

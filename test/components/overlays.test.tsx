@@ -60,7 +60,7 @@ describe("Popover", () => {
     )
     await userEvent.click(screen.getByRole("button", { name: "Filtros" }))
     const panel = (await screen.findByText("contenido")).closest("[data-slot=popover-content]")!
-    expect(panel).toHaveClass("shadow-menu", "rounded-surface", "material-popover")
+    expect(panel).toHaveClass("shadow-menu", "rounded-menu", "material-popover")
     expect(panel.className).not.toMatch(/\bborder\b/)
   })
 
@@ -221,7 +221,7 @@ describe("Select como pop-up button de macOS (2.0)", () => {
     const lista = await screen.findByRole("listbox")
     const panel = lista.closest("[data-slot=select-content]")!
     expect(lista).toHaveAttribute("data-slot", "select-list")
-    expect(lista).toHaveClass("overflow-y-auto", "max-h-(--available-height)", "scroll-py-6", "p-1.5")
+    expect(lista).toHaveClass("overflow-y-auto", "max-h-(--available-height)", "scroll-py-6", "p-1")
     expect(panel).toHaveClass("overflow-hidden", "p-0")
     expect(panel.className).not.toMatch(/overflow-y-auto/)
   })

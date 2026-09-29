@@ -256,10 +256,10 @@ describe("menú de macOS (2.0)", () => {
     expect(menuSeparatorClassName).not.toMatch(/-mx-1/)
   })
 
-  it("el panel: p-1.5, radio concéntrico y 192 px de mínimo", () => {
-    expect(menuPopupClassName).toMatch(/(^|\s)p-1\.5(\s|$)/)
-    // 6 del ítem + 6 del padding = 12, el panel del menú contextual de Mail.
-    expect(menuPopupClassName).toContain("rounded-[calc(var(--radius-menu-item)+--spacing(1.5))]")
+  it("el panel: p-1, radio concéntrico y 192 px de mínimo", () => {
+    expect(menuPopupClassName).toMatch(/(^|\s)p-1(\s|$)/)
+    // 8 del ítem + 4 del padding = 12, el radio de los menús de iCloud.
+    expect(menuPopupClassName).toMatch(/(^|\s)rounded-menu(\s|$)/)
     expect(menuPopupClassName).not.toContain("--radius-control")
     expect(menuPopupClassName).toMatch(/(^|\s)min-w-48(\s|$)/)
   })

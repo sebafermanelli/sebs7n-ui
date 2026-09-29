@@ -10,7 +10,7 @@
  * las opciones pero adelante del fondo de la pista.
  */
 export const segmentedTrackClassName =
-  "relative isolate flex w-fit max-w-full items-center gap-0.5 rounded-full bg-gray-alpha-200 p-0.5 shadow-track"
+  "relative isolate flex w-fit max-w-full items-center gap-0.5 rounded-control bg-gray-alpha-200 p-0.5 shadow-track"
 
 /**
  * La pastilla, siempre más clara que la pista. Alfa y no vidrio: la pista casi siempre vive adentro de una superficie que ya
@@ -28,5 +28,5 @@ export const segmentedThumbClassName =
   // En oscuro `glass-control` es la superficie —casi negra— en alfa, y sobre una pista que es
   // blanco al 9 % la pastilla quedaba MÁS oscura que lo que la rodea: se leía como un hueco y
   // no como una pieza apoyada encima. Ahí va un blanco en alfa, que la levanta.
-  "pointer-events-none absolute -z-10 rounded-full glass-control shadow-card dark:bg-gray-alpha-400 " +
+  "pointer-events-none absolute -z-10 rounded-[calc(var(--radius-control)-2px)] glass-control shadow-card dark:bg-gray-alpha-400 " +
   "transition-[left,width,translate] duration-300 ease-[cubic-bezier(0.3,1.25,0.4,1)] motion-reduce:transition-none"

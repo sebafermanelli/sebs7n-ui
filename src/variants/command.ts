@@ -39,4 +39,4 @@ export const commandItemClassName =
  * filas traigan una imagen y otras un glifo.
  */
 export const commandItemIconClassName =
-  "flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-[8px] bg-gray-alpha-100 text-gray-900 [&_svg:not([class*='size-'])]:size-5 [&>img]:size-full [&>img]:object-cover"
+  "flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-control bg-gray-alpha-100 text-gray-900 [&_svg:not([class*='size-'])]:size-5 [&>img]:size-full [&>img]:object-cover"

@@ -19,7 +19,7 @@ const twMerge = extendTailwindMerge<"touch-target">({
     theme: {
       text: [...TYPE_SCALE],
       shadow: ["tooltip", "menu", "modal", "card", "card-hover", "button", "button-inverted", "button-accent", "track", "chip", "ai"],
-      radius: ["control", "surface", "panel", "field", "menu-item", "tag"],
+      radius: ["control", "surface", "panel", "field", "item", "menu", "menu-item", "tag"],
     },
     classGroups: {
       // `glass`, `glass-control` y los `material-*` pintan el fondo. Sin esto, un `bg-*` que pase el llamador

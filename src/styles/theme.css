@@ -89,41 +89,30 @@
   }
 
   /**
-   * Los tres radios del sistema.
+   * Los radios de iCloud web (2.0, medidos en icloud.com): nada de cápsulas en controles.
+   *
+   *   control    8   botones con texto y de ícono, toggles, la pista del segmentado
+   *   field     10   campos y búsqueda
+   *   item      10   ítems del sidebar y filas de lista con fondo
+   *   surface   11   cards (los widgets de Home)
+   *   panel     11   diálogos y hojas
+   *   menu      12   menús y popovers
+   *   menu-item  8   el resaltado de un ítem de menú: con el `p-1` del panel, 8 + 4 = 12, concéntrico
+   *   tag        4   Badge, Tag, chips de evento
    *
    * Son semánticos y no un paso de la escala de Tailwind (`rounded-md`, `rounded-xl`) porque
    * redefinir esos pasos le cambiaría el radio también al código de la app, que comparte el
-   * tema. Con `--radius-control: 6px`, `--radius-surface: 12px` y `--radius-panel: 16px`
-   * vuelven los radios de Geist.
+   * tema. Hasta 1.x el botón y el campo eran cápsulas: en iCloud la búsqueda mide 10, el
+   * segmentado 8 y los botones 8, y la cápsula quedó solo para lo que es redondo de verdad
+   * (avatar, Switch, pista de un Slider).
    */
-  --radius-control: 10px;
-  --radius-surface: 20px;
-  --radius-panel: 26px;
-  /**
-   * El radio de los campos: Input, Select, Combobox, DatePicker, NumberField.
-   *
-   * Por defecto es una cápsula, la misma forma que un Button: un campo y un botón uno al
-   * lado del otro —o uno arriba del otro, en un formulario— tienen la misma curva. Con 10px
-   * y el botón en cápsula eran dos formas en la misma fila.
-   *
-   * Lo que tiene más de una línea no puede ser una cápsula: Textarea y un Combobox con
-   * varias filas de chips usan `min(este radio, 20px)`, que es la curva de un campo de 40px.
-   * Con `--radius-field: 10px` vuelven todos al rectángulo.
-   */
-  --radius-field: 9999px;
-  /**
-   * El resaltado de un ítem de menú (2.0): 6 px, como en el menú contextual de Mail.
-   *
-   * No es `--radius-control` porque en macOS un control suelto (10) y una fila de menú no tienen
-   * la misma curva: con 10 el resaltado de una fila de 24 se veía como una píldora. El panel del
-   * menú sale de este radio más su `p-1.5` (6 + 6 = 12), así que tocándolo se mueven los dos y
-   * siguen siendo concéntricos.
-   */
-  --radius-menu-item: 6px;
-  /**
-   * El radio de Badge, Tag y el chip del Combobox (2.0): 4 px, la etiqueta del Finder. Una
-   * cápsula sólida de color se leía como un botón.
-   */
+  --radius-control: 8px;
+  --radius-field: 10px;
+  --radius-item: 10px;
+  --radius-surface: 11px;
+  --radius-panel: 11px;
+  --radius-menu: 12px;
+  --radius-menu-item: 8px;
   --radius-tag: 4px;
 
   /* Progress indeterminada: una franja del 40% que recorre la pista. */

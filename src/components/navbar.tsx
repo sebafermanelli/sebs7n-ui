@@ -64,7 +64,7 @@ type NavbarProps = React.ComponentProps<"header"> & {
    * la barra despegada. `className` va al `<header>`, que es la franja entera.
    *
    * Para que `floating` sea una cápsula del ancho del contenido de la app:
-   * `surfaceClassName="max-w-none rounded-full"`, y el ancho se le da al `<header>`.
+   * `surfaceClassName="max-w-none"`, y el ancho se le da al `<header>`.
    */
   surfaceClassName?: string
 }

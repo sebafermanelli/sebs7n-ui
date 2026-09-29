@@ -73,7 +73,7 @@ function Toolbar({ className, onKeyDown, variant = "glass", ...props }: ToolbarP
       className={cn(
         // Una cápsula de vidrio con el canto especular: es la barra de Safari. `relative` es lo
         // que ancla el `::after` del canto.
-        "relative flex items-center gap-1 rounded-full p-1 text-gray-1000",
+        "relative flex items-center gap-1 rounded-menu p-1 text-gray-1000",
         // Con el dedo, 20 px entre controles: un botón de 24 + 20 = 44 entre centros, y las áreas
         // de `touch-target` se tocan sin pisarse. Con 4 px el toque caía en el vecino.
         "pointer-coarse:gap-5",
@@ -191,7 +191,7 @@ function ToolbarLink({ className, ...props }: ToolbarLinkProps) {
     <ToolbarPrimitive.Link
       data-slot="toolbar-link"
       className={cn(
-        "inline-flex h-6 items-center rounded-full px-2 text-callout text-gray-900 no-underline outline-none",
+        "inline-flex h-6 items-center rounded-control px-2 text-callout text-gray-900 no-underline outline-none",
         "transition-control hover:text-gray-1000 focus-visible:focus-ring",
         className
       )}

@@ -82,7 +82,7 @@ describe("Sidebar", () => {
     expect(clients).not.toHaveAttribute("aria-current")
     expect(clients).toHaveClass(
       "h-7",
-      "rounded-control",
+      "rounded-item",
       "px-2",
       "gap-2",
       "text-subheadline",

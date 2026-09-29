@@ -380,7 +380,7 @@ describe("Command", () => {
     const todo = screen.getByRole("radio", { name: "Todo" })
     expect(todo).toHaveAttribute("aria-checked", "true")
     // Se ven como los chips de Toggle.
-    expect(todo).toHaveClass("rounded-full", "data-checked:bg-gray-alpha-200")
+    expect(todo).toHaveClass("rounded-control", "data-checked:bg-gray-alpha-200")
     await userEvent.click(screen.getByRole("radio", { name: "Facturas" }))
     expect(onValueChange).toHaveBeenLastCalledWith("facturas")
     expect(todo).toHaveAttribute("aria-checked", "false")

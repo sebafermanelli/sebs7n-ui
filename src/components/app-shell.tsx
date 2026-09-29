@@ -209,7 +209,7 @@ function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido
               data-slot="app-shell-mobile-bar"
               variant="floating"
               className="z-40 px-3 pt-3 lg:hidden"
-              surfaceClassName="max-w-none rounded-full"
+              surfaceClassName="max-w-none"
             >
               <div className="flex h-14 items-center gap-2 px-4">{barContent}</div>
             </Navbar>

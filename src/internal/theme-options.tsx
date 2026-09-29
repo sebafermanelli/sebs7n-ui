@@ -23,7 +23,7 @@ export const groupClassName = cn(segmentedTrackClassName, "inline-flex")
 // La opción elegida no se pinta: la marca la pastilla, que llega deslizándose. Lo único que
 // cambia en el ítem es el color del ícono.
 export const itemClassName =
-  "inline-flex size-7 cursor-pointer items-center justify-center rounded-full text-gray-900 outline-none transition-control hover:text-gray-1000 focus-visible:focus-ring data-checked:text-gray-1000 [&_svg]:pointer-events-none [&_svg]:size-4"
+  "inline-flex size-7 cursor-pointer items-center justify-center rounded-[calc(var(--radius-control)-2px)] text-gray-900 outline-none transition-control hover:text-gray-1000 focus-visible:focus-ring data-checked:text-gray-1000 [&_svg]:pointer-events-none [&_svg]:size-4"
 
 /**
  * La pastilla que se desliza hasta el tema elegido.

@@ -18,15 +18,13 @@ export const inputControlClassName =
 /**
  * El radio de un campo de más de una línea: Textarea, Combobox con chips.
  *
- * Una cápsula de tres renglones no existe —sería un óvalo—, así que el radio se frena en
- * 16px, que es la curva de un campo de 32px (el `md` desde 2.0). Cuando la app pisa
- * `--radius-field` con algo más chico, gana lo de la app.
+ * Con el `--radius-field` de iCloud (10) es el mismo radio; el tope de 16 px queda para la app que
+ * pise `--radius-field` con una cápsula: una cápsula de tres renglones sería un óvalo.
  */
 export const inputMultilineRadiusClassName = "rounded-[min(var(--radius-field),--spacing(4))]"
 
 /**
- * El aire a los costados de un campo de una línea, por tamaño. Sube con el alto: en una
- * cápsula el texto que empieza a 12px del borde queda metido en la curva.
+ * El aire a los costados de un campo de una línea, por tamaño. Sube con el alto.
  *
  * Es una clase plana por tamaño y no `data-[size=sm]:px-3.5`. Con la variante, un `pl-9` del
  * llamador —el lugar para una lupa— perdía: la variante tiene más especificidad, y
@@ -89,6 +87,6 @@ export const inputShellInputClassName =
 // Botones chicos dentro de la superficie (limpiar, chevron, quitar chip). 20 px con el glifo de 14:
 // en un campo `sm` de 24 un botón de 24 lo llenaba de borde a borde.
 export const inputShellButtonClassName =
-  "inline-flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-full text-gray-900 outline-none transition-control " +
+  "inline-flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-[calc(var(--radius-control)-2px)] text-gray-900 outline-none transition-control " +
   "hover:bg-gray-alpha-200 hover:text-gray-1000 active:bg-gray-alpha-300 focus-visible:focus-ring " +
   "disabled:pointer-events-none data-disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:size-3.5"
