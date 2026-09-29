@@ -234,7 +234,7 @@ describe("Command", () => {
     const fila = screen.getByRole("option")
     expect(fila).toHaveClass("h-10")
     expect(screen.getByTestId("icono").parentElement).toHaveClass("size-8")
-    expect(within(fila).getByText("Factura 0012")).toHaveClass("text-body", "font-medium")
+    expect(within(fila).getByText("Factura 0012")).toHaveClass("text-callout", "font-medium")
     expect(within(fila).getByText("Acme S.A.")).toHaveClass("text-callout", "text-gray-900")
   })
 

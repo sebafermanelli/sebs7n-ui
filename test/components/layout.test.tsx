@@ -121,7 +121,7 @@ describe("EmptyState", () => {
     )
     const title = screen.getByRole("heading", { level: 2, name: "Todavía no hay viajes" })
     expect(title).toHaveClass("text-title-3", "text-gray-1000")
-    expect(screen.getByText("Creá el primero para empezar a cargar pasajeros.")).toHaveClass("text-body", "text-gray-900")
+    expect(screen.getByText("Creá el primero para empezar a cargar pasajeros.")).toHaveClass("text-callout", "text-gray-900")
     const root = title.closest("[data-slot=empty-state]")!
     expect(root).toHaveClass("material-group", "border", "rounded-surface", "items-center", "text-center", "py-12")
     // Desde 2.0 es un grupo, como una Card: fondo sólido y borde, sin la sombra hundida de `subtle`.
@@ -163,7 +163,7 @@ describe("EmptyState titleAs", () => {
 describe("Stat", () => {
   it("label gris, valor title-1 tabular, delta con color semántico; sin card", () => {
     render(<Stat label="Ingresos" value="$48.200" delta="+12%" trend="up" hint="vs. mes anterior" />)
-    expect(screen.getByText("Ingresos")).toHaveClass("text-body", "text-gray-900")
+    expect(screen.getByText("Ingresos")).toHaveClass("text-callout", "text-gray-900")
     expect(screen.getByText("$48.200")).toHaveClass("text-title-1", "tabular-nums", "text-gray-1000")
     expect(screen.getByText("+12%")).toHaveClass("text-callout", "text-green-900", "tabular-nums")
     expect(screen.getByText("vs. mes anterior")).toHaveClass("text-callout", "text-gray-900")

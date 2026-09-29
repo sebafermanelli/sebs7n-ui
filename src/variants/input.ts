@@ -13,7 +13,7 @@
  * el contenido, una casilla de OTP es cuadrada y un input de barra de herramientas mide 24px—.
  */
 export const inputControlClassName =
-  "rounded-field border border-gray-alpha-400 glass-control text-body text-gray-1000 shadow-card outline-none transition-control hover:border-gray-alpha-500"
+  "rounded-field border border-gray-alpha-400 glass-control text-callout text-gray-1000 shadow-card outline-none transition-control hover:border-gray-alpha-500"
 
 /**
  * El radio de un campo de más de una línea: Textarea, Combobox con chips.

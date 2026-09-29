@@ -57,7 +57,7 @@ function Progress({ className, size = "md", label, showValue = false, trackClass
       {(label != null || showValue) && (
         <div className={cn("flex items-baseline gap-3", label != null ? "justify-between" : "justify-end")}>
           {label != null && (
-            <ProgressPrimitive.Label data-slot="progress-label" className="text-body text-gray-1000">
+            <ProgressPrimitive.Label data-slot="progress-label" className="text-callout text-gray-1000">
               {label}
             </ProgressPrimitive.Label>
           )}

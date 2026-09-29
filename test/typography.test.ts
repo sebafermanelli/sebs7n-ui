@@ -82,29 +82,48 @@ describe("fuente", () => {
   })
 })
 
-const APPLE_ROLES: Record<string, { size: number; weight: number }> = {
-  "large-title": { size: 26, weight: 700 },
-  "title-1": { size: 22, weight: 700 },
-  "title-2": { size: 17, weight: 600 },
-  "title-3": { size: 15, weight: 600 },
-  headline: { size: 13, weight: 600 },
-  body: { size: 13, weight: 400 },
-  // El cuerpo de los controles `lg` (40 px): 15 px como `title-3`, pero regular. No es un rol de
-  // AppKit —ahí no hay controles de 40—; existe para que el peso no sea un `font-normal` pisando
-  // un título.
-  "body-large": { size: 15, weight: 400 },
-  callout: { size: 12, weight: 400 },
-  subheadline: { size: 11, weight: 400 },
-  footnote: { size: 10, weight: 400 },
-  caption: { size: 10, weight: 500 },
-  "mono-body": { size: 13, weight: 400 },
-  "mono-callout": { size: 12, weight: 400 },
+/**
+ * La escala de iCloud web (2.0): base 17, pasos 11/12/14/15/17/19/21/28 y 48 de display. Los roles
+ * conservan el nombre de Apple para que los componentes no se renombren; cambia el valor. El
+ * chrome (menús, campos, botones, metadatos) es `callout` (14), como en iCloud; `body` (17) es
+ * el texto que se lee: celdas, párrafos, recordatorios.
+ */
+const APPLE_ROLES: Record<string, { size: number; weight: number; lineHeight: number }> = {
+  "large-title": { size: 48, weight: 600, lineHeight: 52 },
+  "title-1": { size: 28, weight: 600, lineHeight: 34 },
+  "title-2": { size: 21, weight: 600, lineHeight: 25 },
+  "title-3": { size: 19, weight: 600, lineHeight: 24 },
+  headline: { size: 17, weight: 600, lineHeight: 22 },
+  body: { size: 17, weight: 400, lineHeight: 22 },
+  // Alias de `body` desde R1: era el cuerpo de los controles `lg` (15 px). Queda para no romper.
+  "body-large": { size: 17, weight: 400, lineHeight: 22 },
+  subheadline: { size: 15, weight: 400, lineHeight: 20 },
+  callout: { size: 14, weight: 400, lineHeight: 18 },
+  footnote: { size: 12, weight: 400, lineHeight: 16 },
+  caption: { size: 11, weight: 400, lineHeight: 13 },
+  "mono-body": { size: 14, weight: 400, lineHeight: 18 },
+  "mono-callout": { size: 12, weight: 400, lineHeight: 16 },
 }
 
-describe("roles de Apple (2.0)", () => {
-  it("cada rol declara el tamaño y el peso de macOS", () => {
-    for (const [role, expected] of Object.entries(APPLE_ROLES)) {
-      expect(utility(role), role).toEqual(expected)
+describe("roles de Apple con la escala de iCloud (2.0)", () => {
+  it("cada rol declara el tamaño, el peso y el interlineado de iCloud", () => {
+    for (const [role, { size, weight, lineHeight }] of Object.entries(APPLE_ROLES)) {
+      expect(utility(role), role).toEqual({ size, weight })
+      const line = theme.match(new RegExp(`^@utility text-${role} \\{(.+)\\}$`, "m"))![1]!
+      expect(line, role).toContain(`line-height: ${lineHeight}px`)
+    }
+  })
+
+  it("solo usa pasos de la escala de iCloud", () => {
+    const pasos = new Set([11, 12, 14, 15, 17, 19, 21, 28, 48])
+    for (const [role, { size }] of Object.entries(APPLE_ROLES)) expect(pasos.has(size), role).toBe(true)
+  })
+
+  it("el display grande lleva el tracking de iCloud (−0,005em) y los demás ninguno", () => {
+    expect(theme).toMatch(/^@utility text-large-title \{.*letter-spacing: -0\.005em;.*\}$/m)
+    for (const role of Object.keys(APPLE_ROLES)) {
+      if (role === "large-title") continue
+      expect(theme.match(new RegExp(`^@utility text-${role} \\{(.+)\\}$`, "m"))![1], role).not.toContain("letter-spacing")
     }
   })
 

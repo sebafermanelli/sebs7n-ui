@@ -54,7 +54,7 @@ function TabsTrigger({ className, ...props }: TabsTriggerProps) {
     <TabsPrimitive.Tab
       data-slot="tabs-trigger"
       className={cn(
-        "relative isolate inline-flex cursor-pointer items-center justify-center gap-1.5 px-3 text-body whitespace-nowrap text-gray-900 outline-none select-none transition-control",
+        "relative isolate inline-flex cursor-pointer items-center justify-center gap-1.5 px-3 text-callout whitespace-nowrap text-gray-900 outline-none select-none transition-control",
         // Segmentado: 28 + los 2 px de la pista de cada lado = 32, el alto de un botón `md` y el del
         // ThemeSwitcher, que es el mismo objeto. Línea: 32, el alto de los controles.
         "group-data-[variant=line]/tabs-list:h-8 group-data-[variant=segmented]/tabs-list:h-7 group-data-[variant=segmented]/tabs-list:rounded-full",
@@ -92,7 +92,7 @@ function TabsContent({ className, ...props }: TabsContentProps) {
   return (
     <TabsPrimitive.Panel
       data-slot="tabs-content"
-      className={cn("text-body rounded-control outline-none focus-visible:focus-ring", className)}
+      className={cn("text-callout rounded-control outline-none focus-visible:focus-ring", className)}
       {...props}
     />
   )

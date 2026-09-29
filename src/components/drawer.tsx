@@ -182,7 +182,7 @@ function DrawerContent({ className, children, showCloseButton = true, showHandle
           data-slot="drawer-content"
           ref={ref}
           className={cn(
-            "group/drawer absolute flex rounded-panel material-modal text-body text-gray-1000 shadow-modal outline-none",
+            "group/drawer absolute flex rounded-panel material-modal text-callout text-gray-1000 shadow-modal outline-none",
             // Flotante (2.0), como las hojas de iOS 26: 8 px (o el área segura) de cada borde que
             // toca y las cuatro esquinas redondeadas. Hasta 1.x iba pegada y con radio solo del
             // lado de adentro. El margen se mide desde el viewport, que ocupa la pantalla entera.
@@ -287,7 +287,7 @@ function DrawerTitle({ className, ...props }: DrawerTitleProps) {
 type DrawerDescriptionProps = WithClassName<DrawerPrimitive.Description.Props>
 
 function DrawerDescription({ className, ...props }: DrawerDescriptionProps) {
-  return <DrawerPrimitive.Description data-slot="drawer-description" className={cn("text-body text-gray-900", className)} {...props} />
+  return <DrawerPrimitive.Description data-slot="drawer-description" className={cn("text-callout text-gray-900", className)} {...props} />
 }
 
 export {

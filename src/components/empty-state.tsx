@@ -29,7 +29,7 @@ function EmptyState({ className, icon, title, titleAs: Title = "h2", description
       data-slot="empty-state"
       data-variant={variant}
       className={cn(
-        variant === "plain" ? "flex flex-col text-body text-gray-1000" : cardVariants({ variant: variant === "subtle" ? "subtle" : "default" }),
+        variant === "plain" ? "flex flex-col text-callout text-gray-1000" : cardVariants({ variant: variant === "subtle" ? "subtle" : "default" }),
         "items-center justify-center gap-4 px-6 py-12 text-center",
         className
       )}
@@ -49,7 +49,7 @@ function EmptyState({ className, icon, title, titleAs: Title = "h2", description
           {title}
         </Title>
         {description && (
-          <p data-slot="empty-state-description" className="text-body text-pretty text-gray-900">
+          <p data-slot="empty-state-description" className="text-callout text-pretty text-gray-900">
             {description}
           </p>
         )}

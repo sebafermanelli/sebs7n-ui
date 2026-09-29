@@ -432,7 +432,7 @@ function ChatInput({
 
 /** La letra chica: que lo que dice el asistente se confirme. Va debajo del campo. */
 function ChatDisclaimer({ className, ...props }: React.ComponentProps<"p">) {
-  return <p data-slot="chat-disclaimer" className={cn("text-center text-callout text-gray-900", className)} {...props} />
+  return <p data-slot="chat-disclaimer" className={cn("text-center text-footnote text-gray-900", className)} {...props} />
 }
 
 export {

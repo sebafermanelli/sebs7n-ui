@@ -234,7 +234,7 @@ function Calendar(props: CalendarProps) {
           const titulo = (
             // `aria-live`: al cambiar de mes con los botones, el lector dice a cuál se llegó. Con
             // varios a la vista alcanza con el primero: leerlos todos es oír la misma noticia dos veces.
-            <div aria-live={indice === 0 ? "polite" : undefined} className="text-headline first-letter:uppercase" data-slot="calendar-title" id={id}>
+            <div aria-live={indice === 0 ? "polite" : undefined} className="text-callout font-bold first-letter:uppercase" data-slot="calendar-title" id={id}>
               {formatos.titulo.format(mes)}
             </div>
           )
@@ -272,7 +272,7 @@ function Calendar(props: CalendarProps) {
                 <thead>
                   <tr>
                     {weeksOfMonth(mes, weekStartsOn)[0]!.map((dia) => (
-                      <th abbr={formatos.largo.format(dia)} className="size-7 pointer-coarse:size-10 text-callout font-normal text-gray-900" key={dia.getDay()} scope="col">
+                      <th abbr={formatos.largo.format(dia)} className="size-7 pointer-coarse:size-10 text-footnote font-semibold text-gray-900" key={dia.getDay()} scope="col">
                         {formatos.corto.format(dia).replace(".", "").slice(0, 2)}
                       </th>
                     ))}
@@ -285,7 +285,7 @@ function Calendar(props: CalendarProps) {
                         const iso = toISODate(dia)
                         if (!isSameMonth(dia, mes)) {
                           return (
-                            <td aria-hidden="true" className="size-7 pointer-coarse:size-10 p-0 text-center text-body tabular-nums text-gray-700" data-outside="" key={iso}>
+                            <td aria-hidden="true" className="size-7 pointer-coarse:size-10 p-0 text-center text-callout tabular-nums text-gray-700" data-outside="" key={iso}>
                               {cuantos === 1 ? dia.getDate() : null}
                             </td>
                           )
@@ -329,7 +329,7 @@ function Calendar(props: CalendarProps) {
                               aria-disabled={off || undefined}
                               aria-label={formatos.dia.format(dia)}
                               className={cn(
-                                "relative inline-flex size-7 pointer-coarse:size-10 cursor-pointer items-center justify-center rounded-full text-body tabular-nums outline-none select-none transition-surface",
+                                "relative inline-flex size-7 pointer-coarse:size-10 cursor-pointer items-center justify-center rounded-full text-callout tabular-nums outline-none select-none transition-surface",
                                 "hover:bg-gray-alpha-200 focus-visible:focus-ring active:scale-95",
                                 // Hoy: el número en el color de marca y un punto debajo. El punto es lo que
                                 // lo distingue cuando además está elegido, que es cuando el color no alcanza.

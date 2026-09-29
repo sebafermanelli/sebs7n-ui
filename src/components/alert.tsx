@@ -18,7 +18,7 @@ const alertVariants = cva(
   // curva por debajo de la franja y sus puntas quedaban afuera del contorno. A 8px del borde y
   // 12 de arriba y de abajo entra en cualquier radio: con 20px la curva se mete 1,7px a esa
   // altura, y con 32 —el máximo que admite un alert de dos líneas—, 7.
-  "group/alert relative grid w-full gap-0.5 rounded-surface border border-gray-alpha-400 glass-control py-3 pr-4 pl-5 text-left text-body shadow-card has-[>svg]:grid-cols-[auto_1fr] has-[>svg]:gap-x-3 *:[svg]:row-span-2 *:[svg]:mt-0.5 *:[svg:not([class*='size-'])]:size-4 before:pointer-events-none before:absolute before:inset-y-3 before:left-2 before:w-1 before:rounded-full before:bg-transparent",
+  "group/alert relative grid w-full gap-0.5 rounded-surface border border-gray-alpha-400 glass-control py-3 pr-4 pl-5 text-left text-callout shadow-card has-[>svg]:grid-cols-[auto_1fr] has-[>svg]:gap-x-3 *:[svg]:row-span-2 *:[svg]:mt-0.5 *:[svg:not([class*='size-'])]:size-4 before:pointer-events-none before:absolute before:inset-y-3 before:left-2 before:w-1 before:rounded-full before:bg-transparent",
   {
     variants: {
       variant: {
@@ -41,7 +41,7 @@ function AlertTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="alert-title"
-      className={cn("text-body font-medium text-gray-1000 group-has-[>svg]/alert:col-start-2", className)}
+      className={cn("text-callout font-medium text-gray-1000 group-has-[>svg]/alert:col-start-2", className)}
       {...props}
     />
   )
@@ -51,7 +51,7 @@ function AlertDescription({ className, ...props }: React.ComponentProps<"div">) 
   return (
     <div
       data-slot="alert-description"
-      className={cn("text-body text-gray-900 [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-gray-1000", className)}
+      className={cn("text-callout text-gray-900 [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-gray-1000", className)}
       {...props}
     />
   )

@@ -85,7 +85,7 @@ describe("Sidebar", () => {
       "rounded-control",
       "px-2",
       "gap-2",
-      "text-body",
+      "text-subheadline",
       "text-gray-900",
       "hover:bg-gray-alpha-100",
       "hover:text-gray-1000",
@@ -105,7 +105,7 @@ describe("Sidebar", () => {
   it("label de grupo en callout gris sin uppercase; se oculta colapsado y nombra al grupo", () => {
     render(<Example />)
     const label = screen.getByText("Operación")
-    expect(label).toHaveClass("text-callout", "text-gray-900", "group-data-collapsed/sidebar:hidden")
+    expect(label).toHaveClass("text-callout", "font-semibold", "text-gray-900", "group-data-collapsed/sidebar:hidden")
     expect(label.className).not.toMatch(/uppercase/)
     expect(screen.getByRole("group", { name: "Operación" })).toBeInTheDocument()
   })

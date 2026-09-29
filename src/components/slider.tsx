@@ -63,7 +63,7 @@ function Slider<Value extends number | readonly number[] = number | readonly num
       {(label != null || showValue) && (
         <div className={cn("flex items-baseline gap-3", label != null ? "justify-between" : "justify-end")}>
           {label != null && (
-            <SliderPrimitive.Label data-slot="slider-label" className="text-body text-gray-1000">
+            <SliderPrimitive.Label data-slot="slider-label" className="text-callout text-gray-1000">
               {label}
             </SliderPrimitive.Label>
           )}

@@ -69,7 +69,7 @@ function NavigationMenuTrigger({ className, active, chevron = true, children, ..
         // padding existe solo para que el área clickeable llegue a 28px (el alto de
         // un ítem del sidebar) y el
         // anillo de foco no apriete el texto.
-        "inline-flex cursor-pointer items-center gap-1 rounded-control bg-transparent px-2 py-1.5 text-body text-gray-900 select-none",
+        "inline-flex cursor-pointer items-center gap-1 rounded-control bg-transparent px-2 py-1.5 text-callout text-gray-900 select-none",
         "outline-none transition-control hover:text-gray-1000 focus-visible:focus-ring",
         "data-popup-open:text-gray-1000 data-active:text-gray-1000",
         "data-disabled:cursor-not-allowed data-disabled:text-gray-700 data-disabled:hover:text-gray-700",
@@ -180,7 +180,7 @@ function NavigationMenuLink({ className, title, description, icon, children, ...
         // sólido, y el título, la descripción y el ícono pasan al color de contraste.
         // `group/selectable` solo acá: el link de la barra no se pinta de acento, y lo de adentro
         // no tiene que pasar a blanco.
-        "group/nav-link group/selectable block p-2 text-body text-gray-1000 hover:bg-gray-alpha-100 data-[active]:bg-selection data-[active]:text-on-selection",
+        "group/nav-link group/selectable block p-2 text-callout text-gray-1000 hover:bg-gray-alpha-100 data-[active]:bg-selection data-[active]:text-on-selection",
         className
       )}
       {...props}
@@ -196,11 +196,11 @@ function NavigationMenuLink({ className, title, description, icon, children, ...
           </span>
         )}
         <span className="flex min-w-0 flex-col gap-0.5">
-          <span data-slot="navigation-menu-link-title" className="text-body text-gray-1000 group-data-[active]/nav-link:text-on-selection">
+          <span data-slot="navigation-menu-link-title" className="text-callout text-gray-1000 group-data-[active]/nav-link:text-on-selection">
             {title}
           </span>
           {description && (
-            <span data-slot="navigation-menu-link-description" className="truncate text-body text-gray-900 group-data-[active]/nav-link:text-on-selection">
+            <span data-slot="navigation-menu-link-description" className="truncate text-callout text-gray-900 group-data-[active]/nav-link:text-on-selection">
               {description}
             </span>
           )}

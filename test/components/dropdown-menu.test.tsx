@@ -235,7 +235,7 @@ describe("menú de macOS (2.0)", () => {
   })
 
   it("el título de grupo es chico, en negrita y gris; con inset alinea con la canaleta", async () => {
-    expect(menuLabelClassName).toMatch(/\btext-subheadline\b/)
+    expect(menuLabelClassName).toMatch(/\btext-callout\b/)
     expect(menuLabelClassName).toMatch(/\bfont-semibold\b/)
     expect(menuLabelClassName).toMatch(/\btext-gray-900\b/)
     render(

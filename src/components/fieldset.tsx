@@ -62,7 +62,7 @@ function FieldsetLegend({ className, ...props }: FieldsetLegendProps) {
   return (
     <FieldsetPrimitive.Legend
       data-slot="fieldset-legend"
-      className={cn("text-body text-gray-1000 data-disabled:text-gray-700", className)}
+      className={cn("text-callout text-gray-1000 data-disabled:text-gray-700", className)}
       {...props}
     />
   )

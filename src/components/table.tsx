@@ -34,7 +34,7 @@ function TableFooter({ className, ...props }: React.ComponentProps<"tfoot">) {
   return (
     <tfoot
       data-slot="table-footer"
-      className={cn("border-t border-gray-alpha-400 bg-gray-alpha-100 text-body [&>tr]:last:border-b-0", className)}
+      className={cn("border-t border-gray-alpha-400 bg-gray-alpha-100 text-callout [&>tr]:last:border-b-0", className)}
       {...props}
     />
   )
@@ -94,7 +94,7 @@ function TableCell({ className, numeric = false, ...props }: TableCellProps) {
 // `mt-4` a secas el texto quedaba apoyado en el borde de abajo, y con el radio de 20px la
 // esquina le pasaba por encima.
 function TableCaption({ className, ...props }: React.ComponentProps<"caption">) {
-  return <caption data-slot="table-caption" className={cn("px-4 py-3 text-body text-gray-900", className)} {...props} />
+  return <caption data-slot="table-caption" className={cn("px-4 py-3 text-callout text-gray-900", className)} {...props} />
 }
 
 export {

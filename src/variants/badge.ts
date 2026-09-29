@@ -52,7 +52,7 @@ const badgeVariantsBase = cva(
   // `inside-selection:[&>svg]:text-current!`: el ítem de menú resaltado pinta todo `svg` de adentro
   // de `on-selection` con un selector más fuerte que el de acá, y un ícono blanco sobre un badge
   // ámbar no se ve. El `!` solo vale adentro de una selección.
-  "inline-flex w-fit shrink-0 items-center justify-center gap-1.5 overflow-hidden rounded-tag text-callout whitespace-nowrap [&>svg]:pointer-events-none [&>svg]:size-3 inside-selection:[&>svg]:text-current!",
+  "inline-flex w-fit shrink-0 items-center justify-center gap-1.5 overflow-hidden rounded-tag text-footnote whitespace-nowrap [&>svg]:pointer-events-none [&>svg]:size-3 inside-selection:[&>svg]:text-current!",
   {
     variants: {
       variant: { solid: "", subtle: "" },

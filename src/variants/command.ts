@@ -30,7 +30,7 @@ export const commandDialogPopupClassName =
  * `group/command-item` es para la pista `tab`, que solo se ve en el elegido.
  */
 export const commandItemClassName =
-  "group/command-item relative flex h-10 cursor-pointer items-center gap-3 rounded-[calc(var(--radius-panel)-(--spacing(1.5)))] px-2 text-body text-gray-1000 outline-none select-none transition-control " +
+  "group/command-item relative flex h-10 cursor-pointer items-center gap-3 rounded-[calc(var(--radius-panel)-(--spacing(1.5)))] px-2 text-callout text-gray-1000 outline-none select-none transition-control " +
   "data-highlighted:bg-gray-alpha-200 data-disabled:cursor-not-allowed data-disabled:text-gray-700 [&_svg]:pointer-events-none [&_svg]:shrink-0"
 
 /**

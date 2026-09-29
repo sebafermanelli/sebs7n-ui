@@ -81,7 +81,7 @@ function FieldDescription({ className, ...props }: FieldDescriptionProps) {
   return (
     <FieldPrimitive.Description
       data-slot="field-description"
-      className={cn("text-body text-gray-900", className)}
+      className={cn("text-callout text-gray-900", className)}
       {...props}
     />
   )
@@ -130,7 +130,7 @@ function FieldError({ className, alert = false, ...props }: FieldErrorProps) {
       data-slot="field-error"
       role={alert ? "alert" : undefined}
       className={cn(
-        "text-body text-red-900",
+        "text-callout text-red-900",
         // Con más de un mensaje, Base UI los mete en un `<ul>` sin estilo, que
         // el reset de Tailwind deja como un párrafo pegado. Con viñeta y
         // sangría se lee que son dos problemas distintos y no una frase larga.

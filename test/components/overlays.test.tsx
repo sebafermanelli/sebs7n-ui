@@ -118,7 +118,7 @@ describe("DropdownMenu", () => {
       </DropdownMenu>
     )
     await userEvent.click(screen.getByRole("button", { name: "Más" }))
-    expect(await screen.findByText("Viaje")).toHaveClass("text-subheadline", "font-semibold", "text-gray-900")
+    expect(await screen.findByText("Viaje")).toHaveClass("text-callout", "font-semibold", "text-gray-900")
   })
 })
 
@@ -447,7 +447,7 @@ describe("Sheet, Popover al estilo macOS (2.0)", () => {
       </Popover>
     )
     const panel = (await screen.findByText("Rango")).closest("[data-slot=popover-content]")!
-    expect(panel).toHaveClass("w-64", "p-3", "gap-2", "text-body")
+    expect(panel).toHaveClass("w-64", "p-3", "gap-2", "text-callout")
     expect(panel).not.toHaveClass("w-72", "p-4")
     expect(screen.getByText("Rango")).toHaveClass("text-headline")
   })

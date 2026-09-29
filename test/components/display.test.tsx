@@ -43,7 +43,7 @@ describe("Badge", () => {
   it("sólido por color: relleno lleno, sin borde, sin brillo, radio de etiqueta", () => {
     render(<Badge color="amber">Pendiente</Badge>)
     const badge = screen.getByText("Pendiente")
-    expect(badge).toHaveClass("bg-amber-700", "text-black/85", "rounded-tag", "text-callout", "h-6")
+    expect(badge).toHaveClass("bg-amber-700", "text-black/85", "rounded-tag", "text-footnote", "h-6")
     expect(badge.className).not.toMatch(/(^|\s)border(\s|$|-)|sheen|shadow-|glass|material-|--sf-tint|rounded-full/)
     expect(badge).toHaveAttribute("data-variant", "solid")
   })
@@ -130,7 +130,7 @@ describe("Card", () => {
     expect(card).toHaveClass("shadow-card")
     expect(card.className).not.toMatch(/shadow-(menu|modal|tooltip)/)
     expect(screen.getByText("Ingresos")).toHaveClass("text-title-2")
-    expect(screen.getByText("Últimos 30 días")).toHaveClass("text-body", "text-gray-900")
+    expect(screen.getByText("Últimos 30 días")).toHaveClass("text-callout", "text-gray-900")
     expect(screen.getByText("pie")).toHaveClass("border-t", "border-gray-alpha-400")
   })
 

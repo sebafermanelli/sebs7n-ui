@@ -44,7 +44,7 @@ function PopoverTitle({ className, ...props }: PopoverTitleProps) {
 type PopoverDescriptionProps = WithClassName<PopoverPrimitive.Description.Props>
 
 function PopoverDescription({ className, ...props }: PopoverDescriptionProps) {
-  return <PopoverPrimitive.Description data-slot="popover-description" className={cn("text-body text-gray-900", className)} {...props} />
+  return <PopoverPrimitive.Description data-slot="popover-description" className={cn("text-callout text-gray-900", className)} {...props} />
 }
 
 export {

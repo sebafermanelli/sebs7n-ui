@@ -76,7 +76,7 @@ function BreadcrumbList({
   return (
     <ol
       data-slot="breadcrumb-list"
-      className={cn("flex min-w-0 flex-wrap items-center gap-1.5 text-body text-gray-900", className)}
+      className={cn("flex min-w-0 flex-wrap items-center gap-1.5 text-callout text-gray-900", className)}
       {...props}
     >
       {visible.map((item, index) => (
@@ -103,7 +103,7 @@ type BreadcrumbLinkProps = WithClassName<React.ComponentProps<"a">> & {
  * El link de un nivel. Usa `linkVariants({ variant: "subtle" })`, como cualquier link suelto del
  * sistema.
  *
- * El `py-1` no es aire decorativo: el texto es `text-body`, de 16px de alto, y sin él el link
+ * El `py-1` no es aire decorativo: el texto es `text-callout`, de 18px de alto, y sin él el link
  * medía 16px de alto —abajo de los 24 que pide WCAG 2.5.8— y en un celular se erraba. Como el
  * `BreadcrumbItem` es un flex container, el `<a>` es un ítem de flex y el padding sí cuenta para el
  * alto; en un `<a>` inline suelto no contaría.

@@ -46,7 +46,7 @@ describe("AlertDialog", () => {
     expect(dialog).toHaveClass("shadow-modal", "rounded-panel", "p-5", "gap-3", "material-modal")
     expect(dialog.className).not.toMatch(/\bborder\b/)
     expect(screen.getByText("¿Eliminar el viaje?")).toHaveClass("text-title-3", "text-gray-1000")
-    expect(screen.getByText("Se borran también los pasajeros cargados.")).toHaveClass("text-body", "text-gray-900")
+    expect(screen.getByText("Se borran también los pasajeros cargados.")).toHaveClass("text-callout", "text-gray-900")
     expect(document.querySelector("[data-slot=alert-dialog-overlay]")).toHaveClass("bg-backdrop")
     // Sin botón X: un alert dialog exige respuesta.
     expect(screen.queryByRole("button", { name: "Cerrar" })).toBeNull()

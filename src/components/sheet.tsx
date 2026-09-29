@@ -50,7 +50,7 @@ function SheetContent({ className, children, side = "right", showCloseButton = t
           // Flotante (2.0): despegada 8 px de cada borde que toca y con las cuatro esquinas del
           // radio del panel, el mismo de la píldora del Sidebar. Hasta 1.x iba de punta a punta y
           // cuadrada. Al cerrar se desplaza su tamaño más el margen, para salir entera.
-          "fixed z-50 flex flex-col gap-4 rounded-panel material-modal text-body text-gray-1000 shadow-modal outline-none transition-[translate] duration-200 ease-out",
+          "fixed z-50 flex flex-col gap-4 rounded-panel material-modal text-callout text-gray-1000 shadow-modal outline-none transition-[translate] duration-200 ease-out",
           floatingSheetGapClassName,
           "data-[side=right]:top-(--sheet-gap-t) data-[side=right]:bottom-(--sheet-gap-b) data-[side=right]:right-(--sheet-gap-r) data-[side=right]:w-3/4 data-[side=right]:sm:max-w-sm data-[side=right]:data-ending-style:translate-x-[calc(100%+var(--sheet-gap-r))] data-[side=right]:data-starting-style:translate-x-[calc(100%+var(--sheet-gap-r))]",
           "data-[side=left]:top-(--sheet-gap-t) data-[side=left]:bottom-(--sheet-gap-b) data-[side=left]:left-(--sheet-gap-l) data-[side=left]:w-3/4 data-[side=left]:sm:max-w-sm data-[side=left]:data-ending-style:-translate-x-[calc(100%+var(--sheet-gap-l))] data-[side=left]:data-starting-style:-translate-x-[calc(100%+var(--sheet-gap-l))]",
@@ -95,7 +95,7 @@ function SheetTitle({ className, ...props }: SheetTitleProps) {
 type SheetDescriptionProps = WithClassName<SheetPrimitive.Description.Props>
 
 function SheetDescription({ className, ...props }: SheetDescriptionProps) {
-  return <SheetPrimitive.Description data-slot="sheet-description" className={cn("text-body text-gray-900", className)} {...props} />
+  return <SheetPrimitive.Description data-slot="sheet-description" className={cn("text-callout text-gray-900", className)} {...props} />
 }
 
 export {

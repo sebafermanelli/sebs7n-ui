@@ -61,7 +61,7 @@ function MenubarTrigger({ className, ...props }: MenubarTriggerProps) {
     <MenuPrimitive.Trigger
       data-slot="menubar-trigger"
       className={cn(
-        "inline-flex h-6 pointer-coarse:h-11 cursor-pointer items-center gap-1 rounded-control bg-transparent px-2 text-body text-gray-1000 outline-none select-none",
+        "inline-flex h-6 pointer-coarse:h-11 cursor-pointer items-center gap-1 rounded-control bg-transparent px-2 text-callout text-gray-1000 outline-none select-none",
         // El título abierto de la barra de menús de macOS (2.0) es una pastilla gris sutil, no del
         // acento: el acento es del ítem resaltado adentro del menú, y dos manchas azules a la vez
         // competirían por decir dónde está el foco.

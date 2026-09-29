@@ -441,7 +441,7 @@ function CommandItem({ value, keywords, description, icon, textValue, onSelect, 
         </span>
       )}
       <span className="flex min-w-0 flex-1 flex-col">
-        <span className="truncate text-body font-medium">{children}</span>
+        <span className="truncate text-callout font-medium">{children}</span>
         {description != null && <span className="truncate text-callout text-gray-900">{description}</span>}
       </span>
       {/* Solo cuando Tab hace algo: en el elegido, si su título completa lo escrito. */}
@@ -470,7 +470,7 @@ function CommandEmpty({ className, children, ...props }: React.ComponentProps<"d
       role="status"
       aria-live="polite"
       aria-atomic="true"
-      className={cn("text-center text-body text-gray-900 not-empty:px-4 not-empty:py-6", className)}
+      className={cn("text-center text-callout text-gray-900 not-empty:px-4 not-empty:py-6", className)}
       {...props}
     >
       {count === 0 ? (children ?? labels.empty) : null}

@@ -23,7 +23,7 @@ export const backdropClassName =
  * La entrada sube 8px mientras aparece: es la señal de que algo entró, no decoración.
  */
 export const modalPopupClassName =
-  "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-panel material-modal p-5 text-body text-gray-1000 shadow-modal outline-none " +
+  "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-panel material-modal p-5 text-callout text-gray-1000 shadow-modal outline-none " +
   "transition-[opacity,translate] duration-150 data-ending-style:opacity-0 data-starting-style:translate-y-[calc(-50%+8px)] data-starting-style:opacity-0"
 
 /**
@@ -34,7 +34,7 @@ export const modalPopupClassName =
  * (un celular acostado, una ventana angosta) la estiraba a todo el ancho.
  */
 export const alertPopupClassName =
-  "fixed top-1/2 left-1/2 z-50 flex w-full max-w-[min(300px,calc(100%-2rem))] -translate-x-1/2 -translate-y-1/2 flex-col gap-3 rounded-panel material-modal p-5 text-body text-gray-1000 shadow-modal outline-none " +
+  "fixed top-1/2 left-1/2 z-50 flex w-full max-w-[min(300px,calc(100%-2rem))] -translate-x-1/2 -translate-y-1/2 flex-col gap-3 rounded-panel material-modal p-5 text-callout text-gray-1000 shadow-modal outline-none " +
   "transition-[opacity,translate] duration-150 data-ending-style:opacity-0 data-starting-style:translate-y-[calc(-50%+8px)] data-starting-style:opacity-0"
 
 /**
@@ -117,7 +117,7 @@ export const floatingSheetGapClassName =
  * mitad con overrides, que es peor que repetir.
  */
 export const floatingPopupClassName =
-  "flex w-64 origin-(--transform-origin) flex-col gap-2 rounded-surface material-popover p-3 text-body text-gray-1000 shadow-menu outline-none " +
+  "flex w-64 origin-(--transform-origin) flex-col gap-2 rounded-surface material-popover p-3 text-callout text-gray-1000 shadow-menu outline-none " +
   "focus-visible:focus-ring transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0"
 
 /**
@@ -129,4 +129,4 @@ export const floatingPopupClassName =
  * trigger de un Popover o un Sheet). Sin posición ni animación: eso lo pone cada uno.
  */
 export const tooltipSurfaceClassName =
-  "rounded-control border border-gray-alpha-400 material-popover px-2 py-1 text-body text-gray-1000 shadow-tooltip"
+  "rounded-control border border-gray-alpha-400 material-popover px-2 py-1 text-callout text-gray-1000 shadow-tooltip"

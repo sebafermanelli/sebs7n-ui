@@ -26,7 +26,7 @@ export type MenuInsetProps = { inset?: boolean }
  * ítems seleccionables: ver `selectionSecondaryClassName`.
  */
 export const menuItemClassName =
-  "group/menu-item group/selectable relative flex h-6 pointer-coarse:h-11 cursor-pointer items-center gap-2 rounded-menu-item px-2 text-body text-gray-1000 outline-none select-none transition-control data-highlighted:bg-selection data-highlighted:text-on-selection data-highlighted:[&_svg]:text-on-selection active:bg-selection data-disabled:cursor-not-allowed data-disabled:text-gray-700 data-disabled:active:bg-transparent data-disabled:data-highlighted:bg-transparent data-disabled:data-highlighted:text-gray-700 data-disabled:data-highlighted:[&_svg]:text-gray-700 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+  "group/menu-item group/selectable relative flex h-6 pointer-coarse:h-11 cursor-pointer items-center gap-2 rounded-menu-item px-2 text-callout text-gray-1000 outline-none select-none transition-control data-highlighted:bg-selection data-highlighted:text-on-selection data-highlighted:[&_svg]:text-on-selection active:bg-selection data-disabled:cursor-not-allowed data-disabled:text-gray-700 data-disabled:active:bg-transparent data-disabled:data-highlighted:bg-transparent data-disabled:data-highlighted:text-gray-700 data-disabled:data-highlighted:[&_svg]:text-gray-700 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
 
 /**
  * El texto secundario de un ítem —el atajo de teclado—. En reposo es `gray-900`; con el ítem
@@ -81,7 +81,7 @@ export const menuIndicatorClassName = "pointer-events-none absolute left-2 flex 
  * Los tres menús le suman `menuInsetClassName` para que `inset` lo alinee con la canaleta del
  * tilde; Select y Combobox, `menuGutterClassName` siempre, porque todas sus opciones la reservan.
  */
-export const menuLabelClassName = "px-2 pt-2 pb-1 text-subheadline font-semibold text-gray-900"
+export const menuLabelClassName = "px-2 pt-2 pb-1 text-callout font-semibold text-gray-900"
 
 /**
  * La línea entre grupos de ítems: los tres menús, Select, Combobox y Autocomplete.
