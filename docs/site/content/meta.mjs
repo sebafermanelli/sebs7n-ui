@@ -175,7 +175,7 @@ export const COMPONENTS = {
     keyboard: [["—", "No es interactivo. Si tiene que serlo, `render={<button />}` y pasa a comportarse como un botón."]],
     a11y: [
       "Es un `<span>`: no anuncia nada por sí solo. El color no puede ser la única señal — el texto tiene que decir el estado.",
-      "Los nueve colores llegan a 4,5:1 en los dos temas: la tinta es blanca sobre los rellenos oscuros (rojo, azul, violeta, rosa) y negra al 85 % sobre los claros (gris, ámbar, verde, teal). El rojo, el azul y el rosa van un paso más oscuros que el resto porque con blanco el `-700` no llega.",
+      "Los nueve colores llegan a 4,5:1 en los dos temas: la tinta es blanca en todos, así una fila de estados se lee pareja. Gris, ámbar, verde y teal van en rellenos propios del badge (`badge-*`), porque ningún paso de la paleta llega a 4,5:1 con blanco en oscuro; el rojo, el azul y el rosa, un paso más oscuros (`-800`).",
       "El punto (`dot`) es `aria-hidden`: es decoración.",
       "Sin `\"use client\"`: sirve en un Server Component. Una tabla de facturas renderizada en el server no arrastra JS por tener un estado por fila.",
     ],

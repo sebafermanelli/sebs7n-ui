@@ -173,7 +173,7 @@ describe("Anillo de foco interior en las cuatro marcas (WCAG 1.4.11)", () => {
     const fuente = (file: string) => readFileSync(join(root, "src", file), "utf8")
     expect(fuente("components/calendar.tsx")).toContain("data-selected:focus-visible:focus-ring-inverse")
     expect(fuente("components/checkbox.tsx")).toContain("data-indeterminate:focus-visible:focus-ring-inverse")
-    // La X de un Tag sólido: la tinta del Tag (blanca o negra al 85 %) ya llega a 4,5:1 sobre el relleno.
+    // La X de un Tag sólido: la tinta blanca del Tag ya llega a 4,5:1 sobre el relleno.
     const tag = fuente("variants/tag.ts")
     expect(tag).toContain("focus-visible:focus-ring-inverse [--sf-focus-inverse:currentColor]")
     expect(tag).not.toMatch(/focus-visible:focus-ring(\s|")/)
@@ -237,8 +237,9 @@ describe("Anillo de foco interior en las cuatro marcas (WCAG 1.4.11)", () => {
   }
 })
 
-// El Badge y el Tag (2.0) son sólidos, como las etiquetas del Finder: la tinta (blanca o negra
-// al 85 %) sobre el relleno del color, que es el mismo en los dos temas. Relleno y tinta se leen
+// El Badge y el Tag (2.0) son sólidos, como las etiquetas del Finder: la tinta blanca en todos
+// (con dos tintas una fila de estados se leía mezclada) sobre el relleno del color, que es el
+// mismo en los dos temas. Relleno y tinta se leen
 // de `badgeVariants`, no de una copia: si alguien pasa el rojo a `-700` «porque es más vivo», el
 // 4,05:1 aparece acá. El brand es el par `brand-700` / `brand-contrast` del botón `accent`, que
 // cubre `brand-contrast.test.ts` en las cuatro marcas.
@@ -253,11 +254,15 @@ describe("Badge y Tag sólidos: la tinta sobre su relleno (WCAG 1.4.3)", () => {
   for (const color of PALETAS) {
     if (color === "brand") continue
     const clases = badgeVariants({ color })
-    const [, familia, paso] = clases.match(/(?:^|\s)bg-([a-z]+)-(\d+)(?:\s|$)/)!
+    // El relleno es un paso de la paleta (`bg-red-800`) o uno propio del badge (`bg-badge-gray`).
+    const [, familia, paso] = clases.match(/(?:^|\s)bg-([a-z]+)-(\d+|[a-z]+)(?:\s|$)/)!
     const tintaBlanca = /(?:^|\s)text-white(?:\s|$)/.test(clases)
+    it(`${color}: la tinta es blanca, la misma en los nueve colores`, () => {
+      expect(tintaBlanca).toBe(true)
+    })
     const velo = rgba(clases.match(/\[--sf-tag-press:rgb\(([^)]+)\)\]/)![1]!.replaceAll("_", " "))
     for (const theme of ["light", "dark"] as const) {
-      const relleno = paleta[theme][`--sf-${familia}-${paso}`]!
+      const relleno = heredado(theme, `--sf-${familia}-${paso}`)
       const tinta = tintaBlanca ? "#ffffff" : composite("#000000", 0.85, relleno)
       it(`${theme} · ${color}: ${tintaBlanca ? "blanco" : "negro 85 %"} sobre ${familia}-${paso} (${relleno}) llega a 4.5:1`, () => {
         expect(ratio(tinta, relleno)).toBeGreaterThanOrEqual(4.5)

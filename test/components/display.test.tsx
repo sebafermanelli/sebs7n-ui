@@ -78,20 +78,20 @@ describe("Badge", () => {
     const badge = screen.getByText("Pendiente")
     // R4: 20 de alto (16 en sm) y texto 12: un Badge nunca mide más que un botón sm (28) ni que
     // la fila de menú (30) donde vive.
-    expect(badge).toHaveClass("bg-amber-700", "text-black/85", "rounded-tag", "text-footnote", "h-5")
+    expect(badge).toHaveClass("bg-badge-amber", "text-white", "rounded-tag", "text-footnote", "h-5")
     expect(badge.className).not.toMatch(/(^|\s)border(\s|$|-)|sheen|shadow-|glass|material-|--sf-tint|rounded-full/)
     expect(badge).toHaveAttribute("data-variant", "solid")
   })
 
-  it("los nueve colores son sólidos, con tinta blanca o negra según el relleno", () => {
+  it("los nueve colores son sólidos, con la misma tinta blanca", () => {
     const esperado = {
-      gray: ["bg-gray-700", "text-black/85"],
+      gray: ["bg-badge-gray", "text-white"],
       brand: ["bg-brand-700", "text-brand-contrast"],
       red: ["bg-red-800", "text-white"],
-      amber: ["bg-amber-700", "text-black/85"],
-      green: ["bg-green-700", "text-black/85"],
+      amber: ["bg-badge-amber", "text-white"],
+      green: ["bg-badge-green", "text-white"],
       blue: ["bg-blue-800", "text-white"],
-      teal: ["bg-teal-700", "text-black/85"],
+      teal: ["bg-badge-teal", "text-white"],
       purple: ["bg-purple-700", "text-white"],
       pink: ["bg-pink-800", "text-white"],
     } as const
@@ -181,7 +181,7 @@ describe("Badge", () => {
     expect(link).toHaveAttribute("href", "/planes")
     expect(link).toHaveAttribute("data-slot", "badge")
     expect(link).toHaveAttribute("data-color", "green")
-    expect(link).toHaveClass("bg-green-700", "underline")
+    expect(link).toHaveClass("bg-badge-green", "underline")
     expect(link.querySelector("[data-slot=badge-dot]")).not.toBeNull()
   })
 })

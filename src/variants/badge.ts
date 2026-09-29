@@ -8,16 +8,13 @@ export type BadgeColor = (typeof BADGE_COLORS)[number]
 /**
  * Las dos tintas de una etiqueta sólida, con el velo del hover de su botón de quitar.
  *
- * Blanco sobre los rellenos oscuros y negro al 85 % (el `labelColor` de macOS) sobre los claros:
- * ningún color de la paleta llega a 4,5:1 con las dos, así que cada uno usa la que pasa (los
- * números están en `test/contrast.test.ts`).
+ * La tinta es blanca en los nueve colores (los números están en `test/contrast.test.ts`).
  *
- * `--sf-tag-press` es el hover del botón de quitar del Tag, y va del lado contrario a la tinta:
- * oscurece bajo la X blanca y aclara bajo la negra, así el contraste sube en vez de bajar. Con el
- * `gray-alpha-300` del sistema, en oscuro aclaraba bajo la X blanca.
+ * `--sf-tag-press` es el hover del botón de quitar del Tag, del lado contrario a la tinta: oscurece
+ * bajo la X blanca, así el contraste sube en vez de bajar. Con el `gray-alpha-300` del sistema, en
+ * oscuro aclaraba bajo la X blanca.
  */
 const inkWhite = "text-white [--sf-tag-press:rgb(0_0_0/0.25)]"
-const inkBlack = "text-black/85 [--sf-tag-press:rgb(255_255_255/0.3)]"
 
 /**
  * El cuerpo de una etiqueta (2.0): la etiqueta del Finder.
@@ -26,24 +23,25 @@ const inkBlack = "text-black/85 [--sf-tag-press:rgb(255_255_255/0.3)]"
  * fase 3 el default era un tinte con borde (`subtle`): adentro de una tabla densa se leía
  * como un control más, y el color —que es lo que dice el estado— quedaba lavado.
  *
- * El relleno es el paso de la paleta donde el color se ve vivo y su tinta llega a 4,5:1, y es el
- * mismo en los dos temas (los `-700` y `-800` de Geist casi no cambian entre claro y oscuro):
+ * La tinta es blanca en los nueve (con dos tintas, una fila de estados se leía mezclada) y el
+ * relleno es el mismo en los dos temas: un paso de la paleta donde el color se ve vivo y el blanco
+ * llega a 4,5:1, o uno propio del badge donde ningún paso llega:
  *
- * | color  | relleno      | tinta     |
- * | ------ | ------------ | --------- |
- * | gray   | `gray-700`   | negra     |
- * | brand  | `brand-700`  | `brand-contrast` (el par del botón `accent`) |
- * | red    | `red-800`    | blanca    |
- * | amber  | `amber-700`  | negra     |
- * | green  | `green-700`  | negra     |
- * | blue   | `blue-800`   | blanca    |
- * | teal   | `teal-700`   | negra     |
- * | purple | `purple-700` | blanca    |
- * | pink   | `pink-800`   | blanca    |
+ * | color  | relleno             |
+ * | ------ | ------------------- |
+ * | gray   | `badge-gray` (#6e6e73)  |
+ * | brand  | `brand-700` con `brand-contrast` (el par del botón `accent`) |
+ * | red    | `red-800`           |
+ * | amber  | `badge-amber` (#b25e00) |
+ * | green  | `badge-green` (#1e8038) |
+ * | blue   | `blue-800`          |
+ * | teal   | `badge-teal` (#00786c)  |
+ * | purple | `purple-700`        |
+ * | pink   | `pink-800`          |
  *
  * El rojo, el azul y el rosa van en `-800` porque en `-700` el blanco no llega (3,98, 4,47 y 3,88
- * en el peor tema); el verde y el teal, en oscuro, no llegan con blanco en ningún paso, y van con
- * tinta negra.
+ * en el peor tema). El ámbar con blanco es más tostado que el amarillo de la paleta: es lo que
+ * pide el contraste.
  *
  * `variant`: `solid` es la etiqueta; `subtle` se acepta por compatibilidad y dibuja lo mismo que
  * `solid`; `count` (R4) es el badge de app de iCloud (§2.18): un círculo de 20 (16 en `sm`), 11 px
@@ -61,16 +59,16 @@ const badgeVariantsBase = cva(
     variants: {
       variant: { solid: "", subtle: "", count: "rounded-full text-caption tabular-nums shadow-badge" },
       color: {
-        gray: cn("bg-gray-700", inkBlack),
+        gray: cn("bg-badge-gray", inkWhite),
         // El brand es el color de la selección: adentro de un ítem seleccionado se invierte, o
         // desaparecería. Los demás colores traen su tinta y se leen igual sobre el acento, como
         // las etiquetas del Finder en una fila seleccionada.
         brand: "bg-brand-700 text-brand-contrast [--sf-tag-press:rgb(0_0_0/0.25)] inside-selection:bg-on-selection inside-selection:text-selection",
         red: cn("bg-red-800", inkWhite),
-        amber: cn("bg-amber-700", inkBlack),
-        green: cn("bg-green-700", inkBlack),
+        amber: cn("bg-badge-amber", inkWhite),
+        green: cn("bg-badge-green", inkWhite),
         blue: cn("bg-blue-800", inkWhite),
-        teal: cn("bg-teal-700", inkBlack),
+        teal: cn("bg-badge-teal", inkWhite),
         purple: cn("bg-purple-700", inkWhite),
         pink: cn("bg-pink-800", inkWhite),
       },

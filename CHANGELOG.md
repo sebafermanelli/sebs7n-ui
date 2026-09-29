@@ -205,7 +205,8 @@ DropdownMenu, ContextMenu, Menubar, Select, Combobox, Autocomplete y las filas d
   de 16/20 que se estiraba como lente). `sliderThumbClassName` y sus estados cambian de valor; el
   ColorPicker los sigue.
 - **Badge y Tag: etiquetas sólidas rectangulares.** Radio 4 (antes cápsula con borde), altos
-  **20 / 16** (antes 24 / 20), texto 12, relleno lleno con tinta blanca o negra que llega a 4,5:1.
+  **20 / 16** (antes 24 / 20), texto 12, relleno lleno con **tinta blanca en los nueve colores** (gris, ámbar, verde y teal van
+  en rellenos propios, `badge-*`, porque ningún paso de la paleta llega a 4,5:1 con blanco en oscuro).
   **El default pasa de `subtle` a `solid`**: `subtle` se acepta y dibuja lo mismo (obsoleto). `solid`
   `gray` ya no es el negro invertido (`className="bg-gray-1000 text-background-100"` para el de
   antes). El punto de `dot` va en la tinta. `--sf-tint-border` ya no lo usa ningún componente.

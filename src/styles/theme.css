@@ -151,6 +151,12 @@
   --color-surface-header: var(--sf-surface-header);
   /* La franja de una card sobre el wallpaper (W): `bg-translucent-strip`. */
   --color-translucent-strip: var(--sf-translucent-strip);
+  /* Los rellenos propios del Badge y del Tag: los colores donde ningún paso de la paleta llega a
+     4,5:1 con blanco en los dos temas. */
+  --color-badge-gray: var(--sf-badge-gray);
+  --color-badge-amber: var(--sf-badge-amber);
+  --color-badge-green: var(--sf-badge-green);
+  --color-badge-teal: var(--sf-badge-teal);
   --color-grouped: var(--sf-group);
   --color-fill-1: var(--sf-fill-1);
   --color-fill-2: var(--sf-fill-2);
@@ -401,6 +407,17 @@
      * que `surface-bar` con `surface` en la card opaca.
      */
     --sf-translucent-strip: #7878801f;
+
+    /**
+     * Rellenos del Badge y del Tag con tinta blanca, iguales en los dos temas. Gris, ámbar, verde
+     * y teal no tienen un paso de la paleta que llegue a 4,5:1 con blanco en oscuro (el mejor da
+     * 4,1); con tinta negra en esos cuatro, una fila de estados se leía mezclada. Blanco sobre:
+     * gris 5,07 · ámbar 4,67 · verde 5,00 · teal 5,38 (test/contrast.test.ts).
+     */
+    --sf-badge-gray: #6e6e73;
+    --sf-badge-amber: #b25e00;
+    --sf-badge-green: #1e8038;
+    --sf-badge-teal: #00786c;
 
     /* L fija = la del paso equivalente de blue en Geist; k = croma relativo a blue-700. */
     --sf-brand-100: oklch(from var(--sf-brand-src) 0.973 calc(c * 0.059) h);

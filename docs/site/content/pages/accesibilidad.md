@@ -21,7 +21,7 @@ Qué cubre esa tabla:
 | El texto del tooltip sobre su gris oscuro, en los dos temas | 4,5:1 |
 | El acento como texto (links, `plain`) y como glifo (íconos del sidebar y la toolbar), en las cinco marcas | 4,5:1 y 3:1 |
 | `Button variant="destructive"`, en reposo, hover y active | 4,5:1 |
-| `Badge` y `Tag` sólidos: la tinta (blanca o negra al 85 %) sobre el relleno, en las ocho paletas y los dos temas | 4,5:1 |
+| `Badge` y `Tag` sólidos: la tinta blanca sobre el relleno, en las ocho paletas y los dos temas | 4,5:1 |
 | La X del `Tag` sobre el hover de su botón | 4,5:1 |
 | Contorno de Checkbox, Radio, Switch y Toggle sin marcar | 3:1 (1.4.11) |
 | Borde del campo enfocado | 3:1 (2.4.11) |

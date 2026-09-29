@@ -81,8 +81,8 @@ describe("Tag", () => {
     }
   })
 
-  // El hover del botón de quitar va del lado contrario a la tinta (oscurece bajo la X blanca,
-  // aclara bajo la negra): con el gris alfa del sistema, en oscuro aclaraba bajo la X blanca.
+  // El hover del botón de quitar va del lado contrario a la tinta (oscurece bajo la X blanca): con
+  // el gris alfa del sistema, en oscuro aclaraba bajo la X blanca.
   it("el hover del botón de quitar usa el velo de su color, no el gris del sistema", () => {
     render(
       <>
@@ -95,7 +95,8 @@ describe("Tag", () => {
       </>
     )
     expect(screen.getByText("Urgente").closest("[data-slot=tag]")).toHaveClass("[--sf-tag-press:rgb(0_0_0/0.25)]")
-    expect(screen.getByText("Pendiente").closest("[data-slot=tag]")).toHaveClass("[--sf-tag-press:rgb(255_255_255/0.3)]")
+    // Con la tinta blanca en todos, el velo oscurece en todos.
+    expect(screen.getByText("Pendiente").closest("[data-slot=tag]")).toHaveClass("[--sf-tag-press:rgb(0_0_0/0.25)]")
     const quitar = screen.getByRole("button", { name: "Quitar Urgente" })
     expect(quitar).toHaveClass("hover:bg-(--sf-tag-press)")
     expect(quitar.className).not.toMatch(/gray-alpha/)
