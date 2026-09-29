@@ -1807,6 +1807,7 @@ export const COMPONENTS = {
       },
       NavbarContent: {
         className: PROP_DESCRIPTIONS.className,
+        style: "Se suma al `maxWidth` de la columna; lo que pongas gana.",
       },
     },
     related: ["navigation-menu", "user-menu", "theme-switcher"],

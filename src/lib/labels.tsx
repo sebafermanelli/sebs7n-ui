@@ -3,7 +3,6 @@
 import * as React from "react"
 
 import { defined } from "../internal/defined.js"
-import type { WeekStart } from "./dates.js"
 
 /**
  * Los textos que los componentes escriben solos.
@@ -263,8 +262,8 @@ export type Labels = {
   dates?: {
     /** El idioma de fechas y calendarios, como lo entiende `Intl` («en-US»). */
     locale?: string
-    /** Con qué día arranca la semana: `1` lunes, `0` domingo. */
-    weekStartsOn?: WeekStart
+    /** Con qué día arranca la semana: `1` lunes, `0` domingo. (Es `WeekStart` de `lib/dates`, escrito acá para que `labels` no dependa de ese módulo en el registry.) */
+    weekStartsOn?: 0 | 1
     /**
      * Cómo escribe `DatePicker` la fecha en el campo. Declaralo a nivel de módulo o memoizalo: el
      * provider lo compara por identidad, como a `combobox.remove`.
