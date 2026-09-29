@@ -26,3 +26,15 @@ export function Basico() {
     </div>
   )
 }
+
+/**
+ * El panel vacío
+ * `placeholder` es el de iCloud («No Message Selected»): solo el título grande y tenue, centrado en todo el alto del panel, sin ícono ni acción.
+ */
+export function Panel() {
+  return (
+    <div className="h-64 w-full rounded-surface border border-separator">
+      <EmptyState title="Ninguna factura elegida" variant="placeholder" />
+    </div>
+  )
+}

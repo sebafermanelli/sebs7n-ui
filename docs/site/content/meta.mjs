@@ -238,11 +238,11 @@ export const COMPONENTS = {
     keyboard: [["—", "No es interactivo."]],
     a11y: [
       "`AvatarImage` **exige `alt` en el tipo**, incluso vacío. Sin `alt` el lector lee la URL del archivo letra por letra; con `alt=\"\"` la foto sale del árbol y la nombra el contexto, que es lo correcto cuando el nombre de la persona ya está al lado. Las dos decisiones son válidas; no haber decidido, no.",
-      "El fallback es siempre gris: un color por persona sería una señal que nadie puede interpretar.",
+      "El fallback es el monograma de iCloud, siempre gris: iniciales blancas sobre un gradiente (#6e6e73 → #48484a) que llega a 4,5:1. Un color por persona sería una señal que nadie puede interpretar.",
     ],
     usage: ["Las iniciales, dos letras como máximo.", "Dentro de un `UserMenu` ya viene armado: no lo rehagas."],
     props: {
-      Avatar: { size: "`sm` 24px · `md` 32px · `lg` 40px." },
+      Avatar: { size: "Los de iCloud: `sm` 28px (barra) · `md` 32px (lista) · `lg` 40px · `xl` 80px (ficha)." },
     },
     related: ["user-menu", "sidebar"],
   },
@@ -306,10 +306,11 @@ export const COMPONENTS = {
   skeleton: {
     title: "Skeleton",
     group: "fundamentos",
-    description: "El bloque gris que late mientras carga algo.",
+    description: "El bloque gris con un brillo lento que lo cruza mientras carga algo.",
     keyboard: [["—", "No es interactivo."]],
     a11y: [
-      "La animación pasa por `motion-reduce`, además del reset global del paquete.",
+      "Con `prefers-reduced-motion` no hay brillo: gris parejo y quieto.",
+      "El brillo se ubica contra la ventana (`background-attachment: fixed`): todos los bloques de la pantalla lo muestran en el mismo lugar, como una sola luz que pasa, y no cada uno con su propio pulso.",
       "La región que se está cargando debería tener `aria-busy=\"true\"`; el skeleton solo es el relleno visual.",
     ],
     usage: [
@@ -1175,7 +1176,7 @@ export const COMPONENTS = {
   tooltip: {
     title: "Tooltip",
     group: "superposiciones",
-    description: "Una línea de texto que aclara un control, en hover y en foco.",
+    description: "Una línea de texto que aclara un control, en hover y en foco: chica, gris oscura en los dos temas y sin flecha.",
     keyboard: [["Tab", "Enfocar el trigger lo muestra."], ["Escape", "Lo cierra."]],
     a11y: [
       "**No sirve como nombre accesible.** Un botón de ícono necesita `aria-label` igual: en un celular el tooltip no existe.",
@@ -1456,25 +1457,24 @@ export const COMPONENTS = {
     title: "Navbar",
     group: "navegacion",
     detallado: true,
-    description: "La barra de arriba de un sitio o un portal. `bar` se vuelve translúcida con blur al scrollear; `floating` se despega en una píldora con margen.",
+    description: "La barra global de iCloud: fija a todo el ancho, 44 de alto y opaca; translúcida solo sobre el wallpaper.",
     keyboard: [["Tab", "Recorre los links y botones de adentro. La barra en sí no recibe foco."]],
     a11y: [
       "Es un `<header>` (landmark `banner` cuando está en el body). La navegación de adentro va en un `<nav>` con `aria-label` propio.",
-      "El fondo al scrollear es `background-100` al 80 % más blur: el texto de la barra conserva el contraste de la superficie sobre cualquier contenido que pase por debajo.",
-      "Con `prefers-reduced-motion` la barra cambia de estado igual, sin transición.",
+      "Es opaca (`surface-header`) desde arriba: el texto de la barra no depende de lo que pase por debajo. Sobre el wallpaper de `AppShell ambient` es `material-translucent`, que con `prefers-reduced-transparency` vuelve a ser opaca.",
     ],
     usage: [
-      "**`bar` para un portal o una app; `floating` para una landing o un sitio de marketing.** La píldora flotante se lee como pieza de marketing, igual que el botón `pill`: en el chrome de una app no va.",
+      "**Una sola barra, como iCloud**: a todo el ancho y sin cápsula. La píldora flotante de 1.x se fue en 2.0.",
       "`position=\"fixed\"` cuando el hero tiene que llegar hasta el borde de arriba; `sticky` (el default) en todo lo demás, para que el contenido no quede tapado.",
-      "Una sola fila de 56px (`NavbarContent`). Una segunda fila (una barra de avisos) va como otro hijo del `Navbar`: se mueve y se despega con ella.",
-      "Dentro de un `AppShell` no va: la barra mobile del shell ya tiene el mismo tratamiento.",
+      "Una sola fila de 44px (`NavbarContent`, `0 6px 0 16px`): la marca a la izquierda, botones de ícono de 36 y un avatar de 28 a la derecha.",
+      "Dentro de un `AppShell` no va: la barra global es su prop `header`.",
     ],
     props: {
       Navbar: {
-        variant: "`bar` (default) · `floating`.",
+        variant: "**Obsoleta**: `bar` se acepta y no hace nada (se borra en 3.0). `floating` se fue.",
         position: "`sticky` (default) ocupa su alto; `fixed` se superpone al contenido.",
-        scrollThreshold: "Cuántos px de scroll cambian el estado. Por defecto, 12.",
-        surfaceClassName: "Clases de la caja con fondo, que es la que tiene el ancho y el radio de la barra despegada.",
+        scrollThreshold: "Cuántos px de scroll prenden `data-scrolled`. La barra no cambia: es para quien quiera cambiar algo al bajar.",
+        surfaceClassName: "Clases de la caja con fondo.",
         className: PROP_DESCRIPTIONS.className,
       },
       NavbarContent: {
@@ -1570,7 +1570,7 @@ export const COMPONENTS = {
     title: "Toolbar",
     group: "navegacion",
     detallado: true,
-    description: "Acciones agrupadas con roving tabindex: una parada de tabulación para toda la barra.",
+    description: "La toolbar de iCloud: a todo el ancho, 44 de alto, botones de ícono de 28, y una sola parada de tabulación para toda la barra.",
     keyboard: [
       ["Tab", "Entra a la barra y sale. Veinte botones adentro siguen siendo **una** parada."],
       ["← →", "Mueve entre controles en una barra horizontal."],
@@ -1589,19 +1589,20 @@ export const COMPONENTS = {
     usage: [
       "**El roving tabindex es toda la razón del componente.** Veinte botones sueltos son veinte paradas de Tab entre el contenido de arriba y el de abajo; quien navega con teclado o con un switch los atraviesa todos cada vez. La barra ya se veía bien con un `<div className=\"flex gap-1\">`.",
       "**Todo hijo interactivo tiene que ser `ToolbarButton`, `ToolbarLink` o `ToolbarInput`.** Un `<button>` puesto a mano queda fuera del recorrido y se vuelve inalcanzable, porque la barra le sacó el Tab al resto.",
-      "**`render` en vez de estilos nuevos**: `render={<Toggle />}`, `render={<ToggleGroupItem value=\"bold\" />}`, `render={<DropdownMenuTrigger render={<Button />} />}`. El default ya es el `Button` del sistema en `ghost`.",
+      "**`render` en vez de estilos nuevos**: `render={<Toggle />}`, `render={<ToggleGroupItem value=\"bold\" />}`, `render={<DropdownMenuTrigger render={<Button />} />}`. El default ya es el botón de ícono de iCloud (`Button plain size=\"icon-sm\"`): 28, glifo en el acento y un cuadrado gris al pasar.",
+      "**Agrupá por intención, como iCloud**: a la izquierda la vista, en el centro lo que actúa sobre la selección (apagado a .4 sin selección, `disabled`), a la derecha buscar y crear.",
       "`ToolbarInput` es el campo chico de una barra —zoom, ancho de línea—, no un campo de formulario: para eso está `Field` + `Input`, con label, error y descripción.",
       "Menos de tres o cuatro controles no justifica la barra: son botones sueltos y se acabó.",
     ],
     props: {
       Toolbar: {
         orientation: "`vertical` cambia las flechas a ↑ ↓ y da vuelta los separadores.",
-        variant: "`glass` (default): **ya no hay vidrio**, el nombre es de 1.x y R5 lo renombra; pinta el fondo opaco de las barras de iCloud (`bg-surface-bar`) · `plain` no lleva fondo, para una barra adentro de otra superficie.",
+        variant: "`bar` (default): la toolbar de iCloud, a todo el ancho con `surface-bar` y el separador abajo · `plain` sin fondo ni borde, para una barra adentro de otra superficie · `glass`: **obsoleta**, alias de `bar` (se borra en 3.0).",
         loopFocus: "Si al pasar del último control se vuelve al primero.",
         onKeyDown: "Corre **antes** que el manejador propio de la barra. Si hacés `preventDefault()`, Home y End no mueven el foco.",
       },
       ToolbarButton: {
-        render: "El componente que pone los estilos. Por defecto, `<Button size=\"icon-sm\" variant=\"ghost\" />`.",
+        render: "El componente que pone los estilos. Por defecto, `<Button size=\"icon-sm\" variant=\"plain\" />`.",
         focusableWhenDisabled: "Deshabilitado pero todavía en el recorrido con flechas. Dejalo en `true`.",
       },
     },
@@ -1651,7 +1652,7 @@ export const COMPONENTS = {
     title: "Sidebar",
     group: "navegacion",
     detallado: true,
-    description: "La navegación lateral de un panel: header, grupos, ítems con ícono y contador, footer y modo colapsado.",
+    description: "La lista de fuentes de iCloud: a ras del borde, ítems de 32 con ícono en el acento y contador en texto, secciones plegables con «+» y modo colapsado.",
     keyboard: [
       ["Tab", "Recorre los ítems en orden."],
       ["Enter", "Navega."],
@@ -1663,19 +1664,28 @@ export const COMPONENTS = {
       "`SidebarItemBadge` acepta `label` para que el contador se lea con contexto: «Clientes, 3 pendientes».",
       "`SidebarSearch shortcut` emite `aria-keyshortcuts`, pero **no registra el atajo**: eso es de la app.",
       "Colapsado, cada ítem muestra su label en un tooltip y conserva el nombre accesible.",
+      "Una sección `collapsible` convierte su `SidebarGroupLabel` en un botón con `aria-expanded` y `aria-controls`; el grupo se sigue nombrando por ese título. `SidebarGroupAction` exige `aria-label` en el tipo: el «+» solo no dice qué crea.",
     ],
     usage: [
       "**El paquete no guarda el estado de colapsado.** Guardalo en una cookie y pasá `defaultCollapsed` desde el layout: así el server ya renderiza el ancho correcto y no hay salto.",
       "`SidebarItem` es un `<a>`: con Next, `render={<Link href />}`.",
       "**El ítem activo va en gris (`fill-1`) y el texto no cambia de color** (2.0, como el sidebar de iCloud): un contador o un ícono de color adentro se quedan como están, sin `selectionSecondaryClassName`. Esa clase solo cambia algo adentro de una fila elegida de `Table` con el foco adentro.",
       "Lo que sea texto del header se oculta con `group-data-collapsed/sidebar:hidden`.",
+      "**Secciones como en Photos o Drive**: `SidebarGroup collapsible` (con `defaultOpen` u `open`/`onOpenChange`) y un `SidebarGroupAction` para el «+». El «+» queda fuera del panel: se puede crear con la sección cerrada.",
       "Grupos de 3 a 7 ítems con `SidebarGroupLabel`. Si hay más de ~20 ítems en total, hace falta una paleta de comandos.",
     ],
     props: {
       Sidebar: {
         collapsed: "Solo íconos, 64px. El ancho cambia sin animación: animarlo hace saltar todo el contenido.",
-        variant: "`floating` (default) es un panel despegado del borde · `bar` va a ras de la ventana con un borde derecho, como en iCloud.",
+        variant: "**Obsoleta**: el sidebar es siempre la lista de fuentes a ras. `bar` se acepta y no hace nada (se borra en 3.0); `floating` se fue.",
       },
+      SidebarGroup: {
+        collapsible: "El título se vuelve un botón con chevron que abre y cierra los ítems.",
+        defaultOpen: "Abierta al montar (no controlado). Por defecto, abierta.",
+        open: "Controlado: si la sección está abierta.",
+        onOpenChange: "Se llama con el estado nuevo al abrir o cerrar la sección.",
+      },
+      SidebarGroupAction: { "aria-label": "Qué crea el «+» («Nueva carpeta»). Obligatorio." },
       SidebarSearch: { shortcut: "Solo muestra el `Kbd` y lo anuncia. Escuchar la tecla es trabajo de la app." },
       SidebarItem: { icon: "El ícono de la izquierda, que es lo único que queda visible con el sidebar colapsado." },
       SidebarGroupLabel: {
@@ -1688,7 +1698,7 @@ export const COMPONENTS = {
     title: "AppShell",
     group: "navegacion",
     detallado: true,
-    description: "El layout de un panel: sidebar sticky desde `lg` y, debajo, una barra de 56px con hamburguesa.",
+    description: "El layout de una app de iCloud: barra global de 44 a todo el ancho, sidebar a ras debajo desde `lg` y, en el teléfono, una barra de 44 con hamburguesa.",
     keyboard: [
       ["Tab (primera parada)", "«Ir al contenido», el skip link que salta al `<main>`."],
       ["Escape", "Cierra el Sheet mobile."],
@@ -1708,9 +1718,10 @@ export const COMPONENTS = {
     props: {
       AppShell: {
         pathname: "La ruta actual. Cuando cambia, el Sheet mobile se cierra.",
-        mobileBar: "Contenido de la barra de 56px a la derecha de la hamburguesa.",
+        header: "La barra global a todo el ancho (≥ lg): 44, `surface-header`, borde abajo. Marca a la izquierda, botones de ícono de 36 y avatar de 28 a la derecha.",
+        mobileBar: "Contenido de la barra de 44px del teléfono, a la derecha de la hamburguesa.",
         mainId: "`id` del `<main>`; es a donde apunta el skip link.",
-        variant: "`floating` (default): en el teléfono la barra es el `Navbar` flotante, transparente arriba y píldora al scrollear · `bar`: a ras, como antes de 1.10.",
+        variant: "**Obsoleta**: `bar` se acepta y no hace nada (se borra en 3.0). `floating` se fue.",
       },
     },
     related: ["sidebar", "app-shell-content", "user-menu", "sheet"],
@@ -1857,7 +1868,7 @@ export const COMPONENTS = {
     title: "Table",
     group: "contenido",
     detallado: true,
-    description: "Una tabla de datos: cabecera con banda, columnas numéricas alineadas a la derecha y densidad compacta.",
+    description: "La vista de lista de iCloud Drive: sin caja, filas de 41 con separadores interiores, selección redondeada en el acento y títulos de grupo.",
     keyboard: [
       ["Tab", "Recorre los controles de las celdas, no las celdas."],
       ["—", "No es una grilla: si necesitás navegar celda por celda con flechas, hace falta una data grid de verdad."],
@@ -1875,11 +1886,17 @@ export const COMPONENTS = {
       "**Color propio adentro de una fila elegida → `selectionSecondaryClassName`.** La fila elegida es acento sólido mientras la tabla tiene el foco adentro (gris sin foco): una fecha en `text-label-secondary` o un ícono en `text-green-900` desaparecen sobre el azul. `cn(\"text-label-secondary\", selectionSecondaryClassName)` pasa a `text-on-selection` cuando la fila está elegida (`data-state=\"selected\"`) y la tabla tiene el foco; para bordes o fondos, el variant `inside-selection:` directo. Un `Badge` adentro se adapta solo.",
       "En mobile una tabla de más de 3 columnas no entra: o hacés scroll horizontal con la primera columna fija, o cambiás a tarjetas.",
       "Las acciones de fila van en la última columna, en un `DropdownMenu`, no como tres botones sueltos.",
-      "El `thead` y el `tfoot` usan `bg-fill-1`: es la banda, no la superficie.",
+      "**La primera celda es el nombre** (17, texto principal) y el resto son metadatos en 14 gris, como las columnas de Drive. Una columna de casillas primero se ajusta con `className`.",
+      "Los grupos («Últimos 7 días · 6 ítems») van con `TableGroupHeader`, un `<th scope=\"colgroup\">` de 19/600 con el contador al lado.",
+      "Sin caja: la tabla vive sobre la página o adentro de un panel. Si hace falta un borde, lo pone quien la contiene.",
       "**No virtualiza.** Renderiza las filas que le pasás, todas. Hasta ~500 anda bien; más que eso, paginá con `Pagination` o virtualizá vos y pasale la ventana.",
     ],
     props: {
-      Table: { density: "`compact` baja el alto de fila. Para listas largas." },
+      Table: { density: "`default` 41px (Drive) · `compact` 32px, para listas largas." },
+      TableGroupHeader: {
+        count: "El contador que va pegado al título («6 ítems»), en 15 gris.",
+        colSpan: "Cuántas columnas ocupa. Por defecto 100, que alcanza para cualquier tabla.",
+      },
       TableHead: { numeric: "Alinea a la derecha con cifras tabulares." },
       TableCell: { numeric: "Alinea a la derecha con cifras tabulares. Tiene que coincidir con el `TableHead`." },
     },
@@ -1889,7 +1906,7 @@ export const COMPONENTS = {
     title: "Card",
     group: "contenido",
     detallado: true,
-    description: "La superficie que agrupa: cabecera, contenido, pie y acción. Dos variantes, dos tamaños, interactiva y seleccionable.",
+    description: "El widget de iCloud: franja de cabecera con ícono, título y acción; cuerpo en filas con separadores, en una o dos columnas; y el «…» abajo.",
     keyboard: [
       ["Tab", "Con `interactive` (y `render` sobre un link o un botón), la tarjeta entera es una parada."],
       ["Enter", "Activa la tarjeta interactiva."],
@@ -1900,17 +1917,27 @@ export const COMPONENTS = {
       "`CardTitle` es un `<div>`: si la tarjeta encabeza una sección, poné el heading vos (`render` no aplica acá — usá tu propio `<h3>` adentro).",
     ],
     usage: [
-      "**`variant=\"default\"` es el grupo** (`bg-grouped`, opaco y sin borde, como las cards de iCloud); **`subtle` es la banda** (`bg-fill-1`) para una zona hundida.",
+      "**`variant=\"default\"` es el widget** (radio 11, cuerpo opaco con la sombra de widget); **`subtle` es la card hundida** (`bg-fill-1`, sin sombra) para ir adentro de otra superficie.",
+      "**La cabecera es una franja**: `CardHeader icon` pone el ícono de la app (40), `CardTitle` 21/600 y `CardDescription` 14 gris. La acción (`CardAction`) va arriba a la derecha como botón de ícono.",
+      "**El cuerpo en filas**: `CardRow` (60, radio 8) con `title`, `description` y `trailing`, separadas por una línea interior. `CardContent columns={2}` las reparte en dos columnas con una regla en el medio.",
+      "**Sin franja de pie**: `CardFooter` es la fila del «…» (un `Button plain size=\"icon-sm\"`) y, si hace falta, un filtro a la derecha. Nada de botones con borde ni una línea arriba.",
       "Una card dentro de otra card es una señal de que falta una tabla o una lista.",
       "`size=\"sm\"` en una grilla de 3 o más columnas; `md` suelta.",
       "`CardAction` se ubica sola arriba a la derecha si está dentro de `CardHeader`.",
     ],
     props: {
       Card: {
-        size: "El padding interno, vía `--card-spacing`: `sm` 16px · `md` 24px.",
-        variant: "`default` superficie con borde · `subtle` banda sin borde.",
+        size: "El padding interno, vía `--card-spacing`: `sm` 16px · `md` 20px (el de iCloud).",
+        variant: "`default` el widget con sombra · `subtle` hundida, sin sombra.",
         interactive: "Estilos de hover, active y foco. No hace la tarjeta clickeable: eso lo hace el elemento.",
-        selected: "Borde y anillo de marca.",
+        selected: "Anillo de marca de 2px, por fuera.",
+      },
+      CardHeader: { icon: "El ícono de la app, en una caja de 40 a la izquierda del título. Decorativo: el título ya nombra la card." },
+      CardContent: { columns: "`2` reparte las filas en dos columnas con una regla vertical." },
+      CardRow: {
+        title: "Primera línea, 14 en texto principal.",
+        description: "Segunda línea, 12 gris.",
+        trailing: "A la derecha de la primera línea: una hora, un importe.",
       },
     },
     related: ["stat", "table", "empty-state"],
@@ -1944,18 +1971,20 @@ export const COMPONENTS = {
     keyboard: [["Tab", "Llega a la acción."]],
     a11y: [
       "`titleAs` controla el nivel del heading: dentro de una página con `<h1>`, que sea `h2`.",
-      "Por defecto es un grupo, como una Card: fondo sólido con borde.",
+      "Por defecto es un grupo plano (`bg-grouped`), sin la sombra de widget de la Card.",
+      "`placeholder` pone el título en `label-tertiary` y no en el cuaternario de iCloud: en 28/600 (texto grande) llega a 3:1.",
       "Sin `\"use client\"`: sirve en un Server Component.",
     ],
     usage: [
       "**Distinguí los tres vacíos**: todavía no hay nada (con acción), el filtro no encontró nada (con «limpiar filtros») y hubo un error (con «reintentar»). No son el mismo texto.",
       "El título dice qué falta, no «Sin resultados».",
       "Una sola acción.",
+      "**El panel de detalle vacío** («Ningún mensaje elegido») es `variant=\"placeholder\"`: solo el título grande y tenue, centrado en todo el alto, sin ícono ni acción. Es el de iCloud.",
       "Adentro de una `Card` o de una `Table`, `variant=\"plain\"` (o `subtle`): el grupo ya lo pone quien lo contiene, y un segundo borde con sombra es una caja adentro de otra.",
     ],
     props: {
       EmptyState: {
-        variant: "`default` (grupo con borde, suelto en la página) · `subtle` (zona hundida) · `plain` (sin superficie, adentro de una Card o Table).",
+        variant: "`default` (grupo plano, suelto en la página) · `subtle` (zona hundida) · `plain` (sin superficie, adentro de una Card o Table) · `placeholder` (el panel vacío de iCloud: solo el título grande y tenue).",
         icon: "El ícono de arriba, dentro de su cuadrito. Es decoración (`aria-hidden`): el título tiene que alcanzar solo.",
         title: "Qué falta, en una línea. Sale como el heading que diga `titleAs`.",
         description: "La línea que explica por qué no hay nada y qué se puede hacer.",
@@ -2014,7 +2043,7 @@ export const COMPONENTS = {
       Meter: {
         value: "El valor actual, siempre un número: un `Meter` no tiene estado indeterminado.",
         label: "El nombre visible de la medida. Es la forma preferida de nombrarla; sin él, el tipo exige `aria-label` o `aria-labelledby`.",
-        size: "`sm` 4px · `md` 6px de alto de la pista, los mismos que `Progress`.",
+        size: "`sm` 4px · `md` 6px de alto de la pista, los mismos que `Progress` · `lg` 16px con radio 6, la barra de almacenamiento de iCloud.",
         showValue: "Muestra el valor formateado a la derecha.",
         format: "Opciones de `Intl.NumberFormat`. Cambian lo que se ve y lo que se lee, nunca el valor.",
         locale: "El locale de `Intl.NumberFormat`. Por defecto, el del navegador.",
@@ -2025,7 +2054,7 @@ export const COMPONENTS = {
   collapsible: {
     title: "Collapsible",
     group: "contenido",
-    description: "Mostrar y ocultar un bloque con un botón. La pieza simple detrás del Accordion.",
+    description: "Mostrar y ocultar un bloque con un botón, con el disclosure de iCloud opcional. La pieza simple detrás del Accordion.",
     keyboard: [
       ["Enter · Espacio", "Abre y cierra."],
       ["Tab", "Entra y sale del trigger."],
@@ -2037,12 +2066,13 @@ export const COMPONENTS = {
     ],
     usage: [
       "**Si hay varias secciones que son un grupo, es un `Accordion`**: trae el `<h3>` por sección.",
-      "El trigger no trae estilo a propósito: va `render={<Button variant=\"ghost\" />}`.",
+      "El trigger no trae estilo a propósito: va `render={<Button variant=\"ghost\" />}`. Con `chevron` suma el disclosure de iCloud (› que gira a ⌄) y el foco interior.",
       "`className` cae en el contenido, no en el elemento que anima el alto: ahí va el padding.",
       "Lo que está plegado no se lee ni se indexa: `keepMounted` si esos links importan para el crawler.",
     ],
     props: {
       Collapsible: heredadas("open", "defaultOpen", "onOpenChange", "disabled"),
+      CollapsibleTrigger: { chevron: "Suma el chevron › después del texto, que gira a ⌄ al abrir (sin recorrido con movimiento reducido)." },
       CollapsibleContent: heredadas("keepMounted"),
     },
     related: ["accordion", "card", "button"],
@@ -2050,7 +2080,7 @@ export const COMPONENTS = {
   accordion: {
     title: "Accordion",
     group: "contenido",
-    description: "Secciones plegables que se leen como una lista. Una sola abierta, o varias.",
+    description: "Secciones plegables como el disclosure de iCloud: filas de 44 con separador y un chevron › que gira. Una sola abierta, o varias.",
     keyboard: [
       ["Enter · Espacio", "Abre y cierra la sección enfocada."],
       ["Tab", "Cada trigger es su propia parada: desde Base UI 1.8 no hay foco rotativo, siguiendo la corrección de la APG."],

@@ -8,6 +8,11 @@ import {
   ChevronDownIcon,
   ItalicIcon,
   LinkIcon,
+  PanelLeftIcon,
+  SearchIcon,
+  ShareIcon,
+  SquarePenIcon,
+  Trash2Icon,
   UnderlineIcon,
 } from "lucide-react"
 import { Button } from "sebs7n-ui/button"
@@ -19,6 +24,37 @@ import {
 } from "sebs7n-ui/dropdown-menu"
 import { ToggleGroup, ToggleGroupItem } from "sebs7n-ui/toggle-group"
 import { Toolbar, ToolbarButton, ToolbarGroup, ToolbarInput, ToolbarLink, ToolbarSeparator } from "sebs7n-ui/toolbar"
+
+/**
+ * La barra de una app
+ * La toolbar de iCloud: a todo el ancho, 44 de alto, botones de ícono de 28 con el glifo en el acento y un cuadrado gris al pasar el puntero. A la izquierda la vista, en el centro lo que actúa sobre la selección —apagado a .4 mientras no hay nada elegido— y a la derecha buscar y crear.
+ */
+export function Barra() {
+  return (
+    <div className="w-full overflow-hidden rounded-surface border border-separator">
+      <Toolbar aria-label="Acciones de la lista">
+        <ToolbarButton aria-label="Mostrar la barra lateral">
+          <PanelLeftIcon />
+        </ToolbarButton>
+        <ToolbarGroup aria-label="Selección" className="mx-auto">
+          <ToolbarButton aria-label="Compartir" disabled>
+            <ShareIcon />
+          </ToolbarButton>
+          <ToolbarButton aria-label="Eliminar" disabled>
+            <Trash2Icon />
+          </ToolbarButton>
+        </ToolbarGroup>
+        <ToolbarButton aria-label="Buscar">
+          <SearchIcon />
+        </ToolbarButton>
+        <ToolbarButton aria-label="Nuevo">
+          <SquarePenIcon />
+        </ToolbarButton>
+      </Toolbar>
+      <div className="h-24 bg-background" />
+    </div>
+  )
+}
 
 /**
  * La barra del editor de texto
@@ -81,7 +117,7 @@ export function Lienzo() {
 
         <ToolbarSeparator />
 
-        <label className="flex items-center gap-2 pl-1 text-copy-13 text-label-secondary">
+        <label className="flex items-center gap-2 pl-1 text-callout text-label-secondary">
           Zoom
           <ToolbarInput className="w-16" defaultValue="100" inputMode="numeric" />
         </label>

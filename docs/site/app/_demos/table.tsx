@@ -1,6 +1,7 @@
 "use client"
 
-import { MoreHorizontalIcon } from "lucide-react"
+import { FileTextIcon, MoreHorizontalIcon } from "lucide-react"
+import { useState } from "react"
 import { Badge } from "sebs7n-ui/badge"
 import { Button } from "sebs7n-ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "sebs7n-ui/dropdown-menu"
@@ -10,6 +11,7 @@ import {
   TableCaption,
   TableCell,
   TableFooter,
+  TableGroupHeader,
   TableHead,
   TableHeader,
   TableRow,
@@ -23,7 +25,7 @@ const FACTURAS = [
 
 /**
  * Con números a la derecha
- * `numeric` alinea a la derecha y usa cifras tabulares: las columnas de plata se comparan de un vistazo.
+ * La vista de lista de Drive: la primera celda es el nombre (17, texto principal) y el resto metadatos en 14 gris. `numeric` alinea a la derecha con cifras tabulares.
  */
 export function Basico() {
   return (
@@ -31,8 +33,8 @@ export function Basico() {
       <TableCaption>Facturas emitidas en septiembre.</TableCaption>
       <TableHeader>
         <TableRow>
-          <TableHead>Nº</TableHead>
           <TableHead>Cliente</TableHead>
+          <TableHead>Nº</TableHead>
           <TableHead>Estado</TableHead>
           <TableHead numeric>Importe</TableHead>
           <TableHead className="w-12" />
@@ -41,8 +43,8 @@ export function Basico() {
       <TableBody>
         {FACTURAS.map((factura) => (
           <TableRow key={factura.id}>
-            <TableCell className="text-label-13-mono">{factura.id}</TableCell>
             <TableCell>{factura.cliente}</TableCell>
+            <TableCell className="tabular-nums">{factura.id}</TableCell>
             <TableCell>
               <Badge color={factura.color} size="sm">
                 {factura.estado}
@@ -76,25 +78,82 @@ export function Basico() {
   )
 }
 
+const DOCUMENTOS = [
+  { grupo: "Últimos 7 días", filas: [
+    { id: "a", nombre: "Factura 0014", tipo: "Documento PDF", tamano: "110 KB", fecha: "25/09/2026" },
+    { id: "b", nombre: "Factura 0013", tipo: "Documento PDF", tamano: "96 KB", fecha: "23/09/2026" },
+    { id: "c", nombre: "Resumen de cuenta", tipo: "Planilla", tamano: "36 KB", fecha: "22/09/2026" },
+  ] },
+  { grupo: "Últimos 30 días", filas: [
+    { id: "d", nombre: "Factura 0012", tipo: "Documento PDF", tamano: "104 KB", fecha: "14/09/2026" },
+    { id: "e", nombre: "Contrato de licencia", tipo: "Documento PDF", tamano: "1,5 MB", fecha: "02/09/2026" },
+  ] },
+]
+
+/**
+ * Grupos y selección
+ * `TableGroupHeader` es el título de grupo de Drive con su contador. Tocá una fila: la elegida va en el acento mientras la tabla tiene el foco y en gris cuando el foco se va (hacé click afuera).
+ */
+export function Grupos() {
+  const [elegida, setElegida] = useState("b")
+  return (
+    <Table aria-label="Documentos">
+      <TableHeader>
+        <TableRow>
+          <TableHead>Nombre</TableHead>
+          <TableHead>Tipo</TableHead>
+          <TableHead numeric>Tamaño</TableHead>
+          <TableHead>Fecha</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {DOCUMENTOS.map(({ grupo, filas }) => [
+          <TableGroupHeader count={`${filas.length} ítems`} key={grupo}>
+            {grupo}
+          </TableGroupHeader>,
+          ...filas.map((fila) => (
+            <TableRow
+              aria-selected={elegida === fila.id}
+              data-state={elegida === fila.id ? "selected" : undefined}
+              key={fila.id}
+              onClick={() => setElegida(fila.id)}
+            >
+              <TableCell>
+                <span className="flex items-center gap-2.5">
+                  <FileTextIcon aria-hidden="true" className="size-4 text-label-secondary" />
+                  {fila.nombre}
+                </span>
+              </TableCell>
+              <TableCell>{fila.tipo}</TableCell>
+              <TableCell numeric>{fila.tamano}</TableCell>
+              <TableCell className="tabular-nums">{fila.fecha}</TableCell>
+            </TableRow>
+          )),
+        ])}
+      </TableBody>
+    </Table>
+  )
+}
+
 /**
  * Densidad compacta
- * Para más de ~20 filas visibles.
+ * Filas de 32, para más de ~20 filas visibles.
  */
 export function Compacta() {
   return (
     <Table density="compact">
       <TableHeader>
         <TableRow>
-          <TableHead>Nº</TableHead>
           <TableHead>Cliente</TableHead>
+          <TableHead>Nº</TableHead>
           <TableHead numeric>Importe</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {FACTURAS.map((factura) => (
           <TableRow key={factura.id}>
-            <TableCell className="text-label-13-mono">{factura.id}</TableCell>
             <TableCell>{factura.cliente}</TableCell>
+            <TableCell className="tabular-nums">{factura.id}</TableCell>
             <TableCell numeric>{factura.importe}</TableCell>
           </TableRow>
         ))}

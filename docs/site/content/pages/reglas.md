@@ -4,35 +4,30 @@ Las decisiones que no se ven en una tabla de props. Cada una existe porque rompe
 
 **Un solo acento sólido por pantalla.** El `Button` por defecto es el primario de iCloud, el acento sólido: va en la acción principal, y las demás son `secondary` (gris) o `plain` (texto de acento). Dos acentos compitiendo no son dos acciones importantes: son ninguna. Los estados prendidos —un `Checkbox` marcado, un `Switch`, el relleno de un `Slider`— llevan el brand y no cuentan: dicen «esto está activo», no «apretá acá».
 
-**El botón es una cápsula.** `shape="pill"` le suma un escalón de padding horizontal (`sm` 20px, `md` 24px, `lg` 28px) y es para los CTA de un hero. `shape="rect"` devuelve el rectángulo (`rounded-control`) para donde una cápsula no entra: una celda de tabla densa, un botón a todo el ancho de un formulario angosto. **Una sola forma por pantalla:** dos formas de botón juntas se leen como un descuido, no como una jerarquía.
+**Sin cápsulas.** Desde 2.0 nada es una píldora: botones y controles con radio 8, campos e ítems de lista con 10, cards y diálogos con 11, menús y popovers con 12 (los de iCloud). `shape="pill"` queda aceptada y sin efecto hasta 3.0.
 
 **`variant="destructive"` solo cuando la acción borra algo**, y siempre detrás de un `AlertDialog`.
 
-## Material
+## Superficies
 
-**Nunca vidrio sobre vidrio.** Lo que flota lleva `glass`; lo que vive **adentro** de algo que flota lleva `glass-control`, que es alfa sin blur. No es solo estética: un elemento con `backdrop-filter` se vuelve la raíz del fondo de sus hijos, así que un segundo vidrio adentro desenfoca lo que pintó el primero y no la página. Cuesta lo mismo de pintar y no muestra nada.
-
-Desde 2.0 el material va **por rol**, como en macOS: no todo es el mismo vidrio.
+**Opaco en capas, como iCloud.** Desde 2.0 no hay vidrio: la página es `bg-background`, el sidebar `surface-secondary`, las barras `surface-bar` (toolbar) y `surface-header` (barra global), lo que flota —menú, popover, diálogo, toast— `bg-surface` con su sombra. El gris de hover y de selección neutra sale de `fill-1/2/3`.
 
 | Es | Lleva |
 |---|---|
-| Una barra: Navbar, Toolbar, Sidebar, la barra mobile del AppShell | `material-bar` (= `glass`) |
-| Algo que se lee y flota: menú, Select, Combobox, Popover, HoverCard, Tooltip, el panel de DatePicker | `material-popover` (= `glass glass-dense`) |
-| Un diálogo: Dialog, AlertDialog, Sheet, Drawer | `material-modal`: casi opaco (91 % de fill), no se ve lo de atrás |
-| Un grupo apoyado en la ventana: Card, Table, EmptyState | `material-group`: sólido, sin blur |
-| Lo que vive adentro de una superficie: Input, Button `secondary`, Checkbox vacío, Alert | `glass-control` |
-| Cromo: Toolbar, Navbar despegada | `material-bar` + `glass-rim` |
-| Una zona hundida: `Card subtle`, `thead`, `EmptyState` | `bg-gray-alpha-100` |
+| La página, el contenido de una lista o un detalle | `bg-background` |
+| La columna del sidebar | `bg-surface-secondary` + borde derecho `separator-strong` |
+| La barra global (`Navbar`, `AppShell header`, la barra del teléfono) | `bg-surface-header` + borde abajo `separator-strong` |
+| La toolbar de una app (`Toolbar`) | `bg-surface-bar` + separador abajo |
+| Menú, Select, Combobox, Popover, HoverCard, Dialog, Sheet, toast | `bg-surface` + `shadow-menu` / `shadow-modal` |
+| Un widget (`Card`) | cuerpo `bg-surface` + `shadow-widget`, cabecera `bg-surface-bar` |
+| Una zona hundida: `Card subtle`, la card inline, el `EmptyState` | `bg-fill-1` / `bg-grouped` |
+| El tooltip | `bg-tooltip` (gris oscuro en los dos temas) |
 
-**Las curvas son concéntricas.** Cuando algo redondeado vive cerca del borde de otra cosa redondeada, su radio es el de afuera menos la distancia que los separa. Un diálogo de 26px con un ítem a 8px del borde pide un ítem de 18px: con uno de 10 se ve una caja cuadrada metida en una redondeada. Los menús ya lo hacen solos (el panel mide el radio del ítem más su `p-1`). Importa cuando el padding es menor que el radio; con un padding de 24px en un diálogo de 26, no.
+**Un solo material translúcido**: `material-translucent`, y solo donde iCloud lo usa —la barra global y el header de un widget **sobre el wallpaper** (`AppShell ambient`), el popover de acceso rápido—. Con `prefers-reduced-transparency` o más contraste vuelve a ser opaco. Adentro de una app todo es opaco.
 
-**El grosor sigue al tamaño.** Una superficie grande con el blur de un tooltip se ve como un papel de calcar; un tooltip con el de un diálogo, como un bloque.
+**Las curvas son concéntricas.** Cuando algo redondeado vive cerca del borde de otra cosa redondeada, su radio es el de afuera menos la distancia que los separa: el menú de 12 con 5 de padding lleva ítems de 8 (la cabecera de cuenta del `UserMenu`, 7). Importa cuando el padding es menor que el radio.
 
-**El color va en capa sólida.** Un botón de acción, un Badge `solid`, un Tooltip no son traslúcidos: el color que tiene que leerse igual en cualquier pantalla no puede depender de lo que pase por debajo.
-
-**Cápsulas, no botones sueltos.** En el cromo, las acciones hermanas comparten una cápsula (`Toolbar`) con un separador fino entre grupos, en vez de un borde por botón.
-
-**Blur solo en superficies.** Es lo caro de pintar. Unas pocas por pantalla; una grilla de 200 tarjetas de vidrio se nota al scrollear.
+**A ras, no flotando.** El sidebar va pegado arriba, a la izquierda y abajo; la barra global y la toolbar, a todo el ancho. Las acciones hermanas de una barra se separan con un `ToolbarSeparator` fino, no con un borde por botón.
 
 ## Etiquetas
 
@@ -49,7 +44,7 @@ Comparten forma y paleta a propósito: el sistema tiene una sola forma de etique
 | Variante | Cuándo |
 |---|---|
 | `inline` | Dentro de una frase. Subrayado siempre: una línea tenue que se refuerza en hover. |
-| `subtle` | Suelto y secundario. Sin subrayado en reposo; en hover sube a `gray-1000` y aparece la línea. |
+| `subtle` | Suelto y secundario. Sin subrayado en reposo; en hover sube a `label` y aparece la línea. |
 | `row` | El nombre clickeable de una fila de tabla. |
 
 Traen `rounded-sm`, `transition-control`, `focus-visible:focus-ring` y `underline-offset-4`: no los repitas en el llamador. `icon: true` alinea una flecha con el texto.
@@ -58,7 +53,7 @@ Traen `rounded-sm`, `transition-control`, `focus-visible:focus-ring` y `underlin
 
 ## Menús y navegación
 
-**`Tabs` es una pista segmentada.** La pestaña activa es una pastilla que se desliza. `ThemeSwitcher` es el mismo control con íconos: los dos salen de `sebs7n-ui/variants/segmented`, que también sirve para armar uno propio. `<TabsList variant="line">` es la de Geist —a todo el ancho, con la línea abajo— para la navegación de una página entera, donde una cápsula de 800px de ancho no es un control.
+**`Tabs` es la barra de Settings de iCloud.** La `line` (el default) va en 17, con el subrayado de 1px del ancho del texto sobre la línea base: es la navegación de una página. `segmented` es el control de Calendar (pista de 28, segmento de 24 que se eleva) para cambiar de vista adentro de algo. `ThemeSwitcher` es el segmentado con íconos: los dos salen de `sebs7n-ui/variants/segmented`.
 
 **`NavigationMenu` si los ítems navegan, `DropdownMenu` si ejecutan algo.** No es cosmético: `DropdownMenu` emite `role="menu"` / `role="menuitem"`, atrapa el foco y se recorre con las flechas, así que un lector anuncia «menú, 3 elementos» en vez de una lista de links, y el modo de navegación por links no los ve. El menú de idioma y el de usuario siguen siendo `DropdownMenu` (cambian el estado, no la página).
 
@@ -86,7 +81,7 @@ Traen `rounded-sm`, `transition-control`, `focus-visible:focus-ring` y `underlin
 
 ## Formularios
 
-**El tamaño se elige una vez por formulario**, no por campo: `md` (40px) es el de una app.
+**El tamaño se elige una vez por formulario**, no por campo: `md` (36px, el botón de un modal de iCloud) es el de una app.
 
 **Select, Combobox o Autocomplete:**
 
@@ -103,11 +98,11 @@ Traen `rounded-sm`, `transition-control`, `focus-visible:focus-ring` y `underlin
 
 | Token | Rol |
 |---|---|
-| `bg-background` | **La página.** `body` y la raíz del `AppShell`. Con luz ambiente, `bg-ambient`. |
-| `glass` | **La superficie**: lo que flota sobre la página. |
-| `bg-gray-alpha-100` | **La zona hundida**: `thead`, `Card subtle`, `EmptyState`. |
+| `bg-background` | **La página.** `body` y la raíz del `AppShell`. Con wallpaper, `bg-ambient`. |
+| `bg-surface` | **Lo que flota**: menú, popover, diálogo, toast, el cuerpo de un widget. |
+| `bg-fill-1` | **La zona hundida** y el hover: `Card subtle`, la fila con el puntero. |
 
-La regla: si el elemento **es** la página, `bg-background`; si flota **sobre** ella, `glass`. `bg-background-100` y `bg-background-200` siguen existiendo como tokens, pero ningún componente los escribe: un fondo opaco adentro de un vidrio es un parche.
+La regla: si el elemento **es** la página, `bg-background`; si flota **sobre** ella, `bg-surface` con su sombra. `bg-background-100` y `bg-background-200` son de la escala de Geist, obsoleta desde 2.0: ningún componente los escribe.
 
 ## Server Components
 
@@ -121,7 +116,7 @@ No llevan `"use client"` y se pueden usar desde un Server Component:
 
 ## Tipografía
 
-**No pises el peso de un `heading` con `font-semibold`.** Los `heading` llevan la corrección óptica del peso; para más presencia está el paso de arriba de la escala.
+**Los roles de iCloud, no tamaños sueltos.** `text-large-title` (48) para el título de una página, `text-title-1/2/3` (28, 21, 19) para títulos, `text-headline` (17/600) y `text-body` (17) para el contenido, `text-subheadline` (15) para el sidebar, `text-callout` (14) para el cromo —menús, campos, botones, metadatos— y `text-footnote` (12) / `text-caption` (11) para lo chico. La escala de Geist (`text-heading-*`, `text-copy-*`, `text-label-*`) sigue en el CSS hasta 3.0, pero ningún componente la usa.
 
 ## Lo que no hace el paquete, y es a propósito
 

@@ -1,6 +1,5 @@
 "use client"
 
-import { ChevronDownIcon } from "lucide-react"
 import { useId, useState } from "react"
 import { DatePicker } from "sebs7n-ui/date-picker"
 import { Button } from "sebs7n-ui/button"
@@ -10,14 +9,13 @@ import { Label } from "sebs7n-ui/label"
 
 /**
  * El detalle de una fila
- * El trigger no trae estilo: va `render={<Button … />}`. El chevron gira con `data-panel-open`, que Base UI pone en el trigger.
+ * `chevron` suma el disclosure de iCloud: un › que gira a ⌄ al abrir. Sin él, el trigger no trae estilo y va `render={<Button … />}`.
  */
 export function Basico() {
   return (
     <Collapsible className="w-full max-w-sm gap-1">
-      <CollapsibleTrigger render={<Button className="group w-full justify-between" variant="ghost" />}>
+      <CollapsibleTrigger chevron className="h-8 px-1 text-callout text-label">
         Factura 0012 · $ 128.400
-        <ChevronDownIcon className="transition-transform duration-150 ease-out motion-reduce:transition-none group-data-panel-open:rotate-180" />
       </CollapsibleTrigger>
       <CollapsibleContent className="flex flex-col gap-1 rounded-control bg-fill-1 p-3">
         <span>Consultoría — 40 h — $ 96.000</span>
@@ -66,7 +64,7 @@ export function KeepMounted() {
   return (
     <Collapsible className="w-full max-w-sm gap-1">
       <CollapsibleTrigger render={<Button size="sm" variant="secondary" />}>Ver claves de recuperación</CollapsibleTrigger>
-      <CollapsibleContent className="flex flex-col gap-1 text-copy-13-mono" keepMounted>
+      <CollapsibleContent className="flex flex-col gap-1 text-mono-callout" keepMounted>
         <span>alien-bean-pasta</span>
         <span>wild-irish-burrito</span>
         <span>horse-battery-staple</span>

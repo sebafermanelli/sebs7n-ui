@@ -1,22 +1,31 @@
 "use client"
 
+import {
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+} from "sebs7n-ui/breadcrumb"
 import { Button } from "sebs7n-ui/button"
 import { PageHeader, PageHeaderActions, PageHeaderDescription, PageHeaderTitle } from "sebs7n-ui/page-header"
 import { Tabs, TabsList, TabsTrigger } from "sebs7n-ui/tabs"
 
 /**
  * Con migas, acciones y tabs
- * Cualquier hijo que no sea título, bajada o acciones ocupa una fila entera debajo.
+ * La página de Settings de iCloud: migas de 12, título de 48, bajada de 17 gris con un ancho de lectura de 650 y las pestañas de línea debajo. Cualquier hijo que no sea título, bajada o acciones ocupa una fila entera debajo.
  */
 export function Basico() {
   return (
     <PageHeader
       breadcrumb={
-        <>
-          <a href="/docs">Facturas</a>
-          <span aria-hidden="true">›</span>
-          <span>0012</span>
-        </>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/docs">Facturas</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbItem>
+            <BreadcrumbPage>0012</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
       }
     >
       <PageHeaderTitle>Factura 0012</PageHeaderTitle>

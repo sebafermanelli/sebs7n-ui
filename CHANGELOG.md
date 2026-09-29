@@ -271,6 +271,91 @@ estos controles (Toggle con borde, perilla en cápsula, botón `outline`), que n
   `sm`, 20 en los demás).
 - **Kbd**: `bg-fill-2` sin borde y radio 4 (antes `fill-1` con borde y radio 2).
 
+**Navegación y componentes existentes (R5a).** Medidos en Mail, Drive, Home y Settings de iCloud
+(catálogo §2.1–§2.5, §2.7, §2.18–§2.23). Los «antes» son contra 1.13.1. Los componentes nuevos de
+R5 (Tree, ListRow, SplitView, WidgetCard, CalendarView, FileGrid, el Meter apilado) vienen en R5b.
+
+- **Sin flotantes ni cápsulas en la navegación.** `Sidebar`, `AppShell` y `Navbar` pierden
+  `variant="floating"` (el default de 1.x en los tres); la prop queda como `variant?: "bar"`
+  **obsoleta y sin efecto** (se borra en 3.0), así una app que ya pedía `bar` no se rompe.
+  **Migración:** borrá `variant="floating"`; si usabas `useNavbar().floating`, ya no existe.
+- **Sidebar = la lista de fuentes de iCloud.** A ras arriba, a la izquierda y abajo (antes panel
+  despegado de vidrio con margen de 12, radio 26 y sombra), `surface-secondary` con borde derecho
+  `separator-strong`, 10 de inset a cada lado del ítem.
+
+  | | 1.13.1 | 2.0 |
+  |---|---|---|
+  | ítem | 32 · radio 10 · 14 `gray-900` | **32 · radio 10 · 15/400 `label`** (el texto no se apaga) |
+  | ícono | 16 en el color del texto (brand solo el activo) | **18 en el acento** (`brand-900`) siempre |
+  | activo | tinte de marca (`highlight`) + `gray-1000` | **`fill-1`**, el texto no cambia |
+  | contador | 12 `gray-900` | 14 secundario, sin pill |
+  | título de sección | 12 `gray-900` | **14/600 secundario a 16 del borde** |
+  | búsqueda | cápsula de 32 con borde y vidrio | **campo de iCloud**: 32, radio 10, `fill-1`, sin relleno con el foco |
+  | colapsado | 64 de ancho, cuadrados de 32 | igual |
+
+  **Nuevo:** `SidebarGroup collapsible` (`defaultOpen`, `open`, `onOpenChange`): el título pasa a ser
+  un botón con un chevron que gira y `aria-expanded`/`aria-controls`; **`SidebarGroupAction`**, el
+  «+» gris de una sección (fuera del panel, `aria-label` obligatorio). Colapsado, una sección
+  cerrada sigue mostrando sus íconos.
+- **AppShell.** Nueva prop **`header`**: la barra global a todo el ancho arriba del sidebar y del
+  contenido (≥ lg), 44, `surface-header`, borde `separator-strong`, `0 6px 0 16px`,
+  `material-translucent` sobre el wallpaper. El sidebar se pega debajo (`--app-shell-header`). La
+  barra del teléfono es siempre esa barra de **44** (antes el `Navbar` flotante de 56 con 12 de
+  aire); AppShell ya no importa `Navbar`.
+- **Navbar = la barra global de iCloud.** A todo el ancho, **44** (antes 56), opaca desde arriba
+  (antes transparente hasta scrollear) con el borde abajo, y translúcida solo sobre el wallpaper.
+  `NavbarContent` sin `max-w-6xl` y con `0 6px 0 16px`. `data-scrolled` sigue, pero la barra ya no
+  cambia al bajar.
+- **Toolbar = la de una app de iCloud.** `variant="bar"` (nuevo default) va a todo el ancho, 44 con
+  el borde abajo, `surface-bar`, 10 de padding y 6 entre controles (antes cápsula de vidrio de
+  ancho de contenido, `rounded-full`, `p-1`). **`glass` queda como alias obsoleto de `bar`**; `plain` sigue.
+- **Card = el widget de iCloud.** Radio 11, cuerpo `surface` con **`shadow-widget`** (antes vidrio
+  con borde y `shadow-card`), `overflow-hidden`, padding 20 en `md` (antes 24).
+  - `CardHeader` es una **franja** de otro tono (`surface-bar`, 80 de alto en `md`) con **`icon`**
+    (caja de 40), `CardTitle` 21/600 y `CardDescription` 14 secundario; `CardAction` arriba a la
+    derecha, haya o no ícono.
+  - **Nuevo `CardRow`** (60, radio 8, `title`/`description`/`trailing` o hijos) con separador
+    interior, y **`CardContent columns={2}`** con regla vertical.
+  - **`CardFooter` sin línea ni franja**: la fila del «…». Antes `border-t` con el padding de la card.
+  - `selected` pasa a un anillo de 2 por fuera; la interactiva ya no cambia de sombra al pasar.
+  - **Migración:** el uso simple sigue andando y se ve como widget. Si querías el grupo plano, usá
+    `variant="subtle"` o `className="bg-grouped shadow-none"`. Un pie con botones con borde pasa a
+    un botón de ícono (`Button plain size="icon-sm"`).
+- **Table = la vista de lista de Drive.** Sin caja (antes borde, radio y fondo), cabecera de 44 en 14
+  secundario **sin fondo** (antes una banda de 40) con una línea abajo, filas de **41** (antes
+  48; `compact` 32) con separador interior que arranca a 10 del borde y se esconde al lado de la fila
+  con el puntero o la elegida, **selección redondeada** (radio 10) en el acento con foco y gris sin
+  foco. El fondo de hover y selección pasa del `<tr>` a las celdas (`border-separate`). La primera
+  celda es el nombre (17, `label`) y el resto metadatos en 14 secundario; padding de celda 10 (antes
+  16). **Nuevo `TableGroupHeader`** (58, 19/600 con el contador inline). `TableFooter` sin fondo.
+- **Accordion y Collapsible, el disclosure de iCloud.** Filas de 44 con separador a todo el ancho, el
+  título ya no se apaga con el puntero y el chevron es **› que gira 90° a ⌄** (antes ⌄ que giraba
+  180°); el contenido baja a 14. `CollapsibleTrigger chevron` (nuevo) suma el mismo disclosure.
+- **Tooltip gris oscuro en los dos temas** (la captura de Sebastián): `bg-tooltip` (`#3a3a3c` claro,
+  `#48484a` oscuro) con texto blanco de **12**, radio **6**, sin flecha y sombra suave (antes
+  `gray-1000` invertido —negro en claro, blanco en oscuro—, 13 y radio 10). Lo comparte la etiqueta
+  del `AiLauncher`.
+- **Skeleton: un brillo que cruza** en vez del pulso: gris parejo y una franja apenas más clara que
+  pasa de izquierda a derecha en 1,5 s (2 s de ciclo), con `background-attachment: fixed` para que
+  todos los bloques la muestren en la misma fase. Quieto con movimiento reducido.
+- **Avatar:** tamaños de iCloud `sm` **28** (antes 24), `md` 32, `lg` 40 y **`xl` 80** (nuevo); el
+  fallback es el **monograma**: iniciales blancas en 600 sobre un gradiente gris (#6e6e73 → #48484a,
+  5,07:1 arriba), antes `gray-200` con texto 12 `gray-900`.
+- **UserMenu:** la cabecera del menú es la de la cuenta de iCloud: 72, `fill-2` con el radio de
+  arriba del panel, nombre 17/600 y mail 14 secundario.
+- **Breadcrumb** en 12 secundario con chevrons de 10 y 4 entre partes (antes 13, 14 y 6), el de
+  Settings. **PageHeaderDescription** con ancho de lectura de 650.
+- **EmptyState `placeholder`** (nuevo): el panel vacío de iCloud, solo el título en 28/600
+  `label-tertiary` centrado en todo el alto. `EmptyState` ya no sale de `cardVariants`: sigue siendo
+  el grupo plano aunque la Card ahora sea un widget.
+- **Meter `size="lg"`** (nuevo): la barra de almacenamiento, 16 con radio 6. El valor de Meter y
+  Progress pasa de mono a 14 con cifras tabulares.
+- **Sonner:** título en 600 y la acción en el acento (antes el botón invertido `gray-1000`).
+- **Sin cambios, a propósito:** la paleta de gráficos (azul, ámbar, rosa, violeta y verde en ese
+  orden pasa el validador de daltonismo; los colores de categoría de iCloud no), las burbujas del
+  Chat (iCloud no tiene chat: se sigue derivando del tinte de marca), Stat, Spinner y Pagination (ya
+  estaban en los tokens de R1–R4).
+
 **Lo que sigue de las fases 1–3.** Los números de alto y de radio que cambió R1 ya están arriba;
 las fases R2–R5 rehacen diálogos, menús, controles y listas con las medidas de iCloud.
 
@@ -297,7 +382,7 @@ las fases R2–R5 rehacen diálogos, menús, controles y listas con las medidas 
   tamaños**: el `lg` ya no sube a 17. El chip (Toggle), el campo y el link de la Toolbar van en el
   escalón `sm`. Con el dedo, `sm` y `md` de los campos suben a 36 y 44, **su texto sube a 17** (con
   menos de 16 iOS hace zoom al enfocar; también el campo de Command) y los botones crecen a 44 por
-  `touch-target`. Los ítems de menú miden 30 (R3) y los del Sidebar 28 (iCloud usa 32: R5). Un botón
+  `touch-target`. Los ítems de menú miden 30 (R3) y los del Sidebar 32 (R5a). Un botón
   al lado de un campo lleva el mismo `size`. Los «…» de Pagination miden lo mismo que un número.
 - **Chat a la escala de un panel:** los mensajes a 15 (`text-subheadline`), el campo, los avisos y
   las sugerencias a 14, la cabecera `text-headline`; el campo mide 36 como el botón de enviar (17 con
@@ -387,7 +472,12 @@ las fases R2–R5 rehacen diálogos, menús, controles y listas con las medidas 
 - Sombras `shadow-widget`, `shadow-segment`, `shadow-badge` y `shadow-thumbnail`.
 - `focus-ring-inverse` (el anillo sobre un fondo de marca) y `--sf-focus`/`--sf-focus-alpha`.
 - Los roles tipográficos con la escala de iCloud y `text-body-large` (alias de `text-body`).
-- `EmptyState variant`: `default`, `subtle` y `plain` (sin superficie, adentro de una Card o Table).
+- `EmptyState variant`: `default`, `subtle`, `plain` (sin superficie, adentro de una Card o Table) y
+  `placeholder` (el panel vacío de iCloud).
+- R5a: `SidebarGroup collapsible`/`defaultOpen`/`open`/`onOpenChange` y `SidebarGroupAction`;
+  `AppShell header`; `CardHeader icon`, `CardRow`, `CardContent columns`; `TableGroupHeader`;
+  `CollapsibleTrigger chevron`; `Avatar size="xl"`; `Meter size="lg"`; `Toolbar variant="bar"`;
+  tokens `tooltip`/`on-tooltip` (`bg-tooltip`, `text-on-tooltip`) y `--sf-skeleton-shine`.
 - `Kbd size`: `md` (20 px) y `sm` (18 px).
 - `sliderThumbClassName` y sus estados (`variants/slider`), y `tooltipSurfaceClassName`
   (`variants/overlay`), que comparten el Slider con el ColorPicker y el Tooltip con la etiqueta

@@ -12,11 +12,13 @@ Qué cubre esa tabla:
 
 | Par | Umbral |
 |---|---|
-| `gray-900` y `gray-1000` como texto, sobre los tres fondos | 4,5:1 (1.4.3) |
+| `label` y `label-secondary` como texto, sobre la página, las superficies, el sidebar y las barras | 4,5:1 (1.4.3) |
 | Placeholder de los campos | 4,5:1 |
 | Atajos de menú sobre el popup | 4,5:1 |
 | Texto secundario sobre la selección (resaltado y apretado), en las cuatro marcas de ejemplo | 4,5:1 |
-| Texto principal y secundario sobre vidrio, sobre la página y sobre la luz ambiente | 4,5:1 |
+| Texto principal sobre `material-translucent` (con su respaldo opaco) y sobre la selección sin foco | 4,5:1 |
+| El texto del tooltip sobre su gris oscuro, en los dos temas | 4,5:1 |
+| El acento como texto (links, `plain`) y como glifo (íconos del sidebar y la toolbar), en las cinco marcas | 4,5:1 y 3:1 |
 | `Button variant="destructive"`, en reposo, hover y active | 4,5:1 |
 | `Badge` y `Tag` sólidos: la tinta (blanca o negra al 85 %) sobre el relleno, en las ocho paletas y los dos temas | 4,5:1 |
 | La X del `Tag` sobre el hover de su botón | 4,5:1 |
@@ -24,40 +26,29 @@ Qué cubre esa tabla:
 | Borde del campo enfocado | 3:1 (2.4.11) |
 | Anillo de foco en las cuatro marcas de ejemplo | 3:1 |
 
-Los grises que el paquete usa como **texto** son dos, y estos son los números sobre la superficie:
+Los textos del paquete son los `label` de iCloud, y estos son los números sobre la página:
 
 | Texto | Claro | Oscuro |
 |---|---|---|
-| `gray-1000` (cuerpo) | 17,93:1 | 16,91:1 |
-| `gray-900` (secundario, placeholder, atajos) | 8,45:1 | 7,57:1 |
+| `label` (cuerpo) | 16,48:1 | 16,38:1 |
+| `label-secondary` (secundario, placeholder, atajos, metadatos) | 4,95:1 | 7,99:1 |
+| `label-tertiary` | 3,69:1 | 5,19:1 |
 
-`gray-800` **no es un color de texto**: en claro da 4,12:1 y no llega a AA, y no se usa como texto en ninguno de los 58 componentes. `gray-700` y abajo son bordes y estados deshabilitados.
+`label-tertiary` **no es texto chico**: en claro no llega a 4,5:1. El paquete lo usa solo para glifos (3:1), deshabilitados y texto grande —el `EmptyState placeholder` en 28/600—. Por eso la cabecera de la `Table` y el campo de búsqueda van en secundario aunque iCloud los pinte en terciario.
 
 **Los deshabilitados están exentos** (1.4.3 y 1.4.11 eximen a los componentes inactivos), y es deliberado: un control apagado tiene que verse apagado, y subirlo a 4,5:1 lo volvería indistinguible de uno que anda.
 
-**El borde del `Input` se queda en `gray-alpha-400`** (1,20:1 sobre la superficie), y es la única excepción escrita del sistema. Lo que identifica a un campo de texto no es su contorno sino su superficie —más opaca que el vidrio que la contiene— más su etiqueta, que es obligatoria. Checkbox, Radio, Switch y Toggle sí subieron a `gray-700`, porque ahí el contorno es lo único que hay: sin él no hay control, hay un hueco.
+**El campo no tiene borde**, como en iCloud: lo identifica su relleno (`fill-1`) más su etiqueta, que es obligatoria. Checkbox y Radio sin marcar sí llevan contorno, porque ahí el contorno es lo único que hay: sin él no hay control, hay un hueco.
 
-### Contraste sobre vidrio
+### Contraste sobre el material translúcido
 
-Sobre una superficie sólida el contraste es un número. Sobre un vidrio depende de lo que pase por debajo, y eso no lo decide el paquete. `test/glass-contrast.test.ts` fija lo que sí se puede prometer:
-
-| Garantía | Hasta |
-|---|---|
-| Texto principal y secundario a 4,5:1 sobre **la página y la luz ambiente** | `--glass: 1` (el default) |
-| Texto principal a 4,5:1 contra **cualquier fondo** | `--glass: 1` (el default) |
-| Texto principal y secundario a 4,5:1 contra **cualquier fondo**, en un menú | `--glass: 1` (el default) |
-| Todo igual que sobre `background-100` | `--glass: 0` |
-
-**Lo que no se promete, con el número:** el texto **secundario** sobre contenido arbitrario. Blanco detrás de un vidrio oscuro deja el gris secundario en 2,02:1. El principal sí pasa contra cualquier fondo: el vidrio lleva 65 % de fill para eso.
-
-**Los menús son la excepción.** Un Select, un Combobox o un DropdownMenu son listas que se leen y flotan sobre lo que haya, fotos incluidas. Llevan un vidrio más denso (`glass-dense`): más fill y, en el tema oscuro, lo de atrás apagado. Ahí el texto pasa contra cualquier fondo con el default.
+Desde 2.0 casi todo es opaco y el contraste es un número fijo. La excepción es `material-translucent`, que va solo sobre el wallpaper (la barra global de `AppShell ambient`, el header de un widget). `test/surfaces.test.ts` verifica el texto principal contra su **respaldo opaco** —lo que se ve con `prefers-reduced-transparency` o `prefers-contrast: more`—, y el material lleva 85 % de fill en claro para que el texto se lea sobre cualquier foto.
 
 Qué hacer:
 
-- **Texto secundario sobre contenido saturado:** usá el principal (`text-gray-1000`).
-- **Nada, para quien lo pidió:** con `prefers-reduced-transparency: reduce` o `prefers-contrast: more` el paquete apaga el material y todo se ve sólido. No hay que escribir el media query en la app.
+- **Texto secundario sobre el wallpaper:** usá el principal (`text-label`).
+- **Nada, para quien lo pidió:** con `prefers-reduced-transparency: reduce` o `prefers-contrast: more` el material se vuelve opaco. No hay que escribir el media query en la app.
 
-El modelo compone el fill sobre el fondo; no incluye el `backdrop-filter` ni el brillo del canto, que mueven la luminancia poco pero no cero. Sirve para fijar un piso.
 
 ### Foco visible siempre
 

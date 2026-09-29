@@ -13,7 +13,6 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupLabel,
-  SidebarHeader,
   SidebarItem,
 } from "sebs7n-ui/sidebar"
 import { Stat } from "sebs7n-ui/stat"
@@ -21,7 +20,7 @@ import { UserMenu } from "sebs7n-ui/user-menu"
 
 /**
  * El layout completo
- * Achicá la ventana por debajo de 1024px: el sidebar pasa a un Sheet detrás de la hamburguesa.
+ * La barra global de 44 a todo el ancho (`header`), el sidebar a ras debajo y el contenido. Achicá la ventana por debajo de 1024px: el sidebar pasa a un Sheet detrás de la hamburguesa de la barra del teléfono.
  * El alto sale de `--app-shell-height`; acá está fijado en 560px para que entre en la página.
  */
 export function Completo() {
@@ -30,6 +29,15 @@ export function Completo() {
     <div className="overflow-hidden rounded-surface border border-separator">
       <AppShell
         className="[--app-shell-height:560px]"
+        header={
+          <>
+            <span className="text-title-3 text-label">
+              Acme <span className="text-brand-900">Facturas</span>
+            </span>
+            <span className="ml-auto" />
+            <UserMenu collapsed user={usuario} />
+          </>
+        }
         mobileBar={
           <>
             <div className="size-6 rounded-control bg-label" />
@@ -39,12 +47,6 @@ export function Completo() {
         }
         sidebar={
           <Sidebar>
-            <SidebarHeader>
-              <div className="flex h-8 items-center gap-2 px-1">
-                <div className="size-6 shrink-0 rounded-control bg-label" />
-                <span className="text-label-14 font-medium">Acme</span>
-              </div>
-            </SidebarHeader>
             <SidebarContent>
               <SidebarGroup>
                 <SidebarGroupLabel>Operación</SidebarGroupLabel>
@@ -76,7 +78,7 @@ export function Completo() {
               <Button>Nueva factura</Button>
             </PageHeaderActions>
           </PageHeader>
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 2xl:grid-cols-2">
             <Card size="sm">
               <CardContent>
                 <Stat delta="+12,4 %" hint="vs. agosto" label="Facturado" trend="up" value="$ 1.284.000" />

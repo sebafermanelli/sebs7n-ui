@@ -54,45 +54,38 @@ describe("la marca llega a AA", () => {
 | `brand-100` · `brand-400` | No los usa ningún componente desde 1.0: el fondo suave de `Badge` y `Tag` es `brand-700` en alfa. |
 | `brand-contrast` | El texto **encima** del acento, también el de la selección (`on-selection`). |
 
-`brand-200`, `brand-300` y `brand-500` no los usa ningún componente: existen para la app, que también tiene la escala completa. Y `linkVariants` **no usa la marca**: los links de texto son grises (`gray-900` → `gray-1000`), para que un párrafo con tres links no se convierta en tres manchas de color.
+`brand-200`, `brand-300` y `brand-500` no los usa ningún componente: existen para la app, que también tiene la escala completa. `linkVariants` tiene los dos: `accent` (el link de iCloud, en `brand-900`) para un link suelto, y los grises (`inline`, `subtle`) para adentro de un párrafo, donde tres links de color serían tres manchas.
 
 **Un solo acento sólido por pantalla.** El `Button` por defecto (el acento sólido) es la acción principal y va uno. Los estados prendidos no compiten con él: son chicos y dicen «esto está activo», no «apretá acá». Si en una pantalla igual molestan, `Switch variant="neutral"` prende en gris.
 
-## Glass
+## Superficies
 
-El material de todo lo que flota —Card, Popover, menús, Dialog, Sidebar, Navbar— sale de **un solo número**, como el ajuste de transparencia de macOS:
+Desde 2.0 no hay vidrio: las superficies son las de iCloud web, **grises opacos en capas**. Cada una es un token con su valor claro y oscuro, y los componentes ya los traen:
 
-```css
-:root {
-  --glass: 1;        /* 0 = sólido · 1 = Liquid Glass, el default */
-  --glass-tint: 0;   /* cuánto brand entra al vidrio */
-}
-```
-
-| `--glass` | Fill | Blur | Se ve |
+| Token | Claro | Oscuro | Dónde |
 |---|---|---|---|
-| `0` | 100 % | 0 | Sólido: el Geist de 0.8.0. |
-| `0.5` | 82 % | 8px | Esmerilado. |
-| `1` | 65 % | 16px | El default: el fondo se reconoce desenfocado y el texto principal llega a 4,5:1 contra cualquier cosa que pase por debajo. |
+| `background` | `#ffffff` | `#1c1c1e` | La página, una lista, un detalle |
+| `surface` | `#ffffff` | `#1c1c1e` | Lo que flota: menú, popover, diálogo, toast, el cuerpo de un widget |
+| `surface-secondary` | `#fbfbfd` | `#202023` | La columna del sidebar |
+| `surface-bar` | `#f2f2f7` | `#2c2c2e` | La toolbar de una app, la cabecera de un widget |
+| `surface-header` | `#f2f2f7` | `#323236` | La barra global |
+| `fill-1` · `fill-2` · `fill-3` | 8 · 12 · 16 % | 25 · 30 · 36 % | Hover y selección neutra · resaltado de menú · selección fuerte |
+| `separator` · `separator-strong` | `#e5e5ea` · `#d1d1d6` | `#343436` · `#3c3c3e` | Entre filas · entre paneles |
+| `tooltip` | `#3a3a3c` | `#48484a` | El tooltip, gris oscuro en los dos temas |
 
-De ese número salen también la saturación, el punto de brillo y el canto especular. No hay una variable por capa a propósito: cinco perillas sueltas dan un vidrio que nadie calibró.
+Para cambiar el tono de una capa en toda la app se pisa su variable `--sf-*` en `:root` y en `.dark` (por ejemplo `--sf-surface-secondary`). Los textos (`label`, `label-secondary`, `label-tertiary`) están calibrados contra estas capas: si oscurecés una, corré el test de contraste.
 
-**Se puede pisar en un subárbol.** Las utilidades calculan la intensidad en el elemento, no en `:root`:
+### El material translúcido y el wallpaper
+
+Hay **un solo** material con blur, `material-translucent`, y va solo donde iCloud lo usa: la barra global y el header de un widget **sobre el wallpaper**. Con `prefers-reduced-transparency` o `prefers-contrast: more` vuelve a ser opaco.
+
+El wallpaper son tres focos de color que salen de `--brand-base`, fijos detrás de todo:
 
 ```tsx
-{/* Una galería de fotos: el vidrio que flota encima necesita más cuerpo. */}
-<section style={{ "--glass": 0.5 } as React.CSSProperties}>…</section>
+<AppShell ambient header={…} sidebar={…}>
 ```
 
-### La luz ambiente
-
-Sobre una página blanca o negra lisa el vidrio no tiene nada que desenfocar y se ve como un gris plano. La luz ambiente son tres focos de color que salen de `--brand-base`, fijos detrás de todo:
-
-```tsx
-<AppShell ambient sidebar={…}>
-```
-
-Sin `AppShell`, la misma utilidad en el `<body>`: `className="bg-ambient"`. Es opt-in porque cambia el fondo de la app entera.
+Sin `AppShell`, la misma utilidad en el `<body>`: `className="bg-ambient"`. Es opt-in porque cambia el fondo de la app entera. Sobre él, la barra global de `AppShell` y el `Navbar` pasan solos a `material-translucent`.
 
 Cuánta luz, con un número:
 
@@ -102,37 +95,19 @@ Cuánta luz, con un número:
 }
 ```
 
-En el tema oscuro la luz ya viene más baja que en el claro —menos croma, menos alfa y los tres focos más cerca del matiz de la marca—, porque sobre negro un color saturado compite con el contenido. `--ambient` baja los dos temas por igual; para tocar uno solo, va adentro de `.dark`. El vidrio no cambia: `--glass` sigue en lo que esté.
+En el tema oscuro la luz ya viene más baja que en el claro —menos croma, menos alfa y los tres focos más cerca del matiz de la marca—, porque sobre negro un color saturado compite con el contenido. `--ambient` baja los dos temas por igual; para tocar uno solo, va adentro de `.dark`.
 
 ### Las utilidades
 
 | Utilidad | Para qué |
 |---|---|
-| `material-bar` · `material-popover` · `material-modal` · `material-group` | El material por rol (2.0): barra, popup que se lee, diálogo casi opaco y grupo sólido (`--sf-group`). Los componentes ya lo traen. |
-| `glass` | Una superficie que flota. Es lo mismo que `material-bar`, y sigue existiendo para las apps. |
-| `glass-thin` · `glass-thick` | El grosor: lámina (Tooltip, chip) o placa (Dialog, Sidebar). Van al lado de `glass`. |
-| `glass-dense` | El vidrio de una lista de texto: más fill y, en oscuro, lo de atrás apagado. Va al lado de `glass`. Los menús ya lo traen. |
-| `glass-control` | Un control **adentro** de un vidrio: alfa, sin blur. |
+| `material-translucent` | El único material con blur, para lo que va sobre el wallpaper. |
+| `bg-ambient` | El wallpaper. |
 | `scroll-fade` | El difuminado de un scroll interno, arriba y abajo, solo del lado donde hay contenido escondido. Va en el elemento que scrollea, si no tiene fondo propio. Lo traen `SidebarContent`, `ChatMessages` y `DrawerBody`. |
-| `glass-rim` | El canto especular del cromo. El elemento tiene que estar posicionado. |
-| `sheen` | El brillo de arriba de un botón de color. |
-| `bg-ambient` | La luz ambiente. |
+| `animate-skeleton` | El brillo lento del `Skeleton`, en la misma fase en todos los bloques. |
+| `focus-ring` | El anillo interior de iCloud (`inset 0 0 0 3px`), del color del foco. |
 
-Las reglas de cuándo va cada una están en [Reglas de uso](/docs/reglas).
-
-### Volver al sólido
-
-```css
-:root {
-  --glass: 0;
-  --radius-field: 6px;
-  --radius-control: 6px;
-  --radius-surface: 12px;
-  --radius-panel: 16px;
-}
-```
-
-Con eso el material y los radios son los de 0.8.0. Lo que no vuelve es la forma del botón (`shape="rect"` lo devuelve uno por uno) ni el brand de los estados prendidos.
+`glass`, `glass-*`, `sheen`, `material-bar/popover/modal/group` y las variables `--glass` / `--glass-tint` se fueron en 2.0. Las reglas de cuándo va cada superficie están en [Reglas de uso](/docs/reglas).
 
 ## Claro y oscuro
 

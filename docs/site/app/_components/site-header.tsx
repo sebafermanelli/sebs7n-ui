@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Badge } from "sebs7n-ui/badge"
-import { Navbar } from "sebs7n-ui/navbar"
+import { Navbar, NavbarContent } from "sebs7n-ui/navbar"
 import { ThemeSwitcher } from "sebs7n-ui/theme-switcher"
 import { cn } from "sebs7n-ui/lib/utils"
 
@@ -19,21 +19,15 @@ const LINKS = [
 export function SiteHeader({ version }: { version: string }) {
   const pathname = usePathname()
   return (
-    // El `Navbar` flotante del paquete: transparente arriba y una píldora de vidrio al
-    // scrollear. El ancho es el de la página desde el principio y el aire de arriba es fijo:
-    // al aparecer la píldora no se corre nada, ni de costado ni para abajo.
-    <Navbar
-      className="mx-auto max-w-[90rem] px-3 pt-3 md:px-4"
-      surfaceClassName="max-w-none rounded-full"
-      variant="floating"
-    >
-      <div className="flex h-14 w-full items-center gap-4 px-4">
+    // El `Navbar` del paquete: la barra global de iCloud, a todo el ancho, 44 de alto y opaca.
+    <Navbar>
+      <NavbarContent className="justify-start">
         <Link
           className="flex shrink-0 items-center gap-2 rounded-sm outline-none focus-visible:focus-ring"
           href="/"
         >
           <span className="size-5 rounded-control bg-label" />
-          <span className="text-heading-16 text-label">sebs7n-ui</span>
+          <span className="text-headline text-label">sebs7n-ui</span>
           <Badge size="sm">{version}</Badge>
         </Link>
 
@@ -41,7 +35,7 @@ export function SiteHeader({ version }: { version: string }) {
           {LINKS.map((link) => (
             <Link
               className={cn(
-                "rounded-control px-2 py-1 text-copy-14 outline-none transition-control hover:text-label focus-visible:focus-ring",
+                "rounded-control px-2 py-1 text-callout outline-none transition-control hover:bg-fill-2 hover:text-label focus-visible:focus-ring",
                 pathname.startsWith(link.href.split("/").slice(0, 3).join("/")) ? "text-label" : "text-label-secondary"
               )}
               href={link.href}
@@ -64,7 +58,7 @@ export function SiteHeader({ version }: { version: string }) {
           </a>
           <ThemeSwitcher />
         </div>
-      </div>
+      </NavbarContent>
     </Navbar>
   )
 }

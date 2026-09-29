@@ -29,9 +29,22 @@ function Marca({ version }: { version: string }) {
       href="/"
     >
       <span className="size-5 shrink-0 rounded-control bg-label" />
-      <span className="truncate text-heading-16 text-label">sebs7n-ui</span>
+      <span className="truncate text-headline text-label">sebs7n-ui</span>
       <Badge size="sm">{version}</Badge>
     </Link>
+  )
+}
+
+function GitHub() {
+  return (
+    <a
+      className="inline-flex h-8 items-center rounded-control px-2 text-callout text-label-secondary outline-none transition-control hover:bg-fill-2 hover:text-label focus-visible:focus-ring"
+      href={REPO}
+      rel="noreferrer"
+      target="_blank"
+    >
+      GitHub
+    </a>
   )
 }
 
@@ -40,22 +53,18 @@ function DocsSidebar({ nav, version }: { nav: Grupo[]; version: string }) {
   return (
     <Sidebar>
       <SidebarHeader>
-        <Marca version={version} />
+        {/* En el teléfono no hay barra global: la marca va arriba del Sheet. */}
+        <div className="lg:hidden">
+          <Marca version={version} />
+        </div>
         {/* El atajo lo escucha SearchProvider; SidebarSearch solo lo muestra y lo anuncia. */}
         <SidebarSearch onClick={abrir} shortcut="⌘K" />
       </SidebarHeader>
       <SidebarContent aria-label="Documentación">
         <DocsNav nav={nav} />
       </SidebarContent>
-      <SidebarFooter className="flex-row items-center justify-between gap-2">
-        <a
-          className="rounded-control px-2 py-1 text-copy-14 text-label-secondary outline-none transition-control hover:text-label focus-visible:focus-ring"
-          href={REPO}
-          rel="noreferrer"
-          target="_blank"
-        >
-          GitHub
-        </a>
+      <SidebarFooter className="flex-row items-center justify-between gap-2 lg:hidden">
+        <GitHub />
         <ThemeSwitcher />
       </SidebarFooter>
     </Sidebar>
@@ -63,8 +72,9 @@ function DocsSidebar({ nav, version }: { nav: Grupo[]; version: string }) {
 }
 
 /**
- * El shell del paquete, usado tal cual: el Sidebar queda pegado al borde de la ventana y a todo
- * el alto, y en mobile AppShell lo mete en un Sheet detrás de la hamburguesa de `mobileBar`.
+ * El shell del paquete, usado tal cual: la barra global de 44 arriba a todo el ancho, el Sidebar
+ * pegado al borde debajo, y en mobile AppShell lo mete en un Sheet detrás de la hamburguesa de
+ * `mobileBar`.
  */
 export function DocsShell({ nav, version, children }: { nav: Grupo[]; version: string; children: ReactNode }) {
   const pathname = usePathname()
@@ -72,6 +82,14 @@ export function DocsShell({ nav, version, children }: { nav: Grupo[]; version: s
   return (
     <AppShell
       ambient={config.ambient}
+      header={
+        <>
+          <Marca version={version} />
+          <span className="ml-auto" />
+          <GitHub />
+          <ThemeSwitcher />
+        </>
+      }
       mainId="contenido"
       mobileBar={
         <>
