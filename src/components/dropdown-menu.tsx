@@ -97,11 +97,11 @@ function DropdownMenuItem({ className, inset, variant = "default", external, chi
   )
 }
 
-type DropdownMenuCheckboxItemProps = WithClassName<MenuPrimitive.CheckboxItem.Props>
+type DropdownMenuCheckboxItemProps = WithClassName<MenuPrimitive.CheckboxItem.Props> & MenuInsetProps
 
-function DropdownMenuCheckboxItem({ className, children, ...props }: DropdownMenuCheckboxItemProps) {
+function DropdownMenuCheckboxItem({ className, inset, children, ...props }: DropdownMenuCheckboxItemProps) {
   return (
-    <MenuPrimitive.CheckboxItem data-slot="dropdown-menu-checkbox-item" className={cn(menuItemClassName, className, menuGutterClassName)} {...props}>
+    <MenuPrimitive.CheckboxItem data-slot="dropdown-menu-checkbox-item" data-inset={inset ? "" : undefined} className={cn(menuItemClassName, menuInsetClassName, className, menuGutterClassName)} {...props}>
       {children}
       <MenuPrimitive.CheckboxItemIndicator data-slot="dropdown-menu-item-indicator" className={menuIndicatorClassName}>
         <MenuCheck />
@@ -114,11 +114,11 @@ function DropdownMenuRadioGroup(props: MenuPrimitive.RadioGroup.Props) {
   return <MenuPrimitive.RadioGroup data-slot="dropdown-menu-radio-group" {...props} />
 }
 
-type DropdownMenuRadioItemProps = WithClassName<MenuPrimitive.RadioItem.Props>
+type DropdownMenuRadioItemProps = WithClassName<MenuPrimitive.RadioItem.Props> & MenuInsetProps
 
-function DropdownMenuRadioItem({ className, children, ...props }: DropdownMenuRadioItemProps) {
+function DropdownMenuRadioItem({ className, inset, children, ...props }: DropdownMenuRadioItemProps) {
   return (
-    <MenuPrimitive.RadioItem data-slot="dropdown-menu-radio-item" className={cn(menuItemClassName, className, menuGutterClassName)} {...props}>
+    <MenuPrimitive.RadioItem data-slot="dropdown-menu-radio-item" data-inset={inset ? "" : undefined} className={cn(menuItemClassName, menuInsetClassName, className, menuGutterClassName)} {...props}>
       {children}
       <MenuPrimitive.RadioItemIndicator data-slot="dropdown-menu-item-indicator" className={menuIndicatorClassName}>
         <MenuCheck />

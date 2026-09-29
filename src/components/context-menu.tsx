@@ -181,11 +181,11 @@ function ContextMenuItem({ className, inset, variant = "default", external, chil
   )
 }
 
-type ContextMenuCheckboxItemProps = WithClassName<ContextMenuPrimitive.CheckboxItem.Props>
+type ContextMenuCheckboxItemProps = WithClassName<ContextMenuPrimitive.CheckboxItem.Props> & MenuInsetProps
 
-function ContextMenuCheckboxItem({ className, children, ...props }: ContextMenuCheckboxItemProps) {
+function ContextMenuCheckboxItem({ className, inset, children, ...props }: ContextMenuCheckboxItemProps) {
   return (
-    <ContextMenuPrimitive.CheckboxItem data-slot="context-menu-checkbox-item" className={cn(menuItemClassName, className, menuGutterClassName)} {...props}>
+    <ContextMenuPrimitive.CheckboxItem data-slot="context-menu-checkbox-item" data-inset={inset ? "" : undefined} className={cn(menuItemClassName, menuInsetClassName, className, menuGutterClassName)} {...props}>
       {children}
       <ContextMenuPrimitive.CheckboxItemIndicator data-slot="context-menu-item-indicator" className={menuIndicatorClassName}>
         <MenuCheck />
@@ -198,11 +198,11 @@ function ContextMenuRadioGroup(props: ContextMenuPrimitive.RadioGroup.Props) {
   return <ContextMenuPrimitive.RadioGroup data-slot="context-menu-radio-group" {...props} />
 }
 
-type ContextMenuRadioItemProps = WithClassName<ContextMenuPrimitive.RadioItem.Props>
+type ContextMenuRadioItemProps = WithClassName<ContextMenuPrimitive.RadioItem.Props> & MenuInsetProps
 
-function ContextMenuRadioItem({ className, children, ...props }: ContextMenuRadioItemProps) {
+function ContextMenuRadioItem({ className, inset, children, ...props }: ContextMenuRadioItemProps) {
   return (
-    <ContextMenuPrimitive.RadioItem data-slot="context-menu-radio-item" className={cn(menuItemClassName, className, menuGutterClassName)} {...props}>
+    <ContextMenuPrimitive.RadioItem data-slot="context-menu-radio-item" data-inset={inset ? "" : undefined} className={cn(menuItemClassName, menuInsetClassName, className, menuGutterClassName)} {...props}>
       {children}
       <ContextMenuPrimitive.RadioItemIndicator data-slot="context-menu-item-indicator" className={menuIndicatorClassName}>
         <MenuCheck />

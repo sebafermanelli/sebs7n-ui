@@ -150,11 +150,11 @@ function MenubarItem({ className, inset, variant = "default", external, children
  * `ContextMenu`. El atajo (`MenubarShortcut`) queda antes, pegado a la columna del tilde, y conserva
  * su lugar en un ítem sin marcar.
  */
-type MenubarCheckboxItemProps = WithClassName<MenuPrimitive.CheckboxItem.Props>
+type MenubarCheckboxItemProps = WithClassName<MenuPrimitive.CheckboxItem.Props> & MenuInsetProps
 
-function MenubarCheckboxItem({ className, children, ...props }: MenubarCheckboxItemProps) {
+function MenubarCheckboxItem({ className, inset, children, ...props }: MenubarCheckboxItemProps) {
   return (
-    <MenuPrimitive.CheckboxItem data-slot="menubar-checkbox-item" className={cn(menuItemClassName, className, menuGutterClassName)} {...props}>
+    <MenuPrimitive.CheckboxItem data-slot="menubar-checkbox-item" data-inset={inset ? "" : undefined} className={cn(menuItemClassName, menuInsetClassName, className, menuGutterClassName)} {...props}>
       {children}
       <MenuPrimitive.CheckboxItemIndicator data-slot="menubar-item-indicator" className={menuIndicatorClassName}>
         <MenuCheck />
@@ -167,11 +167,11 @@ function MenubarRadioGroup(props: MenuPrimitive.RadioGroup.Props) {
   return <MenuPrimitive.RadioGroup data-slot="menubar-radio-group" {...props} />
 }
 
-type MenubarRadioItemProps = WithClassName<MenuPrimitive.RadioItem.Props>
+type MenubarRadioItemProps = WithClassName<MenuPrimitive.RadioItem.Props> & MenuInsetProps
 
-function MenubarRadioItem({ className, children, ...props }: MenubarRadioItemProps) {
+function MenubarRadioItem({ className, inset, children, ...props }: MenubarRadioItemProps) {
   return (
-    <MenuPrimitive.RadioItem data-slot="menubar-radio-item" className={cn(menuItemClassName, className, menuGutterClassName)} {...props}>
+    <MenuPrimitive.RadioItem data-slot="menubar-radio-item" data-inset={inset ? "" : undefined} className={cn(menuItemClassName, menuInsetClassName, className, menuGutterClassName)} {...props}>
       {children}
       <MenuPrimitive.RadioItemIndicator data-slot="menubar-item-indicator" className={menuIndicatorClassName}>
         <MenuCheck />

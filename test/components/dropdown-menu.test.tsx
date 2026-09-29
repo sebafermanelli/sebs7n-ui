@@ -373,3 +373,35 @@ describe("el ícono de un ítem marcable no cambia de color al marcarlo", () => 
     expect(fuente.match(/\{children\}\s*<\w+\.(Checkbox|Radio)ItemIndicator/g)).toHaveLength(2)
   })
 })
+
+// Revisión de R3: en un menú que mezcla ítems con ícono y con tilde, el marcable también tiene que
+// poder alinear su texto con la columna del ícono.
+describe("inset en los ítems marcables", () => {
+  it("CheckboxItem y RadioItem aceptan inset y alinean con la columna del ícono", async () => {
+    render(
+      <DropdownMenu defaultOpen>
+        <DropdownMenuTrigger>Vista</DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuCheckboxItem inset>Barra lateral</DropdownMenuCheckboxItem>
+          <DropdownMenuRadioGroup value="a">
+            <DropdownMenuRadioItem inset value="a">
+              Lista
+            </DropdownMenuRadioItem>
+          </DropdownMenuRadioGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    )
+    for (const item of [await screen.findByRole("menuitemcheckbox", { name: "Barra lateral" }), screen.getByRole("menuitemradio", { name: "Lista" })]) {
+      expect(item).toHaveAttribute("data-inset")
+      expect(item).toHaveClass("data-inset:pl-9", "pr-9")
+    }
+  })
+
+  it.each(["context-menu.tsx", "menubar.tsx"])("%s: CheckboxItem y RadioItem aceptan inset", async (archivo) => {
+    const { readFileSync } = await import("node:fs")
+    const { join } = await import("node:path")
+    const fuente = readFileSync(join(import.meta.dirname, "../../src/components", archivo), "utf8")
+    expect(fuente).toMatch(/(Checkbox)ItemProps = WithClassName<[^>]+> & MenuInsetProps/)
+    expect(fuente).toMatch(/(Radio)ItemProps = WithClassName<[^>]+> & MenuInsetProps/)
+  })
+})
