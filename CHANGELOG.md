@@ -76,13 +76,23 @@ todavía; la 2.0.0 sale al final de todas las fases, y con ella la guía de migr
 - **Sombras de iCloud.** `shadow-menu` y `shadow-modal` son `0 11px 34px` (16 % en claro, 65 % en
   oscuro) con el filo del popover; entran `shadow-widget`, `shadow-segment`, `shadow-badge` y
   `shadow-thumbnail`; `shadow-card` es plana. Se van `shadow-button`, `shadow-button-inverted`,
-  `shadow-button-accent`, `shadow-chip` y `shadow-track`. Botones, campos, chips, casillas y
+  `shadow-button-accent`, `shadow-chip` y `shadow-track`. En claro iCloud solo mostró la de menú
+  y la de widget; las otras son la oscura por 16/65. Botones, campos, chips, casillas y
   pistas son planos y **ya no se hunden al apretar** (`active:translate-y-px`).
 - **Foco interior.** `focus-ring` pasa del anillo de Geist por fuera a `inset 0 0 0 3px` del color
   de foco (`--sf-focus`, la marca). iCloud lo pinta al 70 %; con las marcas de ejemplo eso no
   llega a 3:1 en claro, así que el default es la marca plena y `--sf-focus-alpha: 70%` queda para
-  la app cuya marca lo aguante. `focus-border` (campos) es el mismo anillo y **se ve también con
-  el puntero** (ya no hay halo solo de teclado). Sobre un fondo de marca va `focus-ring-inverse`.
+  la app cuya marca lo aguante (se pisa en `:root` y `.dark`). **En oscuro el foco sale de
+  `brand-900`**: sobre las barras, los campos (`fill-1`) y el resaltado (`fill-2`), `brand-700`
+  no llegaba a 3:1 con las marcas oscuras. `focus-border` (campos) es el mismo anillo y **se ve
+  también con el puntero** (ya no hay halo solo de teclado): se va `data-sf-modality`, que ya
+  nadie leía. El anillo va en `--tw-inset-ring-shadow` y **se compone con la sombra** del
+  elemento: un panel enfocado conserva su `shadow-menu`. `cn()` fusiona `focus-ring`,
+  `focus-ring-inverse`, `focus-border` y `focus-border-error`. Sobre un fondo de color va
+  `focus-ring-inverse`: botón `accent`, casilla marcada o indeterminada, día elegido del Calendar,
+  la X de un Tag sólido (en su tinta) y el AiButton sólido (blanco). El Switch lleva el anillo
+  **por fuera** de la pista (`outline` de 2 px con 2 de separación): sobre la pista gris el
+  interior daba 1,3:1.
 - **Selección de iCloud** (reemplaza la de la fase 1, que era acento sólido en todos lados). El
   ítem resaltado de un menú (también Select y Combobox) va en `fill-2` y **el texto no cambia de
   color**; el activo del Sidebar y el link actual de NavigationMenu, en `fill-1`. El acento sólido
@@ -90,7 +100,8 @@ todavía; la 2.0.0 sale al final de todas las fases, y con ella la guía de migr
   foco adentro**; sin foco la fila es `bg-selection-inactive`. `inside-selection` y
   `selectionSecondaryClassName` miran solo ese caso: un color propio adentro de un ítem de menú o
   del Sidebar ya no pasa a blanco, y no hace falta. `menuItemSecondaryClassName` es
-  `text-label-secondary`.
+  `text-label-secondary`. El contenedor de la `Table` lleva `tabIndex={-1}`: un click en una celda
+  común le deja el foco y la fila elegida no parpadea a gris.
 - **Playground del sitio:** sin los controles de vidrio, tinte y radios; quedan marca, tema y
   wallpaper (apagado por defecto).
 
@@ -151,8 +162,9 @@ las fases R2–R5 rehacen diálogos, menús, controles y listas con las medidas 
   cambiar lo que se ve.
 - **`Button variant="link"` no agranda su área con el dedo**: es texto adentro de un párrafo.
 - **Toggle con borde lleno** en los dos estados (antes, punteado sin apretar).
-- **La perilla del Slider es una cápsula** de 20 × 28, la misma del matiz del ColorPicker; al
-  arrastrarla crece (ya no se vuelve lente).
+- **La perilla del Slider es una cápsula** de 20 × 28 (provisorio: R4 la lleva a la de iCloud), la
+  misma del matiz del ColorPicker; al arrastrarla crece (ya no se vuelve lente). Lleva un borde de
+  1 px en `label-tertiary` (`ring-1`): blanca sobre la página blanca no llegaba a 3:1.
 - **NumberField mide lo que el número**: el grupo pasa a `w-fit` y el input usa
   `field-sizing: content`. Si la app contaba con que ocupara todo el ancho, pasale `className="w-full"`.
 - **SidebarSearch mide 32** (`h-8`, antes 28) y el atajo va en `Kbd size="sm"`.
@@ -222,16 +234,17 @@ las fases R2–R5 rehacen diálogos, menús, controles y listas con las medidas 
   y `rounded-tag`; `cn()` los fusiona como los otros radios.
 - `touch-target` (área de 44 con el dedo, sin cambiar lo que se ve) y `touch-target-y` (solo en
   alto, para controles en fila que no se pueden separar; con `cn()` reemplaza al otro).
-- `menuItemSecondaryClassName` (el atajo de un ítem de menú) y `selectionSecondaryClassName`
-  (cualquier ítem seleccionable), con el variant `inside-selection:` que sostiene al segundo.
-  `MenuItem`, `SidebarItem`, `TableRow` y `NavigationMenuLink` (el de tarjeta) llevan
-  `group/selectable`.
+- `menuItemSecondaryClassName` (el atajo de un ítem de menú) y `selectionSecondaryClassName` (un
+  color propio adentro de la fila elegida de una `Table` con foco, que es la única selección en
+  acento desde R1), con el variant `inside-selection:` que sostiene al segundo. `MenuItem`,
+  `SidebarItem`, `TableRow` y `NavigationMenuLink` (el de tarjeta) llevan `group/selectable`.
 - Tokens `--sf-selection`, `--sf-on-selection` y `--sf-selection-inactive` (utilidades
   `bg-selection`, `text-on-selection`, `bg-selection-inactive`), y las superficies de iCloud:
   `bg-surface`, `bg-surface-secondary`, `bg-surface-bar`, `bg-surface-header`, `bg-grouped`,
   `bg-fill-1/2/3`, `border-separator`, `border-separator-strong`, `hairline`, `text-label*` y
   `bg-segment`.
-- `material-translucent`, el único material con blur, para lo que va sobre un wallpaper.
+- `material-translucent`, el único material con blur, para lo que va sobre un wallpaper. Con menos
+  transparencia o más contraste es la barra global opaca (`surface-header`).
 - Sombras `shadow-widget`, `shadow-segment`, `shadow-badge` y `shadow-thumbnail`.
 - `focus-ring-inverse` (el anillo sobre un fondo de marca) y `--sf-focus`/`--sf-focus-alpha`.
 - Los roles tipográficos con la escala de iCloud y `text-body-large` (alias de `text-body`).
