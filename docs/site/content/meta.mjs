@@ -2850,6 +2850,29 @@ export const COMPONENTS = {
     },
     related: ["card", "list-row", "app-shell"],
   },
+  marquee: {
+    title: "Marquee",
+    group: "contenido",
+    description: "Una fila de logos o nombres que se desplaza sola en bucle cuando no entra en el ancho, como la de clientes de una home. Si entra, queda quieta y centrada.",
+    keyboard: [["Tab", "Recorre los links de la fila una sola vez; con foco adentro, la fila se pausa."]],
+    a11y: [
+      "La fila es una lista con nombre (`aria-label`, obligatorio). La tanda copia del bucle va con `aria-hidden` e `inert`: el lector y Tab no la recorren.",
+      "Se pausa con el puntero encima, con foco adentro y fuera de pantalla. Con `prefers-reduced-motion` no se mueve: si desborda, se scrollea a mano.",
+      "Sin JS, y en el HTML del servidor, es la fila quieta con todos los ítems.",
+    ],
+    usage: [
+      "Para una prueba social de marketing (clientes, prensa), no para información que haya que leer: lo que se mueve no se lee.",
+      "Cada ítem es `{ id, node, href? }`: `node` puede ser un SVG o un `<img>` con `alt`; con `href`, un link que abre en otra pestaña.",
+      "`speed` en píxeles por segundo (40 por defecto): la duración sale del ancho de la tanda, así se siente igual con 4 ítems que con 10.",
+      "La animación es la utilidad `animate-marquee` de `theme.css`. Solo por subpath (`sebs7n-ui/marquee`).",
+    ],
+    props: {
+      Marquee: {
+        "aria-label": "El nombre de la lista, que no se ve: «Clientes».",
+      },
+    },
+    related: ["carousel"],
+  },
   carousel: {
     title: "Carousel",
     group: "contenido",

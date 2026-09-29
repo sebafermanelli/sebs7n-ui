@@ -37,6 +37,7 @@ const SOLO_SUBPATH = [
   "drop-zone",
   "carousel",
   "list-index",
+  "marquee",
 ]
 
 describe("componentes solo por subpath", () => {

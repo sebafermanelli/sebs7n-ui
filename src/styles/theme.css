@@ -975,6 +975,33 @@
   }
 }
 
+/**
+ * El bucle de `Marquee`: la pista lleva dos tandas iguales y correrla -50 % es correr una, así el
+ * final empalma con el principio. `translate` y no `transform`, como `animate-jiggle`. La duración la
+ * pone el componente (`--sf-marquee-duration`, el ancho de una tanda sobre la velocidad). Se pausa con
+ * el puntero encima, con foco adentro y fuera de pantalla (`data-paused`); con movimiento reducido no
+ * corre (el componente, además, deja la fila quieta con scroll a mano).
+ */
+@keyframes sf-marquee {
+  to {
+    translate: -50% 0;
+  }
+}
+
+@utility animate-marquee {
+  animation: sf-marquee var(--sf-marquee-duration, 20s) linear infinite;
+
+  [data-slot="marquee"]:hover &,
+  [data-slot="marquee"]:focus-within &,
+  [data-slot="marquee"][data-paused] & {
+    animation-play-state: paused;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
 @utility transition-control {
   transition-property: color, background-color, border-color, box-shadow, opacity;
   transition-timing-function: ease;
