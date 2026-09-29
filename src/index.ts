@@ -173,3 +173,4 @@ export * from "./components/user-menu.js"
 // andan igual, pero se importan por su ruta. La tabla del README los nombra (la genera
 // scripts/subpaths.mjs leyendo este archivo).
 //   `tree`            sebs7n-ui/tree (+1,95 kB al barrel)
+//   `split-view`      sebs7n-ui/split-view (+0,70 kB)

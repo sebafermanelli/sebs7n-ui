@@ -1697,6 +1697,43 @@ export const COMPONENTS = {
     },
     related: ["app-shell", "user-menu", "navigation-menu"],
   },
+  "split-view": {
+    title: "SplitView",
+    group: "navegacion",
+    detallado: true,
+    description: "El master-detail de iCloud Mail: sidebar, lista y detalle separados por la línea entre paneles, que en el teléfono pasa a un panel por vez con «‹ Atrás».",
+    keyboard: [
+      ["Tab", "Recorre los paneles en orden: sidebar, lista, detalle. En angosto, solo el que se ve."],
+      ["Enter", "En `SplitViewBack`, vuelve al panel anterior."],
+    ],
+    a11y: [
+      "Cada panel es un `<section>`: con `aria-label` es una región con nombre, y el lector salta entre paneles con los atajos de regiones.",
+      "En angosto los paneles que no se ven llevan `display: none`: no quedan en el orden de Tab ni los lee el lector.",
+      "**Al pasar de panel, mové el foco vos**: al elegir una fila en angosto, el detalle aparece y el foco tiene que ir a su título (`ref.focus()`), si no se queda en un elemento que ya no se ve.",
+      "`SplitViewBack` es un `<button>` con el nombre del panel al que vuelve («‹ Facturas»), como iOS: nunca solo el chevron.",
+    ],
+    usage: [
+      "**Para recorrer una colección y ver un ítem al lado**: comprobantes, clientes, mensajes. Si el detalle es otra pantalla, es una `List` con `chevron`.",
+      "Anchos de iCloud: sidebar 230, lista 380 (320 en mediano), detalle el resto. Se acomoda al **ancho del contenedor** (container query), no al de la ventana: adentro de un panel angosto también pasa a un panel.",
+      "**La fila de la lista llama `setPane(\"detail\")`** (`useSplitView()`) al elegirse: en ancho no cambia nada, en angosto muestra el detalle.",
+      "Dos paneles: omití el que sobra. Sin lista, `SplitViewBack` del detalle vuelve al sidebar con `to=\"sidebar\"`.",
+      "No se redimensiona, como iCloud: las manijas van a ser `Resizable` (R6).",
+      "El alto lo pone quien lo contiene (`h-full` adentro de `AppShell`, o un alto fijo); cada panel scrollea por su cuenta.",
+      "Solo por subpath (`sebs7n-ui/split-view`): no está en el barrel, por peso.",
+    ],
+    props: {
+      SplitView: {
+        pane: "El panel activo (`sidebar`, `list`, `detail`): el que se ve en angosto. Pasarlo lo vuelve controlado.",
+        defaultPane: "El panel activo al arrancar. Por defecto `list`.",
+        onPaneChange: "Se llama con el panel nuevo.",
+      },
+      SplitViewBack: {
+        to: "Adónde vuelve. Por defecto, el anterior: del detalle a la lista, de la lista al sidebar. El texto del botón (los hijos) es el nombre de ese panel («Facturas»).",
+        onClick: "Se llama antes de volver. Con `event.preventDefault()` no vuelve (para confirmar un cambio sin guardar).",
+      },
+    },
+    related: ["list-row", "app-shell", "sidebar"],
+  },
   "app-shell": {
     title: "AppShell",
     group: "navegacion",
@@ -1949,7 +1986,7 @@ export const COMPONENTS = {
         render: "El elemento interactivo de la fila (`<a>`, `Link`). Recibe el contenido y las clases.",
       },
     },
-    related: ["table", "card"],
+    related: ["table", "card", "split-view"],
   },
   tree: {
     title: "Tree",

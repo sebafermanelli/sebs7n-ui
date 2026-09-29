@@ -514,6 +514,11 @@ las fases R2–R5 rehacen diálogos, menús, controles y listas con las medidas 
   `aria-expanded`, `aria-selected`), foco itinerante, ↑↓ →← Home End Enter Espacio y type-ahead.
   `expanded`/`selected` controlables, `onOpen`, y `hasChildren` + `onLoadChildren` para hijos
   perezosos (`aria-busy`).
+- **`SplitView`** (`sebs7n-ui/split-view`, **solo por subpath**), el master-detail de Mail (R5b):
+  `SplitViewSidebar` (230), `SplitViewList` (380; 320 en mediano) y `SplitViewDetail`, `<section>`
+  opacos separados por `separator-strong`. Por container query: angosto un panel (`pane`/`defaultPane`/
+  `onPaneChange`, `useSplitView()`), mediano lista + detalle, ancho los tres. `SplitViewBack` («‹
+  Facturas») vuelve al anterior y solo se ve cuando hace falta. Sin redimensionar (va a ser `Resizable`).
 - La tabla de subpaths del README dice qué componentes no están en el barrel (la lee de `src/index.ts`).
 - El variant `inside-selection` también mira las listas de filas (`group/list`: `List`, `Tree`,
   `FileGrid`), no solo la `Table`.

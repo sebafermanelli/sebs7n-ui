@@ -1,0 +1,84 @@
+import { render, screen } from "@testing-library/react"
+import userEvent from "@testing-library/user-event"
+import { describe, expect, it, vi } from "vitest"
+
+import { SplitView, SplitViewBack, SplitViewDetail, SplitViewList, SplitViewSidebar, useSplitView } from "../../src/components/split-view"
+
+function Abrir() {
+  const { setPane } = useSplitView()
+  return (
+    <button onClick={() => setPane("detail")} type="button">
+      Abrir factura
+    </button>
+  )
+}
+
+function Mail(props: Partial<React.ComponentProps<typeof SplitView>>) {
+  return (
+    <SplitView {...props}>
+      <SplitViewSidebar aria-label="Carpetas">Carpetas</SplitViewSidebar>
+      <SplitViewList aria-label="Facturas">
+        <SplitViewBack>Carpetas</SplitViewBack>
+        <Abrir />
+      </SplitViewList>
+      <SplitViewDetail aria-label="Factura">
+        <SplitViewBack>Facturas</SplitViewBack>
+        Detalle
+      </SplitViewDetail>
+    </SplitView>
+  )
+}
+
+describe("SplitView", () => {
+  it("tres paneles con nombre, separados por la línea entre paneles, con los anchos de Mail", () => {
+    render(<Mail />)
+    const sidebar = screen.getByRole("region", { name: "Carpetas" })
+    const lista = screen.getByRole("region", { name: "Facturas" })
+    const detalle = screen.getByRole("region", { name: "Factura" })
+    expect(sidebar.className).toContain("@5xl/split:w-[230px]")
+    expect(sidebar.className).toContain("bg-surface-secondary")
+    expect(lista.className).toContain("@5xl/split:w-[380px]")
+    for (const panel of [sidebar, lista]) expect(panel.className).toContain("@2xl/split:border-e")
+    expect(detalle.className).toContain("flex-1")
+    expect(sidebar.parentElement).toHaveClass("@container/split")
+  })
+
+  it("angosto muestra un panel: el activo, que arranca en la lista", () => {
+    render(<Mail />)
+    const raiz = screen.getByRole("region", { name: "Facturas" }).parentElement!
+    expect(raiz).toHaveAttribute("data-pane", "list")
+    expect(screen.getByRole("region", { name: "Facturas" })).toHaveAttribute("data-active")
+    expect(screen.getByRole("region", { name: "Factura" })).not.toHaveAttribute("data-active")
+    // Oculto de verdad en angosto (no solo corrido): `hidden` salvo el activo.
+    expect(screen.getByRole("region", { name: "Factura" }).className).toContain("hidden")
+    expect(screen.getByRole("region", { name: "Factura" }).className).toContain("data-active:flex")
+  })
+
+  it("elegir algo pasa al detalle y Atrás vuelve un panel", async () => {
+    const onPaneChange = vi.fn()
+    render(<Mail onPaneChange={onPaneChange} />)
+    await userEvent.click(screen.getByRole("button", { name: "Abrir factura" }))
+    expect(onPaneChange).toHaveBeenLastCalledWith("detail")
+    expect(screen.getByRole("region", { name: "Factura" })).toHaveAttribute("data-active")
+    await userEvent.click(screen.getByRole("button", { name: "Facturas" }))
+    expect(screen.getByRole("region", { name: "Facturas" })).toHaveAttribute("data-active")
+    await userEvent.click(screen.getByRole("button", { name: "Carpetas" }))
+    expect(screen.getByRole("region", { name: "Carpetas" })).toHaveAttribute("data-active")
+  })
+
+  it("Atrás solo se ve cuando hace falta: en el detalle, solo en angosto", () => {
+    render(<Mail />)
+    const [aCarpetas, aFacturas] = screen.getAllByRole("button", { name: /Carpetas|Facturas/ })
+    expect(aFacturas!.className).toContain("@2xl/split:hidden")
+    expect(aCarpetas!.className).toContain("@5xl/split:hidden")
+  })
+
+  it("pane controlado", async () => {
+    const onPaneChange = vi.fn()
+    render(<Mail onPaneChange={onPaneChange} pane="detail" />)
+    expect(screen.getByRole("region", { name: "Factura" })).toHaveAttribute("data-active")
+    await userEvent.click(screen.getByRole("button", { name: "Facturas" }))
+    expect(onPaneChange).toHaveBeenLastCalledWith("list")
+    expect(screen.getByRole("region", { name: "Factura" })).toHaveAttribute("data-active")
+  })
+})
