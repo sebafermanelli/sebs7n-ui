@@ -2274,6 +2274,8 @@ export const COMPONENTS = {
     ],
     props: {
       Tree: {
+        onLoadError: "La promesa de `onLoadChildren` falló: la carpeta se vuelve a cerrar (abrirla reintenta). Para avisar con un toast.",
+        labels: "Textos: `loading` («Cargando…», lo que se lee en la carpeta mientras llegan sus hijos).",
         onKeyDown: "Se llama antes de la navegación por teclado. Con `event.preventDefault()`, la tecla no navega.",
         items: "Los nodos: `{ id, label, icon?, children?, hasChildren?, columns?, disabled? }`. Un `children` (aunque vacío) la hace carpeta.",
         columns: "Columnas a la derecha: `{ header, width?, numeric? }`. Los valores van en `node.columns`, en el mismo orden.",

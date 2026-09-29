@@ -526,7 +526,8 @@ las fases R2–R5 rehacen diálogos, menús, controles y listas con las medidas 
   la selección de Drive. Patrón `tree` de WAI-ARIA con ítems planos (`aria-level/setsize/posinset`,
   `aria-expanded`, `aria-selected`), foco itinerante, ↑↓ →← Home End Enter Espacio y type-ahead.
   `expanded`/`selected` controlables, `onOpen`, y `hasChildren` + `onLoadChildren` para hijos
-  perezosos (`aria-busy`).
+  perezosos (`aria-busy` y «Cargando…» para el lector, una carga a la vez, `onLoadError` cierra la
+  carpeta si falla). Labels `tree: { loading }`.
 - **`SplitView`** (`sebs7n-ui/split-view`, **solo por subpath**), el master-detail de Mail (R5b):
   `SplitViewSidebar` (230), `SplitViewList` (380; 320 en mediano) y `SplitViewDetail`, `<section>`
   opacos separados por `separator-strong`. Por container query: angosto un panel (`pane`/`defaultPane`/

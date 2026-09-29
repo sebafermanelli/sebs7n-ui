@@ -4,6 +4,7 @@ import * as React from "react"
 import { ChevronRightIcon, FileIcon, FolderIcon, LoaderCircleIcon } from "lucide-react"
 
 import type { AccessibleName } from "../internal/accessible-name.js"
+import { useLabels, type Labels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
 
 /**
@@ -57,6 +58,9 @@ type TreePropsBase = Omit<React.ComponentProps<"div">, "children" | "defaultValu
   onOpen?: (node: TreeNode) => void
   /** Trae los hijos de una carpeta `hasChildren`; la app actualiza `items` y resuelve la promesa. */
   onLoadChildren?: (node: TreeNode) => Promise<void>
+  /** La promesa de `onLoadChildren` falló: la carpeta vuelve a cerrarse (se puede reintentar abriéndola). */
+  onLoadError?: (node: TreeNode, error: unknown) => void
+  labels?: Partial<Labels["tree"]>
 }
 
 type Visible = { node: TreeNode; level: number; setSize: number; posInSet: number; parent: string | null }
@@ -95,10 +99,16 @@ function Tree({
   onSelectedChange,
   onOpen,
   onLoadChildren,
+  onLoadError,
   onKeyDown: onKeyDownProp,
+  labels: labelsProp,
   ...props
 }: TreeProps) {
+  const labels = { ...useLabels().tree, ...labelsProp }
   const [expandedList, setExpandedList] = useControllable(expandedProp, defaultExpanded, onExpandedChange)
+  // La lista de ahora, para lo que termina después (una carga que falla cierra su carpeta).
+  const expandedRef = React.useRef(expandedList)
+  expandedRef.current = expandedList
   const [selected, setSelectedOwn] = useControllable<string | null>(selectedProp, defaultSelected)
   const [focused, setFocused] = React.useState<string | null>(null)
   const [loading, setLoading] = React.useState<ReadonlySet<string>>(new Set())
@@ -128,17 +138,61 @@ function Tree({
   const setOpen = (node: TreeNode, open: boolean) => {
     if (open === expanded.has(node.id)) return
     setExpandedList(open ? [...expandedList, node.id] : expandedList.filter((id) => id !== node.id))
-    if (open && node.children == null && node.hasChildren && onLoadChildren) {
-      setLoading((prev) => new Set(prev).add(node.id))
-      void onLoadChildren(node).finally(() =>
-        setLoading((prev) => {
-          const next = new Set(prev)
-          next.delete(node.id)
-          return next
-        })
-      )
-    }
   }
+
+  // Todos los nodos, con su padre: para encontrar un ítem aunque su carpeta esté cerrada.
+  const all = React.useMemo(() => {
+    const map = new Map<string, { node: TreeNode; parent: string | null }>()
+    const walk = (nodes: TreeNode[], parent: string | null) =>
+      nodes.forEach((node) => {
+        map.set(node.id, { node, parent })
+        if (node.children) walk(node.children, node.id)
+      })
+    walk(items, null)
+    return map
+  }, [items])
+
+  // Una carpeta perezosa abierta (al abrirla, o abierta de entrada) pide sus hijos una sola vez a la
+  // vez. Si la carga falla, se cierra y se avisa: abrirla de nuevo reintenta.
+  const pending = React.useRef(new Set<string>())
+  React.useEffect(() => {
+    if (!onLoadChildren) return
+    for (const id of expandedList) {
+      const node = all.get(id)?.node
+      if (!node || node.children != null || !node.hasChildren || pending.current.has(id)) continue
+      pending.current.add(id)
+      setLoading(new Set(pending.current))
+      onLoadChildren(node)
+        .catch((error: unknown) => {
+          setExpandedList(expandedRef.current.filter((open) => open !== id))
+          onLoadError?.(node, error)
+        })
+        .finally(() => {
+          pending.current.delete(id)
+          setLoading(new Set(pending.current))
+        })
+    }
+  })
+
+  // Si el ítem con foco deja de verse (su carpeta se cerró desde afuera), el foco sube a la carpeta
+  // visible más cercana en vez de perderse en el <body>.
+  React.useEffect(() => {
+    if (focused == null || visible.some((row) => row.node.id === focused)) return
+    const active = document.activeElement
+    if (active && active !== document.body) return
+    let parent = all.get(focused)?.parent ?? null
+    while (parent != null && !visible.some((row) => row.node.id === parent)) parent = all.get(parent)?.parent ?? null
+    if (parent == null) return
+    setFocused(parent)
+    rows.current.get(parent)?.focus()
+  })
+
+  // Si el elegido ya no está en `items`, la selección queda vacía y se avisa.
+  React.useEffect(() => {
+    if (selected == null || all.has(selected)) return
+    setSelectedOwn(null)
+    onSelectedChange?.(null, null)
+  })
 
   const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     // El de la app va primero y puede cancelar el nuestro con `preventDefault()`; antes el suyo, que
@@ -184,8 +238,10 @@ function Tree({
         if (event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) {
           // Type-ahead: lo tipeado en el último medio segundo, desde el ítem que sigue.
           const now = Date.now()
-          const text = (now - typed.current.at > 500 ? "" : typed.current.text) + normalize(event.key)
+          let text = (now - typed.current.at > 500 ? "" : typed.current.text) + normalize(event.key)
           typed.current = { text, at: now }
+          // La misma letra repetida («aa») recorre los que empiezan con ella, como en el Finder.
+          if (text.length > 1 && [...text].every((char) => char === text[0])) text = text[0]!
           const ordered = [...visible.slice(index + (text.length === 1 ? 1 : 0)), ...visible.slice(0, index + 1)]
           moveTo(ordered.find((candidate) => normalize(candidate.node.label).startsWith(text))?.node)
           handled = true
@@ -290,6 +346,7 @@ function Tree({
               </span>
               <span className="min-w-40 flex-1 truncate pe-3 text-body text-label group-data-[state=selected]/selectable:group-focus-within/list:text-on-selection">
                 {node.label}
+                {busy && <span className="sr-only">, {labels.loading}</span>}
               </span>
               {columns?.map((column, index) => (
                 <span

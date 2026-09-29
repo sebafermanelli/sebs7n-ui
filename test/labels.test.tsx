@@ -206,6 +206,7 @@ describe("LabelsProvider", () => {
       "sidebar",
       "stepper",
       "themeSwitcher",
+      "tree",
       "userMenu",
     ])
     for (const grupo of Object.values(defaultLabels)) {

@@ -189,3 +189,68 @@ describe("Tree · onKeyDown de la app", () => {
     expect(screen.getByRole("treeitem", { name: /Beta/ })).toHaveFocus()
   })
 })
+
+describe("Tree · revisión de R5b", () => {
+  const REMOTA: TreeNode[] = [{ id: "remota", label: "Remota", hasChildren: true }]
+
+  it("una carga que falla cierra la carpeta y avisa con onLoadError", async () => {
+    const onLoadError = vi.fn()
+    const error = new Error("sin red")
+    render(<Tree aria-label="Archivos" items={REMOTA} onLoadChildren={() => Promise.reject(error)} onLoadError={onLoadError} />)
+    await userEvent.tab()
+    await userEvent.keyboard("{ArrowRight}")
+    await act(async () => {})
+    expect(onLoadError).toHaveBeenCalledWith(expect.objectContaining({ id: "remota" }), error)
+    expect(item("Remota")).toHaveAttribute("aria-expanded", "false")
+    expect(item("Remota")).not.toHaveAttribute("aria-busy")
+  })
+
+  it("no pide dos veces los mismos hijos, y dice «Cargando…» mientras tanto", async () => {
+    const onLoadChildren = vi.fn(() => new Promise<void>(() => {}))
+    render(<Tree aria-label="Archivos" items={REMOTA} onLoadChildren={onLoadChildren} />)
+    await userEvent.tab()
+    await userEvent.keyboard("{ArrowRight}{ArrowLeft}{ArrowRight}")
+    expect(onLoadChildren).toHaveBeenCalledTimes(1)
+    expect(item("Remota")).toHaveTextContent("Cargando…")
+  })
+
+  it("una carpeta perezosa abierta de entrada pide sus hijos al montar", () => {
+    const onLoadChildren = vi.fn(() => new Promise<void>(() => {}))
+    render(<Tree aria-label="Archivos" defaultExpanded={["remota"]} items={REMOTA} onLoadChildren={onLoadChildren} />)
+    expect(onLoadChildren).toHaveBeenCalledWith(expect.objectContaining({ id: "remota" }))
+  })
+
+  it("type-ahead: la misma letra otra vez va al siguiente que empieza con ella", async () => {
+    render(<Tree aria-label="Archivos" items={[{ id: "a", label: "Acme" }, { id: "b", label: "Arcor" }, { id: "c", label: "Aysa" }]} />)
+    await userEvent.tab()
+    await userEvent.keyboard("a")
+    expect(item("Arcor")).toHaveFocus()
+    await userEvent.keyboard("a")
+    expect(item("Aysa")).toHaveFocus()
+  })
+
+  it("si se cierra (controlado) la carpeta del ítem con foco, el foco sube a la carpeta", async () => {
+    function Controlado() {
+      const [expanded, setExpanded] = useState(["facturas"])
+      return (
+        <>
+          <button onClick={() => setExpanded([])} type="button">
+            Cerrar todo
+          </button>
+          <Tree aria-label="Archivos" expanded={expanded} items={ITEMS} onExpandedChange={setExpanded} onKeyDown={(event) => event.key === "x" && setExpanded([])} />
+        </>
+      )
+    }
+    render(<Controlado />)
+    item("Factura 0001.pdf").focus()
+    await userEvent.keyboard("x")
+    expect(item("Facturas")).toHaveFocus()
+  })
+
+  it("si el elegido desaparece de items, avisa con null", () => {
+    const onSelectedChange = vi.fn()
+    const { rerender } = render(<Tree aria-label="Archivos" defaultSelected="notas" items={ITEMS} onSelectedChange={onSelectedChange} />)
+    rerender(<Tree aria-label="Archivos" defaultSelected="notas" items={ITEMS.filter((node) => node.id !== "notas")} onSelectedChange={onSelectedChange} />)
+    expect(onSelectedChange).toHaveBeenCalledWith(null, null)
+  })
+})

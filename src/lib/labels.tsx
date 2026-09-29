@@ -248,6 +248,10 @@ export type Labels = {
     dark: string
     system: string
   }
+  tree: {
+    /** Lo que se lee en una carpeta mientras llegan sus hijos. */
+    loading: string
+  }
   userMenu: {
     /** Encabezado de la sección de tema adentro del menú. */
     theme: string
@@ -366,6 +370,7 @@ export const defaultLabels: Labels = {
     dark: "Tema oscuro",
     system: "Tema del sistema",
   },
+  tree: { loading: "Cargando…" },
   userMenu: { theme: "Tema" },
 }
 
