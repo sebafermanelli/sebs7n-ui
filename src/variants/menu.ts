@@ -17,7 +17,9 @@ export type MenuInsetProps = { inset?: boolean }
  * (el que va después en el DOM se pinta encima y se queda con el toque).
  *
  * Íconos de 16 y **el primero, el que encabeza el ítem, en el acento** (`text-brand-900`, la tinta
- * de link), como los glifos azules de los menús de Drive y Mail. `gap-2.5`: el texto de un ítem con
+ * de link), como los glifos azules de los menús de Drive y Mail. Los íconos propios del paquete (el
+ * chevron del submenú, la flecha de `external`) llevan `data-slot` y quedan afuera: en un ítem de
+ * solo texto son el primer hijo, y sin eso tomaban el acento. `gap-2.5`: el texto de un ítem con
  * ícono arranca a 36 (10 + 16 + 10; en iCloud, 37).
  *
  * El resaltado es el de iCloud: gris translúcido (`fill-2`) y el texto no cambia de color;
@@ -28,7 +30,7 @@ export type MenuInsetProps = { inset?: boolean }
  * ítems seleccionables: ver `selectionSecondaryClassName`.
  */
 export const menuItemClassName =
-  "group/menu-item group/selectable relative flex h-7.5 pointer-coarse:h-11 cursor-pointer items-center gap-2.5 rounded-menu-item px-2.5 text-callout text-label outline-none select-none transition-control data-highlighted:bg-fill-2 active:bg-fill-3 data-disabled:cursor-not-allowed data-disabled:opacity-30 data-disabled:active:bg-transparent data-disabled:data-highlighted:bg-transparent [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&>svg:first-child]:text-brand-900"
+  "group/menu-item group/selectable relative flex h-7.5 pointer-coarse:h-11 cursor-pointer items-center gap-2.5 rounded-menu-item px-2.5 text-callout text-label outline-none select-none transition-control data-highlighted:bg-fill-2 active:bg-fill-3 data-disabled:cursor-not-allowed data-disabled:opacity-30 data-disabled:active:bg-transparent data-disabled:data-highlighted:bg-transparent [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&>svg:first-child:not([data-slot])]:text-brand-900"
 
 /**
  * El ítem que destruye (`variant="destructive"`): texto e ícono en rojo, como el «Delete Selected»
@@ -39,7 +41,14 @@ export const menuItemClassName =
  * panel, sobre `fill-2` y sobre `fill-3`, en claro y en oscuro (`test/contrast.test.ts`); el rojo de
  * iCloud (`rgb(255,48,55)`) se queda en 3,2:1 sobre el resaltado oscuro.
  */
-export const menuItemDestructiveClassName = "text-red-ink [&>svg:first-child]:text-current"
+export const menuItemDestructiveClassName = "text-red-ink [&>svg:first-child:not([data-slot])]:text-current"
+
+/**
+ * Un ítem que lleva a otro sitio (`external`): el texto en el acento y ↗ al final, como el «Manage
+ * Apple Account ↗» del menú de cuenta de iCloud. La flecha es `menuItemExternalIconClassName`.
+ */
+export const menuItemExternalClassName = "text-brand-900"
+export const menuItemExternalIconClassName = "ml-auto size-3.5"
 
 /**
  * El texto secundario de un ítem —el atajo de teclado—: `label-secondary`, también resaltado.

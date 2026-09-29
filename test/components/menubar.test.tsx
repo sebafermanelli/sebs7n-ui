@@ -180,13 +180,30 @@ describe("Menubar", () => {
     expect(titulo("Archivo")).toHaveAttribute("data-popup-open")
   })
 
+  it("external pone ↗ al final y el chevron del submenú no toma el acento", async () => {
+    render(
+      <Menubar>
+        <MenubarMenu>
+          <MenubarTrigger>Ayuda</MenubarTrigger>
+          <MenubarContent>
+            <MenubarItem external>Documentación</MenubarItem>
+          </MenubarContent>
+        </MenubarMenu>
+      </Menubar>
+    )
+    await userEvent.click(titulo("Ayuda"))
+    const item = await screen.findByRole("menuitem", { name: "Documentación" })
+    expect(item).toHaveClass("text-brand-900")
+    expect(item.querySelector("svg.lucide-arrow-up-right")).toHaveAttribute("data-slot", "menubar-external-icon")
+  })
+
   it("el destructivo va en rojo, como el «Delete Selected» de iCloud, y se resalta en el mismo gris", async () => {
     render(<Editor />)
     await userEvent.click(titulo("Archivo"))
 
     const descartar = await screen.findByRole("menuitem", { name: "Descartar borrador" })
     expect(descartar).toHaveAttribute("data-variant", "destructive")
-    expect(descartar).toHaveClass("text-red-ink", "[&>svg:first-child]:text-current", "data-highlighted:bg-fill-2")
+    expect(descartar).toHaveClass("text-red-ink", "[&>svg:first-child:not([data-slot])]:text-current", "data-highlighted:bg-fill-2")
     expect(screen.getByRole("menuitem", { name: /Nuevo informe/ }).className).not.toMatch(/red/)
   })
 })

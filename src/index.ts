@@ -69,6 +69,8 @@ export {
   menuInsetClassName,
   menuItemClassName,
   menuItemDestructiveClassName,
+  menuItemExternalClassName,
+  menuItemExternalIconClassName,
   menuItemSecondaryClassName,
   menuLabelClassName,
   menuPopupClassName,

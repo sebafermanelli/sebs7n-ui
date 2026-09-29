@@ -3,7 +3,7 @@
 import type * as React from "react"
 import { Menu as MenuPrimitive } from "@base-ui/react/menu"
 import { Menubar as MenubarPrimitive } from "@base-ui/react/menubar"
-import { ChevronRightIcon } from "lucide-react"
+import { ArrowUpRightIcon, ChevronRightIcon } from "lucide-react"
 
 import { MenuCheck } from "../internal/menu-check.js"
 import { cn, type WithClassName } from "../lib/utils.js"
@@ -13,6 +13,8 @@ import {
   menuInsetClassName,
   menuItemClassName,
   menuItemDestructiveClassName,
+  menuItemExternalClassName,
+  menuItemExternalIconClassName,
   menuItemSecondaryClassName,
   menuLabelClassName,
   menuPopupClassName,
@@ -115,22 +117,33 @@ type MenubarItemProps = WithClassName<MenuPrimitive.Item.Props> &
      * no se puede deshacer la confirma un `AlertDialog`. Sale también como `data-variant`.
      */
     variant?: "default" | "destructive"
+    /**
+     * Lleva a otro sitio: el texto en el acento y ↗ al final, como el «Manage Apple Account ↗» de
+     * iCloud. Es una prop y no se deduce de `target="_blank"`: el `<a>` llega por `render` y el ítem
+     * no lo ve. Si abre otra pestaña, decilo en el texto o en un `aria-label`: la flecha es decorativa.
+     */
+    external?: boolean
   }
 
-function MenubarItem({ className, inset, variant = "default", ...props }: MenubarItemProps) {
+function MenubarItem({ className, inset, variant = "default", external, children, ...props }: MenubarItemProps) {
   return (
     <MenuPrimitive.Item
       data-slot="menubar-item"
       data-inset={inset ? "" : undefined}
       data-variant={variant}
+      data-external={external ? "" : undefined}
       className={cn(
         menuItemClassName,
+        external && menuItemExternalClassName,
         variant === "destructive" && menuItemDestructiveClassName,
         menuInsetClassName,
         className
       )}
       {...props}
-    />
+    >
+      {children}
+      {external && <ArrowUpRightIcon aria-hidden="true" data-slot="menubar-external-icon" className={menuItemExternalIconClassName} />}
+    </MenuPrimitive.Item>
   )
 }
 
@@ -209,7 +222,7 @@ function MenubarSubTrigger({ className, inset, children, ...props }: MenubarSubT
       {...props}
     >
       {children}
-      <ChevronRightIcon className="ml-auto text-label-secondary" />
+      <ChevronRightIcon data-slot="menubar-sub-icon" className="ml-auto text-label-secondary" />
     </MenuPrimitive.SubmenuTrigger>
   )
 }

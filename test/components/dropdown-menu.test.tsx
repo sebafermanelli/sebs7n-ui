@@ -175,7 +175,7 @@ describe("DropdownMenu", () => {
     const eliminar = screen.getByRole("menuitem", { name: "Eliminar" })
     expect(eliminar).toHaveAttribute("data-variant", "destructive")
     // Texto e ícono en la tinta roja (el ícono deja el acento), sobre el mismo gris al resaltarlo.
-    expect(eliminar).toHaveClass("text-red-ink", "[&>svg:first-child]:text-current", "data-highlighted:bg-fill-2")
+    expect(eliminar).toHaveClass("text-red-ink", "[&>svg:first-child:not([data-slot])]:text-current", "data-highlighted:bg-fill-2")
   })
 
   it("Escape cierra y devuelve el foco al disparador", async () => {
@@ -271,8 +271,50 @@ describe("menú de macOS (2.0)", () => {
 
   it("el ítem: 30 de alto, 10 de lado, 14 de texto, íconos de 16 y el primero en el acento", () => {
     const item = menuItemClassName.split(" ")
-    expect(item).toEqual(expect.arrayContaining(["h-7.5", "px-2.5", "gap-2.5", "text-callout", "[&>svg:first-child]:text-brand-900"]))
+    expect(item).toEqual(expect.arrayContaining(["h-7.5", "px-2.5", "gap-2.5", "text-callout", "[&>svg:first-child:not([data-slot])]:text-brand-900"]))
     expect(menuItemClassName).toContain("[&_svg:not([class*='size-'])]:size-4")
+  })
+
+  it("el acento es solo del ícono de la app: el chevron del submenú y la flecha externa llevan data-slot", async () => {
+    render(
+      <DropdownMenu defaultOpen>
+        <DropdownMenuTrigger>Ver</DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>Compartir</DropdownMenuSubTrigger>
+          </DropdownMenuSub>
+          <DropdownMenuItem external>Centro de ayuda</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    )
+    // Un ítem de solo texto tiene la flecha o el chevron como primer hijo: sin el data-slot, el
+    // selector del ícono de la app los pintaba en el acento.
+    const sub = await screen.findByRole("menuitem", { name: "Compartir" })
+    expect(sub.querySelector("svg")).toHaveAttribute("data-slot", "dropdown-menu-sub-icon")
+    expect(screen.getByRole("menuitem", { name: "Centro de ayuda" }).querySelector("svg")).toHaveAttribute("data-slot", "dropdown-menu-external-icon")
+  })
+
+  it("external: el texto en el acento y ↗ al final, como «Manage Apple Account ↗»", async () => {
+    render(
+      <DropdownMenu defaultOpen>
+        <DropdownMenuTrigger>Ayuda</DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem external render={<a href="https://example.com" rel="noopener" target="_blank" />}>
+            Centro de ayuda
+          </DropdownMenuItem>
+          <DropdownMenuItem>Atajos</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    )
+    const ayuda = await screen.findByRole("menuitem", { name: "Centro de ayuda" })
+    expect(ayuda.tagName).toBe("A")
+    expect(ayuda).toHaveAttribute("data-external")
+    expect(ayuda).toHaveClass("text-brand-900")
+    const flecha = ayuda.querySelector("svg.lucide-arrow-up-right")!
+    expect(flecha).toHaveAttribute("aria-hidden", "true")
+    expect(flecha).toHaveClass("ml-auto")
+    expect(ayuda.lastElementChild).toBe(flecha)
+    expect(screen.getByRole("menuitem", { name: "Atajos" })).not.toHaveAttribute("data-external")
   })
 
   it("el atajo va a la derecha, gris y en el tamaño del ítem", async () => {

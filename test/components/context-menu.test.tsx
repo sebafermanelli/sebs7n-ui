@@ -162,7 +162,23 @@ describe("ContextMenu", () => {
   })
 })
 
-describe("menú de macOS (2.0)", () => {
+describe("menú de iCloud (R3)", () => {
+  it("external pone ↗ al final y el texto en el acento", async () => {
+    render(
+      <ContextMenu>
+        <ContextMenuTrigger>Archivo</ContextMenuTrigger>
+        <ContextMenuContent>
+          <ContextMenuItem external>Abrir en el sitio</ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenu>
+    )
+    fireEvent.contextMenu(screen.getByText("Archivo"))
+    const item = await screen.findByRole("menuitem", { name: "Abrir en el sitio" })
+    expect(item).toHaveClass("text-brand-900")
+    expect(item.querySelector("svg.lucide-arrow-up-right")).toHaveAttribute("data-slot", "context-menu-external-icon")
+    expect(item.querySelector("svg.lucide-arrow-up-right")).toHaveAttribute("aria-hidden", "true")
+  })
+
   it("el tilde va a la derecha, en el círculo de acento", async () => {
     render(<Archivo />)
     abrirConClickDerecho()
