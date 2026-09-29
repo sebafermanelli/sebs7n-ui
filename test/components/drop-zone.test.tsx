@@ -342,6 +342,28 @@ describe("DropZone", () => {
     expect(click).toHaveBeenCalledTimes(1)
   })
 
+  it("compact: con archivos, el recuadro pasa a una fila chica «Elegir otro», el mismo botón y con su nombre", async () => {
+    const user = userEvent.setup()
+    render(<DropZone aria-label="Factura" compact />)
+    const button = area()
+    expect(button).toHaveClass("min-h-32")
+    expect(button).not.toHaveAttribute("data-compact")
+    await user.upload(input(), pdf())
+    expect(area()).toBe(button)
+    expect(button).toHaveAttribute("data-compact", "")
+    expect(button).toHaveTextContent("Elegir otro")
+    expect(button).not.toHaveClass("min-h-32")
+    expect(button).toHaveClass("min-h-9", "rounded-field")
+    expect(button).toHaveAccessibleName("Factura")
+  })
+
+  it("compact con multiple dice «Agregar más», y el texto sale de labels", async () => {
+    const user = userEvent.setup()
+    render(<DropZone aria-label="Facturas" compact labels={{ addMore: "Sumar facturas" }} multiple />)
+    await user.upload(input(), pdf())
+    expect(area()).toHaveTextContent("Sumar facturas")
+  })
+
   it("el reset del form vacía la lista", async () => {
     const user = userEvent.setup()
     render(

@@ -12,7 +12,7 @@ import { Button } from "./button.js"
 import { List, ListRow } from "./list-row.js"
 import { Progress } from "./progress.js"
 
-type DropZoneLabels = NonNullable<Labels["dropZone"]>
+type DropZoneLabels = Required<NonNullable<Labels["dropZone"]>>
 
 /**
  * Los textos por defecto. No están en `defaultLabels` porque el barrel no tenía lugar (ver el tipo
@@ -28,6 +28,8 @@ const dropZoneLabels: DropZoneLabels = {
   tooLarge: "pesa más de",
   tooMany: "no entra: el máximo es",
   locale: "es-AR",
+  replace: "Elegir otro",
+  addMore: "Agregar más",
 }
 
 /**
@@ -85,6 +87,11 @@ type DropZoneProps = Omit<React.ComponentProps<"div">, "children" | "onChange" |
   validate?: (file: File) => string | undefined | Promise<string | undefined>
   /** Un error de la app para un archivo («No se pudo subir»), en rojo en su fila. */
   fileError?: (file: File) => React.ReactNode
+  /**
+   * Con archivos, el recuadro grande pasa a una fila chica: «Elegir otro» (o «Agregar más» con
+   * `multiple`). Para una pantalla donde el archivo es el protagonista y el recuadro ya cumplió.
+   */
+  compact?: boolean
   /** `"window"`: mientras se arrastra un archivo, toda la ventana es la zona. */
   scope?: "area" | "window"
   disabled?: boolean
@@ -155,6 +162,7 @@ function DropZone({
   fileError,
   formatSize,
   validate,
+  compact = false,
   scope = "area",
   disabled = false,
   children,
@@ -383,6 +391,9 @@ function DropZone({
       : {}
 
   const dragging = over || windowDrag
+  // Con archivos, el recuadro grande ya cumplió: queda una fila para cambiar o sumar. Es el mismo botón
+  // (el foco no se pierde); sus `children` son para el recuadro grande.
+  const small = compact && files.length > 0
   const describedBy = cn(ariaDescribedby, errors.length > 0 && errorsId) || undefined
 
   return (
@@ -415,24 +426,33 @@ function DropZone({
         aria-invalid={errors.length > 0 || undefined}
         aria-label={ariaLabel}
         aria-labelledby={ariaLabelledby}
+        data-compact={small ? "" : undefined}
         data-dragging={dragging ? "" : undefined}
         data-slot="drop-zone-area"
         disabled={disabled}
         onClick={() => input.current?.click()}
         {...areaHandlers}
         className={cn(
-          "flex min-h-32 w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-surface border border-separator-strong bg-fill-1 px-6 py-8 text-center outline-none transition-control",
+          "flex w-full cursor-pointer items-center justify-center border border-separator-strong bg-fill-1 text-center outline-none transition-control",
+          small ? "min-h-9 gap-1.5 rounded-field px-3 py-1.5" : "min-h-32 flex-col gap-2 rounded-surface px-6 py-8",
           "hover:bg-fill-2 focus-visible:focus-ring disabled:cursor-not-allowed disabled:opacity-40",
           // Arrastrando: el anillo y el tinte del acento, como la selección de iCloud Drive.
           "data-dragging:border-brand-700 data-dragging:bg-highlight data-dragging:ring-1 data-dragging:ring-brand-700",
           "aria-invalid:border-red-800"
         )}
       >
-        {children ?? (
+        {small ? (
           <>
-            <UploadIcon aria-hidden="true" className="size-6 text-label-secondary in-data-dragging:text-brand-900" />
-            <span className="text-callout text-label">{dragging ? labels.drop : labels.prompt}</span>
+            <UploadIcon aria-hidden="true" className="size-4 text-label-secondary in-data-dragging:text-brand-900" />
+            <span className="text-callout text-label">{dragging ? labels.drop : multiple ? labels.addMore : labels.replace}</span>
           </>
+        ) : (
+          (children ?? (
+            <>
+              <UploadIcon aria-hidden="true" className="size-6 text-label-secondary in-data-dragging:text-brand-900" />
+              <span className="text-callout text-label">{dragging ? labels.drop : labels.prompt}</span>
+            </>
+          ))
         )}
       </button>
       {errors.length > 0 && (

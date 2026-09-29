@@ -278,6 +278,10 @@ export type Labels = {
     tooMany: string
     /** El idioma de los tamaños: «1,3 MB». */
     locale: string
+    /** La fila de `compact` con un archivo: «Elegir otro». Opcional (2.1): el default está en `dropZoneLabels`. */
+    replace?: string
+    /** La fila de `compact` con `multiple`: «Agregar más». */
+    addMore?: string
   }
   /** Opcional: `ListIndex`; el texto por defecto es `listIndexLabels` de `sebs7n-ui/list-index` (ver `carousel`). */
   listIndex?: {

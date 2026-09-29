@@ -1057,7 +1057,7 @@ export const COMPONENTS = {
         "aria-label": PROP_DESCRIPTIONS["aria-label"],
         "aria-labelledby": "El `id` del elemento que nombra el recuadro, si no es un `<label>`.",
         "aria-describedby": "El `id` de una ayuda («PDF o imagen, hasta 5 MB»). Los errores se suman solos.",
-        labels: "Textos: `prompt`, `drop`, `remove`, `added`, `removed`, `invalidType`, `tooLarge`, `tooMany` y `locale` (el de los tamaños). Los que vienen por defecto son `dropZoneLabels`.",
+        labels: "Textos: `prompt`, `drop`, `remove`, `added`, `removed`, `invalidType`, `tooLarge`, `tooMany`, `locale` (el de los tamaños), `replace` y `addMore` (la fila de `compact`). Los que vienen por defecto son `dropZoneLabels`.",
       },
     },
     related: ["progress", "list-row", "field"],

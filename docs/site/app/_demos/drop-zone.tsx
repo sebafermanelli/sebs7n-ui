@@ -80,3 +80,11 @@ async function isPdf(file: File) {
 export function Validate() {
   return <DropZone accept=".pdf" aria-label="Facturas en PDF" className="w-full max-w-md" multiple validate={isPdf} />
 }
+
+/**
+ * Compacta
+ * `compact`: con un archivo elegido, el recuadro grande pasa a una fila «Elegir otro» y el protagonista es el archivo.
+ */
+export function Compact() {
+  return <DropZone accept=".pdf" aria-label="Factura para convertir" className="w-full max-w-md" compact />
+}
