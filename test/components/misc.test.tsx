@@ -10,15 +10,30 @@ import { Skeleton } from "../../src/components/skeleton"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../src/components/tabs"
 
 describe("Avatar", () => {
-  it("fallback gris con iniciales, sin color por persona", () => {
+  it("el monograma de iCloud: iniciales blancas sobre un gradiente gris, sin color por persona", () => {
     render(
       <Avatar size="lg">
         <AvatarFallback>sf</AvatarFallback>
       </Avatar>
     )
     const fallback = screen.getByText("sf")
-    expect(fallback).toHaveClass("bg-fill-2", "text-label-secondary", "text-callout", "uppercase")
+    // #6e6e73 → #48484a: el blanco llega a 5,07:1 en el tono más claro del gradiente.
+    expect(fallback).toHaveClass("bg-linear-to-b", "from-[#6e6e73]", "to-[#48484a]", "text-white", "font-semibold", "uppercase")
     expect(fallback.closest("[data-slot=avatar]")).toHaveAttribute("data-size", "lg")
+  })
+
+  it("tamaños de iCloud: 28 (barra), 32 (lista), 40 y 80 (ficha)", () => {
+    render(
+      <>
+        <Avatar size="sm" data-testid="sm" />
+        <Avatar data-testid="md" />
+        <Avatar size="lg" data-testid="lg" />
+        <Avatar size="xl" data-testid="xl" />
+      </>
+    )
+    const clases = screen.getByTestId("md").className
+    for (const c of ["data-[size=sm]:size-7", "data-[size=md]:size-8", "data-[size=lg]:size-10", "data-[size=xl]:size-20"]) expect(clases).toContain(c)
+    expect(screen.getByTestId("xl")).toHaveAttribute("data-size", "xl")
   })
 })
 
