@@ -1,6 +1,7 @@
-// El disparador de `Collapsible` con `chevron` (el estilo del paquete) trae, desde 2.1, el texto de 14,
-// un alto mínimo de 24 (WCAG 2.5.8) y 44 con el dedo. Es CSS en `theme.css` (`@layer base`, así una
-// clase de la app le gana) y no JS: el barrel está en su tope. Sin `chevron`, el trigger sigue sin estilo.
+// El disparador de `Collapsible` con `chevron` (el estilo del paquete) trae, desde 2.1, un alto mínimo
+// de 24 (WCAG 2.5.8) y 44 con el dedo. Es CSS en `theme.css` (`:where()`, así una clase de la app le
+// gana) y no JS: el barrel está en su tope. El tamaño de letra se hereda, como en 2.0. La cascada con el
+// CSS compilado está en `docs/site/test/theme-cascade.test.ts`.
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
 
@@ -12,12 +13,11 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../../src/c
 const theme = readFileSync(join(import.meta.dirname, "../../src/styles/theme.css"), "utf8")
 
 describe("CollapsibleTrigger chevron", () => {
-  it("theme.css: 14/18, 24 de alto mínimo y el área de 44 con el dedo, en @layer base", () => {
-    const block = theme.slice(theme.indexOf("/* CollapsibleTrigger */"))
-    expect(block).toMatch(/@layer base \{\s*\[data-slot="collapsible-trigger"\]\.group\\\/collapsible-trigger \{/)
+  it("theme.css: 24 de alto mínimo y el área de 44 con el dedo, en :where(), sin tocar la letra", () => {
+    const block = theme.slice(theme.indexOf("/* CollapsibleTrigger */"), theme.indexOf("/* Textarea rows */"))
+    expect(block).toMatch(/@layer base \{\s*:where\(\[data-slot="collapsible-trigger"\]\.group\\\/collapsible-trigger\) \{/)
     expect(block).toContain("min-height: 24px;")
-    expect(block).toContain("font-size: 14px;")
-    expect(block).toContain("line-height: 18px;")
+    expect(block).not.toMatch(/font-size|line-height/)
     expect(block).toMatch(/@media \(pointer: coarse\)[\s\S]*::after[\s\S]*height: max\(100%, 44px\)/)
   })
 

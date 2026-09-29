@@ -578,7 +578,7 @@ export const COMPONENTS = {
       "Renderiza a través de `Field.Control`, no un `<textarea>` suelto: es lo que hace que reciba el `name` del campo y quede nombrada por su etiqueta.",
     ],
     usage: [
-      "`rows` es el alto mínimo (de 1 a 12 filas) y el campo sigue creciendo con el texto. Sin `rows`, arranca en 80. Lo resuelve `theme.css` y manda sobre un `min-h-*` propio.",
+      "`rows` es el alto mínimo (de 1 a 12 filas) y el campo sigue creciendo con el texto. Sin `rows`, arranca en 80. Lo resuelve `theme.css` con `--sf-textarea-min`; un `min-h-*` de la app le gana a `rows`.",
       "`rows` define el alto inicial. Para que crezca solo hace falta JS de la app: el paquete no lo trae.",
       "Si el texto tiene formato (markdown, código), decilo en la ayuda debajo del campo.",
     ],
@@ -3133,7 +3133,7 @@ export const COMPONENTS = {
       "El alto pasa por `motion-reduce`, además del reset global del paquete.",
     ],
     usage: [
-      "Con `chevron`, el disparador trae el estilo del paquete: texto de 14, 24 de alto mínimo (44 de área con el dedo), foco y el chevron que gira como en `Accordion`. Una clase propia (`text-body`, `min-h-*`) le gana. Sin `chevron` no trae estilo: lo pone el `render`.",
+      "Con `chevron`, el disparador trae el estilo del paquete: 24 de alto mínimo (44 de área con el dedo), foco y el chevron que gira como en `Accordion`. El tamaño de letra lo hereda del contenedor, como en 2.0 (para el del cromo, `text-callout`). Una clase propia (`min-h-*`) le gana: la regla va en `:where()`. Sin `chevron` no trae estilo: lo pone el `render`.",
       "**Si hay varias secciones que son un grupo, es un `Accordion`**: trae el `<h3>` por sección.",
       "El trigger no trae estilo a propósito: va `render={<Button variant=\"ghost\" />}`. Con `chevron` suma el disclosure de iCloud (› que gira a ⌄) y el foco interior.",
       "`className` cae en el contenido, no en el elemento que anima el alto: ahí va el padding.",

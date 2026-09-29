@@ -13,10 +13,13 @@ import { Navbar, NavbarContent } from "../src/components/navbar"
 const theme = readFileSync(join(import.meta.dirname, "../src/styles/theme.css"), "utf8")
 
 describe("bar-end", () => {
-  it("theme.css: 16 por defecto y 10 con un botón de ícono al final, directo o último de lo último", () => {
+  it("theme.css: 16 por defecto y 10 con un botón de ícono al final (lo último visible), hasta tres niveles", () => {
     const utility = theme.slice(theme.indexOf("@utility bar-end"), theme.indexOf("}\n}", theme.indexOf("@utility bar-end")) + 3)
+    const visible = ":nth-last-child(1 of :not(.sr-only, [hidden], .hidden))"
     expect(utility).toContain("--sf-bar-end: 16px;")
-    expect(utility).toContain('&:has(> [data-size^="icon"]:last-child, > :last-child > [data-size^="icon"]:last-child)')
+    expect(utility).toContain(`> [data-size^="icon"]${visible},`)
+    expect(utility).toContain(`> ${visible} > [data-size^="icon"]${visible},`)
+    expect(utility).toContain(`> ${visible} > ${visible} > [data-size^="icon"]${visible}`)
     expect(utility).toContain("--sf-bar-end: 10px;")
   })
 
