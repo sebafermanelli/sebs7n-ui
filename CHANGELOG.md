@@ -320,20 +320,25 @@ para no pasar el tope de 55 kB gzip del barrel (sus textos de `labels` sí entra
     de WAI-ARIA con teclado y puntero, `onLayout`/`defaultLayout`. El HTML del servidor ya sale
     repartido (con los paneles como hijos directos del grupo).
   - **`CopyButton`** (subpath): copia al portapapeles. Botón de ícono `plain` de 28 o texto + ícono;
-    ✓ durante 1,5 s, tooltip «Copiado» y anuncio por región viva. `onCopy`.
+    ✓ durante 1,5 s, tooltip «Copiado» y anuncio por región viva (o «No se pudo copiar» si el
+    portapapeles no deja). `onCopy`.
   - **`PasswordInput`** (subpath): el ojo adentro del campo (botón de alternar con `aria-pressed`) y
     `strength`, una barra de 4 niveles por reglas sin librería con el nivel en texto; `passwordStrength`.
   - **`TimePicker`** (subpath): hora de 24 h que se tipea («930») o se elige de una lista cada `step` (15),
-    con `min`/`max` y `name` por un hidden.
+    con `min`/`max` y `name` por un hidden. Mide lo que la hora (`w-fit`, como `NumberField`).
   - **`DateTimePicker`** (subpath): `DatePicker` + `TimePicker` en un solo campo; `Date | null`, `name`
-    como `datetime-local`, `clearable`.
+    como `datetime-local` (hora local sin zona horaria), `clearable`.
   - **`CountryPicker`** (subpath): `Combobox` de los 249 países ISO con la bandera emoji y los nombres de
-    `Intl.DisplayNames`, filtro sin tildes; el valor es el código.
+    `Intl.DisplayNames`, filtro sin tildes y por código («US»); el valor es el código.
   - **`PhoneInput`** (subpath): selector de país compacto (bandera + código) y el número en dígitos; valor
-    E.164, `defaultCountry` («AR»).
+    E.164, `defaultCountry` («AR»). Saca el prefijo nacional («011…» → +54 11…) y pasa el 15 del
+    celular argentino a 9; pegar con «+» o «00» cambia el país.
+  - Los campos con estado propio (`TimePicker`, `DateTimePicker`, `PhoneInput`, `PasswordInput`)
+    vuelven a su `defaultValue` con el reset del formulario.
 - **`lib/countries`** y **`lib/phone`** (solo por subpath, sin `"use client"`): `COUNTRY_CODES`,
   `isCountryCode`, `countryFlag`, `countryName`; `PHONE_COUNTRIES`, `phoneCountry`, `parsePhone`, `toE164`,
-  `onlyDigits` e `isValidPhone`, que valida el largo por país en el servidor. Sin libphonenumber.
+  `onlyDigits`, `nationalNumber` e `isValidPhone`, que valida el largo por país (y rechaza el prefijo
+  nacional) en el servidor. Sin libphonenumber.
 - **Props nuevas:** `AlertDialogIcon` y `AlertDialogDescription align`; `PopoverContent
   translucent`; `external` en los ítems de DropdownMenu, ContextMenu y Menubar;
   `Button variant="plain" | "destructive-plain"`; `Badge variant="count"`; `Checkbox shape="circle"`;
