@@ -19,6 +19,7 @@ function Card({ className, variant, size = "md", interactive, selected, ...props
   return (
     <div
       data-slot="card"
+      data-variant={variant ?? "default"}
       data-size={size}
       data-selected={selected ? "" : undefined}
       className={cn(cardVariants({ variant, size, interactive, selected }), className)}
@@ -45,6 +46,8 @@ function CardHeader({ className, icon, children, ...props }: CardHeaderProps) {
       data-icon={icon != null ? "" : undefined}
       className={cn(
         "group/card-header grid min-h-20 auto-rows-min content-center items-center gap-x-4 gap-y-0.5 bg-surface-bar px-(--card-spacing) py-3.5 group-data-[size=sm]/card:min-h-0 group-data-[size=sm]/card:py-3",
+        // La franja es del widget: adentro de una card hundida (`subtle`) la cabecera va sin fondo.
+        "group-data-[variant=subtle]/card:bg-transparent",
         "has-data-[slot=card-action]:grid-cols-[1fr_auto] data-icon:grid-cols-[auto_1fr] data-icon:has-data-[slot=card-action]:grid-cols-[auto_1fr_auto]",
         className
       )}

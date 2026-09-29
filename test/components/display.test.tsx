@@ -215,6 +215,21 @@ describe("Card", () => {
     expect(out).not.toMatch(/(^|\s)shadow-widget(\s|$)/)
   })
 
+  // Revisión de R5a: la franja de otro tono es del widget. Adentro de una card hundida (`fill-1`)
+  // una banda más clara parecía un segundo control; la cabecera va sin fondo.
+  it("subtle: la cabecera no lleva franja", () => {
+    render(
+      <Card variant="subtle">
+        <CardHeader>
+          <CardTitle>Consejo</CardTitle>
+        </CardHeader>
+      </Card>
+    )
+    const card = screen.getByText("Consejo").closest("[data-slot=card]")!
+    expect(card).toHaveAttribute("data-variant", "subtle")
+    expect(card.querySelector("[data-slot=card-header]")!.className).toContain("group-data-[variant=subtle]/card:bg-transparent")
+  })
+
   it("CardHeader con ícono de app: caja de 40 a la izquierda, título y subtítulo en la segunda columna", () => {
     render(
       <Card>

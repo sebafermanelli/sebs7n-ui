@@ -327,6 +327,8 @@ R5 (Tree, ListRow, SplitView, WidgetCard, CalendarView, FileGrid, el Meter apila
     interior, y **`CardContent columns={2}`** con regla vertical.
   - **`CardFooter` sin línea ni franja**: la fila del «…». Antes `border-t` con el padding de la card.
   - `selected` pasa a un anillo de 2 por fuera; la interactiva ya no cambia de sombra al pasar.
+  - En `variant="subtle"` la cabecera va sin franja (la banda de otro tono es del widget). La
+    Card lleva `data-variant`.
   - **Migración:** el uso simple sigue andando y se ve como widget. Si querías el grupo plano, usá
     `variant="subtle"` o `className="bg-grouped shadow-none"`. Un pie con botones con borde pasa a
     un botón de ícono (`Button plain size="icon-sm"`).
