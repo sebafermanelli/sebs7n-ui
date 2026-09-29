@@ -372,3 +372,24 @@ describe("foco inicial y botón por defecto: los casos raros", () => {
     await waitFor(() => expect(screen.getByRole("button", { name: "Emitir" })).toHaveFocus())
   })
 })
+
+describe("textos largos en la alerta", () => {
+  it('AlertDialogDescription align="start" alinea un texto largo a la izquierda', async () => {
+    render(
+      <AlertDialog defaultOpen>
+        <AlertDialogContent>
+          <AlertDialogTitle>¿Emitir?</AlertDialogTitle>
+          <AlertDialogDescription align="start">Un texto de varios renglones.</AlertDialogDescription>
+          <AlertDialogDescription>Corto.</AlertDialogDescription>
+        </AlertDialogContent>
+      </AlertDialog>
+    )
+    expect(await screen.findByText("Un texto de varios renglones.")).toHaveClass("w-full", "text-left")
+    expect(screen.getByText("Corto.").className).not.toMatch(/text-left/)
+  })
+
+  it("un botón con una palabra larga no desborda la columna del pie", async () => {
+    const { alertFooterClassName } = await import("../../src/variants/overlay")
+    expect(alertFooterClassName.split(" ")).toEqual(expect.arrayContaining(["[&>*]:min-w-0", "[&>*]:break-words"]))
+  })
+})

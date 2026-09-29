@@ -157,13 +157,21 @@ function AlertDialogTitle({ className, ...props }: AlertDialogTitleProps) {
   return <AlertDialogPrimitive.Title data-slot="alert-dialog-title" className={cn("text-headline text-label", className)} {...props} />
 }
 
-type AlertDialogDescriptionProps = WithClassName<AlertDialogPrimitive.Description.Props>
+type AlertDialogDescriptionProps = WithClassName<AlertDialogPrimitive.Description.Props> & {
+  /**
+   * `center` (el default) es la alerta de iCloud, de una o dos líneas. Un texto largo centrado se
+   * lee mal —cada renglón arranca en otro lugar—: con más de dos o tres renglones, `start`. Es una
+   * prop y no automático porque CSS no sabe cuántos renglones ocupa un texto.
+   */
+  align?: "center" | "start"
+}
 
-function AlertDialogDescription({ className, ...props }: AlertDialogDescriptionProps) {
+function AlertDialogDescription({ className, align = "center", ...props }: AlertDialogDescriptionProps) {
   return (
     <AlertDialogPrimitive.Description
       data-slot="alert-dialog-description"
-      className={cn("text-callout leading-5 text-pretty text-label-secondary", className)}
+      data-align={align}
+      className={cn("text-callout leading-5 text-pretty text-label-secondary", align === "start" && "w-full text-left", className)}
       {...props}
     />
   )
@@ -179,7 +187,11 @@ type AlertDialogActionProps = Omit<ButtonBaseProps, "variant"> & {
    * **Cambió en 2.0**: hasta 1.x `default` era el negro y `destructive` el rojo sólido.
    */
   variant?: "default" | "destructive"
-  /** Los botones de un AlertDialog siempre llevan texto: los tamaños de ícono no aplican acá. */
+  /**
+   * Los botones de un AlertDialog siempre llevan texto: los tamaños de ícono no aplican acá. Adentro
+   * de `AlertDialogFooter` el alto no cambia: todos miden 36 como mínimo y crecen si el texto baja
+   * de renglón. Solo cuenta fuera del pie.
+   */
   size?: ButtonTextSize
 }
 
@@ -203,7 +215,7 @@ function AlertDialogAction({ variant = "default", className, ...props }: AlertDi
 }
 
 type AlertDialogCancelProps = WithClassName<AlertDialogPrimitive.Close.Props> & {
-  /** Mismo motivo que en `AlertDialogAction`: acá siempre hay texto. */
+  /** Mismo motivo que en `AlertDialogAction`: acá siempre hay texto, y en el pie no cambia el alto. */
   size?: ButtonTextSize
 }
 

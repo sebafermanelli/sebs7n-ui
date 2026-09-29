@@ -41,12 +41,13 @@ export const alertWidthClassName = "max-w-[min(450px,calc(100%-2rem))]"
  * 2.4.3)—, a todo el ancho y con los mismos estilos.
  *
  * La última línea es una red de seguridad: un Button es `whitespace-nowrap`, y una etiqueta larga
- * en media alerta se salía del botón. Acá el texto baja de renglón (centrado) y el botón crece en
- * alto desde sus 36.
+ * en media alerta se salía del botón. Acá el texto baja de renglón (centrado), una palabra sola más
+ * larga que la columna se corta (`min-w-0` + `break-words`) y el botón crece en alto desde sus 36.
+ * Por eso el `size` de los botones no cambia nada adentro del pie.
  */
 export const alertFooterClassName =
   "grid w-full auto-cols-fr grid-flow-col gap-2.5 pt-2 has-[>:nth-child(3)]:grid-flow-row max-[360px]:grid-flow-row [&>*]:w-full " +
-  "[&>*]:h-auto [&>*]:min-h-9 [&>*]:py-1.5 [&>*]:text-center [&>*]:whitespace-normal"
+  "[&>*]:h-auto [&>*]:min-h-9 [&>*]:min-w-0 [&>*]:py-1.5 [&>*]:text-center [&>*]:whitespace-normal [&>*]:break-words"
 
 /**
  * El pie de Dialog: los botones abajo a la derecha, sin línea arriba y
