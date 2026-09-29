@@ -105,7 +105,7 @@ export const COMPONENTS = {
     title: "Button",
     group: "fundamentos",
     detallado: true,
-    description: "La acción. Siete variantes, seis tamaños, estado de carga y forma de píldora para marketing.",
+    description: "La acción, con las variantes de iCloud: acento sólido, gris, texto de acento y rojo. Seis tamaños —con los botones de ícono de la toolbar— y estado de carga.",
     keyboard: [
       ["Enter", "Activa el botón."],
       ["Espacio", "Activa el botón."],
@@ -115,13 +115,16 @@ export const COMPONENTS = {
       "`loading` pone `aria-busy` y `aria-disabled`, y cancela el `onClick`: el botón se lee como ocupado en vez de desaparecer del foco.",
       "El anillo de foco (`focus-visible:focus-ring`) usa `brand-700` y no se saca nunca.",
       "En `size=\"icon-*\"` **el tipo exige** `aria-label` o `aria-labelledby`: no hay texto que leer, y un botón de ícono sin nombre se anuncia «botón» a secas. Si el nombre ya está en los hijos (un `sr-only`, el número de un día) o lo pone un envoltorio (`<DropdownMenuTrigger aria-label=\"Menú\" render={<Button size=\"icon-sm\" />} />`), escribilo igual en el `aria-label` del `Button`: es el que termina en el DOM.",
-      "El texto sobre `variant=\"accent\"` llega a 4,5:1 en claro y en oscuro; hay un test que lo recalcula desde OKLCH.",
+      "El texto sobre el acento sólido (`default`) llega a 4,5:1 en claro y en oscuro; hay un test que lo recalcula desde OKLCH.",
+      "`plain` escribe en `brand-ink` y no en `brand-900`: su hover es un relleno (`fill-2`), y sobre un relleno `brand-900` no llega a 4,5:1 con todas las marcas en claro. El glifo sí va en `brand-900` (a un ícono le alcanza 3:1). Lo mide un test con las cinco marcas.",
+      "Deshabilitado es opacidad .4, como en iCloud: los controles inactivos quedan fuera de WCAG 1.4.3, y el botón apagado sigue siendo reconocible.",
     ],
     usage: [
-      "**Un solo acento por pantalla.** `variant=\"accent\"` para la acción principal; el CTA por defecto es el negro (`variant=\"default\"`).",
+      "**Un solo acento sólido por pantalla.** `default` es el primario de iCloud (el acento sólido) y va en la acción principal; las demás son `secondary` (gris) o `plain` (texto de acento). iCloud no tiene botón con borde: la jerarquía es acento sólido → gris → texto de acento → ícono.",
+      "**Botón de ícono de una toolbar:** `size=\"icon-sm\" variant=\"plain\"` (28 × 28, glifo en el acento, gris claro con el puntero), como los de Drive. `variant=\"ghost\"` para el glifo neutro: la X de un diálogo, la barra global (`icon-md`, 36).",
       "**`shape=\"pill\"` solo en los CTA de un hero o de una sección de marketing.** Nunca en el chrome de una app —nav, tablas, formularios, diálogos—: dos formas de botón en la misma pantalla se leen como un descuido.",
       "**Un link con forma de botón es un `<a>`**: `className={buttonVariants({ variant })}` sobre `<Link>`. No uses `render` para links: con el `nativeButton` que trae el `Button` por defecto, Base UI le pone `type=\"button\"` al `<a>` y avisa por consola en desarrollo.",
-      "`variant=\"destructive\"` solo cuando la acción borra algo, y siempre detrás de un `AlertDialog`; adentro de la alerta es la acción (`AlertDialogAction variant=\"destructive\"`).",
+      "`variant=\"destructive\"` (gris con el texto rojo) solo cuando la acción borra algo, y siempre detrás de un `AlertDialog`; adentro de la alerta es la acción (`AlertDialogAction variant=\"destructive\"`). `destructive-plain` es el texto rojo sin fondo, al final de una lista o de un panel.",
       "`loading` no reemplaza al `disabled` del formulario: deshabilitá también el submit si no querés dobles envíos.",
       "**Con el dedo el área es de 44 × 44** (`touch-target`), aunque el botón mida 24 o 32. Dos botones de ícono en fila necesitan `pointer-coarse:gap-5` (los de 24) o `pointer-coarse:gap-3` (los de 32) para que las áreas no se pisen; si no hay lugar para separarlos —un botón de ícono pegado a un `Input`, una fila de números—, `className=\"touch-target-y\"` crece solo en alto. `variant=\"link\"` no lleva área: es texto adentro de un párrafo.",
     ],
@@ -129,8 +132,8 @@ export const COMPONENTS = {
       Button: {
         loading: "Muestra el spinner encima del contenido y cancela el `onClick`. El ancho no cambia.",
         onClick: "Se ignora mientras `loading` está activo.",
-        variant: "`default` (negro) · `accent` (marca) · `outline` · `secondary` · `ghost` · `destructive` · `link`.",
-        size: "`sm` 28 px · `md` 36 px · `lg` 40 px, los mismos altos que los campos (un botón al lado de un campo del mismo `size` mide lo mismo), texto 14 e íconos 16. Los `icon-*` son cuadrados: 28 (barra de herramientas, cerrar un diálogo), 36 y 40. Con el dedo el área crece a 44 sin cambiar lo que se ve.",
+        variant: "`default` (acento sólido) · `secondary` (gris) · `plain` (texto de acento) · `ghost` (texto neutro) · `destructive` (gris con texto rojo) · `destructive-plain` (texto rojo) · `link`. `accent` es un alias **obsoleto** de `default`; `outline` **se fue** en 2.0 (reemplazo: `secondary`).",
+        size: "`sm` 28 px · `md` 36 px · `lg` 40 px, los mismos altos que los campos (un botón al lado de un campo del mismo `size` mide lo mismo), texto 14 e íconos 16. Los `icon-*` son cuadrados: 28 (barra de herramientas, cerrar un diálogo; glifo 16), 36 (barra global; glifo 18) y 40 (glifo 20). Con el dedo el área crece a 44 sin cambiar lo que se ve.",
       },
     },
     related: ["badge", "dropdown-menu", "alert-dialog"],
@@ -169,7 +172,7 @@ export const COMPONENTS = {
     title: "Badge",
     group: "fundamentos",
     detallado: true,
-    description: "Etiqueta de estado: nueve colores sólidos y sin borde, como las etiquetas del Finder, con punto opcional.",
+    description: "Etiqueta de estado: nueve colores sólidos y sin borde, con punto opcional, y el contador redondo de iCloud (`variant=\"count\"`).",
     keyboard: [["—", "No es interactivo. Si tiene que serlo, `render={<button />}` y pasa a comportarse como un botón."]],
     a11y: [
       "Es un `<span>`: no anuncia nada por sí solo. El color no puede ser la única señal — el texto tiene que decir el estado.",
@@ -179,15 +182,16 @@ export const COMPONENTS = {
     ],
     usage: [
       "**Estado, no acción.** Si se puede hacer click, es un `Button` o un `Toggle`.",
-      "Un solo aspecto desde 2.0: sólido. `variant=\"subtle\"` se acepta por compatibilidad y se ve igual.",
+      "Sólido desde 2.0. `variant=\"subtle\"` se acepta por compatibilidad y se ve igual.",
+      "**`variant=\"count\"` es para un número**, el badge de app de iCloud: no leídos, pendientes. Un círculo de 20 con 11 px y sombra; el estado («Pagada») va en el badge rectangular.",
       "El color tiene que significar algo consistente en toda la app: `green` pagado, `amber` pendiente, `red` vencido. No lo elijas por estética.",
-      "`size=\"sm\"` dentro de una fila de tabla y **siempre dentro de un ítem de menú**: el `md` mide 24, lo mismo que el ítem, y lo llena de borde a borde. `md` suelto.",
+      "`size=\"sm\"` (16) dentro de una fila de tabla o de un ítem de menú; `md` (20) suelto. Un badge nunca mide más que un botón `sm` (28).",
       "Adentro de un ítem seleccionado (fila de tabla, ítem de menú o del Sidebar) el badge conserva su relleno y su tinta, como las etiquetas del Finder; solo el `brand`, que es el color de la selección, se invierte.",
     ],
     props: {
       Badge: {
-        variant: "`solid` (el default y el único aspecto desde 2.0). `subtle` está **obsoleto**: se acepta y se ve igual que `solid`.",
-        size: "`sm` 20px · `md` 24px de alto. El texto es `label-12` en los dos.",
+        variant: "`solid` (el default) · `count` (círculo con un número, el badge de app de iCloud). `subtle` está **obsoleto**: se acepta y se ve igual que `solid`.",
+        size: "`sm` 16px · `md` 20px de alto. El texto es 12 (`text-footnote`) en los dos; en `count`, 11.",
         color: "Nueve tonos, todos sólidos.",
         dot: "Agrega un punto a la izquierda del texto, en el color de la tinta.",
       },
@@ -218,7 +222,7 @@ export const COMPONENTS = {
     ],
     props: {
       Tag: {
-        size: "Las dos alturas del `Badge`: `sm` 20px · `md` 24px.",
+        size: "Las dos alturas del `Badge`: `sm` 16px · `md` 20px. El botón de quitar mide 12 y 16, con área de 24.",
         onRemove: "Qué hacer al quitar. Sin esto no aparece el botón — y sin botón, probablemente sea un `Badge`.",
         removeLabel: "Nombre del botón de quitar. Un string es el prefijo del dato («Quitar» → «Quitar Chile»); una función recibe el dato y devuelve la frase entera, que es lo único que sirve donde el verbo no va adelante: `(name) => name + \" entfernen\"`.",
         textValue: "El texto del tag para el nombre del botón, cuando `children` no es texto.",
@@ -245,7 +249,7 @@ export const COMPONENTS = {
   kbd: {
     title: "Kbd",
     group: "fundamentos",
-    description: "Una tecla o un atajo en línea, en la mono del sistema.",
+    description: "Una tecla o un atajo en línea, en la mono del sistema, en un gris sin borde.",
     keyboard: [["—", "Es texto."]],
     a11y: ["Emite `<kbd>`, que es lo que corresponde. No registra ningún atajo: solo lo muestra."],
     usage: [
@@ -259,6 +263,32 @@ export const COMPONENTS = {
       },
     },
     related: ["sidebar", "dropdown-menu"],
+  },
+  "text-link": {
+    title: "TextLink",
+    group: "fundamentos",
+    description: "El link suelto de iCloud: semibold en el acento, con «›» para ir a otra pantalla o «↗» para salir del sitio.",
+    keyboard: [["Enter", "Sigue el link."], ["Tab", "Entra y sale."]],
+    a11y: [
+      "Es un `<a>` real, sin `\"use client\"`: sirve en un Server Component y se puede abrir en otra pestaña.",
+      "El adorno es decorativo (`aria-hidden`). Con `trailing=\"external\"` el link suma un texto `sr-only` —«(se abre en otra pestaña)», o el de `externalLabel`— que forma parte de su nombre: quien no ve la flecha se entera igual.",
+      "El acento va en `brand-900`, que llega a 4,5:1 sobre la página con todas las marcas. Por eso el link **no pinta fondo** en hover: sobre un relleno no llegaría.",
+    ],
+    usage: [
+      "**`chevron` adentro, `external` afuera.** «Ver planes ›» lleva a otra pantalla de la app; «account.apple.com ↗» sale del sitio y abre otra pestaña (`target=\"_blank\"` y `rel=\"noopener noreferrer\"` por defecto; los tuyos ganan).",
+      "El adorno va pegado a la última palabra con un espacio duro: la flecha nunca queda sola en el renglón de abajo.",
+      "Con `next/link`: `render={<Link href=\"/planes\" />}`. No se llama `Link` para no chocar con ese.",
+      "Adentro de un párrafo, `variant=\"inline\"` (subrayado siempre). El acento es para el link suelto debajo de una sección.",
+    ],
+    props: {
+      TextLink: {
+        variant: "`accent` (el default: semibold en el acento) · `inline` · `subtle` · `row`, los de `linkVariants`.",
+        trailing: "`chevron` (›) para navegar adentro · `external` (↗) para salir del sitio, en otra pestaña.",
+        externalLabel: "El aviso para el lector de pantalla de `external`. Por defecto «(se abre en otra pestaña)».",
+        render: "El elemento que se renderiza en lugar del `<a>`: `render={<Link href=\"/planes\" />}`.",
+      },
+    },
+    related: ["button", "breadcrumb"],
   },
   separator: {
     title: "Separator",
@@ -744,7 +774,7 @@ export const COMPONENTS = {
   checkbox: {
     title: "Checkbox",
     group: "formularios",
-    description: "Sí o no, o varios de una lista. Con estado indeterminado.",
+    description: "Sí o no, o varios de una lista, como la casilla de Calendar de iCloud. Con estado indeterminado y el check circular de Reminders (`shape=\"circle\"`).",
     keyboard: [["Espacio", "Alterna."], ["Tab", "Entra y sale."]],
     a11y: [
       "Necesita `Label` asociado o `aria-label`: la caja sola no dice nada.",
@@ -753,7 +783,13 @@ export const COMPONENTS = {
     usage: [
       "Varias opciones no excluyentes. Una sola opción excluyente con efecto inmediato es un `Switch`.",
       "El checkbox de «seleccionar todo» de una tabla va `indeterminate` cuando hay selección parcial.",
+      "`shape=\"circle\"` para completar una tarea en una lista (el check de Reminders, 22 px). Para un sí/no de formulario, el cuadrado.",
     ],
+    props: {
+      Checkbox: {
+        shape: "`square` (16 px, radio 4, el default) · `circle` (22 px, borde de 1,5, el check de Reminders).",
+      },
+    },
     related: ["checkbox-group", "switch", "label"],
   },
   "checkbox-group": {
@@ -828,7 +864,7 @@ export const COMPONENTS = {
     ],
     usage: [
       "**Efecto inmediato.** Si el cambio se aplica al apretar «Guardar», es un `Checkbox`.",
-      "`variant=\"accent\"` cuenta como el único acento de la pantalla: no lo combines con un `Button variant=\"accent\"`.",
+      "iCloud no tiene Switch: el del sistema se deriva de sus tokens. Deshabilitado va a .4, como el resto de los controles.",
     ],
     props: {
       Switch: {
@@ -842,29 +878,33 @@ export const COMPONENTS = {
   toggle: {
     title: "Toggle",
     group: "formularios",
-    description: "Un chip de filtro que queda apretado: borde lleno siempre; prendido suma fondo, borde más oscuro y texto pleno.",
+    description: "Un chip de filtro que queda apretado: el token de la búsqueda de iCloud, gris en reposo y el acento sólido prendido.",
     keyboard: [["Espacio · Enter", "Alterna."]],
     a11y: [
       "Emite `aria-pressed`. Sin texto (solo ícono) necesita `aria-label`.",
-      "El estado se ve por el fondo, el borde más oscuro y el texto pleno, además de `data-pressed`: son tres señales de luminosidad, no de tono, y por eso nunca usa la marca. El borde apagado (`gray-700`) pasa el 3:1 de WCAG 1.4.11.",
+      "El estado se ve por el relleno —gris apagado, acento sólido prendido—, además de `aria-pressed`. El texto prendido es `brand-contrast` sobre `brand-700`, el par que se verifica a 4,5:1 con todas las marcas.",
     ],
     usage: [
       "Si la acción navega o abre algo, es un `Button`.",
       "Varios toggles relacionados van en un `ToggleGroup`.",
-      "**El botón de negrita de una barra no es este.** Ahí va un `ToolbarButton render={<ToggleGroupItem />}`, que toma la forma del `Button` en `ghost`. `Toggle` es el chip suelto que filtra.",
+      "**El botón de negrita de una barra no es este.** Ahí va un `ToolbarButton render={<ToggleGroupItem />}` adentro de un `ToggleGroup`: el segmentado. `Toggle` es el chip suelto que filtra.",
     ],
     related: ["toggle-group", "switch", "button"],
   },
   "toggle-group": {
     title: "ToggleGroup",
     group: "formularios",
-    description: "Varios Toggle juntos, en modo «uno» o «varios».",
+    description: "Opciones que se prenden, juntas en el segmentado de iCloud: el ítem prendido es el segmento elevado. En modo «uno» o «varios».",
     keyboard: [["← →", "Se mueve entre ítems."], ["Espacio · Enter", "Alterna el ítem."], ["Tab", "Entra y sale del grupo entero."]],
     a11y: [
       "El grupo necesita `aria-label`: «Alineación», «Vista».",
       "En modo único es un `RadioGroup` visualmente distinto; si la lista es larga, usá `RadioGroup` de verdad.",
     ],
-    usage: ["Hasta 4 o 5 ítems: es una barra, no un menú.", "Íconos solos únicamente si son universales (alineación, vista); si no, texto."],
+    usage: [
+      "Hasta 4 o 5 ítems: es una barra, no un menú.",
+      "Íconos solos únicamente si son universales (alineación, vista); si no, texto.",
+      "Los B/I/U de un editor, la alineación, «Lista / Cuadrícula». Para filtros sueltos que envuelven en varias filas, `Toggle` de a uno.",
+    ],
     props: {
       ToggleGroup: heredadas("value", "defaultValue", "onValueChange", "multiple", "orientation", "loopFocus", "disabled"),
     },
@@ -874,7 +914,7 @@ export const COMPONENTS = {
   slider: {
     title: "Slider",
     group: "formularios",
-    description: "Elegir un número —o un rango— arrastrando. Marcas opcionales y valor visible.",
+    description: "Elegir un número —o un rango— arrastrando, con el slider de Photos de iCloud: pista de 2 px y perilla de 14. Marcas opcionales y valor visible.",
     keyboard: [
       ["← ↓", "Baja un `step`."],
       ["→ ↑", "Sube un `step`."],
@@ -887,7 +927,8 @@ export const COMPONENTS = {
       "Cada thumb es un `<input type=\"range\">` de verdad: el teclado y los lectores de pantalla lo tratan como el control nativo.",
       "El `label` visible queda asociado a los thumbs por Base UI. Sin `label`, el `aria-label` que pases viaja al input, no solo al grupo.",
       "En un rango, `aria-valuetext` distingue el thumb de inicio del de fin.",
-      "El anillo de foco va en el thumb (`has-[input:focus-visible]:focus-ring`), porque el foco real vive en el input de adentro.",
+      "El anillo de foco va en el thumb, **por fuera** (como el del Switch: adentro de una perilla de 14 un anillo interior la taparía), porque el foco real vive en el input de adentro.",
+      "La perilla es lo que se agarra: su borde de 2 px en el label llega a 3:1 contra la página en los dos temas. El área de toque la agranda un `::after` (34 px, 46 con el dedo).",
       "Las marcas son `aria-hidden`: el valor lo canta el thumb, no un punto.",
     ],
     usage: [
@@ -899,7 +940,7 @@ export const COMPONENTS = {
     ],
     props: {
       Slider: {
-        size: "`sm` 24px · `md` 32px de área arrastrable. La pista es 4px y 6px.",
+        size: "`sm` 24px · `md` 32px de área arrastrable. La pista (2 px) y la perilla (14) son las mismas en los dos.",
         marks: "Valores donde va un punto de referencia. Siguen a `min` y `max`, no al 0–100 fijo.",
         value: "Un número, o un array de dos para un rango. Pasarlo lo vuelve controlado.",
         defaultValue: "El valor inicial. La forma que le des acá decide si el slider es simple (`40`) o de rango (`[20, 60]`).",
@@ -1569,7 +1610,7 @@ export const COMPONENTS = {
     title: "Tabs",
     group: "navegacion",
     detallado: true,
-    description: "Secciones de la misma página que se turnan. Subrayado bajo la activa.",
+    description: "Secciones de la misma página que se turnan: las pestañas de Settings de iCloud (subrayado de 1 px) o el segmentado de Calendar.",
     keyboard: [
       ["← →", "Mueve el foco entre tabs. **No** activa al pasar."],
       ["Enter · Espacio", "Activa la tab que tiene el foco."],
@@ -1587,13 +1628,17 @@ export const COMPONENTS = {
       "El contenido de todas las tabs debería costar lo mismo: si una tarda 3 segundos en cargar, poné una página.",
       "3 a 6 tabs. Más, un `Select` o una navegación lateral.",
       "No anides tabs dentro de tabs.",
+      "**`line` (el default) es la navegación de una página**, como las de Settings de iCloud: texto de 17, la excepción a los 14 de un control. **`segmented`** es para cambiar de vista adentro de un panel (Día/Semana/Mes, Paleta/Espectro): segmentos del mismo ancho y el activo elevado.",
     ],
     props: {
       Tabs: {
         ...heredadas("value", "defaultValue", "onValueChange", "orientation"),
         value: "El `value` de la tab activa. Pasarlo lo vuelve controlado: es lo que hace falta para atar las tabs a la URL.",
       },
-      TabsList: { loopFocus: "Si al pasar de la última tab las flechas vuelven a la primera." },
+      TabsList: {
+        variant: "`line` (el default desde 2.0: 17 px, subrayado de 1 px del ancho del texto sobre una línea base, 60 de alto) · `segmented` (pista de 28, segmentos de 24).",
+        loopFocus: "Si al pasar de la última tab las flechas vuelven a la primera.",
+      },
       TabsContent: {
         ...heredadas("value", "keepMounted"),
         value: "Con qué `TabsTrigger` se corresponde este panel.",
@@ -1706,7 +1751,7 @@ export const COMPONENTS = {
   "theme-switcher": {
     title: "ThemeSwitcher",
     group: "navegacion",
-    description: "Los tres estados del tema —sistema, claro, oscuro— en una barra segmentada.",
+    description: "Los tres estados del tema —sistema, claro, oscuro— en el segmentado de iCloud.",
     keyboard: [["← →", "Se mueve entre las tres opciones."], ["Enter · Espacio", "Aplica."], ["Tab", "Entra y sale del grupo."]],
     a11y: [
       "Cada opción tiene nombre accesible propio; los textos se cambian con `labels`.",

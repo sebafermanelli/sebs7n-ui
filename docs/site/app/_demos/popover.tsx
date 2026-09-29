@@ -9,7 +9,7 @@ import { Popover, PopoverContent, PopoverDescription, PopoverHeader, PopoverTitl
 export function Basico() {
   return (
     <Popover>
-      <PopoverTrigger render={<Button variant="outline" />}>Rango de fechas</PopoverTrigger>
+      <PopoverTrigger render={<Button variant="secondary" />}>Rango de fechas</PopoverTrigger>
       <PopoverContent className="w-72">
         <PopoverHeader>
           <PopoverTitle>Rango</PopoverTitle>

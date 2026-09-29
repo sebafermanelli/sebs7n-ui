@@ -10,13 +10,13 @@ import { Button } from "sebs7n-ui/button"
 export function Basico() {
   return (
     <div className="flex flex-wrap gap-3">
-      <Button onClick={() => toast("Factura 0014 emitida")} variant="outline">
+      <Button onClick={() => toast("Factura 0014 emitida")} variant="secondary">
         Neutro
       </Button>
-      <Button onClick={() => toast.success("Se envió el email al cliente")} variant="outline">
+      <Button onClick={() => toast.success("Se envió el email al cliente")} variant="secondary">
         Éxito
       </Button>
-      <Button onClick={() => toast.error("AFIP rechazó el comprobante")} variant="outline">
+      <Button onClick={() => toast.error("AFIP rechazó el comprobante")} variant="secondary">
         Error
       </Button>
     </div>
@@ -37,7 +37,7 @@ export function AccionYPromesa() {
             duration: 8000,
           })
         }
-        variant="outline"
+        variant="secondary"
       >
         Con acción
       </Button>
@@ -49,7 +49,7 @@ export function AccionYPromesa() {
             error: "No respondió el servicio",
           })
         }
-        variant="outline"
+        variant="secondary"
       >
         Con promesa
       </Button>

@@ -19,10 +19,10 @@ export function Completa() {
         <div className="text-heading-32 text-label tabular-nums">$ 128.400</div>
       </CardContent>
       <CardFooter>
-        <Button size="sm" variant="outline">
+        <Button size="sm" variant="secondary">
           Descargar
         </Button>
-        <Button size="sm" variant="ghost">
+        <Button size="sm" variant="plain">
           Ver detalle
         </Button>
       </CardFooter>

@@ -54,7 +54,7 @@ export function Basico() {
 export function AccionPorDefecto() {
   return (
     <AlertDialog>
-      <AlertDialogTrigger render={<Button variant="outline" />}>Emitir factura</AlertDialogTrigger>
+      <AlertDialogTrigger render={<Button variant="secondary" />}>Emitir factura</AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>¿Emitir la factura 0013?</AlertDialogTitle>
@@ -79,7 +79,7 @@ export function AccionPorDefecto() {
 export function EtiquetaLarga() {
   return (
     <AlertDialog>
-      <AlertDialogTrigger render={<Button variant="outline" />}>Salir sin guardar</AlertDialogTrigger>
+      <AlertDialogTrigger render={<Button variant="secondary" />}>Salir sin guardar</AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>¿Salir sin guardar la factura?</AlertDialogTitle>

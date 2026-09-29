@@ -22,8 +22,8 @@ export function Basico() {
       <PageHeaderTitle>Factura 0012</PageHeaderTitle>
       <PageHeaderDescription>Acme S.A. · emitida el 01/09 · vence el 30/09.</PageHeaderDescription>
       <PageHeaderActions>
-        <Button variant="outline">Descargar</Button>
-        <Button variant="accent">Enviar por email</Button>
+        <Button variant="secondary">Descargar</Button>
+        <Button>Enviar por email</Button>
       </PageHeaderActions>
       <Tabs defaultValue="resumen">
         <TabsList>

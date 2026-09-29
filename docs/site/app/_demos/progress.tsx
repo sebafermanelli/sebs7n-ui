@@ -35,7 +35,7 @@ export function Subida() {
             setCorriendo(true)
           }}
           size="sm"
-          variant="outline"
+          variant="secondary"
         >
           Subir de nuevo
         </Button>

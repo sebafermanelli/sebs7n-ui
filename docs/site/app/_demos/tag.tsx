@@ -21,7 +21,7 @@ export function Filtros() {
         ))}
         {filtros.length === 0 && <span className="text-copy-14 text-label-secondary">Sin filtros</span>}
       </div>
-      <Button disabled={filtros.length === 3} onClick={() => setFiltros(["Pendientes", "Acme S.A.", "Septiembre"])} size="sm" variant="outline">
+      <Button disabled={filtros.length === 3} onClick={() => setFiltros(["Pendientes", "Acme S.A.", "Septiembre"])} size="sm" variant="secondary">
         Restaurar
       </Button>
     </div>

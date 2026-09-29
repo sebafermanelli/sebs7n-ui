@@ -26,3 +26,24 @@ export function Basico() {
     </div>
   )
 }
+
+/**
+ * Check circular
+ * `shape="circle"`: completar una tarea en una lista, como en Reminders.
+ */
+export function Circular() {
+  const a = useId()
+  const b = useId()
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="flex items-center gap-2.5">
+        <Checkbox id={a} shape="circle" />
+        <Label htmlFor={a}>Enviar el presupuesto a Acme</Label>
+      </div>
+      <div className="flex items-center gap-2.5">
+        <Checkbox defaultChecked id={b} shape="circle" />
+        <Label htmlFor={b}>Cargar las facturas de agosto</Label>
+      </div>
+    </div>
+  )
+}

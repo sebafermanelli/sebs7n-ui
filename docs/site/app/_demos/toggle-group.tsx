@@ -1,5 +1,6 @@
 "use client"
 
+import { BoldIcon, ItalicIcon, StrikethroughIcon, UnderlineIcon } from "lucide-react"
 import { useState } from "react"
 import { ToggleGroup, ToggleGroupItem } from "sebs7n-ui/toggle-group"
 
@@ -14,6 +15,29 @@ export function Basico() {
       <ToggleGroupItem value="tabla">Tabla</ToggleGroupItem>
       <ToggleGroupItem value="tarjetas">Tarjetas</ToggleGroupItem>
       <ToggleGroupItem value="calendario">Calendario</ToggleGroupItem>
+    </ToggleGroup>
+  )
+}
+
+/**
+ * Varios a la vez
+ * Con `multiple`, cada ítem se prende solo: los B/I/U de un editor, como el formato de Notes.
+ */
+export function Varios() {
+  return (
+    <ToggleGroup aria-label="Formato" defaultValue={["bold"]} multiple>
+      <ToggleGroupItem aria-label="Negrita" value="bold">
+        <BoldIcon />
+      </ToggleGroupItem>
+      <ToggleGroupItem aria-label="Cursiva" value="italic">
+        <ItalicIcon />
+      </ToggleGroupItem>
+      <ToggleGroupItem aria-label="Subrayado" value="underline">
+        <UnderlineIcon />
+      </ToggleGroupItem>
+      <ToggleGroupItem aria-label="Tachado" value="strike">
+        <StrikethroughIcon />
+      </ToggleGroupItem>
     </ToggleGroup>
   )
 }

@@ -43,7 +43,7 @@ export function Acciones() {
   return (
     <>
       <DropdownMenu>
-        <DropdownMenuTrigger ref={disparador} render={<Button aria-label="Acciones de la factura 0012" size="icon-md" variant="ghost" />}>
+        <DropdownMenuTrigger ref={disparador} render={<Button aria-label="Acciones de la factura 0012" size="icon-md" variant="plain" />}>
           <MoreHorizontalIcon />
         </DropdownMenuTrigger>
         <DropdownMenuContent>
@@ -110,7 +110,7 @@ export function ChecksYRadios() {
   const [orden, setOrden] = useState("fecha")
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger render={<Button variant="outline" />}>Vista</DropdownMenuTrigger>
+      <DropdownMenuTrigger render={<Button variant="secondary" />}>Vista</DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuGroup>
           <DropdownMenuLabel>Columnas</DropdownMenuLabel>

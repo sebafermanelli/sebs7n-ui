@@ -49,7 +49,7 @@ export function EnUnBoton() {
       >
         Emitir factura
       </Button>
-      <Button loading size="lg" variant="accent">
+      <Button loading size="lg">
         Grande
       </Button>
     </div>

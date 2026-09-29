@@ -73,7 +73,7 @@ export function Completo() {
             <PageHeaderTitle>Facturas</PageHeaderTitle>
             <PageHeaderDescription>Todo lo emitido en septiembre.</PageHeaderDescription>
             <PageHeaderActions>
-              <Button variant="accent">Nueva factura</Button>
+              <Button>Nueva factura</Button>
             </PageHeaderActions>
           </PageHeader>
           <div className="grid gap-4 sm:grid-cols-2">

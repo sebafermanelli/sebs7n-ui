@@ -299,18 +299,18 @@ function Muestra() {
               </CardHeader>
               <CardContent className="flex flex-col gap-4">
                 <div className="flex flex-wrap gap-2">
-                  <Button variant="accent">
+                  <Button>
                     <PlusIcon />
                     Nueva factura
                   </Button>
                   <Button>Guardar</Button>
-                  <Button variant="outline">Exportar</Button>
+                  <Button variant="secondary">Exportar</Button>
                   <Button variant="secondary">Filtrar</Button>
                   <Button variant="ghost">Cancelar</Button>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   <Dialog>
-                    <DialogTrigger render={<Button variant="outline" />}>Abrir un diálogo</DialogTrigger>
+                    <DialogTrigger render={<Button variant="secondary" />}>Abrir un diálogo</DialogTrigger>
                     <DialogContent>
                       <DialogHeader>
                         <DialogTitle>¿Anular la factura?</DialogTitle>
@@ -334,7 +334,7 @@ function Muestra() {
                         action: { label: "Deshacer", onClick: () => toast.success("Restaurada") },
                       })
                     }}
-                    variant="outline"
+                    variant="secondary"
                   >
                     Mostrar un toast
                   </Button>

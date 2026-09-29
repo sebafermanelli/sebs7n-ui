@@ -52,7 +52,7 @@ export function Basico() {
             <TableCell>
               <DropdownMenu>
                 <DropdownMenuTrigger
-                  render={<Button aria-label={`Acciones de la factura ${factura.id}`} size="icon-sm" variant="ghost" />}
+                  render={<Button aria-label={`Acciones de la factura ${factura.id}`} size="icon-sm" variant="plain" />}
                 >
                   <MoreHorizontalIcon />
                 </DropdownMenuTrigger>

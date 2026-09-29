@@ -196,6 +196,72 @@ las filas de Command, que comparten `variants/menu`.
   trigger pasa de `px-2 py-1.5` a `h-7 px-2.5`. El contenido con `keepMounted` cerrado lleva
   `[&[hidden]]:hidden`, para que una grilla en su `className` no le gane al `hidden`.
 
+**Controles (R4).** Medidos en el CSS de los botones de iCloud (`ui-button`), las pestañas de
+Settings, el segmentado de Calendar y el slider de Photos. Reemplaza lo que las fases 1–3 decían de
+estos controles (Toggle con borde, perilla en cápsula, botón `outline`), que no llega a publicarse.
+
+- **Button, solo las variantes de iCloud.** La jerarquía es acento sólido → gris → texto de acento →
+  ícono; no hay botón con borde ni rojo sólido.
+
+  | 1.x | 2.0 | en iCloud |
+  |---|---|---|
+  | `default` (negro) | **`default` = acento sólido** (`bg-brand-700`) | `block.primary` |
+  | `accent` | `default` (`accent` queda como alias **obsoleto**, se va en 3.0) | |
+  | `outline` | **se va** → `secondary` | no existe |
+  | `secondary` | `secondary` (gris `fill-2`) | `block.secondary` |
+  | `ghost` | `ghost` (texto `label`, hover `fill-2`) | `push.neutral` |
+  | — | **`plain`** (nuevo): texto semibold de acento, hover `fill-2`, apretado `highlight` | `push` |
+  | `destructive` (rojo sólido) | **`destructive` = gris con texto rojo** (`text-red-ink`) | `block.secondary.destructive` |
+  | — | **`destructive-plain`** (nuevo): texto rojo sin fondo | `push.destructive` |
+  | `link` | `link` | |
+
+  **Migración:** `variant="outline"` → `"secondary"`; `variant="accent"` → sin `variant`; donde
+  la app usaba el negro a propósito, `className="bg-label text-surface hover:bg-label/85"`. Un
+  `default` que convivía con un `accent` en la misma pantalla ahora son dos acentos: pasá el que no
+  es la acción principal a `secondary` o `plain`. **Deshabilitado = opacidad .4** (antes gris
+  `fill-1` con texto terciario). `plain` escribe en `brand-ink` y dibuja el glifo en `brand-900`:
+  sobre el `fill-2` del hover `brand-900` no llega a 4,5:1 en claro con todas las marcas (lo mide un
+  test nuevo con las cinco). Botones de ícono: glifo 16 en `icon-sm` (28), **18 en `icon-md`** (36),
+  20 en `icon-lg`. La Toolbar (botón por defecto), las flechas del Calendar y el disparador del
+  Sidebar pasan a `plain` (el glifo azul de la toolbar de Drive); «Limpiar» del DatePicker a
+  `plain`; «Reintentar» del Chat a `secondary`. `AlertDialogAction variant="destructive"` usa la
+  variante `destructive`. `AiButton variant="outline"` conserva su borde (ahora sobre `ghost`).
+- **`TextLink`** (nuevo, `sebs7n-ui/text-link`) y **`linkVariants({ variant: "accent" })`**: el link
+  de Settings de iCloud, semibold en `brand-900`, subraya con el puntero y no pinta fondo.
+  `trailing="chevron"` (›) o `"external"` (↗, con `target="_blank"`, `rel="noopener noreferrer"` y
+  el aviso `sr-only` «(se abre en otra pestaña)», `externalLabel`). Sin `"use client"`.
+- **Tabs: `line` es el default** (antes `segmented`) y es la de Settings: 17 px en
+  `label-secondary`, la activa en `label` con **subrayado de 1 px** del ancho del texto sobre la
+  línea base `fill-3`, 60 de alto, 46 de texto a texto (antes: línea de Geist de 2 px, 32 de alto,
+  14 px). **Si la app usaba el default, ahora es la línea: para el segmentado, `variant="segmented"`.**
+  El segmentado es el de Calendar: pista de **28** (antes 32), segmentos de 24 **del mismo ancho**,
+  activo en semibold y separadores de 1 × 16 entre los que no tocan al activo; la pista ya no tiene
+  espacio entre segmentos (`segmentedTrackClassName` sin `gap-0.5`). ThemeSwitcher igual: segmentos
+  de 24 × 32 (antes 28 × 28), 40 × 44 con el dedo.
+- **ToggleGroup es el segmentado** (antes una fila de chips con `gap-2`): la pista de
+  `segmentedTrackClassName` y cada ítem prendido se eleva con `bg-segment` + `shadow-segment`
+  (`segmentedItemClassName`, nuevo); admite varios prendidos. **Toggle** suelto es el token de la
+  búsqueda de iCloud: `fill-1` sin borde, `fill-2` con el puntero y **el acento sólido prendido**
+  (antes borde gris lleno que se oscurecía).
+- **Checkbox y Radio** marcados sin borde (el relleno es el contorno) y **deshabilitados a .4**;
+  **`Checkbox shape="circle"`** (nuevo) es el check de Reminders, 22 px con borde de 1,5. Switch
+  deshabilitado a .4.
+- **Slider = el de Photos**: pista de **2 px** (antes 4/6) en `label/32`, progreso en el **label**
+  (antes `brand-700`), perilla **círculo de 14** con borde de 2 px en el label y centro `surface`
+  (antes cápsula blanca de 20 × 28), que crece al arrastrar; área de toque por `::after` (34, 46
+  con el dedo); **el foco va por fuera** (como el Switch). `sliderThumbClassName` cambia y el matiz
+  del ColorPicker lo sigue. Deshabilitado a .4.
+- **Campos: con el foco pierden el relleno.** `focus-border` y `focus-border-error` ponen
+  `background-color: transparent` y queda solo el anillo interior, como la búsqueda de iCloud.
+  `inputDisabledClassName` pasa a **opacidad .4** (Input, Textarea, NumberField, OTPField,
+  DatePicker, ColorPicker, Select, Combobox, Autocomplete, el campo del Chat).
+- **Badge y Tag: 20 / 16** (antes 24 / 20), texto 12; siguen rectangulares con radio 4 (una
+  etiqueta de estado, como los chips de evento de Calendar). **`Badge variant="count"`** (nuevo) es
+  el badge de app de iCloud: círculo de 20 (16 en `sm`), 11 px, cifras tabulares y `shadow-badge`.
+  El botón de quitar del Tag `sm` mide 12 (área 24). Los chips de Combobox siguen al campo (16 en
+  `sm`, 20 en los demás).
+- **Kbd**: `bg-fill-2` sin borde y radio 4 (antes `fill-1` con borde y radio 2).
+
 **Lo que sigue de las fases 1–3.** Los números de alto y de radio que cambió R1 ya están arriba;
 las fases R2–R5 rehacen diálogos, menús, controles y listas con las medidas de iCloud.
 
@@ -228,10 +294,6 @@ las fases R2–R5 rehacen diálogos, menús, controles y listas con las medidas 
   las sugerencias a 14, la cabecera `text-headline`; el campo mide 36 como el botón de enviar (17 con
   el dedo, para que iOS no haga zoom).
 - **`Button variant="link"` no agranda su área con el dedo**: es texto adentro de un párrafo.
-- **Toggle con borde lleno** en los dos estados (antes, punteado sin apretar).
-- **La perilla del Slider es una cápsula** de 20 × 28 (provisorio: R4 la lleva a la de iCloud), la
-  misma del matiz del ColorPicker; al arrastrarla crece (ya no se vuelve lente). Lleva un borde de
-  1 px en `label-tertiary` (`ring-1`): blanca sobre la página blanca no llegaba a 3:1.
 - **NumberField mide lo que el número**: el grupo pasa a `w-fit` y el input usa
   `field-sizing: content`. Si la app contaba con que ocupara todo el ancho, pasale `className="w-full"`.
 - **SidebarSearch mide 32** (`h-8`, antes 28) y el atajo va en `Kbd size="sm"`.
@@ -242,8 +304,8 @@ las fases R2–R5 rehacen diálogos, menús, controles y listas con las medidas 
   `false`); el scroll de una lista larga es de `SelectPrimitive.List`, no del panel. Combobox lleva
   ⌃⌄ y no gira. El resto de lo que la fase 3 hizo en los menús lo reemplaza «Menús (R3)».
 - **Badge y Tag sólidos, como las etiquetas del Finder.** Relleno lleno, sin borde, sin brillo y
-  con 4 px de radio (`rounded-tag`), texto `text-footnote`. La tinta es blanca o negra al 85 %, la
-  que llega a 4,5:1 en los dos temas:
+  con 4 px de radio (`rounded-tag`), texto `text-footnote` (los altos, en «Controles (R4)»). La
+  tinta es blanca o negra al 85 %, la que llega a 4,5:1 en los dos temas:
 
   | color | relleno | tinta | claro | oscuro |
   |---|---|---|---|---|
@@ -321,6 +383,9 @@ las fases R2–R5 rehacen diálogos, menús, controles y listas con las medidas 
 - `sliderThumbClassName` y sus estados (`variants/slider`), y `tooltipSurfaceClassName`
   (`variants/overlay`), que comparten el Slider con el ColorPicker y el Tooltip con la etiqueta
   del `AiLauncher`.
+- **`TextLink`** (`sebs7n-ui/text-link`) y `linkVariants({ variant: "accent" })`.
+- `Button variant="plain"` y `"destructive-plain"`; `Badge variant="count"`; `Checkbox shape`
+  (`square`, `circle`); `segmentedItemClassName` (`variants/segmented`, también en el barrel).
 
 ## [1.13.1] - 2026-09-28
 

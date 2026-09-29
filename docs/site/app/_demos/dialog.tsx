@@ -25,7 +25,7 @@ import { Label } from "sebs7n-ui/label"
 export function Hoja() {
   return (
     <Dialog>
-      <DialogTrigger render={<Button variant="outline" />}>Ver factura 0012</DialogTrigger>
+      <DialogTrigger render={<Button variant="secondary" />}>Ver factura 0012</DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Factura 0012</DialogTitle>
@@ -48,7 +48,7 @@ export function Hoja() {
         <p className="text-footnote text-label-secondary">Pasado el vencimiento se suma el recargo que figura en las condiciones de venta.</p>
         <DialogFooter>
           <DialogClose render={<Button variant="secondary" />}>Cancelar</DialogClose>
-          <DialogClose render={<Button variant="accent" />}>Listo</DialogClose>
+          <DialogClose render={<Button />}>Listo</DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -63,7 +63,7 @@ export function Basico() {
   const id = useId()
   return (
     <Dialog>
-      <DialogTrigger render={<Button variant="outline" />}>Editar cliente</DialogTrigger>
+      <DialogTrigger render={<Button variant="secondary" />}>Editar cliente</DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Editar cliente</DialogTitle>
@@ -75,7 +75,7 @@ export function Basico() {
         </div>
         <DialogFooter>
           <DialogClose render={<Button variant="secondary" />}>Cancelar</DialogClose>
-          <DialogClose render={<Button variant="accent" />}>Guardar</DialogClose>
+          <DialogClose render={<Button />}>Guardar</DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -108,7 +108,6 @@ export function Controlado() {
                 setAbierto(false)
               }, 1400)
             }}
-            variant="accent"
           >
             Emitir
           </Button>

@@ -65,7 +65,7 @@ export function Controlado() {
 export function KeepMounted() {
   return (
     <Collapsible className="w-full max-w-sm gap-1">
-      <CollapsibleTrigger render={<Button size="sm" variant="outline" />}>Ver claves de recuperación</CollapsibleTrigger>
+      <CollapsibleTrigger render={<Button size="sm" variant="secondary" />}>Ver claves de recuperación</CollapsibleTrigger>
       <CollapsibleContent className="flex flex-col gap-1 text-copy-13-mono" keepMounted>
         <span>alien-bean-pasta</span>
         <span>wild-irish-burrito</span>

@@ -11,7 +11,7 @@ export function Basico() {
   return (
     <div className="flex flex-wrap gap-3">
       <Sheet>
-        <SheetTrigger render={<Button variant="outline" />}>Filtros</SheetTrigger>
+        <SheetTrigger render={<Button variant="secondary" />}>Filtros</SheetTrigger>
         <SheetContent>
           <SheetHeader>
             <SheetTitle>Filtrar facturas</SheetTitle>
@@ -28,7 +28,7 @@ export function Basico() {
             </div>
           </div>
           <SheetFooter>
-            <Button variant="accent">Aplicar</Button>
+            <Button>Aplicar</Button>
           </SheetFooter>
         </SheetContent>
       </Sheet>

@@ -24,3 +24,23 @@ export function Basico() {
     </Tabs>
   )
 }
+
+/**
+ * Segmentado
+ * Para cambiar de vista adentro de un panel, como Día/Semana/Mes en Calendar: los segmentos miden
+ * lo mismo y el activo se eleva.
+ */
+export function Segmentado() {
+  return (
+    <Tabs defaultValue="semana">
+      <TabsList variant="segmented">
+        <TabsTrigger value="dia">Día</TabsTrigger>
+        <TabsTrigger value="semana">Semana</TabsTrigger>
+        <TabsTrigger value="mes">Mes</TabsTrigger>
+      </TabsList>
+      <TabsContent value="dia">Hoy: 3 vencimientos.</TabsContent>
+      <TabsContent value="semana">Esta semana: 12 vencimientos.</TabsContent>
+      <TabsContent value="mes">Septiembre: 41 vencimientos.</TabsContent>
+    </Tabs>
+  )
+}

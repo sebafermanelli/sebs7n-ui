@@ -98,7 +98,7 @@ export function Archivos() {
 
           <DropdownMenu>
             <DropdownMenuTrigger
-              render={<Button aria-label={`Acciones de ${archivo.nombre}`} size="icon-sm" variant="ghost" />}
+              render={<Button aria-label={`Acciones de ${archivo.nombre}`} size="icon-sm" variant="plain" />}
               className="absolute top-1.5 right-1.5"
             >
               <MoreHorizontalIcon />

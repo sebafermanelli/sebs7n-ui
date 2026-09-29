@@ -166,7 +166,7 @@ export function IconCatalog({ nombres, iniciales }: { nombres: string[]; inicial
       )}
 
       {visibles.length < resultados.length && (
-        <Button className="self-center" onClick={() => setLimite((n) => n + PAGINA * 2)} variant="outline">
+        <Button className="self-center" onClick={() => setLimite((n) => n + PAGINA * 2)} variant="secondary">
           Mostrar más ({resultados.length - visibles.length} restantes)
         </Button>
       )}

@@ -44,7 +44,7 @@ describe("la marca llega a AA", () => {
 
 | Token | Dónde |
 |---|---|
-| `brand-700` | `Button variant="accent"`, anillo de foco y borde del campo enfocado, borde de `Card selected`, franja de `Alert variant="brand"`, `Badge solid color="brand"`. Y **todo lo que está prendido**: `Checkbox` y `Radio` marcados, `Switch`, el relleno de `Slider`, `Progress` y `Meter`. |
+| `brand-700` | `Button` (el default, acento sólido), anillo de foco y borde del campo enfocado, borde de `Card selected`, franja de `Alert variant="brand"`, `Badge solid color="brand"`. Y **todo lo que está prendido**: `Checkbox` y `Radio` marcados, `Switch`, el relleno de `Slider`, `Progress` y `Meter`. |
 | `brand-700` como selección | Desde 2.0, la selección es el acento sólido, como en macOS: el ítem de menú resaltado (puntero o flechas) de `DropdownMenu`, `ContextMenu`, `Menubar`, `Select`, `Combobox` y `Autocomplete`, el ítem activo del `Sidebar`, la fila elegida de `Table`, la página actual de `NavigationMenu`. Es `bg-selection`, con texto e íconos en `text-on-selection` (`brand-contrast`). |
 | `brand-700` en tinte | Lo que se marca sin ser la selección: el tramo del medio de un rango en `Calendar`, la burbuja del usuario en `Chat` (14 % en claro, 22 % en oscuro). Es `bg-highlight`. |
 | `brand-800` | Hover del acento. |
@@ -56,7 +56,7 @@ describe("la marca llega a AA", () => {
 
 `brand-200`, `brand-300` y `brand-500` no los usa ningún componente: existen para la app, que también tiene la escala completa. Y `linkVariants` **no usa la marca**: los links de texto son grises (`gray-900` → `gray-1000`), para que un párrafo con tres links no se convierta en tres manchas de color.
 
-**Un solo acento sólido por pantalla.** El `Button variant="accent"` es la acción principal y va uno. Los estados prendidos no compiten con él: son chicos y dicen «esto está activo», no «apretá acá». Si en una pantalla igual molestan, `Switch variant="neutral"` prende en gris.
+**Un solo acento sólido por pantalla.** El `Button` por defecto (el acento sólido) es la acción principal y va uno. Los estados prendidos no compiten con él: son chicos y dicen «esto está activo», no «apretá acá». Si en una pantalla igual molestan, `Switch variant="neutral"` prende en gris.
 
 ## Glass
 

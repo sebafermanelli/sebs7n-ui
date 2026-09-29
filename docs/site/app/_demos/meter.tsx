@@ -22,7 +22,7 @@ export function EspacioDelPlan() {
         value={usado}
       />
       <div className="flex gap-2">
-        <Button onClick={() => setUsado((v) => Math.min(10, v + 1.3))} size="sm" variant="outline">
+        <Button onClick={() => setUsado((v) => Math.min(10, v + 1.3))} size="sm" variant="secondary">
           Subir un adjunto
         </Button>
         <Button disabled={usado === 0} onClick={() => setUsado(0)} size="sm" variant="ghost">

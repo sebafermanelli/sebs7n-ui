@@ -1,40 +1,71 @@
 "use client"
 
-import { ArrowRightIcon, PlusIcon, TrashIcon } from "lucide-react"
+import { ArrowRightIcon, EllipsisIcon, PlusIcon, ShareIcon, TrashIcon, XIcon } from "lucide-react"
 import { useState } from "react"
 import { Button } from "sebs7n-ui/button"
 import { buttonVariants } from "sebs7n-ui/variants/button"
 
-/** Variantes */
+/**
+ * Variantes
+ * Las de iCloud: el acento sólido para la acción principal (una por pantalla), el gris para las
+ * demás, el texto de acento para lo secundario y el rojo para lo que borra. No hay botón con borde.
+ */
 export function Variantes() {
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <Button>Guardar</Button>
-      <Button variant="accent">Nueva factura</Button>
-      <Button variant="outline">Exportar</Button>
+      <Button>Nueva factura</Button>
       <Button variant="secondary">Duplicar</Button>
+      <Button variant="plain">Editar</Button>
       <Button variant="ghost">Cancelar</Button>
       <Button variant="destructive">Eliminar</Button>
+      <Button variant="destructive-plain">Quitar</Button>
       <Button variant="link">Ver detalle</Button>
     </div>
   )
 }
 
-/** Tamaños e íconos */
+/**
+ * Tamaños
+ * 28, 36 y 40: los mismos altos que los campos, texto de 14 en los tres.
+ */
 export function Tamanos() {
   return (
     <div className="flex flex-wrap items-center gap-3">
       <Button size="sm">Pequeño</Button>
       <Button size="md">Mediano</Button>
       <Button size="lg">Grande</Button>
-      <Button size="icon-sm" aria-label="Agregar">
+      <Button variant="secondary">
+        Continuar <ArrowRightIcon />
+      </Button>
+    </div>
+  )
+}
+
+/**
+ * Botones de ícono
+ * El de la toolbar de iCloud: 28 × 28, sin fondo en reposo, gris claro con el puntero y el glifo en
+ * el acento (`plain`). `ghost` para el glifo neutro (cerrar, la barra global). Apagados a .4.
+ */
+export function Iconos() {
+  return (
+    <div className="flex flex-wrap items-center gap-1.5">
+      <Button aria-label="Nueva" size="icon-sm" variant="plain">
         <PlusIcon />
       </Button>
-      <Button size="icon-md" variant="outline" aria-label="Eliminar">
+      <Button aria-label="Compartir" size="icon-sm" variant="plain">
+        <ShareIcon />
+      </Button>
+      <Button aria-label="Más acciones" size="icon-sm" variant="plain">
+        <EllipsisIcon />
+      </Button>
+      <Button aria-label="Eliminar" disabled size="icon-sm" variant="plain">
         <TrashIcon />
       </Button>
-      <Button>
-        Continuar <ArrowRightIcon />
+      <Button aria-label="Cerrar" size="icon-sm" variant="ghost">
+        <XIcon />
+      </Button>
+      <Button aria-label="Nueva" size="icon-md" variant="ghost">
+        <PlusIcon />
       </Button>
     </div>
   )
@@ -69,7 +100,7 @@ export function Pildora() {
       <Button shape="pill" size="lg">
         Empezar gratis
       </Button>
-      <Button shape="pill" size="lg" variant="outline">
+      <Button shape="pill" size="lg" variant="secondary">
         Hablar con ventas
       </Button>
     </div>
@@ -82,7 +113,7 @@ export function Pildora() {
  */
 export function ComoLink() {
   return (
-    <a className={buttonVariants({ variant: "accent" })} href="/docs/instalacion">
+    <a className={buttonVariants()} href="/docs/instalacion">
       Ir a la instalación
     </a>
   )

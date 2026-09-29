@@ -87,7 +87,7 @@ describe("extractProps", () => {
     // `color?: BadgeColor` — el tipo por nombre no sirve en una tabla.
     expect(prop("badge", "Badge", "color").type).toContain('"purple"')
     // Unión discriminada: variant es "subtle" | "solid", no solo el primer constituyente.
-    expect(prop("badge", "Badge", "variant").type).toBe('"subtle" | "solid"')
+    expect(prop("badge", "Badge", "variant").type).toBe('"subtle" | "solid" | "count"')
   })
 
   it("descarta las props heredadas del primitivo y deja la línea de herencia", () => {

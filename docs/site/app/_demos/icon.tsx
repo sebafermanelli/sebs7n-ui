@@ -85,7 +85,7 @@ export function ConTexto() {
         <PlusIcon />
         Nueva factura
       </Button>
-      <Button variant="outline">
+      <Button variant="secondary">
         <DownloadIcon />
         Exportar
       </Button>
@@ -170,7 +170,7 @@ export function CambioDeEstado() {
     <Button
       aria-pressed={activas}
       onClick={() => startTransition(() => setActivas((valor) => !valor))}
-      variant="outline"
+      variant="secondary"
     >
       {activas ? (
         <ViewTransition key="on" enter="icon-in" exit="icon-out" default="none">

@@ -102,7 +102,7 @@ export function Basico() {
 
   return (
     <div className="flex flex-col items-center gap-3">
-      <Button aria-keyshortcuts="Meta+J" onClick={() => setAbierto(true)} variant="outline">
+      <Button aria-keyshortcuts="Meta+J" onClick={() => setAbierto(true)} variant="secondary">
         <SearchIcon />
         Buscar en facturación
         <Kbd size="sm">⌘J</Kbd>

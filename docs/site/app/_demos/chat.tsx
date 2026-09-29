@@ -74,14 +74,14 @@ function Conversacion({ onClose, onBusyChange }: { onClose?: () => void; onBusyC
           Asistente
         </ChatTitle>
         <ChatActions>
-          <Button aria-label="Nueva conversación" onClick={nueva} size="icon-sm" variant="ghost">
+          <Button aria-label="Nueva conversación" onClick={nueva} size="icon-sm" variant="plain">
             <PlusIcon />
           </Button>
-          <Button aria-label="Conversaciones" size="icon-sm" variant="ghost">
+          <Button aria-label="Conversaciones" size="icon-sm" variant="plain">
             <HistoryIcon />
           </Button>
           {onClose && (
-            <Button aria-label="Cerrar asistente" onClick={onClose} size="icon-sm" variant="ghost">
+            <Button aria-label="Cerrar asistente" onClick={onClose} size="icon-sm" variant="plain">
               <XIcon />
             </Button>
           )}
@@ -105,10 +105,10 @@ function Conversacion({ onClose, onBusyChange }: { onClose?: () => void; onBusyC
             {mensaje.texto}
             {mensaje.from === "assistant" && (
               <ChatMessageActions>
-                <Button aria-label="Buena respuesta" size="icon-sm" variant="ghost">
+                <Button aria-label="Buena respuesta" size="icon-sm" variant="plain">
                   <ThumbsUpIcon />
                 </Button>
-                <Button aria-label="Mala respuesta" size="icon-sm" variant="ghost">
+                <Button aria-label="Mala respuesta" size="icon-sm" variant="plain">
                   <ThumbsDownIcon />
                 </Button>
               </ChatMessageActions>

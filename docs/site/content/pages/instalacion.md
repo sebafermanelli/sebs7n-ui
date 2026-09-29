@@ -146,7 +146,7 @@ export function Panel() {
     <Card>
       <CardHeader><CardTitle>Facturas</CardTitle></CardHeader>
       <CardContent>
-        <Button variant="accent">Nueva factura</Button>
+        <Button>Nueva factura</Button>
       </CardContent>
     </Card>
   )
@@ -256,7 +256,7 @@ import { Button } from "sebs7n-ui/button"
 <Button>Hola</Button>
 ```
 
-En tema claro tiene que verse **con fondo negro y texto blanco**, con las esquinas apenas redondeadas y 40px de alto. Si sale como un botón del navegador —gris, con borde de sistema, sin redondear—, las utilidades del paquete no se generaron: revisá que `@import "sebs7n-ui/theme.css"` esté **después** de `@import "tailwindcss"` y que sea el paquete instalado y no una copia vieja en el repo. Es binario a propósito: no hay que leer ningún CSS ni abrir devtools, y es justo el síntoma que antes tenía una causa invisible —el `@source` con la ruta mal—, que ya no existe porque lo pone el paquete.
+Tiene que verse **con el fondo del color de marca y texto blanco**, con 8px de radio y 36px de alto. Si sale como un botón del navegador —gris, con borde de sistema, sin redondear—, las utilidades del paquete no se generaron: revisá que `@import "sebs7n-ui/theme.css"` esté **después** de `@import "tailwindcss"` y que sea el paquete instalado y no una copia vieja en el repo. Es binario a propósito: no hay que leer ningún CSS ni abrir devtools, y es justo el síntoma que antes tenía una causa invisible —el `@source` con la ruta mal—, que ya no existe porque lo pone el paquete.
 
 Después, tres cosas más:
 

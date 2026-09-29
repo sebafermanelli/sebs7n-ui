@@ -12,13 +12,13 @@ export function Basico() {
   return (
     <div className="flex w-full flex-col gap-4">
       <EmptyState
-        action={<Button variant="accent">Nueva factura</Button>}
+        action={<Button>Nueva factura</Button>}
         description="Cuando emitas la primera, va a aparecer acá con su estado y su vencimiento."
         icon={<FileTextIcon />}
         title="Todavía no emitiste ninguna factura"
       />
       <EmptyState
-        action={<Button variant="outline">Limpiar filtros</Button>}
+        action={<Button variant="secondary">Limpiar filtros</Button>}
         description="Probá con otro rango de fechas o sacá el filtro de cliente."
         icon={<SearchXIcon />}
         title="Ninguna factura coincide con el filtro"

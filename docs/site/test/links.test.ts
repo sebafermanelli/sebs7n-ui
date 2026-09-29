@@ -55,7 +55,9 @@ describe("links de las demos", () => {
       // Una demo no tiene a dónde navegar: o es un ancla muerta (`#`) o apunta a
       // una página del sitio que existe de verdad. Un `#loquesea` es un link roto
       // con otra cara — no hay ningún elemento con ese id.
-      const rotos = hrefs.filter((href) => href !== "#" && !existe(href))
+      // Afuera, solo el repo del paquete: es real y es el único sitio externo que la doc controla
+      // (la demo de TextLink necesita un link que salga del sitio).
+      const rotos = hrefs.filter((href) => href !== "#" && !href.startsWith("https://github.com/sebafermanelli/sebs7n-ui") && !existe(href))
       expect(rotos).toEqual([])
     })
   }

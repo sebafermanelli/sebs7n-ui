@@ -77,3 +77,23 @@ export function EnTabla() {
     </Table>
   )
 }
+
+/**
+ * Contador
+ * `variant="count"` es el badge de app de iCloud: un número, no un estado.
+ */
+export function Contador() {
+  return (
+    <div className="flex items-center gap-3">
+      <Badge color="red" variant="count">
+        3
+      </Badge>
+      <Badge color="red" variant="count">
+        128
+      </Badge>
+      <Badge color="brand" size="sm" variant="count">
+        9
+      </Badge>
+    </div>
+  )
+}

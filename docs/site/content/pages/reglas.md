@@ -2,7 +2,7 @@ Las decisiones que no se ven en una tabla de props. Cada una existe porque rompe
 
 ## Jerarquía
 
-**Un solo acento sólido por pantalla.** `Button variant="accent"` para la acción principal; el CTA por defecto es el negro (`variant="default"`). Dos acentos compitiendo no son dos acciones importantes: son ninguna. Los estados prendidos —un `Checkbox` marcado, un `Switch`, el relleno de un `Slider`— llevan el brand y no cuentan: dicen «esto está activo», no «apretá acá».
+**Un solo acento sólido por pantalla.** El `Button` por defecto es el primario de iCloud, el acento sólido: va en la acción principal, y las demás son `secondary` (gris) o `plain` (texto de acento). Dos acentos compitiendo no son dos acciones importantes: son ninguna. Los estados prendidos —un `Checkbox` marcado, un `Switch`, el relleno de un `Slider`— llevan el brand y no cuentan: dicen «esto está activo», no «apretá acá».
 
 **El botón es una cápsula.** `shape="pill"` le suma un escalón de padding horizontal (`sm` 20px, `md` 24px, `lg` 28px) y es para los CTA de un hero. `shape="rect"` devuelve el rectángulo (`rounded-control`) para donde una cápsula no entra: una celda de tabla densa, un botón a todo el ancho de un formulario angosto. **Una sola forma por pantalla:** dos formas de botón juntas se leen como un descuido, no como una jerarquía.
 
@@ -20,7 +20,7 @@ Desde 2.0 el material va **por rol**, como en macOS: no todo es el mismo vidrio.
 | Algo que se lee y flota: menú, Select, Combobox, Popover, HoverCard, Tooltip, el panel de DatePicker | `material-popover` (= `glass glass-dense`) |
 | Un diálogo: Dialog, AlertDialog, Sheet, Drawer | `material-modal`: casi opaco (91 % de fill), no se ve lo de atrás |
 | Un grupo apoyado en la ventana: Card, Table, EmptyState | `material-group`: sólido, sin blur |
-| Lo que vive adentro de una superficie: Input, Button `outline`, Checkbox vacío, Alert | `glass-control` |
+| Lo que vive adentro de una superficie: Input, Button `secondary`, Checkbox vacío, Alert | `glass-control` |
 | Cromo: Toolbar, Navbar despegada | `material-bar` + `glass-rim` |
 | Una zona hundida: `Card subtle`, `thead`, `EmptyState` | `bg-gray-alpha-100` |
 

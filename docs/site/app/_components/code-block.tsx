@@ -34,7 +34,7 @@ export function CodeBlock({ code, label = "Copiar el código" }: { code: string;
           }
         }}
         size="icon-sm"
-        variant="outline"
+        variant="secondary"
       >
         {copiado ? <CheckIcon className="text-green-900" /> : <CopyIcon />}
       </Button>

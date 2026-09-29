@@ -57,11 +57,11 @@ export default function Home() {
             variables para el color de marca.
           </p>
           <div className="flex flex-wrap items-center gap-3">
-            <Link className={buttonVariants({ variant: "accent", size: "lg", shape: "pill" })} href="/docs/instalacion">
+            <Link className={buttonVariants({ size: "lg", shape: "pill" })} href="/docs/instalacion">
               Empezar
             </Link>
             <Link
-              className={buttonVariants({ variant: "outline", size: "lg", shape: "pill" })}
+              className={buttonVariants({ variant: "secondary", size: "lg", shape: "pill" })}
               href="/docs/components/button"
             >
               Ver los componentes

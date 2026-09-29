@@ -25,7 +25,7 @@ import { Label } from "sebs7n-ui/label"
 export function FiltrosEnMobile() {
   return (
     <Drawer>
-      <DrawerTrigger render={<Button variant="outline" />}>Filtros</DrawerTrigger>
+      <DrawerTrigger render={<Button variant="secondary" />}>Filtros</DrawerTrigger>
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>Filtrar facturas</DrawerTitle>
@@ -42,7 +42,7 @@ export function FiltrosEnMobile() {
           </div>
         </DrawerBody>
         <DrawerFooter>
-          <DrawerClose render={<Button variant="accent" />}>Aplicar</DrawerClose>
+          <DrawerClose render={<Button />}>Aplicar</DrawerClose>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
@@ -56,7 +56,7 @@ export function FiltrosEnMobile() {
 export function DetalleAMediaHoja() {
   return (
     <Drawer defaultSnapPoint={0.45} snapPoints={[0.45, 1]}>
-      <DrawerTrigger render={<Button variant="outline" />}>Ver la factura 0012</DrawerTrigger>
+      <DrawerTrigger render={<Button variant="secondary" />}>Ver la factura 0012</DrawerTrigger>
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>Factura 0012</DrawerTitle>
@@ -83,7 +83,7 @@ export function DetalleAMediaHoja() {
           </dl>
         </DrawerBody>
         <DrawerFooter>
-          <Button variant="accent">Descargar el PDF</Button>
+          <Button>Descargar el PDF</Button>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
@@ -115,7 +115,7 @@ export function ElegirDeUnaListaLarga() {
   return (
     <div className="flex flex-col items-start gap-3">
       <Drawer>
-        <DrawerTrigger render={<Button variant="outline" />}>{chofer ?? "Asignar chofer"}</DrawerTrigger>
+        <DrawerTrigger render={<Button variant="secondary" />}>{chofer ?? "Asignar chofer"}</DrawerTrigger>
         <DrawerContent className="data-[swipe-direction=down]:max-h-[70%]">
           <DrawerHeader>
             <DrawerTitle>Asignar chofer</DrawerTitle>

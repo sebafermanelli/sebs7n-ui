@@ -12,7 +12,7 @@ export function Basico() {
   return (
     <div className="flex flex-wrap items-center gap-3">
       <Tooltip>
-        <TooltipTrigger render={<Button aria-label="Copiar al portapapeles" size="icon-md" variant="outline" />}>
+        <TooltipTrigger render={<Button aria-label="Copiar al portapapeles" size="icon-md" variant="secondary" />}>
           <CopyIcon />
         </TooltipTrigger>
         <TooltipContent>Copiar al portapapeles</TooltipContent>
