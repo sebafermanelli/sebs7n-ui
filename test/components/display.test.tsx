@@ -10,16 +10,15 @@ import { ToggleGroup, ToggleGroupItem } from "../../src/components/toggle-group"
 import { cardVariants } from "../../src/variants/card"
 
 describe("Toggle (chip)", () => {
-  // Borde lleno en los dos estados (el punteado se leía como un hueco para soltar algo, no como
-  // un control). Prendido se distingue sin depender del color: fondo, borde más oscuro y texto
-  // pleno.
-  it("borde lleno siempre; prendido con fondo, borde y texto más fuertes, sin color de marca", async () => {
+  // R4: el token de iCloud (los filtros de la búsqueda, el botón de formato de Notes): gris sin
+  // borde en reposo, el acento sólido prendido. Es el mismo objeto que `commandFilterClassName`.
+  it("gris en reposo; prendido, el acento sólido con su color de contraste; sin borde", async () => {
     render(<Toggle>Activos</Toggle>)
     const chip = screen.getByRole("button", { name: "Activos" })
-    expect(chip).toHaveClass("rounded-control", "border", "border-label-tertiary", "text-label-secondary", "hover:border-label-secondary")
-    expect(chip.className).not.toMatch(/border-(dashed|dotted)/)
-    expect(chip).toHaveClass("data-pressed:border-label", "data-pressed:bg-fill-2", "data-pressed:text-label")
-    expect(chip.className).not.toMatch(/brand/)
+    expect(chip).toHaveClass("h-7", "rounded-control", "bg-fill-1", "text-label", "hover:bg-fill-2")
+    expect(chip).toHaveClass("data-pressed:bg-brand-700", "data-pressed:text-brand-contrast", "data-pressed:focus-visible:focus-ring-inverse")
+    expect(chip.className).not.toMatch(/(^|\s)border-(label|separator|gray)/)
+    expect(chip).toHaveClass("data-disabled:opacity-40")
     await userEvent.click(chip)
     expect(chip).toHaveAttribute("aria-pressed", "true")
     expect(chip).toHaveAttribute("data-pressed")
@@ -35,6 +34,23 @@ describe("Toggle (chip)", () => {
     await userEvent.click(screen.getByRole("button", { name: "B" }))
     expect(screen.getByRole("button", { name: "B" })).toHaveAttribute("aria-pressed", "true")
     expect(screen.getByRole("button", { name: "A" })).toHaveAttribute("aria-pressed", "false")
+  })
+
+  // R4: un ToggleGroup es el segmentado de iCloud (los B/I/U de Notes, el Día/Semana/Mes de
+  // Calendar): la pista gris y cada ítem prendido es un segmento elevado. Admite varios prendidos,
+  // así que no hay pastilla que se deslice: cada ítem se eleva solo.
+  it("ToggleGroup es el segmentado: pista fill-2 y el prendido elevado en semibold", () => {
+    render(
+      <ToggleGroup aria-label="Estilo" defaultValue={["a"]}>
+        <ToggleGroupItem value="a">A</ToggleGroupItem>
+        <ToggleGroupItem value="b">B</ToggleGroupItem>
+      </ToggleGroup>
+    )
+    expect(screen.getByRole("group", { name: "Estilo" })).toHaveClass("rounded-control", "bg-fill-2", "p-0.5", "w-fit")
+    const b = screen.getByRole("button", { name: "B" })
+    expect(b).toHaveClass("h-6", "text-callout", "text-label", "data-pressed:bg-segment", "data-pressed:shadow-segment", "data-pressed:font-semibold")
+    expect(b).toHaveClass("after:w-px", "after:bg-fill-3", "first:after:hidden", "data-pressed:after:hidden", "[[data-pressed]+&]:after:hidden")
+    expect(b.className).not.toMatch(/brand/)
   })
 })
 

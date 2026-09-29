@@ -118,7 +118,10 @@ describe("Toolbar", () => {
     render(<Formato />)
     expect(screen.getByRole("toolbar")).toHaveClass("pointer-coarse:gap-5")
     expect(screen.getByRole("group", { name: "Alineación" })).toHaveClass("pointer-coarse:gap-5")
-    expect(screen.getByRole("group", { name: "Estilo" })).toHaveClass("pointer-coarse:gap-5")
+    // El ToggleGroup es el segmentado (R4): sus ítems van pegados y crecen de verdad a 40 × 44 con
+    // el dedo, así que no necesitan separarse.
+    expect(screen.getByRole("group", { name: "Estilo" })).toHaveClass("bg-fill-2")
+    expect(screen.getByRole("button", { name: "Negrita" })).toHaveClass("pointer-coarse:h-10", "pointer-coarse:min-w-11")
   })
 
   it("`plain` no lleva material: es la barra que vive adentro de otra superficie", () => {
@@ -172,9 +175,9 @@ describe("Toolbar", () => {
     expect(suelto).toHaveAttribute("data-slot", "toolbar-button")
     expect(suelto).toHaveClass("size-7", "hover:bg-fill-2", "[&_svg]:text-brand-900")
 
-    // Con `render={<ToggleGroupItem />}`: el chip de Toggle, sin nada del Button.
+    // Con `render={<ToggleGroupItem />}`: el segmento del ToggleGroup, sin nada del Button.
     const negrita = control("Negrita")
-    expect(negrita).toHaveClass("rounded-control", "border-label-tertiary")
+    expect(negrita).toHaveClass("h-6", "data-pressed:bg-segment")
     expect(negrita.className).not.toMatch(/\bsize-6\b/)
     expect(negrita.className).not.toMatch(/hover:bg-fill-2/)
   })

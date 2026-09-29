@@ -312,9 +312,10 @@ describe("Texto sobre el tinte de marca, en las cuatro marcas (WCAG 1.4.3)", () 
   }
 })
 
-// La pista del Switch apagado es `gray-700` (iCloud no tiene Switch: se deriva). Checkbox, Radio y
-// Toggle dibujan su contorno con `label-tertiary`, que mide `surfaces.test.ts`. Sin marcar no
-// tienen relleno ni texto que los dibuje: caen bajo WCAG 1.4.11 (3:1 contra el fondo adyacente).
+// La pista del Switch apagado es `gray-700` (iCloud no tiene Switch: se deriva). Checkbox y Radio
+// dibujan su contorno con `label-tertiary`, que mide `surfaces.test.ts`. Sin marcar no tienen
+// relleno ni texto que los dibuje: caen bajo WCAG 1.4.11 (3:1 contra el fondo adyacente). El Toggle
+// (R4) es un token con texto, como los filtros de iCloud: lo nombra su texto (`label`, 4,5:1).
 describe("Pista del Switch apagado (WCAG 1.4.11)", () => {
   for (const theme of ["light", "dark"] as const) {
     const fg = paleta[theme]["--sf-gray-700"]!
