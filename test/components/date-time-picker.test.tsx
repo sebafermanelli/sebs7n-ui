@@ -1,4 +1,4 @@
-import { render, screen, waitFor, within } from "@testing-library/react"
+import { act, render, screen, waitFor, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import * as React from "react"
 import { renderToString } from "react-dom/server"
@@ -99,6 +99,27 @@ describe("DateTimePicker", () => {
     const data = new FormData(container.querySelector("form")!)
     expect(data.get("vence")).toBe("2026-09-29T09:30")
     expect([...data.keys()]).toEqual(["vence"])
+  })
+
+  it("el reset del form vuelve al defaultValue y descarta la hora sin día", async () => {
+    const user = userEvent.setup()
+    render(
+      <form data-testid="form">
+        <DateTimePicker aria-label="Vencimiento" defaultValue={new Date(2026, 8, 29, 9, 30)} name="vence" />
+        <DateTimePicker aria-label="Recordatorio" name="recordar" />
+      </form>
+    )
+    const form = screen.getByTestId("form") as HTMLFormElement
+    await user.clear(time())
+    await user.type(time(), "14{Enter}")
+    const other = within(screen.getByRole("group", { name: "Recordatorio" })).getByRole("combobox", { name: "Hora" })
+    await user.type(other, "1830")
+    await user.tab()
+    expect(new FormData(form).get("vence")).toBe("2026-09-29T14:00")
+    act(() => form.reset())
+    expect(new FormData(form).get("vence")).toBe("2026-09-29T09:30")
+    expect(time()).toHaveValue("09:30")
+    expect(other).toHaveValue("")
   })
 
   it("el nombre de la hora sale de LabelsProvider y la prop labels le gana", () => {

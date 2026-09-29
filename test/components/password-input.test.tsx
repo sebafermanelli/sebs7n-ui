@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react"
+import { act, render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { renderToString } from "react-dom/server"
 import { afterEach, describe, expect, it, vi } from "vitest"
@@ -90,6 +90,20 @@ describe("PasswordInput", () => {
     await user.type(field(), "Abcdefg1")
     await user.click(screen.getByRole("button", { name: "Mostrar contraseña" }))
     expect(new FormData(screen.getByTestId("form") as HTMLFormElement).get("password")).toBe("Abcdefg1")
+  })
+
+  it("el reset del form vuelve la barra al defaultValue", async () => {
+    const user = userEvent.setup()
+    render(
+      <form data-testid="form">
+        <PasswordInput aria-label="Contraseña" defaultValue="abc" name="password" strength />
+      </form>
+    )
+    await user.type(field(), "defg1!")
+    expect(screen.getByRole("meter")).toHaveAttribute("aria-valuetext", "Buena")
+    act(() => (screen.getByTestId("form") as HTMLFormElement).reset())
+    expect(field()).toHaveValue("abc")
+    expect(screen.getByRole("meter")).toHaveAttribute("aria-valuetext", "Débil")
   })
 
   it("disabled apaga el campo y el ojo", () => {

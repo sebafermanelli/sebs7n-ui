@@ -4,6 +4,7 @@ import * as React from "react"
 import { EyeIcon, EyeOffIcon } from "lucide-react"
 
 import { useLabels, type Labels } from "../lib/labels.js"
+import { useFormReset } from "../internal/form-reset.js"
 import { cn } from "../lib/utils.js"
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput, type InputGroupInputProps } from "./input-group.js"
 import { Meter } from "./meter.js"
@@ -60,9 +61,11 @@ function PasswordInput({ className, size = "md", strength = false, labels: label
   const level = passwordStrength(text)
   const levelText = ["", labels.weak, labels.fair, labels.good, labels.strong][level]!
   const titleId = React.useId()
+  // El reset nativo vuelve el campo a `defaultValue`; la barra lo sigue.
+  const formReset = useFormReset(() => setOwn(String(defaultValue ?? "")))
 
   return (
-    <div data-slot="password-input" className={cn("flex w-full flex-col gap-2", className)}>
+    <div ref={formReset} data-slot="password-input" className={cn("flex w-full flex-col gap-2", className)}>
       <InputGroup disabled={disabled} size={size}>
         <InputGroupInput
           type={visible ? "text" : "password"}

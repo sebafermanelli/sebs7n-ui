@@ -5,6 +5,7 @@ import { Autocomplete as AutocompletePrimitive } from "@base-ui/react/autocomple
 import { ClockIcon } from "lucide-react"
 import { flushSync } from "react-dom"
 
+import { useFormReset } from "../internal/form-reset.js"
 import { MenuCheck } from "../internal/menu-check.js"
 import { clampTime, matchesTime, parseTime, timeSlots } from "../internal/time.js"
 import { useLabels, type Labels } from "../lib/labels.js"
@@ -79,6 +80,12 @@ function TimePicker({
     setSynced(value)
     setDraft(value ?? "")
   }
+  // El reset del form vuelve a `defaultValue` (sin controlar) y descarta lo tipeado.
+  const formReset = useFormReset(() => {
+    if (valueProp === undefined) setOwn(defaultValue)
+    setDraft((valueProp !== undefined ? valueProp : defaultValue) ?? "")
+    setStatus("")
+  })
   const highlighted = React.useRef<string | undefined>(undefined)
   // Al abrir, la lista arranca en la hora elegida (centrada) y no en las 00:00. Ref estable: corre
   // cuando la opción elegida se monta (al abrir o al cambiar de hora), no en cada render.
@@ -136,6 +143,7 @@ function TimePicker({
         <AutocompletePrimitive.InputGroup
           data-slot="time-picker"
           data-size={size}
+          ref={formReset}
           data-disabled={disabled ? "" : undefined}
           className={cn(inputShellClassName, className)}
         >

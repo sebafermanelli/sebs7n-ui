@@ -7,6 +7,7 @@ import { ChevronsUpDownIcon } from "lucide-react"
 import { countryFlag } from "../lib/countries.js"
 import { useLabels, type Labels } from "../lib/labels.js"
 import { nationalNumber, onlyDigits, parsePhone, PHONE_COUNTRIES, phoneCountry, type PhoneCountry } from "../lib/phone.js"
+import { useFormReset } from "../internal/form-reset.js"
 import { cn } from "../lib/utils.js"
 import { InputGroup, InputGroupAddon, InputGroupInput } from "./input-group.js"
 import { SelectContent, SelectItem } from "./select.js"
@@ -80,6 +81,13 @@ function PhoneInput({
   const country = parsed?.country ?? chosen
   const national = parsed?.national ?? ""
 
+  // El reset del form vuelve a `defaultValue` (sin controlar) y a su país.
+  const formReset = useFormReset(() => {
+    if (valueProp === undefined) setOwn(defaultValue)
+    setChosen(parsePhone(valueProp ?? defaultValue, defaultCountry)?.country ?? fallback)
+    setStatus("")
+  })
+
   const names = React.useMemo(() => {
     const display = new Intl.DisplayNames([locale], { type: "region", fallback: "code" })
     return new Map(PHONE_COUNTRIES.map((item) => [item.code, display.of(item.code) ?? item.code]))
@@ -101,7 +109,7 @@ function PhoneInput({
   }
 
   return (
-    <InputGroup className={className} disabled={disabled} size={size}>
+    <InputGroup className={className} disabled={disabled} ref={formReset} size={size}>
       <InputGroupAddon>
         <SelectPrimitive.Root
           disabled={disabled}

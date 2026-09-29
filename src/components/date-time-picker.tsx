@@ -4,6 +4,7 @@ import * as React from "react"
 
 import { toISODate } from "../lib/dates.js"
 import { useLabels, type Labels } from "../lib/labels.js"
+import { useFormReset } from "../internal/form-reset.js"
 import { cn } from "../lib/utils.js"
 import { DatePicker } from "./date-picker.js"
 import { TimePicker } from "./time-picker.js"
@@ -94,13 +95,19 @@ function DateTimePicker({
   }
   const time = value ? timeOf(value) : pendingTime
 
+  // El reset del form vuelve a `defaultValue` (sin controlar) y descarta la hora sin día.
+  const formReset = useFormReset(() => {
+    if (valueProp === undefined) setOwn(defaultValue)
+    setPendingTime(null)
+  })
+
   const commit = (next: Date | null) => {
     if (valueProp === undefined) setOwn(next)
     onValueChange?.(next)
   }
 
   return (
-    <div role="group" data-slot="date-time-picker" className={cn("flex w-full min-w-0", className)} {...aria}>
+    <div ref={formReset} role="group" data-slot="date-time-picker" className={cn("flex w-full min-w-0", className)} {...aria}>
       <DatePicker
         className="min-w-0 flex-1 rounded-e-none"
         clearable={clearable}

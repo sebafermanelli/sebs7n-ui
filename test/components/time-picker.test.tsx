@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react"
+import { act, render, screen, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import * as React from "react"
 import { renderToString } from "react-dom/server"
@@ -153,6 +153,23 @@ describe("TimePicker", () => {
     )
     await user.type(field(), "1437{Enter}")
     expect(sent?.get("hora")).toBe("14:37")
+  })
+
+  it("el reset del form vuelve al defaultValue, también el hidden", async () => {
+    const user = userEvent.setup()
+    render(
+      <form data-testid="form">
+        <TimePicker aria-label="Hora de envío" defaultValue="09:30" name="hora" />
+      </form>
+    )
+    const form = screen.getByTestId("form") as HTMLFormElement
+    await user.clear(field())
+    await user.type(field(), "14")
+    await user.tab()
+    expect(new FormData(form).get("hora")).toBe("14:00")
+    act(() => form.reset())
+    expect(field()).toHaveValue("09:30")
+    expect(new FormData(form).get("hora")).toBe("09:30")
   })
 
   it("controlado: un value nuevo reemplaza lo tipeado", async () => {

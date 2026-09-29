@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react"
+import { act, render, screen, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import * as React from "react"
 import { renderToString } from "react-dom/server"
@@ -175,6 +175,23 @@ describe("PhoneInput", () => {
     )
     expect(number()).toHaveValue("91155552002")
     expect(new FormData(screen.getByTestId("form") as HTMLFormElement).get("phone")).toBe("+5491155552002")
+  })
+
+  it("el reset del form vuelve al defaultValue, con su país", async () => {
+    const user = userEvent.setup()
+    render(
+      <form data-testid="form">
+        <PhoneInput aria-label="Teléfono" defaultValue="+541155552002" name="phone" />
+      </form>
+    )
+    const form = screen.getByTestId("form") as HTMLFormElement
+    await user.tripleClick(number())
+    await user.paste("+598 99 123 456")
+    expect(new FormData(form).get("phone")).toBe("+59899123456")
+    act(() => form.reset())
+    expect(number()).toHaveValue("1155552002")
+    expect(country()).toHaveTextContent("+54")
+    expect(new FormData(form).get("phone")).toBe("+541155552002")
   })
 
   it("controlado con +1: el país elegido desempata", async () => {
