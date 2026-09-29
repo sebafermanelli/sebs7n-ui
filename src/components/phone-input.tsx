@@ -39,6 +39,8 @@ type PhoneInputProps = {
   labels?: Partial<Labels["phoneInput"]>
 }
 
+const noopSubscribe = () => () => {}
+
 /**
  * Un teléfono: a la izquierda, adentro del campo, un selector compacto con la bandera y el código
  * («🇦🇷 +54»); a la derecha, el número, solo dígitos y con el largo máximo del país. El valor es
@@ -88,6 +90,10 @@ function PhoneInput({
     setStatus("")
   })
 
+  // Los nombres de `Intl.DisplayNames` dependen del ICU: el de Node puede no ser el del navegador. El
+  // único que se pinta en el servidor es el del nombre del selector, así que ahí va el código ISO
+  // hasta hidratar («Código de país: AR (+54)»); la lista se abre solo en el cliente.
+  const hydrated = React.useSyncExternalStore(noopSubscribe, () => true, () => false)
   const names = React.useMemo(() => {
     const display = new Intl.DisplayNames([locale], { type: "region", fallback: "code" })
     return new Map(PHONE_COUNTRIES.map((item) => [item.code, display.of(item.code) ?? item.code]))
@@ -117,7 +123,7 @@ function PhoneInput({
           value={country.code}
         >
           <SelectPrimitive.Trigger
-            aria-label={`${labels.country}: ${names.get(country.code)} (+${country.dial})`}
+            aria-label={`${labels.country}: ${hydrated ? names.get(country.code) : country.code} (+${country.dial})`}
             data-slot="phone-input-country"
             className={cn(
               "inline-flex h-7 shrink-0 cursor-pointer items-center gap-1 rounded-[calc(var(--radius-field)-4px)] px-2 text-callout tabular-nums text-label outline-none transition-control",

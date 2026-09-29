@@ -216,6 +216,21 @@ describe("PhoneInput", () => {
     expect(country()).toHaveAccessibleName("Código de país: Argentina (+54)")
   })
 
+  it("hidrata sin mismatch aunque el Intl del servidor nombre distinto, y después nombra con el del navegador", async () => {
+    const ui = <PhoneInput aria-label="Teléfono" defaultValue="+5491155552002" name="phone" />
+    const server = vi.spyOn(Intl.DisplayNames.prototype, "of").mockImplementation((code: string) => `Servidor ${code}`)
+    const container = document.createElement("div")
+    container.innerHTML = renderToString(ui)
+    server.mockRestore()
+    document.body.append(container)
+    const errors = vi.spyOn(console, "error").mockImplementation(() => {})
+    const recoverable = vi.fn()
+    await hidratar(container, ui, { onRecoverableError: recoverable })
+    expect(recoverable).not.toHaveBeenCalled()
+    expect(errors.mock.calls.filter(([message]) => /hydrat|did not match/i.test(String(message)))).toEqual([])
+    expect(container.querySelector("[data-slot=phone-input-country]")).toHaveAttribute("aria-label", "Código de país: Argentina (+54)")
+  })
+
   it("hidrata sin mismatch", async () => {
     const ui = <PhoneInput aria-label="Teléfono" defaultValue="+5491155552002" name="phone" />
     const container = document.createElement("div")

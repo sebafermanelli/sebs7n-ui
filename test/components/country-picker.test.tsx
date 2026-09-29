@@ -96,6 +96,22 @@ describe("CountryPicker", () => {
     expect(field()).toHaveAttribute("placeholder", "País de emisión")
   })
 
+  it("hidrata sin mismatch aunque el Intl del servidor nombre distinto, y después muestra el del navegador", async () => {
+    const ui = <CountryPicker aria-label="País" defaultValue="AR" name="country" />
+    // El ICU de Node no es el del navegador: un nombre puede cambiar entre versiones de CLDR.
+    const server = vi.spyOn(Intl.DisplayNames.prototype, "of").mockImplementation((code: string) => `Servidor ${code}`)
+    const container = document.createElement("div")
+    container.innerHTML = renderToString(ui)
+    server.mockRestore()
+    document.body.append(container)
+    const errors = vi.spyOn(console, "error").mockImplementation(() => {})
+    const recoverable = vi.fn()
+    await hidratar(container, ui, { onRecoverableError: recoverable })
+    expect(recoverable).not.toHaveBeenCalled()
+    expect(errors.mock.calls.filter(([message]) => /hydrat|did not match/i.test(String(message)))).toEqual([])
+    expect(container.querySelector("input:not([type=hidden])")).toHaveValue("Argentina")
+  })
+
   it("hidrata sin mismatch", async () => {
     const ui = <CountryPicker aria-label="País" defaultValue="AR" name="country" />
     const container = document.createElement("div")
