@@ -1252,6 +1252,34 @@
  */
 @source "../../dist";
 
+/* CollapsibleTrigger */
+/*
+ * El disparador de `Collapsible` con `chevron` (el estilo del paquete; sin él no trae estilo): el texto
+ * del cromo (14/18), un alto mínimo de 24 (WCAG 2.5.8) y, con el dedo, el área de 44 de `touch-target`.
+ * Las apps se lo agregaban a mano. CSS y no JS: el barrel está en su tope. En `@layer base`, así el
+ * `text-*` o el `min-h-*` de la app le gana.
+ */
+@layer base {
+  [data-slot="collapsible-trigger"].group\/collapsible-trigger {
+    position: relative;
+    min-height: 24px;
+    font-size: 14px;
+    line-height: 18px;
+
+    @media (pointer: coarse) {
+      &::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: max(100%, 44px);
+        height: max(100%, 44px);
+        transform: translate(-50%, -50%);
+      }
+    }
+  }
+}
+
 /* Textarea rows */
 /*
  * `Textarea` crece con el texto (`field-sizing: content`), y con eso el navegador ignora `rows`: el campo

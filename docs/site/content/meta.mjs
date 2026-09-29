@@ -3098,6 +3098,7 @@ export const COMPONENTS = {
       "El alto pasa por `motion-reduce`, además del reset global del paquete.",
     ],
     usage: [
+      "Con `chevron`, el disparador trae el estilo del paquete: texto de 14, 24 de alto mínimo (44 de área con el dedo), foco y el chevron que gira como en `Accordion`. Una clase propia (`text-body`, `min-h-*`) le gana. Sin `chevron` no trae estilo: lo pone el `render`.",
       "**Si hay varias secciones que son un grupo, es un `Accordion`**: trae el `<h3>` por sección.",
       "El trigger no trae estilo a propósito: va `render={<Button variant=\"ghost\" />}`. Con `chevron` suma el disclosure de iCloud (› que gira a ⌄) y el foco interior.",
       "`className` cae en el contenido, no en el elemento que anima el alto: ahí va el padding.",
