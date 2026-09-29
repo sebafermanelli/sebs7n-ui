@@ -20,7 +20,8 @@ export const backdropClassName =
  *
  * Es el contenedor de diálogo de iCloud (catálogo §2.15): radio 11 (`rounded-panel`), opaco
  * (`bg-surface`), la sombra de popover con su filo (`shadow-modal`) y 20 px de padding. Lo
- * comparten Dialog y AlertDialog; la alerta solo es más angosta (`alertWidthClassName`).
+ * comparten Dialog y AlertDialog; la alerta es más angosta (`alertWidthClassName`), con 24 de
+ * aire y centrada.
  * La entrada sube 8px mientras aparece: es la señal de que algo entró, no decoración.
  */
 export const modalPopupClassName =
@@ -28,14 +29,27 @@ export const modalPopupClassName =
   "transition-[opacity,translate] duration-150 data-ending-style:opacity-0 data-starting-style:translate-y-[calc(-50%+8px)] data-starting-style:opacity-0"
 
 /**
- * El ancho de la confirmación (AlertDialog): el mismo diálogo que Dialog, más angosto. 400 px es
- * el diálogo chico de iCloud (el «Go To Date…» de Calendar mide 395) y deja una pregunta con dos o
- * tres botones en un renglón. Sin breakpoint: en un celular es el ancho menos 2rem.
+ * El ancho de la alerta (AlertDialog): el mismo diálogo que Dialog, más angosto. 450 px es la
+ * alerta de iCloud. Sin breakpoint: en un celular es el ancho menos 2rem.
  */
-export const alertWidthClassName = "max-w-[min(400px,calc(100%-2rem))]"
+export const alertWidthClassName = "max-w-[min(450px,calc(100%-2rem))]"
 
 /**
- * El pie de un diálogo (Dialog y AlertDialog): los botones abajo a la derecha, sin línea arriba y
+ * El pie de la alerta de iCloud: dos botones iguales a todo el ancho, separados 10 px, el primero
+ * del DOM a la izquierda («Cancelar»). Con tres o más, o en 360 px o menos, se apilan **en el
+ * orden del DOM** —invertir con CSS haría que Tab recorra al revés de como se ve (WCAG 1.3.2 y
+ * 2.4.3)—, a todo el ancho y con los mismos estilos.
+ *
+ * La última línea es una red de seguridad: un Button es `whitespace-nowrap`, y una etiqueta larga
+ * en media alerta se salía del botón. Acá el texto baja de renglón (centrado) y el botón crece en
+ * alto desde sus 36.
+ */
+export const alertFooterClassName =
+  "grid w-full auto-cols-fr grid-flow-col gap-2.5 pt-2 has-[>:nth-child(3)]:grid-flow-row max-[360px]:grid-flow-row [&>*]:w-full " +
+  "[&>*]:h-auto [&>*]:min-h-9 [&>*]:py-1.5 [&>*]:text-center [&>*]:whitespace-normal"
+
+/**
+ * El pie de Dialog: los botones abajo a la derecha, sin línea arriba y
  * separados 8 px. iCloud centra el único botón de sus hojas informativas («What's New»); en una
  * confirmación o un formulario —«Cancelar» y la acción— van a la derecha, y el CTA centrado sale
  * con `sm:justify-center`.

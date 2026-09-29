@@ -111,14 +111,17 @@ flotantes, la paleta de Spotlight, los botones teñidos) no llega a publicarse.
 
 - **Un solo contenedor de diálogo** para Dialog y AlertDialog (`modalPopupClassName`):
   `rounded-panel` (11), `bg-surface`, `shadow-modal`, 20 px de padding, el velo sin blur.
-- **AlertDialog es la confirmación de iCloud.** 400 px (`alertWidthClassName`), título
-  `text-title-3` y cuerpo `text-callout` secundario a la izquierda, botones a la derecha con su
-  ancho (`modalFooterClassName`), en el orden del DOM y apilados sin invertir en mobile.
-  `AlertDialogAction variant="destructive"` pasa a `Button variant="destructive"` (rojo sólido);
-  `default` sigue en `accent`; `AlertDialogCancel` es el gris y sigue siendo el foco inicial.
-  **Se van** `AlertDialogIcon` (iCloud no pone ícono en sus diálogos: borralo, el título ya
-  dice qué pasa), `AlertDialogFooter stacked` (sacalo: los botones miden lo que su texto),
-  `alertPopupClassName` y `alertFooterClassName`.
+- **AlertDialog es la alerta de iCloud.** 450 px (`alertWidthClassName`), 24 px de aire y todo
+  centrado: `AlertDialogIcon` arriba (opcional, en la marca, un `<svg>` a 36 px), título
+  `text-headline`, detalle `text-callout` secundario y **dos botones iguales a todo el ancho**
+  (`alertFooterClassName`: grilla de columnas iguales, 10 px; con tres o más, o en 360 px o menos,
+  se apilan en el orden del DOM). **El botón por defecto es el seguro y va en el acento**: con una
+  `AlertDialogAction variant="destructive"`, «Cancelar» pasa a acento sólido y es el foco inicial,
+  y la acción que destruye es gris (`secondary`) con el texto en `text-red-ink` (4,5:1 sobre el gris
+  en los dos temas); sin destructiva, la acción es el acento, «Cancelar» el gris y **el foco inicial
+  va a la acción** (Return la dispara). Hasta 1.x `default` era el negro y `destructive` el rojo
+  sólido. **Se van** `AlertDialogFooter stacked` (con tres botones se apila solo) y
+  `alertPopupClassName`.
 - **Dialog con la X arriba a la izquierda** (`dialogCloseClassName`) y el título centrado:
   `DialogHeader` es `px-8 text-center`. La X de Dialog, Sheet y Drawer mide **28 × 28** con glifo
   de 14 (`closeButtonClassName`). El pie (`modalFooterClassName`) es
@@ -226,7 +229,7 @@ las fases R2–R5 rehacen diálogos, menús, controles y listas con las medidas 
   «Filtros»). El nombre del campo es su `placeholder` cuando lo trae.
 - `commandDialogPopupClassName`, `commandInputClassName`, `commandFilterClassName`,
   `commandItemClassName` y `commandItemIconClassName` (`variants/command`, también en el barrel).
-- `alertWidthClassName`, `closeButtonClassName` y `dialogCloseClassName` (`variants/overlay`,
+- `alertWidthClassName`, `alertFooterClassName`, `closeButtonClassName` y `dialogCloseClassName` (`variants/overlay`,
   también en el barrel).
 - `PopoverContent translucent`.
 - `menuGutterClassName`, `menuInsetClassName` y `menuIndicatorClassName` (`variants/menu`).

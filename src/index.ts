@@ -75,6 +75,7 @@ export {
 } from "./variants/menu.js"
 export { selectionSecondaryClassName } from "./variants/selection.js"
 export {
+  alertFooterClassName,
   alertWidthClassName,
   backdropClassName,
   closeButtonClassName,

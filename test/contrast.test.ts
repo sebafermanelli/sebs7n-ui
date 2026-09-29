@@ -368,3 +368,20 @@ describe("La perilla del Slider se ve sobre la página (WCAG 1.4.11)", () => {
     }
   }
 })
+
+// La acción destructiva de una alerta (R2, la alerta real de iCloud): gris (`secondary`, fill-2 y
+// fill-3 con el puntero) con el texto rojo. El rojo es la tinta de la paleta (`red-ink`): `red-900`
+// daba 3,6–4,0:1 sobre el gris en oscuro.
+describe("La acción destructiva de la alerta: rojo sobre gris (WCAG 1.4.3)", () => {
+  const css = read("theme.css")
+  const mezcla = Number(css.match(/--color-red-ink: color-mix\(in srgb, var\(--sf-red-900\) (\d+)%/)![1]) / 100
+  for (const theme of ["light", "dark"] as const) {
+    const tinta = composite(paleta[theme]["--sf-red-900"]!, mezcla, paleta[theme]["--sf-red-1000"]!)
+    for (const fill of ["--sf-fill-2", "--sf-fill-3"] as const) {
+      const fondo = flattenAlpha(paleta[theme][fill]!, paleta[theme]["--sf-surface"]!)
+      it(`${theme} · ${tinta} sobre ${fill.replace("--sf-", "")} ${fondo} llega a 4.5:1`, () => {
+        expect(ratio(tinta, fondo)).toBeGreaterThanOrEqual(4.5)
+      })
+    }
+  }
+})

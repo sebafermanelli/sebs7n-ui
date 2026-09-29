@@ -12,6 +12,7 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
+  AlertDialogIcon,
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../../src/components/alert-dialog"
@@ -42,16 +43,16 @@ describe("AlertDialog", () => {
     render(<Example />)
     await userEvent.click(screen.getByRole("button", { name: "Eliminar viaje" }))
     const dialog = await screen.findByRole("alertdialog")
-    expect(dialog).toHaveClass("shadow-modal", "rounded-panel", "p-5", "gap-4", "bg-surface")
+    expect(dialog).toHaveClass("shadow-modal", "rounded-panel", "p-6", "gap-4", "bg-surface")
     expect(dialog.className).not.toMatch(/\bborder\b/)
-    expect(screen.getByText("¿Eliminar el viaje?")).toHaveClass("text-title-3", "text-label")
+    expect(screen.getByText("¿Eliminar el viaje?")).toHaveClass("text-headline", "text-label")
     expect(screen.getByText("Se borran también los pasajeros cargados.")).toHaveClass("text-callout", "text-label-secondary")
     expect(document.querySelector("[data-slot=alert-dialog-overlay]")).toHaveClass("bg-backdrop")
     // Sin botón X: un alert dialog exige respuesta.
     expect(screen.queryByRole("button", { name: "Cerrar" })).toBeNull()
     const cancel = screen.getByRole("button", { name: "Cancelar" })
-    // El botón gris de iCloud, no uno con borde.
-    expect(cancel).toHaveClass("bg-fill-2")
+    // En una alerta destructiva, Cancelar es el botón por defecto: el acento sólido.
+    expect(cancel).toHaveClass("bg-brand-700")
     expect(cancel).not.toHaveClass("border-separator-strong")
     await userEvent.click(cancel)
     await waitFor(() => expect(screen.queryByRole("alertdialog")).toBeNull())
@@ -62,17 +63,17 @@ describe("AlertDialog", () => {
     render(<Example onAction={onAction} />)
     await userEvent.click(screen.getByRole("button", { name: "Eliminar viaje" }))
     const action = await screen.findByRole("button", { name: "Eliminar" })
-    expect(action).toHaveClass("bg-red-800")
+    expect(action).toHaveClass("bg-fill-2", "text-red-ink")
     await userEvent.click(action)
     expect(onAction).toHaveBeenCalled()
   })
 
-  it("el footer alinea los botones a la derecha, sin borde superior", async () => {
+  it("el footer es una grilla de botones iguales, sin borde superior", async () => {
     render(<Example />)
     await userEvent.click(screen.getByRole("button", { name: "Eliminar viaje" }))
     const footer = (await screen.findByRole("button", { name: "Cancelar" })).parentElement!
     expect(footer).toHaveAttribute("data-slot", "alert-dialog-footer")
-    expect(footer).toHaveClass("sm:justify-end")
+    expect(footer).toHaveClass("grid", "auto-cols-fr")
     expect(footer).not.toHaveClass("border-t")
     expect(footer.className).not.toMatch(/-mx-6/)
   })
@@ -111,11 +112,17 @@ describe("AlertDialog", () => {
   })
 })
 
-describe("confirmación de iCloud (2.0, R2)", () => {
-  function Alerta({ extra = false }: { extra?: boolean }) {
+// La alerta real de iCloud (captura de Sebastián): ícono de la marca arriba al centro, título y
+// texto centrados, y dos botones iguales a todo el ancho. El botón por defecto —el seguro— es el
+// del acento: en una alerta destructiva es «Cancelar», y «Eliminar» va en gris con texto rojo.
+describe("alerta de iCloud (2.0, R2)", () => {
+  function Alerta({ extra = false, destructiva = true }: { extra?: boolean; destructiva?: boolean }) {
     return (
       <AlertDialog defaultOpen>
         <AlertDialogContent>
+          <AlertDialogIcon>
+            <svg data-testid="icono" />
+          </AlertDialogIcon>
           <AlertDialogHeader>
             <AlertDialogTitle>¿Eliminar la factura 0012?</AlertDialogTitle>
             <AlertDialogDescription>Se borra del listado y del resumen del mes.</AlertDialogDescription>
@@ -123,64 +130,65 @@ describe("confirmación de iCloud (2.0, R2)", () => {
           <AlertDialogFooter>
             <AlertDialogCancel />
             {extra && <AlertDialogAction>Archivar</AlertDialogAction>}
-            <AlertDialogAction variant="destructive">Eliminar</AlertDialogAction>
+            <AlertDialogAction variant={destructiva ? "destructive" : "default"}>{destructiva ? "Eliminar" : "Emitir"}</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
     )
   }
 
-  it("es el diálogo de iCloud: radio 11, 20 de padding, opaco, 400 px como máximo", async () => {
+  it("es el diálogo de iCloud: radio 11, opaco, 24 de aire, 450 px como máximo y todo centrado", async () => {
     render(<Alerta />)
     const alerta = await screen.findByRole("alertdialog")
-    expect(alerta).toHaveClass("rounded-panel", "p-5", "bg-surface", "shadow-modal", "max-w-[min(400px,calc(100%-2rem))]")
-    expect(alerta.className).not.toMatch(/300px|backdrop-blur/)
+    expect(alerta).toHaveClass("rounded-panel", "p-6", "bg-surface", "shadow-modal", "max-w-[min(450px,calc(100%-2rem))]", "text-center", "justify-items-center")
   })
 
-  it("título title-3 y cuerpo callout, alineados a la izquierda", async () => {
+  it("el ícono va arriba al centro, en la marca, y es decorativo", async () => {
+    render(<Alerta />)
+    const alerta = await screen.findByRole("alertdialog")
+    const icono = alerta.querySelector('[data-slot="alert-dialog-icon"]')!
+    expect(icono).toHaveAttribute("aria-hidden", "true")
+    expect(icono).toHaveClass("justify-center", "text-brand-900")
+    expect(alerta.firstElementChild).toBe(icono)
+    expect(screen.getByTestId("icono").parentElement).toBe(icono)
+  })
+
+  it("título headline y texto callout secundario, centrados", async () => {
     render(<Alerta />)
     const header = (await screen.findByRole("alertdialog")).querySelector('[data-slot="alert-dialog-header"]')!
-    expect(header).not.toHaveClass("text-center", "items-center")
-    expect(screen.getByRole("heading", { name: "¿Eliminar la factura 0012?" })).toHaveClass("text-title-3")
+    expect(header).toHaveClass("items-center", "text-center")
+    expect(screen.getByRole("heading", { name: "¿Eliminar la factura 0012?" })).toHaveClass("text-headline")
+    expect(screen.getByText("Se borra del listado y del resumen del mes.")).toHaveClass("text-callout", "text-label-secondary")
   })
 
-  it("los botones van a la derecha, con su ancho y en el orden del DOM", async () => {
-    render(<Alerta extra />)
+  it("dos botones iguales a todo el ancho; con tres se apilan, en el orden del DOM", async () => {
+    const { unmount } = render(<Alerta />)
     const pie = (await screen.findByRole("alertdialog")).querySelector('[data-slot="alert-dialog-footer"]')!
-    expect(pie).toHaveClass("flex", "sm:flex-row", "sm:justify-end")
-    expect(pie.className).not.toMatch(/grid|auto-cols-fr|w-full|reverse|order-/)
-    expect([...pie.children].map((b) => b.textContent)).toEqual(["Cancelar", "Archivar", "Eliminar"])
+    expect(pie).toHaveClass("grid", "w-full", "auto-cols-fr", "grid-flow-col", "[&>*]:w-full")
+    expect(pie.className).toMatch(/has-\[>:nth-child\(3\)\]:grid-flow-row/)
+    expect(pie.className).not.toMatch(/reverse|order-|justify-end/)
+    unmount()
+    render(<Alerta extra />)
+    const pie3 = (await screen.findByRole("alertdialog")).querySelector('[data-slot="alert-dialog-footer"]')!
+    expect([...pie3.children].map((b) => b.textContent)).toEqual(["Cancelar", "Archivar", "Eliminar"])
   })
 
-  it("no hay ícono de alerta: iCloud no lo pone", async () => {
-    const modulo = await import("../../src/components/alert-dialog")
-    expect("AlertDialogIcon" in modulo).toBe(false)
-  })
-
-  it("Cancelar es el gris de iCloud y la acción destructiva, el rojo sólido", async () => {
+  it("destructiva: Cancelar es el acento sólido y Eliminar el gris con texto rojo", async () => {
     render(<Alerta />)
-    expect(await screen.findByRole("button", { name: "Cancelar" })).toHaveClass("bg-fill-2")
+    const cancelar = await screen.findByRole("button", { name: "Cancelar" })
+    await waitFor(() => expect(cancelar).toHaveClass("bg-brand-700", "text-brand-contrast"))
     const eliminar = screen.getByRole("button", { name: "Eliminar" })
-    expect(eliminar).toHaveClass("bg-red-800")
-    expect(eliminar.className).not.toMatch(/tint|red-ink/)
+    expect(eliminar).toHaveClass("bg-fill-2", "text-red-ink")
+    expect(eliminar.className).not.toMatch(/bg-red-800|bg-brand-700/)
   })
 
-  it("la acción por defecto es del acento", async () => {
-    render(
-      <AlertDialog defaultOpen>
-        <AlertDialogContent>
-          <AlertDialogTitle>¿Emitir la factura?</AlertDialogTitle>
-          <AlertDialogFooter>
-            <AlertDialogCancel />
-            <AlertDialogAction>Emitir</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    )
+  it("sin destructiva: la acción es el acento y Cancelar el gris", async () => {
+    render(<Alerta destructiva={false} />)
     expect(await screen.findByRole("button", { name: "Emitir" })).toHaveClass("bg-brand-700")
+    expect(screen.getByRole("button", { name: "Cancelar" })).toHaveClass("bg-fill-2")
   })
 
-  it("AlertDialogClose con render de la acción destructiva conserva el rojo", async () => {
+  it("AlertDialogClose con render de la acción destructiva conserva el gris y el rojo", async () => {
     render(
       <AlertDialog defaultOpen>
         <AlertDialogContent>
@@ -193,14 +201,15 @@ describe("confirmación de iCloud (2.0, R2)", () => {
       </AlertDialog>
     )
     const eliminar = await screen.findByRole("button", { name: "Eliminar" })
-    expect(eliminar).toHaveClass("bg-red-800")
+    expect(eliminar).toHaveClass("text-red-ink")
+    await waitFor(() => expect(screen.getByRole("button", { name: "Cancelar" })).toHaveClass("bg-brand-700"))
     await userEvent.click(eliminar)
     await waitFor(() => expect(screen.queryByRole("alertdialog")).toBeNull())
   })
 })
 
-// Lo que documenta meta.mjs para una alerta que no destruye nada: el foco inicial en la acción,
-// así Return la dispara. Por defecto sigue arrancando en «Cancelar».
+// Lo que documenta meta.mjs: `initialFocus` de la app gana siempre, y sin destructiva el foco
+// arranca en la acción, así Return la dispara.
 describe("foco inicial (revisión fase 2)", () => {
   function Emitir({ enAccion }: { enAccion: boolean }) {
     const emitir = useRef<HTMLButtonElement>(null)
@@ -220,10 +229,12 @@ describe("foco inicial (revisión fase 2)", () => {
     )
   }
 
-  it("por defecto arranca en Cancelar", async () => {
+  // Sin acción destructiva, el botón por defecto es la acción (el acento): ahí arranca el foco y
+  // Return la dispara. Con una destructiva, el por defecto es Cancelar (ver abajo).
+  it("sin destructiva, por defecto arranca en la acción", async () => {
     render(<Emitir enAccion={false} />)
     await userEvent.click(screen.getByRole("button", { name: "Abrir" }))
-    await waitFor(() => expect(screen.getByRole("button", { name: "Cancelar" })).toHaveFocus())
+    await waitFor(() => expect(screen.getByRole("button", { name: "Emitir" })).toHaveFocus())
   })
 
   it("con initialFocus en la acción, Return la dispara y cierra", async () => {

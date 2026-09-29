@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef } from "react"
+import { FileXIcon } from "lucide-react"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,6 +10,7 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
+  AlertDialogIcon,
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "sebs7n-ui/alert-dialog"
@@ -17,15 +18,19 @@ import { Button } from "sebs7n-ui/button"
 
 /**
  * Confirmar algo destructivo
- * La confirmación de iCloud: la pregunta a la izquierda y los botones a la derecha. Cancelar es gris
- * y la acción destructiva, roja. `AlertDialogAction` no cierra sola: se envuelve en
- * `AlertDialogClose` o se controla `open`.
+ * La alerta de iCloud: el ícono de la marca arriba, la pregunta y el detalle centrados, y dos
+ * botones iguales. Con una acción destructiva, «Cancelar» es el botón por defecto (el acento, con el
+ * foco) y «Eliminar» va en gris con el texto rojo. `AlertDialogAction` no cierra sola: se envuelve
+ * en `AlertDialogClose` o se controla `open`.
  */
 export function Basico() {
   return (
     <AlertDialog>
       <AlertDialogTrigger render={<Button variant="destructive" />}>Eliminar factura</AlertDialogTrigger>
       <AlertDialogContent>
+        <AlertDialogIcon>
+          <FileXIcon strokeWidth={1.5} />
+        </AlertDialogIcon>
         <AlertDialogHeader>
           <AlertDialogTitle>¿Eliminar la factura 0012?</AlertDialogTitle>
           <AlertDialogDescription>
@@ -43,22 +48,21 @@ export function Basico() {
 
 /**
  * Acción por defecto
- * Sin `variant`, la acción es el botón del acento. Para lo que no destruye nada. `initialFocus` la
- * enfoca al abrir, así Return la dispara.
+ * Sin `variant`, la acción es el botón por defecto: el acento, con el foco al abrir, así Return la
+ * dispara. «Cancelar» va en gris. Para lo que no destruye nada.
  */
 export function AccionPorDefecto() {
-  const emitir = useRef<HTMLButtonElement>(null)
   return (
     <AlertDialog>
       <AlertDialogTrigger render={<Button variant="outline" />}>Emitir factura</AlertDialogTrigger>
-      <AlertDialogContent initialFocus={emitir}>
+      <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>¿Emitir la factura 0013?</AlertDialogTitle>
           <AlertDialogDescription>Se numera y se envía al cliente. Después solo se puede anular.</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel />
-          <AlertDialogClose ref={emitir} render={<AlertDialogAction />}>
+          <AlertDialogClose render={<AlertDialogAction />}>
             Emitir
           </AlertDialogClose>
         </AlertDialogFooter>
@@ -69,8 +73,8 @@ export function AccionPorDefecto() {
 
 /**
  * Etiqueta larga
- * Los botones miden lo que su texto: «Descartar cambios» entra en el pie sin apilar. El foco
- * arranca en «Seguir editando», nunca en la acción que destruye.
+ * Los dos botones son iguales: si una etiqueta no entra, baja de renglón adentro del botón. El
+ * foco arranca en «Seguir editando», el botón por defecto, nunca en la acción que destruye.
  */
 export function EtiquetaLarga() {
   return (
