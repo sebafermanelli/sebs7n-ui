@@ -264,7 +264,23 @@ function DropZone({
   // `scope="window"`: se escucha la ventana. Un contador y no un booleano porque `dragenter` y
   // `dragleave` llegan de a pares por cada hijo que cruza el puntero.
   React.useEffect(() => {
-    if (scope !== "window" || disabled) return
+    if (scope !== "window") return
+    if (disabled) {
+      // Deshabilitada (convirtiendo, subiendo), la ventana sigue siendo la zona para el navegador: sin
+      // esto, un archivo soltado se abre en la pestaña y la app se pierde. No agrega nada: solo avisa
+      // con el cursor que ahí no se suelta.
+      const block = (event: DragEvent) => {
+        if (!hasFiles(event)) return
+        event.preventDefault()
+        if (event.dataTransfer) event.dataTransfer.dropEffect = "none"
+      }
+      window.addEventListener("dragover", block)
+      window.addEventListener("drop", block)
+      return () => {
+        window.removeEventListener("dragover", block)
+        window.removeEventListener("drop", block)
+      }
+    }
     let depth = 0
     const enter = (event: DragEvent) => {
       if (!hasFiles(event)) return

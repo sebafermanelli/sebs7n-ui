@@ -1046,7 +1046,7 @@ export const COMPONENTS = {
       "`validate` suma una validación propia por archivo (leer los bytes `%PDF-`, pedir un mínimo): el texto que devuelve es el error en línea de ese archivo y el archivo no entra. Puede ser asíncrona; corre antes del cupo de `maxFiles`.",
       "Los tamaños van en base 1024 (`maxSize={20 * 1024 * 1024}` dice «20 MB»); `formatSize` los escribe de otra forma, en la lista y en el error.",
       "Con `name`, los archivos viajan con el `<form>` en un `<input type=\"file\">`, también los que llegaron arrastrando: sirve igual para una Server Action. Necesita `DataTransfer` (todos los navegadores actuales): sin él, el input queda como lo dejó el diálogo.",
-      "`scope=\"window\"`: mientras se arrastra un archivo, toda la ventana es la zona (una app de una sola tarea, como un conversor).",
+      "`scope=\"window\"`: mientras se arrastra un archivo, toda la ventana es la zona (una app de una sola tarea, como un conversor). Deshabilitada sigue montada como guardia: soltar un archivo no lo abre en la pestaña (el cursor dice que ahí no se suelta).",
       "Sin `multiple`, uno nuevo reemplaza al anterior; si se sueltan varios, entra el primero y el resto se avisa. `accept=\"*/*\"` acepta todo. Solo por subpath (`sebs7n-ui/drop-zone`): no está en el barrel, por peso.",
     ],
     props: {

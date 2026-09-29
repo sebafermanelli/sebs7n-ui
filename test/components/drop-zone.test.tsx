@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor, within } from "@testing-library/react"
+import { createEvent, fireEvent, render, screen, waitFor, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { renderToString } from "react-dom/server"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
@@ -288,6 +288,33 @@ describe("DropZone", () => {
     expect(document.querySelector("[data-slot=drop-zone-overlay]")).toBeNull()
     rerender(<DropZone aria-label="Adjuntos" scope="window" />)
     expect(document.querySelector("[data-slot=drop-zone-overlay]")).toBeNull()
+  })
+
+  it("deshabilitada con scope=window, la ventana sigue sin abrir el archivo: preventDefault y dropEffect none", () => {
+    const onFilesChange = vi.fn()
+    const { unmount } = render(<DropZone aria-label="Factura" disabled onFilesChange={onFilesChange} scope="window" />)
+    const transfer = { types: ["Files"], dropEffect: "copy", files: [pdf()] }
+    const over = createEvent.dragOver(window, { dataTransfer: transfer })
+    fireEvent(window, over)
+    expect(over.defaultPrevented).toBe(true)
+    expect(transfer.dropEffect).toBe("none")
+    const dropped = createEvent.drop(window, { dataTransfer: transfer })
+    fireEvent(window, dropped)
+    expect(dropped.defaultPrevented).toBe(true)
+    expect(onFilesChange).not.toHaveBeenCalled()
+    expect(document.querySelector("[data-slot=drop-zone-overlay]")).toBeNull()
+    // Desmontada, la ventana vuelve a ser del navegador.
+    unmount()
+    const later = createEvent.dragOver(window, { dataTransfer: { types: ["Files"] } })
+    fireEvent(window, later)
+    expect(later.defaultPrevented).toBe(false)
+  })
+
+  it("deshabilitada con scope=area no toca la ventana", () => {
+    render(<DropZone aria-label="Factura" disabled />)
+    const over = createEvent.dragOver(window, { dataTransfer: { types: ["Files"] } })
+    fireEvent(window, over)
+    expect(over.defaultPrevented).toBe(false)
   })
 
   it("scope=window: al desmontar saca sus listeners de la ventana", () => {
