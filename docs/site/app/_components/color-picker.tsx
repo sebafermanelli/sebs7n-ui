@@ -18,8 +18,9 @@ export function Veredicto({ color, superficie }: { color: Oklch; superficie: str
   const numero = (ratio: number) => ratio.toFixed(2).replace(".", ",")
   return (
     <>
+      {/* La forma del Button `md` de 2.0 (36 de alto, radio 8, callout), no una cápsula. */}
       <div
-        className="flex h-10 items-center justify-center rounded-full text-callout font-medium"
+        className="flex h-9 items-center justify-center rounded-control text-callout"
         style={{ backgroundColor: hexOfOklch(color), color: texto.hex }}
       >
         Así queda el botón
