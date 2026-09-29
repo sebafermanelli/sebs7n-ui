@@ -22,8 +22,9 @@ const twMerge = extendTailwindMerge<"touch-target" | "focus-ring">({
       radius: ["control", "surface", "panel", "field", "item", "menu", "menu-item", "tag", "tooltip", "meter", "menu-header", "thumb"],
     },
     classGroups: {
-      // `material-translucent`, `material-translucent-body` y `bg-ambient` pintan el fondo. Sin esto, un `bg-*` que pase el llamador
-      // convive con ellos y gana el que Tailwind haya emitido último, que no se elige.
+      // `material-translucent`, `material-translucent-body` y `bg-ambient` pintan el fondo. Sin esto,
+      // un `bg-*` que pase el llamador convive con ellos y gana el que Tailwind haya emitido último,
+      // que no se elige.
       // Las dos formas del área táctil pelean por el mismo `::after`: la que se pase después gana.
       "touch-target": ["touch-target", "touch-target-y"],
       // Los anillos pintan el mismo `box-shadow`: el de la variante (sobre la marca, o el del campo)
