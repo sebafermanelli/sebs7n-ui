@@ -35,7 +35,8 @@ describe("selectionSecondaryClassName: lo que tiene color propio adentro de un Ã
     expect(selectionSecondaryClassName.split(" ")).toContain("inside-selection:text-on-selection")
   })
 
-  it("MenuItem resaltado", async () => {
+  // En iCloud el resaltado de un menÃº es gris y el texto no cambia: no es una selecciÃ³n sobre el acento.
+  it("MenuItem resaltado no cuenta", async () => {
     render(
       <DropdownMenu>
         <DropdownMenuTrigger render={<Button variant="outline" />}>Acciones</DropdownMenuTrigger>
@@ -52,7 +53,7 @@ describe("selectionSecondaryClassName: lo que tiene color propio adentro de un Ã
     expect(screen.getByTestId("secundario").matches(insideSelection)).toBe(false)
     await userEvent.keyboard("{ArrowDown}")
     await waitFor(() => expect(item).toHaveAttribute("data-highlighted"))
-    expect(screen.getByTestId("secundario").matches(insideSelection)).toBe(true)
+    expect(screen.getByTestId("secundario").matches(insideSelection)).toBe(false)
   })
 
   it("MenuItem deshabilitado no cuenta aunque quede resaltado", () => {
@@ -64,7 +65,7 @@ describe("selectionSecondaryClassName: lo que tiene color propio adentro de un Ã
     expect(container.querySelector("[data-testid=secundario]")!.matches(insideSelection)).toBe(false)
   })
 
-  it("SidebarItem activo", () => {
+  it("SidebarItem activo no cuenta: es gris", () => {
     render(
       <Sidebar>
         <SidebarContent>
@@ -77,10 +78,10 @@ describe("selectionSecondaryClassName: lo que tiene color propio adentro de un Ã
     )
     expect(screen.getByRole("link", { name: /Inicio/ })).toHaveClass("group/selectable")
     expect(screen.getByRole("link", { name: "Clientes" })).toHaveClass("group/selectable")
-    expect(screen.getByTestId("secundario").matches(insideSelection)).toBe(true)
+    expect(screen.getByTestId("secundario").matches(insideSelection)).toBe(false)
   })
 
-  it("TableRow seleccionada", () => {
+  it("TableRow seleccionada cuenta solo mientras la tabla tiene el foco", () => {
     const { rerender } = render(
       <Table>
         <TableBody>
@@ -97,7 +98,7 @@ describe("selectionSecondaryClassName: lo que tiene color propio adentro de un Ã
     rerender(
       <Table>
         <TableBody>
-          <TableRow data-state="selected">
+          <TableRow data-state="selected" tabIndex={0}>
             <TableCell>
               Factura <Secundario />
             </TableCell>
@@ -105,10 +106,15 @@ describe("selectionSecondaryClassName: lo que tiene color propio adentro de un Ã
         </TableBody>
       </Table>
     )
-    expect(screen.getByTestId("secundario").matches(insideSelection)).toBe(true)
+    // Elegida pero sin foco: la fila es gris (`selection-inactive`) y lo de adentro no cambia.
+    expect(screen.getByTestId("secundario").matches(insideSelection)).toBe(false)
+    screen.getByRole("row").focus()
+    // nwsapi (el motor de selectores de jsdom) cachea el resultado de `matches()` y no lo invalida
+    // cuando cambia el foco: se pregunta con el mismo selector mÃ¡s una rama que no matchea nada.
+    expect(screen.getByTestId("secundario").matches(`${insideSelection}, :not(*)`)).toBe(true)
   })
 
-  it("NavigationMenuLink de la pÃ¡gina actual (el de tarjeta; el de la barra no se pinta de acento)", () => {
+  it("NavigationMenuLink de la pÃ¡gina actual no cuenta: es gris", () => {
     render(
       <NavigationMenu>
         <NavigationMenuList>
@@ -126,7 +132,7 @@ describe("selectionSecondaryClassName: lo que tiene color propio adentro de un Ã
       </NavigationMenu>
     )
     expect(screen.getByRole("link", { name: /Sistemas/ })).toHaveClass("group/selectable")
-    expect(screen.getByTestId("secundario").matches(insideSelection)).toBe(true)
+    expect(screen.getByTestId("secundario").matches(insideSelection)).toBe(false)
     expect(screen.getByRole("link", { name: "Blog" })).not.toHaveClass("group/selectable")
   })
 })

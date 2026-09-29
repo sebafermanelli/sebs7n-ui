@@ -234,7 +234,7 @@ function ContextMenuSubTrigger({ className, inset, children, ...props }: Context
     <ContextMenuPrimitive.SubmenuTrigger
       data-slot="context-menu-sub-trigger"
       data-inset={inset ? "" : undefined}
-      className={cn(menuItemClassName, menuInsetClassName, "data-popup-open:bg-selection data-popup-open:text-on-selection data-popup-open:[&_svg]:text-on-selection", className)}
+      className={cn(menuItemClassName, menuInsetClassName, "data-popup-open:bg-fill-2", className)}
       {...props}
     >
       {children}

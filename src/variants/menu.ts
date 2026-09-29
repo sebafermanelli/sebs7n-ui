@@ -17,25 +17,23 @@ export type MenuInsetProps = { inset?: boolean }
  *
  * `rounded-menu-item` (8, como los ítems de menú de Mail y Drive en iCloud).
  *
- * El resaltado es la selección de macOS (2.0): acento sólido con texto e íconos de contraste.
- * Base UI pone `data-highlighted` tanto con el puntero como con las flechas, igual que macOS. Un
- * ítem deshabilitado no lo toma aunque quede resaltado: se queda transparente y en `gray-700`.
+ * El resaltado es el de iCloud (2.0): gris translúcido (`fill-2`) y el texto no cambia de color;
+ * apretado, `fill-3`. Base UI pone `data-highlighted` tanto con el puntero como con las flechas.
+ * Un ítem deshabilitado no lo toma aunque quede resaltado: se queda transparente y en
+ * `label-tertiary`.
  * `group/menu-item` es para lo que adentro tiene color propio (el atajo): ver
  * `menuItemSecondaryClassName`. `group/selectable` es el mismo gancho, compartido con los otros
  * ítems seleccionables: ver `selectionSecondaryClassName`.
  */
 export const menuItemClassName =
-  "group/menu-item group/selectable relative flex h-6 pointer-coarse:h-11 cursor-pointer items-center gap-2 rounded-menu-item px-2 text-callout text-label outline-none select-none transition-control data-highlighted:bg-selection data-highlighted:text-on-selection data-highlighted:[&_svg]:text-on-selection active:bg-selection data-disabled:cursor-not-allowed data-disabled:text-label-tertiary data-disabled:active:bg-transparent data-disabled:data-highlighted:bg-transparent data-disabled:data-highlighted:text-label-tertiary data-disabled:data-highlighted:[&_svg]:text-label-tertiary [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+  "group/menu-item group/selectable relative flex h-6 pointer-coarse:h-11 cursor-pointer items-center gap-2 rounded-menu-item px-2 text-callout text-label outline-none select-none transition-control data-highlighted:bg-fill-2 active:bg-fill-3 data-disabled:cursor-not-allowed data-disabled:text-label-tertiary data-disabled:active:bg-transparent data-disabled:data-highlighted:bg-transparent data-disabled:data-highlighted:text-label-tertiary data-disabled:data-highlighted:[&_svg]:text-label-tertiary [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
 
 /**
- * El texto secundario de un ítem —el atajo de teclado—. En reposo es `gray-900`; con el ítem
- * resaltado pasa al color de contraste pleno. macOS lo baja a ~80 %, pero sobre el blue del
- * paquete eso da 3,4:1 y el atajo es texto: queda abajo del 4,5 de WCAG 1.4.3. El
- * `group-not-data-disabled` hace falta porque las dos variantes de grupo pesan lo mismo
- * (`:where()`), y sin él el orden del CSS decidiría si un deshabilitado se pone blanco.
+ * El texto secundario de un ítem —el atajo de teclado—: `label-secondary`, también resaltado.
+ * Con el resaltado gris de iCloud el texto no cambia de color, y sobre `fill-2` el secundario
+ * sigue arriba de 4,5:1 (`test/surfaces.test.ts`).
  */
-export const menuItemSecondaryClassName =
-  "text-label-secondary group-data-highlighted/menu-item:group-not-data-disabled/menu-item:text-on-selection"
+export const menuItemSecondaryClassName = "text-label-secondary"
 
 /**
  * `rounded-menu` (12, el de los menús de iCloud) con `p-1`: el ítem mide `rounded-menu-item` (8)

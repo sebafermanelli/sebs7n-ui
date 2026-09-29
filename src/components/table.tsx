@@ -46,14 +46,14 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
       data-slot="table-row"
       className={cn(
         "group/table-row group/selectable h-12 border-b border-separator transition-control group-data-[density=compact]/table:h-10",
-        // El hover es un velo, no un fondo: `gray-alpha-100` es un 5 % de negro en claro y un 7 %
-        // de blanco en oscuro. Un gris opaco tapaba el vidrio de la tabla y la fila parecía
-        // recortada y pegada encima. La elegida es la selección de macOS (2.0), como una fila de
-        // Finder: acento sólido, y las celdas e íconos pasan al color de contraste (`TableCell`
-        // cuelga de `group/table-row`). El anillo de foco sobre el acento no se vería en brand:
-        // en la fila elegida va en el color de contraste.
-        "hover:bg-fill-1 data-[state=selected]:bg-selection data-[state=selected]:text-on-selection data-[state=selected]:[&_svg]:text-on-selection",
-        "[&[tabindex]]:cursor-pointer focus-visible:shadow-[inset_0_0_0_2px_var(--color-brand-700)] focus-visible:outline-none data-[state=selected]:focus-visible:shadow-[inset_0_0_0_2px_var(--color-on-selection)]",
+        // El hover es `fill-1`, como en Drive. La elegida es la de iCloud (2.0): acento sólido con
+        // el texto y los íconos en el color de contraste **mientras la tabla tiene el foco**
+        // (`group-focus-within/table`), y el gris de `selection-inactive` cuando el foco se va a
+        // otro lado, como una lista de Drive que pierde el foco. `TableCell` cuelga de
+        // `group/table-row` para lo mismo. El anillo de foco sobre el acento no se vería en brand:
+        // en la fila elegida va el inverso.
+        "hover:bg-fill-1 data-[state=selected]:bg-selection-inactive data-[state=selected]:group-focus-within/table:bg-selection data-[state=selected]:group-focus-within/table:text-on-selection data-[state=selected]:group-focus-within/table:[&_svg]:text-on-selection",
+        "[&[tabindex]]:cursor-pointer focus-visible:focus-ring data-[state=selected]:focus-visible:focus-ring-inverse",
         className
       )}
       {...props}
@@ -84,7 +84,7 @@ function TableCell({ className, numeric = false, ...props }: TableCellProps) {
   return (
     <td
       data-slot="table-cell"
-      className={cn("px-4 align-middle whitespace-nowrap text-label group-data-[state=selected]/table-row:text-on-selection", numeric && "text-right tabular-nums", className)}
+      className={cn("px-4 align-middle whitespace-nowrap text-label group-data-[state=selected]/table-row:group-focus-within/table:text-on-selection", numeric && "text-right tabular-nums", className)}
       {...props}
     />
   )

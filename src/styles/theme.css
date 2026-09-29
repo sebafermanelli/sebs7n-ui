@@ -7,17 +7,15 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /**
- * Adentro de un ítem seleccionado (2.0). La selección es acento sólido, y lo que adentro tiene
- * color propio —una fecha en gris, un badge rojo— deja de leerse sobre el azul: en macOS todo lo
- * de una fila seleccionada pasa a blanco. Los ítems seleccionables llevan `group/selectable`
- * (MenuItem, SidebarItem, TableRow, NavigationMenuLink con `title`) y cada uno marca su estado a
- * su manera; este variant junta los cuatro para que la app escriba una sola clase:
- * `inside-selection:text-on-selection`, o `selectionSecondaryClassName`.
- *
- * Un ítem de menú deshabilitado conserva `data-highlighted` pero no se pinta: no cuenta.
- * `:where()` deja la especificidad en la de la clase, igual que `dark:`.
+ * Adentro de una fila elegida sobre el acento (2.0, iCloud). En iCloud lo neutro es gris y el
+ * texto no cambia (menú resaltado, sidebar activo); el acento sólido es solo la fila elegida de
+ * una lista que tiene el foco, y ahí lo que adentro tiene color propio —una fecha en gris, un
+ * ícono— tiene que pasar al color de contraste, como en Drive. Hoy la lista es la `Table`
+ * (`group/table` con el foco adentro y la fila con `data-state="selected"`); sin foco la fila es
+ * gris y no cuenta. La app escribe `inside-selection:text-on-selection`, o
+ * `selectionSecondaryClassName`. `:where()` deja la especificidad en la de la clase.
  */
-@custom-variant inside-selection (&:where(.group\/selectable[data-highlighted]:not([data-disabled]) *, .group\/selectable[data-active] *, .group\/selectable[aria-current="page"] *, .group\/selectable[data-state="selected"] *));
+@custom-variant inside-selection (&:where(.group\/table:focus-within .group\/selectable[data-state="selected"] *));
 
 /**
  * Este `@theme` va sin `inline` a propósito: lo que se declara acá sale como variable en
@@ -392,15 +390,12 @@
     --sf-highlight: color-mix(in srgb, var(--sf-brand-700) 14%, transparent);
     --sf-highlight-active: color-mix(in srgb, var(--sf-brand-700) 22%, transparent);
     /**
-     * La selección de 2.0: el ítem de menú resaltado (con el puntero o con las flechas), el ítem
-     * activo del Sidebar, la opción marcada de un Select o un Combobox. Es el acento sólido con
-     * texto e íconos de contraste, como en macOS (Finder, Ajustes, cualquier menú), porque ahí
-     * la selección se lee de un vistazo y el tinte de 1.x se confundía con el hover.
+     * La fila elegida de una lista con foco (2.0, iCloud): el acento sólido con texto e íconos de
+     * contraste, como una fila de Drive. Lo neutro —menú resaltado, sidebar activo— es gris
+     * (`fill-1/2`) y no usa esto; sin foco la fila pasa a `selection-inactive`.
      *
      * Es el mismo par que el botón `accent` —`brand-700` con `brand-contrast`—, que cada app ya
-     * tiene que llevar a 4,5:1 (`test/brand-contrast.test.ts`). Lo que vive adentro de un ítem
-     * y tiene color propio (el atajo, el ícono, el contador del Sidebar) pasa a
-     * `on-selection` desde el componente; `--sf-highlight` queda para lo que no es selección.
+     * tiene que llevar a 4,5:1 (`test/brand-contrast.test.ts`).
      */
     --sf-selection: var(--sf-brand-700);
     --sf-on-selection: var(--sf-brand-fg);

@@ -95,7 +95,7 @@ describe("DropdownMenu", () => {
     )
     await userEvent.click(screen.getByRole("button", { name: "Acciones" }))
     const edit = await screen.findByRole("menuitem", { name: "Editar" })
-    expect(edit).toHaveClass("h-6", "rounded-menu-item", "data-highlighted:bg-selection", "data-highlighted:text-on-selection", "active:bg-selection", "data-disabled:text-label-tertiary", "data-disabled:data-highlighted:bg-transparent")
+    expect(edit).toHaveClass("h-6", "rounded-menu-item", "data-highlighted:bg-fill-2", "active:bg-fill-3", "data-disabled:text-label-tertiary", "data-disabled:data-highlighted:bg-transparent")
     // Como el «Eliminar» de Mail: texto común, y resaltado en el mismo acento. El peligro lo
     // muestra la alerta que confirma, no el ítem.
     const eliminar = screen.getByRole("menuitem", { name: "Eliminar" })

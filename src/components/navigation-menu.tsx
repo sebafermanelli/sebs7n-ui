@@ -176,11 +176,10 @@ function NavigationMenuLink({ className, title, description, icon, children, ...
       data-slot="navigation-menu-link"
       className={cn(
         linkBaseClassName,
-        // La página actual es la selección (2.0), igual que el ítem activo del Sidebar: acento
-        // sólido, y el título, la descripción y el ícono pasan al color de contraste.
-        // `group/selectable` solo acá: el link de la barra no se pinta de acento, y lo de adentro
-        // no tiene que pasar a blanco.
-        "group/nav-link group/selectable block p-2 text-callout text-label hover:bg-fill-1 data-[active]:bg-selection data-[active]:text-on-selection",
+        // La página actual es gris (`fill-1`), igual que el ítem activo del Sidebar en iCloud: el
+        // título, la descripción y el ícono conservan su color. `group/selectable` solo acá: es el
+        // gancho de `selectionSecondaryClassName` para el link de tarjeta.
+        "group/nav-link group/selectable block p-2 text-callout text-label hover:bg-fill-1 data-[active]:bg-fill-1",
         className
       )}
       {...props}
@@ -190,17 +189,17 @@ function NavigationMenuLink({ className, title, description, icon, children, ...
           <span
             aria-hidden="true"
             data-slot="navigation-menu-link-icon"
-            className="mt-px flex shrink-0 text-label-secondary group-data-[active]/nav-link:text-on-selection [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4"
+            className="mt-px flex shrink-0 text-label-secondary [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4"
           >
             {icon}
           </span>
         )}
         <span className="flex min-w-0 flex-col gap-0.5">
-          <span data-slot="navigation-menu-link-title" className="text-callout text-label group-data-[active]/nav-link:text-on-selection">
+          <span data-slot="navigation-menu-link-title" className="text-callout text-label">
             {title}
           </span>
           {description && (
-            <span data-slot="navigation-menu-link-description" className="truncate text-callout text-label-secondary group-data-[active]/nav-link:text-on-selection">
+            <span data-slot="navigation-menu-link-description" className="truncate text-callout text-label-secondary">
               {description}
             </span>
           )}
