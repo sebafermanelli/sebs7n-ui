@@ -139,3 +139,41 @@ describe("InputGroup", () => {
     expect(grupo()).toHaveClass("has-[input[aria-invalid=true]]:border-red-800")
   })
 })
+
+describe("InputGroupButton loading", () => {
+  it("como Button: spinner, aria-busy, no dispara el clic y conserva el ancho", async () => {
+    const user = userEvent.setup()
+    const onClick = vi.fn()
+    render(
+      <InputGroup>
+        <InputGroupInput aria-label="Cupón" />
+        <InputGroupAddon>
+          <InputGroupButton loading onClick={onClick} variant="plain">
+            Aplicar
+          </InputGroupButton>
+        </InputGroupAddon>
+      </InputGroup>
+    )
+    const button = screen.getByRole("button", { name: "Aplicar" })
+    expect(button).toHaveAttribute("aria-busy", "true")
+    expect(button).toHaveAttribute("data-loading", "")
+    expect(button).toHaveClass("relative")
+    expect(button.querySelector("[data-slot=input-group-button-spinner]")).not.toBeNull()
+    expect(screen.getByText("Aplicar")).toHaveClass("opacity-0")
+    await user.click(button)
+    expect(onClick).not.toHaveBeenCalled()
+  })
+
+  it("sin loading, el clic pasa y no hay spinner", async () => {
+    const user = userEvent.setup()
+    const onClick = vi.fn()
+    render(
+      <InputGroup>
+        <InputGroupButton onClick={onClick}>Aplicar</InputGroupButton>
+      </InputGroup>
+    )
+    await user.click(screen.getByRole("button", { name: "Aplicar" }))
+    expect(onClick).toHaveBeenCalledTimes(1)
+    expect(document.querySelector("[data-slot=input-group-button-spinner]")).toBeNull()
+  })
+})

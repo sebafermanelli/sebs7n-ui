@@ -6,6 +6,7 @@ import { Input as InputPrimitive } from "@base-ui/react/input"
 
 import { cn, type WithClassName } from "../lib/utils.js"
 import { inputShellClassName, inputShellInputClassName } from "../variants/input.js"
+import { Spinner } from "./spinner.js"
 
 /**
  * Un campo con cosas pegadas adentro: «$» antes del importe, «.com» después del dominio, la lupa,
@@ -97,6 +98,11 @@ type InputGroupButtonProps = WithClassName<ButtonPrimitive.Props> & {
    * campo. `plain`: texto en el acento, para la acción («Aplicar»). `default`: el acento sólido.
    */
   variant?: "ghost" | "plain" | "default"
+  /**
+   * Esperando (validando el cupón, buscando): como `Button`, el spinner en el lugar del contenido (el
+   * ancho no salta), `aria-busy` y el clic no pasa.
+   */
+  loading?: boolean
 }
 
 const BUTTON_VARIANT = {
@@ -107,11 +113,15 @@ const BUTTON_VARIANT = {
 
 // Un botón a escala del campo: 20 en uno de 28, 28 en uno de 36 y 32 en uno de 40 (con el dedo, 28 y 36), con el radio del
 // campo menos el aire que lo separa del borde. Solo ícono: `aria-label`.
-function InputGroupButton({ className, variant = "ghost", disabled, ...props }: InputGroupButtonProps) {
+function InputGroupButton({ className, variant = "ghost", disabled, loading = false, onClick, children, ...props }: InputGroupButtonProps) {
   const group = React.useContext(GroupContext)
   return (
     <ButtonPrimitive
       data-slot="input-group-button"
+      data-loading={loading ? "" : undefined}
+      aria-busy={loading || undefined}
+      aria-disabled={loading || undefined}
+      onClick={loading ? (event) => event.preventDefault() : onClick}
       disabled={disabled ?? group.disabled}
       className={cn(
         "inline-flex h-7 min-w-7 shrink-0 cursor-pointer items-center justify-center gap-1 rounded-[calc(var(--radius-field)-4px)] px-2 text-callout outline-none transition-control focus-visible:focus-ring",
@@ -120,10 +130,22 @@ function InputGroupButton({ className, variant = "ghost", disabled, ...props }: 
         "pointer-coarse:group-data-[size=sm]/input-group:h-7 pointer-coarse:group-data-[size=sm]/input-group:min-w-7 pointer-coarse:group-data-[size=md]/input-group:h-9 pointer-coarse:group-data-[size=md]/input-group:min-w-9",
         "data-disabled:pointer-events-none data-disabled:opacity-40 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
         BUTTON_VARIANT[variant],
+        loading && "relative cursor-progress",
         className
       )}
       {...props}
-    />
+    >
+      {loading ? (
+        <>
+          {/* Sin nombre: la espera la anuncia el `aria-busy` del botón. El contenido queda invisible y
+              sigue midiendo, así el campo no salta. */}
+          <Spinner data-slot="input-group-button-spinner" size="sm" className="absolute inset-0 m-auto" />
+          <span className="inline-flex items-center gap-1 opacity-0">{children}</span>
+        </>
+      ) : (
+        children
+      )}
+    </ButtonPrimitive>
   )
 }
 
