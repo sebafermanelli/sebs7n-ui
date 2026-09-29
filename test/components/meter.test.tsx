@@ -169,3 +169,30 @@ describe("StackedMeter (R5b): la barra de almacenamiento de iCloud", () => {
     expect(within(leyenda).getByText("Facturas")).toBeInTheDocument()
   })
 })
+
+describe("StackedMeter · valores fuera de rango", () => {
+  it("si lo usado pasa el máximo, la barra se escala a lo usado y los meters no pasan su máximo", async () => {
+    render(
+      <StackedMeter
+        aria-label="Espacio"
+        max={10}
+        segments={[
+          { label: "Fotos", value: 9, color: "amber" },
+          { label: "Documentos", value: 6, color: "blue" },
+        ]}
+      />
+    )
+    const [fotos, documentos] = screen.getAllByRole("meter")
+    expect(fotos).toHaveStyle({ width: "60%" })
+    expect(documentos).toHaveStyle({ width: "40%" })
+    for (const meter of [fotos!, documentos!]) expect(Number(meter.getAttribute("aria-valuenow"))).toBeLessThanOrEqual(Number(meter.getAttribute("aria-valuemax")))
+    expect(screen.getByText(/Libre/)).toHaveTextContent("Libre 0")
+  })
+
+  it("max 0 o valores negativos no dan NaN", async () => {
+    render(<StackedMeter aria-label="Espacio" max={0} segments={[{ label: "Fotos", value: -2, color: "amber" }]} />)
+    const meter = screen.getByRole("meter")
+    expect(meter.style.width).toBe("0%")
+    expect(meter).toHaveAttribute("aria-valuenow", "0")
+  })
+})

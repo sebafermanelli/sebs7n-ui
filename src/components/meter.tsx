@@ -124,8 +124,13 @@ type StackedMeterProps = Omit<React.ComponentProps<"div">, "children"> & {
 function StackedMeter({ className, segments, max, format, locale, total, labels, legend = false, ...props }: StackedMeterProps) {
   const text = { ...useLabels().meter, ...labels }
   const formatter = new Intl.NumberFormat(locale, format)
-  const used = segments.reduce((sum, segment) => sum + segment.value, 0)
-  const pct = (value: number) => `${Math.max(0, Math.min(100, (value / max) * 100))}%`
+  // Un valor negativo no ocupa lugar. Si lo usado pasa el máximo (una cuota que se excedió), la barra
+  // se escala a lo usado en vez de cortar los últimos segmentos sin avisar; con un máximo de 0 o
+  // menos, no hay barra que dividir (antes daba `NaN%`).
+  const value = (segment: StackedMeterSegment) => Math.max(0, segment.value)
+  const used = segments.reduce((sum, segment) => sum + value(segment), 0)
+  const scale = Math.max(max, used, 0)
+  const pct = (amount: number) => `${scale > 0 ? Math.min(100, (amount / scale) * 100) : 0}%`
   return (
     <div role="group" data-slot="stacked-meter" className={cn("flex w-full flex-col gap-3", className)} {...props}>
       <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
@@ -147,11 +152,11 @@ function StackedMeter({ className, segments, max, format, locale, total, labels,
             role="meter"
             aria-label={segment.label}
             aria-valuemin={0}
-            aria-valuemax={max}
-            aria-valuenow={segment.value}
+            aria-valuemax={scale}
+            aria-valuenow={value(segment)}
             aria-valuetext={formatter.format(segment.value)}
             className={cn("h-full shrink-0 transition-[width] duration-300 ease-out motion-reduce:transition-none", categoryFill[segment.color])}
-            style={{ width: pct(segment.value) }}
+            style={{ width: pct(value(segment)) }}
           />
         ))}
       </div>
