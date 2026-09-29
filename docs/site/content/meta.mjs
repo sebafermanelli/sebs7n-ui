@@ -837,7 +837,8 @@ export const COMPONENTS = {
     usage: [
       "El valor es E.164 (`+5491155552002`) y viaja así con `name`: se guarda tal cual y sirve para un link de WhatsApp.",
       "`isValidPhone` y `parsePhone` están en `sebs7n-ui/lib/phone`, sin `\"use client\"`: validan igual en una Server Action. Miran el **largo** del número de cada país, no el tipo de línea.",
-      "El número se corta en el largo máximo del país. Pegar un número que empieza con «+» cambia el país solo.",
+      "El número se corta en el largo máximo del país. Pegar un número que empieza con «+» o «00» cambia el país solo; si el código no está en la tabla, el número no cambia y se anuncia «Código de país desconocido».",
+      "El prefijo nacional no entra al E.164: «011 5555 2002» es `+541155552002` (Italia no tiene: su 0 se queda). En Argentina, el celular con 15 («11 15 5555 2002») pasa a la forma con 9, `+5491155552002`. `isValidPhone` rechaza un número que empieza con el prefijo nacional.",
       "Tiene 45 países (América, Europa y los más comunes); uno que falte se suma a la tabla de `lib/phone` con los largos de libphonenumber.",
       "No formatea mientras se escribe. Solo por subpath (`sebs7n-ui/phone-input`): no está en el barrel, por peso.",
     ],
@@ -849,7 +850,7 @@ export const COMPONENTS = {
         "aria-labelledby": "El `id` del elemento que nombra el número, si no es un `<label>`.",
         "aria-describedby": "El `id` de la ayuda o del error del campo.",
         "aria-invalid": "Marca el campo inválido (borde rojo).",
-        labels: "Textos: `country` (antes del país, en el nombre del selector). El idioma de los nombres es `countryPicker.locale`.",
+        labels: "Textos: `country` (antes del país, en el nombre del selector) y `unknownCode` (lo que se anuncia al pegar un código que no está). El idioma de los nombres es `countryPicker.locale`.",
       },
     },
     related: ["country-picker", "input-group", "field"],
