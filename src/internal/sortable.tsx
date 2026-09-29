@@ -265,20 +265,23 @@ function SortableBase<T>({
     }
   }
 
-  // Al sacar uno, el foco pasa al «−» que queda en su lugar (o al último): si no, se iba al `<body>`
-  // con el botón que desaparece.
-  const focusAfterRemove = React.useRef<number | null>(null)
+  // Al sacar uno, el foco pasa al «−» que queda en su lugar (o al último, o al «+ Agregar», o a la
+  // grilla si quedó vacía): si no, se iba al `<body>` con el botón que desaparece. Se resuelve
+  // cuando la clave ya no está en `items`, no en el render que sigue: la app puede sacarlo tarde
+  // (después de guardar), y mientras tanto el foco se queda en su «−».
+  const focusAfterRemove = React.useRef<{ key: string; index: number } | null>(null)
   const removeItem = (key: string, index: number, name: string) => {
-    focusAfterRemove.current = index
+    focusAfterRemove.current = { key, index }
     setStatus(`${labels.removed} ${name}.`)
     onRemove?.(key)
   }
   React.useEffect(() => {
-    const index = focusAfterRemove.current
-    if (index === null) return
+    const pending = focusAfterRemove.current
+    if (!pending || keys.includes(pending.key)) return
     focusAfterRemove.current = null
-    const buttons = container.current?.querySelectorAll<HTMLElement>("[data-slot=sortable-remove]") ?? []
-    const next = buttons[Math.min(index, buttons.length - 1)] ?? container.current?.querySelector<HTMLElement>("[data-slot=sortable-add] button")
+    const root = container.current
+    const buttons = root?.querySelectorAll<HTMLElement>("[data-slot=sortable-remove]") ?? []
+    const next = buttons[Math.min(pending.index, buttons.length - 1)] ?? root?.querySelector<HTMLElement>("[data-slot=sortable-add] button") ?? root
     next?.focus()
   })
 
@@ -315,7 +318,9 @@ function SortableBase<T>({
               if (ref) ref.current = node
             }}
             role="list"
-            className={cn(variant === "grid" && "grid gap-5", className)}
+            // Enfocable por código (no por Tab): adonde va el foco si se saca el último ítem.
+            tabIndex={-1}
+            className={cn("outline-none", variant === "grid" && "grid gap-5", className)}
             {...props}
           >
             {shown.map((item, index) => {

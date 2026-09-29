@@ -563,3 +563,31 @@ describe("SortableGrid · revisión R10: el toque largo", () => {
   })
 })
 
+describe("SortableGrid · revisión R10: el foco al sacar", () => {
+  function Removable({ delay, initial = WIDGETS }: { delay?: number; initial?: Widget[] }) {
+    const [items, setItems] = React.useState(initial)
+    const remove = (id: string) => setItems((all) => all.filter((widget) => widget.id !== id))
+    return <Widgets items={items} onRemove={(id) => (delay === undefined ? remove(id) : setTimeout(() => remove(id), delay))} />
+  }
+
+  it("si se saca el último y no hay «+ Agregar», el foco queda en la grilla y no en el <body>", async () => {
+    const user = userEvent.setup()
+    render(<Removable initial={[WIDGETS[0]!]} />)
+    await user.click(screen.getByRole("button", { name: "Sacar Facturas" }))
+    const list = screen.getByRole("list", { name: "Widgets" })
+    expect(list).toHaveAttribute("tabindex", "-1")
+    expect(list).toHaveFocus()
+  })
+
+  it("si la app saca el ítem más tarde (async), el foco pasa al siguiente «−» recién cuando se fue", async () => {
+    const user = userEvent.setup()
+    render(<Removable delay={20} />)
+    await user.click(screen.getByRole("button", { name: "Sacar Clientes" }))
+    // Todavía está: el foco no se movió a otra tarjeta.
+    expect(screen.getByRole("button", { name: "Sacar Clientes" })).toHaveFocus()
+    await act(() => new Promise((resolve) => setTimeout(resolve, 40)))
+    expect(screen.queryByRole("button", { name: "Sacar Clientes" })).toBeNull()
+    expect(screen.getByRole("button", { name: "Sacar Calendario" })).toHaveFocus()
+  })
+})
+
