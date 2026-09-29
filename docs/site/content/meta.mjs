@@ -1035,7 +1035,7 @@ export const COMPONENTS = {
       ["Enter · Espacio", "En el recuadro, abren el selector de archivos del sistema."],
     ],
     a11y: [
-      "El recuadro es un `<button>`: nombralo con `aria-label` o con un `<Label htmlFor>` al `id`. El `<input type=\"file\">` de adentro está fuera del orden de Tab.",
+      "El recuadro es un `<button>`: nombralo con `aria-label`, con un `<Label htmlFor>` al `id` o metiéndolo en un `Field` (toma su `FieldLabel`, suma `FieldDescription` y `FieldError` a su descripción y su `disabled`/`invalid`). El `<input type=\"file\">` de adentro está fuera del orden de Tab.",
       "Los errores de tipo, tamaño y cantidad aparecen abajo con `role=\"alert\"` y el recuadro queda `aria-invalid`, con el error en su `aria-describedby`.",
       "Agregar y quitar se anuncian por una región viva («Archivos agregados: factura.pdf»). Al quitar, el foco vuelve al recuadro.",
       "El botón de quitar se llama «Quitar factura.pdf»; la miniatura es decorativa (`alt=\"\"`). Cada barra de progreso se llama como su archivo.",

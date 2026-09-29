@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import * as React from "react"
 
 import { DropZone, type DropZoneHandle } from "../../src/components/drop-zone"
+import { Field, FieldDescription, FieldError, FieldLabel } from "../../src/components/field"
 import { LabelsProvider } from "../../src/lib/labels"
 import { hidratar } from "../hidratar"
 
@@ -362,6 +363,46 @@ describe("DropZone", () => {
     render(<DropZone aria-label="Facturas" compact labels={{ addMore: "Sumar facturas" }} multiple />)
     await user.upload(input(), pdf())
     expect(area()).toHaveTextContent("Sumar facturas")
+  })
+
+  it("dentro de Field toma la etiqueta, la ayuda y el error del campo", () => {
+    render(
+      <Field invalid>
+        <FieldLabel>Comprobante</FieldLabel>
+        <DropZone />
+        <FieldDescription>PDF, hasta 5 MB.</FieldDescription>
+        <FieldError match>Falta el comprobante.</FieldError>
+      </Field>
+    )
+    const button = area()
+    expect(button).toHaveAccessibleName("Comprobante")
+    expect(button).toHaveAccessibleDescription(expect.stringContaining("PDF, hasta 5 MB."))
+    expect(button).toHaveAccessibleDescription(expect.stringContaining("Falta el comprobante."))
+    expect(button).toHaveAttribute("aria-invalid", "true")
+  })
+
+  it("dentro de Field, sus errores propios se suman a la descripción del campo", async () => {
+    const user = userEvent.setup({ applyAccept: false })
+    render(
+      <Field>
+        <FieldLabel>Comprobante</FieldLabel>
+        <DropZone accept=".pdf" />
+        <FieldDescription>Solo PDF.</FieldDescription>
+      </Field>
+    )
+    await user.upload(input(), png())
+    expect(area()).toHaveAccessibleDescription(expect.stringContaining("Solo PDF."))
+    expect(area()).toHaveAccessibleDescription(expect.stringContaining("logo.png no es de un tipo permitido"))
+  })
+
+  it("Field disabled apaga el recuadro", () => {
+    render(
+      <Field disabled>
+        <FieldLabel>Comprobante</FieldLabel>
+        <DropZone />
+      </Field>
+    )
+    expect(area()).toBeDisabled()
   })
 
   it("el reset del form vacía la lista", async () => {

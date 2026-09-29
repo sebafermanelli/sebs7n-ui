@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Button, Label } from "sebs7n-ui"
+import { Button, Field, FieldDescription, FieldLabel, Label } from "sebs7n-ui"
 import { DropZone } from "sebs7n-ui/drop-zone"
 
 /**
@@ -87,4 +87,18 @@ export function Validate() {
  */
 export function Compact() {
   return <DropZone accept=".pdf" aria-label="Factura para convertir" className="w-full max-w-md" compact />
+}
+
+/**
+ * Dentro de un Field
+ * La etiqueta, la ayuda y el error salen del `Field`, como en cualquier otro campo: el recuadro se nombra con el `FieldLabel`.
+ */
+export function InField() {
+  return (
+    <Field className="w-full max-w-md">
+      <FieldLabel>Comprobante de pago</FieldLabel>
+      <DropZone accept=".pdf,image/*" compact maxSize={5 * 1024 * 1024} />
+      <FieldDescription>PDF o imagen, hasta 5 MB.</FieldDescription>
+    </Field>
+  )
 }

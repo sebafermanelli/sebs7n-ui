@@ -2,6 +2,8 @@
 
 import * as React from "react"
 import { createPortal } from "react-dom"
+import { useFieldRootContext } from "@base-ui/react/internals/field-root-context"
+import { useLabelableContext, useLabelableId } from "@base-ui/react/internals/labelable-provider"
 import { CircleAlertIcon, FileIcon, UploadIcon, XIcon } from "lucide-react"
 
 import { defined } from "../internal/defined.js"
@@ -164,7 +166,7 @@ function DropZone({
   validate,
   compact = false,
   scope = "area",
-  disabled = false,
+  disabled: disabledProp = false,
   children,
   id,
   "aria-label": ariaLabel,
@@ -176,6 +178,14 @@ function DropZone({
   ...props
 }: DropZoneProps) {
   const labels = { ...dropZoneLabels, ...useLabels().dropZone, ...defined(labelsProp) }
+  // Dentro de un `Field`, como los controles de Base UI: el recuadro se registra como el control del
+  // campo (el `FieldLabel` lo nombra), suma la ayuda y el error del campo a su descripción y toma su
+  // `disabled` e `invalid`. Son los hooks que Base UI exporta como `internals` para eso; afuera de un
+  // `Field` devuelven el contexto vacío y todo queda como en 2.0.
+  const field = useFieldRootContext()
+  const labelable = useLabelableContext()
+  const controlId = useLabelableId({ id })
+  const disabled = disabledProp || field.disabled === true
   const sizeText = (bytes: number) => (formatSize ? formatSize(bytes) : formatBytes(bytes, labels.locale))
   const [ownFiles, setOwnFiles] = React.useState<File[]>([])
   const files = filesProp ?? ownFiles
@@ -394,7 +404,7 @@ function DropZone({
   // Con archivos, el recuadro grande ya cumplió: queda una fila para cambiar o sumar. Es el mismo botón
   // (el foco no se pierde); sus `children` son para el recuadro grande.
   const small = compact && files.length > 0
-  const describedBy = cn(ariaDescribedby, errors.length > 0 && errorsId) || undefined
+  const describedBy = cn(ariaDescribedby, labelable.messageIds.join(" "), errors.length > 0 && errorsId) || undefined
 
   return (
     <div ref={resetRef} data-slot="drop-zone" className={cn("flex flex-col gap-2", className)} {...props}>
@@ -421,9 +431,9 @@ function DropZone({
       <button
         ref={button}
         type="button"
-        id={id}
+        id={controlId}
         aria-describedby={describedBy}
-        aria-invalid={errors.length > 0 || undefined}
+        aria-invalid={errors.length > 0 || field.invalid === true || undefined}
         aria-label={ariaLabel}
         aria-labelledby={ariaLabelledby}
         data-compact={small ? "" : undefined}
