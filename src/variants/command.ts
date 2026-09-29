@@ -5,13 +5,12 @@
 
 /**
  * El panel de `CommandDialog`: la superficie de un popover de iCloud (catálogo §2.8) —radio 12,
- * opaco, `shadow-menu` con su filo— y el padding de 4 px de un menú, así el radio 8 de las filas es
- * concéntrico (8 + 4 = 12). Anclado arriba (`top-[18vh]`) y no centrado: el campo no salta cuando
+ * opaco, `shadow-menu` con su filo— y los 5 px de padding de un menú (R3). Anclado arriba (`top-[18vh]`) y no centrado: el campo no salta cuando
  * la lista crece o se achica con cada tecla; centrado, el panel entero se movería con los
  * resultados. Hasta R1 era la paleta de Spotlight (radio de ventana, 640 px, campo como cabecera).
  */
 export const commandDialogPopupClassName =
-  "fixed top-[18vh] left-1/2 z-50 flex max-h-[min(480px,calc(100dvh-18vh-1rem))] w-[min(560px,calc(100%-2rem))] -translate-x-1/2 flex-col overflow-hidden rounded-menu bg-surface p-1 text-label shadow-menu outline-none " +
+  "fixed top-[18vh] left-1/2 z-50 flex max-h-[min(480px,calc(100dvh-18vh-1rem))] w-[min(560px,calc(100%-2rem))] -translate-x-1/2 flex-col overflow-hidden rounded-menu bg-surface p-1.25 text-label shadow-menu outline-none " +
   "transition-[opacity,scale] duration-150 data-ending-style:scale-[0.98] data-ending-style:opacity-0 data-starting-style:scale-[0.98] data-starting-style:opacity-0"
 
 /**

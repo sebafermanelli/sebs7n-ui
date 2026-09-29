@@ -359,7 +359,7 @@ describe("CommandDialog", () => {
       </CommandDialog>
     )
     const dialogo = screen.getByRole("dialog", { name: "Buscar en facturación" })
-    expect(dialogo).toHaveClass("top-[18vh]", "bg-surface", "rounded-menu", "shadow-menu", "p-1")
+    expect(dialogo).toHaveClass("top-[18vh]", "bg-surface", "rounded-menu", "shadow-menu", "p-1.25")
     expect(dialogo).not.toHaveClass("rounded-panel", "shadow-modal")
     expect(dialogo.className).toMatch(/w-\[min\(560px,calc\(100%-2rem\)\)\]/)
   })
