@@ -165,6 +165,23 @@ export type Labels = {
     /** Nombre del grupo de filtros de `CommandFilters`. */
     filters: string
   }
+  dataTable: {
+    /** El nombre y el placeholder de la búsqueda. */
+    search: string
+    /** La casilla de la cabecera. */
+    selectAll: string
+    /** Antes del nombre de la fila en su casilla: «Seleccionar Acme S.A.». */
+    selectRow: string
+    loadMore: string
+    /** La fila de la tabla vacía. */
+    empty: string
+    /** El total que se anuncia al buscar: «1 resultado», «12 resultados». */
+    result: string
+    results: string
+    /** El contador de un grupo: «1 ítem», «6 ítems». */
+    item: string
+    items: string
+  }
   datePicker: {
     /** Lo que dice el campo cuando no hay fecha elegida. */
     placeholder: string
@@ -290,6 +307,17 @@ export const defaultLabels: Labels = {
     empty: "Sin resultados",
     dialog: "Buscar",
     filters: "Filtros",
+  },
+  dataTable: {
+    search: "Buscar",
+    selectAll: "Seleccionar todas",
+    selectRow: "Seleccionar",
+    loadMore: "Cargar más",
+    empty: "Sin resultados",
+    result: "resultado",
+    results: "resultados",
+    item: "ítem",
+    items: "ítems",
   },
   datePicker: {
     placeholder: "Elegí una fecha",

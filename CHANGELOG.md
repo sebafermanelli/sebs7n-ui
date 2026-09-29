@@ -561,6 +561,13 @@ las fases R2–R5 rehacen diálogos, menús, controles y listas con las medidas 
   `aria-current="step"`, pendiente = `fill-2`, error = rojo con «!»), conector de 1 px en el acento
   después de un completo, `horizontal`/`vertical`, `icon` por paso y `onStepClick` para volver a un
   paso completo. Estado en texto para el lector. Labels `stepper: { label, complete, upcoming, error }`.
+- **`DataTable`** (`sebs7n-ui/data-table`, **solo por subpath**), una tabla de datos sobre `Table` (R6):
+  genérica (`DataTable<T>`), `columns` con `value`/`cell`/`sortable`/`numeric`, orden con la cabecera
+  (`aria-sort`, asc → desc → sin orden; números, fechas y texto con `Intl.Collator`), búsqueda sin
+  tildes con el total en una región `status`, `pageSize` con `Pagination` o «Cargar más», selección con
+  `Checkbox` (la de todas en `mixed`, la fila elegida en el acento), `empty`, `loading` con esqueletos y
+  `aria-busy`, y `groupBy` con `TableGroupHeader`. Orden, búsqueda, página y selección controlables.
+  Labels `dataTable`.
 - La tabla de subpaths del README dice qué componentes no están en el barrel (la lee de `src/index.ts`).
 - El variant `inside-selection` también mira las listas de filas (`group/list`: `List`, `Tree`,
   `FileGrid`), no solo la `Table`.

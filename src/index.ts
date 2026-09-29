@@ -180,3 +180,4 @@ export * from "./components/widget-card.js"
 // Y los de R6, que nacieron afuera (el barrel ya estaba en 54,38 de 55): solo sus textos de
 // `labels` entran al barrel.
 //   `stepper`         sebs7n-ui/stepper
+//   `data-table`      sebs7n-ui/data-table

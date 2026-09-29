@@ -193,6 +193,7 @@ describe("LabelsProvider", () => {
       "colorPicker",
       "combobox",
       "command",
+      "dataTable",
       "datePicker",
       "dialog",
       "drawer",
