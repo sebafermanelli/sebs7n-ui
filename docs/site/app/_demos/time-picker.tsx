@@ -31,3 +31,19 @@ export function WithBusinessHours() {
     </Field>
   )
 }
+
+/**
+ * Sin vacío
+ * `required`: el horario de atención siempre tiene apertura y cierre. Borrar la hora y salir vuelve a la anterior; nunca avisa `null`.
+ */
+export function Required() {
+  const [opens, setOpens] = useState("09:00")
+  const [closes, setCloses] = useState("18:00")
+  return (
+    <div className="flex items-center gap-2 text-callout text-label-secondary">
+      <TimePicker aria-label="Abre" onValueChange={(time) => time && setOpens(time)} required size="sm" value={opens} />
+      a
+      <TimePicker aria-label="Cierra" min={opens} onValueChange={(time) => time && setCloses(time)} required size="sm" value={closes} />
+    </div>
+  )
+}

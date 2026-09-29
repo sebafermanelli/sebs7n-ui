@@ -250,3 +250,36 @@ describe("TimePicker", () => {
     expect(errors.mock.calls.filter(([message]) => /hydrat|did not match/i.test(String(message)))).toEqual([])
   })
 })
+
+describe("TimePicker required", () => {
+  it("vaciar el texto y salir vuelve a la hora anterior y nunca emite null", async () => {
+    const user = userEvent.setup()
+    const onValueChange = vi.fn()
+    render(<TimePicker aria-label="Apertura" onValueChange={onValueChange} required value="09:00" />)
+    const field = screen.getByRole("combobox", { name: "Apertura" })
+    expect(field).toHaveAttribute("aria-required", "true")
+    await user.clear(field)
+    await user.tab()
+    expect(field).toHaveValue("09:00")
+    expect(onValueChange).not.toHaveBeenCalled()
+  })
+
+  it("sin controlar también: la hora queda y el form la lleva", async () => {
+    const user = userEvent.setup()
+    const { container } = render(<TimePicker aria-label="Cierre" defaultValue="18:00" name="closes" required />)
+    const field = screen.getByRole("combobox", { name: "Cierre" })
+    await user.clear(field)
+    await user.keyboard("{Enter}")
+    expect(field).toHaveValue("18:00")
+    expect(container.querySelector<HTMLInputElement>("input[name=closes]")!.value).toBe("18:00")
+  })
+
+  it("sin required, vaciar sigue emitiendo null (2.0)", async () => {
+    const user = userEvent.setup()
+    const onValueChange = vi.fn()
+    render(<TimePicker aria-label="Apertura" onValueChange={onValueChange} value="09:00" />)
+    await user.clear(screen.getByRole("combobox", { name: "Apertura" }))
+    await user.tab()
+    expect(onValueChange).toHaveBeenCalledWith(null)
+  })
+})

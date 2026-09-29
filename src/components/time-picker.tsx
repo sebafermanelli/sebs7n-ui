@@ -27,6 +27,11 @@ type TimePickerProps = {
   min?: string
   /** La última hora posible, «HH:MM». Lo tipeado después se lleva a esta. */
   max?: string
+  /**
+   * Una hora que no puede quedar vacía (la apertura de un horario): vaciar el texto y salir vuelve a la
+   * hora anterior y nunca avisa `null`. Pone `aria-required`.
+   */
+  required?: boolean
   /** El nombre con el que la hora viaja en un formulario, como «09:30» (vacío sin hora). */
   name?: string
   /** 28, 36 (default) o 40, como los campos. */
@@ -61,6 +66,7 @@ function TimePicker({
   min,
   max,
   name,
+  required = false,
   size = "md",
   disabled,
   id,
@@ -116,7 +122,8 @@ function TimePicker({
     setOpen(false)
     clearTimeout(announce.current)
     setStatus("")
-    if (draft.trim() === "") return commit(null)
+    // Con `required` vaciar no es una respuesta: vuelve la hora de antes, sin avisar nada.
+    if (draft.trim() === "") return required ? setDraft(value ?? "") : commit(null)
     const parsed = parseTime(draft)
     if (!parsed) {
       setDraft(value ?? "")
@@ -178,6 +185,7 @@ function TimePicker({
               // la hora nueva cuando el Enter envíe el formulario.
               if (event.key === "Enter" && highlighted.current === undefined) flushSync(commitDraft)
             }}
+            aria-required={required || undefined}
             placeholder={placeholder ?? labels.placeholder}
             {...aria}
           />
