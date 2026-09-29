@@ -197,5 +197,6 @@ export * from "./components/widget-card.js"
 // Sus textos no entran al barrel: viven en cada componente (ver el tipo `Labels`).
 //   `sortable-list`     sebs7n-ui/sortable-list
 //   `sortable-grid`     sebs7n-ui/sortable-grid
+//   `drop-zone`         sebs7n-ui/drop-zone
 // `lib/countries` y `lib/phone` tampoco entran: son los únicos de `lib/` solo por subpath (ver
 // `test/api-publica.test.ts`).

@@ -34,6 +34,7 @@ const SOLO_SUBPATH = [
   "phone-input",
   "sortable-list",
   "sortable-grid",
+  "drop-zone",
 ]
 
 describe("componentes solo por subpath", () => {

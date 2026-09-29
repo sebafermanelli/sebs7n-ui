@@ -1,0 +1,374 @@
+"use client"
+
+import * as React from "react"
+import { createPortal } from "react-dom"
+import { CircleAlertIcon, FileIcon, UploadIcon, XIcon } from "lucide-react"
+
+import { useFormReset } from "../internal/form-reset.js"
+import { useLabels, type Labels } from "../lib/labels.js"
+import { cn } from "../lib/utils.js"
+import { Button } from "./button.js"
+import { List, ListRow } from "./list-row.js"
+import { Progress } from "./progress.js"
+
+type DropZoneLabels = NonNullable<Labels["dropZone"]>
+
+/**
+ * Los textos por defecto. No están en `defaultLabels` porque el barrel no tenía lugar (ver el tipo
+ * `Labels`).
+ */
+const dropZoneLabels: DropZoneLabels = {
+  prompt: "Arrastrá archivos acá o hacé clic para elegirlos",
+  drop: "Soltá para agregarlos",
+  remove: "Quitar",
+  added: "Archivos agregados:",
+  removed: "Archivo quitado:",
+  invalidType: "no es de un tipo permitido",
+  tooLarge: "pesa más de",
+  tooMany: "no entra: el máximo es",
+  locale: "es-AR",
+}
+
+/**
+ * Un recuadro para soltar archivos o elegirlos (clic, Enter o Espacio), con la lista de los que
+ * se agregaron abajo: miniatura si es imagen, nombre, tamaño, el progreso que pase la app y quitar.
+ *
+ * No sube nada: la red es de la app. `DropZone` valida tipo, tamaño y cantidad (los errores van en
+ * línea, abajo del recuadro, no en un toast) y con `name` deja los archivos en un
+ * `<input type="file">` que viaja con el `<form>`, como uno nativo.
+ */
+type DropZoneProps = Omit<React.ComponentProps<"div">, "children" | "onChange"> & {
+  /** Los tipos que acepta, como el `accept` de un `<input type="file">`: `".pdf,image/*"`. */
+  accept?: string
+  /** Más de un archivo. Sin `multiple`, uno nuevo reemplaza al anterior. */
+  multiple?: boolean
+  /** El tamaño máximo de cada archivo, en bytes. */
+  maxSize?: number
+  /** Cuántos archivos como mucho, con `multiple`. */
+  maxFiles?: number
+  /** El nombre del campo en el `<form>`: los archivos viajan en un `<input type="file">`. */
+  name?: string
+  /** Los archivos, controlado. Sin `files`, el componente los guarda. */
+  files?: File[]
+  /** Se llama con la lista entera cada vez que se agrega o se quita uno. */
+  onFilesChange?: (files: File[]) => void
+  /** El progreso de cada archivo, de 0 a 100 (`null`, indeterminado). Sin valor, no hay barra. */
+  fileProgress?: (file: File) => number | null | undefined
+  /** Un error de la app para un archivo («No se pudo subir»), en rojo en su fila. */
+  fileError?: (file: File) => React.ReactNode
+  /** `"window"`: mientras se arrastra un archivo, toda la ventana es la zona. */
+  scope?: "area" | "window"
+  disabled?: boolean
+  /** Lo que dice el recuadro. Por defecto, el ícono y `labels.prompt`. */
+  children?: React.ReactNode
+  id?: string
+  "aria-label"?: string
+  "aria-labelledby"?: string
+  "aria-describedby"?: string
+  labels?: Partial<DropZoneLabels>
+}
+
+/** `accept` como el del input: extensiones, `tipo/*` o el tipo exacto. */
+function accepts(file: File, accept: string | undefined): boolean {
+  if (!accept) return true
+  const name = file.name.toLowerCase()
+  const type = file.type.toLowerCase()
+  return accept.split(",").some((raw) => {
+    const rule = raw.trim().toLowerCase()
+    if (!rule) return false
+    if (rule.startsWith(".")) return name.endsWith(rule)
+    if (rule.endsWith("/*")) return type.startsWith(rule.slice(0, -1))
+    return type === rule
+  })
+}
+
+const UNITS = ["kilobyte", "megabyte", "gigabyte"] as const
+
+/** En base 1000, como el Finder: «96 kB», «1,3 MB». */
+function formatSize(bytes: number, locale: string): string {
+  if (bytes < 1000) return `${bytes} B`
+  let value = bytes / 1000
+  let unit = 0
+  while (value >= 1000 && unit < UNITS.length - 1) {
+    value /= 1000
+    unit++
+  }
+  return new Intl.NumberFormat(locale, { style: "unit", unit: UNITS[unit], unitDisplay: "short", maximumFractionDigits: 1 }).format(value)
+}
+
+const sameFile = (a: File, b: File) => a.name === b.name && a.size === b.size && a.lastModified === b.lastModified
+const hasFiles = (event: DragEvent | React.DragEvent) => Array.from(event.dataTransfer?.types ?? []).includes("Files")
+
+/** La miniatura de una imagen. El object URL se revoca al quitar el archivo o desmontar. */
+function Thumbnail({ file }: { file: File }) {
+  const [src, setSrc] = React.useState<string | null>(null)
+  React.useEffect(() => {
+    const url = URL.createObjectURL(file)
+    setSrc(url)
+    return () => URL.revokeObjectURL(url)
+  }, [file])
+  return src ? <img alt="" className="object-cover" data-slot="drop-zone-thumbnail" src={src} /> : null
+}
+
+function DropZone({
+  accept,
+  multiple = false,
+  maxSize,
+  maxFiles,
+  name,
+  files: filesProp,
+  onFilesChange,
+  fileProgress,
+  fileError,
+  scope = "area",
+  disabled = false,
+  children,
+  id,
+  "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledby,
+  "aria-describedby": ariaDescribedby,
+  labels: labelsProp,
+  className,
+  ...props
+}: DropZoneProps) {
+  const labels = { ...dropZoneLabels, ...useLabels().dropZone, ...labelsProp }
+  const [ownFiles, setOwnFiles] = React.useState<File[]>([])
+  const files = filesProp ?? ownFiles
+  const [errors, setErrors] = React.useState<string[]>([])
+  const [status, setStatus] = React.useState("")
+  const [over, setOver] = React.useState(false)
+  const [windowDrag, setWindowDrag] = React.useState(false)
+  const input = React.useRef<HTMLInputElement>(null)
+  const button = React.useRef<HTMLButtonElement>(null)
+  const errorsId = React.useId()
+
+  const commit = (next: File[]) => {
+    if (filesProp === undefined) setOwnFiles(next)
+    onFilesChange?.(next)
+  }
+
+  const add = (list: FileList | File[] | null | undefined) => {
+    const incoming = Array.from(list ?? [])
+    if (!incoming.length) return
+    const problems: string[] = []
+    const valid: File[] = []
+    for (const file of incoming) {
+      if (!accepts(file, accept)) problems.push(`${file.name} ${labels.invalidType}`)
+      else if (maxSize !== undefined && file.size > maxSize) problems.push(`${file.name} ${labels.tooLarge} ${formatSize(maxSize, labels.locale)}`)
+      else if (!files.some((existing) => sameFile(existing, file)) && !valid.some((other) => sameFile(other, file))) valid.push(file)
+    }
+    let next: File[]
+    if (multiple) {
+      const room = maxFiles === undefined ? valid.length : Math.max(0, maxFiles - files.length)
+      for (const file of valid.slice(room)) problems.push(`${file.name} ${labels.tooMany} ${maxFiles}`)
+      next = [...files, ...valid.slice(0, room)]
+    } else {
+      next = valid.length ? [valid[0]!] : files
+    }
+    setErrors(problems)
+    const added = next.filter((file) => !files.includes(file))
+    if (added.length) {
+      setStatus(`${labels.added} ${added.map((file) => file.name).join(", ")}`)
+      commit(next)
+    }
+  }
+
+  const remove = (file: File) => {
+    commit(files.filter((other) => other !== file))
+    setStatus(`${labels.removed} ${file.name}`)
+    setErrors([])
+    // La fila (y su botón) desaparece: el foco vuelve al recuadro.
+    button.current?.focus()
+  }
+
+  // `name`: el `<input type="file">` tiene que tener los mismos archivos que la lista, que no son
+  // los que eligió en el diálogo (se sumaron arrastrando, se quitaron, se validaron). `DataTransfer`
+  // es la única forma de armar un `FileList`.
+  React.useEffect(() => {
+    if (!name || !input.current || typeof DataTransfer !== "function") return
+    const transfer = new DataTransfer()
+    for (const file of files) transfer.items.add(file)
+    input.current.files = transfer.files
+  }, [files, name])
+
+  const resetRef = useFormReset(() => {
+    if (filesProp === undefined) setOwnFiles([])
+    setErrors([])
+  })
+
+  // Los listeners de la ventana se ponen una vez por arrastre y llaman siempre al `add` del último
+  // render: si se volvieran a poner en cada render, el contador de abajo arrancaría de cero a mitad
+  // de camino y la zona se apagaría con el puntero todavía adentro.
+  const latestAdd = React.useRef(add)
+  React.useEffect(() => {
+    latestAdd.current = add
+  })
+
+  // `scope="window"`: se escucha la ventana. Un contador y no un booleano porque `dragenter` y
+  // `dragleave` llegan de a pares por cada hijo que cruza el puntero.
+  React.useEffect(() => {
+    if (scope !== "window" || disabled) return
+    let depth = 0
+    const enter = (event: DragEvent) => {
+      if (!hasFiles(event)) return
+      event.preventDefault()
+      depth++
+      setWindowDrag(true)
+    }
+    const overWindow = (event: DragEvent) => {
+      if (!hasFiles(event)) return
+      event.preventDefault()
+      if (event.dataTransfer) event.dataTransfer.dropEffect = "copy"
+    }
+    const leave = (event: DragEvent) => {
+      if (!hasFiles(event)) return
+      depth = Math.max(0, depth - 1)
+      if (depth === 0) setWindowDrag(false)
+    }
+    const drop = (event: DragEvent) => {
+      if (!hasFiles(event)) return
+      event.preventDefault()
+      depth = 0
+      setWindowDrag(false)
+      latestAdd.current(event.dataTransfer?.files)
+    }
+    window.addEventListener("dragenter", enter)
+    window.addEventListener("dragover", overWindow)
+    window.addEventListener("dragleave", leave)
+    window.addEventListener("drop", drop)
+    return () => {
+      window.removeEventListener("dragenter", enter)
+      window.removeEventListener("dragover", overWindow)
+      window.removeEventListener("dragleave", leave)
+      window.removeEventListener("drop", drop)
+    }
+  }, [scope, disabled])
+
+  // En `window` la ventana ya maneja todo: el recuadro solo se pinta.
+  const areaHandlers =
+    scope === "area" && !disabled
+      ? {
+          onDragEnter: (event: React.DragEvent) => {
+            if (!hasFiles(event)) return
+            event.preventDefault()
+            setOver(true)
+          },
+          onDragOver: (event: React.DragEvent) => {
+            if (!hasFiles(event)) return
+            event.preventDefault()
+            event.dataTransfer.dropEffect = "copy"
+          },
+          onDragLeave: (event: React.DragEvent) => {
+            if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setOver(false)
+          },
+          onDrop: (event: React.DragEvent) => {
+            if (!hasFiles(event)) return
+            event.preventDefault()
+            setOver(false)
+            add(event.dataTransfer.files)
+          },
+        }
+      : {}
+
+  const dragging = over || windowDrag
+  const describedBy = cn(ariaDescribedby, errors.length > 0 && errorsId) || undefined
+
+  return (
+    <div ref={resetRef} data-slot="drop-zone" className={cn("flex flex-col gap-2", className)} {...props}>
+      <input
+        ref={input}
+        type="file"
+        accept={accept}
+        aria-hidden="true"
+        className="sr-only"
+        disabled={disabled}
+        multiple={multiple}
+        name={name}
+        tabIndex={-1}
+        onChange={(event) => {
+          const picked = Array.from(event.currentTarget.files ?? [])
+          // Sin `name`, se vacía: elegir el mismo archivo de nuevo vuelve a disparar `change`. Con
+          // `name`, el efecto de arriba lo vuelve a llenar con la lista.
+          if (!name) event.currentTarget.value = ""
+          add(picked)
+        }}
+      />
+      <button
+        ref={button}
+        type="button"
+        id={id}
+        aria-describedby={describedBy}
+        aria-invalid={errors.length > 0 || undefined}
+        aria-label={ariaLabel}
+        aria-labelledby={ariaLabelledby}
+        data-dragging={dragging ? "" : undefined}
+        data-slot="drop-zone-area"
+        disabled={disabled}
+        onClick={() => input.current?.click()}
+        {...areaHandlers}
+        className={cn(
+          "flex min-h-32 w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-surface border border-separator-strong bg-fill-1 px-6 py-8 text-center outline-none transition-control",
+          "hover:bg-fill-2 focus-visible:focus-ring disabled:cursor-not-allowed disabled:opacity-40",
+          // Arrastrando: el anillo y el tinte del acento, como la selección de iCloud Drive.
+          "data-dragging:border-brand-700 data-dragging:bg-highlight data-dragging:ring-1 data-dragging:ring-brand-700",
+          "aria-invalid:border-red-800"
+        )}
+      >
+        {children ?? (
+          <>
+            <UploadIcon aria-hidden="true" className="size-6 text-label-secondary in-data-dragging:text-brand-900" />
+            <span className="text-callout text-label">{dragging ? labels.drop : labels.prompt}</span>
+          </>
+        )}
+      </button>
+      {errors.length > 0 && (
+        <div id={errorsId} data-slot="drop-zone-errors" role="alert" className="flex flex-col gap-1 text-footnote text-red-ink">
+          {errors.map((error) => (
+            <p key={error} className="flex items-start gap-1.5">
+              <CircleAlertIcon aria-hidden="true" className="mt-px size-3.5 shrink-0" />
+              {error}
+            </p>
+          ))}
+        </div>
+      )}
+      {files.length > 0 && (
+        <List data-slot="drop-zone-files">
+          {files.map((file) => {
+            const progress = fileProgress?.(file)
+            const error = fileError?.(file)
+            return (
+              <ListRow key={`${file.name}-${file.size}-${file.lastModified}`} icon={file.type.startsWith("image/") ? <Thumbnail file={file} /> : <FileIcon />}>
+                <div className="flex min-w-0 flex-1 flex-col gap-1">
+                  <span className="truncate text-body text-label">{file.name}</span>
+                  <span className="text-callout text-label-secondary tabular-nums">{formatSize(file.size, labels.locale)}</span>
+                  {progress !== undefined && <Progress aria-label={file.name} size="sm" value={progress} />}
+                  {error != null && error !== false && <span className="text-callout text-red-ink">{error}</span>}
+                </div>
+                <Button aria-label={`${labels.remove} ${file.name}`} disabled={disabled} onClick={() => remove(file)} size="icon-sm" type="button" variant="ghost">
+                  <XIcon />
+                </Button>
+              </ListRow>
+            )
+          })}
+        </List>
+      )}
+      <span className="sr-only" data-slot="drop-zone-status" role="status">
+        {status}
+      </span>
+      {windowDrag &&
+        createPortal(
+          // La ventana entera es la zona: el mismo anillo y tinte, con el texto en el medio.
+          <div
+            aria-hidden="true"
+            data-slot="drop-zone-overlay"
+            className="pointer-events-none fixed inset-3 z-50 flex items-center justify-center rounded-surface bg-highlight ring-2 ring-brand-700"
+          >
+            <span className="rounded-control bg-surface px-4 py-2 text-callout text-label shadow-menu">{labels.drop}</span>
+          </div>,
+          document.body
+        )}
+    </div>
+  )
+}
+
+export { DropZone, dropZoneLabels, type DropZoneLabels, type DropZoneProps }
