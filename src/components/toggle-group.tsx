@@ -55,7 +55,9 @@ function ToggleGroup({ className, size = "sm", name, value, defaultValue, onValu
         className={cn(segmentedTrackClassName, segmentedGroupClassName, "group/toggle-group", className)}
         aria-labelledby={props["aria-label"] ? undefined : field.labelId}
         aria-describedby={field.messageIds.join(" ") || undefined}
-        aria-invalid={field.invalid || undefined}
+        // `aria-invalid` no vale en un role=group: el estado va en `data-invalid` y el `FieldError` se
+        // asocia por `aria-describedby`.
+        data-invalid={field.invalid ? "" : undefined}
         {...props}
         ref={groupRef}
         disabled={field.disabled}

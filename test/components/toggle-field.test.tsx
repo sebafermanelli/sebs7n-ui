@@ -123,7 +123,10 @@ describe("ToggleGroup como control de formulario", () => {
     await user.click(screen.getByRole("button", { name: "Filtrar" }))
     expect(onFormSubmit).not.toHaveBeenCalled()
     expect(screen.getByRole("button", { name: "Pagadas" })).toHaveFocus()
-    expect(group).toHaveAttribute("aria-invalid", "true")
+    // `aria-invalid` no vale en un role=group: el estado va en data-invalid y el error se asocia.
+    expect(group).not.toHaveAttribute("aria-invalid")
+    expect(group).toHaveAttribute("data-invalid")
+    expect(group).toHaveAccessibleDescription("Elegí al menos uno.")
     await user.click(screen.getByRole("button", { name: "Vencidas" }))
     await user.click(screen.getByRole("button", { name: "Filtrar" }))
     expect(onFormSubmit.mock.calls[0]![0]).toEqual({ status: ["due"] })
