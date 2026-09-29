@@ -22,8 +22,13 @@ describe("Navbar", () => {
     expect(header(container)).toHaveClass("sticky", "top-0", "w-full")
     expect(header(container)).not.toHaveAttribute("data-scrolled")
     // Sin estado transparente: translúcida con desenfoque siempre (el contenido pasa por abajo), con
-    // el fill denso de la barra. Opaca con menos transparencia: lo resuelve la utilidad.
-    expect(surface(container)).toHaveClass("material-translucent", "[--sf-translucent:var(--sf-translucent-bar)]", "shadow-[inset_0_-1px_0_var(--color-separator-strong)]")
+    // el fill denso de la barra fuera del wallpaper y el de `material-translucent` sobre él. Opaca con
+    // menos transparencia: lo resuelve la utilidad.
+    expect(surface(container)).toHaveClass(
+      "material-translucent",
+      "not-in-data-ambient:[--sf-translucent:var(--sf-translucent-bar)]",
+      "shadow-[inset_0_-1px_0_var(--color-separator-strong)]"
+    )
     expect(surface(container).className).not.toMatch(/bg-transparent|rounded-|shadow-menu|backdrop-blur/)
   })
 

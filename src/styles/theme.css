@@ -293,18 +293,20 @@
     /**
      * El wallpaper (`bg-ambient`, W): cuatro tonos del brand con la luminosidad fija por tema,
      * como la escala de brand, así un brand oscuro no apaga la home ni uno claro la quema.
-     * 1 el cielo, 2 y 3 las ondas, 4 la cresta. El matiz se corre pocos grados (−12° a +6°)
-     * para que sea un solo color y no un arcoíris.
+     * 1 es la base (el más profundo) y 2, 3 y 4 los círculos, de atrás hacia adelante. El matiz
+     * se corre pocos grados (−12° a +4°) para que sea un solo color y no un arcoíris.
      *
      * La luminosidad está calibrada para que `label` y `label-secondary` lleguen a 4,5:1
      * **directo sobre cualquier punto** del wallpaper con las cinco marcas
-     * (`test/contrast.test.ts`): en claro ningún tono baja de L 0,915; en oscuro ninguno pasa
-     * de 0,385. Subir el croma sí se puede; mover la L, correr el test.
+     * (`test/contrast.test.ts`): en claro ningún tono baja de L 0,9; en oscuro ninguno pasa
+     * de 0,385. En claro ese piso es el techo del efecto: a L fija, más croma baja la
+     * luminancia (y un azul muy claro sale del gamut sRGB y vira a cian), así que el tono más
+     * lejos del blanco ya está en ~12,5 de distancia OKLab. Mover L o croma, correr el test.
      */
-    --sf-wallpaper-1: oklch(from var(--sf-brand-src) 0.98 calc(c * 0.08) h);
-    --sf-wallpaper-2: oklch(from var(--sf-brand-src) 0.95 calc(c * 0.3) calc(h - 6));
-    --sf-wallpaper-3: oklch(from var(--sf-brand-src) 0.915 calc(c * 0.55) calc(h + 4));
-    --sf-wallpaper-4: oklch(from var(--sf-brand-src) 0.93 calc(c * 0.45) calc(h - 12));
+    --sf-wallpaper-1: oklch(from var(--sf-brand-src) 0.905 calc(c * 0.45) calc(h + 4));
+    --sf-wallpaper-2: oklch(from var(--sf-brand-src) 0.9 calc(c * 0.4) calc(h - 12));
+    --sf-wallpaper-3: oklch(from var(--sf-brand-src) 0.94 calc(c * 0.35) calc(h - 6));
+    --sf-wallpaper-4: oklch(from var(--sf-brand-src) 0.98 calc(c * 0.08) h);
 
     /**
      * Fondo de página. No es un primitivo de Geist (por eso vive acá y no en
@@ -371,11 +373,13 @@
     /* El segmento activo de un control segmentado: blanco en claro, el gris de Calendar en oscuro. */
     --sf-segment: #ffffff;
     /**
-     * El único material translúcido (`material-translucent`), para lo que iCloud pone sobre el
-     * wallpaper: la barra global de Home, el header de un widget. En claro, el 85 % del header de
-     * widget y no el 40 % de la barra: con 40 el texto no se lee sobre cualquier foto.
+     * El material translúcido de las barras (`material-translucent`), para lo que iCloud pone
+     * sobre el wallpaper: la barra global de Home, la Toolbar, el popover de acceso rápido. Al
+     * 60 %, el mismo alfa que en oscuro: entre el 40 % de la barra de iCloud (con 40 el secundario
+     * no llega) y el 85 % del header de widget, con el que el wallpaper no se veía a través
+     * (ΔOKLab < 2 contra la página lisa). Directo sobre el wallpaper el secundario llega a 4,73.
      */
-    --sf-translucent: #f8f8fcd9;
+    --sf-translucent: #f8f8fc99;
     /**
      * El fill de la barra del Navbar, que es translúcida siempre (la home de iCloud: el contenido
      * pasa por abajo, desenfocado). Va sobre cualquier cosa que scrollee, así que es más denso que el
@@ -386,10 +390,11 @@
     /**
      * El cuerpo de un widget sobre el wallpaper (`material-translucent-body`, W): Card,
      * WidgetCard y la columna del Sidebar. En oscuro, el negro al 75 % de iCloud (§1.5); en claro
-     * iCloud lo deja blanco opaco y acá va al 80 %, para que el wallpaper se asome sin que el
-     * secundario baje de 4,5:1 (4,87 en el peor punto).
+     * iCloud lo deja blanco opaco y acá va al 60 %, para que el wallpaper se vea a través
+     * (ΔOKLab ≥ 4,4 contra la página lisa). El piso lo pone el rojo de `Stat`, que llega a 4,58:1
+     * sobre el peor punto; al 55 % ya no llega.
      */
-    --sf-translucent-body: #ffffffcc;
+    --sf-translucent-body: #ffffff99;
     /**
      * La franja de cabecera de una card sobre el wallpaper: una capa encima del cuerpo, sin blur
      * propio (el cuerpo ya desenfoca). Más gris en claro, más clara en oscuro: la misma relación
@@ -516,9 +521,10 @@
     --sf-brand-src: var(--brand-base-dark);
     --sf-brand-fg: var(--brand-contrast-dark);
 
-    /* La home oscura de iCloud: de un azul noche a una cresta saturada. El tope de L 0,385 es el
-       que deja al secundario en 4,5:1 directo encima; el croma alto es lo que la hace azul y no
-       gris. Se redeclaran porque `--sf-brand-src` cambia en `.dark`. */
+    /* La home oscura de iCloud: una base azul noche y círculos cada vez más claros y saturados
+       hacia adelante. El tope de L 0,385 es el que deja al secundario en 4,5:1 directo encima; el
+       croma alto es lo que la hace azul y no gris. Se redeclaran porque `--sf-brand-src` cambia
+       en `.dark`. */
     --sf-wallpaper-1: oklch(from var(--sf-brand-src) 0.2 calc(c * 0.55) h);
     --sf-wallpaper-2: oklch(from var(--sf-brand-src) 0.27 calc(c * 0.75) calc(h + 6));
     --sf-wallpaper-3: oklch(from var(--sf-brand-src) 0.33 calc(c * 0.95) calc(h - 4));
@@ -818,10 +824,10 @@
 }
 
 /**
- * El wallpaper (W): la home de iCloud, con ondas del color del brand detrás de todo. Sobre él,
- * adentro de `data-ambient`, la barra, las cards, el sidebar y la toolbar pasan a translúcidos
- * con blur; menús, diálogos y campos siguen opacos. Adentro de una app la página es lisa: es
- * opt-in (`AppShell ambient`, o `bg-ambient` + `data-ambient` en un contenedor).
+ * El wallpaper (W): la home de icloud.com, con círculos grandes del color del brand detrás de
+ * todo. Sobre él, adentro de `data-ambient`, la barra, las cards, el sidebar y la toolbar pasan a
+ * translúcidos con blur; menús, diálogos y campos siguen opacos. Adentro de una app la página es
+ * lisa: es opt-in (`AppShell ambient`, o `bg-ambient` + `data-ambient` en un contenedor).
  *
  * El dibujo va en un `::before` con `position: fixed` y no con `background-attachment: fixed`,
  * que Safari en iOS ignora: así queda quieto contra la ventana y el contenido pasa por delante.
@@ -833,9 +839,14 @@
  * vista previa en una caja (una demo) lleva `[contain:paint]` en esa caja; sin eso el wallpaper
  * de la demo tapa la página entera.
  *
- * Las ondas son `radial-gradient` grandes de borde suave más una cresta marcada; cada color
- * lleva el alfa `--ambient` sobre el fondo de página (0 = lisa, 1 = wallpaper entero). Se calcula
- * acá y no en `:root` para que `--ambient` responda donde la app lo pise.
+ * Los círculos: la base es el tono 1 (el más profundo) y encima van tres círculos de radio en
+ * `vmax`, con el centro afuera de la pantalla, de atrás hacia adelante los tonos 2, 3 y 4 (el
+ * primer `radial-gradient` es el de adelante). Cada uno llega a su borde nítido —el color hasta
+ * el 100 % del radio, transparente medio píxel después— y adentro se sombrea hacia el tono de
+ * atrás, para que las superposiciones se lean como hojas curvas. Todo color del dibujo queda
+ * entre dos tonos, así que el test de contraste cubre los extremos. Cada color lleva el alfa
+ * `--ambient` sobre el fondo de página (0 = lisa, 1 = wallpaper entero); se calcula acá y no en
+ * `:root` para que `--ambient` responda donde la app lo pise.
  */
 @utility bg-ambient {
   isolation: isolate;
@@ -849,11 +860,11 @@
     pointer-events: none;
     background-color: var(--color-background);
     background-image:
-      radial-gradient(150% 100% at 0% 125%, transparent 44%, oklch(from var(--sf-wallpaper-4) l c h / var(--ambient)) 47% 51%, transparent 60%),
-      radial-gradient(120% 75% at 105% 110%, oklch(from var(--sf-wallpaper-4) l c h / var(--ambient)) 0 25%, transparent 55%),
-      radial-gradient(130% 80% at -10% 100%, oklch(from var(--sf-wallpaper-3) l c h / var(--ambient)) 0 35%, transparent 62%),
-      radial-gradient(90% 60% at 85% -10%, oklch(from var(--sf-wallpaper-2) l c h / var(--ambient)) 0 20%, transparent 60%),
-      linear-gradient(165deg, oklch(from var(--sf-wallpaper-1) l c h / var(--ambient)) 0%, oklch(from var(--sf-wallpaper-2) l c h / var(--ambient)) 50%, oklch(from var(--sf-wallpaper-3) l c h / var(--ambient)) 100%);
+      radial-gradient(circle 70vmax at -8% 112%, oklch(from var(--sf-wallpaper-4) l c h / var(--ambient)) 55%, oklch(from var(--sf-wallpaper-3) l c h / var(--ambient)) 100%, transparent calc(100% + 0.5px)),
+      radial-gradient(circle 95vmax at -20% 125%, oklch(from var(--sf-wallpaper-3) l c h / var(--ambient)) 60%, oklch(from var(--sf-wallpaper-2) l c h / var(--ambient)) 100%, transparent calc(100% + 0.5px)),
+      radial-gradient(circle 80vmax at 118% 108%, oklch(from var(--sf-wallpaper-2) l c h / var(--ambient)) 50%, oklch(from var(--sf-wallpaper-1) l c h / var(--ambient)) 100%, transparent calc(100% + 0.5px)),
+      radial-gradient(circle 60vmax at 105% -35%, oklch(from var(--sf-wallpaper-3) l c h / var(--ambient)) 45%, oklch(from var(--sf-wallpaper-1) l c h / var(--ambient)) 100%, transparent calc(100% + 0.5px)),
+      linear-gradient(oklch(from var(--sf-wallpaper-1) l c h / var(--ambient)), oklch(from var(--sf-wallpaper-1) l c h / var(--ambient)));
   }
 }
 

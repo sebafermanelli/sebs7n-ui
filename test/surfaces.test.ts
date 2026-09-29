@@ -42,7 +42,9 @@ const ICLOUD = {
     "surface-header": "#f2f2f7", group: "#f4f4f5", "fill-1": "#78788014", "fill-2": "#7676801f",
     "fill-3": "#78788029", separator: "#e5e5ea", "separator-strong": "#d1d1d6", hairline: "#78788014",
     label: "#000000e0", "label-secondary": "#0000008f", "label-tertiary": "#0000007a",
-    "label-quaternary": "#78788029", "selection-inactive": "#dcdce0", translucent: "#f8f8fcd9",
+    // `translucent` no es el 85 % del header de widget de iCloud: es la barra y el acceso rápido
+    // sobre el wallpaper, y al 60 % (el mismo alfa que en oscuro) el wallpaper se ve a través (W).
+    "label-quaternary": "#78788029", "selection-inactive": "#dcdce0", translucent: "#f8f8fc99",
   },
   dark: {
     background: "#1c1c1e", surface: "#1c1c1e", "surface-secondary": "#202023", "surface-bar": "#2c2c2e",
@@ -147,10 +149,11 @@ describe("material-translucent: el único con blur", () => {
   })
 
   // Como la barra de la home de iCloud: el contenido pasa por abajo, desenfocado. Siempre, no solo sobre
-  // el wallpaper; con el fill de la barra (`translucent-bar`), que es más denso que el del widget.
-  it("la barra del Navbar es siempre translúcida, con su fill", () => {
+  // el wallpaper. Fuera de él con el fill denso de la barra (`translucent-bar`), que aguanta cualquier
+  // cosa debajo; sobre el wallpaper con el de `material-translucent`, para que el wallpaper se vea (W).
+  it("la barra del Navbar es siempre translúcida; más densa fuera del wallpaper", () => {
     const navbar = read("../src/components/navbar.tsx")
-    expect(navbar).toContain("material-translucent [--sf-translucent:var(--sf-translucent-bar)]")
+    expect(navbar).toContain("material-translucent not-in-data-ambient:[--sf-translucent:var(--sf-translucent-bar)]")
     expect(navbar).not.toContain("in-data-ambient:material-translucent")
   })
 
@@ -254,9 +257,16 @@ describe("wallpaper (W)", () => {
     expect(u).not.toContain("background-attachment")
   })
 
-  it("las ondas salen de los cuatro tonos del brand y --ambient regula cuánto color", () => {
+  // La home de icloud.com: círculos grandes superpuestos, de borde nítido, cada uno de un tono del
+  // brand, sobre una base del más profundo. Nada de imagen de Apple: todo `radial-gradient`.
+  it("son círculos de borde nítido sobre la base, y --ambient regula cuánto color", () => {
     const u = utility("bg-ambient")
     for (const n of [1, 2, 3, 4]) expect(u, `tono ${n}`).toContain(`oklch(from var(--sf-wallpaper-${n}) l c h / var(--ambient))`)
+    const circulos = u.match(/radial-gradient\(circle \d+vmax at /g) ?? []
+    expect(circulos.length).toBeGreaterThanOrEqual(3)
+    // El borde: el color llega al 100 % del radio y medio píxel después ya es transparente.
+    expect(u.match(/100%, transparent calc\(100% \+ 0\.5px\)/g)?.length).toBe(circulos.length)
+    expect(u).not.toMatch(/ondas|transparent 60%/)
     for (const tema of ["light", "dark"] as const) {
       for (const n of [1, 2, 3, 4]) {
         expect(bloque(tema), `${tema} tono ${n}`).toMatch(new RegExp(`--sf-wallpaper-${n}: oklch\\(from var\\(--sf-brand-src\\) `))
@@ -269,7 +279,7 @@ describe("wallpaper (W)", () => {
   })
 
   it("el cuerpo y la franja de un widget sobre el wallpaper tienen su token", () => {
-    expect(token("light", "translucent-body")).toBe("#ffffffcc")
+    expect(token("light", "translucent-body")).toBe("#ffffff99")
     expect(token("dark", "translucent-body")).toBe("#000000bf")
     expect(token("light", "translucent-strip")).toBe("#7878801f")
     expect(token("dark", "translucent-strip")).toBe("#ffffff1a")

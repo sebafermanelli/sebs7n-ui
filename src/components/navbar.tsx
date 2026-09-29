@@ -55,10 +55,11 @@ type NavbarProps = React.ComponentProps<"header"> & {
 /**
  * La barra global de la home de iCloud (catálogo §2.1): a todo el ancho, con el borde entre paneles
  * abajo y **translúcida con desenfoque** (`material-translucent`): el contenido de la página pasa por
- * abajo. Su fill (`--sf-translucent-bar`) es más denso que el del widget para que el texto llegue a
- * 4,5:1 sobre cualquier cosa; con menos transparencia o más contraste es la barra opaca
- * (`surface-header`). La barra de `AppShell` no es esta: queda opaca, como la de Mail o Drive, donde
- * el contenido scrollea adentro de los paneles. El contenido va en `NavbarContent` (44 de alto).
+ * abajo. Fuera del wallpaper su fill (`--sf-translucent-bar`) es más denso, para que el texto llegue
+ * a 4,5:1 sobre cualquier cosa; sobre el wallpaper (`data-ambient`) usa el de `material-translucent`
+ * y el wallpaper se ve a través. Con menos transparencia o más contraste es la barra opaca
+ * (`surface-header`). La barra de `AppShell` no es esta: es su prop `header`, opaca adentro de una
+ * app (como Mail o Drive) y translúcida sobre el wallpaper. El contenido va en `NavbarContent`.
  *
  * El borde es una sombra interior de 1 px y no un `border`: así la barra mide 44 con él adentro, lo
  * mismo que en iCloud, sin que `NavbarContent` tenga que descontarlo.
@@ -79,7 +80,10 @@ function Navbar({ className, surfaceClassName, variant: _variant, position = "st
       <div
         data-slot="navbar-surface"
         className={cn(
-          "relative material-translucent [--sf-translucent:var(--sf-translucent-bar)] text-label shadow-[inset_0_-1px_0_var(--color-separator-strong)]",
+          // Fuera del wallpaper, el fill denso de la barra: debajo puede pasar cualquier cosa. Sobre él
+          // (`data-ambient`), el de `material-translucent`, para que el wallpaper se vea a través.
+          "relative material-translucent not-in-data-ambient:[--sf-translucent:var(--sf-translucent-bar)]",
+          "text-label shadow-[inset_0_-1px_0_var(--color-separator-strong)]",
           surfaceClassName
         )}
       >

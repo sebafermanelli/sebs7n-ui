@@ -24,7 +24,7 @@ type AppShellProps = Omit<React.ComponentProps<"div">, "children"> & {
   /** id del <main> (destino del skip link). */
   mainId?: string
   /**
-   * El wallpaper: ondas del color del brand, fijas detrás de todo, como la home de iCloud. Sobre
+   * El wallpaper: círculos grandes del color del brand, fijos detrás de todo, como la home de iCloud. Sobre
    * él la barra (`header` y la del teléfono) y la `Toolbar` pasan a `material-translucent`, y
    * `Card`, `WidgetCard` y el `Sidebar` al cuerpo translúcido (`material-translucent-body`); menús,
    * diálogos y campos siguen opacos. Es opt-in porque cambia el fondo de la app entera, y esa
@@ -190,7 +190,7 @@ function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido
           // Lo que mide la barra global: el sidebar se pega debajo de ella y descuenta su alto.
           // Con barra, la fila de arriba mide lo suyo y la de abajo se estira hasta el alto del shell.
           header == null ? "[--app-shell-header:0px]" : "[--app-shell-header:2.75rem] lg:grid-rows-[auto_minmax(0,1fr)]",
-          // `bg-ambient` pinta el mismo color de página y le suma las ondas del wallpaper detrás.
+          // `bg-ambient` pinta el mismo color de página y le suma los círculos del wallpaper detrás.
           ambient && "bg-ambient",
           className
         )}
@@ -217,7 +217,8 @@ function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido
           {sidebar}
         </div>
         <div data-slot="app-shell-column" className="flex min-w-0 flex-col">
-          {/* La barra de una app de iCloud en el teléfono: 44, opaca y con el borde abajo. */}
+          {/* La barra de una app de iCloud en el teléfono: 44 y con el borde abajo; opaca, y translúcida
+              sobre el wallpaper. */}
           <header
             data-slot="app-shell-mobile-bar"
             className="sticky top-0 z-40 flex h-11 shrink-0 items-center gap-2 border-b border-separator-strong bg-surface-header ps-4 pe-1.5 in-data-ambient:material-translucent lg:hidden"
