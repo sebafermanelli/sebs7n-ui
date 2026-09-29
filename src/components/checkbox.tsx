@@ -33,8 +33,11 @@ function Checkbox({ className, shape = "square", ...props }: CheckboxProps) {
         "data-checked:border-transparent data-checked:bg-brand-700 data-checked:hover:bg-brand-800 data-checked:focus-visible:focus-ring-inverse",
         "data-indeterminate:border-transparent data-indeterminate:bg-brand-700 data-indeterminate:focus-visible:focus-ring-inverse",
         "aria-invalid:border-red-800 data-invalid:border-red-800",
-        // Apagada a .4, como todo control de iCloud: se sigue viendo si estaba marcada.
+        // Marcada y apagada, a .4, como todo control de iCloud: se sigue viendo que estaba marcada.
+        // Vacía no se apaga (a .4 el contorno quedaba en ~1,4:1 y la casilla no se encontraba):
+        // conserva el contorno y el interior pasa al gris de `fill-2`, que dice «apagada».
         "data-disabled:cursor-not-allowed data-disabled:opacity-40",
+        "data-disabled:not-data-checked:not-data-indeterminate:opacity-100 data-disabled:not-data-checked:not-data-indeterminate:bg-fill-2 data-disabled:not-data-checked:not-data-indeterminate:hover:border-label-tertiary",
         className
       )}
       {...props}

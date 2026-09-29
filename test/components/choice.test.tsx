@@ -73,7 +73,35 @@ describe("RadioGroup", () => {
     )
     const radio = screen.getByRole("radio", { name: "A" })
     expect(radio).toHaveClass("size-4", "rounded-full", "data-checked:border-transparent", "data-checked:bg-brand-700", "data-disabled:opacity-40")
-    expect(radio.className).not.toMatch(/data-disabled:(bg|border)-/)
+    expect(radio.className).not.toMatch(/data-disabled:(border)-/)
+  })
+})
+
+// Revisión de R4 (M1): vacía y apagada a .4, la casilla quedaba en ~1,4:1 contra la página y casi
+// no se encontraba. Vacía no se apaga: conserva su contorno (label-tertiary, 3,69:1) y el interior
+// pasa al gris de fill-2, que dice «apagada». Marcada sigue a .4, como iCloud.
+describe("Checkbox y Radio vacíos y deshabilitados", () => {
+  it("la casilla vacía conserva el contorno y se rellena de gris", () => {
+    render(<Checkbox aria-label="x" disabled />)
+    const box = screen.getByRole("checkbox")
+    expect(box).toHaveClass(
+      "data-disabled:opacity-40",
+      "data-disabled:not-data-checked:not-data-indeterminate:opacity-100",
+      "data-disabled:not-data-checked:not-data-indeterminate:bg-fill-2",
+      "border-label-tertiary"
+    )
+  })
+
+  it("el radio vacío también", () => {
+    render(
+      <RadioGroup aria-label="Plan" disabled>
+        <RadioGroupItem value="a" aria-label="A" />
+      </RadioGroup>
+    )
+    expect(screen.getByRole("radio", { name: "A" })).toHaveClass(
+      "data-disabled:not-data-checked:opacity-100",
+      "data-disabled:not-data-checked:bg-fill-2"
+    )
   })
 })
 

@@ -26,6 +26,8 @@ function RadioGroupItem({ className, ...props }: RadioGroupItemProps) {
         "aria-invalid:border-red-800 data-invalid:border-red-800",
         // Apagado a .4, como todo control de iCloud: se sigue viendo si estaba marcado.
         "data-disabled:cursor-not-allowed data-disabled:opacity-40",
+        // Vacío no se apaga (ver Checkbox): conserva el contorno y el interior pasa a `fill-2`.
+        "data-disabled:not-data-checked:opacity-100 data-disabled:not-data-checked:bg-fill-2 data-disabled:not-data-checked:hover:border-label-tertiary",
         className
       )}
       {...props}
