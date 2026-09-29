@@ -12,9 +12,19 @@ import {
   useSensors,
   type Announcements,
   type DragEndEvent,
+  type DragOverEvent,
   type UniqueIdentifier,
 } from "@dnd-kit/core"
-import { arrayMove, rectSortingStrategy, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable"
+import {
+  arrayMove,
+  defaultAnimateLayoutChanges,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+  type AnimateLayoutChanges,
+  type SortingStrategy,
+} from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import { GripVerticalIcon } from "lucide-react"
 
@@ -108,7 +118,19 @@ function SortableBase<T>({
   // pisó el servidor), mandan los suyos.
   const [optimistic, setOptimistic] = React.useState<Optimistic<T> | null>(null)
   const [status, setStatus] = React.useState("")
-  const shown = optimistic?.base === items ? optimistic.next : items
+  const settled = optimistic?.base === items ? optimistic.next : items
+  // En la grilla el orden cambia de verdad mientras arrastrás (`onDragOver`), no con traslaciones:
+  // con tarjetas de distinto ancho (una `col-span-2`), correr cada una al lugar de la vecina las
+  // encimaba y dejaba huecos. Así la grilla de CSS reacomoda todo y lo que ves es lo que queda.
+  // dnd-kit compensa que el nodo arrastrado cambie de lugar en el DOM (sigue bajo el puntero).
+  const live = variant === "grid"
+  const dragOrder = React.useRef<T[] | null>(null)
+  const [dragShown, setDragShown] = React.useState<T[] | null>(null)
+  const setDragOrder = (order: T[] | null) => {
+    dragOrder.current = order
+    setDragShown(order)
+  }
+  const shown = dragShown ?? settled
   const keys = shown.map(getKey)
 
   // Con manija, el puntero toma al toque (la manija es `touch-none`). Sin manija, la tarjeta entera:
@@ -142,9 +164,30 @@ function SortableBase<T>({
     onDragCancel: ({ active }) => `${labels.canceled} ${nameOf(active.id)}.`,
   }
 
+  const indexIn = (order: readonly T[], key: UniqueIdentifier) => order.findIndex((item) => getKey(item) === String(key))
+
+  const move = ({ active, over }: DragOverEvent) => {
+    if (!live || !over || active.id === over.id) return
+    const order = dragOrder.current ?? settled
+    const from = indexIn(order, active.id)
+    const to = indexIn(order, over.id)
+    if (from < 0 || to < 0) return
+    setDragOrder(arrayMove([...order], from, to))
+  }
+
   const reorder = ({ active, over }: DragEndEvent) => {
+    if (live) {
+      const next = dragOrder.current
+      setDragOrder(null)
+      // Soltada afuera de la grilla: vuelve a donde estaba, como Escape.
+      if (over && next && next.some((item, index) => item !== settled[index])) commit(next)
+      return
+    }
     if (!over || active.id === over.id) return
-    const next = arrayMove([...shown], keys.indexOf(String(active.id)), keys.indexOf(String(over.id)))
+    commit(arrayMove([...shown], keys.indexOf(String(active.id)), keys.indexOf(String(over.id))))
+  }
+
+  const commit = (next: T[]) => {
     setOptimistic({ base: items, next })
     setStatus("")
     const result = onReorder(next)
@@ -164,10 +207,12 @@ function SortableBase<T>({
         accessibility={{ announcements, screenReaderInstructions: { draggable: labels.instructions } }}
         collisionDetection={closestCenter}
         id={id}
+        onDragCancel={() => setDragOrder(null)}
         onDragEnd={reorder}
+        onDragOver={move}
         sensors={sensors}
       >
-        <SortableContext disabled={disabled} items={keys} strategy={variant === "list" ? verticalListSortingStrategy : rectSortingStrategy}>
+        <SortableContext disabled={disabled} items={keys} strategy={variant === "list" ? verticalListSortingStrategy : inPlace}>
           <Container
             data-slot={`sortable-${variant}`}
             role="list"
@@ -201,6 +246,11 @@ function SortableBase<T>({
   )
 }
 
+// La grilla no corre a nadie con transformaciones (el orden ya cambió en el DOM)…
+const inPlace: SortingStrategy = () => null
+// …y cada tarjeta que cambió de lugar se desliza desde donde estaba, no salta.
+const animateAlways: AnimateLayoutChanges = (args) => defaultAnimateLayoutChanges({ ...args, wasDragging: true })
+
 type SortableItemProps = {
   id: string
   index: number
@@ -213,7 +263,10 @@ type SortableItemProps = {
 }
 
 function SortableItem({ id, index, label, labels, variant, handle, className, children }: SortableItemProps) {
-  const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } = useSortable({ id })
+  const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } = useSortable({
+    id,
+    animateLayoutChanges: variant === "grid" ? animateAlways : undefined,
+  })
   // dnd-kit pone `role="button"` y `aria-roledescription="sortable"` (en inglés). La manija ya es un
   // `<button>` con nombre; el ítem entero es un `listitem` con botones adentro, y un botón no puede
   // tener otros adentro. Las instrucciones llegan por `aria-describedby`.

@@ -84,6 +84,22 @@ describe("SortableGrid", () => {
     expect(onReorder).toHaveBeenCalledWith([WIDGETS[1], WIDGETS[2], WIDGETS[3], WIDGETS[0]])
   })
 
+  it("mientras arrastrás la grilla se reacomoda de verdad (tarjetas de distinto ancho) y Escape la devuelve", async () => {
+    const user = userEvent.setup()
+    const onReorder = vi.fn()
+    render(<Widgets itemClassName={(widget) => (widget.id === "files" ? "col-span-2" : undefined)} onReorder={onReorder} />)
+    screen.getAllByRole("listitem")[0]!.focus()
+    await user.keyboard(" {ArrowRight}")
+    // Todavía sin soltar: el DOM ya está en el orden nuevo y ninguna tarjeta quieta va corrida.
+    expect(order()).toEqual(["Clientes", "Facturas", "Calendario", "Archivos"])
+    const quietas = screen.getAllByRole("listitem").filter((item) => !item.hasAttribute("data-dragging"))
+    expect(quietas.map((item) => item.style.transform || "none")).toEqual(["none", "none", "none"])
+    expect(onReorder).not.toHaveBeenCalled()
+    await user.keyboard("{Escape}")
+    expect(order()).toEqual(["Facturas", "Clientes", "Calendario", "Archivos"])
+    expect(onReorder).not.toHaveBeenCalled()
+  })
+
   it("un click y un Espacio en un botón de adentro son del botón, no toman la tarjeta", async () => {
     const user = userEvent.setup()
     const onOpen = vi.fn()
