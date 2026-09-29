@@ -108,7 +108,9 @@ describe("Sidebar", () => {
     expect(clients.className).not.toMatch(/(^|\s)(data-active:|aria-\[current=page\]:)?text-brand/)
     // En iCloud el texto es el principal siempre (no el secundario) y el ícono va en el acento, a 18.
     expect(clients.className).not.toMatch(/(^|\s)text-label-secondary(\s|$)/)
-    expect(clients).toHaveClass("[&_svg]:text-brand-900", "[&_svg:not([class*='size-'])]:size-[18px]")
+    // Solo el ícono propio del ítem (hijo directo): el svg de un Badge adentro conserva su color.
+    expect(clients).toHaveClass("[&>svg]:text-brand-900", "[&>svg:not([class*='size-'])]:size-[18px]")
+    expect(clients.className).not.toContain("[&_svg]:text-brand-900")
     expect(screen.getByText("3")).toHaveClass("ml-auto", "text-callout", "tabular-nums", "text-label-secondary")
     // Adentro del activo, el contador también pasa al color de contraste.
     expect(screen.getByText("3").className).not.toMatch(/selection/)
