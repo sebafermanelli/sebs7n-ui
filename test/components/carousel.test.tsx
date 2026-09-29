@@ -214,3 +214,22 @@ describe("Carousel", () => {
     expect(errors.mock.calls.filter(([message]) => /hydrat|did not match/i.test(String(message)))).toEqual([])
   })
 })
+
+describe("Carousel bleed", () => {
+  it("la vista sin aire ni máscara y las diapositivas sin separación, para fotos de borde a borde", () => {
+    render(<Plans bleed />)
+    const viewport = document.querySelector("[data-slot=carousel-content]")!
+    expect(viewport.className).toBe("overflow-hidden")
+    expect(viewport.firstElementChild).toHaveClass("flex")
+    expect(viewport.firstElementChild).not.toHaveClass("-ms-4")
+    for (const item of document.querySelectorAll("[data-slot=carousel-item]")) expect(item).not.toHaveClass("ps-4")
+    expect(document.querySelector("[data-slot=carousel]")).toHaveAttribute("data-bleed", "")
+  })
+
+  it("sin bleed, la vista de 2.0: aire para la sombra y la máscara de los costados", () => {
+    render(<Plans />)
+    const viewport = document.querySelector("[data-slot=carousel-content]")!
+    expect(viewport).toHaveClass("-mx-4", "px-4", "pt-4", "pb-10")
+    expect(document.querySelector("[data-slot=carousel-item]")).toHaveClass("ps-4")
+  })
+})

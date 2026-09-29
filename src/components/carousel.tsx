@@ -37,6 +37,11 @@ type CarouselProps = React.ComponentProps<"div"> & {
   orientation?: "horizontal" | "vertical"
   /** Recibe la API de Embla, para manejarlo desde afuera. */
   setApi?: (api: CarouselApi) => void
+  /**
+   * A sangre: la vista sin el aire para la sombra ni la máscara de los costados, y las diapositivas sin
+   * separación. Para fotos de borde a borde, como la de una card de producto.
+   */
+  bleed?: boolean
   labels?: Partial<CarouselLabels>
 }
 
@@ -52,6 +57,7 @@ type CarouselContextValue = {
   selected: number
   snaps: number
   labels: CarouselLabels
+  bleed: boolean
 }
 
 const CarouselContext = React.createContext<CarouselContextValue | null>(null)
@@ -86,6 +92,7 @@ function Carousel({
   setApi,
   plugins,
   labels: labelsProp,
+  bleed = false,
   className,
   children,
   onKeyDown,
@@ -132,9 +139,10 @@ function Carousel({
   }
 
   return (
-    <CarouselContext.Provider value={{ carouselRef, api, orientation, scrollPrev, scrollNext, scrollTo, labels, ...state }}>
+    <CarouselContext.Provider value={{ carouselRef, api, orientation, scrollPrev, scrollNext, scrollTo, labels, bleed, ...state }}>
       <div
         aria-roledescription={labels.carousel}
+        data-bleed={bleed ? "" : undefined}
         data-orientation={orientation}
         data-slot="carousel"
         role="region"
@@ -154,7 +162,7 @@ function Carousel({
 const SlideContext = React.createContext<{ index: number; count: number } | null>(null)
 
 function CarouselContent({ className, children, ...props }: React.ComponentProps<"div">) {
-  const { carouselRef, orientation } = useCarousel()
+  const { carouselRef, orientation, bleed } = useCarousel()
   const slides = React.Children.toArray(children).filter(React.isValidElement)
   return (
     // La vista recorta (si no, se verían las otras diapositivas), pero con aire para la sombra de las
@@ -163,8 +171,13 @@ function CarouselContent({ className, children, ...props }: React.ComponentProps
     // reservado, sin margen negativo: la máscara arma un contexto de apilamiento y una vista que se
     // metiera debajo del carrusel se quedaría con los clicks de lo que haya ahí. Embla mide el
     // contenedor de adentro, no la vista: el padding no le cambia las paradas.
-    <div ref={carouselRef} data-slot="carousel-content" className="-mx-4 overflow-hidden px-4 pt-4 pb-10 [mask-image:linear-gradient(to_right,transparent,#000_16px,#000_calc(100%-16px),transparent)]">
-      <div className={cn("flex", orientation === "horizontal" ? "-ms-4" : "-mt-4 flex-col", className)} {...props}>
+    // A sangre (`bleed`) no hay sombra que cuidar ni vecina que tapar: la vista recorta justo en su borde.
+    <div
+      ref={carouselRef}
+      data-slot="carousel-content"
+      className={bleed ? "overflow-hidden" : "-mx-4 overflow-hidden px-4 pt-4 pb-10 [mask-image:linear-gradient(to_right,transparent,#000_16px,#000_calc(100%-16px),transparent)]"}
+    >
+      <div className={cn("flex", !bleed && (orientation === "horizontal" ? "-ms-4" : "-mt-4"), orientation === "vertical" && "flex-col", className)} {...props}>
         {slides.map((slide, index) => (
           <SlideContext.Provider key={slide.key ?? index} value={{ index, count: slides.length }}>
             {slide}
@@ -176,7 +189,7 @@ function CarouselContent({ className, children, ...props }: React.ComponentProps
 }
 
 function CarouselItem({ className, ...props }: React.ComponentProps<"div">) {
-  const { orientation, labels } = useCarousel()
+  const { orientation, labels, bleed } = useCarousel()
   const slide = React.useContext(SlideContext)
   return (
     <div
@@ -184,7 +197,7 @@ function CarouselItem({ className, ...props }: React.ComponentProps<"div">) {
       aria-roledescription={labels.slide}
       data-slot="carousel-item"
       role="group"
-      className={cn("min-w-0 shrink-0 grow-0 basis-full", orientation === "horizontal" ? "ps-4" : "pt-4", className)}
+      className={cn("min-w-0 shrink-0 grow-0 basis-full", !bleed && (orientation === "horizontal" ? "ps-4" : "pt-4"), className)}
       {...props}
     />
   )
