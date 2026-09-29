@@ -35,7 +35,8 @@ export const isRtl = (element: Element) => element.closest("[dir]")?.getAttribut
 /**
  * Sigue al puntero desde un `pointerdown` sobre el separador: llama `onMove` con los píxeles
  * recorridos desde el comienzo (positivo = crece el panel de antes) y `onEnd` al soltar. Captura el
- * puntero, así el arrastre sigue aunque el cursor se salga de la manija de 12 px.
+ * puntero, así el arrastre sigue aunque el cursor se salga de la manija de 12 px. Si el navegador le
+ * saca la captura (otra ventana, un gesto del sistema) el arrastre termina igual, una sola vez.
  */
 export function dragSeparator(event: React.PointerEvent<HTMLElement>, axis: SeparatorAxis, onMove: (deltaPx: number) => void, onEnd: () => void) {
   if (event.button !== 0) return
@@ -54,11 +55,13 @@ export function dragSeparator(event: React.PointerEvent<HTMLElement>, axis: Sepa
     element.removeEventListener("pointermove", move)
     element.removeEventListener("pointerup", end)
     element.removeEventListener("pointercancel", end)
+    element.removeEventListener("lostpointercapture", end)
     onEnd()
   }
   element.addEventListener("pointermove", move)
   element.addEventListener("pointerup", end)
   element.addEventListener("pointercancel", end)
+  element.addEventListener("lostpointercapture", end)
 }
 
 /**
