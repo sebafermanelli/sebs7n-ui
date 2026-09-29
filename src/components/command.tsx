@@ -271,7 +271,9 @@ function CommandInput({ className, wrapperClassName, placeholder, onKeyDown, ref
         <AutocompletePrimitive.Input
           data-slot="command-input"
           ref={setRef}
-          aria-label={labels.placeholder}
+          // El nombre es lo que dice el campo vacío: un placeholder no alcanza como nombre para todos
+          // los lectores, así que se repite en `aria-label`. Un `aria-label` de la app le gana.
+          aria-label={placeholder ?? labels.placeholder}
           placeholder={placeholder ?? labels.placeholder}
           autoComplete="off"
           autoCapitalize="off"

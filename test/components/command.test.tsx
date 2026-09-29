@@ -348,6 +348,22 @@ describe("Command", () => {
     expect(cabecera.querySelector("svg.lucide-search")).toHaveClass("size-5")
   })
 
+  it("el nombre del campo es su placeholder si lo trae; un aria-label le gana", () => {
+    const { unmount } = render(
+      <Command>
+        <CommandInput placeholder="Facturas, clientes…" />
+      </Command>
+    )
+    expect(screen.getByRole("combobox")).toHaveAccessibleName("Facturas, clientes…")
+    unmount()
+    render(
+      <Command>
+        <CommandInput aria-label="Buscar en facturación" placeholder="Facturas, clientes…" />
+      </Command>
+    )
+    expect(screen.getByRole("combobox")).toHaveAccessibleName("Buscar en facturación")
+  })
+
   it("los chips exponen su valor y son de una sola opción", async () => {
     const onValueChange = vi.fn()
     render(
