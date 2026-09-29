@@ -57,10 +57,10 @@ export const tagVariants = ({ color = "gray", size = "md", removable = false, cl
 export const tagRemoveClassName: Record<TagSize, string> = {
   sm: cn(
     "relative inline-flex size-4 shrink-0 cursor-pointer items-center justify-center rounded-full outline-none transition-control after:absolute after:-inset-1",
-    "hover:bg-(--sf-tag-press) focus-visible:focus-ring [&_svg]:pointer-events-none [&_svg]:size-3"
+    "hover:bg-(--sf-tag-press) focus-visible:focus-ring-inverse [--sf-focus-inverse:currentColor] [&_svg]:pointer-events-none [&_svg]:size-3"
   ),
   md: cn(
     "relative inline-flex size-4 shrink-0 cursor-pointer items-center justify-center rounded-full outline-none transition-control after:absolute after:-inset-1",
-    "hover:bg-(--sf-tag-press) focus-visible:focus-ring [&_svg]:pointer-events-none [&_svg]:size-3"
+    "hover:bg-(--sf-tag-press) focus-visible:focus-ring-inverse [--sf-focus-inverse:currentColor] [&_svg]:pointer-events-none [&_svg]:size-3"
   ),
 }

@@ -29,8 +29,12 @@ function Switch({ className, size = "md", variant = "default", ...props }: Switc
         // contra el pulgar: la pista y el pulgar eran el mismo blanco). `gray-700` (#8f8f8f en los
         // dos temas) es el punto medio que pasa por los dos lados: 3,23:1 contra el blanco en
         // claro, 6,12:1 contra el negro en oscuro, y 3,23:1 contra el pulgar en los dos.
-        "bg-gray-700 hover:bg-gray-800 focus-visible:focus-ring",
-        "data-checked:bg-brand-700 data-checked:hover:bg-brand-800 data-checked:focus-visible:focus-ring-inverse",
+        "bg-gray-700 hover:bg-gray-800",
+        // El foco va por fuera de la pista: el anillo interior del acento sobre `gray-700` daba
+        // ~1,3:1, y sobre la pista prendida habría que invertirlo. Afuera queda sobre la página,
+        // donde el acento llega a 3:1 (test/contrast.test.ts), prendido o apagado.
+        "focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(color:--sf-focus)",
+        "data-checked:bg-brand-700 data-checked:hover:bg-brand-800",
         "data-[variant=neutral]:data-checked:bg-label data-[variant=neutral]:data-checked:hover:bg-button-primary-hover",
         "aria-invalid:ring-1 aria-invalid:ring-red-800 data-invalid:ring-1 data-invalid:ring-red-800",
         "data-disabled:cursor-not-allowed data-disabled:bg-fill-1 data-disabled:hover:bg-fill-1",

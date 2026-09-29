@@ -106,7 +106,7 @@ describe("Tag", () => {
     const tag = screen.getByText("React").closest("[data-slot=tag]")!
     expect(tag).toHaveClass("overflow-visible")
     expect(tag).not.toHaveClass("overflow-hidden")
-    expect(screen.getByRole("button")).toHaveClass("focus-visible:focus-ring", "transition-control", "rounded-full")
+    expect(screen.getByRole("button")).toHaveClass("focus-visible:focus-ring-inverse", "[--sf-focus-inverse:currentColor]", "transition-control", "rounded-full")
   })
 
   // El botón mide 4px menos que el tag en los dos tamaños: ese es el aire que le

@@ -140,9 +140,30 @@ describe("Anillo de foco interior en las cuatro marcas (WCAG 1.4.11)", () => {
       expect(buttonVariants({ variant }).split(" "), variant).not.toContain("focus-visible:focus-ring")
     }
     expect(buttonVariants({ variant: "destructive" })).toContain("[--sf-focus-inverse:var(--sf-button-error-fg)]")
-    for (const file of ["checkbox.tsx", "radio-group.tsx", "switch.tsx"]) {
+    for (const file of ["checkbox.tsx", "radio-group.tsx"]) {
       expect(readFileSync(join(root, "src/components", file), "utf8"), file).toContain("data-checked:focus-visible:focus-ring-inverse")
     }
+  })
+
+  // Revisión de R1: más lugares donde el anillo del acento caía sobre un fondo de color y no se veía.
+  it("sobre un fondo de color, el anillo es el inverso: día elegido, casilla indeterminada, X del Tag, IA sólida", () => {
+    const fuente = (file: string) => readFileSync(join(root, "src", file), "utf8")
+    expect(fuente("components/calendar.tsx")).toContain("data-selected:focus-visible:focus-ring-inverse")
+    expect(fuente("components/checkbox.tsx")).toContain("data-indeterminate:focus-visible:focus-ring-inverse")
+    // La X de un Tag sólido: la tinta del Tag (blanca o negra al 85 %) ya llega a 4,5:1 sobre el relleno.
+    const tag = fuente("variants/tag.ts")
+    expect(tag).toContain("focus-visible:focus-ring-inverse [--sf-focus-inverse:currentColor]")
+    expect(tag).not.toMatch(/focus-visible:focus-ring(\s|")/)
+    // El AiButton sólido es violeta con texto blanco: el anillo, blanco.
+    expect(fuente("components/ai-button.tsx")).toContain("focus-visible:focus-ring-inverse [--sf-focus-inverse:white]")
+  })
+
+  // La pista apagada del Switch es `gray-700`: el anillo interior del acento encima daba ~1,3:1.
+  // El Switch lleva el anillo por fuera, sobre la página, donde el acento ya llega a 3:1 (abajo).
+  it("el Switch lleva el anillo por fuera de la pista", () => {
+    const sw = readFileSync(join(root, "src/components/switch.tsx"), "utf8")
+    expect(sw).toContain("focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(color:--sf-focus)")
+    expect(sw).not.toMatch(/focus-visible:focus-ring/)
   })
 
   // El anillo no se ve solo sobre la página: los campos y la búsqueda son `fill-1`, el ítem

@@ -335,7 +335,7 @@ function Calendar(props: CalendarProps) {
                                 // lo distingue cuando además está elegido, que es cuando el color no alcanza.
                                 "aria-[current=date]:font-medium aria-[current=date]:text-brand-900",
                                 "aria-[current=date]:after:absolute aria-[current=date]:after:bottom-0.5 pointer-coarse:aria-[current=date]:after:bottom-1.5 aria-[current=date]:after:size-1 aria-[current=date]:after:rounded-full aria-[current=date]:after:bg-brand-700",
-                                "data-selected:bg-brand-700 data-selected:text-brand-contrast data-selected:hover:bg-brand-800",
+                                "data-selected:bg-brand-700 data-selected:text-brand-contrast data-selected:hover:bg-brand-800 data-selected:focus-visible:focus-ring-inverse",
                                 "data-selected:aria-[current=date]:text-brand-contrast data-selected:aria-[current=date]:after:bg-brand-contrast",
                                 "aria-disabled:cursor-not-allowed aria-disabled:text-label-tertiary aria-disabled:hover:bg-transparent aria-disabled:active:scale-100"
                               )}

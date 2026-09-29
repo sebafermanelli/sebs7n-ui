@@ -25,7 +25,7 @@ function AiIcon({ className, ...props }: React.ComponentProps<typeof SparklesIco
 const OUTLINE =
   "border-ai/40 text-ai not-data-disabled:hover:border-ai/60 not-data-disabled:hover:bg-ai/8 not-data-disabled:active:bg-ai/12"
 const SOLID =
-  "bg-ai-solid text-white shadow-ai not-data-disabled:hover:bg-ai-solid-hover not-data-disabled:active:bg-ai-solid-hover [&_svg]:text-current"
+  "bg-ai-solid text-white shadow-ai not-data-disabled:hover:bg-ai-solid-hover not-data-disabled:active:bg-ai-solid-hover [&_svg]:text-current focus-visible:focus-ring-inverse [--sf-focus-inverse:white]"
 
 // Genérico en el `size`, igual que `ButtonProps`: así un `AiButton size="icon-md"` sigue
 // exigiendo `aria-label`, que es lo que el tipo del Button garantiza.

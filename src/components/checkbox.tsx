@@ -23,7 +23,7 @@ function Checkbox({ className, ...props }: CheckboxProps) {
         // Marcada lleva el brand, como cualquier estado prendido del sistema. El tilde va en
         // `brand-contrast`, que es el par que `brand-contrast.test.ts` verifica a 4,5:1.
         "data-checked:border-brand-800 data-checked:bg-brand-700 data-checked:hover:bg-brand-800 data-checked:focus-visible:focus-ring-inverse",
-        "data-indeterminate:border-brand-800 data-indeterminate:bg-brand-700",
+        "data-indeterminate:border-brand-800 data-indeterminate:bg-brand-700 data-indeterminate:focus-visible:focus-ring-inverse",
         "aria-invalid:border-red-800 data-invalid:border-red-800",
         "data-disabled:cursor-not-allowed data-disabled:border-separator data-disabled:bg-fill-1 data-disabled:text-label-tertiary",
         className
