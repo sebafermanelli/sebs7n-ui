@@ -1890,7 +1890,7 @@ export const COMPONENTS = {
       "En mobile una tabla de más de 3 columnas no entra: o hacés scroll horizontal con la primera columna fija, o cambiás a tarjetas.",
       "Las acciones de fila van en la última columna, en un `DropdownMenu`, no como tres botones sueltos.",
       "**La primera celda es el nombre** (17, texto principal) y el resto son metadatos en 14 gris, como las columnas de Drive. Una columna de casillas primero se ajusta con `className`.",
-      "Los grupos («Últimos 7 días · 6 ítems») van con `TableGroupHeader`, un `<th scope=\"colgroup\">` de 19/600 con el contador al lado.",
+      "Los grupos («Últimos 7 días · 6 ítems») van con `TableGroupHeader`, un `<th scope=\"rowgroup\">` de 19/600 con el contador al lado: **un `TableBody` por grupo**, y `colSpan` con las columnas que tiene la tabla (el lector lo anuncia).",
       "Sin caja: la tabla vive sobre la página o adentro de un panel. Si hace falta un borde, lo pone quien la contiene.",
       "**No virtualiza.** Renderiza las filas que le pasás, todas. Hasta ~500 anda bien; más que eso, paginá con `Pagination` o virtualizá vos y pasale la ventana.",
     ],
@@ -1898,7 +1898,7 @@ export const COMPONENTS = {
       Table: { density: "`default` 41px (Drive) · `compact` 32px, para listas largas." },
       TableGroupHeader: {
         count: "El contador que va pegado al título («6 ítems»), en 15 gris.",
-        colSpan: "Cuántas columnas ocupa. Por defecto 100, que alcanza para cualquier tabla.",
+        colSpan: "Obligatorio: cuántas columnas tiene la tabla. El lector lo anuncia como el ancho de la tabla.",
       },
       TableHead: { numeric: "Alinea a la derecha con cifras tabulares." },
       TableCell: { numeric: "Alinea a la derecha con cifras tabulares. Tiene que coincidir con el `TableHead`." },

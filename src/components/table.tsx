@@ -129,16 +129,20 @@ type TableGroupHeaderProps = Omit<React.ComponentProps<"tr">, "children"> & {
   children: React.ReactNode
   /** El contador que va pegado al título («6 ítems»), en 15 secundario. */
   count?: React.ReactNode
-  /** Cuántas columnas ocupa. Por defecto, todas (100 alcanza para cualquier tabla). */
-  colSpan?: number
+  /**
+   * Cuántas columnas tiene la tabla. Es obligatorio: el lector anuncia el `colSpan` como el ancho
+   * de la tabla, y un número de más («100 columnas») lo confunde.
+   */
+  colSpan: number
 }
 
 // El título de un grupo de filas de Drive: 58 de alto, 19/600 y el contador en 15 sin negrita al
-// lado. Es un `<th scope="colgroup">`: el lector lo anuncia como encabezado de las filas que siguen.
-function TableGroupHeader({ className, children, count, colSpan = 100, ...props }: TableGroupHeaderProps) {
+// lado. Es un `<th scope="rowgroup">`: encabeza las filas de su cuerpo, así que **cada grupo va en
+// su propio `TableBody`** (una tabla puede tener varios) y el lector lo anuncia en cada fila.
+function TableGroupHeader({ className, children, count, colSpan, ...props }: TableGroupHeaderProps) {
   return (
     <tr data-slot="table-group-header" className={className} {...props}>
-      <th scope="colgroup" colSpan={colSpan} className="h-[58px] px-0.5 pt-3 text-left align-middle text-title-3 whitespace-nowrap text-label">
+      <th scope="rowgroup" colSpan={colSpan} className="h-[58px] px-0.5 pt-3 text-left align-middle text-title-3 whitespace-nowrap text-label">
         {children}
         {count != null && (
           <>

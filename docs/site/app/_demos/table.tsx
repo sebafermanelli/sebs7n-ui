@@ -106,12 +106,13 @@ export function Grupos() {
           <TableHead>Fecha</TableHead>
         </TableRow>
       </TableHeader>
-      <TableBody>
-        {DOCUMENTOS.map(({ grupo, filas }) => [
-          <TableGroupHeader count={`${filas.length} ítems`} key={grupo}>
+      {DOCUMENTOS.map(({ grupo, filas }) => (
+        // Un `TableBody` por grupo: el título (`scope="rowgroup"`) encabeza las filas de su cuerpo.
+        <TableBody key={grupo}>
+          <TableGroupHeader colSpan={4} count={`${filas.length} ítems`}>
             {grupo}
-          </TableGroupHeader>,
-          ...filas.map((fila) => (
+          </TableGroupHeader>
+          {filas.map((fila) => (
             <TableRow
               aria-selected={elegida === fila.id}
               data-state={elegida === fila.id ? "selected" : undefined}
@@ -128,9 +129,9 @@ export function Grupos() {
               <TableCell numeric>{fila.tamano}</TableCell>
               <TableCell className="tabular-nums">{fila.fecha}</TableCell>
             </TableRow>
-          )),
-        ])}
-      </TableBody>
+          ))}
+        </TableBody>
+      ))}
     </Table>
   )
 }

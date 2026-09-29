@@ -336,7 +336,9 @@ R5 (Tree, ListRow, SplitView, WidgetCard, CalendarView, FileGrid, el Meter apila
   con el puntero o la elegida, **selección redondeada** (radio 10) en el acento con foco y gris sin
   foco. El fondo de hover y selección pasa del `<tr>` a las celdas (`border-separate`). La primera
   celda es el nombre (17, `label`) y el resto metadatos en 14 secundario; padding de celda 10 (antes
-  16). **Nuevo `TableGroupHeader`** (58, 19/600 con el contador inline). `TableFooter` sin fondo.
+  16). **Nuevo `TableGroupHeader`** (58, 19/600 con el contador inline): un `<th scope="rowgroup">`, así que
+  va **un `TableBody` por grupo**, y `colSpan` es obligatorio (las columnas de la tabla: el lector lo
+  anuncia como su ancho). `TableFooter` sin fondo.
 - **Accordion y Collapsible, el disclosure de iCloud.** Filas de 44 con separador a todo el ancho, el
   título ya no se apaga con el puntero y el chevron es **› que gira 90° a ⌄** (antes ⌄ que giraba
   180°); el contenido baja a 14. `CollapsibleTrigger chevron` (nuevo) suma el mismo disclosure.

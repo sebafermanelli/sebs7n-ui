@@ -318,16 +318,20 @@ describe("Table", () => {
     render(
       <Table>
         <TableBody>
-          <TableGroupHeader count="6 ítems">Últimos 7 días</TableGroupHeader>
+          <TableGroupHeader colSpan={1} count="6 ítems">
+            Últimos 7 días
+          </TableGroupHeader>
           <TableRow>
             <TableCell>Ana</TableCell>
           </TableRow>
         </TableBody>
       </Table>
     )
-    const th = screen.getByRole("columnheader", { name: /Últimos 7 días/ })
-    expect(th).toHaveAttribute("scope", "colgroup")
-    expect(th).toHaveAttribute("colspan", "100")
+    const th = screen.getByRole("rowheader", { name: /Últimos 7 días/ })
+    // Encabeza las filas de su `TableBody` (un grupo por cuerpo), no un grupo de columnas. Y ocupa
+    // las columnas que tiene la tabla: con 100 el lector anunciaba una tabla de 100 columnas.
+    expect(th).toHaveAttribute("scope", "rowgroup")
+    expect(th).toHaveAttribute("colspan", "1")
     expect(th).toHaveClass("h-[58px]", "text-title-3", "text-label")
     expect(screen.getByText("6 ítems")).toHaveClass("text-subheadline", "font-normal", "text-label-secondary")
     // La fila que sigue al título no lleva separador arriba.
