@@ -169,8 +169,8 @@ describe("Menubar", () => {
 
   it("el título abierto se marca con fondo y comparte la pastilla del sistema", async () => {
     render(<Editor />)
-    // macOS (2.0): el título abierto es una pastilla gris sutil, no del acento.
-    expect(titulo("Archivo")).toHaveClass("h-6", "rounded-control", "hover:bg-fill-1", "data-popup-open:bg-fill-2")
+    // Como un botón de la toolbar de iCloud: 28 de alto, radio 8; abierto, el gris del resaltado.
+    expect(titulo("Archivo")).toHaveClass("h-7", "px-2.5", "text-callout", "rounded-control", "hover:bg-fill-1", "data-popup-open:bg-fill-2")
     expect(titulo("Archivo").className).not.toMatch(/bg-selection|gray-alpha-300/)
 
     await userEvent.click(titulo("Archivo"))

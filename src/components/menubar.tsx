@@ -56,22 +56,20 @@ type MenubarTriggerProps = WithClassName<MenuPrimitive.Trigger.Props>
 /**
  * El título clickeable.
  *
- * Más chato que un `Button`: en una barra de menús el fondo lo gana el menú
- * abierto (`data-popup-open`), no el reposo. Si todos los títulos tuvieran
- * fondo, la barra se leería como cinco botones y no como un menú.
+ * iCloud no tiene barra de menús: el título se ve como un botón de su toolbar (28 de alto, radio 8,
+ * 14/400) sin fondo en reposo. El fondo lo gana el menú abierto (`data-popup-open`, el `fill-2` del
+ * resaltado), no el reposo: si todos los títulos tuvieran fondo, la barra se leería como cinco
+ * botones y no como un menú. Con el dedo sube a 44.
  */
 function MenubarTrigger({ className, ...props }: MenubarTriggerProps) {
   return (
     <MenuPrimitive.Trigger
       data-slot="menubar-trigger"
       className={cn(
-        "inline-flex h-6 pointer-coarse:h-11 cursor-pointer items-center gap-1 rounded-control bg-transparent px-2 text-callout text-label outline-none select-none",
-        // El título abierto de la barra de menús de macOS (2.0) es una pastilla gris sutil, no del
-        // acento: el acento es del ítem resaltado adentro del menú, y dos manchas azules a la vez
-        // competirían por decir dónde está el foco.
+        "inline-flex h-7 pointer-coarse:h-11 cursor-pointer items-center gap-1 rounded-control bg-transparent px-2.5 text-callout text-label outline-none select-none",
         "transition-control hover:bg-fill-1 focus-visible:focus-ring",
         "data-popup-open:bg-fill-2 data-popup-open:hover:bg-fill-2",
-        "data-disabled:cursor-not-allowed data-disabled:text-label-tertiary data-disabled:hover:bg-transparent",
+        "data-disabled:cursor-not-allowed data-disabled:opacity-30 data-disabled:hover:bg-transparent",
         className
       )}
       {...props}
