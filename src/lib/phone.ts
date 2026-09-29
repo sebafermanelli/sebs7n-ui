@@ -99,8 +99,11 @@ export const onlyDigits = (text: string) => text.replace(/\D/g, "")
  * `national_prefix_for_parsing` de AR en la metadata de libphonenumber-js 1.12.41. El número local
  * del celular es «0 + área + 15 + número»; el E.164 es «+54 9 + área + número».
  */
-const AR_MOBILE =
-  /^(11|2(?:2(?:02?|[13]|2[13-79]|4[1-6]|5[2457]|6[124-8]|7[1-4]|8[13-6]|9[1267])|3(?:02?|1[467]|2[03-6]|3[13-8]|[49][2-6]|5[2-8]|[67])|4(?:7[3-578]|9)|6(?:[0136]|2[24-6]|4[6-8]?|5[15-8])|80|9(?:0[1-3]|[19]|2\d|3[1-6]|4[02568]?|5[2-4]|6[2-46]|72?|8[23]?))|3(?:3(?:2[79]|6|8[2578])|4(?:0[0-24-9]|[12]|3[5-8]?|4[24-7]|5[4-68]?|6[02-9]|7[126]|8[2379]?|9[1-36-8])|5(?:1|2[1245]|3[237]?|4[1-46-9]|6[2-4]|7[1-6]|8[2-5]?)|6[24]|7(?:[069]|1[1568]|2[15]|3[145]|4[13]|5[14-8]|7[2-57]|8[126])|8(?:[01]|2[15-7]|3[2578]?|4[13-6]|5[4-8]?|6[1-357-9]|7[36-8]?|8[5-8]?|9[124])))15/
+const AR_AREAS =
+  /11|2(?:2(?:02?|[13]|2[13-79]|4[1-6]|5[2457]|6[124-8]|7[1-4]|8[13-6]|9[1267])|3(?:02?|1[467]|2[03-6]|3[13-8]|[49][2-6]|5[2-8]|[67])|4(?:7[3-578]|9)|6(?:[0136]|2[24-6]|4[6-8]?|5[15-8])|80|9(?:0[1-3]|[19]|2\d|3[1-6]|4[02568]?|5[2-4]|6[2-46]|72?|8[23]?))|3(?:3(?:2[79]|6|8[2578])|4(?:0[0-24-9]|[12]|3[5-8]?|4[24-7]|5[4-68]?|6[02-9]|7[126]|8[2379]?|9[1-36-8])|5(?:1|2[1245]|3[237]?|4[1-46-9]|6[2-4]|7[1-6]|8[2-5]?)|6[24]|7(?:[069]|1[1568]|2[15]|3[145]|4[13]|5[14-8]|7[2-57]|8[126])|8(?:[01]|2[15-7]|3[2578]?|4[13-6]|5[4-8]?|6[1-357-9]|7[36-8]?|8[5-8]?|9[124]))/.source
+const AR_MOBILE = new RegExp(`^(${AR_AREAS})15`)
+/** El código de área de un número argentino sin el 9 del celular, para escribirlo separado. */
+const AR_AREA = new RegExp(`^(?:${AR_AREAS})`)
 
 /**
  * El número nacional como va en el E.164: solo dígitos y sin el prefijo nacional («011 5555 2002» →
@@ -148,4 +151,40 @@ export function isValidPhone(value: string, country?: string): boolean {
   const { national, country: { min, max, trunk } } = phone
   if (trunk && national.startsWith(trunk)) return false
   return national.length >= min && national.length <= max
+}
+
+/** «55552002» → «5555-2002»: el abonado argentino con el guion antes de los últimos cuatro. */
+const subscriber = (digits: string) => `${digits.slice(0, -4)}-${digits.slice(-4)}`
+
+/** Grupos de tres desde la izquierda y los últimos cuatro juntos: «2025550143» → «202 555 0143». */
+function grouped(digits: string): string {
+  if (digits.length <= 4) return digits
+  const head = digits.slice(0, -4).match(/.{1,3}/g)!.join(" ")
+  return `${head} ${digits.slice(-4)}`
+}
+
+/**
+ * Un E.164 para mostrar: internacional legible («+54 9 11 5555-2002») o, si el teléfono es del país
+ * de `country` (el de quien lo lee), nacional («011 15-5555-2002»).
+ *
+ * No es el formato oficial de cada país (eso es libphonenumber): Argentina va con sus códigos de área
+ * y el 15 del celular; el resto, en grupos de tres con los últimos cuatro juntos y, en nacional, con
+ * el prefijo nacional adelante (salvo +1, donde el 1 se marca y no se escribe). Lo que no es un E.164
+ * de la tabla vuelve tal cual: los datos viejos se muestran sin perderse.
+ */
+export function formatPhone(value: string, options: { country?: string } = {}): string {
+  const phone = parsePhone(value, options.country)
+  if (!phone) return value
+  const { country, national } = phone
+  const local = options.country?.toUpperCase() === country.code
+  if (country.code === "AR") {
+    const mobile = national.length === 11 && national.startsWith("9")
+    const rest = mobile ? national.slice(1) : national
+    const area = AR_AREA.exec(rest)?.[0] ?? rest.slice(0, 2)
+    const number = subscriber(rest.slice(area.length))
+    if (local) return mobile ? `0${area} 15-${number}` : `0${area} ${number}`
+    return `+54 ${mobile ? "9 " : ""}${area} ${number}`
+  }
+  if (local) return `${country.dial === "1" ? "" : country.trunk}${grouped(national)}`
+  return `+${country.dial} ${grouped(national)}`
 }

@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Field, FieldDescription, FieldError, FieldLabel } from "sebs7n-ui"
-import { isValidPhone } from "sebs7n-ui/lib/phone"
+import { formatPhone, isValidPhone } from "sebs7n-ui/lib/phone"
 import { PhoneInput } from "sebs7n-ui/phone-input"
 
 /**
@@ -35,5 +35,32 @@ export function WithValidation() {
       <PhoneInput aria-invalid={invalid} defaultCountry="UY" onValueChange={setPhone} value={phone} />
       <FieldError alert match={invalid}>Al número le faltan dígitos.</FieldError>
     </Field>
+  )
+}
+
+const contacts = [
+  { client: "Acme S.A.", phone: "+5491155552002" },
+  { client: "Globex SRL", phone: "+543514567890" },
+  { client: "Initech", phone: "+12025550143" },
+]
+
+/**
+ * Para mostrar
+ * `formatPhone` de `sebs7n-ui/lib/phone`: internacional legible, o nacional si el teléfono es del país de quien lo lee (`country`).
+ */
+export function Display() {
+  return (
+    <dl className="grid w-full max-w-md grid-cols-[1fr_auto_auto] gap-x-4 gap-y-2 text-callout">
+      <dt className="text-label-secondary">Cliente</dt>
+      <dt className="text-label-secondary">Internacional</dt>
+      <dt className="text-label-secondary">Desde Argentina</dt>
+      {contacts.map((contact) => (
+        <div className="contents" key={contact.client}>
+          <dd className="text-label">{contact.client}</dd>
+          <dd className="tabular-nums text-label">{formatPhone(contact.phone)}</dd>
+          <dd className="tabular-nums text-label">{formatPhone(contact.phone, { country: "AR" })}</dd>
+        </div>
+      ))}
+    </dl>
   )
 }
