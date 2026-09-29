@@ -59,15 +59,22 @@ type AlertDialogContentProps = WithClassName<AlertDialogPrimitive.Popup.Props>
  * El foco inicial por defecto: el botón por defecto.
  *
  * Con una acción destructiva es «Cancelar»: Base UI enfoca el primer tabulable, y con la acción
- * escrita primero eso era «Descartar cambios» —un Return y se perdía todo—. Sin destructiva es la
- * acción, que es el acento y la que dispara Return. Sin ninguno de los dos, o con el dedo (donde
- * Base UI enfoca el popup para no abrir el teclado), queda lo de Base UI. Un `initialFocus` de la
- * app gana siempre.
+ * escrita primero eso era «Descartar cambios» —un Return y se perdía todo—. Con una destructiva y
+ * sin «Cancelar», el popup: nunca la acción que destruye. Sin destructiva es la acción `default`,
+ * que es el acento y la que dispara Return. Sin nada de eso, o con el dedo (donde Base UI enfoca el
+ * popup para no abrir el teclado), queda lo de Base UI. Un `initialFocus` de la app gana siempre.
+ *
+ * Lo destructivo lo anotan las `AlertDialogAction variant="destructive"`: un `<Button
+ * variant="destructive">` suelto en el pie **no se detecta** y no cambia ni el foco ni el acento.
  */
 function useFocoInicial(ref: React.Ref<HTMLDivElement> | undefined, destructive: boolean) {
   const popup = React.useRef<HTMLDivElement | null>(null)
   const destructiveRef = React.useRef(destructive)
-  destructiveRef.current = destructive
+  // En un effect y no en el render: escribir un ref mientras se renderiza no es puro, y en modo
+  // concurrente un render descartado dejaría el valor de otro.
+  useIsoLayoutEffect(() => {
+    destructiveRef.current = destructive
+  }, [destructive])
   const mergedRef = React.useCallback(
     (node: HTMLDivElement | null) => {
       popup.current = node
@@ -80,8 +87,8 @@ function useFocoInicial(ref: React.Ref<HTMLDivElement> | undefined, destructive:
     if (openType === "touch") return popup.current
     const buscar = (selector: string) => popup.current?.querySelector<HTMLElement>(selector) ?? null
     const cancelar = buscar('[data-slot="alert-dialog-cancel"]')
-    if (destructiveRef.current) return cancelar ?? true
-    return buscar("[data-alert-action]") ?? cancelar ?? true
+    if (destructiveRef.current) return cancelar ?? popup.current ?? true
+    return buscar('[data-alert-action="default"]') ?? cancelar ?? true
   }, [])
   return { mergedRef, initialFocus }
 }
@@ -166,7 +173,8 @@ type AlertDialogActionProps = Omit<ButtonBaseProps, "variant"> & {
   /**
    * `default` es el botón por defecto: el acento sólido, el que dispara Return. `destructive` es la
    * acción que destruye: gris con el texto rojo (`text-red-ink`, 4,5:1 sobre el gris en los dos
-   * temas), y con ella el botón por defecto pasa a ser «Cancelar».
+   * temas), y con ella el botón por defecto pasa a ser «Cancelar» y las `default` van en gris.
+   * Solo cuenta esta prop: un `<Button variant="destructive">` suelto no se detecta.
    *
    * **Cambió en 2.0**: hasta 1.x `default` era el negro y `destructive` el rojo sólido.
    */
@@ -177,15 +185,17 @@ type AlertDialogActionProps = Omit<ButtonBaseProps, "variant"> & {
 
 // No cierra solo (como shadcn base-nova): así sirve con `loading` mientras corre la acción.
 // Controlá `open` en AlertDialog y cerralo cuando termine, o envolvela en AlertDialogClose.
+// Con una destructiva en la alerta, «Cancelar» es el acento y una acción `default` pasa al gris:
+// dos acentos competirían por ser el botón por defecto.
 function AlertDialogAction({ variant = "default", className, ...props }: AlertDialogActionProps) {
-  const { register } = React.useContext(DestructiveContext)
+  const { register, destructive: hayDestructiva } = React.useContext(DestructiveContext)
   const destructive = variant === "destructive"
   useIsoLayoutEffect(() => (destructive ? register() : undefined), [destructive, register])
   return (
     <Button
       data-alert-action={variant}
       data-slot="alert-dialog-action"
-      variant={destructive ? "secondary" : "accent"}
+      variant={destructive || hayDestructiva ? "secondary" : "accent"}
       className={cn(destructive && "text-red-ink", className)}
       {...props}
     />

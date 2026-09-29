@@ -310,3 +310,65 @@ describe("el foco inicial nunca cae en la acción destructiva", () => {
     expect(nodo).toBe(screen.getByRole("alertdialog"))
   })
 })
+
+// Revisión de R2: los casos que el foco inicial no cubría.
+describe("foco inicial y botón por defecto: los casos raros", () => {
+  it("destructiva sin Cancelar: el foco va al popup, no a la acción que destruye", async () => {
+    render(
+      <AlertDialog>
+        <AlertDialogTrigger render={<Button />}>Abrir</AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogTitle>¿Borrar todo?</AlertDialogTitle>
+          <AlertDialogFooter>
+            <AlertDialogAction variant="destructive">Borrar</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    )
+    await userEvent.click(screen.getByRole("button", { name: "Abrir" }))
+    const alerta = await screen.findByRole("alertdialog")
+    await waitFor(() => expect(alerta).toHaveFocus())
+    expect(screen.getByRole("button", { name: "Borrar" })).not.toHaveFocus()
+  })
+
+  it("con una destructiva, una acción común también es gris: el único acento es Cancelar", async () => {
+    render(
+      <AlertDialog defaultOpen>
+        <AlertDialogContent>
+          <AlertDialogTitle>¿Salir sin guardar?</AlertDialogTitle>
+          <AlertDialogFooter>
+            <AlertDialogCancel />
+            <AlertDialogAction>Guardar</AlertDialogAction>
+            <AlertDialogAction variant="destructive">Descartar</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    )
+    await screen.findByRole("alertdialog")
+    await waitFor(() => expect(screen.getByRole("button", { name: "Cancelar" })).toHaveClass("bg-brand-700"))
+    const guardar = screen.getByRole("button", { name: "Guardar" })
+    expect(guardar).toHaveClass("bg-fill-2")
+    expect(guardar.className).not.toMatch(/bg-brand-700/)
+    expect(screen.getByRole("button", { name: "Descartar" })).toHaveClass("bg-fill-2", "text-red-ink")
+  })
+
+  it("sin destructiva, el foco va a la acción `default` aunque otro [data-alert-action] vaya antes", async () => {
+    render(
+      <AlertDialog>
+        <AlertDialogTrigger render={<Button />}>Abrir</AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogTitle>¿Emitir?</AlertDialogTitle>
+          <AlertDialogFooter>
+            <AlertDialogCancel />
+            <button data-alert-action="otra" type="button">
+              Ver detalle
+            </button>
+            <AlertDialogAction>Emitir</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    )
+    await userEvent.click(screen.getByRole("button", { name: "Abrir" }))
+    await waitFor(() => expect(screen.getByRole("button", { name: "Emitir" })).toHaveFocus())
+  })
+})
