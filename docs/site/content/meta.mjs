@@ -998,7 +998,7 @@ export const COMPONENTS = {
     keyboard: [
       ["Escape", "Cierra (equivale a cancelar)."],
       ["Tab", "Atrapado entre las acciones."],
-      ["Return", "Dispara el botón por defecto, que es el que tiene el foco al abrir."],
+      ["Return", "Dispara el botón que tiene el foco (el estándar de la web, no un atajo global). Al abrir, el foco está en el botón por defecto; si movés el foco con Tab, Return dispara ese otro."],
       ["Click en el fondo", "No cierra: es la diferencia con `Dialog`."],
     ],
     a11y: [
@@ -1006,11 +1006,12 @@ export const COMPONENTS = {
       "No tiene botón X: la única salida es una de las acciones.",
       "`AlertDialogIcon` es decorativo (`aria-hidden`): el título ya dice qué pasa.",
       "La acción destructiva es gris con el texto en la tinta roja (`text-red-ink`), que llega a 4,5:1 sobre el gris en reposo y con el puntero, en claro y en oscuro.",
-      "**El foco arranca en el botón por defecto.** Con una acción destructiva es `AlertDialogCancel`, esté donde esté en el pie: un Return de más no borra nada. Sin destructiva es la acción, y Return la dispara. Un `initialFocus` propio gana siempre.",
+      "**El foco arranca en el botón por defecto.** Con una acción destructiva es `AlertDialogCancel`, esté donde esté en el pie: un Return de más no borra nada; sin `AlertDialogCancel`, el foco va al diálogo y nunca a la acción que destruye. Sin destructiva es la acción `default`, y Return la dispara. Un `initialFocus` propio gana siempre.",
     ],
     usage: [
       "**Es la alerta de iCloud**: el mismo diálogo que `Dialog` (radio 11, opaco), de 450 px, con 24 de aire y todo centrado. Arriba, opcional, `AlertDialogIcon` con el ícono de lo que pasa en trazo (`<FileXIcon strokeWidth={1.5} />`), que toma el color de la marca y se lleva a 36 px; después el título (`headline`), el detalle (`callout`, secundario) y los botones.",
-      "**El botón por defecto es el seguro, y es el del acento.** En una alerta destructiva es «Cancelar» (acento sólido, con el foco) y la acción que destruye va en gris con el texto rojo (`variant=\"destructive\"`). En una que no destruye nada, la acción es el acento y «Cancelar» el gris. El componente lo decide solo según el `variant` de la acción.",
+      "**El botón por defecto es el seguro, y es el del acento.** En una alerta destructiva es «Cancelar» (acento sólido, con el foco) y la acción que destruye va en gris con el texto rojo (`variant=\"destructive\"`); una acción `default` al lado también va en gris, para que haya un solo acento. En una que no destruye nada, la acción es el acento y «Cancelar» el gris. El componente lo decide solo según el `variant` de `AlertDialogAction`: **un `<Button variant=\"destructive\">` suelto en el pie no se detecta**.",
+      "**Un texto de más de dos o tres renglones, `<AlertDialogDescription align=\"start\">`**: centrado, cada renglón arranca en otro lugar y se lee mal.",
       "**Dos botones iguales a todo el ancho**: primero `AlertDialogCancel`, después la acción. Con tres o más —o en una pantalla angosta— se apilan a todo el ancho en el orden en que los escribiste, que es también el orden de Tab; no se invierten.",
       "**`AlertDialogAction` no cierra sola** — a propósito, para poder mostrar `loading` mientras corre la acción. O controlás `open`, o la envolvés: `<AlertDialogClose render={<AlertDialogAction variant=\"destructive\" />}>Eliminar</AlertDialogClose>`.",
       "`AlertDialogCancel` sí cierra sola.",
@@ -1022,6 +1023,10 @@ export const COMPONENTS = {
       AlertDialogAction: {
         variant: "`default`: el botón por defecto, acento sólido. `destructive`: gris con el texto rojo, y «Cancelar» pasa a ser el acento y el foco inicial. Desde 2.0; hasta 1.x eran el negro y el rojo sólido.",
         loading: "El spinner del `Button` mientras corre la acción. Es el motivo por el que esta acción no cierra sola.",
+        size: "Solo cuenta fuera de `AlertDialogFooter`: en el pie todos los botones miden 36 como mínimo y crecen si el texto baja de renglón.",
+      },
+      AlertDialogDescription: {
+        align: "`center` (default) para una o dos líneas; `start` para un texto largo.",
       },
       AlertDialogContent: heredadas("initialFocus", "finalFocus"),
     },
