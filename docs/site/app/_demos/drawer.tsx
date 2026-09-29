@@ -67,7 +67,7 @@ export function DetalleAMediaHoja() {
             <Badge color="green">Pagada</Badge>
             <Badge color="gray">3 ítems</Badge>
           </div>
-          <dl className="flex flex-col gap-3 text-copy-14">
+          <dl className="flex flex-col gap-3 text-callout">
             <div className="flex justify-between">
               <dt className="text-label-secondary">Vencimiento</dt>
               <dd className="tabular-nums">13/04</dd>
@@ -126,7 +126,7 @@ export function ElegirDeUnaListaLarga() {
               {CHOFERES.map((nombre) => (
                 <li key={nombre}>
                   <DrawerClose
-                    className="flex h-11 w-full items-center rounded-control px-2 text-left text-copy-14 outline-none hover:bg-fill-2 focus-visible:focus-ring"
+                    className="flex h-11 w-full items-center rounded-control px-2 text-left text-callout outline-none hover:bg-fill-2 focus-visible:focus-ring"
                     onClick={() => setChofer(nombre)}
                   >
                     {nombre}
@@ -137,7 +137,7 @@ export function ElegirDeUnaListaLarga() {
           </DrawerBody>
         </DrawerContent>
       </Drawer>
-      {chofer && <p className="text-copy-13 text-label-secondary">Asignado: {chofer}</p>}
+      {chofer && <p className="text-footnote text-label-secondary">Asignado: {chofer}</p>}
     </div>
   )
 }

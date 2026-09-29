@@ -94,6 +94,49 @@ todavía; la 2.0.0 sale al final de todas las fases, y con ella la guía de migr
 - **Playground del sitio:** sin los controles de vidrio, tinte y radios; quedan marca, tema y
   wallpaper (apagado por defecto).
 
+**Diálogos (R2).** Como los diálogos, hojas y popovers de iCloud (catálogo §2.8, §2.12, §2.13,
+§2.15). Lo de las fases 1–3 para estos componentes (la alerta compacta de macOS, las hojas
+flotantes, la paleta de Spotlight, los botones teñidos) no llega a publicarse.
+
+- **Un solo contenedor de diálogo** para Dialog y AlertDialog (`modalPopupClassName`):
+  `rounded-panel` (11), `bg-surface`, `shadow-modal`, 20 px de padding, el velo sin blur.
+- **AlertDialog es la confirmación de iCloud.** 400 px (`alertWidthClassName`), título
+  `text-title-3` y cuerpo `text-callout` secundario a la izquierda, botones a la derecha con su
+  ancho (`modalFooterClassName`), en el orden del DOM y apilados sin invertir en mobile.
+  `AlertDialogAction variant="destructive"` pasa a `Button variant="destructive"` (rojo sólido);
+  `default` sigue en `accent`; `AlertDialogCancel` es el gris y sigue siendo el foco inicial.
+  **Se van** `AlertDialogIcon` (iCloud no pone ícono en sus diálogos: borralo, el título ya
+  dice qué pasa), `AlertDialogFooter stacked` (sacalo: los botones miden lo que su texto),
+  `alertPopupClassName` y `alertFooterClassName`.
+- **Dialog con la X arriba a la izquierda** (`dialogCloseClassName`) y el título centrado:
+  `DialogHeader` es `px-8 text-center`. La X de Dialog, Sheet y Drawer mide **28 × 28** con glifo
+  de 14 (`closeButtonClassName`). El pie (`modalFooterClassName`) es
+  `flex flex-col gap-3 pt-1 sm:flex-row sm:justify-end sm:gap-2`; para un único CTA centrado,
+  `<DialogFooter className="sm:justify-center">`.
+- **Sheet y Drawer pegados al borde.** Sin margen, con `rounded-panel` solo en las esquinas de
+  adentro (`rounded-l-panel` del lado derecho, `rounded-t-panel` abajo…), el área segura como
+  padding del lado de la pantalla, y cerrados salen su tamaño entero (`translate-x-full`,
+  `translateY(100%)`). La X sigue arriba a la derecha. El gesto del Drawer no cambia. **Se va**
+  `floatingSheetGapClassName` con las variables `--sheet-gap-*`: si la app los usaba, `inset-y-0
+  right-0` y `translate-x-full`.
+- **Popover y HoverCard**: `floatingPopupClassName` pasa de `p-3` a **`p-4`** (el inset de 16 de
+  los popovers de iCloud); siguen `rounded-menu`, opacos y `shadow-menu`, que ya trae el filo de
+  1 px medido como borde. `PopoverContent translucent` usa `material-translucent`, para el popover
+  de acceso rápido sobre un wallpaper.
+- **Command es la búsqueda de iCloud**, no la paleta de Spotlight. `CommandInput` es el search
+  field (36 px, radio 10, `fill-1`, lupa de 16, texto `text-callout`; con el foco pierde el
+  relleno y queda el anillo interior; `commandInputClassName`). Las filas son las de un menú:
+  **30 px** (`min-h-7.5`), `rounded-menu-item`, título `text-callout` regular (sin
+  `font-medium`), detalle `text-footnote`, ícono en una caja de 30 con el glifo de 16 en el
+  acento (`commandItemClassName`, `commandItemIconClassName`). `CommandDialog` es la superficie de
+  un popover: `rounded-menu`, `shadow-menu`, `p-1`, 560 px (antes `rounded-panel`,
+  `shadow-modal`, 640). Los filtros quedan como los tokens de búsqueda de iCloud: gris, y el
+  marcado en el acento sólido (`commandFilterClassName`). **Se van** la sugerencia en línea, `Tab`
+  y `→` para aceptarla y la pista `tab`: Tab sale del campo. La API, el filtrado, el teclado, los
+  grupos y el vacío no cambian.
+- **Se van `Button variant="tinted"` y `"destructive-tinted"`** (y `--sf-tint-hover`,
+  `--sf-tint-active`): iCloud no tiene botón teñido. Eran de la fase 2 y no llegaron a publicarse.
+
 **Lo que sigue de las fases 1–3.** Los números de alto y de radio que cambió R1 ya están arriba;
 las fases R2–R5 rehacen diálogos, menús, controles y listas con las medidas de iCloud.
 
@@ -116,17 +159,6 @@ las fases R2–R5 rehacen diálogos, menús, controles y listas con las medidas 
 - **Con el dedo** las pestañas llegan a 44, los días del Calendar miden 40 (antes 44: no entraban
   en 320 px), y la Toolbar, sus grupos, las flechas del Calendar y el ToggleGroup se separan 20 px
   para que las áreas de 44 no se pisen.
-- **Diálogos (fase 2, provisorio hasta R2).** AlertDialog es una alerta compacta de 300 px con 20
-  de padding, título `text-title-3` y pie de botones del mismo ancho (`alertPopupClassName`,
-  `alertFooterClassName`); se apilan en el orden del DOM con tres o más, o en 360 px o menos, y
-  separados 12. `AlertDialogCancel` es `secondary` y es el foco inicial. `AlertDialogAction
-  variant` cambia de significado: `default` renderiza `accent` y `destructive` renderiza
-  `destructive-tinted`. Dialog, Sheet y Drawer llevan título `text-title-3`, 20 px de padding
-  (`modalPopupClassName` `p-5`) y el pie `flex flex-col gap-3 pt-2 sm:flex-row sm:justify-end`,
-  sin `-mx-6`, sin `border-t` y sin invertir en mobile. La X queda en `top-4.5 right-4.5`
-  (`overlayCloseClassName`). Popover y HoverCard: `w-64 p-3 gap-2` (`floatingPopupClassName`).
-  Todo esto es opaco (`bg-surface`), no el material de la fase 2. R2 lo rehace como iCloud
-  (radio 11, cerrar arriba a la izquierda, acción centrada).
 - **Menús (fase 3, provisorio hasta R3).** El tilde de `CheckboxItem`, `RadioItem` y la opción
   elegida de Select y Combobox va en una canaleta a la izquierda (`pl-7`, `menuGutterClassName`,
   también después del `className` de la app); `inset` pasa a `pl-7` (`menuInsetClassName`). Títulos
@@ -160,45 +192,34 @@ las fases R2–R5 rehacen diálogos, menús, controles y listas con las medidas 
     `brand` se invierte.
   - `Tag` y `ComboboxChip` salen de `tagVariants`. El hover del botón de quitar es `--sf-tag-press`,
     un velo del lado contrario a la tinta. `--sf-tint-border` ya no lo usa ningún componente.
-- **Sheet y Drawer flotantes (provisorio hasta R2).** Se despegan 8 px de cada borde que tocan (el
-  área segura si es más grande) y llevan las cuatro esquinas en `rounded-panel` (11 desde R1).
-  Cerradas se desplazan su tamaño más el margen. En el `Drawer` el gesto no cambia. Si la app ponía
-  contenido que llega al borde, sumale `overflow-hidden`. Si pisaba `inset-y-0`, `right-0` o
-  `translate-x-full`, ahora son `top-(--sheet-gap-t)`, `right-(--sheet-gap-r)` y
-  `translate-x-[calc(100%+var(--sheet-gap-r))]`.
 
 ### Added (2.0)
 
-- **`Command`**, la paleta de comandos estilo Spotlight (`sebs7n-ui/command`): `Command`
-  (incrustado), `CommandDialog` (anclado arriba, opaco, sin X ni velo, Escape cierra),
-  `CommandInput`, `CommandFilters`/`CommandFilter` (chips en un `radiogroup` nombrado «Filtros»,
-  que exponen su valor),
-  `CommandList`, `CommandGroup` (título con `menuLabelClassName`), `CommandItem` (40 px, ícono de
-  32, título y detalle; `keywords`, `onSelect`) y `CommandEmpty`. Teclado y ARIA de Base UI
-  Autocomplete en modo `inline`; el filtrado es propio: título y `keywords`, sin mayúsculas ni
-  tildes.
-  - El elegido va en gris translúcido (`bg-gray-alpha-200`), no en el acento de los menús: como en
-    Spotlight, el primer resultado está elegido desde la primera tecla.
-  - La sugerencia en línea («Fact|ura 0012 — Acme S.A.») **sigue al elegido**, no solo al primer
-    resultado, y `Tab` o `→` al final la aceptan. La pista `tab` aparece solo cuando Tab completa
-    algo (no con el título entero ya escrito, ni mientras se compone con un IME). Si lo escrito no
-    entra en el ancho del campo, la sugerencia se esconde.
+- **`Command`**, la búsqueda de iCloud (`sebs7n-ui/command`): `Command` (incrustado),
+  `CommandDialog` (anclado arriba, con la superficie de un popover, sin X ni velo, Escape cierra),
+  `CommandInput` (el search field), `CommandFilters`/`CommandFilter` (tokens en un `radiogroup`
+  nombrado «Filtros», que exponen su valor), `CommandList`, `CommandGroup` (título con
+  `menuLabelClassName`), `CommandItem` (fila de menú de 30 px con ícono y detalle; `keywords`,
+  `onSelect`) y `CommandEmpty`. Teclado y ARIA de Base UI Autocomplete en modo `inline`; el
+  filtrado es propio: título y `keywords`, sin mayúsculas ni tildes.
+  - El elegido va en el gris del resaltado de menú (`fill-2`), no en el acento: el primer
+    resultado está elegido desde la primera tecla.
   - Ítems que llegan tarde (un índice async, con `shouldFilter={false}`) quedan con el primero
     elegido, y dos ítems con el mismo `value` no se pisan.
-  - El campo usa `text-body-large` (17 px regular desde R1): un rol de título no se pisa con `font-normal`.
   - `CommandEmpty` va al lado de `CommandList`, no adentro: un listbox solo admite opciones y
     grupos.
   - `shouldFilter={false}` para ítems que la app ya filtró y ordenó (es lo que usa el buscador del
     sitio de docs).
 - Labels `command: { placeholder, empty, dialog, filters }` («Buscar», «Sin resultados», «Buscar»,
   «Filtros»). El nombre del campo es su `placeholder` cuando lo trae.
-- `commandDialogPopupClassName`, `commandItemClassName` y `commandItemIconClassName`
-  (`variants/command`, también en el barrel).
+- `commandDialogPopupClassName`, `commandInputClassName`, `commandFilterClassName`,
+  `commandItemClassName` y `commandItemIconClassName` (`variants/command`, también en el barrel).
+- `alertWidthClassName`, `closeButtonClassName` y `dialogCloseClassName` (`variants/overlay`,
+  también en el barrel).
+- `PopoverContent translucent`.
 - `menuGutterClassName`, `menuInsetClassName` y `menuIndicatorClassName` (`variants/menu`).
 - Tokens `--radius-item` (10), `--radius-menu` (12), `--radius-menu-item` (8) y `--radius-tag` (4), con sus utilidades `rounded-item`, `rounded-menu`, `rounded-menu-item`
   y `rounded-tag`; `cn()` los fusiona como los otros radios.
-- `floatingSheetGapClassName` (`variants/overlay`, también en el barrel): las cuatro variables
-  `--sheet-gap-*` del margen de una hoja flotante, para armar una a mano con Sheet o Drawer.
 - `touch-target` (área de 44 con el dedo, sin cambiar lo que se ve) y `touch-target-y` (solo en
   alto, para controles en fila que no se pueden separar; con `cn()` reemplaza al otro).
 - `menuItemSecondaryClassName` (el atajo de un ítem de menú) y `selectionSecondaryClassName`
@@ -219,15 +240,6 @@ las fases R2–R5 rehacen diálogos, menús, controles y listas con las medidas 
 - `sliderThumbClassName` y sus estados (`variants/slider`), y `tooltipSurfaceClassName`
   (`variants/overlay`), que comparten el Slider con el ColorPicker y el Tooltip con la etiqueta
   del `AiLauncher`.
-- `AlertDialogFooter stacked`: apila los botones aunque sean dos, para etiquetas largas.
-- `AlertDialogIcon`: el ícono de la alerta, arriba a la izquierda, 48 px, `aria-hidden`.
-- Variantes de Button `tinted` (tinta de marca sobre tinte de marca) y `destructive-tinted`
-  (tinta roja sobre tinte rojo), con `touch-target`. El texto es `-ink` y no `-900`: sobre el
-  tinte, `-900` no llega a 4,5:1 en claro; con la tinta, el mínimo es 5,23:1 en claro y 5,88:1 en
-  oscuro, en reposo, hover y apretado.
-- Tokens `--sf-tint-hover` (18 % claro, 28 % oscuro) y `--sf-tint-active` (24 % y 34 %), los
-  estados de un botón teñido sobre `--sf-tint-fill`.
-- `alertPopupClassName` y `alertFooterClassName` (`variants/overlay`, también en el barrel).
 
 ## [1.13.1] - 2026-09-28
 

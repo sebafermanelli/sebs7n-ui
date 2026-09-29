@@ -11,7 +11,7 @@ import { linkVariants } from "sebs7n-ui/variants/link"
  */
 export function Basico() {
   return (
-    <p className="max-w-sm text-copy-14 text-label">
+    <p className="max-w-sm text-callout text-label">
       La factura 0012 salió a nombre de{" "}
       <HoverCard>
         <HoverCardTrigger className={linkVariants({ variant: "inline" })} href="#">
@@ -24,14 +24,14 @@ export function Basico() {
             </Avatar>
             <div className="flex min-w-0 flex-col">
               <span className="text-headline text-label">Acme S.A.</span>
-              <span className="text-body text-label-secondary">CUIT 30-71234567-8</span>
+              <span className="text-callout text-label-secondary">CUIT 30-71234567-8</span>
             </div>
           </HoverCardHeader>
           <div className="flex items-center gap-2">
             <Badge color="green" size="sm">
               Al día
             </Badge>
-            <span className="text-body text-label-secondary">12 facturas · $ 1.284.000</span>
+            <span className="text-callout text-label-secondary">12 facturas · $ 1.284.000</span>
           </div>
         </HoverCardContent>
       </HoverCard>{" "}
@@ -54,7 +54,7 @@ export function Retardos() {
     </HoverCardContent>
   )
   return (
-    <div className="flex max-w-sm flex-col gap-3 text-copy-14 text-label">
+    <div className="flex max-w-sm flex-col gap-3 text-callout text-label">
       <span>
         Por defecto, 600 ms para abrir:{" "}
         <HoverCard>
