@@ -148,7 +148,7 @@ export const COMPONENTS = {
     a11y: [
       "Solo ícono se llama «Copiar» (`labels.copy`); mejor uno que diga qué copia: `aria-label=\"Copiar el link de pago\"`. Con `children`, el nombre es el texto.",
       "Al copiar, una región viva (`role=\"status\"`) dice «Copiado»: el ✓ y el tooltip no se anuncian solos.",
-      "Si el portapapeles no está (contexto inseguro, permiso negado) no anuncia nada: el texto sigue a la vista para copiarlo a mano.",
+      "Si el portapapeles no deja copiar (contexto inseguro, permiso negado), el tooltip dice «No se pudo copiar» y se anuncia, sin ✓: el texto sigue a la vista para copiarlo a mano.",
     ],
     usage: [
       "Al lado de un dato que se copia para pegarlo en otro lado: un CUIT, un número de factura, un link de pago. Para copiar desde adentro de un campo, `InputGroupButton` con el mismo ícono.",
@@ -161,7 +161,7 @@ export const COMPONENTS = {
         className: PROP_DESCRIPTIONS.className,
         disabled: "Apaga el botón. Un `value` vacío también.",
         onCopy: "Se llama después de copiar, con el texto copiado (no con el evento del portapapeles).",
-        labels: "Textos: `copy` (nombre y tooltip) y `copied` (tooltip y anuncio).",
+        labels: "Textos: `copy` (nombre y tooltip), `copied` y `failed` (tooltip y anuncio).",
       },
     },
     related: ["button", "tooltip", "input-group"],

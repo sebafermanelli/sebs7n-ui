@@ -14,7 +14,8 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip.js"
  *
  * Al copiar, el ícono pasa a ✓ durante 1,5 s, el tooltip dice «Copiado» y una región viva lo
  * anuncia: el cambio de ícono no lo ve un lector de pantalla y el tooltip no se anuncia. Si el
- * portapapeles no está (contexto inseguro, permiso negado), no pasa nada: el texto sigue a la vista.
+ * portapapeles no deja (contexto inseguro, permiso negado), el tooltip dice «No se pudo copiar» y se
+ * anuncia igual, sin ✓: el texto sigue a la vista para copiarlo a mano.
  */
 type CopyButtonProps = Omit<React.ComponentProps<"button">, "value" | "children" | "onClick" | "onCopy"> & {
   /** El texto que se copia. Vacío apaga el botón. */
@@ -35,7 +36,9 @@ const COPIED_MS = 1500
 
 function CopyButton({ value, children, size = "sm", onCopy, labels: labelsProp, disabled, className, ...props }: CopyButtonProps) {
   const labels = { ...useLabels().copyButton, ...labelsProp }
-  const [copied, setCopied] = React.useState(false)
+  // Lo que pasó con el último click, mientras dura: «Copiado» o «No se pudo copiar».
+  const [result, setResult] = React.useState<"copied" | "failed" | null>(null)
+  const copied = result === "copied"
   const [hover, setHover] = React.useState(false)
   const timer = React.useRef<ReturnType<typeof setTimeout>>(undefined)
   React.useEffect(() => () => clearTimeout(timer.current), [])
@@ -45,15 +48,16 @@ function CopyButton({ value, children, size = "sm", onCopy, labels: labelsProp, 
     event.preventDefault()
     event.stopPropagation()
     if (!value) return
+    let ok = true
     try {
       await navigator.clipboard.writeText(value)
     } catch {
-      return
+      ok = false
     }
-    setCopied(true)
-    onCopy?.(value)
+    setResult(ok ? "copied" : "failed")
+    if (ok) onCopy?.(value)
     clearTimeout(timer.current)
-    timer.current = setTimeout(() => setCopied(false), COPIED_MS)
+    timer.current = setTimeout(() => setResult(null), COPIED_MS)
   }
 
   const icon = copied ? <CheckIcon aria-hidden="true" /> : <CopyIcon aria-hidden="true" />
@@ -80,13 +84,13 @@ function CopyButton({ value, children, size = "sm", onCopy, labels: labelsProp, 
   return (
     <>
       {/* Con texto a la vista el tooltip de «Copiar» repite lo que ya se lee: solo aparece el «Copiado». */}
-      <Tooltip open={(hover && !children) || copied} onOpenChange={setHover}>
+      <Tooltip open={(hover && !children) || result !== null} onOpenChange={setHover}>
         {/* `data-slot` del botón: el del trigger lo pisaría, y el botón sigue siendo un botón del sistema. */}
         <TooltipTrigger closeOnClick={false} data-slot="button" render={button} />
-        <TooltipContent>{copied ? labels.copied : labels.copy}</TooltipContent>
+        <TooltipContent>{result ? labels[result] : labels.copy}</TooltipContent>
       </Tooltip>
       <span className="sr-only" data-slot="copy-button-status" role="status">
-        {copied ? labels.copied : ""}
+        {result ? labels[result] : ""}
       </span>
     </>
   )

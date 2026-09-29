@@ -170,6 +170,8 @@ export type Labels = {
     copy: string
     /** Lo que dice el tooltip y se anuncia después de copiar. */
     copied: string
+    /** Lo que dice el tooltip y se anuncia si el portapapeles no dejó copiar. */
+    failed: string
   }
   countryPicker: {
     /** El idioma de los nombres de los países (`Intl.DisplayNames`), como lo entiende `Intl`. */
@@ -364,7 +366,7 @@ export const defaultLabels: Labels = {
     dialog: "Buscar",
     filters: "Filtros",
   },
-  copyButton: { copy: "Copiar", copied: "Copiado" },
+  copyButton: { copy: "Copiar", copied: "Copiado", failed: "No se pudo copiar" },
   countryPicker: { locale: "es-AR", placeholder: "Elegí un país" },
   dataTable: {
     search: "Buscar",

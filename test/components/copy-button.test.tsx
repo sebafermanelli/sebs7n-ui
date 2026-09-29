@@ -61,13 +61,16 @@ describe("CopyButton", () => {
     expect(document.querySelector("svg.lucide-copy")).not.toBeNull()
   })
 
-  it("sin portapapeles no anuncia nada ni rompe", async () => {
+  it("si el portapapeles no deja copiar, lo dice en el tooltip y lo anuncia, sin ✓", async () => {
     const user = userEvent.setup()
+    const onCopy = vi.fn()
     vi.spyOn(navigator.clipboard, "writeText").mockRejectedValue(new Error("denegado"))
-    render(<CopyButton value="F-0012" />)
+    render(<CopyButton onCopy={onCopy} value="F-0012" />)
     await user.click(screen.getByRole("button", { name: "Copiar" }))
-    expect(status()).toHaveTextContent("")
+    expect(status()).toHaveTextContent("No se pudo copiar")
+    expect(await screen.findByText("No se pudo copiar", { selector: "[data-slot=tooltip-content]" })).toBeInTheDocument()
     expect(document.querySelector("svg.lucide-copy")).not.toBeNull()
+    expect(onCopy).not.toHaveBeenCalled()
   })
 
   it("con children: texto e ícono, nombrado por el texto; adentro de una fila no la abre", async () => {
