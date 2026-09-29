@@ -7,7 +7,7 @@ import { PasswordInput } from "sebs7n-ui/password-input"
  * Básico
  * El ojo va adentro del campo: muestra y oculta, con `aria-pressed`.
  */
-export function Basico() {
+export function Basic() {
   return (
     <Field className="w-full max-w-sm">
       <FieldLabel>Contraseña</FieldLabel>
@@ -20,7 +20,7 @@ export function Basico() {
  * Con seguridad
  * `strength` suma la barra de 4 niveles con el nivel en texto: largo, mayúsculas y minúsculas, números y símbolos.
  */
-export function ConSeguridad() {
+export function WithStrength() {
   return (
     <Field className="w-full max-w-sm">
       <FieldLabel>Contraseña nueva</FieldLabel>

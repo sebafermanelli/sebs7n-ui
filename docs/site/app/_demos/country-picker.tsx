@@ -7,7 +7,7 @@ import { CountryPicker } from "sebs7n-ui/country-picker"
  * Básico
  * Los 249 países con su bandera, por nombre en el idioma de la app. Se escribe sin tildes: «peru» encuentra «Perú».
  */
-export function Basico() {
+export function Basic() {
   return (
     <Field className="w-full max-w-sm">
       <FieldLabel>País de facturación</FieldLabel>
@@ -17,10 +17,10 @@ export function Basico() {
 }
 
 /**
- * Algunos países
+ * SomeCountries países
  * `countries` limita la lista; se ordena por nombre.
  */
-export function Algunos() {
+export function SomeCountries() {
   return (
     <Field className="w-full max-w-sm">
       <FieldLabel>País del emisor</FieldLabel>

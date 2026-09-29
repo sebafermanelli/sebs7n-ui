@@ -7,7 +7,7 @@ import { CopyButton } from "sebs7n-ui/copy-button"
  * Solo ícono
  * El botón `plain` de 28 de una barra de iCloud: copia, pasa a ✓ y el tooltip dice «Copiado».
  */
-export function Basico() {
+export function IconOnly() {
   return (
     <div className="flex w-full max-w-sm items-end gap-2">
       <Field className="flex-1">
@@ -23,7 +23,7 @@ export function Basico() {
  * Con texto
  * Un id corto que se copia entero: el texto es el nombre del botón.
  */
-export function ConTexto() {
+export function WithText() {
   return (
     <p className="text-callout text-label-secondary">
       Factura{" "}
