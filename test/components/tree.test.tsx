@@ -214,6 +214,25 @@ describe("Tree · revisión de R5b", () => {
     expect(item("Remota")).toHaveTextContent("Cargando…")
   })
 
+  it("si la carga termina y los hijos siguen sin llegar, no los vuelve a pedir solo", async () => {
+    const onLoadChildren = vi.fn(() => Promise.resolve())
+    render(<Tree aria-label="Archivos" defaultExpanded={["remota"]} items={REMOTA} onLoadChildren={onLoadChildren} />)
+    for (let i = 0; i < 5; i++) await act(async () => {})
+    expect(onLoadChildren).toHaveBeenCalledTimes(1)
+    // Cerrar y abrir de nuevo sí reintenta.
+    await userEvent.tab()
+    await userEvent.keyboard("{ArrowLeft}{ArrowRight}")
+    await act(async () => {})
+    expect(onLoadChildren).toHaveBeenCalledTimes(2)
+  })
+
+  it("con expanded controlado que no se cierra, una carga que falla no se reintenta sola", async () => {
+    const onLoadChildren = vi.fn(() => Promise.reject(new Error("sin red")))
+    render(<Tree aria-label="Archivos" expanded={["remota"]} items={REMOTA} onLoadChildren={onLoadChildren} onLoadError={() => {}} />)
+    for (let i = 0; i < 5; i++) await act(async () => {})
+    expect(onLoadChildren).toHaveBeenCalledTimes(1)
+  })
+
   it("una carpeta perezosa abierta de entrada pide sus hijos al montar", () => {
     const onLoadChildren = vi.fn(() => new Promise<void>(() => {}))
     render(<Tree aria-label="Archivos" defaultExpanded={["remota"]} items={REMOTA} onLoadChildren={onLoadChildren} />)

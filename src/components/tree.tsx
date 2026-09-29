@@ -135,8 +135,13 @@ function Tree({
     rows.current.get(node.id)?.focus()
   }
 
+  // Las carpetas perezosas que ya se pidieron desde la última vez que el usuario las abrió.
+  const attempted = React.useRef(new Set<string>())
+
   const setOpen = (node: TreeNode, open: boolean) => {
     if (open === expanded.has(node.id)) return
+    // Abrir o cerrar a mano es lo único que habilita pedir de nuevo.
+    attempted.current.delete(node.id)
     setExpandedList(open ? [...expandedList, node.id] : expandedList.filter((id) => id !== node.id))
   }
 
@@ -153,13 +158,16 @@ function Tree({
   }, [items])
 
   // Una carpeta perezosa abierta (al abrirla, o abierta de entrada) pide sus hijos una sola vez a la
-  // vez. Si la carga falla, se cierra y se avisa: abrirla de nuevo reintenta.
+  // vez. Si la carga falla, se cierra y se avisa: abrirla de nuevo reintenta. El effect nunca
+  // reintenta solo: si la carga termina sin hijos, o falla con `expanded` controlado que no se
+  // cierra, pedir en cada render era un bucle (miles de llamadas por segundo).
   const pending = React.useRef(new Set<string>())
   React.useEffect(() => {
     if (!onLoadChildren) return
     for (const id of expandedList) {
       const node = all.get(id)?.node
-      if (!node || node.children != null || !node.hasChildren || pending.current.has(id)) continue
+      if (!node || node.children != null || !node.hasChildren || pending.current.has(id) || attempted.current.has(id)) continue
+      attempted.current.add(id)
       pending.current.add(id)
       setLoading(new Set(pending.current))
       onLoadChildren(node)
