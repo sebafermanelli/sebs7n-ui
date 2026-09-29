@@ -202,7 +202,7 @@ describe("Card", () => {
     expect(card).toHaveClass("bg-surface", "shadow-widget", "rounded-surface", "overflow-hidden", "[--card-spacing:--spacing(5)]")
     // La cabecera es una franja de otro tono, no un bloque con padding dentro de la card.
     const header = card.querySelector("[data-slot=card-header]")!
-    expect(header).toHaveClass("bg-surface-bar", "min-h-20", "px-(--card-spacing)")
+    expect(header).toHaveClass("bg-(--card-strip,var(--color-surface-bar))", "min-h-20", "px-(--card-spacing)")
     expect(screen.getByText("Ingresos")).toHaveClass("text-title-2")
     expect(screen.getByText("Últimos 30 días")).toHaveClass("text-callout", "text-label-secondary")
     // Sin franja de pie: ni línea arriba ni el padding grande de 1.x.
@@ -228,7 +228,9 @@ describe("Card", () => {
     )
     const card = screen.getByText("Consejo").closest("[data-slot=card]")!
     expect(card).toHaveAttribute("data-variant", "subtle")
-    expect(card.querySelector("[data-slot=card-header]")!.className).toContain("group-data-[variant=subtle]/card:bg-transparent")
+    // La franja la fija cada card en `--card-strip`: la hundida, sin fondo (el orden de las reglas
+    // con una hundida adentro de otra lo verifica el CSS compilado, docs/site/test/card-css.test.ts).
+    expect(card).toHaveClass("[--card-strip:transparent]")
   })
 
   // W: sobre el wallpaper el cuerpo es el material con blur (en la raíz, un solo blur por card) y la
@@ -244,8 +246,9 @@ describe("Card", () => {
     )
     const card = screen.getByText("Ingresos").closest("[data-slot=card]")!
     expect(card).toHaveClass("bg-surface", "in-data-ambient:material-translucent-body")
+    expect(card).toHaveClass("[--card-strip:var(--color-surface-bar)]", "in-data-ambient:[--card-strip:var(--color-translucent-strip)]")
     const header = card.querySelector("[data-slot=card-header]")!
-    expect(header).toHaveClass("bg-surface-bar", "in-data-ambient:group-data-[variant=default]/card:bg-translucent-strip")
+    expect(header).toHaveClass("bg-(--card-strip,var(--color-surface-bar))")
     expect(header.className).not.toMatch(/material-translucent|backdrop-blur/)
   })
 

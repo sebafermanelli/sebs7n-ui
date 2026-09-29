@@ -39,19 +39,17 @@ type CardHeaderProps = React.ComponentProps<"div"> & {
 // La franja: 80 de alto en `md` (la de iCloud), `surface-bar` sobre el cuerpo `surface`: más gris
 // en claro, más clara en oscuro. Grilla de hasta tres columnas —ícono, textos, acción— y dos filas
 // —título y subtítulo—, centrada en alto.
-// Sobre el wallpaper, la franja es `translucent-strip` sobre el cuerpo translúcido.
+// El color lo pone la card en `--card-strip` (`variants/card.ts`): `surface-bar`; sobre el
+// wallpaper, `translucent-strip` encima del cuerpo translúcido, sin blur propio; en la hundida
+// (`subtle`), nada. Fuera de una Card, `surface-bar`.
 function CardHeader({ className, icon, children, ...props }: CardHeaderProps) {
   return (
     <div
       data-slot="card-header"
       data-icon={icon != null ? "" : undefined}
       className={cn(
-        "group/card-header grid min-h-20 auto-rows-min content-center items-center gap-x-4 gap-y-0.5 bg-surface-bar px-(--card-spacing) py-3.5 group-data-[size=sm]/card:min-h-0 group-data-[size=sm]/card:py-3",
-        // La franja es del widget: adentro de una card hundida (`subtle`) la cabecera va sin fondo.
-        "group-data-[variant=subtle]/card:bg-transparent",
-        // Sobre el wallpaper (W), una capa más clara encima del cuerpo translúcido: sin blur propio,
-        // porque uno adentro de otro solo vería el fondo de la card. Solo en la card widget.
-        "in-data-ambient:group-data-[variant=default]/card:bg-translucent-strip",
+        "group/card-header grid min-h-20 auto-rows-min content-center items-center gap-x-4 gap-y-0.5 px-(--card-spacing) py-3.5",
+        "bg-(--card-strip,var(--color-surface-bar)) group-data-[size=sm]/card:min-h-0 group-data-[size=sm]/card:py-3",
         "has-data-[slot=card-action]:grid-cols-[1fr_auto] data-icon:grid-cols-[auto_1fr] data-icon:has-data-[slot=card-action]:grid-cols-[auto_1fr_auto]",
         className
       )}

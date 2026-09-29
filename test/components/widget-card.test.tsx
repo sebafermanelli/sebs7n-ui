@@ -29,7 +29,8 @@ describe("WidgetCard", () => {
     expect(card).toHaveClass("bg-surface", "in-data-ambient:material-translucent-body")
     expect(card.className).not.toContain("in-data-ambient:bg-transparent")
     const header = card.querySelector("[data-slot=card-header]")!
-    expect(header).toHaveClass("in-data-ambient:group-data-[variant=default]/card:bg-translucent-strip")
+    expect(card).toHaveClass("in-data-ambient:[--card-strip:var(--color-translucent-strip)]")
+    expect(header).toHaveClass("bg-(--card-strip,var(--color-surface-bar))")
     expect(header.className).not.toContain("material-translucent")
     const cuerpo = card.querySelector("[data-slot=widget-card-body]")!
     expect(cuerpo.className).not.toMatch(/(^|\s)\S*(bg-|backdrop-)/)
