@@ -106,7 +106,14 @@ Fase 3 de 2.0: menús y búsqueda.
 - **Select es el pop-up button de macOS**: el disparador lleva ⌃⌄ (`ChevronsUpDownIcon`) y
   `SelectContent` tiene `alignItemWithTrigger` en `true` por defecto, así que la lista se abre con
   la opción elegida encima del disparador. Para el comportamiento de 1.x,
-  `alignItemWithTrigger={false}`. `Combobox` también lleva ⌃⌄ y ya no gira al abrir.
+  `alignItemWithTrigger={false}`. El scroll de una lista larga pasa del panel a `SelectPrimitive.List`
+  (`data-slot="select-list"`, con el `p-1.5`), que es lo que Base UI desplaza para alinear la
+  elegida; el panel queda `overflow-hidden p-0` y las flechas flotan arriba y abajo. Si la app
+  pisaba el padding o el `max-h` del `SelectContent`, ahora van en la lista. `Combobox` también
+  lleva ⌃⌄ y ya no gira al abrir.
+- **La canaleta del tilde le gana al `className` de la app**: `menuGutterClassName` va después en
+  el `cn()`, así que un `px-3` en un `CheckboxItem`, un `RadioItem` o una opción de Select o
+  Combobox ya no la borra. Para mover el texto de esos ítems hay que pisar `pl-*` con `!`.
 - **El título abierto de `Menubar` es una pastilla gris** (`gray-alpha-200`, hover
   `gray-alpha-100`), no el acento.
 
@@ -114,7 +121,8 @@ Fase 3 de 2.0: menús y búsqueda.
 
 - **`Command`**, la paleta de comandos estilo Spotlight (`sebs7n-ui/command`): `Command`
   (incrustado), `CommandDialog` (anclado arriba, `material-popover`, sin X ni velo, Escape cierra),
-  `CommandInput`, `CommandFilters`/`CommandFilter` (chips de una sola opción que exponen su valor),
+  `CommandInput`, `CommandFilters`/`CommandFilter` (chips en un `radiogroup` nombrado «Filtros»,
+  que exponen su valor),
   `CommandList`, `CommandGroup` (título con `menuLabelClassName`), `CommandItem` (40 px, ícono de
   32, título y detalle; `keywords`, `onSelect`) y `CommandEmpty`. Teclado y ARIA de Base UI
   Autocomplete en modo `inline`; el filtrado es propio: título y `keywords`, sin mayúsculas ni
@@ -123,13 +131,17 @@ Fase 3 de 2.0: menús y búsqueda.
     Spotlight, el primer resultado está elegido desde la primera tecla.
   - La sugerencia en línea («Fact|ura 0012 — Acme S.A.») **sigue al elegido**, no solo al primer
     resultado, y `Tab` o `→` al final la aceptan. La pista `tab` aparece solo cuando Tab completa
-    algo.
+    algo (no con el título entero ya escrito, ni mientras se compone con un IME). Si lo escrito no
+    entra en el ancho del campo, la sugerencia se esconde.
+  - Ítems que llegan tarde (un índice async, con `shouldFilter={false}`) quedan con el primero
+    elegido, y dos ítems con el mismo `value` no se pisan.
   - El campo usa `text-body-large` (15 px regular): un rol de título no se pisa con `font-normal`.
   - `CommandEmpty` va al lado de `CommandList`, no adentro: un listbox solo admite opciones y
     grupos.
   - `shouldFilter={false}` para ítems que la app ya filtró y ordenó (es lo que usa el buscador del
     sitio de docs).
-- Labels `command: { placeholder, empty, dialog }` («Buscar», «Sin resultados», «Buscar»).
+- Labels `command: { placeholder, empty, dialog, filters }` («Buscar», «Sin resultados», «Buscar»,
+  «Filtros»). El nombre del campo es su `placeholder` cuando lo trae.
 - `commandDialogPopupClassName`, `commandItemClassName` y `commandItemIconClassName`
   (`variants/command`, también en el barrel).
 - `menuGutterClassName`, `menuInsetClassName` y `menuIndicatorClassName` (`variants/menu`).
