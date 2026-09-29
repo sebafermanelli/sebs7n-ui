@@ -422,6 +422,10 @@
      * ejemplo el 70 % no llega a 3:1 contra la página en claro (WCAG 1.4.11), así que el default es
      * la marca plena. Una app cuya marca lo aguante pone `--sf-focus-alpha: 70%`, y
      * `test/contrast.test.ts` dice si llega.
+     *
+     * **`--sf-focus-alpha` se pisa en `:root` y en `.dark`**, no en un elemento de más abajo:
+     * `--sf-focus` se calcula donde se declara (acá y en `.dark`), así que un override en un
+     * `<div>` no cambia el anillo. En oscuro el foco sale de `brand-900` (ver `.dark`).
      */
     --sf-focus-alpha: 100%;
     --sf-focus: color-mix(in srgb, var(--sf-brand-700) var(--sf-focus-alpha), transparent);
