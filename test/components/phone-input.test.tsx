@@ -245,12 +245,24 @@ describe("PhoneInput", () => {
 })
 
 describe("PhoneInput con un valor viejo sin «+»", () => {
-  it("es un número nacional del defaultCountry: no se vacía y el form lleva el E.164", () => {
+  it("es un número nacional del defaultCountry: no se vacía, y el form lleva el valor original hasta que se edite", async () => {
+    const user = userEvent.setup()
     const { container } = render(<PhoneInput aria-label="Teléfono" defaultValue="011 5555-2002" name="tel" />)
     const field = screen.getByRole("textbox", { name: "Teléfono" })
     expect(field).toHaveValue("1155552002")
     expect(field).not.toHaveAttribute("aria-invalid")
-    expect(container.querySelector<HTMLInputElement>("input[name=tel]")!.value).toBe("+541155552002")
+    // Sin migrar a escondidas: la app no se enteró (no hubo onValueChange), así que el form manda lo que tenía.
+    const hidden = () => container.querySelector<HTMLInputElement>("input[name=tel]")!.value
+    expect(hidden()).toBe("011 5555-2002")
+    await user.type(field, "{Backspace}2")
+    expect(hidden()).toBe("+541155552002")
+  })
+
+  it("«549…» sin + es internacional si empieza con el código del país", () => {
+    render(<PhoneInput aria-label="Teléfono" value="5491155552002" />)
+    const field = screen.getByRole("textbox", { name: "Teléfono" })
+    expect(field).toHaveValue("91155552002")
+    expect(field).not.toHaveAttribute("aria-invalid")
   })
 
   it("con otro defaultCountry, de ese país", () => {
@@ -259,11 +271,25 @@ describe("PhoneInput con un valor viejo sin «+»", () => {
     expect(screen.getByRole("combobox", { name: /Código de país/ })).toHaveTextContent("+598")
   })
 
-  it("si no es un número posible, queda el texto como estaba y el campo inválido", () => {
-    render(<PhoneInput aria-label="Teléfono" value="llamar a la tarde" />)
+  it("si no es un número posible, queda el texto como estaba; en rojo recién después de tocarlo o de enviar", async () => {
+    const user = userEvent.setup()
+    render(
+      <form onSubmit={(event) => event.preventDefault()}>
+        <PhoneInput aria-label="Teléfono" defaultValue="llamar a la tarde" />
+        <PhoneInput aria-label="Otro" defaultValue="a la noche" />
+        <button type="submit">Enviar</button>
+      </form>
+    )
     const field = screen.getByRole("textbox", { name: "Teléfono" })
     expect(field).toHaveValue("llamar a la tarde")
+    expect(field).not.toHaveAttribute("aria-invalid")
+    await user.click(field)
+    await user.tab()
     expect(field).toHaveAttribute("aria-invalid", "true")
+    const other = screen.getByRole("textbox", { name: "Otro" })
+    expect(other).not.toHaveAttribute("aria-invalid")
+    await user.click(screen.getByRole("button", { name: "Enviar" }))
+    expect(other).toHaveAttribute("aria-invalid", "true")
   })
 
   it("no avisa nada al montar; al editar, avisa el E.164", async () => {

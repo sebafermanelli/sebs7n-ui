@@ -9,6 +9,7 @@ import { countryFlag } from "../lib/countries.js"
 import { useLabels, type Labels } from "../lib/labels.js"
 import { isValidPhone, nationalNumber, onlyDigits, parsePhone, PHONE_COUNTRIES, phoneCountry, toE164, type PhoneCountry } from "../lib/phone.js"
 import { useFormReset } from "../internal/form-reset.js"
+import { mergeRefs } from "../internal/merge-refs.js"
 import { cn } from "../lib/utils.js"
 import { InputGroup, InputGroupAddon, InputGroupInput } from "./input-group.js"
 import { SelectContent, SelectItem } from "./select.js"
@@ -16,8 +17,10 @@ import { SelectContent, SelectItem } from "./select.js"
 type PhoneInputProps = {
   /**
    * El teléfono en E.164 («+5491155552002»); vacío sin número. Pasarlo lo vuelve controlado. Un valor
-   * sin «+» (un dato viejo) se toma como número nacional del país de `defaultCountry`; si no es un
-   * número posible, se muestra tal cual y el campo queda inválido.
+   * sin «+» (un dato viejo) se toma como número nacional del país de `defaultCountry` (o internacional,
+   * si empieza con su código: «5491155552002»); si no es un número posible, se muestra tal cual y el
+   * campo queda inválido después de tocarlo o de enviar. Hasta que se edite, el form manda el valor
+   * original: migrar los datos es de la app.
    */
   value?: string
   defaultValue?: string
@@ -92,16 +95,33 @@ function PhoneInput({
   // corrija a mano. No se avisa nada hasta que se edite: migrar los datos es de la app.
   const raw = value.trim()
   const legacy = !parsed && raw !== "" && !raw.startsWith("+")
-  const legacyE164 = legacy ? toE164(country, raw) : ""
+  // «5491155552002»: el E.164 sin el «+» (lo guardaban así algunos formularios). Solo si empieza con el
+  // código del país y así da un número posible; si no, es nacional.
+  const international = legacy ? parsePhone(`+${onlyDigits(raw)}`, country.code) : null
+  const asInternational = international && international.country.code === country.code && isValidPhone(`+${onlyDigits(raw)}`, country.code)
+  const legacyE164 = asInternational ? `+${onlyDigits(raw)}` : legacy ? toE164(country, raw) : ""
   const legacyOk = legacy && isValidPhone(legacyE164, country.code)
-  const national = parsed?.national ?? (legacyOk ? nationalNumber(country, raw) : legacy ? value : "")
+  const national = parsed?.national ?? (asInternational ? international.national : legacyOk ? nationalNumber(country, raw) : legacy ? value : "")
+  // Un dato viejo que no es un número va en rojo recién después de tocarlo o de enviar el form: al
+  // cargar la pantalla, un campo rojo que nadie tocó es un error que el usuario no cometió.
+  const [touched, setTouched] = React.useState(false)
+  const group = React.useRef<HTMLDivElement>(null)
+  React.useEffect(() => {
+    const form = group.current?.querySelector("input")?.form
+    if (!form) return
+    const submit = () => setTouched(true)
+    form.addEventListener("submit", submit)
+    return () => form.removeEventListener("submit", submit)
+  }, [])
 
   // El reset del form vuelve a `defaultValue` (sin controlar) y a su país.
   const formReset = useFormReset(() => {
     if (valueProp === undefined) setOwn(defaultValue)
     setChosen(parsePhone(valueProp ?? defaultValue, defaultCountry)?.country ?? fallback)
     setStatus("")
+    setTouched(false)
   })
+  const groupRef = React.useMemo(() => mergeRefs(formReset, group), [formReset])
 
   // Los nombres de `Intl.DisplayNames` dependen del ICU: el de Node puede no ser el del navegador. El
   // único que se pinta en el servidor es el del nombre del selector, así que ahí va el código ISO
@@ -128,7 +148,7 @@ function PhoneInput({
   }
 
   return (
-    <InputGroup className={className} disabled={disabled} ref={formReset} size={size}>
+    <InputGroup className={className} disabled={disabled} ref={groupRef} size={size}>
       <InputGroupAddon>
         <SelectPrimitive.Root
           disabled={disabled}
@@ -166,6 +186,7 @@ function PhoneInput({
         autoComplete="tel-national"
         id={id}
         inputMode="tel"
+        onBlur={() => setTouched(true)}
         onChange={(event) => {
           const text = event.currentTarget.value.trim()
           // Pegado con el código («+54 9 11 …», «0054 9 11 …»): el país sale del número. Si el código
@@ -183,9 +204,9 @@ function PhoneInput({
         type="tel"
         value={national}
         {...aria}
-        aria-invalid={aria["aria-invalid"] ?? ((legacy && !legacyOk) || undefined)}
+        aria-invalid={aria["aria-invalid"] ?? ((legacy && !legacyOk && touched) || undefined)}
       />
-      {name && <input name={name} type="hidden" value={legacyOk ? legacyE164 : value} />}
+      {name && <input name={name} type="hidden" value={value} />}
       <span className="sr-only" data-slot="phone-input-status" role="status">
         {status}
       </span>
