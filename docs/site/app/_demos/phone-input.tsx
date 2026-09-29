@@ -64,3 +64,23 @@ export function Display() {
     </dl>
   )
 }
+
+/**
+ * Datos viejos
+ * Un valor guardado sin «+» se toma como número nacional del país (`011 5555-2002` → +54 11 5555 2002) y el formulario ya lleva el E.164. Si no es un número posible, queda el texto y el campo inválido.
+ */
+export function Legacy() {
+  return (
+    <div className="flex w-full max-w-sm flex-col gap-3">
+      <Field>
+        <FieldLabel>Teléfono de Acme S.A.</FieldLabel>
+        <PhoneInput defaultValue="011 5555-2002" />
+      </Field>
+      <Field>
+        <FieldLabel>Teléfono de Globex SRL</FieldLabel>
+        <PhoneInput defaultValue="llamar a la tarde" />
+        <FieldDescription>No es un número: corregilo a mano.</FieldDescription>
+      </Field>
+    </div>
+  )
+}

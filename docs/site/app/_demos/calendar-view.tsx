@@ -2,6 +2,7 @@
 
 import { useMemo } from "react"
 import { CalendarView, type CalendarEvent } from "sebs7n-ui/calendar-view"
+import { LabelsProvider } from "sebs7n-ui/labels"
 
 /** Eventos de ejemplo alrededor de hoy, para que la demo siempre tenga algo que mostrar. */
 function useSampleEvents(): CalendarEvent[] {
@@ -63,5 +64,20 @@ export function Dia() {
     <div className="h-[560px] w-full overflow-hidden rounded-surface border border-separator">
       <CalendarView defaultView="day" events={events} hour12={false} locale="es-AR" />
     </div>
+  )
+}
+
+/**
+ * Idioma global
+ * Con `LabelsProvider` `dates` (`en-US`, semana del domingo) no hace falta pasarle `locale` ni `weekStartsOn`.
+ */
+export function IdiomaGlobal() {
+  const events = useSampleEvents()
+  return (
+    <LabelsProvider value={{ dates: { locale: "en-US", weekStartsOn: 0 } }}>
+      <div className="h-[34rem] w-full">
+        <CalendarView className="h-full" events={events} />
+      </div>
+    </LabelsProvider>
   )
 }

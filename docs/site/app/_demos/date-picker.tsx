@@ -1,7 +1,9 @@
 "use client"
 
 import { useId, useState } from "react"
+import { Calendar } from "sebs7n-ui/calendar"
 import { DatePicker } from "sebs7n-ui/date-picker"
+import { DateTimePicker } from "sebs7n-ui/date-time-picker"
 import { Label } from "sebs7n-ui/label"
 import { LabelsProvider } from "sebs7n-ui/labels"
 import type { DateRange } from "sebs7n-ui/lib/dates"
@@ -84,15 +86,19 @@ const NUMERIC: Intl.DateTimeFormatOptions = { day: "2-digit", month: "2-digit", 
 
 /**
  * Idioma global
- * `LabelsProvider` con `dates`: idioma, semana y formato para todos los campos de fecha de abajo. La prop de cada uno le gana.
+ * `LabelsProvider` con `dates`: idioma, semana y formato para `DatePicker`, `DateTimePicker` y `Calendar` de abajo (y `CalendarView`). La prop de cada uno le gana.
  */
 export function IdiomaGlobal() {
   const [due, setDue] = useState<Date | null>(new Date(2026, 9, 15))
   return (
     <LabelsProvider value={{ dates: { locale: "en-US", weekStartsOn: 0, format: NUMERIC } }}>
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="due-global">Due date</Label>
-        <DatePicker className="w-56" id="due-global" onValueChange={setDue} value={due} />
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="due-global">Due date</Label>
+          <DatePicker className="w-56" id="due-global" onValueChange={setDue} value={due} />
+        </div>
+        <DateTimePicker aria-label="Issued at" className="w-72" defaultValue={new Date(2026, 9, 1, 9, 30)} />
+        <Calendar className="self-start" defaultMonth={new Date(2026, 9, 1)} />
       </div>
     </LabelsProvider>
   )
