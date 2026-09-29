@@ -428,6 +428,31 @@ describe("CommandDialog", () => {
     expect(onOpenChange).toHaveBeenCalledWith(false, expect.anything())
   })
 
+  it("el foco inicial va al campo aunque haya algo tabulable antes", async () => {
+    render(
+      <CommandDialog open>
+        <button type="button">Antes</button>
+        {contenido}
+      </CommandDialog>
+    )
+    await waitFor(() => expect(screen.getByRole("combobox")).toHaveFocus())
+  })
+
+  it("un click afuera la cierra", async () => {
+    const onOpenChange = vi.fn()
+    render(
+      <>
+        <button type="button">Afuera</button>
+        <CommandDialog open onOpenChange={onOpenChange}>
+          {contenido}
+        </CommandDialog>
+      </>
+    )
+    await waitFor(() => expect(screen.getByRole("combobox")).toHaveFocus())
+    await userEvent.click(document.body)
+    expect(onOpenChange).toHaveBeenCalledWith(false, expect.anything())
+  })
+
   it("se nombra con labels y va anclado arriba, en el vidrio del popover", () => {
     render(
       <CommandDialog open labels={{ dialog: "Buscar en facturación" }}>

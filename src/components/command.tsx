@@ -489,7 +489,7 @@ type CommandDialogProps = Omit<DialogPrimitive.Root.Props, "children"> &
  * `Command` adentro de un diálogo de Base UI, anclado arriba como Spotlight. Sin X —Escape y un
  * click afuera cierran— y sin velo: la búsqueda flota sobre la pantalla y no la apaga. Base UI
  * soporta este armado a propósito (combobox `inline` dentro de un `role="dialog"`), y el foco
- * inicial cae en el campo porque es lo primero tabulable del panel.
+ * inicial va al campo.
  *
  * Cerrar al elegir lo decide la app en `onSelect`: navegar cierra, pero «copiar el número» o
  * «cambiar de tema» pueden querer dejarla abierta.
@@ -497,10 +497,19 @@ type CommandDialogProps = Omit<DialogPrimitive.Root.Props, "children"> &
 function CommandDialog({ className, labels, value, defaultValue, onValueChange, shouldFilter, children, ...props }: CommandDialogProps) {
   const provided = useLabels().command
   const name = labels?.dialog ?? provided.dialog
+  const popup = React.useRef<HTMLDivElement>(null)
   return (
     <DialogPrimitive.Root {...props}>
       <DialogPrimitive.Portal>
-        <DialogPrimitive.Popup data-slot="command-dialog" aria-label={name} className={cn(commandDialogPopupClassName, className)}>
+        <DialogPrimitive.Popup
+          data-slot="command-dialog"
+          aria-label={name}
+          // El foco va al campo aunque la app ponga algo tabulable antes (un botón en la cabecera):
+          // abrir una búsqueda es para escribir. Sin campo, lo de siempre de Base UI.
+          initialFocus={() => popup.current?.querySelector<HTMLElement>("[data-slot=command-input]") ?? true}
+          ref={popup}
+          className={cn(commandDialogPopupClassName, className)}
+        >
           <Command className="flex-1" labels={labels} value={value} defaultValue={defaultValue} onValueChange={onValueChange} shouldFilter={shouldFilter}>
             {children}
           </Command>
