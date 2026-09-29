@@ -2850,6 +2850,33 @@ export const COMPONENTS = {
     },
     related: ["card", "list-row", "app-shell"],
   },
+  disclosure: {
+    title: "Disclosure",
+    group: "contenido",
+    description: "Secciones plegables sin JavaScript: `<details>` y `<summary>` del navegador con las filas y el chevron del `Accordion`. Server Component.",
+    keyboard: [
+      ["Tab", "Pasa de un título a otro."],
+      ["Enter · Espacio", "Abren y cierran la sección (lo hace el navegador)."],
+    ],
+    a11y: [
+      "Es el `<details>` nativo: el navegador lo hace enfocable, lo abre con Enter y Espacio y anuncia si está expandido o colapsado. El chevron es decorativo.",
+      "El contenido está en el HTML aunque esté cerrado: lo encuentra Cmd+F (Chrome abre la sección) y lo lee un buscador.",
+      "Con movimiento reducido el chevron no gira con recorrido.",
+    ],
+    usage: [
+      "Para una página que tiene que andar sin JS (preguntas frecuentes, un filtro plegado en un blog). En una app, `Accordion`: anima el alto y recorre las secciones con flechas.",
+      "Varios con el mismo `name` se excluyen (abrir uno cierra el otro), como el `Accordion` por defecto; sin `name`, cada uno por su cuenta.",
+      "`variant=\"inline\"` para un disparador en línea (14, gris) arriba de una lista, sin separadores. `defaultOpen` lo abre al cargar (un filtro que ya viene en la URL).",
+      "No lleva `\"use client\"`: las partes leen la variante del `<details>` con `group-data-*`, sin contexto. Solo por subpath (`sebs7n-ui/disclosure`).",
+    ],
+    props: {
+      Disclosure: {
+        name: "Mismo `name` en varios: abrir uno cierra los otros (lo hace el navegador).",
+        open: "Abierto, controlado por atributo: el navegador lo cambia al hacer clic y React no lo vuelve a poner si la prop no cambia.",
+      },
+    },
+    related: ["accordion", "collapsible"],
+  },
   marquee: {
     title: "Marquee",
     group: "contenido",
@@ -3086,7 +3113,7 @@ export const COMPONENTS = {
         chevron: "Saca el chevron para poner otro indicador.",
       },
     },
-    related: ["collapsible", "tabs", "card"],
+    related: ["collapsible", "tabs", "card", "disclosure"],
   },
   "scroll-area": {
     title: "ScrollArea",
