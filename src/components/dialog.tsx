@@ -7,7 +7,7 @@ import { XIcon } from "lucide-react"
 import { useAvisoDeNombre } from "../internal/dialog-name-warning.js"
 import { useLabels } from "../lib/labels.js"
 import { cn, type WithClassName } from "../lib/utils.js"
-import { backdropClassName, modalFooterClassName, modalPopupClassName, overlayCloseClassName } from "../variants/overlay.js"
+import { backdropClassName, closeButtonClassName, dialogCloseClassName, modalFooterClassName, modalPopupClassName } from "../variants/overlay.js"
 import { Button } from "./button.js"
 
 function Dialog(props: DialogPrimitive.Root.Props) {
@@ -63,7 +63,7 @@ function DialogContent({ className, children, showCloseButton = true, labels, ..
             // El nombre va en `aria-label` y no en un `<span class="sr-only">`: el botón es solo el
             // ícono, y `ButtonProps` exige el nombre en el tipo justamente para que no se pueda
             // olvidar. Un texto escondido nombra igual de bien, pero no hay tipo que lo vea.
-            render={<Button variant="ghost" size="icon-sm" aria-label={labels?.close ?? l.close} className={overlayCloseClassName} />}
+            render={<Button variant="ghost" size="icon-sm" aria-label={labels?.close ?? l.close} className={cn(closeButtonClassName, dialogCloseClassName)} />}
           >
             <XIcon />
           </DialogPrimitive.Close>
@@ -73,11 +73,12 @@ function DialogContent({ className, children, showCloseButton = true, labels, ..
   )
 }
 
-// La hoja de macOS (2.0): título `title-3` a la izquierda, contenido, y el pie abajo a la derecha
-// sin línea. El principal del pie es `accent` —el «Done» azul—, pero lo elige quien la arma.
-// `pr-8` deja lugar a la X, que se queda (decisión de Sebastián).
+// El diálogo de iCloud (2.0, R2): la X arriba a la izquierda, el título `title-3` centrado, el
+// contenido y el pie abajo a la derecha, sin línea. `px-8` deja el mismo aire a los dos lados para
+// que el título quede centrado de verdad y no choque con la X. El principal del pie es `accent`,
+// pero lo elige quien lo arma.
 function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
-  return <div data-slot="dialog-header" className={cn("flex flex-col gap-1 pr-8", className)} {...props} />
+  return <div data-slot="dialog-header" className={cn("flex flex-col gap-1 px-8 text-center", className)} {...props} />
 }
 
 function DialogFooter({ className, ...props }: React.ComponentProps<"div">) {

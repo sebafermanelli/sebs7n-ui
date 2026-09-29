@@ -71,6 +71,8 @@ export { selectionSecondaryClassName } from "./variants/selection.js"
 export {
   alertWidthClassName,
   backdropClassName,
+  closeButtonClassName,
+  dialogCloseClassName,
   floatingPopupClassName,
   floatingSheetGapClassName,
   modalFooterClassName,

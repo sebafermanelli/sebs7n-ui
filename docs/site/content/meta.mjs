@@ -975,9 +975,9 @@ export const COMPONENTS = {
       "En mobile, un formulario largo no va en Dialog: va en una página o en un `Sheet`.",
       "El footer va con la acción principal a la derecha y «Cancelar» a su izquierda: escribí «Cancelar» primero.",
       "**En mobile el pie se apila en el orden en que lo escribiste**, que es también el orden de Tab: no se invierte con CSS. Con «Cancelar» primero, el principal queda abajo, al alcance del pulgar. Si lo querés arriba, escribilo primero (y en desktop queda a la izquierda).",
-      "**Es la hoja de macOS**: título a la izquierda, contenido y el pie abajo a la derecha, sin línea arriba. El principal va del acento (`<Button variant=\"accent\">Listo</Button>`, el «Done» azul) y «Cancelar» en `secondary`. El componente no lo fuerza: una hoja de solo lectura puede cerrar con un único «Listo».",
-      "**El contenido que es un bloque —un resumen, una lista de datos— va agrupado** en `rounded-surface bg-grouped p-4`, como la tarjeta de una hoja de Ajustes. Un formulario suelto no necesita el bloque.",
-      "La X se queda aunque macOS no la ponga en las hojas: en la web es la salida que se busca primero. `showCloseButton={false}` si el pie ya tiene «Cancelar» y querés la hoja limpia.",
+      "**Es el diálogo de iCloud**: radio 11, opaco, 20 px de aire, la X de 28 arriba a la izquierda, el título centrado (`DialogHeader`) y el pie abajo a la derecha, sin línea arriba. El principal va del acento (`<Button variant=\"accent\">Listo</Button>`) y «Cancelar» en `secondary`. El componente no lo fuerza: uno de solo lectura puede cerrar con un único «Listo», y un único CTA centrado, como las hojas informativas de iCloud, sale con `<DialogFooter className=\"sm:justify-center\">`.",
+      "**El contenido que es un bloque —un resumen, una lista de datos— va agrupado** en `rounded-surface bg-grouped p-4`. Un formulario suelto no necesita el bloque.",
+      "La X va a la izquierda, como en iCloud. `showCloseButton={false}` si el pie ya tiene «Cancelar» y lo querés limpio.",
     ],
     props: {
       Dialog: {

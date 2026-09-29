@@ -274,7 +274,7 @@ describe("Dialog", () => {
   })
 })
 
-describe("hoja de macOS (2.0)", () => {
+describe("diálogo de iCloud (2.0, R2)", () => {
   it("el pie no tiene línea ni márgenes negativos y alinea a la derecha", async () => {
     render(
       <Dialog defaultOpen>
@@ -291,12 +291,11 @@ describe("hoja de macOS (2.0)", () => {
     const pie = (await screen.findByRole("dialog")).querySelector('[data-slot="dialog-footer"]')!
     expect(pie).not.toHaveClass("border-t")
     expect(pie.className).not.toMatch(/-mx-6/)
-    expect(pie).toHaveClass("sm:justify-end")
+    expect(pie).toHaveClass("sm:justify-end", "sm:gap-2")
   })
 
-  // Mismo argumento que la alerta: invertir con CSS hace que Tab recorra al revés de como se ve
-  // (WCAG 1.3.2 y 2.4.3). En mobile los botones se apilan en el orden del DOM, con 12 px para
-  // que las áreas de 44 no se pisen.
+  // Invertir con CSS hace que Tab recorra al revés de como se ve (WCAG 1.3.2 y 2.4.3). En mobile
+  // los botones se apilan en el orden del DOM, con 12 px para que las áreas de 44 no se pisen.
   it("en mobile se apila en el orden del DOM, sin invertir, con gap-3", async () => {
     render(
       <Dialog defaultOpen>
@@ -314,7 +313,8 @@ describe("hoja de macOS (2.0)", () => {
     expect(pie.className).not.toMatch(/reverse/)
   })
 
-  it("sigue teniendo la X, a la altura del título", async () => {
+  // iCloud (Calendar → «Go To Date…»): la X de 28 × 28, radio 8 y glifo de 14, arriba a la izquierda.
+  it("la X va arriba a la izquierda, 28 × 28 con glifo de 14, a la altura del título", async () => {
     render(
       <Dialog defaultOpen>
         <DialogContent>
@@ -322,20 +322,28 @@ describe("hoja de macOS (2.0)", () => {
         </DialogContent>
       </Dialog>
     )
-    // Con `p-5` el renglón del título (20 px de alto) está centrado a 30 px del borde; la X mide
-    // 24, así que va a 18 px (`4.5`) para que su centro caiga en la misma línea.
-    expect(await screen.findByRole("button", { name: "Cerrar" })).toHaveClass("top-4.5", "right-4.5")
+    const x = await screen.findByRole("button", { name: "Cerrar" })
+    // Con `p-5` el renglón del título (24 px) está centrado a 32 px del borde; la X mide 28, así
+    // que va a 18 px (`4.5`) para que su centro caiga en la misma línea.
+    expect(x).toHaveClass("top-4.5", "left-4.5", "size-7", "rounded-control")
+    expect(x).not.toHaveClass("right-4.5", "size-6")
+    expect(x.className).toContain("[&_svg:not([class*='size-'])]:size-3.5")
   })
 
-  it("el título es el de una hoja: title-3", async () => {
+  it("el título es title-3 y el encabezado va centrado, con aire para la X a los dos lados", async () => {
     render(
       <Dialog defaultOpen>
         <DialogContent>
-          <DialogTitle>Factura 0012</DialogTitle>
+          <DialogHeader>
+            <DialogTitle>Factura 0012</DialogTitle>
+          </DialogHeader>
         </DialogContent>
       </Dialog>
     )
     expect(await screen.findByRole("heading", { name: "Factura 0012" })).toHaveClass("text-title-3")
+    const header = screen.getByRole("dialog").querySelector('[data-slot="dialog-header"]')!
+    expect(header).toHaveClass("text-center", "px-8")
+    expect(header).not.toHaveClass("pr-8")
   })
 })
 

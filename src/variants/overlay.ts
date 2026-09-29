@@ -35,30 +35,39 @@ export const modalPopupClassName =
 export const alertWidthClassName = "max-w-[min(400px,calc(100%-2rem))]"
 
 /**
- * El pie de la hoja (Dialog): los botones abajo a la derecha, sin línea arriba, como una hoja de
- * macOS («Done» en la esquina). Hasta 1.x llevaba un borde al ancho completo con márgenes
- * negativos; en macOS el aire alcanza para separar el contenido de las acciones.
+ * El pie de un diálogo (Dialog y AlertDialog): los botones abajo a la derecha, sin línea arriba y
+ * separados 8 px. iCloud centra el único botón de sus hojas informativas («What's New»); en una
+ * confirmación o un formulario —«Cancelar» y la acción— van a la derecha, y el CTA centrado sale
+ * con `sm:justify-center`.
  *
  * En mobile se apilan **en el orden del DOM**. Hasta 2.0 era `flex-col-reverse` —la acción
  * principal arriba—, pero invertir con CSS hace que Tab recorra al revés de como se ve (WCAG
- * 1.3.2 y 2.4.3), el mismo argumento que en la alerta. Qué va arriba lo decide quien arma el
- * pie: con «Cancelar» primero (lo habitual, así en desktop queda a la izquierda) el principal
- * queda abajo en mobile, al alcance del pulgar. 12 px de separación: apilados, las áreas de 44
- * de dos botones de 32 no se pisan.
+ * 1.3.2 y 2.4.3). Qué va arriba lo decide quien arma el pie: con «Cancelar» primero (lo habitual,
+ * así en desktop queda a la izquierda) el principal queda abajo en mobile, al alcance del pulgar.
+ * Apilados van a 12 px: las áreas de 44 de dos botones de 32 no se pisan. Lado a lado alcanza con
+ * 8, porque el área crece en alto y no en ancho.
  */
-export const modalFooterClassName = "flex flex-col gap-3 pt-2 sm:flex-row sm:justify-end"
+export const modalFooterClassName = "flex flex-col gap-3 pt-1 sm:flex-row sm:justify-end sm:gap-2"
 
 /**
- * Dónde va la X de cerrar: Dialog, Sheet y Drawer. Se queda en 2.0 aunque macOS no la ponga en
- * las hojas: en la web es la salida que todos buscan (decisión de Sebastián).
- *
- * El botón en sí es un `Button variant="ghost" size="icon-sm"` —eso ya es una decisión con
- * nombre— y el nombre accesible lo pone cada uno desde sus `labels`. Lo único compartido, y
- * lo único que se puede desincronizar sin que nadie lo note, es la posición.
- *
- * Con el padding de 20 px de 2.0 y el título `title-3` (renglón de 20 px), el centro del título
- * queda a 30 px del borde. La X mide 24: a 18 px (`4.5`) su centro cae en esa misma línea, y a la
- * misma distancia del borde derecho.
+ * El botón de cerrar de iCloud (catálogo §2.12): 28 × 28, radio 8 (el del `Button`) y glifo de
+ * 14. Va sobre un `Button variant="ghost" size="icon-sm"`, que pone el nombre accesible obligatorio
+ * y el área táctil de 44.
+ */
+export const closeButtonClassName = "size-7 [&_svg:not([class*='size-'])]:size-3.5"
+
+/**
+ * Dónde va la X de un Dialog: **arriba a la izquierda**, como en iCloud (Calendar → «Go To
+ * Date…»), con el título centrado. Con el padding de 20 px y el título `title-3` (renglón de 24),
+ * el centro del título queda a 32 px del borde; la X mide 28, así que a 18 px (`4.5`) su centro
+ * cae en la misma línea.
+ */
+export const dialogCloseClassName = "absolute top-4.5 left-4.5"
+
+/**
+ * Dónde va la X de Sheet y Drawer: arriba a la derecha. iCloud no tiene panel lateral; en una hoja
+ * pegada al borde el título va a la izquierda, así que la X se queda del otro lado, en la línea
+ * del título (la misma cuenta que `dialogCloseClassName`).
  */
 export const overlayCloseClassName = "absolute top-4.5 right-4.5"
 
