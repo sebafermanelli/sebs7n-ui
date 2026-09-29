@@ -59,7 +59,7 @@ export const alertFooterClassName =
  * principal arriba—, pero invertir con CSS hace que Tab recorra al revés de como se ve (WCAG
  * 1.3.2 y 2.4.3). Qué va arriba lo decide quien arma el pie: con «Cancelar» primero (lo habitual,
  * así en desktop queda a la izquierda) el principal queda abajo en mobile, al alcance del pulgar.
- * Apilados van a 12 px: las áreas de 44 de dos botones de 32 no se pisan. Lado a lado alcanza con
+ * Apilados van a 12 px: dos botones de 36 quedan a 48 entre centros y sus áreas de 44 no se pisan. Lado a lado alcanza con
  * 8, porque el área crece en alto y no en ancho.
  */
 export const modalFooterClassName = "flex flex-col gap-3 pt-1 sm:flex-row sm:justify-end sm:gap-2"

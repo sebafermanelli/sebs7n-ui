@@ -74,8 +74,8 @@ function Toolbar({ className, onKeyDown, variant = "glass", ...props }: ToolbarP
         // `rounded-menu` (12) con `p-1`: los controles de adentro miden `rounded-control` (8) y
         // 8 + 4 = 12, concéntrico. `relative` ancla lo que la app posicione adentro.
         "relative flex items-center gap-1 rounded-menu p-1 text-label",
-        // Con el dedo, 20 px entre controles: un botón de 24 + 20 = 44 entre centros, y las áreas
-        // de `touch-target` se tocan sin pisarse. Con 4 px el toque caía en el vecino.
+        // Con el dedo, 20 px entre controles: un botón de 28 + 20 = 48 entre centros, y las áreas
+        // de 44 de `touch-target` no se pisan. Con 4 px el toque caía en el vecino.
         "pointer-coarse:gap-5",
         variant === "glass" && "bg-surface-bar",
         "data-[orientation=vertical]:rounded-surface",
