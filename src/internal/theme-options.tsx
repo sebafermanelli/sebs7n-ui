@@ -7,7 +7,8 @@ import { useTheme } from "next-themes"
 
 import { cn } from "../lib/utils.js"
 import { segmentedThumbClassName, segmentedTrackClassName } from "../variants/segmented.js"
-import { segmentedHitAreaClassName } from "./segmented-hit-area.js"
+// Con `../internal/` y no `./`: el registry lee `./x.js` como un componente.
+import { segmentedHitAreaClassName } from "../internal/segmented-hit-area.js"
 
 // Lo que comparten `ThemeSwitcher` y `ThemeMenuRadio`: las opciones, las clases, la pastilla y
 // los hooks. Vive acá y no en ninguno de los dos para que importar uno no arrastre al otro; ver
