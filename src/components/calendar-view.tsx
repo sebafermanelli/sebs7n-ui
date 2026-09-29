@@ -172,8 +172,8 @@ function CalendarView({
     if (view !== "week" || !scrollRef.current) return
     const hour = showsToday && now ? Math.max(0, now.getHours() - 2) : scrollToHour
     scrollRef.current.scrollTop = hour * HOUR
-    // Solo al cambiar de vista o de semana, no con cada minuto del reloj.
-  }, [view, weekStart.getTime()])
+    // Al cambiar de vista o de semana (y cuando llega el reloj), no con cada minuto.
+  }, [view, weekStart.getTime(), showsToday])
 
   const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     const step: Record<string, () => Date> = {
@@ -261,9 +261,18 @@ function CalendarView({
       key={day.getDay()}
       role="columnheader"
       aria-label={fmt({ weekday: "long" }).format(day)}
-      className={cn("truncate px-2 pb-1.5 text-body", now && day.getDay() === now.getDay() && isSameDay(startOfWeek(day, weekStartsOn), startOfWeek(now, weekStartsOn)) ? "text-brand-ink" : "text-label-secondary")}
+      className={cn("truncate px-1.5 pb-1.5 text-body", now && day.getDay() === now.getDay() && isSameDay(startOfWeek(day, weekStartsOn), startOfWeek(now, weekStartsOn)) ? "text-brand-ink" : "text-label-secondary")}
     >
-      {view === "week" && <span className="me-1 font-semibold text-label tabular-nums">{day.getDate()}</span>}
+      {view === "week" && (
+        <span
+          className={cn(
+            "me-1 inline-flex h-[30px] min-w-[30px] items-center justify-center rounded-full px-1 font-semibold tabular-nums",
+            now && isSameDay(day, now) ? "bg-brand-700 text-brand-contrast" : "text-label"
+          )}
+        >
+          {day.getDate()}
+        </span>
+      )}
       {capitalize(fmt({ weekday: "short" }).format(day).replace(".", ""))}
     </div>
   )
@@ -313,7 +322,7 @@ function CalendarView({
     )
   } else {
     const allDay = weekDays.map((day) => eventsOf(events, day).filter((item) => item.allDay))
-    const nowTop = now ? (minutes(now) / 60) * HOUR : 0
+    const nowTop = now ? Math.round((minutes(now) / 60) * HOUR) : 0
     const todayIndex = now ? weekDays.findIndex((day) => isSameDay(day, now)) : -1
     body = (
       <div
@@ -324,11 +333,11 @@ function CalendarView({
         className="flex min-h-0 flex-1 flex-col"
       >
         <div className="flex flex-col">
-          <div role="row" className="grid grid-cols-[3.5rem_repeat(7,minmax(0,1fr))]">
+          <div role="row" className="grid grid-cols-[4.5rem_repeat(7,minmax(0,1fr))]">
             <span aria-hidden="true" />
             {weekDays.map(weekdayHeader)}
           </div>
-          <div role="row" className="grid grid-cols-[3.5rem_repeat(7,minmax(0,1fr))] border-b border-separator-strong">
+          <div role="row" className="grid grid-cols-[4.5rem_repeat(7,minmax(0,1fr))] border-b border-separator-strong">
             <span role="rowheader" className="pe-2 pt-0.5 text-end text-footnote text-label-secondary">
               {labels.allDay}
             </span>
@@ -351,7 +360,7 @@ function CalendarView({
           <div
             data-slot="calendar-view-hours"
             aria-hidden="true"
-            className="relative grid grid-cols-[3.5rem_repeat(7,minmax(0,1fr))]"
+            className="relative grid grid-cols-[4.5rem_repeat(7,minmax(0,1fr))]"
             style={{ height: 24 * HOUR }}
           >
             <div className="relative">
@@ -378,12 +387,12 @@ function CalendarView({
             ))}
             {todayIndex >= 0 && (
               <>
-                <span className="absolute end-[calc(100%-3.5rem+0.5rem)] z-10 -translate-y-1/2 bg-surface text-[13px] leading-4 text-red-ink tabular-nums" style={{ top: nowTop }}>
+                <span className="absolute end-[calc(100%-4rem)] z-10 -translate-y-1/2 bg-surface text-[13px] leading-4 text-red-ink tabular-nums" style={{ top: nowTop }}>
                   {time.format(now!)}
                 </span>
                 <span
                   data-slot="calendar-view-now"
-                  className="absolute end-0 start-14 z-10 h-px bg-red-700"
+                  className="absolute end-0 start-18 z-10 h-px bg-red-700"
                   style={{ top: nowTop }}
                 >
                   <span

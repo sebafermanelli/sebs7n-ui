@@ -118,7 +118,8 @@ describe("CalendarView · semana", () => {
     render(<CalendarView defaultDate={AHORA} defaultView="week" hour12={false} locale="es-AR" now={AHORA} />)
     const linea = document.querySelector("[data-slot=calendar-view-now]") as HTMLElement
     expect(linea).toHaveClass("bg-red-700")
-    expect(linea.style.top).toBe(`${(22 + 7 / 60) * 61}px`)
+    // En un pixel entero: una línea de 1 px entre dos pixeles se ve gris.
+    expect(linea.style.top).toBe(`${Math.round((22 + 7 / 60) * 61)}px`)
     expect(screen.getByText("22:07")).toHaveClass("text-red-ink")
   })
 

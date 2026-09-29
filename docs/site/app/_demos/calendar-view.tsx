@@ -29,7 +29,7 @@ export function Mes() {
   const eventos = useEventos()
   return (
     <div className="h-[640px] w-full overflow-hidden rounded-surface border border-separator">
-      <CalendarView events={eventos} hour12={false} />
+      <CalendarView events={eventos} hour12={false} locale="es-AR" />
     </div>
   )
 }
@@ -42,7 +42,7 @@ export function Semana() {
   const eventos = useEventos()
   return (
     <div className="h-[560px] w-full overflow-hidden rounded-surface border border-separator">
-      <CalendarView defaultView="week" events={eventos} hour12={false} />
+      <CalendarView defaultView="week" events={eventos} hour12={false} locale="es-AR" />
     </div>
   )
 }

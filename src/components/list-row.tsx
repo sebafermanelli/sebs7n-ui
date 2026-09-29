@@ -104,12 +104,12 @@ function ListRow({
       )}
       {title != null ? (
         <span className={cn("flex min-w-0 flex-1", inline ? "items-baseline gap-4" : "flex-col gap-0.5")}>
-          <span className={cn("truncate text-body text-label", inline && "min-w-0 flex-1")}>{title}</span>
+          <span className={cn("truncate text-body text-label", inline && "min-w-0 flex-1 basis-0")}>{title}</span>
           {description != null && (
             <span
               className={cn(
                 "truncate text-label-secondary inside-selection:text-on-selection",
-                inline ? "min-w-0 flex-1 text-body" : "text-callout"
+                inline ? "min-w-0 flex-1 basis-0 text-body" : "text-callout"
               )}
             >
               {description}
@@ -118,7 +118,9 @@ function ListRow({
         </span>
       ) : null}
       {children}
-      {trailing != null && <span className="shrink-0 text-body text-label tabular-nums">{trailing}</span>}
+      {/* Con `inline` el valor tiene un ancho mínimo: si no, cada fila parte distinto el espacio y la
+          columna del medio no queda alineada. */}
+      {trailing != null && <span className={cn("shrink-0 text-body text-label tabular-nums", inline && "min-w-20 text-end")}>{trailing}</span>}
       {dot != null && (
         <span
           data-slot="list-row-dot"

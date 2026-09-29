@@ -202,7 +202,7 @@ function Tree({
           aria-hidden="true"
           className="flex h-11 shrink-0 items-center text-callout whitespace-nowrap text-label-secondary shadow-[inset_0_-1px_0_var(--color-separator)]"
         >
-          <span className="min-w-40 flex-1 ps-[60px] pe-3">{nameHeader}</span>
+          <span className="min-w-40 flex-1 ps-16 pe-3">{nameHeader}</span>
           {columns.map((column, index) => (
             <span key={index} className={cn("shrink-0 px-3", column.numeric && "text-right")} style={colsWidth(column)}>
               {column.header}
@@ -245,7 +245,7 @@ function Tree({
                 "group/selectable relative flex h-[41px] shrink-0 cursor-default items-center rounded-item text-callout text-label-secondary outline-none select-none",
                 // El separador interior, desde el nombre; no va arriba de la primera, ni al lado de la
                 // fila con el puntero o la elegida, como en Drive.
-                "before:pointer-events-none before:absolute before:end-0 before:top-0 before:start-[calc(60px+var(--tree-depth)*20px)] before:h-px before:bg-separator",
+                "before:pointer-events-none before:absolute before:end-0 before:top-0 before:start-[calc(64px+var(--tree-depth)*20px)] before:h-px before:bg-separator",
                 "first:before:hidden hover:before:hidden data-[state=selected]:before:hidden [[role=treeitem]:hover+&]:before:hidden [[data-state=selected]+&]:before:hidden",
                 "not-data-[state=selected]:hover:bg-fill-1 data-[state=selected]:bg-selection-inactive",
                 "data-[state=selected]:group-focus-within/list:bg-selection data-[state=selected]:group-focus-within/list:text-on-selection",
