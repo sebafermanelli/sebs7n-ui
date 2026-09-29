@@ -85,13 +85,13 @@ export function EnTabla() {
 export function Contador() {
   return (
     <div className="flex items-center gap-3">
-      <Badge color="red" variant="count">
+      <Badge color="red" label="3 facturas vencidas" variant="count">
         3
       </Badge>
-      <Badge color="red" variant="count">
+      <Badge color="red" label="128 sin leer" variant="count">
         128
       </Badge>
-      <Badge color="brand" size="sm" variant="count">
+      <Badge color="brand" label="9 pendientes" size="sm" variant="count">
         9
       </Badge>
     </div>

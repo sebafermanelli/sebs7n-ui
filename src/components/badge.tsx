@@ -24,6 +24,12 @@ type BadgeProps = WithClassName<Omit<React.ComponentProps<"span">, "color">> &
   BadgeTone & {
     size?: "sm" | "md"
     dot?: boolean
+    /**
+     * El texto para el lector de pantalla, con contexto («3 sin leer»). El contenido visible queda
+     * escondido del lector, así no se anuncia dos veces. Sobre todo para `count`: un número solo no
+     * dice qué cuenta.
+     */
+    label?: string
     /** El elemento que se renderiza en lugar del `<span>`: `render={<a href="/planes" />}`. */
     render?: RenderElement
   }
@@ -37,7 +43,7 @@ type BadgeProps = WithClassName<Omit<React.ComponentProps<"span">, "color">> &
  * renderizada en el server, un listado— se llevaba Base UI al bundle de cliente por nada.
  * El DOM que sale es el mismo: `<span>` con `data-slot`, `data-variant` y `data-color`.
  */
-function Badge({ className, variant = "solid", color = "gray", size = "md", dot = false, render, children, ...props }: BadgeProps) {
+function Badge({ className, variant = "solid", color = "gray", size = "md", dot = false, label, render, children, ...props }: BadgeProps) {
   return renderElement(render, "span", {
     "data-slot": "badge",
     "data-variant": variant,
@@ -48,7 +54,14 @@ function Badge({ className, variant = "solid", color = "gray", size = "md", dot 
       <>
         {/* El punto va en la tinta (2.0): del color del badge, sobre su propio relleno, no se veía. */}
         {dot && <span data-slot="badge-dot" aria-hidden="true" className="size-1.5 rounded-full bg-current" />}
-        {children}
+        {label ? (
+          <>
+            <span aria-hidden="true">{children}</span>
+            <span className="sr-only">{label}</span>
+          </>
+        ) : (
+          children
+        )}
       </>
     ),
   })

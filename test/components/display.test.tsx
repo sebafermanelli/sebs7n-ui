@@ -119,6 +119,26 @@ describe("Badge", () => {
     expect(badge).not.toHaveClass("rounded-tag", "text-footnote")
   })
 
+  // Revisión de R4 (I3): un «3» suelto no dice de qué. `label` pone el texto para el lector y
+  // esconde el número visible de él, así se anuncia «3 sin leer» una sola vez.
+  it("label: el lector anuncia el texto con contexto y no el número suelto", () => {
+    render(
+      <Badge color="red" label="3 sin leer" variant="count">
+        3
+      </Badge>
+    )
+    const badge = document.querySelector("[data-slot=badge]")!
+    expect(badge).toHaveTextContent("3")
+    expect(screen.getByText("3")).toHaveAttribute("aria-hidden", "true")
+    expect(screen.getByText("3 sin leer")).toHaveClass("sr-only")
+  })
+
+  it("sin label, el badge es su texto tal cual", () => {
+    render(<Badge variant="count">5</Badge>)
+    expect(screen.getByText("5")).toHaveAttribute("data-slot", "badge")
+    expect(document.querySelector("[data-slot=badge] .sr-only")).toBeNull()
+  })
+
   it("el punto va en el color de la tinta, así se lee sobre el relleno", () => {
     render(
       <Badge color="green" dot>

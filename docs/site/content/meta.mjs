@@ -184,6 +184,7 @@ export const COMPONENTS = {
       "**Estado, no acción.** Si se puede hacer click, es un `Button` o un `Toggle`.",
       "Sólido desde 2.0. `variant=\"subtle\"` se acepta por compatibilidad y se ve igual.",
       "**`variant=\"count\"` es para un número**, el badge de app de iCloud: no leídos, pendientes. Un círculo de 20 con 11 px y sombra; el estado («Pagada») va en el badge rectangular.",
+      "`label` le da al lector el número con contexto: `<Badge variant=\"count\" label=\"3 sin leer\">3</Badge>` se anuncia «3 sin leer».",
       "El color tiene que significar algo consistente en toda la app: `green` pagado, `amber` pendiente, `red` vencido. No lo elijas por estética.",
       "`size=\"sm\"` (16) dentro de una fila de tabla o de un ítem de menú; `md` (20) suelto. Un badge nunca mide más que un botón `sm` (28).",
       "Adentro de un ítem seleccionado (fila de tabla, ítem de menú o del Sidebar) el badge conserva su relleno y su tinta, como las etiquetas del Finder; solo el `brand`, que es el color de la selección, se invierte.",
@@ -192,6 +193,7 @@ export const COMPONENTS = {
       Badge: {
         variant: "`solid` (el default) · `count` (círculo con un número, el badge de app de iCloud). `subtle` está **obsoleto**: se acepta y se ve igual que `solid`.",
         size: "`sm` 16px · `md` 20px de alto. El texto es 12 (`text-footnote`) en los dos; en `count`, 11.",
+        label: "El texto para el lector de pantalla, con contexto («3 sin leer»). El número visible queda escondido del lector para que no se anuncie dos veces. **Con `count` ponelo siempre**: un «3» suelto no dice qué cuenta.",
         color: "Nueve tonos, todos sólidos.",
         dot: "Agrega un punto a la izquierda del texto, en el color de la tinta.",
       },
