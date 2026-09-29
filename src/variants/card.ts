@@ -8,7 +8,9 @@ import { cn } from "../lib/utils.js"
 const cardVariantsBase = cva("group/card relative flex flex-col overflow-hidden rounded-surface text-callout text-label", {
   variants: {
     variant: {
-      default: "bg-surface shadow-widget",
+      // Sobre el wallpaper (W, adentro de `data-ambient`) el cuerpo es el material translúcido con
+      // blur, en la raíz: un solo blur por card. La franja de `CardHeader` va encima, sin blur propio.
+      default: "bg-surface shadow-widget in-data-ambient:material-translucent-body",
       // Hundida y plana: la que va ADENTRO de otra superficie (la card inline de Mail, fill 1).
       subtle: "bg-fill-1",
     },

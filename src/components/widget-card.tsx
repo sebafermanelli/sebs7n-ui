@@ -10,8 +10,8 @@ import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader,
  * (`CardRow`, en una o dos columnas) y la fila del «…» abajo. Son las partes de `Card`: cuando hace
  * falta otra forma, se arma con ellas.
  *
- * Sobre el wallpaper (`AppShell ambient`) la franja pasa al material translúcido y el cuerpo al negro
- * al 75 % con blur en oscuro (blanco opaco en claro), como Home. En cualquier otro lado es opaca.
+ * Sobre el wallpaper (`AppShell ambient`) es la `Card` translúcida: el cuerpo con blur
+ * (`material-translucent-body`) y la franja más clara encima, como Home. En cualquier otro lado es opaca.
  */
 type WidgetCardProps = Omit<React.ComponentProps<"div">, "title"> & {
   /** El título (21/600). Es el nombre de la región. */
@@ -33,16 +33,14 @@ type WidgetCardProps = Omit<React.ComponentProps<"div">, "title"> & {
 function WidgetCard({ className, title, subtitle, icon, action, more, filter, columns, children, ...props }: WidgetCardProps) {
   const id = React.useId()
   return (
-    <Card role="region" aria-labelledby={id} className={cn("in-data-ambient:bg-transparent", className)} {...props}>
-      <CardHeader icon={icon} className="in-data-ambient:material-translucent">
+    <Card role="region" aria-labelledby={id} className={className} {...props}>
+      <CardHeader icon={icon}>
         <CardTitle id={id}>{title}</CardTitle>
         {subtitle != null && <CardDescription>{subtitle}</CardDescription>}
         {action != null && <CardAction>{action}</CardAction>}
       </CardHeader>
-      <div
-        data-slot="widget-card-body"
-        className="flex flex-1 flex-col bg-surface dark:in-data-ambient:bg-black/75 dark:in-data-ambient:backdrop-blur-[15px]"
-      >
+      {/* Sin fondo: el cuerpo lo pinta la Card (opaco, o translúcido sobre el wallpaper). */}
+      <div data-slot="widget-card-body" className="flex flex-1 flex-col">
         <CardContent columns={columns} className="flex-1">
           {children}
         </CardContent>

@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest"
 
 import { Badge } from "../../src/components/badge"
 import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardRow, CardTitle } from "../../src/components/card"
+import { Stat } from "../../src/components/stat"
 import { Table, TableBody, TableCell, TableGroupHeader, TableHead, TableHeader, TableRow } from "../../src/components/table"
 import { Toggle } from "../../src/components/toggle"
 import { ToggleGroup, ToggleGroupItem } from "../../src/components/toggle-group"
@@ -230,6 +231,28 @@ describe("Card", () => {
     expect(card.querySelector("[data-slot=card-header]")!.className).toContain("group-data-[variant=subtle]/card:bg-transparent")
   })
 
+  // W: sobre el wallpaper el cuerpo es el material con blur (en la raíz, un solo blur por card) y la
+  // franja es una capa encima, sin blur propio.
+  it("sobre el wallpaper: cuerpo translúcido en la raíz y franja encima, sin blur propio", () => {
+    render(
+      <Card>
+        <CardHeader>
+          <CardTitle>Ingresos</CardTitle>
+        </CardHeader>
+        <CardContent>$48.200</CardContent>
+      </Card>
+    )
+    const card = screen.getByText("Ingresos").closest("[data-slot=card]")!
+    expect(card).toHaveClass("bg-surface", "in-data-ambient:material-translucent-body")
+    const header = card.querySelector("[data-slot=card-header]")!
+    expect(header).toHaveClass("bg-surface-bar", "in-data-ambient:group-data-[variant=default]/card:bg-translucent-strip")
+    expect(header.className).not.toMatch(/material-translucent|backdrop-blur/)
+  })
+
+  it("subtle sobre el wallpaper sigue hundida: sin material", () => {
+    expect(cardVariants({ variant: "subtle" })).not.toContain("material-translucent")
+  })
+
   it("CardHeader con ícono de app: caja de 40 a la izquierda, título y subtítulo en la segunda columna", () => {
     render(
       <Card>
@@ -408,5 +431,15 @@ describe("Table", () => {
   it("density compact", () => {
     render(<Table density="compact"><tbody /></Table>)
     expect(screen.getByRole("table").parentElement).toHaveAttribute("data-density", "compact")
+  })
+})
+
+describe("Stat", () => {
+  // Es una guarda: pasa desde antes. Sobre el wallpaper la superficie la pone la Card que lo contiene
+  // (y ahí el verde y el rojo llegan a 4,5:1, `test/contrast.test.ts`).
+  it("no trae superficie propia", () => {
+    render(<Stat delta="+12,4 %" label="Facturado" trend="up" value="$ 1.284.000" />)
+    const stat = screen.getByText("Facturado").closest("[data-slot=stat]")!
+    expect(stat.className).not.toMatch(/(^|\s)\S*(bg-|material-|backdrop-)/)
   })
 })

@@ -16,6 +16,8 @@ type StatProps = React.ComponentProps<"div"> & {
 const trendClassName = { up: "text-green-900", down: "text-red-900", neutral: "text-label-secondary" } as const
 
 // KPI plano: sin card. Para una fila de KPIs, componé varios dentro de un Card o una grilla.
+// Sobre el wallpaper (W) va siempre adentro de una Card: la translucidez la pone ella, y el verde y
+// el rojo de la variación solo llegan a 4,5:1 sobre ese cuerpo (`test/contrast.test.ts`).
 function Stat({ className, label, value, delta, trend = "neutral", hint, ...props }: StatProps) {
   return (
     <div data-slot="stat" data-trend={delta != null ? trend : undefined} className={cn("flex min-w-0 flex-col gap-1", className)} {...props}>

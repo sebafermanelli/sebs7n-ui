@@ -19,18 +19,20 @@ describe("WidgetCard", () => {
     expect(screen.getByRole("button", { name: "Nueva" }).closest("[data-slot=card-action]")).not.toBeNull()
   })
 
-  it("sobre el wallpaper la franja es translúcida y el cuerpo va aparte; si no, opacos", () => {
+  it("sobre el wallpaper es la Card translúcida: blur en la raíz, franja encima, el cuerpo interno no pinta", () => {
     render(
       <WidgetCard title="Facturas">
         <CardRow title="Acme S.A." />
       </WidgetCard>
     )
     const card = screen.getByRole("region")
-    expect(card.className).toContain("in-data-ambient:bg-transparent")
-    expect(card.querySelector("[data-slot=card-header]")!.className).toContain("in-data-ambient:material-translucent")
+    expect(card).toHaveClass("bg-surface", "in-data-ambient:material-translucent-body")
+    expect(card.className).not.toContain("in-data-ambient:bg-transparent")
+    const header = card.querySelector("[data-slot=card-header]")!
+    expect(header).toHaveClass("in-data-ambient:group-data-[variant=default]/card:bg-translucent-strip")
+    expect(header.className).not.toContain("material-translucent")
     const cuerpo = card.querySelector("[data-slot=widget-card-body]")!
-    expect(cuerpo).toHaveClass("bg-surface")
-    expect(cuerpo.className).toContain("dark:in-data-ambient:bg-black/75")
+    expect(cuerpo.className).not.toMatch(/(^|\s)\S*(bg-|backdrop-)/)
   })
 
   it("columns={2} reparte las filas y more pone el «…» abajo", () => {
