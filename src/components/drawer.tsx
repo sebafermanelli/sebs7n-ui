@@ -7,7 +7,7 @@ import { XIcon } from "lucide-react"
 import { useAvisoDeNombre } from "../internal/dialog-name-warning.js"
 import { useLabels } from "../lib/labels.js"
 import { cn, type WithClassName } from "../lib/utils.js"
-import { backdropClassName, overlayCloseClassName } from "../variants/overlay.js"
+import { backdropClassName, floatingSheetGapClassName, overlayCloseClassName } from "../variants/overlay.js"
 import { Button } from "./button.js"
 
 /**
@@ -182,13 +182,15 @@ function DrawerContent({ className, children, showCloseButton = true, showHandle
           data-slot="drawer-content"
           ref={ref}
           className={cn(
-            "group/drawer absolute flex material-modal text-body text-gray-1000 shadow-modal outline-none",
-            // Redondeado solo del lado de adentro. Contra el borde de la
-            // pantalla no hay radio: ahí el radio deja ver una franja de fondo.
-            "data-[swipe-direction=down]:inset-x-0 data-[swipe-direction=down]:bottom-0 data-[swipe-direction=down]:max-h-[calc(100%-3rem)] data-[swipe-direction=down]:flex-col data-[swipe-direction=down]:rounded-t-panel",
-            "data-[swipe-direction=up]:inset-x-0 data-[swipe-direction=up]:top-0 data-[swipe-direction=up]:max-h-[calc(100%-3rem)] data-[swipe-direction=up]:flex-col data-[swipe-direction=up]:rounded-b-panel",
-            "data-[swipe-direction=left]:inset-y-0 data-[swipe-direction=left]:left-0 data-[swipe-direction=left]:w-3/4 data-[swipe-direction=left]:flex-row data-[swipe-direction=left]:rounded-r-panel data-[swipe-direction=left]:sm:max-w-sm",
-            "data-[swipe-direction=right]:inset-y-0 data-[swipe-direction=right]:right-0 data-[swipe-direction=right]:w-3/4 data-[swipe-direction=right]:flex-row data-[swipe-direction=right]:rounded-l-panel data-[swipe-direction=right]:sm:max-w-sm",
+            "group/drawer absolute flex rounded-panel material-modal text-body text-gray-1000 shadow-modal outline-none",
+            // Flotante (2.0), como las hojas de iOS 26: 8 px (o el área segura) de cada borde que
+            // toca y las cuatro esquinas redondeadas. Hasta 1.x iba pegada y con radio solo del
+            // lado de adentro. El margen se mide desde el viewport, que ocupa la pantalla entera.
+            floatingSheetGapClassName,
+            "data-[swipe-direction=down]:bottom-(--sheet-gap-b) data-[swipe-direction=down]:left-(--sheet-gap-l) data-[swipe-direction=down]:right-(--sheet-gap-r) data-[swipe-direction=down]:max-h-[calc(100%-3rem)] data-[swipe-direction=down]:flex-col",
+            "data-[swipe-direction=up]:top-(--sheet-gap-t) data-[swipe-direction=up]:left-(--sheet-gap-l) data-[swipe-direction=up]:right-(--sheet-gap-r) data-[swipe-direction=up]:max-h-[calc(100%-3rem)] data-[swipe-direction=up]:flex-col",
+            "data-[swipe-direction=left]:top-(--sheet-gap-t) data-[swipe-direction=left]:bottom-(--sheet-gap-b) data-[swipe-direction=left]:left-(--sheet-gap-l) data-[swipe-direction=left]:w-3/4 data-[swipe-direction=left]:flex-row data-[swipe-direction=left]:sm:max-w-sm",
+            "data-[swipe-direction=right]:top-(--sheet-gap-t) data-[swipe-direction=right]:bottom-(--sheet-gap-b) data-[swipe-direction=right]:right-(--sheet-gap-r) data-[swipe-direction=right]:w-3/4 data-[swipe-direction=right]:flex-row data-[swipe-direction=right]:sm:max-w-sm",
             // `transform` a mano y no `translate-*` de Tailwind: mientras se
             // arrastra, Base UI escribe un `transform` inline que tiene que
             // pisar a este. Si el movimiento viviera en la propiedad
@@ -199,11 +201,12 @@ function DrawerContent({ className, children, showCloseButton = true, showHandle
             "data-[swipe-direction=up]:[transform:translateY(calc(var(--drawer-snap-point-offset)_+_var(--drawer-swipe-movement-y)))]",
             "data-[swipe-direction=left]:[transform:translateX(var(--drawer-swipe-movement-x))]",
             "data-[swipe-direction=right]:[transform:translateX(var(--drawer-swipe-movement-x))]",
-            // Cerrado: afuera de la pantalla, del lado por el que entra.
-            "data-[swipe-direction=down]:data-starting-style:[transform:translateY(100%)] data-[swipe-direction=down]:data-ending-style:[transform:translateY(100%)]",
-            "data-[swipe-direction=up]:data-starting-style:[transform:translateY(-100%)] data-[swipe-direction=up]:data-ending-style:[transform:translateY(-100%)]",
-            "data-[swipe-direction=left]:data-starting-style:[transform:translateX(-100%)] data-[swipe-direction=left]:data-ending-style:[transform:translateX(-100%)]",
-            "data-[swipe-direction=right]:data-starting-style:[transform:translateX(100%)] data-[swipe-direction=right]:data-ending-style:[transform:translateX(100%)]",
+            // Cerrado: afuera de la pantalla, del lado por el que entra. Su tamaño más el margen:
+            // con `100%` solo, la hoja flotante quedaba con 8 px asomados.
+            "data-[swipe-direction=down]:data-starting-style:[transform:translateY(calc(100%_+_var(--sheet-gap-b)))] data-[swipe-direction=down]:data-ending-style:[transform:translateY(calc(100%_+_var(--sheet-gap-b)))]",
+            "data-[swipe-direction=up]:data-starting-style:[transform:translateY(calc(-100%_-_var(--sheet-gap-t)))] data-[swipe-direction=up]:data-ending-style:[transform:translateY(calc(-100%_-_var(--sheet-gap-t)))]",
+            "data-[swipe-direction=left]:data-starting-style:[transform:translateX(calc(-100%_-_var(--sheet-gap-l)))] data-[swipe-direction=left]:data-ending-style:[transform:translateX(calc(-100%_-_var(--sheet-gap-l)))]",
+            "data-[swipe-direction=right]:data-starting-style:[transform:translateX(calc(100%_+_var(--sheet-gap-r)))] data-[swipe-direction=right]:data-ending-style:[transform:translateX(calc(100%_+_var(--sheet-gap-r)))]",
             // `--drawer-swipe-strength` (0,1 a 1) escala la duración según la
             // velocidad con la que se soltó: un envión fuerte cierra rápido.
             // Con `prefers-reduced-motion` no hay transición: aparece y listo.

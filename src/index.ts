@@ -75,6 +75,7 @@ export {
   alertPopupClassName,
   backdropClassName,
   floatingPopupClassName,
+  floatingSheetGapClassName,
   modalFooterClassName,
   modalPopupClassName,
   overlayCloseClassName,

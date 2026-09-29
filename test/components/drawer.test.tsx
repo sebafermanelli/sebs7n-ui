@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event"
 import { describe, expect, it } from "vitest"
 
 import { Button } from "../../src/components/button"
+import { floatingSheetGapClassName, overlayCloseClassName } from "../../src/variants/overlay"
 import {
   Drawer,
   DrawerBody,
@@ -110,19 +111,41 @@ describe("Drawer", () => {
     }
   })
 
-  it("el lado sale de swipeDirection, y contra el borde de la pantalla no hay radio", async () => {
+  it("el lado sale de swipeDirection", async () => {
     const { unmount } = render(<DrawerDePrueba />)
     await userEvent.click(screen.getByRole("button", { name: "Filtros" }))
     // Por defecto es la hoja de abajo: se descarta hacia abajo.
     expect(await screen.findByRole("dialog")).toHaveAttribute("data-swipe-direction", "down")
-    // Redondeada arriba (borde de adentro) y recta abajo (borde de la pantalla).
-    expect(popup().className).toContain("data-[swipe-direction=down]:rounded-t-panel")
-    expect(popup().className).not.toMatch(/swipe-direction=down\]:rounded-b/)
     unmount()
 
     render(<DrawerDePrueba swipeDirection="right" />)
     await userEvent.click(screen.getByRole("button", { name: "Filtros" }))
     expect(await screen.findByRole("dialog")).toHaveAttribute("data-swipe-direction", "right")
+  })
+
+  // 2.0: flota como las hojas de iOS 26. 8 px de margen (o el área segura) en cada borde que
+  // toca, las cuatro esquinas redondeadas, y cerrada sale entera: el `transform` de afuera suma el
+  // margen. El del arrastre sigue siendo el de Base UI (snap point + movimiento) sin tocar.
+  it.each([
+    ["down", ["bottom-(--sheet-gap-b)", "left-(--sheet-gap-l)", "right-(--sheet-gap-r)"], "[transform:translateY(calc(100%_+_var(--sheet-gap-b)))]"],
+    ["up", ["top-(--sheet-gap-t)", "left-(--sheet-gap-l)", "right-(--sheet-gap-r)"], "[transform:translateY(calc(-100%_-_var(--sheet-gap-t)))]"],
+    ["left", ["top-(--sheet-gap-t)", "bottom-(--sheet-gap-b)", "left-(--sheet-gap-l)"], "[transform:translateX(calc(-100%_-_var(--sheet-gap-l)))]"],
+    ["right", ["top-(--sheet-gap-t)", "bottom-(--sheet-gap-b)", "right-(--sheet-gap-r)"], "[transform:translateX(calc(100%_+_var(--sheet-gap-r)))]"],
+  ] as const)("flota hacia %s: margen, las cuatro esquinas y sale entera", async (dir, bordes, fuera) => {
+    render(<DrawerDePrueba swipeDirection={dir} />)
+    await userEvent.click(screen.getByRole("button", { name: "Filtros" }))
+    const hoja = await screen.findByRole("dialog")
+    expect(hoja).toHaveClass("rounded-panel", "shadow-modal", ...floatingSheetGapClassName.split(" "))
+    const d = `data-[swipe-direction=${dir}]`
+    for (const borde of bordes) expect(hoja).toHaveClass(`${d}:${borde}`)
+    expect(hoja).toHaveClass(`${d}:data-starting-style:${fuera}`, `${d}:data-ending-style:${fuera}`)
+    // El gesto sigue igual: el snap point y el movimiento del arrastre los escribe Base UI.
+    expect(hoja.className).toContain("--drawer-swipe-movement-")
+    expect(hoja.className).not.toMatch(/rounded-(t|b|l|r)-|inset-(x|y)-0|(top|bottom|left|right)-0(\s|$)|translate(X|Y)\((-)?100%\)/)
+    // La X sigue siendo hija de la hoja, en la línea del título.
+    const x = screen.getByRole("button", { name: "Cerrar" })
+    expect(x.parentElement).toBe(hoja)
+    expect(x).toHaveClass(...overlayCloseClassName.split(" "))
   })
 
   it("el handle se ve pero no se anuncia ni recibe foco: no es el control de cierre", async () => {
