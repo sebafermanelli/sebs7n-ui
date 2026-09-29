@@ -67,3 +67,16 @@ export function WithProgress() {
 export function WholeWindow() {
   return <DropZone accept=".pdf" aria-label="Factura para convertir" className="w-full max-w-md" scope="window" />
 }
+
+/** Los primeros bytes de un PDF de verdad: `%PDF-`. */
+async function isPdf(file: File) {
+  return (await file.slice(0, 5).text()) === "%PDF-" ? undefined : "no es un PDF: le cambiaron la extensión"
+}
+
+/**
+ * Validación propia
+ * `validate` corre después de tipo y tamaño; puede ser asíncrona. Acá lee los primeros bytes: una imagen renombrada a `.pdf` queda afuera con su error en línea.
+ */
+export function Validate() {
+  return <DropZone accept=".pdf" aria-label="Facturas en PDF" className="w-full max-w-md" multiple validate={isPdf} />
+}

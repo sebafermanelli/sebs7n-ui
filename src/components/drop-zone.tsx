@@ -67,6 +67,12 @@ type DropZoneProps = Omit<React.ComponentProps<"div">, "children" | "onChange"> 
    * las unidades de `Intl` en el idioma de `labels.locale`: «1,3 MB».
    */
   formatSize?: (bytes: number) => string
+  /**
+   * Una validación propia por archivo, después de tipo y tamaño y antes del cupo de `maxFiles`: el
+   * texto que devuelve es el error de ese archivo («factura.pdf no es un PDF»), en línea como los
+   * otros, y el archivo no entra ni se anuncia. Puede ser asíncrona, para leer los bytes («%PDF-»).
+   */
+  validate?: (file: File) => string | undefined | Promise<string | undefined>
   /** Un error de la app para un archivo («No se pudo subir»), en rojo en su fila. */
   fileError?: (file: File) => React.ReactNode
   /** `"window"`: mientras se arrastra un archivo, toda la ventana es la zona. */
@@ -138,6 +144,7 @@ function DropZone({
   fileProgress,
   fileError,
   formatSize,
+  validate,
   scope = "area",
   disabled = false,
   children,
@@ -166,32 +173,57 @@ function DropZone({
     onFilesChange?.(next)
   }
 
-  const add = (list: FileList | File[] | null | undefined) => {
-    const incoming = Array.from(list ?? [])
-    if (!incoming.length) return
-    const problems: string[] = []
-    const valid: File[] = []
-    for (const file of incoming) {
-      if (!accepts(file, accept)) problems.push(`${file.name} ${labels.invalidType}`)
-      else if (maxSize !== undefined && file.size > maxSize) problems.push(`${file.name} ${labels.tooLarge} ${sizeText(maxSize)}`)
-      else if (!files.some((existing) => sameFile(existing, file)) && !valid.some((other) => sameFile(other, file))) valid.push(file)
-    }
+  // La lista de ahora, para lo que termina después de un `await` (un `validate` asíncrono): la del render
+  // que empezó puede ser vieja si mientras tanto se agregó o se quitó otro.
+  const latestFiles = React.useRef(files)
+  latestFiles.current = files
+
+  /** El cupo (`maxFiles`, o uno solo), los errores, el anuncio y el aviso: lo que ya pasó las validaciones. */
+  const place = (valid: File[], problems: string[]) => {
+    const current = latestFiles.current
     let next: File[]
     if (multiple) {
-      const room = maxFiles === undefined ? valid.length : Math.max(0, maxFiles - files.length)
+      const room = maxFiles === undefined ? valid.length : Math.max(0, maxFiles - current.length)
       for (const file of valid.slice(room)) problems.push(`${file.name} ${labels.tooMany} ${maxFiles}`)
-      next = [...files, ...valid.slice(0, room)]
+      next = [...current, ...valid.slice(0, room)]
     } else {
       // Uno solo: entra el primero y los demás se avisan, como con `maxFiles`.
       for (const file of valid.slice(1)) problems.push(`${file.name} ${labels.tooMany} 1`)
-      next = valid.length ? [valid[0]!] : files
+      next = valid.length ? [valid[0]!] : current
     }
     setErrors(problems)
-    const added = next.filter((file) => !files.includes(file))
+    const added = next.filter((file) => !current.includes(file))
     if (added.length) {
       setStatus(`${labels.added} ${added.map((file) => file.name).join(", ")}`)
       commit(next)
     }
+  }
+
+  const add = (list: FileList | File[] | null | undefined) => {
+    const incoming = Array.from(list ?? [])
+    if (!incoming.length) return
+    const problems: string[] = []
+    const candidates: File[] = []
+    const current = latestFiles.current
+    for (const file of incoming) {
+      if (!accepts(file, accept)) problems.push(`${file.name} ${labels.invalidType}`)
+      else if (maxSize !== undefined && file.size > maxSize) problems.push(`${file.name} ${labels.tooLarge} ${sizeText(maxSize)}`)
+      else if (!current.some((existing) => sameFile(existing, file)) && !candidates.some((other) => sameFile(other, file))) candidates.push(file)
+    }
+    // `validate` corre antes del cupo: un archivo que no pasa no le quita el lugar a uno que sí.
+    const results = validate ? candidates.map((file) => validate(file)) : []
+    const finish = (messages: (string | undefined)[]) => {
+      const valid = candidates.filter((file, index) => {
+        const message = messages[index]
+        if (message) problems.push(`${file.name} ${message}`)
+        return !message
+      })
+      place(valid, problems)
+    }
+    // Sincrónico si nadie devolvió una promesa: sin `validate` (o con uno sincrónico) todo pasa en el
+    // mismo evento, como en 2.0.
+    if (results.some((result) => result instanceof Promise)) void Promise.all(results).then(finish)
+    else finish(results as (string | undefined)[])
   }
 
   const remove = (file: File) => {

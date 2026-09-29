@@ -1043,6 +1043,7 @@ export const COMPONENTS = {
     usage: [
       "**No sube nada:** la red es de la app. Pasale el progreso de cada archivo con `fileProgress` (de 0 a 100, `null` indeterminado) y un error de la subida con `fileError`.",
       "`accept`, `maxSize` (bytes) y `maxFiles` validan al agregar; lo que no entra queda afuera con su error en línea, no en un toast.",
+      "`validate` suma una validación propia por archivo (leer los bytes `%PDF-`, pedir un mínimo): el texto que devuelve es el error en línea de ese archivo y el archivo no entra. Puede ser asíncrona; corre antes del cupo de `maxFiles`.",
       "Los tamaños van en base 1024 (`maxSize={20 * 1024 * 1024}` dice «20 MB»); `formatSize` los escribe de otra forma, en la lista y en el error.",
       "Con `name`, los archivos viajan con el `<form>` en un `<input type=\"file\">`, también los que llegaron arrastrando: sirve igual para una Server Action. Necesita `DataTransfer` (todos los navegadores actuales): sin él, el input queda como lo dejó el diálogo.",
       "`scope=\"window\"`: mientras se arrastra un archivo, toda la ventana es la zona (una app de una sola tarea, como un conversor).",

@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, within } from "@testing-library/react"
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { renderToString } from "react-dom/server"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
@@ -97,6 +97,43 @@ describe("DropZone", () => {
     await user.upload(input(), [pdf("a.pdf", 96_000), pdf("b.pdf", 200_000)])
     expect(rows()[0]).toHaveTextContent("96 KB")
     expect(screen.getByRole("alert")).toHaveTextContent("b.pdf pesa más de 100 KB")
+  })
+
+  it("validate: el texto devuelto es el error en línea de ese archivo, que no entra ni se anuncia", async () => {
+    const user = userEvent.setup()
+    const onFilesChange = vi.fn()
+    const validate = (file: File) => (file.name.startsWith("falso") ? "no es un PDF de verdad" : undefined)
+    render(<DropZone accept=".pdf" aria-label="Facturas" multiple onFilesChange={onFilesChange} validate={validate} />)
+    const ok = pdf("factura-0012.pdf")
+    await user.upload(input(), [ok, pdf("falso.pdf")])
+    expect(onFilesChange).toHaveBeenLastCalledWith([ok])
+    expect(screen.getByRole("alert")).toHaveTextContent("falso.pdf no es un PDF de verdad")
+    expect(status()).toHaveTextContent("Archivos agregados: factura-0012.pdf")
+    expect(status()).not.toHaveTextContent("falso.pdf")
+    expect(area()).toHaveAttribute("aria-invalid", "true")
+  })
+
+  it("validate asíncrono (leer los bytes): espera y recién ahí agrega", async () => {
+    const user = userEvent.setup()
+    const onFilesChange = vi.fn()
+    const validate = async (file: File) => ((await file.slice(0, 5).text()) === "%PDF-" ? undefined : "no empieza con %PDF-")
+    render(<DropZone accept=".pdf" aria-label="Factura" onFilesChange={onFilesChange} validate={validate} />)
+    await user.upload(input(), new File(["hola"], "roto.pdf", { type: "application/pdf" }))
+    expect(await screen.findByRole("alert")).toHaveTextContent("roto.pdf no empieza con %PDF-")
+    expect(onFilesChange).not.toHaveBeenCalled()
+    const bueno = new File(["%PDF-1.7"], "bueno.pdf", { type: "application/pdf" })
+    await user.upload(input(), bueno)
+    await waitFor(() => expect(onFilesChange).toHaveBeenLastCalledWith([bueno]))
+    expect(screen.queryByRole("alert")).toBeNull()
+  })
+
+  it("un archivo rechazado por validate no ocupa lugar de maxFiles", async () => {
+    const user = userEvent.setup()
+    const validate = (file: File) => (file.name === "falso.pdf" ? "no es un PDF de verdad" : undefined)
+    render(<DropZone aria-label="Facturas" maxFiles={1} multiple validate={validate} />)
+    await user.upload(input(), [pdf("falso.pdf"), pdf("bueno.pdf")])
+    expect(rows().map((row) => row.querySelector(".text-body")?.textContent)).toEqual(["bueno.pdf"])
+    expect(screen.getByRole("alert")).not.toHaveTextContent("no entra")
   })
 
   it("sin multiple, uno nuevo reemplaza al anterior", async () => {
