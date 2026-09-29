@@ -83,7 +83,7 @@ export function Validate() {
 
 /**
  * Compacta
- * `compact`: con un archivo elegido, el recuadro grande pasa a una fila «Elegir otro» y el protagonista es el archivo. El botón de abajo abre el selector con el `ref` (`open()`).
+ * `compact`: con un archivo elegido, el recuadro grande pasa a una fila «Elegir otro» y el protagonista es el archivo. El botón de abajo abre el selector con `actionsRef` (`open()`).
  */
 export function Compact() {
   const zone = useRef<DropZoneHandle>(null)
