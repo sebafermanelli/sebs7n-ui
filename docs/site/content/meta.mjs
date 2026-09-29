@@ -2298,6 +2298,7 @@ export const COMPONENTS = {
     detallado: true,
     description: "La vista de íconos de iCloud Drive: miniaturas con el filo de 1 px, nombre y tipo abajo, la elegida con el nombre en el acento y flechas en dos dimensiones.",
     keyboard: [
+      ["a–z", "Salta al siguiente cuyo nombre empieza con lo tipeado (medio segundo entre teclas); la misma letra repetida recorre los que empiezan con ella."],
       ["Tab", "Entra a la grilla en el elegido (o en el primero) y sale de una: la grilla es una sola parada."],
       ["← →", "El ítem anterior o siguiente. La selección sigue al foco."],
       ["↑ ↓", "El ítem de la fila de arriba o de abajo, el más cercano en horizontal (según el layout real)."],
@@ -2314,6 +2315,7 @@ export const COMPONENTS = {
       "El nombre elegido va en el acento con el foco adentro y en gris sin foco, con el texto en el color de contraste.",
     ],
     usage: [
+      "**Las acciones del ítem, también por teclado**: el «…» es del puntero (queda fuera del lector). Poné las mismas acciones en una `Toolbar` arriba de la grilla que actúe sobre el elegido, como la barra de Drive, además del `ContextMenu`.",
       "**Para archivos que se reconocen por cómo se ven**: comprobantes escaneados, logos, fotos de recibos. Si se comparan por tamaño o fecha, es una `Table` (la vista de lista de Drive).",
       "Miniaturas con `<img alt=\"\">`: se ajustan sin recortar (como Photos) con el filo de 1 px y radio 4. Sin miniatura, el ícono de archivo o de carpeta (`folder`).",
       "`kind` es lo que va abajo en gris: el tipo, el tamaño o cuántos ítems tiene una carpeta. Uno solo, corto.",

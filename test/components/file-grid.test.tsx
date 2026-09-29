@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react"
+import { fireEvent, render, screen, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { describe, expect, it, vi } from "vitest"
 
@@ -105,5 +105,41 @@ describe("FileGrid · onKeyDown de la app", () => {
     expect(screen.getByRole("option", { name: /Beta/ })).toHaveFocus()
     await userEvent.keyboard("{End}")
     expect(screen.getByRole("option", { name: /Beta/ })).toHaveFocus()
+  })
+})
+
+describe("FileGrid · revisión de R5b", () => {
+  const ARCHIVOS: FileGridItem[] = [
+    { id: "a", name: "Acme.pdf" },
+    { id: "b", name: "Balance.xlsx" },
+    { id: "c", name: "Arcor.pdf" },
+  ]
+
+  it("en RTL → va al anterior y ← al siguiente", async () => {
+    render(
+      <div dir="rtl">
+        <FileGrid aria-label="Archivos" items={ARCHIVOS} />
+      </div>
+    )
+    screen.getByRole("option", { name: /Balance/ }).focus()
+    await userEvent.keyboard("{ArrowRight}")
+    expect(screen.getByRole("option", { name: /Acme/ })).toHaveFocus()
+    await userEvent.keyboard("{ArrowLeft}{ArrowLeft}")
+    expect(screen.getByRole("option", { name: /Arcor/ })).toHaveFocus()
+  })
+
+  it("type-ahead: salta al siguiente cuyo nombre empieza con lo tipeado", async () => {
+    render(<FileGrid aria-label="Archivos" items={ARCHIVOS} />)
+    screen.getByRole("option", { name: /Acme/ }).focus()
+    await userEvent.keyboard("a")
+    expect(screen.getByRole("option", { name: /Arcor/ })).toHaveFocus()
+    await userEvent.keyboard("b")
+    expect(screen.getByRole("option", { name: /Arcor/ })).toHaveFocus()
+  })
+
+  it("un click en el «…» no le deja el foco a lo que el lector no ve", () => {
+    render(<FileGrid actions={() => <button type="button">Más</button>} aria-label="Archivos" items={ARCHIVOS} />)
+    const envoltura = document.querySelector("[data-slot=file-grid-actions]")!
+    expect(fireEvent.mouseDown(envoltura)).toBe(false)
   })
 })

@@ -15,8 +15,8 @@ import { cn } from "../lib/utils.js"
  * Drive web no se midió en esta vista (cambiarla escribe la preferencia de la cuenta): las medidas
  * salen de la lista de Drive y de la grilla de Photos (§2.6).
  *
- * Es un `listbox`: flechas en dos dimensiones (↑↓ saltan una fila del layout real), Home/End, Enter
- * abre, y la selección sigue al foco.
+ * Es un `listbox`: flechas en dos dimensiones (↑↓ saltan una fila del layout real; en RTL ← y →
+ * se invierten), Home/End, type-ahead, Enter abre, y la selección sigue al foco.
  */
 type FileGridItem = {
   id: string
@@ -29,6 +29,8 @@ type FileGridItem = {
   folder?: boolean
   disabled?: boolean
 }
+
+const normalize = (text: string) => text.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase()
 
 type FileGridPropsBase = Omit<React.ComponentProps<"div">, "children" | "defaultValue" | "onSelect"> & {
   items: FileGridItem[]
@@ -61,6 +63,7 @@ function FileGrid({
   const selected = selectedProp !== undefined ? selectedProp : own
   const [focused, setFocused] = React.useState<string | null>(null)
   const refs = React.useRef(new Map<string, HTMLDivElement>())
+  const typed = React.useRef({ text: "", at: 0 })
 
   const tabStop =
     (focused != null && items.some((item) => item.id === focused) && focused) ||
@@ -104,12 +107,14 @@ function FileGrid({
     const item = items[index]
     if (!item) return
     let next: number | undefined
+    // En RTL la grilla corre de derecha a izquierda: → va al anterior.
+    const forward = event.currentTarget.closest("[dir]")?.getAttribute("dir") === "rtl" ? -1 : 1
     switch (event.key) {
       case "ArrowRight":
-        next = index + 1
+        next = index + forward
         break
       case "ArrowLeft":
-        next = index - 1
+        next = index - forward
         break
       case "ArrowDown":
         next = rowStep(index, 1)
@@ -129,8 +134,18 @@ function FileGrid({
       case " ":
         select(item)
         break
-      default:
-        return
+      default: {
+        if (event.key.length !== 1 || event.ctrlKey || event.metaKey || event.altKey) return
+        // Type-ahead, como en el Finder: lo tipeado en el último medio segundo, desde el que sigue; la
+        // misma letra repetida recorre los que empiezan con ella.
+        const now = Date.now()
+        let text = (now - typed.current.at > 500 ? "" : typed.current.text) + normalize(event.key)
+        typed.current = { text, at: now }
+        if (text.length > 1 && [...text].every((char) => char === text[0])) text = text[0]!
+        const ordered = [...items.slice(index + (text.length === 1 ? 1 : 0)), ...items.slice(0, index + 1)]
+        const found = ordered.find((candidate) => normalize(candidate.name).startsWith(text))
+        if (found) next = items.indexOf(found)
+      }
     }
     event.preventDefault()
     if (next !== undefined) moveTo(items[next])
@@ -186,6 +201,8 @@ function FileGrid({
                     data-slot="file-grid-actions"
                     aria-hidden="true"
                     onDoubleClick={(event) => event.stopPropagation()}
+                    // Está fuera de lo que lee el lector (`aria-hidden`): un click no le deja el foco.
+                    onMouseDown={(event) => event.preventDefault()}
                     className="absolute -end-1 -top-1 opacity-0 transition-opacity group-hover/selectable:opacity-100 group-data-[state=selected]/selectable:opacity-100 motion-reduce:transition-none"
                   >
                     {React.isValidElement<{ tabIndex?: number }>(action) ? React.cloneElement(action, { tabIndex: -1 }) : action}
