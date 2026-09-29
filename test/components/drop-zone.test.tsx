@@ -1,9 +1,11 @@
-import { createEvent, fireEvent, render, screen, waitFor, within } from "@testing-library/react"
+import { act, createEvent, fireEvent, render, screen, waitFor, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { renderToString } from "react-dom/server"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
-import { DropZone } from "../../src/components/drop-zone"
+import * as React from "react"
+
+import { DropZone, type DropZoneHandle } from "../../src/components/drop-zone"
 import { LabelsProvider } from "../../src/lib/labels"
 import { hidratar } from "../hidratar"
 
@@ -325,6 +327,19 @@ describe("DropZone", () => {
     expect(added).toHaveLength(4)
     unmount()
     for (const [type, listener] of added) expect(remove).toHaveBeenCalledWith(type, listener)
+  })
+
+  it("ref: open() abre el selector y focus() enfoca el recuadro; deshabilitada, open() no hace nada", () => {
+    const click = vi.spyOn(HTMLInputElement.prototype, "click").mockImplementation(() => {})
+    const ref = React.createRef<DropZoneHandle>()
+    const { rerender } = render(<DropZone aria-label="Factura" ref={ref} />)
+    act(() => ref.current!.focus())
+    expect(area()).toHaveFocus()
+    act(() => ref.current!.open())
+    expect(click).toHaveBeenCalledTimes(1)
+    rerender(<DropZone aria-label="Factura" disabled ref={ref} />)
+    act(() => ref.current!.open())
+    expect(click).toHaveBeenCalledTimes(1)
   })
 
   it("el reset del form vacía la lista", async () => {

@@ -38,7 +38,17 @@ const dropZoneLabels: DropZoneLabels = {
  * línea, abajo del recuadro, no en un toast) y con `name` deja los archivos en un
  * `<input type="file">` que viaja con el `<form>`, como uno nativo.
  */
-type DropZoneProps = Omit<React.ComponentProps<"div">, "children" | "onChange"> & {
+/** Lo que da el `ref` de `DropZone`: abrir el selector y enfocar el recuadro desde afuera. */
+type DropZoneHandle = {
+  /** Abre el selector de archivos del sistema, como un clic en el recuadro. Deshabilitada, no hace nada. */
+  open: () => void
+  /** Enfoca el recuadro. */
+  focus: () => void
+}
+
+type DropZoneProps = Omit<React.ComponentProps<"div">, "children" | "onChange" | "ref"> & {
+  /** `open()` y `focus()`, para un botón «Elegir archivo» propio o para volver al recuadro después de un paso. */
+  ref?: React.Ref<DropZoneHandle>
   /** Los tipos que acepta, como el `accept` de un `<input type="file">`: `".pdf,image/*"`. */
   accept?: string
   /** Más de un archivo. Sin `multiple`, uno nuevo reemplaza al anterior. */
@@ -154,6 +164,7 @@ function DropZone({
   "aria-describedby": ariaDescribedby,
   labels: labelsProp,
   className,
+  ref,
   ...props
 }: DropZoneProps) {
   const labels = { ...dropZoneLabels, ...useLabels().dropZone, ...defined(labelsProp) }
@@ -167,6 +178,18 @@ function DropZone({
   const input = React.useRef<HTMLInputElement>(null)
   const button = React.useRef<HTMLButtonElement>(null)
   const errorsId = React.useId()
+  const disabledRef = React.useRef(disabled)
+  disabledRef.current = disabled
+  React.useImperativeHandle(
+    ref,
+    () => ({
+      open: () => {
+        if (!disabledRef.current) input.current?.click()
+      },
+      focus: () => button.current?.focus(),
+    }),
+    []
+  )
 
   const commit = (next: File[]) => {
     if (filesProp === undefined) setOwnFiles(next)
@@ -463,4 +486,4 @@ function DropZone({
   )
 }
 
-export { DropZone, dropZoneLabels, type DropZoneLabels, type DropZoneProps }
+export { DropZone, dropZoneLabels, type DropZoneHandle, type DropZoneLabels, type DropZoneProps }
