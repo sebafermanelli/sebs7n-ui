@@ -263,8 +263,8 @@ describe("wallpaper (W)", () => {
     const u = utility("bg-ambient")
     for (const n of [1, 2, 3, 4]) expect(u, `tono ${n}`).toContain(`oklch(from var(--sf-wallpaper-${n}) l c h / var(--ambient))`)
     const circulos = u.match(/radial-gradient\(circle \d+vmax at /g) ?? []
-    // Siete, como en iCloud: con cuatro quedaban grandes zonas lisas.
-    expect(circulos.length).toBeGreaterThanOrEqual(7)
+    // Cuatro grandes en las esquinas y dos cuartos adelante, abajo a la izquierda y a la derecha.
+    expect(circulos.length).toBeGreaterThanOrEqual(6)
     // Todos con el centro afuera de la pantalla: se ven cuartos y arcos, como en iCloud; un círculo
     // chico entero adentro se lee como una mancha.
     for (const [, x, y] of u.matchAll(/radial-gradient\(circle \d+vmax at (-?\d+)% (-?\d+)%/g)) {

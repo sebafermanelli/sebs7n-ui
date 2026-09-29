@@ -840,10 +840,10 @@
  * vista previa en una caja (una demo) lleva `[contain:paint]` en esa caja; sin eso el wallpaper
  * de la demo tapa la página entera.
  *
- * Los círculos: la base es el tono 1 (el más profundo) y encima van siete círculos de radio en
- * `vmax`, todos con el centro afuera de la pantalla: se ven cuartos y arcos, nunca un círculo
- * entero. Los tres de adelante cortan las zonas lisas desde arriba, la izquierda y la
- * derecha; los cuatro de atrás arman las esquinas (el primer `radial-gradient` es el de adelante).
+ * Los círculos: la base es el tono 1 (el más profundo) y encima van seis círculos de radio en
+ * `vmax`, todos con el centro afuera de la pantalla: cuatro grandes que arman las esquinas y,
+ * adelante, dos cuartos de círculo con el centro en las esquinas de abajo (el primer
+ * `radial-gradient` es el de adelante).
  * Cada uno llega a su borde nítido —el color hasta
  * el 100 % del radio, transparente medio píxel después— y adentro se sombrea hacia el tono de
  * atrás, para que las superposiciones se lean como hojas curvas. Todo color del dibujo queda
@@ -863,9 +863,8 @@
     pointer-events: none;
     background-color: var(--color-background);
     background-image:
-      radial-gradient(circle 65vmax at 42% -52%, oklch(from var(--sf-wallpaper-3) l c h / var(--ambient)) 50%, oklch(from var(--sf-wallpaper-2) l c h / var(--ambient)) 100%, transparent calc(100% + 0.5px)),
-      radial-gradient(circle 55vmax at -38% 22%, oklch(from var(--sf-wallpaper-3) l c h / var(--ambient)) 55%, oklch(from var(--sf-wallpaper-2) l c h / var(--ambient)) 100%, transparent calc(100% + 0.5px)),
-      radial-gradient(circle 70vmax at 138% 48%, oklch(from var(--sf-wallpaper-3) l c h / var(--ambient)) 45%, oklch(from var(--sf-wallpaper-2) l c h / var(--ambient)) 100%, transparent calc(100% + 0.5px)),
+      radial-gradient(circle 26vmax at -2% 102%, oklch(from var(--sf-wallpaper-2) l c h / var(--ambient)) 55%, oklch(from var(--sf-wallpaper-3) l c h / var(--ambient)) 100%, transparent calc(100% + 0.5px)),
+      radial-gradient(circle 30vmax at 102% 102%, oklch(from var(--sf-wallpaper-4) l c h / var(--ambient)) 55%, oklch(from var(--sf-wallpaper-3) l c h / var(--ambient)) 100%, transparent calc(100% + 0.5px)),
       radial-gradient(circle 70vmax at -8% 112%, oklch(from var(--sf-wallpaper-4) l c h / var(--ambient)) 55%, oklch(from var(--sf-wallpaper-3) l c h / var(--ambient)) 100%, transparent calc(100% + 0.5px)),
       radial-gradient(circle 95vmax at -20% 125%, oklch(from var(--sf-wallpaper-3) l c h / var(--ambient)) 60%, oklch(from var(--sf-wallpaper-2) l c h / var(--ambient)) 100%, transparent calc(100% + 0.5px)),
       radial-gradient(circle 80vmax at 118% 108%, oklch(from var(--sf-wallpaper-2) l c h / var(--ambient)) 50%, oklch(from var(--sf-wallpaper-1) l c h / var(--ambient)) 100%, transparent calc(100% + 0.5px)),
