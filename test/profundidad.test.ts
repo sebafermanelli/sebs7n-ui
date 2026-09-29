@@ -89,3 +89,33 @@ describe("plano en reposo, flota lo que se abre", () => {
     expect(usos).toEqual([])
   })
 })
+
+// Revisión de R1: en claro iCloud solo mostró la sombra de menú y la de widget (16 % contra 65 % en
+// oscuro). Las otras se derivan de la oscura con esa misma proporción; el comentario de theme.css lo
+// dice y este test lo sostiene, para que no vuelvan a ser números sueltos.
+describe("sombras claras derivadas de las oscuras", () => {
+  const css = src("styles/theme.css")
+  const bloque = (sel: string) => {
+    const inicio = css.indexOf(sel)
+    return css.slice(inicio, css.indexOf("\n  }", inicio))
+  }
+  const alfa = (cuerpo: string, token: string) => {
+    const valor = new RegExp(`--sf-shadow-${token}: ([^;]+);`).exec(cuerpo)![1]!
+    const hex = [...valor.matchAll(/#000000([0-9a-f]{2})/g)].at(-1)![1]!
+    return parseInt(hex, 16) / 255
+  }
+  const claro = bloque(":root {")
+  const oscuro = bloque(".dark {")
+  const proporcion = alfa(claro, "menu") / alfa(oscuro, "menu")
+
+  it("menú: 16 % en claro y 65 % en oscuro, las dos medidas", () => {
+    expect(alfa(claro, "menu")).toBeCloseTo(0.16, 2)
+    expect(alfa(oscuro, "menu")).toBeCloseTo(0.65, 2)
+  })
+
+  for (const token of ["tooltip", "widget", "segment", "badge", "thumbnail", "card-hover"]) {
+    it(`${token}: la clara es la oscura por ${proporcion.toFixed(3)}`, () => {
+      expect(alfa(claro, token)).toBeCloseTo(alfa(oscuro, token) * proporcion, 2)
+    })
+  }
+})

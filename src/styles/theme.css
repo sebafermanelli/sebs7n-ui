@@ -438,16 +438,17 @@
      *   thumbnail      el filo de 1 px de una miniatura de archivo
      *   card           plana (queda el token para la app); card-hover, la de una card que se toca
      *
-     * En claro iCloud solo mostró la de menú y la de widget (al 16 %); las otras se derivan de la
-     * oscura con la misma proporción.
+     * En claro iCloud solo mostró la de menú y la de widget (al 16 %, contra 65 % en oscuro); las
+     * otras se derivan de la oscura con esa misma proporción (× 0,247), y
+     * `test/profundidad.test.ts` lo sostiene.
      */
     --sf-shadow-menu: 0 0 0 1px var(--sf-hairline), 0 11px 34px 0 #00000029;
     --sf-shadow-modal: var(--sf-shadow-menu);
     --sf-shadow-tooltip: 0 0 0 1px var(--sf-hairline), 0 4px 12px 0 #0000001f;
     --sf-shadow-widget: 0 17px 40px 0 #00000029;
-    --sf-shadow-segment: 0 3px 8px 0 #0000001f;
-    --sf-shadow-badge: 0 2px 4px 0 #00000033;
-    --sf-shadow-thumbnail: 0 0 0 1px #0000001a;
+    --sf-shadow-segment: 0 3px 8px 0 #00000013;
+    --sf-shadow-badge: 0 2px 4px 0 #00000020;
+    --sf-shadow-thumbnail: 0 0 0 1px #00000029;
     --sf-shadow-card: 0 0 #0000;
     --sf-shadow-card-hover: 0 4px 16px 0 #0000001f;
     /* El halo del botón de IA sólido: lo que dice «esto es de la IA» sin un borde. */
