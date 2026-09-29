@@ -181,6 +181,9 @@ export type Labels = {
     /** El contador de un grupo: «1 ítem», «6 ítems». */
     item: string
     items: string
+    /** Lo elegido, que se anuncia con el total (puede estar en otra página o filtrado): «2 seleccionadas». */
+    selectedOne: string
+    selectedMany: string
   }
   datePicker: {
     /** Lo que dice el campo cuando no hay fecha elegida. */
@@ -332,6 +335,8 @@ export const defaultLabels: Labels = {
     results: "resultados",
     item: "ítem",
     items: "ítems",
+    selectedOne: "seleccionada",
+    selectedMany: "seleccionadas",
   },
   datePicker: {
     placeholder: "Elegí una fecha",

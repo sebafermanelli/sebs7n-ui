@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react"
+import { render, screen, waitFor, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import * as React from "react"
 import { describe, expect, it, vi } from "vitest"
@@ -89,11 +89,12 @@ describe("DataTable", () => {
     const buscar = screen.getByRole("searchbox", { name: "Buscar" })
     await userEvent.type(buscar, "optica")
     expect(clientes()).toEqual(["Óptica Sur"])
-    expect(screen.getByRole("status")).toHaveTextContent("1 resultado")
+    // Se anuncia cuando se deja de tipear, no con cada tecla.
+    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("1 resultado"))
     await userEvent.clear(buscar)
     await userEvent.type(buscar, "pagada")
     expect(clientes()).toEqual(["Nube Digital", "Óptica Sur"])
-    expect(screen.getByRole("status")).toHaveTextContent("2 resultados")
+    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("2 resultados"))
   })
 
   it("vacío: una fila que lo dice, con el texto propio si viene", async () => {
@@ -157,5 +158,43 @@ describe("DataTable", () => {
     expect(titulos.map((th) => th.textContent)).toEqual(["Pagada 2 ítems", "Pendiente 1 ítem", "Vencida 1 ítem"])
     expect(titulos[0]).toHaveAttribute("scope", "rowgroup")
     expect(document.querySelectorAll("tbody")).toHaveLength(3)
+  })
+
+  it("una fecha sin `cell` se escribe con el locale de la tabla", () => {
+    type Pago = { id: string; fecha: Date }
+    const columnas: DataTableColumn<Pago>[] = [{ id: "fecha", header: "Fecha", value: (row) => row.fecha }]
+    render(<DataTable aria-label="Pagos" columns={columnas} data={[{ id: "1", fecha: new Date(2026, 0, 5) }]} getRowId={(row) => row.id} locale="en-US" />)
+    expect(screen.getByRole("cell")).toHaveTextContent("1/5/2026")
+  })
+
+  it("la selección que no se ve (otra página, filtrada) se anuncia con el total", async () => {
+    render(<Tabla defaultSelected={["0013", "0015"]} filter pageSize={2} selectable />)
+    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("2 seleccionadas"))
+  })
+
+  it("una página controlada que ya no existe se corrige con onPageChange", () => {
+    const onPageChange = vi.fn()
+    render(<Tabla onPageChange={onPageChange} page={3} pageSize={2} />)
+    expect(onPageChange).toHaveBeenCalledWith(2)
+  })
+
+  it("«Cargar más» vuelve a una página cuando cambian los datos", async () => {
+    const { rerender } = render(<Tabla pageSize={2} paging="more" />)
+    await userEvent.click(screen.getByRole("button", { name: "Cargar más" }))
+    expect(clientes()).toHaveLength(4)
+    rerender(<Tabla data={[...FACTURAS].reverse()} pageSize={2} paging="more" />)
+    expect(clientes()).toHaveLength(2)
+  })
+
+  it("cargando: los esqueletos no se leen y la región dice «Cargando…»", async () => {
+    render(<Tabla filter loading />)
+    for (const fila of document.querySelectorAll("tbody tr")) expect(fila).toHaveAttribute("aria-hidden", "true")
+    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("Cargando…"))
+  })
+
+  it("grupos: el contador es el del grupo entero, no el de la página", () => {
+    render(<Tabla groupBy={(row) => row.estado} pageSize={2} />)
+    // Página 1: Nube Digital (Pagada) y Acme (Pendiente); Pagada tiene 2 en total.
+    expect(screen.getAllByRole("rowheader").map((th) => th.textContent)).toEqual(["Pagada 2 ítems", "Pendiente 1 ítem"])
   })
 })

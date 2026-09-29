@@ -64,7 +64,11 @@ type DataTablePropsBase<T> = Omit<TableProps, "children"> & {
   page?: number
   defaultPage?: number
   onPageChange?: (page: number) => void
-  /** Una casilla por fila y la de todas en la cabecera. */
+  /**
+   * Una casilla por fila y la de todas en la cabecera. La selección es de los ids: lo elegido sigue
+   * elegido aunque la búsqueda o la página lo escondan, y la región viva dice cuántas hay. «Todas»
+   * marca o desmarca solo las que se ven.
+   */
   selectable?: boolean
   selected?: string[]
   defaultSelected?: string[]
@@ -79,7 +83,7 @@ type DataTablePropsBase<T> = Omit<TableProps, "children"> & {
   loadingRows?: number
   /** Lo que va a la derecha de la búsqueda: filtros, «Nueva factura». */
   toolbar?: React.ReactNode
-  /** El locale del orden alfabético. Por defecto, el del navegador. */
+  /** El locale del orden alfabético y de las fechas sin `cell`. Por defecto, el del navegador. */
   locale?: string
   labels?: Partial<Labels["dataTable"]>
 }
@@ -102,7 +106,8 @@ function useControllable<V>(value: V | undefined, defaultValue: V, onChange?: (v
 /** Sin tildes ni mayúsculas: «Óptica» y «optica» son lo mismo para buscar. */
 const normalize = (text: string) => text.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase()
 
-const textOf = (value: DataTableValue) => (value == null ? "" : value instanceof Date ? value.toLocaleDateString() : String(value))
+const textOf = (value: DataTableValue, dates?: Intl.DateTimeFormat) =>
+  value == null ? "" : value instanceof Date ? (dates ?? new Intl.DateTimeFormat()).format(value) : String(value)
 
 function compare(a: DataTableValue, b: DataTableValue, collator: Intl.Collator) {
   // Lo vacío al final en los dos sentidos no: va al final en ascendente, que es lo esperable.
@@ -147,22 +152,30 @@ function DataTable<T>({
   "aria-label": ariaLabel,
   ...props
 }: DataTableProps<T>) {
-  const labels = { ...useLabels().dataTable, ...labelsProp }
+  const allLabels = useLabels()
+  const labels = { ...allLabels.dataTable, ...labelsProp }
   const [sort, setSort] = useControllable(sortProp, defaultSort, onSortChange)
   const [query, setQuery] = useControllable(queryProp, defaultQuery, onQueryChange)
   const [page, setPage] = useControllable(pageProp, defaultPage, onPageChange)
   const [selected, setSelected] = useControllable(selectedProp, defaultSelected, onSelectedChange)
   // «Cargar más» cuenta páginas cargadas: no es la `page` de la paginación y no se controla.
   const [loaded, setLoaded] = React.useState(1)
+  // Con otros datos, «Cargar más» vuelve a una página (ajuste en el render, sin un effect).
+  const [loadedFor, setLoadedFor] = React.useState(data)
+  if (loadedFor !== data) {
+    setLoadedFor(data)
+    setLoaded(1)
+  }
 
   const collator = React.useMemo(() => new Intl.Collator(locale, { numeric: true, sensitivity: "base" }), [locale])
+  const dates = React.useMemo(() => new Intl.DateTimeFormat(locale), [locale])
 
   const rows = React.useMemo(() => {
     let out = data
     const needle = normalize(query.trim())
     if (needle) {
       const searchable = columns.filter((column) => column.value && column.searchable !== false)
-      out = out.filter((row) => searchable.some((column) => normalize(textOf(column.value!(row))).includes(needle)))
+      out = out.filter((row) => searchable.some((column) => normalize(textOf(column.value!(row), dates)).includes(needle)))
     }
     const column = sort && columns.find((item) => item.id === sort.id)
     if (sort && column?.value) {
@@ -171,7 +184,7 @@ function DataTable<T>({
       out = [...out].sort((a, b) => factor * compare(column.value!(a), column.value!(b), collator))
     }
     return out
-  }, [data, columns, query, sort, collator])
+  }, [data, columns, query, sort, collator, dates])
 
   const total = rows.length
   const pageCount = pageSize ? Math.max(1, Math.ceil(total / pageSize)) : 1
@@ -182,6 +195,11 @@ function DataTable<T>({
       ? rows.slice(0, loaded * pageSize)
       : rows.slice((currentPage - 1) * pageSize, currentPage * pageSize)
   const visibleIds = visible.map(getRowId)
+
+  // Una página controlada que dejó de existir (menos datos, otra búsqueda) se corrige.
+  React.useEffect(() => {
+    if (pageSize && paging === "pages" && page !== currentPage) setPage(currentPage)
+  }, [pageSize, paging, page, currentPage, setPage])
 
   // Cambiar la búsqueda o el orden vuelve a la primera página: la 3 de otro resultado no es nada.
   const resetPage = () => {
@@ -205,7 +223,7 @@ function DataTable<T>({
   }
 
   const colCount = columns.length + (selectable ? 1 : 0)
-  const rowLabel = (row: T) => getRowLabel?.(row) ?? (textOf(columns[0]?.value?.(row)) || getRowId(row))
+  const rowLabel = (row: T) => getRowLabel?.(row) ?? (textOf(columns[0]?.value?.(row), dates) || getRowId(row))
 
   const renderRow = (row: T) => {
     const id = getRowId(row)
@@ -226,7 +244,7 @@ function DataTable<T>({
         )}
         {columns.map((column) => (
           <TableCell key={column.id} numeric={column.numeric} className={column.className}>
-            {column.cell ? column.cell(row) : textOf(column.value?.(row))}
+            {column.cell ? column.cell(row) : textOf(column.value?.(row), dates)}
           </TableCell>
         ))}
       </TableRow>
@@ -238,7 +256,8 @@ function DataTable<T>({
     body = (
       <TableBody>
         {Array.from({ length: loadingRows ?? pageSize ?? 5 }, (_, row) => (
-          <TableRow key={row}>
+          // Los esqueletos no se leen: la región viva dice «Cargando…».
+          <TableRow key={row} aria-hidden="true">
             {Array.from({ length: colCount }, (_, cell) => (
               <TableCell key={cell}>
                 <Skeleton className={cn("h-3.5 rounded-tag", cell === 0 && selectable ? "size-4" : cell === (selectable ? 1 : 0) ? "w-40" : "w-20")} />
@@ -264,9 +283,13 @@ function DataTable<T>({
       const key = groupBy(row)
       groups.set(key, [...(groups.get(key) ?? []), row])
     }
+    // El contador es el del grupo entero (con la búsqueda), no el de la página.
+    const counts = new Map<string, number>()
+    for (const row of rows) counts.set(groupBy(row), (counts.get(groupBy(row)) ?? 0) + 1)
+    const countOf = (key: string) => counts.get(key) ?? 0
     body = [...groups].map(([key, groupRows]) => (
       <TableBody key={key}>
-        <TableGroupHeader colSpan={colCount} count={`${groupRows.length} ${groupRows.length === 1 ? labels.item : labels.items}`}>
+        <TableGroupHeader colSpan={colCount} count={`${countOf(key)} ${countOf(key) === 1 ? labels.item : labels.items}`}>
           {key}
         </TableGroupHeader>
         {groupRows.map(renderRow)}
@@ -275,6 +298,16 @@ function DataTable<T>({
   } else {
     body = <TableBody>{visible.map(renderRow)}</TableBody>
   }
+
+  const selectedText = `${selected.length} ${selected.length === 1 ? labels.selectedOne : labels.selectedMany}`
+  const statusNow = loading
+    ? allLabels.tree.loading
+    : [filter && `${total} ${total === 1 ? labels.result : labels.results}`, selectable && selected.length > 0 && selectedText].filter(Boolean).join(", ")
+  const [status, setStatus] = React.useState("")
+  React.useEffect(() => {
+    const timer = setTimeout(() => setStatus(statusNow), 400)
+    return () => clearTimeout(timer)
+  }, [statusNow])
 
   return (
     <div data-slot="data-table" className="flex w-full flex-col gap-2">
@@ -299,10 +332,11 @@ function DataTable<T>({
           {toolbar && <div className="ms-auto flex items-center gap-2">{toolbar}</div>}
         </div>
       )}
-      {/* El total, para quien no ve la tabla achicarse al buscar. Se anuncia solo al cambiar. */}
-      {filter && (
+      {/* El total y lo elegido, para quien no ve la tabla achicarse al buscar ni la selección que
+          quedó en otra página. Se anuncia al dejar de tipear. */}
+      {(filter || selectable || loading) && (
         <p role="status" className="sr-only">
-          {loading ? "" : `${total} ${total === 1 ? labels.result : labels.results}`}
+          {status}
         </p>
       )}
       <Table aria-busy={loading || undefined} aria-label={ariaLabel} className={className} {...props}>
