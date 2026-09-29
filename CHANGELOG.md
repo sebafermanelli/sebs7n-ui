@@ -288,6 +288,8 @@ R5 (Tree, ListRow, SplitView, WidgetCard, CalendarView, FileGrid, el Meter apila
   `variant="floating"` (el default de 1.x en los tres); la prop queda como `variant?: "bar"`
   **obsoleta y sin efecto** (se borra en 3.0), así una app que ya pedía `bar` no se rompe.
   **Migración:** borrá `variant="floating"`; si usabas `useNavbar().floating`, ya no existe.
+  `Sidebar` y `Navbar` **ya no ponen `data-variant`** en su elemento: un estilo de la app colgado de
+  `[data-variant=floating]` (o de `group-data-[variant=…]`) deja de aplicarse; pasalo a `data-slot`.
 - **Sidebar = la lista de fuentes de iCloud.** A ras arriba, a la izquierda y abajo (antes panel
   despegado de vidrio con margen de 12, radio 26 y sombra), `surface-secondary` con borde derecho
   `separator-strong`, 10 de inset a cada lado del ítem.

@@ -151,24 +151,31 @@ El paquete define `color-scheme` en `html` y `html.dark`, así que los scrollbar
 
 ## Radio
 
-Los componentes usan cuatro radios, y los cuatro se pisan desde la app:
+Los radios son los de iCloud web (2.0), con nombre propio. Todos se pisan desde la app:
 
 ```css
 :root {
-  --radius-field: 9999px;   /* campos: Input, Select, Combobox, DatePicker */
-  --radius-control: 10px;   /* ítems de menú y de sidebar, casillas de OTP */
-  --radius-surface: 20px;   /* Card, Alert, Table, Popover, Toast */
-  --radius-panel: 26px;     /* Dialog, Drawer, Navbar flotante */
+  --radius-control: 8px;      /* botones, botones de ícono, segmentado, toggles */
+  --radius-field: 10px;       /* campos: Input, Select, Combobox, la búsqueda */
+  --radius-item: 10px;        /* ítems del Sidebar, filas de lista y de tabla elegidas */
+  --radius-surface: 11px;     /* Card (el widget), Alert */
+  --radius-panel: 11px;       /* Dialog, Sheet, Drawer */
+  --radius-menu: 12px;        /* menús, Popover, HoverCard, toasts */
+  --radius-menu-item: 8px;    /* el ítem de un menú */
+  --radius-menu-header: 7px;  /* la cabecera de cuenta adentro de un menú: 12 − 5 de padding */
+  --radius-tag: 4px;          /* Badge, Tag, chips de evento, miniaturas */
+  --radius-tooltip: 6px;
+  --radius-meter: 6px;        /* la barra de almacenamiento (Meter lg, StackedMeter) */
 }
 ```
 
-**Los campos son cápsulas**, la misma forma que un `Button`: en un formulario, el campo y el botón de abajo tienen la misma curva. Lo que tiene más de una línea no puede serlo —una cápsula de tres renglones es un óvalo—, así que `Textarea` y un `Combobox` con varias filas de chips frenan su radio en 20px. Con `--radius-field: 10px` vuelven todos al rectángulo.
+**Nada es cápsula en los controles**: en iCloud la búsqueda mide 10, el segmentado 8 y los botones 8. La cápsula quedó para lo que es redondo de verdad (avatar, Switch, la pista de un Slider). `Textarea` y un `Combobox` de varias filas usan el mismo `--radius-field`.
 
-Son nombres propios y no pasos de la escala de Tailwind: redefinir `--radius-md` le cambiaría el radio también al código de la app, que comparte el tema. La escala (`rounded-md`, `rounded-xl`) sigue existiendo y es de la app; ningún componente la usa.
+Son nombres propios y no pasos de la escala de Tailwind: redefinir `--radius-md` le cambiaría el radio también al código de la app, que comparte el tema. La escala (`rounded-md`, `rounded-xl`) sigue existiendo y es de la app; ningún componente la usa. `cn()` fusiona los nombres propios como a los de la escala (`rounded-control` y `rounded-none` no conviven).
 
-El panel de un menú no tiene token: su radio es el del ítem más el `p-1` que los separa, así las dos curvas quedan concéntricas cualquiera sea el valor de `--radius-control`.
+El panel de un menú no es concéntrico con sus ítems, igual que en iCloud: radio 12 con 5 de padding e ítems de 8.
 
-El `Button` es una cápsula (`rounded-full`). No hay un token «por componente» a propósito.
+La navegación ya no tiene variantes flotantes: `Sidebar`, `Navbar` y `Toolbar` van a ras y a todo el ancho, y **no ponen `data-variant`** en su elemento. Para colgar estilos propios, usá su `data-slot`.
 
 ## Densidad
 
