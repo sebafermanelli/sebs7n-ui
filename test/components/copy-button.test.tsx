@@ -119,3 +119,44 @@ describe("CopyButton", () => {
     expect(errors.mock.calls.filter(([message]) => /hydrat|did not match/i.test(String(message)))).toEqual([])
   })
 })
+
+describe("CopyButton variant=inline", () => {
+  it("texto mono chico con ícono de 14, sin el alto de 28; mismo feedback", async () => {
+    const user = userEvent.setup()
+    render(
+      <CopyButton aria-label="Copiar el ID 7f3a9c21" value="7f3a9c21-0000" variant="inline">
+        7f3a9c21
+      </CopyButton>
+    )
+    const button = screen.getByRole("button", { name: "Copiar el ID 7f3a9c21" })
+    expect(button).toHaveAttribute("data-slot", "copy-button")
+    expect(button).toHaveAttribute("data-variant", "inline")
+    expect(button).toHaveAttribute("type", "button")
+    expect(button).toHaveClass("font-mono", "text-footnote", "min-h-6", "[&_svg]:size-3.5", "text-label-secondary")
+    expect(button).not.toHaveClass("h-7")
+    expect(button).toHaveTextContent("7f3a9c21")
+    await user.click(button)
+    expect(await navigator.clipboard.readText()).toBe("7f3a9c21-0000")
+    expect(status()).toHaveTextContent("Copiado")
+    expect(await screen.findByText("Copiado", { selector: "[data-slot=tooltip-content]" })).toBeInTheDocument()
+    expect(button.querySelector("svg.lucide-check")).not.toBeNull()
+  })
+
+  it("sin children muestra el valor, y adentro de una fila clickeable no la abre", async () => {
+    const user = userEvent.setup()
+    const onRow = vi.fn()
+    render(
+      <div onClick={onRow}>
+        <CopyButton value="F-0012" variant="inline" />
+      </div>
+    )
+    const button = screen.getByRole("button", { name: "F-0012" })
+    await user.click(button)
+    expect(onRow).not.toHaveBeenCalled()
+  })
+
+  it("vacío se apaga", () => {
+    render(<CopyButton value="" variant="inline" />)
+    expect(document.querySelector("[data-slot=copy-button]")).toBeDisabled()
+  })
+})

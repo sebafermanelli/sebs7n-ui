@@ -154,6 +154,7 @@ export const COMPONENTS = {
       "Al lado de un dato que se copia para pegarlo en otro lado: un CUIT, un número de factura, un link de pago. Para copiar desde adentro de un campo, `InputGroupButton` con el mismo ícono.",
       "Con `children` reemplaza a un id corto que se copia entero: el texto visible puede ser el comienzo y `value` el id completo.",
       "Adentro de una fila clickeable o de un link, copiar no abre la fila: el click no sube.",
+      "`variant=\"inline\"` para IDs en filas densas: mono de 12 con un ícono de 14 y 24 de alto (no los 28 de un botón), mismo tooltip, ✓ y anuncio. Con `translate=\"no\"` el traductor del navegador no toca el ID.",
       "Solo por subpath (`sebs7n-ui/copy-button`): no está en el barrel, por peso.",
     ],
     props: {
