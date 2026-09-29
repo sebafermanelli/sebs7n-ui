@@ -5,7 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "s
 
 /**
  * Colores
- * Sólidos y sin borde, como las etiquetas del Finder. La tinta es blanca o negra según el relleno: la que llega a 4,5:1.
+ * Sólidos y sin borde, como las etiquetas del Finder. La tinta es blanca en todos y llega a 4,5:1.
  */
 export function Colores() {
   return (
