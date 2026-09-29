@@ -148,6 +148,15 @@ flotantes, la paleta de Spotlight, los botones teñidos) no llega a publicarse.
   marcado en el acento sólido (`commandFilterClassName`). **Se van** la sugerencia en línea, `Tab`
   y `→` para aceptarla y la pista `tab`: Tab sale del campo. La API, el filtrado, el teclado, los
   grupos y el vacío no cambian.
+- **Revisión de R2.** La X de Sheet y Drawer suma el área segura (`--sf-safe-top`,
+  `--sf-safe-right`: ya no queda debajo de la isla), el Drawer lateral lleva el área segura arriba,
+  abajo y del lado de la pantalla, y las hojas de arriba y abajo los costados (iPhone apaisado). Las
+  filas y el campo de Command miden 44 con el dedo. AlertDialog: con una destructiva y sin
+  «Cancelar» el foco inicial es el diálogo; sin destructiva, la acción `default`; con una
+  destructiva, una acción `default` al lado también es gris (un solo acento). Un `<Button
+  variant="destructive">` suelto no se detecta. `AlertDialogDescription align="start"` para textos
+  largos, y el pie corta una palabra más larga que la columna (`min-w-0`, `break-words`); el `size`
+  de sus botones no cambia el alto en el pie.
 - **Se van `Button variant="tinted"` y `"destructive-tinted"`** (y `--sf-tint-hover`,
   `--sf-tint-active`): iCloud no tiene botón teñido. Eran de la fase 2 y no llegaron a publicarse.
 
@@ -196,15 +205,25 @@ las fases R2–R5 rehacen diálogos, menús, controles y listas con las medidas 
 - **Las clases tipográficas de Geist quedan obsoletas.** `text-copy-*`, `text-label-*`,
   `text-heading-*` y `text-button-*` siguen andando y `cn()` las sigue fusionando, pero el paquete
   ya no las usa; se van en la próxima major.
-- **Alturas: una sola escala para campos y botones** (revisión visual de R1). `sm` **28**, `md`
-  **36** (antes 40 en 1.x), `lg` **40**, el search field y el botón de modal de iCloud. Input,
-  Textarea, NumberField, OTPField (casillas de 28/36/40), DatePicker, ColorPicker, Select, Combobox,
-  Autocomplete y Button comparten `inputSizeClassName`/los tamaños del Button; los botones de ícono
-  miden 28, 36 y 40. **Texto 14 e íconos 16 en los tres tamaños**: el `lg` ya no sube a 17. El chip
-  (Toggle), el campo y el link de la Toolbar van en el escalón `sm`. Con el dedo, `sm` y `md` de los
-  campos suben a 36 y 44, y los botones crecen a 44 por `touch-target`. Los ítems de menú miden 30
-  (R3) y los del Sidebar 28 (iCloud usa 32: R5). Un botón al lado de un campo lleva el mismo
-  `size`.
+- **Alturas: una sola escala para campos y botones** (revisión visual de R1), la del search field y
+  el botón de modal de iCloud:
+
+  | tamaño | 1.x | 2.0 |
+  |---|---|---|
+  | `sm` | 32 | **28** |
+  | `md` | 40 | **36** |
+  | `lg` | 48 | **40** |
+  | `icon-sm` · `icon-md` · `icon-lg` | 32 · 40 · 48 | **28 · 36 · 40** |
+
+  Input, Textarea, NumberField, OTPField (casillas de 28/36/40), DatePicker, ColorPicker, Select,
+  Combobox, Autocomplete y Button comparten `inputSizeClassName`/los tamaños del Button. **El `lg`
+  es el que más baja (48 → 40)**: un layout que contaba con él para un CTA grande, un campo alineado
+  con una imagen o una fila de alto fijo cambia de alto; revisalo. **Texto 14 e íconos 16 en los tres
+  tamaños**: el `lg` ya no sube a 17. El chip (Toggle), el campo y el link de la Toolbar van en el
+  escalón `sm`. Con el dedo, `sm` y `md` de los campos suben a 36 y 44, **su texto sube a 17** (con
+  menos de 16 iOS hace zoom al enfocar; también el campo de Command) y los botones crecen a 44 por
+  `touch-target`. Los ítems de menú miden 30 (R3) y los del Sidebar 28 (iCloud usa 32: R5). Un botón
+  al lado de un campo lleva el mismo `size`. Los «…» de Pagination miden lo mismo que un número.
 - **Chat a la escala de un panel:** los mensajes a 15 (`text-subheadline`), el campo, los avisos y
   las sugerencias a 14, la cabecera `text-headline`; el campo mide 36 como el botón de enviar (17 con
   el dedo, para que iOS no haga zoom).
