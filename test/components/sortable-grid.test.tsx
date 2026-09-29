@@ -603,6 +603,29 @@ describe("SortableGrid · revisión R10: varias grillas, avisos y capas", () => 
     expect(onA).toHaveBeenCalledTimes(2)
   })
 
+  it("entrar en la B, que saca a la A, anuncia solo el «Modo edición» de la B (sin el «Listo.» de la A)", () => {
+    render(
+      <>
+        <Widgets aria-label="Tablero A" defaultEditing={false} />
+        <Widgets aria-label="Tablero B" defaultEditing={false} />
+      </>
+    )
+    const [a, b] = screen.getAllByRole("list")
+    const [statusA, statusB] = document.querySelectorAll("[data-slot=sortable-status]")
+    vi.useFakeTimers()
+    try {
+      fireEvent.pointerDown(within(a!).getByRole("button", { name: "Abrir Facturas" }), down)
+      act(() => vi.advanceTimersByTime(500))
+      expect(statusA).toHaveTextContent("Modo edición. Arrastrá para ordenar.")
+      fireEvent.pointerDown(within(b!).getByRole("button", { name: "Abrir Facturas" }), down)
+      act(() => vi.advanceTimersByTime(500))
+    } finally {
+      vi.useRealTimers()
+    }
+    expect(statusB).toHaveTextContent("Modo edición. Arrastrá para ordenar.")
+    expect(statusA?.textContent).toBe("")
+  })
+
   it("los clics adentro de un toast (Sonner) no salen de la edición", async () => {
     const user = userEvent.setup()
     const onEditingChange = vi.fn()

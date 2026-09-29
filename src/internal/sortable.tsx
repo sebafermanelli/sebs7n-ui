@@ -154,7 +154,7 @@ function SortableBase<T>({
   // `true` desde que se toma un ítem hasta un tick después de soltarlo: el Esc que cancela un
   // arrastre es del arrastre, no sale de la edición.
   const dragging = React.useRef(false)
-  const { editing, press } = useEditMode({ editingProp, defaultEditing, onEditingChange, disabled, container, dragging })
+  const { editing, press, exitedByOther } = useEditMode({ editingProp, defaultEditing, onEditingChange, disabled, container, dragging })
   // Fuera de edición el arrastre no existe: ni manija, ni parada de Tab, ni sensores.
   const draggable = editing && !disabled
   // El id de dnd-kit sale de `useId`: sin él, su `DndDescribedBy-N` es un contador de módulo y el
@@ -290,10 +290,16 @@ function SortableBase<T>({
   })
 
   // Lo que se eligió en un `SortableAddButton`: cuando aparece acá, el foco va a su «−» (o a la
-  // tarjeta, o a la manija) y se anuncia. Si la app no lo agrega a esta grilla, no pasa nada.
+  // tarjeta, o a la manija) y se anuncia. Solo lo toma la que está en edición (el «+» vive al lado
+  // de su «Listo»): otra que ya tenga esa clave no es la que recibe. Si la app no lo agrega, no pasa
+  // nada y la elección vence sola (ver `SortableAddButton`). Cuenta solo si la clave llega ahora:
+  // una grilla que se monta o ya la tenía no es la que la recibió.
+  const previousKeys = React.useRef(keys)
   React.useEffect(() => {
+    const before = previousKeys.current
+    previousKeys.current = keys
     const key = addedKey.current
-    if (key === null || !keys.includes(key)) return
+    if (!editing || key === null || !keys.includes(key) || before.includes(key)) return
     addedKey.current = null
     const item = container.current?.querySelectorAll<HTMLElement>("[data-slot=sortable-list-item], [data-slot=sortable-grid-item]")[keys.indexOf(key)]
     const target = item?.querySelector<HTMLElement>("[data-slot=sortable-remove], [data-slot=sortable-handle]") ?? (item?.tabIndex === 0 ? item : null)
@@ -307,7 +313,10 @@ function SortableBase<T>({
   React.useEffect(() => {
     if (wasEditing.current === editing) return
     wasEditing.current = editing
-    setStatus(editing ? labels.editing : labels.done)
+    // Si salió porque entró otra, esa anuncia su «Modo edición…»: dos avisos seguidos se pisan.
+    const quiet = !editing && exitedByOther.current
+    exitedByOther.current = false
+    setStatus(editing ? labels.editing : quiet ? "" : labels.done)
   })
 
   const settle = () => window.setTimeout(() => (dragging.current = false))
@@ -394,7 +403,7 @@ const LAYER = "[role=dialog], [role=alertdialog], [role=menu], [role=listbox], [
  * La que está en edición ahora, de todas las de la página: como en iOS, se edita una por vez.
  * Entrar en otra saca a esta, y así el Esc (que escucha solo la que edita) sale de una sola.
  */
-let editingNow: { exit: () => void } | null = null
+let editingNow: { exitForOther: () => void } | null = null
 
 type PressHandlers = Pick<
   React.DOMAttributes<HTMLElement>,
@@ -429,11 +438,19 @@ function useEditMode({ editingProp, defaultEditing, onEditingChange, disabled, c
     current.onEditingChange?.(next)
   }, [])
 
-  const self = React.useRef({ exit: () => setEditing(false) })
+  // `true` cuando la sacó otra que entró en edición: esa salida no se anuncia.
+  const exitedByOther = React.useRef(false)
+  const self = React.useRef({
+    exitForOther: () => {
+      exitedByOther.current = true
+      setEditing(false)
+    },
+  })
   React.useEffect(() => {
     if (!editing) return
+    exitedByOther.current = false
     const me = self.current
-    if (editingNow && editingNow !== me) editingNow.exit()
+    if (editingNow && editingNow !== me) editingNow.exitForOther()
     editingNow = me
     return () => {
       if (editingNow === me) editingNow = null
@@ -519,7 +536,7 @@ function useEditMode({ editingProp, defaultEditing, onEditingChange, disabled, c
       if (press.current || longPressed.current) event.preventDefault()
     },
   }
-  return { editing, press: handlers }
+  return { editing, press: handlers, exitedByOther }
 }
 
 /**
@@ -543,11 +560,13 @@ function jiggleAngle(width: number) {
 }
 
 /**
- * La clave elegida en el último `SortableAddButton`, hasta que la grilla o la lista que la recibe
- * la ve llegar en `items` (ver el efecto en `SortableBase`). De módulo: el botón vive afuera, al
- * lado del «Listo» de la app, y se edita una grilla por vez.
+ * La clave elegida en el último `SortableAddButton`, hasta que la grilla o la lista en edición la ve
+ * llegar en `items` (ver el efecto en `SortableBase`) o hasta `ADDED_TTL`. De módulo: el botón vive
+ * afuera, al lado del «Listo» de la app, y se edita una grilla por vez.
  */
 const addedKey: { current: string | null } = { current: null }
+/** Cuánto vale una elección: si la app no la agregó para entonces, ya no mueve el foco ni se anuncia. */
+const ADDED_TTL = 500
 
 type SortableAddItem = { id: string; label: string; icon?: React.ReactNode }
 
@@ -574,9 +593,11 @@ function SortableAddButton({ items, onSelect, size = "icon-md", labels: labelsPr
   const labels = { ...sortableLabels, ...useLabels().sortable, ...defined(labelsProp) }
   const why = React.useId()
   const chosen = React.useRef(false)
+  const trigger = React.useRef<HTMLButtonElement | null>(null)
   if (items.length === 0) {
     // Deshabilitado pero enfocable (`focusableWhenDisabled`): así el teclado y el lector llegan y
-    // escuchan por qué; el tooltip lo dice al puntero.
+    // escuchan por qué; el tooltip lo dice al puntero. `aria-disabled` explícito a propósito: el
+    // que `Button` maneja por `loading` pisa el que pondría `focusableWhenDisabled`.
     return (
       <Tooltip>
         <TooltipTrigger
@@ -594,8 +615,18 @@ function SortableAddButton({ items, onSelect, size = "icon-md", labels: labelsPr
     )
   }
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger render={<Button aria-label={labels.add} className={className} data-sortable-add="" size={size} variant="plain" />}>
+    <DropdownMenu
+      onOpenChangeComplete={(open) => {
+        // Si lo elegido no apareció en ninguna grilla (o la app no lo agregó), el foco quedó en el
+        // <body> con el menú que se fue: vuelve al «+».
+        if (open || !chosen.current) return
+        window.setTimeout(() => {
+          const active = document.activeElement
+          if (!active || active === document.body || !active.isConnected) trigger.current?.focus()
+        })
+      }}
+    >
+      <DropdownMenuTrigger ref={trigger} render={<Button aria-label={labels.add} className={className} data-sortable-add="" size={size} variant="plain" />}>
         <PlusIcon />
       </DropdownMenuTrigger>
       {/* Si se eligió uno, el foco lo mueve la grilla a lo agregado: el menú no lo devuelve al «+». */}
@@ -607,10 +638,17 @@ function SortableAddButton({ items, onSelect, size = "icon-md", labels: labelsPr
               chosen.current = true
               addedKey.current = item.id
               onSelect(item.id)
-              window.setTimeout(() => (chosen.current = false), 500)
+              window.setTimeout(() => {
+                chosen.current = false
+                if (addedKey.current === item.id) addedKey.current = null
+              }, ADDED_TTL)
             }}
           >
-            {item.icon}
+            {item.icon != null && (
+              <span aria-hidden="true" className="contents">
+                {item.icon}
+              </span>
+            )}
             {item.label}
           </DropdownMenuItem>
         ))}
