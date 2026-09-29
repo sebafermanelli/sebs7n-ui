@@ -199,6 +199,11 @@ comparten `variants/menu`.
   `NavigationMenuLink` sin `title` solo traía radio y foco y heredaba el texto de la página. El
   trigger pasa de `px-2 py-1.5` (14 en `gray-900`) a `h-7 px-2.5`. El contenido con `keepMounted` cerrado lleva
   `[&[hidden]]:hidden`, para que una grilla en su `className` no le gane al `hidden`.
+- **Revisión de R3.** El ítem `external` escribe en `brand-ink` (con `brand-900` quedaba en
+  4,0–4,4:1 sobre el resaltado en claro). `inset` también en `CheckboxItem` y `RadioItem` de los tres
+  menús. El submenú de DropdownMenu abre hacia `inline-end` (antes `right`), como el de Menubar.
+  Las opciones con ícono de Select y Combobox llevan el gap y el acento de un ítem de menú
+  (`menuItemContentClassName`, nuevo).
 
 **Controles (R4).** Medidos en el CSS de los botones de iCloud (`ui-button`), las pestañas de
 Settings, el segmentado de Calendar y el slider de Photos. Reemplaza lo que las fases 1–3 decían de
