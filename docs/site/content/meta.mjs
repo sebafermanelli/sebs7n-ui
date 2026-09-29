@@ -2078,6 +2078,47 @@ export const COMPONENTS = {
     },
     related: ["stat", "table", "empty-state"],
   },
+  "widget-card": {
+    title: "WidgetCard",
+    group: "contenido",
+    detallado: true,
+    description: "El widget de iCloud Home armado de una —ícono, título, subtítulo, acción, filas y «…»—, translúcido sobre el wallpaper; y la card promocional de Ajustes.",
+    keyboard: [
+      ["Tab", "Recorre la acción de arriba, lo interactivo de las filas y el «…». La card no es una parada."],
+    ],
+    a11y: [
+      "`WidgetCard` y `PromoCard` son **regiones nombradas por su título** (`role=\"region\"` + `aria-labelledby`): el lector las lista entre las regiones de la página.",
+      "El ícono de la app es decorativo: el título ya nombra el widget.",
+      "La acción y el «…» son botones de ícono: **necesitan `aria-label`** («Nueva factura», «Ver todas las facturas»).",
+      "`PromoCard` escribe en el color de contraste de la marca (el par del botón `accent`) sobre el acento y un tono un cuarto más oscuro: el 17/600 de los links pasa 4,5:1 con cualquier brand. El chevron es decorativo.",
+      "Con menos transparencia o más contraste pedidos, la franja translúcida es opaca (lo resuelve `material-translucent`).",
+    ],
+    usage: [
+      "**`WidgetCard` para un resumen que lleva a una app**: las últimas facturas, lo cobrado en la semana. Si necesitás otra forma, armala con las partes de `Card`.",
+      "**Sobre el wallpaper** (`AppShell ambient`) la franja y el cuerpo pasan solos a translúcidos; en cualquier otro lado son opacos. No lo fuerces con clases.",
+      "Filas con `CardRow` (`title`, `description`, `trailing`, las mismas props que `ListRow`); `columns={2}` para el widget grande.",
+      "La acción de arriba es **una**: la principal («redactar», «nueva»). El resto va en el menú del «…».",
+      "**`PromoCard` para una sola cosa por pantalla**: el plan de la cuenta, una función nueva. Dos promocionales juntas se pelean.",
+      "`PromoCardLink` con `render` para el `Link` de la app.",
+    ],
+    props: {
+      WidgetCard: {
+        title: "El título (21/600). Es el nombre de la región.",
+        subtitle: "Debajo del título, en 14 gris.",
+        icon: "El ícono de la app, en una caja de 40. Decorativo.",
+        action: "La acción de arriba a la derecha: un botón de ícono.",
+        more: "El «…» de abajo a la izquierda: un botón de ícono o el disparador de un menú.",
+        filter: "Abajo a la derecha: un filtro.",
+        columns: "`2` reparte las filas en dos columnas con una regla vertical.",
+      },
+      PromoCard: {
+        title: "El título grande (48/700). Es el nombre de la región.",
+        chip: "El chip translúcido de abajo a la derecha: el plan, el espacio.",
+      },
+      PromoCardLink: { render: "El elemento del link (el `Link` de Next). Recibe el contenido y las clases." },
+    },
+    related: ["card", "list-row", "app-shell"],
+  },
   alert: {
     title: "Alert",
     group: "contenido",

@@ -519,6 +519,12 @@ las fases R2–R5 rehacen diálogos, menús, controles y listas con las medidas 
   opacos separados por `separator-strong`. Por container query: angosto un panel (`pane`/`defaultPane`/
   `onPaneChange`, `useSplitView()`), mediano lista + detalle, ancho los tres. `SplitViewBack` («‹
   Facturas») vuelve al anterior y solo se ve cuando hace falta. Sin redimensionar (va a ser `Resizable`).
+- **`WidgetCard`** (`sebs7n-ui/widget-card`), el widget de iCloud Home armado de una sobre las partes de
+  `Card` (R5b): `icon`, `title`, `subtitle`, `action`, `more`, `filter`, `columns`; región nombrada por el
+  título. Sobre el wallpaper (`AppShell ambient`) la franja va en `material-translucent` y el cuerpo en
+  negro al 75 % con blur (oscuro). **`PromoCard`** + **`PromoCardLink`**: la card promocional de Ajustes
+  (degradado de marca, radio 24, título 48/700, links 17/600 con chevron, chip translúcido radio 12), en
+  el color de contraste de la marca.
 - La tabla de subpaths del README dice qué componentes no están en el barrel (la lee de `src/index.ts`).
 - El variant `inside-selection` también mira las listas de filas (`group/list`: `List`, `Tree`,
   `FileGrid`), no solo la `Table`.
