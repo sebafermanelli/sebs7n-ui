@@ -69,10 +69,19 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
         // y los íconos en el color de contraste **mientras la tabla tiene el foco**
         // (`group-focus-within/table`), y el gris de `selection-inactive` con el texto principal
         // cuando el foco se va a otro lado. `TableCell` cuelga de `group/table-row` para lo mismo.
-        // El anillo de foco sobre el acento no se vería en brand: en la fila elegida va el inverso.
         "hover:[&>td]:bg-fill-1 data-[state=selected]:[&>td]:bg-selection-inactive data-[state=selected]:[&>td]:text-label",
         "data-[state=selected]:group-focus-within/table:[&>td]:bg-selection data-[state=selected]:group-focus-within/table:text-on-selection data-[state=selected]:group-focus-within/table:[&_svg]:text-on-selection",
-        "[&[tabindex]]:cursor-pointer focus-visible:focus-ring data-[state=selected]:focus-visible:focus-ring-inverse",
+        // El anillo de foco (3 px por dentro) va en las celdas y no en el `<tr>`: el fondo de las
+        // celdas lo tapaba justo en la fila con el puntero o la elegida. Arriba y abajo en todas, y el
+        // costado en la primera y la última, que siguen el radio 10. Sobre el acento no se vería en
+        // brand: en la fila elegida `--sf-focus` pasa al color de contraste.
+        "[&[tabindex]]:cursor-pointer focus-visible:outline-none",
+        "focus-visible:[&>td]:shadow-[inset_0_3px_0_var(--sf-focus),inset_0_-3px_0_var(--sf-focus)]",
+        "focus-visible:[&>td:first-child]:shadow-[inset_3px_0_0_var(--sf-focus),inset_0_3px_0_var(--sf-focus),inset_0_-3px_0_var(--sf-focus)]",
+        "focus-visible:[&>td:last-child]:shadow-[inset_-3px_0_0_var(--sf-focus),inset_0_3px_0_var(--sf-focus),inset_0_-3px_0_var(--sf-focus)]",
+        // Una fila de una sola celda: las dos seudoclases le ganan a `:first-child` y a `:last-child`.
+        "focus-visible:[&>td:first-child:last-child]:shadow-[inset_0_0_0_3px_var(--sf-focus)]",
+        "data-[state=selected]:focus-visible:[--sf-focus:var(--sf-focus-inverse,var(--sf-brand-fg))]",
         className
       )}
       {...props}

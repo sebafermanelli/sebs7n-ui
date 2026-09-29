@@ -356,6 +356,36 @@ describe("Table", () => {
     expect(container.matches(":focus-within")).toBe(true)
   })
 
+  // Revisión de R5a: el fondo de la fila pasó a las celdas (para el radio 10), y el anillo interior
+  // del `<tr>` quedaba tapado por ese fondo justo en la fila con el puntero o la elegida. El anillo
+  // va en las celdas: arriba y abajo en todas, y el costado en la primera y la última.
+  it("el anillo de foco de una fila se pinta en las celdas, y en la elegida va el inverso", () => {
+    render(
+      <Table>
+        <TableBody>
+          <TableRow tabIndex={0}>
+            <TableCell>Ana</TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
+    )
+    const fila = screen.getByText("Ana").closest("tr")!
+    const clases = fila.className.split(/\s+/)
+    expect(clases).toContain("focus-visible:outline-none")
+    expect(clases).toContain("focus-visible:[&>td]:shadow-[inset_0_3px_0_var(--sf-focus),inset_0_-3px_0_var(--sf-focus)]")
+    expect(clases).toContain(
+      "focus-visible:[&>td:first-child]:shadow-[inset_3px_0_0_var(--sf-focus),inset_0_3px_0_var(--sf-focus),inset_0_-3px_0_var(--sf-focus)]"
+    )
+    expect(clases).toContain(
+      "focus-visible:[&>td:last-child]:shadow-[inset_-3px_0_0_var(--sf-focus),inset_0_3px_0_var(--sf-focus),inset_0_-3px_0_var(--sf-focus)]"
+    )
+    expect(clases).toContain("focus-visible:[&>td:first-child:last-child]:shadow-[inset_0_0_0_3px_var(--sf-focus)]")
+    // Sobre el acento, el anillo va en el color de contraste de la marca.
+    expect(clases).toContain("data-[state=selected]:focus-visible:[--sf-focus:var(--sf-focus-inverse,var(--sf-brand-fg))]")
+    // El `<tr>` no dibuja su propio anillo: quedaría debajo del fondo de las celdas.
+    expect(clases).not.toContain("focus-visible:focus-ring")
+  })
+
   it("density compact", () => {
     render(<Table density="compact"><tbody /></Table>)
     expect(screen.getByRole("table").parentElement).toHaveAttribute("data-density", "compact")
