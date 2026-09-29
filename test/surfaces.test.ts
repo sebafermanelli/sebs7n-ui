@@ -144,7 +144,6 @@ describe("material-translucent: el único con blur", () => {
   it("existe el wallpaper (bg-ambient) sobre el que va", () => {
     expect(theme).toMatch(/@utility bg-ambient \{/)
     expect(utility("bg-ambient")).toContain("radial-gradient")
-    expect(utility("bg-ambient")).toContain("background-attachment: fixed")
   })
 
   // Como la barra de la home de iCloud: el contenido pasa por abajo, desenfocado. Siempre, no solo sobre
@@ -158,6 +157,10 @@ describe("material-translucent: el único con blur", () => {
   it("un bg-* de la app le gana", () => {
     expect(cn("material-translucent", "bg-red-100")).toBe("bg-red-100")
     expect(cn("bg-ambient", "bg-surface")).toBe("bg-surface")
+  })
+
+  it("un bg-* de la app le gana al cuerpo translúcido", () => {
+    expect(cn("material-translucent-body", "bg-red-100")).toBe("bg-red-100")
   })
 })
 
@@ -239,5 +242,45 @@ describe("touch-target-y", () => {
     expect(block).toMatch(/@media \(pointer: coarse\)/)
     expect(block).toMatch(/width: 100%;/)
     expect(block).toMatch(/height: max\(100%, 44px\);/)
+  })
+})
+
+// W · El wallpaper de la home de iCloud (spec 2026-09-29).
+describe("wallpaper (W)", () => {
+  it("es un ::before fijo a la ventana, no background-attachment (que iOS ignora)", () => {
+    const u = utility("bg-ambient")
+    expect(u).toContain("isolation: isolate;")
+    expect(u).toMatch(/&::before \{[^}]*content: "";[^}]*position: fixed;[^}]*inset: 0;[^}]*z-index: -1;[^}]*pointer-events: none;/)
+    expect(u).not.toContain("background-attachment")
+  })
+
+  it("las ondas salen de los cuatro tonos del brand y --ambient regula cuánto color", () => {
+    const u = utility("bg-ambient")
+    for (const n of [1, 2, 3, 4]) expect(u, `tono ${n}`).toContain(`oklch(from var(--sf-wallpaper-${n}) l c h / var(--ambient))`)
+    for (const tema of ["light", "dark"] as const) {
+      for (const n of [1, 2, 3, 4]) {
+        expect(bloque(tema), `${tema} tono ${n}`).toMatch(new RegExp(`--sf-wallpaper-${n}: oklch\\(from var\\(--sf-brand-src\\) `))
+      }
+    }
+  })
+
+  it("se fueron los focos de la luz ambiente de 1.x", () => {
+    expect(theme).not.toMatch(/--sf-ambient-/)
+  })
+
+  it("el cuerpo y la franja de un widget sobre el wallpaper tienen su token", () => {
+    expect(token("light", "translucent-body")).toBe("#ffffffcc")
+    expect(token("dark", "translucent-body")).toBe("#000000bf")
+    expect(token("light", "translucent-strip")).toBe("#7878801f")
+    expect(token("dark", "translucent-strip")).toBe("#ffffff1a")
+    expect(theme).toContain("--color-translucent-strip: var(--sf-translucent-strip);")
+  })
+
+  it("material-translucent-body: su fill, blur 15 sin saturar, y opaco sin transparencia", () => {
+    const u = utility("material-translucent-body")
+    expect(u).toContain("background-color: var(--sf-translucent-body);")
+    expect(u).toContain("-webkit-backdrop-filter: blur(15px);")
+    expect(u).toContain("backdrop-filter: blur(15px);")
+    expect(u).toMatch(/@media \(prefers-reduced-transparency: reduce\), \(prefers-contrast: more\) \{\s*background-color: var\(--sf-surface\);\s*-webkit-backdrop-filter: none;\s*backdrop-filter: none;/)
   })
 })

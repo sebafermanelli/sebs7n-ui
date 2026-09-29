@@ -149,6 +149,8 @@
   --color-surface-secondary: var(--sf-surface-secondary);
   --color-surface-bar: var(--sf-surface-bar);
   --color-surface-header: var(--sf-surface-header);
+  /* La franja de una card sobre el wallpaper (W): `bg-translucent-strip`. */
+  --color-translucent-strip: var(--sf-translucent-strip);
   --color-grouped: var(--sf-group);
   --color-fill-1: var(--sf-fill-1);
   --color-fill-2: var(--sf-fill-2);
@@ -280,7 +282,7 @@
     --brand-contrast-dark: var(--brand-contrast);
 
     /**
-     * La luz ambiente (`bg-ambient`, el wallpaper opcional): 0 = página lisa · 1 = el default.
+     * Cuánto color lleva el wallpaper (`bg-ambient`): 0 = página lisa · 1 = el default.
      * El vidrio de 1.x (`--glass`, `--glass-tint`) se fue en 2.0: iCloud es opaco en capas.
      */
     --ambient: 1;
@@ -289,18 +291,20 @@
     --sf-brand-fg: var(--brand-contrast);
 
     /**
-     * La luz ambiente (`bg-ambient`): tres focos que salen del brand, uno en su matiz y dos
-     * corridos 55° y −45°. La luminosidad es fija por tema —igual que en la escala de brand—
-     * para que un brand oscuro no deje la página en penumbra ni uno claro la queme.
+     * El wallpaper (`bg-ambient`, W): cuatro tonos del brand con la luminosidad fija por tema,
+     * como la escala de brand, así un brand oscuro no apaga la home ni uno claro la quema.
+     * 1 el cielo, 2 y 3 las ondas, 4 la cresta. El matiz se corre pocos grados (−12° a +6°)
+     * para que sea un solo color y no un arcoíris.
      *
-     * `--sf-ambient-gain` es cuánto de esa luz llega a la página en este tema; la app regula
-     * el total con `--ambient`.
+     * La luminosidad está calibrada para que `label` y `label-secondary` lleguen a 4,5:1
+     * **directo sobre cualquier punto** del wallpaper con las cinco marcas
+     * (`test/contrast.test.ts`): en claro ningún tono baja de L 0,915; en oscuro ninguno pasa
+     * de 0,385. Subir el croma sí se puede; mover la L, correr el test.
      */
-    --sf-ambient-gain: 1;
-
-    --sf-ambient-1: oklch(from var(--sf-brand-src) 0.8 calc(c * 0.75) h);
-    --sf-ambient-2: oklch(from var(--sf-brand-src) 0.84 calc(c * 0.6) calc(h + 55));
-    --sf-ambient-3: oklch(from var(--sf-brand-src) 0.86 calc(c * 0.55) calc(h - 45));
+    --sf-wallpaper-1: oklch(from var(--sf-brand-src) 0.98 calc(c * 0.08) h);
+    --sf-wallpaper-2: oklch(from var(--sf-brand-src) 0.95 calc(c * 0.3) calc(h - 6));
+    --sf-wallpaper-3: oklch(from var(--sf-brand-src) 0.915 calc(c * 0.55) calc(h + 4));
+    --sf-wallpaper-4: oklch(from var(--sf-brand-src) 0.93 calc(c * 0.45) calc(h - 12));
 
     /**
      * Fondo de página. No es un primitivo de Geist (por eso vive acá y no en
@@ -379,6 +383,19 @@
      * puro (`test/surfaces.test.ts`).
      */
     --sf-translucent-bar: #f8f8fce0;
+    /**
+     * El cuerpo de un widget sobre el wallpaper (`material-translucent-body`, W): Card,
+     * WidgetCard y la columna del Sidebar. En oscuro, el negro al 75 % de iCloud (§1.5); en claro
+     * iCloud lo deja blanco opaco y acá va al 80 %, para que el wallpaper se asome sin que el
+     * secundario baje de 4,5:1 (4,87 en el peor punto).
+     */
+    --sf-translucent-body: #ffffffcc;
+    /**
+     * La franja de cabecera de una card sobre el wallpaper: una capa encima del cuerpo, sin blur
+     * propio (el cuerpo ya desenfoca). Más gris en claro, más clara en oscuro: la misma relación
+     * que `surface-bar` con `surface` en la card opaca.
+     */
+    --sf-translucent-strip: #7878801f;
 
     /* L fija = la del paso equivalente de blue en Geist; k = croma relativo a blue-700. */
     --sf-brand-100: oklch(from var(--sf-brand-src) 0.973 calc(c * 0.059) h);
@@ -499,14 +516,13 @@
     --sf-brand-src: var(--brand-base-dark);
     --sf-brand-fg: var(--brand-contrast-dark);
 
-    /* Sobre negro un color saturado se ve mucho más que sobre blanco: acá la luz es una
-       penumbra. Menos croma, menos alfa y los focos más cerca del matiz del brand —30° y −25°,
-       no 55° y −45°—, para que detrás del vidrio haya un color y no tres. */
-    --sf-ambient-gain: 0.5;
-
-    --sf-ambient-1: oklch(from var(--sf-brand-src) 0.38 calc(c * 0.45) h);
-    --sf-ambient-2: oklch(from var(--sf-brand-src) 0.34 calc(c * 0.4) calc(h + 30));
-    --sf-ambient-3: oklch(from var(--sf-brand-src) 0.32 calc(c * 0.35) calc(h - 25));
+    /* La home oscura de iCloud: de un azul noche a una cresta saturada. El tope de L 0,385 es el
+       que deja al secundario en 4,5:1 directo encima; el croma alto es lo que la hace azul y no
+       gris. Se redeclaran porque `--sf-brand-src` cambia en `.dark`. */
+    --sf-wallpaper-1: oklch(from var(--sf-brand-src) 0.2 calc(c * 0.55) h);
+    --sf-wallpaper-2: oklch(from var(--sf-brand-src) 0.27 calc(c * 0.75) calc(h + 6));
+    --sf-wallpaper-3: oklch(from var(--sf-brand-src) 0.33 calc(c * 0.95) calc(h - 4));
+    --sf-wallpaper-4: oklch(from var(--sf-brand-src) 0.385 calc(c * 0.9) calc(h - 10));
 
     /* La escala «systemGray» de iOS que usa iCloud en oscuro: la página es #1C1C1E, no negro. */
     --sf-background: #1c1c1e;
@@ -532,6 +548,8 @@
     --sf-segment: #636366;
     --sf-translucent: #38383d99;
     --sf-translucent-bar: #38383de0;
+    --sf-translucent-body: #000000bf;
+    --sf-translucent-strip: #ffffff1a;
 
     --sf-brand-100: oklch(from var(--sf-brand-src) 0.22 calc(c * 0.317) h);
     --sf-brand-200: oklch(from var(--sf-brand-src) 0.255 calc(c * 0.369) h);
@@ -602,6 +620,27 @@
 
   @media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
     background-color: var(--sf-surface-header);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+/**
+ * El cuerpo de un widget sobre el wallpaper (W, catálogo §1.5): Card, WidgetCard y la columna
+ * del Sidebar adentro de `data-ambient`. Blur de 15 sin saturar, como el de iCloud. La franja
+ * de cabecera va encima sin blur propio (`bg-translucent-strip`): un blur adentro de otro solo
+ * ve el fondo del de afuera, y cuesta otro pase de GPU.
+ *
+ * Con menos transparencia o más contraste es la superficie opaca (`surface`), y la franja
+ * encima queda del tono de `surface-bar`.
+ */
+@utility material-translucent-body {
+  background-color: var(--sf-translucent-body);
+  -webkit-backdrop-filter: blur(15px);
+  backdrop-filter: blur(15px);
+
+  @media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+    background-color: var(--sf-surface);
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }
@@ -779,24 +818,43 @@
 }
 
 /**
- * La luz ambiente: el wallpaper opcional (2.0). En iCloud solo Home tiene wallpaper, y sobre él
- * van la barra global y los widgets con `material-translucent`; adentro de una app la página es
- * lisa. Por eso es opt-in (`AppShell ambient`), no el default.
+ * El wallpaper (W): la home de iCloud, con ondas del color del brand detrás de todo. Sobre él,
+ * adentro de `data-ambient`, la barra, las cards, el sidebar y la toolbar pasan a translúcidos
+ * con blur; menús, diálogos y campos siguen opacos. Adentro de una app la página es lisa: es
+ * opt-in (`AppShell ambient`, o `bg-ambient` + `data-ambient` en un contenedor).
  *
- * Son tres `radial-gradient` y no tres `div` con `filter: blur()`: el degradé lo resuelve el
- * rasterizador una vez, y un blur de 90px sobre media pantalla se repinta en cada scroll.
- * `fixed` para que la luz quede quieta y sea el contenido el que pasa por delante.
+ * El dibujo va en un `::before` con `position: fixed` y no con `background-attachment: fixed`,
+ * que Safari en iOS ignora: así queda quieto contra la ventana y el contenido pasa por delante.
+ * `isolation: isolate` hace del elemento un contexto de apilamiento, para que el `z-index: -1`
+ * quede arriba de su propio fondo y abajo de sus hijos.
  *
- * El alfa se calcula acá, en el elemento, y no en los tokens de `:root`: por lo mismo que en
- * una variable de `:root`, así `--ambient` responde donde la app lo pise.
+ * Un `fixed` se ubica contra la ventana **salvo** adentro de un ancestro con `transform`,
+ * `filter` o `contain: paint`: ahí se ubica contra ese ancestro y queda recortado por él. Una
+ * vista previa en una caja (una demo) lleva `[contain:paint]` en esa caja; sin eso el wallpaper
+ * de la demo tapa la página entera.
+ *
+ * Las ondas son `radial-gradient` grandes de borde suave más una cresta marcada; cada color
+ * lleva el alfa `--ambient` sobre el fondo de página (0 = lisa, 1 = wallpaper entero). Se calcula
+ * acá y no en `:root` para que `--ambient` responda donde la app lo pise.
  */
 @utility bg-ambient {
+  isolation: isolate;
   background-color: var(--color-background);
-  background-image:
-    radial-gradient(60vmax 60vmax at 0% 0%, oklch(from var(--sf-ambient-1) l c h / calc(0.55 * var(--ambient) * var(--sf-ambient-gain))), transparent 70%),
-    radial-gradient(50vmax 50vmax at 100% 30%, oklch(from var(--sf-ambient-2) l c h / calc(0.5 * var(--ambient) * var(--sf-ambient-gain))), transparent 70%),
-    radial-gradient(55vmax 55vmax at 40% 110%, oklch(from var(--sf-ambient-3) l c h / calc(0.5 * var(--ambient) * var(--sf-ambient-gain))), transparent 70%);
-  background-attachment: fixed;
+
+  &::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-color: var(--color-background);
+    background-image:
+      radial-gradient(150% 100% at 0% 125%, transparent 44%, oklch(from var(--sf-wallpaper-4) l c h / var(--ambient)) 47% 51%, transparent 60%),
+      radial-gradient(120% 75% at 105% 110%, oklch(from var(--sf-wallpaper-4) l c h / var(--ambient)) 0 25%, transparent 55%),
+      radial-gradient(130% 80% at -10% 100%, oklch(from var(--sf-wallpaper-3) l c h / var(--ambient)) 0 35%, transparent 62%),
+      radial-gradient(90% 60% at 85% -10%, oklch(from var(--sf-wallpaper-2) l c h / var(--ambient)) 0 20%, transparent 60%),
+      linear-gradient(165deg, oklch(from var(--sf-wallpaper-1) l c h / var(--ambient)) 0%, oklch(from var(--sf-wallpaper-2) l c h / var(--ambient)) 50%, oklch(from var(--sf-wallpaper-3) l c h / var(--ambient)) 100%);
+  }
 }
 
 /**
