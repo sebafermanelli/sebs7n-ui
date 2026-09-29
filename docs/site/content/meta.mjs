@@ -3064,7 +3064,7 @@ export const COMPONENTS = {
     ],
     a11y: [
       "La fila es una lista con nombre (`aria-label`, obligatorio). La tanda copia del bucle va con `aria-hidden` e `inert`: el lector y Tab no la recorren.",
-      "En bucle trae un botón visible «Pausar» / «Reanudar» (WCAG 2.2.2): el hover no existe en un celular. Se pausa también con el puntero encima y fuera de pantalla.",
+      "En bucle trae un botón visible «Pausar» / «Reanudar» (WCAG 2.2.2): el hover no existe en un celular. Se pausa también con el puntero sobre los ítems y fuera de pantalla; la pausa del botón dura hasta «Reanudar», que la vuelve a mover aunque el botón siga con el foco.",
       "Con foco en un link deja de moverse y pasa a scroll a mano, así el link enfocado queda a la vista y sin cortar (WCAG 2.4.7 y 2.4.11). Con `prefers-reduced-motion` no se mueve: si desborda, se scrollea a mano.",
       "Sin JS, y en el HTML del servidor, es la fila quieta con todos los ítems.",
     ],

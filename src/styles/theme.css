@@ -979,8 +979,10 @@
  * El bucle de `Marquee`: la pista lleva dos tandas iguales y correrla -50 % es correr una, así el
  * final empalma con el principio. `translate` y no `transform`, como `animate-jiggle`. La duración la
  * pone el componente (`--sf-marquee-duration`, el ancho de una tanda sobre la velocidad). Se pausa con
- * el puntero encima, con foco adentro y fuera de pantalla (`data-paused`); con movimiento reducido no
- * corre (el componente, además, deja la fila quieta con scroll a mano).
+ * el puntero o el foco en la vista (los ítems), y con `data-paused` (el botón o fuera de pantalla); con
+ * movimiento reducido no corre (el componente, además, deja la fila quieta con scroll a mano). Hover y
+ * foco miran la vista y no la raíz: el botón de pausa vive en la raíz, y con el foco o el puntero en
+ * «Reanudar» la fila seguía quieta hasta salir de él.
  */
 @keyframes sf-marquee {
   to {
@@ -991,8 +993,8 @@
 @utility animate-marquee {
   animation: sf-marquee var(--sf-marquee-duration, 20s) linear infinite;
 
-  [data-slot="marquee"]:hover &,
-  [data-slot="marquee"]:focus-within &,
+  [data-slot="marquee-viewport"]:hover &,
+  [data-slot="marquee-viewport"]:focus-within &,
   [data-slot="marquee"][data-paused] & {
     animation-play-state: paused;
   }

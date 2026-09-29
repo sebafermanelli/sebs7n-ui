@@ -139,9 +139,12 @@ describe("animate-marquee compilado", () => {
     return compiled.slice(start, compiled.indexOf("\n}\n", start))
   }
 
-  it("corre una tanda con la duración del componente, y se pausa con hover, foco adentro y data-paused", () => {
+  it("corre una tanda con la duración del componente, y se pausa con hover y foco en la vista y con data-paused", () => {
     expect(rule()).toMatch(/animation: sf-marquee var\(--sf-marquee-duration, 20s\) linear infinite/)
-    for (const selector of [":hover", ":focus-within", "[data-paused]"]) expect(rule()).toContain(`[data-slot="marquee"]${selector} &`)
+    for (const selector of [":hover", ":focus-within"]) expect(rule()).toContain(`[data-slot="marquee-viewport"]${selector} &`)
+    expect(rule()).toContain('[data-slot="marquee"][data-paused] &')
+    // No en la raíz: ahí vive el botón de pausa, y con el foco o el puntero en «Reanudar» la fila no arrancaba.
+    for (const selector of [":hover", ":focus-within"]) expect(rule()).not.toContain(`[data-slot="marquee"]${selector} &`)
     expect(rule()).toMatch(/animation-play-state: paused/)
   })
 

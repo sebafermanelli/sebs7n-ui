@@ -47,7 +47,8 @@ const reducedMotion = () => typeof window !== "undefined" && window.matchMedia?.
  * el principio. La copia es decorativa (`aria-hidden` e `inert`): el lector y Tab recorren los ítems
  * una sola vez. Se pausa con el puntero encima y fuera de pantalla, y un botón visible la pausa del
  * todo (WCAG 2.2.2). Con foco en un link la fila queda quieta con scroll a mano, así el link enfocado
- * se ve entero (2.4.7, 2.4.11). Con `prefers-reduced-motion` no se mueve: si desborda, se scrollea a
+ * se ve entero (2.4.7, 2.4.11); el botón queda fuera de la vista, así el foco en «Reanudar» no la
+ * frena. Con `prefers-reduced-motion` no se mueve: si desborda, se scrollea a
  * mano. Sin JS (y en el HTML del servidor) es la fila quieta, con todos los links.
  */
 function Marquee({ items, "aria-label": label, speed = 40, labels: labelsProp, className, ...props }: MarqueeProps) {

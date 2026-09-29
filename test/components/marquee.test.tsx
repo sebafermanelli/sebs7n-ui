@@ -162,6 +162,22 @@ describe("Marquee", () => {
     expect(screen.getByRole("button", { name: "Pause" })).toBeInTheDocument()
   })
 
+  it("«Reanudar» con el foco en el botón la vuelve a mover: el botón queda fuera de la vista, donde el foco pausa", async () => {
+    const user = userEvent.setup()
+    widths(1200, 400)
+    render(<Marquee aria-label="Clientes" items={items} />)
+    const button = screen.getByRole("button", { name: "Pausar" })
+    await user.click(button)
+    await user.click(screen.getByRole("button", { name: "Reanudar" }))
+    expect(button).toHaveFocus()
+    expect(root()).not.toHaveAttribute("data-paused")
+    expect(root()).toHaveAttribute("data-mode", "loop")
+    expect(track()).toHaveClass("animate-marquee")
+    // La pausa por foco y por hover de theme.css mira la vista; el botón no puede estar adentro.
+    expect(viewport().contains(button)).toBe(false)
+    expect(track().contains(button)).toBe(false)
+  })
+
   it("quieta porque entra, no hay botón de pausa", () => {
     widths(300, 800)
     render(<Marquee aria-label="Clientes" items={items} />)
@@ -185,12 +201,14 @@ describe("Marquee", () => {
     expect(recoverable).not.toHaveBeenCalled()
   })
 
-  it("theme.css: animate-marquee corre una tanda, se pausa con hover, foco y data-paused, y no corre con movimiento reducido", () => {
+  it("theme.css: animate-marquee corre una tanda, se pausa con hover y foco en la vista y con data-paused, y no corre con movimiento reducido", () => {
     const css = readFileSync(join(import.meta.dirname, "../../src/styles/theme.css"), "utf8")
     const utility = css.slice(css.indexOf("@utility animate-marquee"), css.indexOf("@utility transition-control"))
     expect(css).toMatch(/@keyframes sf-marquee\s*\{\s*to\s*\{\s*translate: -50% 0;/)
     expect(utility).toContain("var(--sf-marquee-duration")
-    for (const selector of ['[data-slot="marquee"]:hover &', '[data-slot="marquee"]:focus-within &', '[data-slot="marquee"][data-paused] &']) expect(utility).toContain(selector)
+    for (const selector of ['[data-slot="marquee-viewport"]:hover &', '[data-slot="marquee-viewport"]:focus-within &', '[data-slot="marquee"][data-paused] &']) expect(utility).toContain(selector)
+    // En la raíz no: el botón de pausa está ahí, y con el foco (o el puntero) en «Reanudar» no arrancaba.
+    for (const selector of ['[data-slot="marquee"]:hover &', '[data-slot="marquee"]:focus-within &']) expect(utility).not.toContain(selector)
     expect(utility).toMatch(/prefers-reduced-motion: reduce\)\s*\{\s*animation: none;/)
   })
 })
