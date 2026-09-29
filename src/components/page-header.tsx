@@ -52,11 +52,12 @@ function PageHeaderTitle({ className, ...props }: React.ComponentProps<"h1">) {
   )
 }
 
+// La descripción de Settings de iCloud (catálogo §2.23): 17 gris, con un ancho de lectura de ~650.
 function PageHeaderDescription({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
       data-slot="page-header-description"
-      className={cn("min-w-0 text-body text-pretty text-label-secondary sm:col-start-1", className)}
+      className={cn("min-w-0 max-w-[650px] text-body text-pretty text-label-secondary sm:col-start-1", className)}
       {...props}
     />
   )

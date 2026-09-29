@@ -13,9 +13,10 @@ type EmptyStateProps = Omit<React.ComponentProps<"div">, "title"> & {
   /**
    * `default`: un grupo plano para el vacío suelto en la página. `subtle`: la zona
    * hundida de `Card variant="subtle"`. `plain`: sin superficie, para adentro de una Card o de
-   * una Table, que ya son el grupo.
+   * una Table, que ya son el grupo. `placeholder`: el panel vacío de iCloud («No Message Selected»),
+   * solo el título grande y tenue, centrado en todo el alto, sin caja ni ícono.
    */
-  variant?: "default" | "subtle" | "plain"
+  variant?: "default" | "subtle" | "plain" | "placeholder"
 }
 
 // Un grupo plano (2.0): fondo opaco `bg-grouped`, sin la sombra de widget de la Card. Antes era la zona
@@ -32,6 +33,7 @@ function EmptyState({ className, icon, title, titleAs: Title = "h2", description
         // Desde R5a la Card es un widget con sombra; el vacío sigue siendo un grupo plano.
         variant === "default" && "rounded-surface bg-grouped",
         variant === "subtle" && "rounded-surface bg-fill-1",
+        variant === "placeholder" && "h-full",
         "items-center justify-center gap-4 px-6 py-12 text-center",
         className
       )}
@@ -47,7 +49,11 @@ function EmptyState({ className, icon, title, titleAs: Title = "h2", description
         </div>
       )}
       <div className="flex max-w-sm flex-col gap-1">
-        <Title data-slot="empty-state-title" className="text-title-3 text-balance text-label">
+        {/* El tenue de iCloud es el cuaternario; va el terciario, que en 28/600 (texto grande) llega a 3:1. */}
+        <Title
+          data-slot="empty-state-title"
+          className={cn("text-title-3 text-balance text-label", variant === "placeholder" && "text-title-1 text-label-tertiary")}
+        >
           {title}
         </Title>
         {description && (

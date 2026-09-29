@@ -87,6 +87,8 @@ describe("PageHeader", () => {
         children: <PageHeaderTitle>Viajes</PageHeaderTitle>,
       })
     ).not.toThrow()
+    // La descripción de Settings de iCloud: 17 gris con un ancho de lectura de ~650.
+    expect(PageHeaderDescription({ children: "x" }).props.className).toContain("max-w-[650px]")
     for (const parte of [PageHeaderTitle, PageHeaderDescription, PageHeaderActions]) {
       expect(() => parte({ children: "x" })).not.toThrow()
     }
@@ -137,6 +139,18 @@ describe("EmptyState", () => {
 
 // Adentro de una Card o de una Table el grupo ya está: un segundo borde con sombra es una caja
 // adentro de otra caja.
+describe("EmptyState placeholder", () => {
+  it("el panel vacío de iCloud: solo el título grande y tenue, centrado, sin caja", () => {
+    render(<EmptyState title="Ningún mensaje elegido" variant="placeholder" />)
+    const titulo = screen.getByRole("heading", { name: "Ningún mensaje elegido" })
+    expect(titulo).toHaveClass("text-title-1", "text-label-tertiary")
+    const root = titulo.closest("[data-slot=empty-state]")!
+    expect(root).toHaveAttribute("data-variant", "placeholder")
+    expect(root.className).not.toMatch(/(^|\s)(bg-|rounded-surface)/)
+    expect(root).toHaveClass("h-full")
+  })
+})
+
 describe("EmptyState variant", () => {
   it("default es el grupo; subtle la zona hundida de la Card; plain, sin superficie", () => {
     const { rerender } = render(<EmptyState title="Vacío" />)
