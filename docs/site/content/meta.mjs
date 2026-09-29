@@ -1043,9 +1043,9 @@ export const COMPONENTS = {
     usage: [
       "**No sube nada:** la red es de la app. Pasale el progreso de cada archivo con `fileProgress` (de 0 a 100, `null` indeterminado) y un error de la subida con `fileError`.",
       "`accept`, `maxSize` (bytes) y `maxFiles` validan al agregar; lo que no entra queda afuera con su error en línea, no en un toast.",
-      "Con `name`, los archivos viajan con el `<form>` en un `<input type=\"file\">`, también los que llegaron arrastrando: sirve igual para una Server Action.",
+      "Con `name`, los archivos viajan con el `<form>` en un `<input type=\"file\">`, también los que llegaron arrastrando: sirve igual para una Server Action. Necesita `DataTransfer` (todos los navegadores actuales): sin él, el input queda como lo dejó el diálogo.",
       "`scope=\"window\"`: mientras se arrastra un archivo, toda la ventana es la zona (una app de una sola tarea, como un conversor).",
-      "Sin `multiple`, uno nuevo reemplaza al anterior. Solo por subpath (`sebs7n-ui/drop-zone`): no está en el barrel, por peso.",
+      "Sin `multiple`, uno nuevo reemplaza al anterior; si se sueltan varios, entra el primero y el resto se avisa. `accept=\"*/*\"` acepta todo. Solo por subpath (`sebs7n-ui/drop-zone`): no está en el barrel, por peso.",
     ],
     props: {
       DropZone: {
@@ -2462,12 +2462,12 @@ export const COMPONENTS = {
     ],
     usage: [
       "`renderItem` devuelve **el contenido** de la fila, no un `<li>` (un `<li>` adentro de otro rompe la hidratación).",
-      "`onReorder` recibe los ítems en el orden nuevo, que se ve al soltar. Si devuelve una promesa que falla, vuelve el anterior y se anuncia «No se pudo guardar el orden».",
+      "`onReorder` recibe los ítems en el orden nuevo, que se ve al soltar. **Optimista:** devolvé una promesa sin tocar `items`; si falla, vuelve el anterior y se anuncia «No se pudo guardar el orden». **Si la app aplica el orden ella** (cambia `items`), revertirlo y avisar si falla también es suyo: el componente no anuncia una vuelta atrás que no hizo.",
       "**`@dnd-kit/core`, `@dnd-kit/sortable` y `@dnd-kit/utilities` son peers opcionales:** `npm install @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities` en la app que lo usa. Solo por subpath (`sebs7n-ui/sortable-list`).",
     ],
     props: {
       SortableList: {
-        labels: "Textos: `handle`, `instructions`, `picked`, `dropped`, `canceled`, `position`, `of` y `failed`. Los que vienen por defecto son `sortableLabels`.",
+        labels: "Textos: `handle`, `instructions`, `picked`, `dropped`, `canceled`, `position`, `of`, `failed` y `grabbed` (solo `SortableGrid` sin manija). Los que vienen por defecto son `sortableLabels`.",
         "aria-label": PROP_DESCRIPTIONS["aria-label"],
       },
     },
@@ -2484,7 +2484,7 @@ export const COMPONENTS = {
       ["Escape", "Cancela: la tarjeta vuelve a su lugar."],
     ],
     a11y: [
-      "Es un `<ul role=\"list\">` de `<li>`: sin `handle`, cada `<li>` es la parada de Tab (con el anillo de foco por fuera) y lleva las instrucciones en `aria-describedby`.",
+      "Es un `<ul role=\"list\">` de `<li>`: sin `handle`, cada `<li>` es la parada de Tab (con el anillo de foco por fuera) y lleva las instrucciones en `aria-describedby`; tomada, su descripción empieza con «En movimiento» (un `listitem` no puede llevar el `aria-pressed` de la manija).",
       "Los anuncios son los de `SortableList`: «Tomaste Facturas, posición 1 de 4».",
       "Con movimiento reducido las tarjetas no se deslizan: saltan a su lugar.",
     ],
@@ -2492,7 +2492,7 @@ export const COMPONENTS = {
       "**Sin `handle` se arrastra la tarjeta entera:** con el mouse arranca a los 8 px, así un click en un botón de adentro sigue siendo un click; con el dedo, después de 250 ms apretado, así deslizar sigue scrolleando.",
       "Con `handle`, `renderItem` recibe la manija en `state.handle` y la pone donde vaya (en la cabecera de la tarjeta).",
       "`columns` fija las columnas; sin `columns`, las pone `className` (`@2xl:grid-cols-2`). `itemClassName` para una tarjeta más ancha (`col-span-2`).",
-      "`onReorder` es optimista, con vuelta atrás si su promesa falla. Peers opcionales `@dnd-kit/*`, como `SortableList`. Solo por subpath (`sebs7n-ui/sortable-grid`).",
+      "`onReorder` es optimista, con vuelta atrás si su promesa falla y la app no tocó `items` (el mismo contrato que `SortableList`). Si la app cambia `items` a mitad del arrastre, lo nuevo se ve y el orden al soltar sale de ahí. Peers opcionales `@dnd-kit/*`, como `SortableList`. Solo por subpath (`sebs7n-ui/sortable-grid`).",
     ],
     props: {
       SortableGrid: {
@@ -2772,13 +2772,13 @@ export const COMPONENTS = {
     group: "contenido",
     description: "Un carrusel sobre Embla con la API de shadcn: flechas de 28 sobre el material translúcido, puntos y «2 de 5» para el lector.",
     keyboard: [
-      ["← / →", "Con el foco adentro, la anterior y la siguiente (↑/↓ si es vertical)."],
+      ["← / →", "Con el foco adentro, la parada anterior y la siguiente (↑/↓ si es vertical). En un control que ya usa las flechas (campo, slider, radios, listbox, combobox) son del control."],
       ["Tab", "Recorre lo de adentro, las flechas y los puntos."],
       ["Enter · Espacio", "En una flecha o un punto, mueven el carrusel."],
     ],
     a11y: [
-      "Es una región con `aria-roledescription` «carrusel»: nombrala con `aria-label` («Planes»).",
-      "Cada diapositiva es un `group` «diapositiva» llamado «2 de 5»; las flechas, «Diapositiva anterior» y «Diapositiva siguiente»; cada punto, «Ir a la diapositiva 3», y el actual lleva `aria-current`.",
+      "Es una región con `aria-roledescription` «carrusel»: nombrala con `aria-label` («Planes»); sin nombre se llama «Carrusel» (`labels.label`).",
+      "Cada diapositiva es un `group` «diapositiva» llamado «2 de 5»; las flechas, «Diapositiva anterior» y «Diapositiva siguiente»; cada punto es una parada, «Ir a la página 2 de 3» (con `slidesToScroll` > 1 una página tiene varias diapositivas), y el actual lleva `aria-current`.",
       "En la punta, la flecha que no lleva a ningún lado se apaga y se esconde (salvo con `loop`).",
       "Con movimiento reducido salta en vez de deslizar.",
     ],
@@ -2791,8 +2791,8 @@ export const COMPONENTS = {
     props: {
       Carousel: {
         orientation: "`horizontal` (por defecto) o `vertical`.",
-        onKeyDownCapture: "Corre antes que ←/→: con `event.preventDefault()` el carrusel no se mueve.",
-        labels: "Textos: `carousel`, `slide`, `previous`, `next`, `of` y `goTo`. Los que vienen por defecto son `carouselLabels`.",
+        onKeyDown: "Corre antes que ←/→: con `event.preventDefault()` el carrusel no se mueve. Un control de adentro que haga `preventDefault` también lo frena.",
+        labels: "Textos: `label` (el nombre de la región sin `aria-label`), `carousel`, `slide`, `previous`, `next`, `of` y `goTo`. Los que vienen por defecto son `carouselLabels`.",
         "aria-label": PROP_DESCRIPTIONS["aria-label"],
       },
       CarouselPrevious: { variant: "La variante del botón. Por defecto `ghost`, sobre el material translúcido." },
