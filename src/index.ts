@@ -190,3 +190,6 @@ export * from "./components/widget-card.js"
 //   `password-input`    sebs7n-ui/password-input
 //   `time-picker`       sebs7n-ui/time-picker
 //   `date-time-picker`  sebs7n-ui/date-time-picker
+//   `country-picker`    sebs7n-ui/country-picker
+// `lib/countries` y `lib/phone` tampoco entran: son los únicos de `lib/` solo por subpath (ver
+// `test/api-publica.test.ts`).

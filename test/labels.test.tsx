@@ -194,6 +194,7 @@ describe("LabelsProvider", () => {
       "combobox",
       "command",
       "copyButton",
+      "countryPicker",
       "dataTable",
       "datePicker",
       "dateTimePicker",

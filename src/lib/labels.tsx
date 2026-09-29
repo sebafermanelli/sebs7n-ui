@@ -171,6 +171,12 @@ export type Labels = {
     /** Lo que dice el tooltip y se anuncia después de copiar. */
     copied: string
   }
+  countryPicker: {
+    /** El idioma de los nombres de los países (`Intl.DisplayNames`), como lo entiende `Intl`. */
+    locale: string
+    /** Lo que dice el campo sin país elegido. */
+    placeholder: string
+  }
   dataTable: {
     /** El nombre y el placeholder de la búsqueda. */
     search: string
@@ -353,6 +359,7 @@ export const defaultLabels: Labels = {
     filters: "Filtros",
   },
   copyButton: { copy: "Copiar", copied: "Copiado" },
+  countryPicker: { locale: "es-AR", placeholder: "Elegí un país" },
   dataTable: {
     search: "Buscar",
     selectAll: "Seleccionar todas",

@@ -52,12 +52,19 @@ describe("API pública: los tipos de props se exportan", () => {
   //
   // El orden del archivo no se toca: agrupa `lib`, `variants` y componentes, y dentro de cada
   // grupo es el de `ls`. Lo que se verifica es que no falte nada, no cómo está ordenado.
+  //
+  // Las excepciones son `lib/countries` y `lib/phone` (R7): las tablas de países y de códigos de
+  // discado pesan y el barrel está en su tope de 55 kB. Van solo por subpath, como los componentes
+  // de `SOLO_SUBPATH` (`test/solo-subpath.test.ts`), y el README los nombra igual.
+  const LIB_SOLO_SUBPATH = ["countries.ts", "phone.ts"]
+
   it("el barrel exporta todo lo público de lib/ y variants/", () => {
     const barrel = readFileSync(join(root, "src/index.ts"), "utf8")
     const faltan: string[] = []
     for (const carpeta of ["lib", "variants"]) {
       const ruta = join(root, "src", carpeta)
       for (const archivo of readdirSync(ruta)) {
+        if (carpeta === "lib" && LIB_SOLO_SUBPATH.includes(archivo)) continue
         const fuente = readFileSync(join(ruta, archivo), "utf8")
         const nombres = new Set<string>()
         for (const match of fuente.matchAll(/^export (?:async )?(?:function|const|type|interface)\s+(\w+)/gm)) {
@@ -75,6 +82,11 @@ describe("API pública: los tipos de props se exportan", () => {
       }
     }
     expect(faltan).toEqual([])
+  })
+
+  it("lib/countries y lib/phone no están en el barrel", () => {
+    const barrel = readFileSync(join(root, "src/index.ts"), "utf8")
+    for (const archivo of LIB_SOLO_SUBPATH) expect(barrel).not.toContain(`"./lib/${archivo.replace(".ts", ".js")}"`)
   })
 
   // Un tipo declarado dos veces con el mismo nombre en dos componentes distintos no
