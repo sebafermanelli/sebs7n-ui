@@ -154,8 +154,8 @@ function CalendarView({
   defaultDate,
   onDateChange,
   now: nowProp,
-  weekStartsOn = 1,
-  locale,
+  weekStartsOn: weekStartsOnProp,
+  locale: localeProp,
   hour12,
   onEventClick,
   onDayOpen,
@@ -163,7 +163,11 @@ function CalendarView({
   labels: labelsProp,
   ...props
 }: CalendarViewProps) {
-  const labels = { ...calendarViewDayLabels, ...useLabels().calendarView, ...defined(labelsProp) } as Required<Labels["calendarView"]>
+  const all = useLabels()
+  const labels = { ...calendarViewDayLabels, ...all.calendarView, ...defined(labelsProp) } as Required<Labels["calendarView"]>
+  // El idioma y la semana globales (`LabelsProvider` `dates`); la prop gana.
+  const locale = localeProp ?? all.dates?.locale
+  const weekStartsOn = weekStartsOnProp ?? all.dates?.weekStartsOn ?? 1
   const now = useNow(nowProp)
   const [ownView, setOwnView] = React.useState(defaultView)
   const view = viewProp ?? ownView

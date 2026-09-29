@@ -109,8 +109,8 @@ function DatePicker(props: DatePickerProps) {
     min,
     max,
     isDateDisabled,
-    locale = "es-AR",
-    format,
+    locale: localeProp,
+    format: formatProp,
     weekStartsOn,
     numberOfMonths,
     open: openProp,
@@ -126,6 +126,10 @@ function DatePicker(props: DatePickerProps) {
   }
   const todos = useLabels()
   const labels = { ...todos.calendar, ...todos.datePicker, ...defined(labelsProp) }
+  // El idioma y el formato globales (`LabelsProvider` `dates`); la prop gana. La semana la resuelve el
+  // `Calendar` de adentro.
+  const locale = localeProp ?? todos.dates?.locale ?? "es-AR"
+  const format = formatProp ?? todos.dates?.format
 
   const [interno, setInterno] = React.useState(defaultValue ?? (mode === "range" ? SIN_RANGO : null))
   const value = valueProp !== undefined ? valueProp : interno

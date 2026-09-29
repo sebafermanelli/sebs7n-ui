@@ -109,8 +109,8 @@ function Calendar(props: CalendarProps) {
     min,
     max,
     isDateDisabled,
-    locale = "es-AR",
-    weekStartsOn = 1,
+    locale: localeProp,
+    weekStartsOn: weekStartsOnProp,
     labels: labelsProp,
     ...rest
   } = props as CalendarBaseProps & {
@@ -119,7 +119,11 @@ function Calendar(props: CalendarProps) {
     defaultValue?: Date | null | DateRange
     onValueChange?: (value: never) => void
   }
-  const labels = { ...useLabels().calendar, ...defined(labelsProp) }
+  const all = useLabels()
+  const labels = { ...all.calendar, ...defined(labelsProp) }
+  // El idioma y la semana globales (`LabelsProvider` `dates`); la prop gana.
+  const locale = localeProp ?? all.dates?.locale ?? "es-AR"
+  const weekStartsOn = weekStartsOnProp ?? all.dates?.weekStartsOn ?? 1
   const titleId = React.useId()
   const raiz = React.useRef<HTMLDivElement>(null)
 

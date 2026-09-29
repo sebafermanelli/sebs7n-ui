@@ -3,6 +3,7 @@
 import { useId, useState } from "react"
 import { DatePicker } from "sebs7n-ui/date-picker"
 import { Label } from "sebs7n-ui/label"
+import { LabelsProvider } from "sebs7n-ui/labels"
 import type { DateRange } from "sebs7n-ui/lib/dates"
 
 /**
@@ -75,5 +76,24 @@ export function FechaDeAlta() {
       <Label htmlFor={id}>Fecha de alta del cliente</Label>
       <DatePicker defaultValue={new Date(2006, 3, 12)} id={id} max={new Date(2026, 8, 29)} name="alta" />
     </div>
+  )
+}
+
+// A nivel de módulo: el provider compara `format` por identidad.
+const NUMERIC: Intl.DateTimeFormatOptions = { day: "2-digit", month: "2-digit", year: "numeric" }
+
+/**
+ * Idioma global
+ * `LabelsProvider` con `dates`: idioma, semana y formato para todos los campos de fecha de abajo. La prop de cada uno le gana.
+ */
+export function IdiomaGlobal() {
+  const [due, setDue] = useState<Date | null>(new Date(2026, 9, 15))
+  return (
+    <LabelsProvider value={{ dates: { locale: "en-US", weekStartsOn: 0, format: NUMERIC } }}>
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="due-global">Due date</Label>
+        <DatePicker className="w-56" id="due-global" onValueChange={setDue} value={due} />
+      </div>
+    </LabelsProvider>
   )
 }

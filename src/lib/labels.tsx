@@ -3,6 +3,7 @@
 import * as React from "react"
 
 import { defined } from "../internal/defined.js"
+import type { WeekStart } from "./dates.js"
 
 /**
  * Los textos que los componentes escriben solos.
@@ -252,6 +253,23 @@ export type Labels = {
   dateTimePicker: {
     /** Nombre del campo de la hora, adentro del campo de fecha y hora. */
     time: string
+  }
+  /**
+   * Opcional (2.1): el idioma y la semana de `Calendar`, `DatePicker`, `DateTimePicker` y
+   * `CalendarView` para toda la app, en vez de pasarlos a cada uno. La prop del componente gana. No
+   * son textos, pero viven acá por la misma razón que `countryPicker.locale`: es la configuración de
+   * idioma que ya baja por el árbol. Sin valor, lo de cada componente (`es-AR` y el lunes).
+   */
+  dates?: {
+    /** El idioma de fechas y calendarios, como lo entiende `Intl` («en-US»). */
+    locale?: string
+    /** Con qué día arranca la semana: `1` lunes, `0` domingo. */
+    weekStartsOn?: WeekStart
+    /**
+     * Cómo escribe `DatePicker` la fecha en el campo. Declaralo a nivel de módulo o memoizalo: el
+     * provider lo compara por identidad, como a `combobox.remove`.
+     */
+    format?: Intl.DateTimeFormatOptions
   }
   dialog: {
     /** Nombre del botón X. */

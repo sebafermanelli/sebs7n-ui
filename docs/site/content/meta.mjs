@@ -916,6 +916,7 @@ export const COMPONENTS = {
       "Con varios meses hay una grilla por mes, cada una con su nombre, y siguen siendo una sola parada de tabulación entre todas.",
     ],
     usage: [
+      "Idioma y semana para toda la app: `<LabelsProvider value={{ dates: { locale: \"en-US\", weekStartsOn: 0 } }}>` (también `format` para el campo de `DatePicker`). Lo leen `Calendar`, `DatePicker`, `DateTimePicker` y `CalendarView`; la prop de cada uno gana.",
       "No dibuja superficie: va adentro de un `Popover`, de una `Card` o suelto. El fondo lo pone quien lo contiene.",
       "Para un campo de formulario, usá `DatePicker`, que ya lo trae adentro.",
       "Siempre son seis semanas, aunque el mes entre en cinco: con un alto fijo, lo que está debajo no se mueve al cambiar de mes.",
@@ -946,6 +947,7 @@ export const COMPONENTS = {
       "**No valida.** No tiene `required` y no se registra en un `Field`: si la fecha es obligatoria, lo chequea la app al enviar.",
     ],
     usage: [
+      "Idioma y semana para toda la app: `<LabelsProvider value={{ dates: { locale: \"en-US\", weekStartsOn: 0 } }}>` (también `format` para el campo de `DatePicker`). Lo leen `Calendar`, `DatePicker`, `DateTimePicker` y `CalendarView`; la prop de cada uno gana.",
       "Para fechas que se eligen mirando un calendario: un turno, un vencimiento cercano, un período.",
       "Una fecha lejana no se recorre mes por mes: el título del calendario abre la grilla de meses, y su año la de años. Si lo normal es tipearla —un vencimiento que se copia de un papel—, va un `Input`.",
       "`mode=\"range\"` elige desde y hasta en el mismo calendario, y se cierra recién con el segundo clic.",
@@ -977,6 +979,7 @@ export const COMPONENTS = {
       "Si lo tipeado no es una hora, el campo vuelve a la anterior y una región viva dice «Hora no válida».",
     ],
     usage: [
+      "No depende del idioma: la hora es siempre de 24 h, «HH:MM», y no lee `dates` de `LabelsProvider`. Con `required`, vaciar el texto y salir vuelve a la hora anterior y nunca avisa `null` (una franja horaria sin hora no existe).",
       "Para una hora suelta: un envío programado, un horario de débito. Con fecha, `DateTimePicker`.",
       "`step` arma la lista pero no limita lo tipeado: con `step={15}` se puede escribir 09:37. `min`/`max` sí: lo de afuera se lleva al borde.",
       "`value` es «HH:MM» o `null`; con `name`, un `<input type=\"hidden\">` lo manda a la Server Action.",
@@ -2734,6 +2737,7 @@ export const COMPONENTS = {
       "‹ y › se llaman «Mes anterior»/«Mes siguiente» (o semana, o día), desde el `LabelsProvider` (`calendarView`). Los de la vista Día (`day`, `previousDay`, `nextDay`) son opcionales en el tipo: sus valores por defecto son `calendarViewDayLabels`. Un provider armado antes de R9, sin esas claves (o con ellas en `undefined`), no rompe nada: la vista Día cae al español por defecto hasta que las traduzcas. Lo mismo vale para cualquier clave en `undefined`, en el provider o en `labels`: no pisa el texto de abajo.",
     ],
     usage: [
+      "Idioma y semana para toda la app: `<LabelsProvider value={{ dates: { locale: \"en-US\", weekStartsOn: 0 } }}>` (también `format` para el campo de `DatePicker`). Lo leen `Calendar`, `DatePicker`, `DateTimePicker` y `CalendarView`; la prop de cada uno gana.",
       "**Con SSR, pasá `now` o `defaultDate`** (la fecha del request): sin ellas el calendario no puede saber qué día es hoy hasta montar, y se dibuja invisible hasta entonces para que el server y el cliente coincidan.",
       "**Para ver fechas con cosas encima**: vencimientos, cobros, turnos. Para elegir una fecha, es `Calendar` o `DatePicker`.",
       "Los eventos son datos (`events`): `{ id, title, start, end?, allDay?, color? }`. El componente no crea ni arrastra eventos: `onDayOpen` y `onEventClick` son para que la app lo haga.",
