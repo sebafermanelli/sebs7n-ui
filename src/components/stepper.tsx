@@ -59,6 +59,8 @@ function Stepper({ className, steps, current, orientation = "horizontal", onStep
 
   return (
     <ol
+      // Explícito: Safari le saca la semántica de lista a una `<ol>` sin viñetas.
+      role="list"
       data-slot="stepper"
       data-orientation={orientation}
       aria-label={ariaLabel ?? (props["aria-labelledby"] ? undefined : labels.label)}
@@ -136,7 +138,8 @@ function Stepper({ className, steps, current, orientation = "horizontal", onStep
             key={index}
             data-slot="stepper-step"
             data-status={status}
-            aria-current={status === "current" ? "step" : undefined}
+            // Por el índice: el actual con `status: "error"` sigue siendo el paso en el que se está.
+            aria-current={index === current ? "step" : undefined}
             className={cn("relative flex min-w-0", vertical ? "pb-6 last:pb-0" : "flex-1 flex-col items-center px-1")}
           >
             {content}

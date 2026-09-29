@@ -19,6 +19,8 @@ describe("Stepper", () => {
     render(<Stepper current={1} steps={PASOS} />)
     const lista = screen.getByRole("list", { name: "Pasos" })
     expect(lista.tagName).toBe("OL")
+    // `role="list"` explícito: Safari saca la semántica de lista a una `<ol>` sin viñetas.
+    expect(lista).toHaveAttribute("role", "list")
     expect(within(lista).getAllByRole("listitem")).toHaveLength(4)
   })
 
@@ -52,6 +54,11 @@ describe("Stepper", () => {
     expect(error.dataset.status).toBe("error")
     expect(circulo(error)).toHaveClass("bg-red-800", "text-white")
     expect(error).toHaveTextContent("Ítems, con error")
+  })
+
+  it("el paso actual con error sigue siendo el actual para el lector", () => {
+    render(<Stepper current={1} steps={PASOS.map((paso, index) => (index === 1 ? { ...paso, status: "error" } : paso))} />)
+    expect(screen.getAllByRole("listitem")[1]).toHaveAttribute("aria-current", "step")
   })
 
   it("el conector va en el acento después de un paso completo y gris si no", () => {
