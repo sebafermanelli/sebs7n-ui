@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Button } from "sebs7n-ui/button"
-import { Meter } from "sebs7n-ui/meter"
+import { Meter, StackedMeter } from "sebs7n-ui/meter"
 
 /**
  * Cuánto del plan se usó
@@ -85,5 +85,29 @@ export function LicenciasPorEquipo() {
         </div>
       ))}
     </div>
+  )
+}
+
+/**
+ * Apilado: la barra de almacenamiento
+ * `StackedMeter` apila varias medidas del mismo total, como la barra de Almacenamiento de iCloud: cada segmento es un `meter` con su nombre («Facturas, 13,5 GB»), el resto queda gris, y arriba van el chip del total y «Libre · Usado».
+ */
+export function Apilado() {
+  return (
+    <StackedMeter
+      aria-label="Espacio de la cuenta"
+      className="w-full max-w-xl"
+      format={{ style: "unit", unit: "gigabyte", maximumFractionDigits: 1 }}
+      legend
+      locale="es-AR"
+      max={50}
+      segments={[
+        { label: "Facturas", value: 13.5, color: "amber" },
+        { label: "Documentos", value: 6.1, color: "purple" },
+        { label: "Imágenes", value: 4, color: "teal" },
+        { label: "Adjuntos", value: 1.2, color: "blue" },
+      ]}
+      total="50 GB"
+    />
   )
 }

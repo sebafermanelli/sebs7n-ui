@@ -162,6 +162,12 @@ export type Labels = {
     close: string
   }
   drawer: { close: string }
+  meter: {
+    /** «Libre», en la cabecera de `StackedMeter`. */
+    free: string
+    /** «Usado», en la cabecera de `StackedMeter`. */
+    used: string
+  }
   numberField: {
     decrement: string
     increment: string
@@ -251,6 +257,7 @@ export const defaultLabels: Labels = {
   },
   dialog: { close: "Cerrar" },
   drawer: { close: "Cerrar" },
+  meter: { free: "Libre", used: "Usado" },
   numberField: {
     decrement: "Disminuir",
     increment: "Aumentar",

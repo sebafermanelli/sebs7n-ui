@@ -195,6 +195,7 @@ describe("LabelsProvider", () => {
       "datePicker",
       "dialog",
       "drawer",
+      "meter",
       "numberField",
       "pageHeader",
       "sheet",

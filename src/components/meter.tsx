@@ -3,7 +3,10 @@
 import type * as React from "react"
 import { Meter as MeterPrimitive } from "@base-ui/react/meter"
 
+import { categoryFill } from "../internal/category-color.js"
+import { useLabels, type Labels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
+import type { BadgeColor } from "../variants/badge.js"
 
 /**
  * Una **medida** dentro de un rango conocido: cuánto disco se usó, cuánto del
@@ -86,4 +89,85 @@ function Meter({ className, label, showValue = false, size = "md", trackClassNam
   )
 }
 
-export { Meter, type MeterBaseProps, type MeterProps }
+type StackedMeterSegment = {
+  /** De qué es («Facturas»): el nombre del segmento para el lector y la leyenda. */
+  label: string
+  value: number
+  /** El color de la categoría (la paleta de `Badge`). */
+  color: BadgeColor
+}
+
+type StackedMeterProps = Omit<React.ComponentProps<"div">, "children"> & {
+  /** Los segmentos, en el orden en que se apilan. Lo que sobra hasta `max` queda gris. */
+  segments: StackedMeterSegment[]
+  /** El total: el tamaño del plan. */
+  max: number
+  /** Formato de los valores (`Intl.NumberFormat`): `{ style: "unit", unit: "gigabyte" }`. */
+  format?: Intl.NumberFormatOptions
+  locale?: Intl.LocalesArgument
+  /** El chip del total, a la izquierda de la cabecera («200 GB»). */
+  total?: React.ReactNode
+  /** Los textos de la cabecera («Libre», «Usado»). Le gana al `LabelsProvider`. */
+  labels?: Partial<Labels["meter"]>
+  /** El desglose debajo: punto, nombre y valor de cada segmento. */
+  legend?: boolean
+}
+
+/**
+ * La barra de almacenamiento de iCloud (catálogo §2.19): segmentos de color apilados en una pista de
+ * 16 con radio 6, separados por 1 px, y el resto en gris; arriba «Libre X · Usado Y» y el chip del
+ * total. Son varias medidas del mismo total, así que es un grupo con **un `role="meter"` por
+ * segmento**: el lector dice «Facturas, 13,5 GB» y no solo un porcentaje suelto.
+ *
+ * El grupo necesita nombre (`aria-label` o `aria-labelledby`).
+ */
+function StackedMeter({ className, segments, max, format, locale, total, labels, legend = false, ...props }: StackedMeterProps) {
+  const text = { ...useLabels().meter, ...labels }
+  const formatter = new Intl.NumberFormat(locale, format)
+  const used = segments.reduce((sum, segment) => sum + segment.value, 0)
+  const pct = (value: number) => `${Math.max(0, Math.min(100, (value / max) * 100))}%`
+  return (
+    <div role="group" data-slot="stacked-meter" className={cn("flex w-full flex-col gap-3", className)} {...props}>
+      <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
+        {total != null && (
+          <span className="rounded-item bg-white px-2.5 py-2 text-title-1 font-bold text-black/90 tabular-nums shadow-thumbnail">{total}</span>
+        )}
+        <p data-slot="stacked-meter-summary" className="ms-auto text-title-2 text-label tabular-nums">
+          <span className="text-label-secondary">
+            {text.free} {formatter.format(Math.max(0, max - used))}
+          </span>
+          {" · "}
+          {text.used} {formatter.format(used)}
+        </p>
+      </div>
+      <div data-slot="stacked-meter-track" className="flex h-4 w-full gap-px overflow-hidden rounded-[6px] bg-fill-3">
+        {segments.map((segment) => (
+          <div
+            key={segment.label}
+            role="meter"
+            aria-label={segment.label}
+            aria-valuemin={0}
+            aria-valuemax={max}
+            aria-valuenow={segment.value}
+            aria-valuetext={formatter.format(segment.value)}
+            className={cn("h-full shrink-0 transition-[width] duration-300 ease-out motion-reduce:transition-none", categoryFill[segment.color])}
+            style={{ width: pct(segment.value) }}
+          />
+        ))}
+      </div>
+      {legend && (
+        <ul className="flex flex-wrap gap-x-5 gap-y-1 text-callout text-label-secondary">
+          {segments.map((segment) => (
+            <li key={segment.label} className="flex items-center gap-1.5">
+              <span aria-hidden="true" className={cn("size-2 rounded-full", categoryFill[segment.color])} />
+              <span className="text-label">{segment.label}</span>
+              <span className="tabular-nums">{formatter.format(segment.value)}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}
+
+export { Meter, StackedMeter, type MeterBaseProps, type MeterProps, type StackedMeterProps, type StackedMeterSegment }

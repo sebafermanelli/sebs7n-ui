@@ -1,7 +1,7 @@
-import { render, screen } from "@testing-library/react"
+import { render, screen, within } from "@testing-library/react"
 import { describe, expect, it } from "vitest"
 
-import { Meter } from "../../src/components/meter"
+import { Meter, StackedMeter } from "../../src/components/meter"
 
 const track = () => document.querySelector("[data-slot=meter-track]")!
 const indicator = () => document.querySelector("[data-slot=meter-indicator]") as HTMLElement
@@ -119,5 +119,53 @@ describe("Meter · R5a", () => {
     const valor = meter.querySelector("[data-slot=meter-value]")!
     expect(valor).toHaveClass("text-callout", "tabular-nums")
     expect(valor.className).not.toMatch(/mono/)
+  })
+})
+
+describe("StackedMeter (R5b): la barra de almacenamiento de iCloud", () => {
+  const SEGMENTOS = [
+    { label: "Facturas", value: 13.5, color: "amber" as const },
+    { label: "Documentos", value: 6.1, color: "purple" as const },
+  ]
+  const GB = { style: "unit", unit: "gigabyte", maximumFractionDigits: 1 } as const
+
+  it("un grupo nombrado con un meter por segmento, que dice de qué es y cuánto", () => {
+    render(<StackedMeter aria-label="Espacio de la cuenta" format={GB} locale="es-AR" max={50} segments={SEGMENTOS} />)
+    const grupo = screen.getByRole("group", { name: "Espacio de la cuenta" })
+    const meters = within(grupo).getAllByRole("meter")
+    expect(meters).toHaveLength(2)
+    expect(meters[0]).toHaveAccessibleName("Facturas")
+    expect(meters[0]).toHaveAttribute("aria-valuenow", "13.5")
+    expect(meters[0]).toHaveAttribute("aria-valuemax", "50")
+    expect(meters[0]).toHaveAttribute("aria-valuetext", "13,5 GB")
+    // El ancho es la proporción sobre el total, y el color sale de la paleta de Badge.
+    expect(meters[0]).toHaveStyle({ width: "27%" })
+    expect(meters[0]).toHaveClass("bg-amber-700")
+  })
+
+  it("pista de 16 con radio 6, segmentos a 1 px, y el resto queda gris", () => {
+    render(<StackedMeter aria-label="Espacio" max={50} segments={SEGMENTOS} />)
+    const pista = document.querySelector("[data-slot=stacked-meter-track]")!
+    expect(pista).toHaveClass("h-4", "rounded-[6px]", "gap-px", "bg-fill-3", "overflow-hidden")
+  })
+
+  it("la cabecera: Libre · Usado (21/600, libre en gris) y el chip del total", () => {
+    render(<StackedMeter aria-label="Espacio" format={GB} locale="es-AR" max={50} segments={SEGMENTOS} total="50 GB" />)
+    const resumen = document.querySelector("[data-slot=stacked-meter-summary]")!
+    expect(resumen).toHaveClass("text-title-2")
+    expect(resumen).toHaveTextContent("Libre 30,4 GB · Usado 19,6 GB")
+    expect(screen.getByText(/Libre/)).toHaveClass("text-label-secondary")
+    const chip = screen.getByText("50 GB")
+    expect(chip).toHaveClass("rounded-item", "bg-white", "text-title-1", "font-bold")
+  })
+
+  it("labels traduce Libre y Usado; legend muestra el desglose con puntos", () => {
+    render(
+      <StackedMeter aria-label="Storage" labels={{ free: "Free", used: "Used" }} legend max={50} segments={SEGMENTOS} />
+    )
+    expect(document.querySelector("[data-slot=stacked-meter-summary]")).toHaveTextContent("Free 30.4 · Used 19.6")
+    const leyenda = screen.getByRole("list")
+    expect(within(leyenda).getAllByRole("listitem")).toHaveLength(2)
+    expect(within(leyenda).getByText("Facturas")).toBeInTheDocument()
   })
 })

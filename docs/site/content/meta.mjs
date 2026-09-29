@@ -2199,7 +2199,7 @@ export const COMPONENTS = {
   meter: {
     title: "Meter",
     group: "contenido",
-    description: "Una medida dentro de un rango: disco usado, cupo consumido, ocupación. No es un progreso.",
+    description: "Una medida dentro de un rango: disco usado, cupo consumido, ocupación. No es un progreso. Con `StackedMeter`, la barra de almacenamiento de iCloud.",
     keyboard: [["—", "No es interactivo."]],
     a11y: [
       "Emite `role=\"meter\"`, no `role=\"progressbar\"`: el lector anuncia una medida y no una tarea en curso. Es la diferencia que hace que valga la pena tener los dos componentes.",
@@ -2207,6 +2207,8 @@ export const COMPONENTS = {
       "Lo que se ve con `showValue` y lo que se lee salen del mismo texto: no se pueden desincronizar.",
       "El nombre es **obligatorio y lo exige el tipo**: `label` (visible, la preferida), `aria-label` o `aria-labelledby`. Mismo motivo que en `Progress`.",
       "Un valor fuera de rango se recorta contra `min` y `max` en vez de desbordar la pista.",
+      "`StackedMeter` es un `role=\"group\"` (con nombre obligatorio) con **un `role=\"meter\"` por segmento**, nombrado por su `label` y con el valor formateado en `aria-valuetext`: el lector dice «Facturas, 13,5 GB» segmento por segmento, no un porcentaje suelto.",
+      "En `StackedMeter` el color no es el único dato: cada segmento tiene nombre, y `legend` (o una `List` con `dot`) lo escribe.",
     ],
     usage: [
       "**Si el número puede bajar solo, es un `Meter`.** Un disco que se libera al borrar un archivo, un cupo que se renueva, una ocupación que sube y baja. Si en cambio arrancó, va para un lado solo y al llegar al final la pantalla cambia de estado, es un `Progress`.",
@@ -2215,6 +2217,8 @@ export const COMPONENTS = {
       "`format` y `locale` son los de `Intl.NumberFormat`. Sin `format`, lo que se anuncia es la proporción.",
       "Poné `label` o `aria-label`: una barra sin nombre no dice qué está midiendo.",
       "`size=\"sm\"` cuando acompaña una fila de una lista y el texto de al lado ya dice el número; `md` suelta.",
+      "**Varias medidas del mismo total → `StackedMeter`**, la barra de almacenamiento de iCloud: el chip del total (`total`), «Libre · Usado» arriba y el desglose con `legend` o, mejor, una `List` con `ListSection` y `dot` debajo.",
+      "Hasta cinco o seis segmentos: más que eso no se distinguen en 16 px. Agrupá el resto en «Otros».",
     ],
     props: {
       Meter: {
@@ -2224,6 +2228,14 @@ export const COMPONENTS = {
         showValue: "Muestra el valor formateado a la derecha.",
         format: "Opciones de `Intl.NumberFormat`. Cambian lo que se ve y lo que se lee, nunca el valor.",
         locale: "El locale de `Intl.NumberFormat`. Por defecto, el del navegador.",
+      },
+      StackedMeter: {
+        segments: "Los segmentos, en orden: `{ label, value, color }` (`color` de la paleta de `Badge`). Lo que sobra hasta `max` queda gris.",
+        max: "El total: el tamaño del plan.",
+        format: "Opciones de `Intl.NumberFormat` para los valores (`{ style: \"unit\", unit: \"gigabyte\" }`).",
+        locale: "El locale de `Intl.NumberFormat`.",
+        total: "El chip del total, a la izquierda de la cabecera: blanco, radio 10, 28/700.",
+        legend: "El desglose debajo de la barra: punto, nombre y valor.",
       },
     },
     related: ["progress", "stat", "slider"],

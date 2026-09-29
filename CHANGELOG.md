@@ -525,6 +525,11 @@ las fases R2–R5 rehacen diálogos, menús, controles y listas con las medidas 
   negro al 75 % con blur (oscuro). **`PromoCard`** + **`PromoCardLink`**: la card promocional de Ajustes
   (degradado de marca, radio 24, título 48/700, links 17/600 con chevron, chip translúcido radio 12), en
   el color de contraste de la marca.
+- **`StackedMeter`** (`sebs7n-ui/meter`), la barra de almacenamiento de iCloud (R5b): segmentos de color
+  (paleta de `Badge`) apilados en una pista de 16 radio 6 a 1 px, el resto gris, «Libre · Usado» en
+  21/600 (libre en gris), chip del total (blanco, radio 10, 28/700) y `legend` opcional. Un `group`
+  nombrado con un `meter` por segmento (`aria-valuetext` formateado con `format`/`locale`). Labels
+  `meter: { free, used }` («Libre», «Usado»).
 - La tabla de subpaths del README dice qué componentes no están en el barrel (la lee de `src/index.ts`).
 - El variant `inside-selection` también mira las listas de filas (`group/list`: `List`, `Tree`,
   `FileGrid`), no solo la `Table`.
