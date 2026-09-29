@@ -44,7 +44,7 @@ describe("radios de iCloud", () => {
     const { readdirSync, readFileSync } = await import("node:fs")
     const { join } = await import("node:path")
     const dir = join(import.meta.dirname, "../src/components")
-    const sueltos = readdirSync(dir).filter((archivo) => /rounded-\[\d+px\]/.test(readFileSync(join(dir, archivo), "utf8")))
+    const sueltos = readdirSync(dir).filter((archivo) => /rounded(-[a-z]+)?-\[\d/.test(readFileSync(join(dir, archivo), "utf8")))
     expect(sueltos).toEqual([])
   })
 
