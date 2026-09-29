@@ -81,11 +81,21 @@ zoom 200 % y 320 px sin scroll horizontal.
 - **Componentes solo por subpath:** los pesados y `chart` quedan fuera del barrel; la lista es
   `SOLO_SUBPATH` en `test/solo-subpath.test.ts` (más `lib/countries` y `lib/phone` en
   `test/api-publica.test.ts`). Componente nuevo y grande → a esa lista.
-- **Barrel ≤ 56 kB gzip** (`.size-limit.js`, `npm run size`); `button` por subpath ≤ 12,5 kB. Todo
-  salto se explica en el PR.
+- **Peers opcionales:** `recharts` (`chart`), `@dnd-kit/core` + `sortable` + `utilities`
+  (`sortable-list`, `sortable-grid`) y `embla-carousel-react` (`carousel`) están en
+  `peerDependenciesMeta` como `optional`; solo los importa su subpath, nunca el barrel.
+- **Barrel ≤ 56 kB gzip** (`.size-limit.js`, `npm run size`), ya en su tope; `button` por subpath
+  ≤ 12,5 kB. Todo salto se explica en el PR, y subir el umbral lo aprueba Sebastián.
 - **Server Components:** sin `"use client"` donde no hay estado; `variants/*` nunca lo lleva.
 - **Labels:** todo texto interno pasa por `Labels` / `LabelsProvider` (español por defecto); la prop
-  `labels` del componente le gana al provider.
+  `labels` del componente le gana al provider, y una clave en `undefined` no pisa el default
+  (`defined()` de `internal/`). **Grupos nuevos, opcionales:** con el barrel en su tope, los textos
+  de un componente solo por subpath no van a `defaultLabels`: el grupo (o la clave) es opcional en
+  `Labels` y el default vive en el componente (`carouselLabels`, `dropZoneLabels`,
+  `sortableLabels`, `calendarViewDayLabels`…), que mezcla `{ ...locales, ...useLabels().grupo,
+  ...defined(labels) }`.
+- **Props que son uniones** (`Tree`, `FileGrid` por `selectionMode`): para envolverlas,
+  `DistributiveOmit<Props, "…">` (exportado de `lib/utils`), no `Omit`, que aplana la unión.
 - **Idioma:** texto visible en español; identificadores, rutas, archivos, ids y código nuevo en
   inglés. Comentarios en español rioplatense, explicando el porqué.
 - **Demos, docs y tests genéricos:** vocabulario de facturación (facturas, clientes, equipos), sin
