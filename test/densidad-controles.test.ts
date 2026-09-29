@@ -4,7 +4,7 @@ import { join } from "node:path"
 import { describe, expect, it } from "vitest"
 
 import { buttonVariants } from "../src/variants/button"
-import { inputPaddingClassName, inputSizeClassName } from "../src/variants/input"
+import { inputControlClassName, inputPaddingClassName, inputSizeClassName } from "../src/variants/input"
 import { toggleVariants } from "../src/variants/toggle"
 
 /**
@@ -69,6 +69,9 @@ const CONTROLES = [
 const PERMITIDOS: Record<string, string[]> = {
   "components/popover.tsx": ["text-headline"],
   "components/chat.tsx": ["text-headline", "pointer-coarse:text-body-large"],
+  // Los campos, con el dedo, a 17: con menos de 16 px iOS hace zoom al enfocar.
+  "variants/input.ts": ["pointer-coarse:text-body-large"],
+  "components/command.tsx": ["pointer-coarse:text-body-large"],
 }
 
 describe("el texto de un control no pasa de 15 px", () => {
@@ -142,5 +145,37 @@ describe("una sola escala de alto para campos y botones", () => {
 
   it("el campo del chat mide lo que el botón de enviar (md, 36)", () => {
     expect(fuente("components/chat.tsx")).toContain("min-h-9")
+  })
+})
+
+// iOS hace zoom a cualquier campo con menos de 16 px al enfocarlo, y no vuelve: con el dedo, el texto
+// de todo lo que se escribe sube a 17 (`text-body-large`). Con el mouse sigue en 14.
+describe("con el dedo los campos no disparan el zoom de iOS", () => {
+  const CAMPOS = [
+    "components/input.tsx",
+    "components/textarea.tsx",
+    "components/otp-field.tsx",
+    "components/number-field.tsx",
+    "components/date-picker.tsx",
+    "components/color-picker.tsx",
+    "components/select.tsx",
+    "components/combobox.tsx",
+    "components/autocomplete.tsx",
+    "components/toolbar.tsx",
+    "components/chat.tsx",
+  ]
+
+  it("el cuerpo de los campos sube a 17 con el dedo", () => {
+    expect(inputControlClassName.split(" ")).toEqual(expect.arrayContaining(["text-callout", "pointer-coarse:text-body-large"]))
+  })
+
+  for (const archivo of CAMPOS) {
+    it(`${archivo} usa el cuerpo de campo`, () => {
+      expect(fuente(archivo)).toMatch(/inputControlClassName|inputShellClassName/)
+    })
+  }
+
+  it("el campo de Command, que no usa el cuerpo de campo, también", () => {
+    expect(fuente("components/command.tsx")).toMatch(/text-callout[^"]*pointer-coarse:text-body-large/)
   })
 })

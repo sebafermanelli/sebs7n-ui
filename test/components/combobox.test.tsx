@@ -76,7 +76,9 @@ describe("Combobox", () => {
       "has-[input[aria-invalid=true]]:border-red-800", "data-disabled:bg-fill-1"
     )
     expect(group(md)).toHaveClass("text-callout")
-    expect(group(md).className).not.toMatch(/text-body/)
+    // 17 solo con el dedo (el zoom de iOS); con el mouse, 14.
+    expect(group(md).className).not.toMatch(/(^|\s)text-body/)
+    expect(group(md)).toHaveClass("pointer-coarse:text-body-large")
     expect(md).toHaveClass("placeholder:text-label-secondary", "bg-transparent", "outline-none")
     expect(group(sm)).toHaveAttribute("data-size", "sm")
     expect(sm).toHaveAttribute("aria-invalid", "true")

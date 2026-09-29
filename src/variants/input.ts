@@ -10,10 +10,14 @@
  * La superficie de un control: borde, fondo, texto, transición y hover.
  *
  * No trae alto ni padding: los pone cada control, porque no coinciden —un `<textarea>` crece con
- * el contenido, una casilla de OTP es cuadrada y un input de barra de herramientas mide 24px—.
+ * el contenido, una casilla de OTP es cuadrada y un input de barra de herramientas mide 28px—.
+ *
+ * Texto 14, y **17 con el dedo** (`pointer-coarse:text-body-large`): iOS hace zoom al enfocar un
+ * campo de menos de 16 px y no vuelve. Lo heredan todos los campos (también el `<input>` de
+ * Combobox y Autocomplete, que es `text-inherit`).
  */
 export const inputControlClassName =
-  "rounded-field border border-transparent bg-fill-1 text-callout text-label outline-none transition-control"
+  "rounded-field border border-transparent bg-fill-1 text-callout pointer-coarse:text-body-large text-label outline-none transition-control"
 
 /**
  * El radio de un campo de más de una línea: Textarea, Combobox con chips.

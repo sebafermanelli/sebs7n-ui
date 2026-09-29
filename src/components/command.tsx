@@ -212,7 +212,7 @@ function CommandInput({ className, wrapperClassName, placeholder, ...props }: Co
         autoCapitalize="off"
         spellCheck={false}
         enterKeyHint="search"
-        className={cn("h-full w-full min-w-0 bg-transparent text-callout text-label outline-none placeholder:text-label-tertiary", className)}
+        className={cn("h-full w-full min-w-0 bg-transparent text-callout pointer-coarse:text-body-large text-label outline-none placeholder:text-label-tertiary", className)}
         {...props}
       />
     </div>
