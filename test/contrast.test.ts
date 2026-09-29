@@ -6,6 +6,7 @@ import { describe, expect, it } from "vitest"
 import brands from "../tokens/brands.json"
 import { badgeVariants } from "../src/variants/badge.js"
 import { buttonVariants } from "../src/variants/button.js"
+import { sliderThumbClassName } from "../src/variants/slider.js"
 import { composite, contrastRatio, flattenAlpha, hexOfOklch, luminanceOfHex, type Oklch } from "../src/lib/contrast.js"
 
 /**
@@ -318,5 +319,32 @@ describe("Pista del Switch apagado (WCAG 1.4.11)", () => {
     it(`${theme} · pulgar del Switch apagado: #ffffff sobre ${fg} llega a 3:1`, () => {
       expect(ratio("#ffffff", fg)).toBeGreaterThanOrEqual(3)
     })
+  }
+})
+
+// Revisión de R1: la perilla del Slider es blanca en los dos temas, y en claro sobre la página
+// blanca solo la separaba el filo de `shadow-tooltip` (1,1:1). La perilla es lo que se agarra:
+// cae bajo WCAG 1.4.11. Lleva un borde de 1 px en `label-tertiary`, que llega a 3:1 contra la
+// página y contra la propia perilla.
+describe("La perilla del Slider se ve sobre la página (WCAG 1.4.11)", () => {
+  it("lleva un borde de 1 px en label-tertiary", () => {
+    expect(sliderThumbClassName.split(" ")).toEqual(expect.arrayContaining(["ring-1", "ring-label-tertiary"]))
+  })
+
+  for (const theme of ["light", "dark"] as const) {
+    for (const [donde, token] of Object.entries(FONDOS)) {
+      const bg = paleta[theme][token]!
+      const borde = flattenAlpha(paleta[theme]["--sf-label-tertiary"]!, bg)
+      it(`${theme} · el borde (${borde}) sobre ${donde} ${bg} llega a 3:1`, () => {
+        expect(ratio(borde, bg)).toBeGreaterThanOrEqual(3)
+      })
+    }
+    // Contra la perilla blanca solo importa en claro: en oscuro la perilla contra la página ya da 17:1.
+    if (theme === "light") {
+      const borde = flattenAlpha(paleta.light["--sf-label-tertiary"]!, "#ffffff")
+      it(`light · el borde (${borde}) contra la perilla blanca llega a 3:1`, () => {
+        expect(ratio(borde, "#ffffff")).toBeGreaterThanOrEqual(3)
+      })
+    }
   }
 })
