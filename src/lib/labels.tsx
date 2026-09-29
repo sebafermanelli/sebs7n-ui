@@ -203,6 +203,12 @@ export type Labels = {
     /** «Usado», en la cabecera de `StackedMeter`. */
     used: string
   }
+  multiSelect: {
+    /** La opción de arriba de la lista que marca todas las que se ven. */
+    selectAll: string
+    /** Antes del tope, en la lista, cuando se llegó: «Máximo 3». */
+    max: string
+  }
   numberField: {
     decrement: string
     increment: string
@@ -328,6 +334,10 @@ export const defaultLabels: Labels = {
   dialog: { close: "Cerrar" },
   drawer: { close: "Cerrar" },
   meter: { free: "Libre", used: "Usado" },
+  multiSelect: {
+    selectAll: "Seleccionar todo",
+    max: "Máximo",
+  },
   numberField: {
     decrement: "Disminuir",
     increment: "Aumentar",

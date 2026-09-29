@@ -182,3 +182,4 @@ export * from "./components/widget-card.js"
 //   `stepper`         sebs7n-ui/stepper
 //   `data-table`      sebs7n-ui/data-table
 //   `input-group`     sebs7n-ui/input-group
+//   `multi-select`    sebs7n-ui/multi-select

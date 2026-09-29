@@ -573,6 +573,11 @@ las fases R2–R5 rehacen diálogos, menús, controles y listas con las medidas 
   28/36/40, `disabled`), `InputGroupAddon` (texto, ícono, `Kbd`; un click enfoca el campo),
   `InputGroupInput` (transparente, se integra con `Field`) e `InputGroupButton` (`ghost`, `plain`,
   `default`, a escala del campo).
+- **`MultiSelect`** (`sebs7n-ui/multi-select`, **solo por subpath**), varias opciones con chips (R6):
+  `Combobox multiple` de Base UI armado por datos (`options`, `value`/`defaultValue`/`onValueChange` en
+  el orden de las opciones), filtro sin tildes, el círculo de acento a la derecha, «Seleccionar todo»
+  (las habilitadas que se ven), `max` (el resto se apaga y la lista lo dice), `showClear`, `size`,
+  `name`. Labels `multiSelect: { selectAll, max }`.
 - La tabla de subpaths del README dice qué componentes no están en el barrel (la lee de `src/index.ts`).
 - El variant `inside-selection` también mira las listas de filas (`group/list`: `List`, `Tree`,
   `FileGrid`), no solo la `Table`.

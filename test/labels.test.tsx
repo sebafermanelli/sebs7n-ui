@@ -198,6 +198,7 @@ describe("LabelsProvider", () => {
       "dialog",
       "drawer",
       "meter",
+      "multiSelect",
       "numberField",
       "pageHeader",
       "sheet",
