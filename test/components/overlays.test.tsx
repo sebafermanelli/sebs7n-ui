@@ -80,7 +80,7 @@ describe("Popover", () => {
 })
 
 describe("DropdownMenu", () => {
-  it("ítems de 24px con el resaltado en acento sólido; destructivo en rojo", async () => {
+  it("ítems de 24px con el resaltado en acento sólido; el destructivo, igual que los demás", async () => {
     const onClick = vi.fn()
     render(
       <DropdownMenu>
@@ -94,7 +94,11 @@ describe("DropdownMenu", () => {
     await userEvent.click(screen.getByRole("button", { name: "Acciones" }))
     const edit = await screen.findByRole("menuitem", { name: "Editar" })
     expect(edit).toHaveClass("h-6", "rounded-menu-item", "data-highlighted:bg-selection", "data-highlighted:text-on-selection", "active:bg-selection", "data-disabled:text-gray-700", "data-disabled:data-highlighted:bg-transparent")
-    expect(screen.getByRole("menuitem", { name: "Eliminar" })).toHaveClass("data-[variant=destructive]:data-highlighted:not-data-disabled:bg-red-800")
+    // Como el «Eliminar» de Mail: texto común, y resaltado en el mismo acento. El peligro lo
+    // muestra la alerta que confirma, no el ítem.
+    const eliminar = screen.getByRole("menuitem", { name: "Eliminar" })
+    expect(eliminar.className).not.toMatch(/red|error/)
+    expect(eliminar.className).toBe(edit.className)
     expect(screen.getByRole("menuitem", { name: "Eliminar" })).toHaveAttribute("data-variant", "destructive")
     await userEvent.click(edit)
     expect(onClick).toHaveBeenCalled()

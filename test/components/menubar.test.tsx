@@ -175,4 +175,14 @@ describe("Menubar", () => {
     expect(panel).toHaveClass("shadow-menu", "rounded-[calc(var(--radius-menu-item)+--spacing(1.5))]", "material-popover", "p-1.5", "min-w-48")
     expect(titulo("Archivo")).toHaveAttribute("data-popup-open")
   })
+
+  it("el destructivo se ve como cualquier ítem: sin rojo, el mismo acento al resaltarlo", async () => {
+    render(<Editor />)
+    await userEvent.click(titulo("Archivo"))
+
+    const descartar = await screen.findByRole("menuitem", { name: "Descartar borrador" })
+    const comun = screen.getByRole("menuitem", { name: /Nuevo informe/ })
+    expect(descartar.className).not.toMatch(/red|error/)
+    expect(descartar.className).toBe(comun.className)
+  })
 })

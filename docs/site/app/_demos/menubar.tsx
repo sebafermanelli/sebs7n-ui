@@ -51,8 +51,8 @@ export function Editor() {
             </MenubarSubContent>
           </MenubarSub>
           <MenubarSeparator />
-          <MenubarItem variant="destructive">
-            Descartar borrador
+          <MenubarItem>
+            Descartar borrador…
             <MenubarShortcut>⌘⌫</MenubarShortcut>
           </MenubarItem>
         </MenubarContent>

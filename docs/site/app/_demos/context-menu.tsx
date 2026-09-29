@@ -66,7 +66,7 @@ export function Archivo() {
             </ContextMenuSub>
           </ContextMenuGroup>
           <ContextMenuSeparator />
-          <ContextMenuItem variant="destructive">
+          <ContextMenuItem>
             <TrashIcon />
             Mover a la papelera
             <ContextMenuShortcut>⌫</ContextMenuShortcut>

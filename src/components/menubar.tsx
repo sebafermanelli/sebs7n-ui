@@ -106,7 +106,15 @@ function MenubarLabel({ className, inset, ...props }: MenubarLabelProps) {
 }
 
 type MenubarItemProps = WithClassName<MenuPrimitive.Item.Props> &
-  MenuInsetProps & { variant?: "default" | "destructive" }
+  MenuInsetProps & {
+    /**
+     * @deprecated Desde 2.0 no cambia cómo se ve: el ítem destructivo va en texto común y se
+     * resalta con el mismo acento que los demás, como el «Eliminar» de Mail. El peligro lo
+     * muestra un `AlertDialog` que confirma la acción. Se sigue aceptando (y sale como
+     * `data-variant`) para no romper a quien lo pasa; se va en la próxima major.
+     */
+    variant?: "default" | "destructive"
+  }
 
 function MenubarItem({ className, inset, variant = "default", ...props }: MenubarItemProps) {
   return (
@@ -116,10 +124,9 @@ function MenubarItem({ className, inset, variant = "default", ...props }: Menuba
       data-variant={variant}
       className={cn(
         menuItemClassName,
-        // El destructivo resaltado va en rojo sólido con su texto de contraste: el mismo par que
-        // el botón `destructive`. Sobre el acento, el rojo del texto no se leería.
+        // Sin rojo (2.0): en macOS «Eliminar» es un ítem más y lo que avisa es la alerta que sigue.
+        // Un ítem rojo entre ítems negros, además, se lee como un error y no como una opción.
         menuInsetClassName,
-        "data-[variant=destructive]:text-red-900 data-[variant=destructive]:data-highlighted:not-data-disabled:bg-red-800 data-[variant=destructive]:data-highlighted:not-data-disabled:text-button-error-fg data-[variant=destructive]:data-highlighted:not-data-disabled:[&_svg]:text-button-error-fg",
         className
       )}
       {...props}

@@ -132,7 +132,7 @@ describe("ContextMenu", () => {
     await waitFor(() => expect(trigger()).toHaveFocus())
   })
 
-  it("usa la misma pastilla que DropdownMenu y marca el destructivo en rojo", async () => {
+  it("usa la misma pastilla que DropdownMenu y el destructivo va sin rojo", async () => {
     render(<Archivo />)
     abrirConClickDerecho()
 
@@ -145,7 +145,8 @@ describe("ContextMenu", () => {
 
     const borrar = screen.getByRole("menuitem", { name: "Mover a la papelera" })
     expect(borrar).toHaveAttribute("data-variant", "destructive")
-    expect(borrar).toHaveClass("data-[variant=destructive]:text-red-900")
+    expect(borrar.className).not.toMatch(/red|error/)
+    expect(borrar).toHaveClass("text-gray-1000", "data-highlighted:bg-selection", "data-highlighted:text-on-selection")
   })
 
   it("el checkbox se lee como menuitemcheckbox y no cierra el menú", async () => {

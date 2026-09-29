@@ -249,7 +249,7 @@ function Muestra() {
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                <DropdownMenuItem variant="destructive">Anular</DropdownMenuItem>
+                <DropdownMenuItem>Anular…</DropdownMenuItem>
               </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>
