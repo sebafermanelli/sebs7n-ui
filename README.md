@@ -351,13 +351,8 @@ opción "Sistema".
   `variant`) es el primario de iCloud, el acento sólido, y va en la acción
   principal; las demás son `secondary` (gris) o `plain` (texto de acento).
   `variant="accent"` quedó como alias obsoleto de `default`.
-- **Sin cápsulas desde 2.0.** `shape="pill"` solo suma un escalón de padding
-  horizontal (`sm` 20px, `md` 24px, `lg` 28px); el radio es el del botón (8).
-  En `icon-*` se ignora. Dos formas de botón en la misma pantalla se leen como
-  un descuido, no como una jerarquía. `shape` es opcional y su default no agrega
-  ninguna clase: sin pasarlo, `buttonVariants` emite exactamente la misma cadena
-  que antes de que la variante existiera, y hay un test que compara la cadena
-  entera.
+- **Sin cápsulas desde 2.0.** El botón tiene una sola forma, el rectángulo de
+  iCloud (radio 8); la prop `shape` se fue.
 - **Links con forma de botón o card:** `buttonVariants()` / `cardVariants()`
   sobre `<a>` o `<Link>`. No uses `render` para links: Base UI les pone
   `role="button"`.

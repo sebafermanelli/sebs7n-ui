@@ -39,7 +39,7 @@ export {
 } from "./lib/schema.js"
 
 export { badgeDotColor, badgeVariants, BADGE_COLORS, type BadgeColor } from "./variants/badge.js"
-export { buttonVariants, type ButtonIconSize, type ButtonShape, type ButtonSize, type ButtonTextSize, type ButtonVariantProps } from "./variants/button.js"
+export { buttonVariants, type ButtonIconSize, type ButtonSize, type ButtonTextSize, type ButtonVariantProps } from "./variants/button.js"
 export { cardVariants } from "./variants/card.js"
 export {
   commandDialogPopupClassName,

@@ -46,20 +46,6 @@ const buttonVariantsBase = cva(
         "icon-md": "size-9 [&_svg:not([class*='size-'])]:size-4.5",
         "icon-lg": "size-10 [&_svg:not([class*='size-'])]:size-5",
       },
-      /**
-       * La forma del botón.
-       *
-       * Desde 2.0 el botón es el rectángulo de iCloud (`rounded-control`, 8 px) en todas las
-       * formas: de 1.0 a 1.x era una cápsula, y en iCloud no hay controles en cápsula.
-       *
-       * `pill` suma un escalón de padding horizontal, para los CTA de un hero. `rect` queda por
-       * compatibilidad: ya es lo mismo que `default`.
-       */
-      shape: {
-        default: "",
-        pill: "",
-        rect: "rounded-control",
-      },
     },
     compoundVariants: [
       // El área táctil de 44 va en todos menos en `link`: ese es texto adentro de un párrafo, y un
@@ -69,13 +55,8 @@ const buttonVariantsBase = cva(
         variant: ["default", "accent", "secondary", "plain", "ghost", "destructive", "destructive-plain"],
         className: "touch-target",
       },
-      // Un escalón más de aire, por tamaño. `lg` ya es ancho, así que sube
-      // menos: a 20px de padding la curva ya no toca el texto.
-      { shape: "pill", size: "sm", className: "px-4" },
-      { shape: "pill", size: "md", className: "px-5" },
-      { shape: "pill", size: "lg", className: "px-6" },
     ],
-    defaultVariants: { variant: "default", size: "md", shape: "default" },
+    defaultVariants: { variant: "default", size: "md" },
   }
 )
 
@@ -83,9 +64,6 @@ const buttonVariantsBase = cva(
 export const buttonVariants = (props?: Parameters<typeof buttonVariantsBase>[0]) => cn(buttonVariantsBase(props))
 
 export type ButtonVariantProps = VariantProps<typeof buttonVariants>
-
-/** La forma del botón: la del sistema, con más aire (`pill`) o `rect` (igual que la del sistema). */
-export type ButtonShape = NonNullable<ButtonVariantProps["shape"]>
 
 export type ButtonSize = NonNullable<ButtonVariantProps["size"]>
 

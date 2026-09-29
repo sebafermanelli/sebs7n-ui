@@ -4,7 +4,7 @@ Las decisiones que no se ven en una tabla de props. Cada una existe porque rompe
 
 **Un solo acento sólido por pantalla.** El `Button` por defecto es el primario de iCloud, el acento sólido: va en la acción principal, y las demás son `secondary` (gris) o `plain` (texto de acento). Dos acentos compitiendo no son dos acciones importantes: son ninguna. Los estados prendidos —un `Checkbox` marcado, un `Switch`, un `Toggle`— llevan el brand y no cuentan: dicen «esto está activo», no «apretá acá».
 
-**Sin cápsulas.** Desde 2.0 nada es una píldora: botones y controles con radio 8, campos e ítems de lista con 10, cards y diálogos con 11, menús y popovers con 12 (los de iCloud). `shape="pill"` ya no redondea: solo suma un escalón de padding horizontal, para el CTA de un hero.
+**Sin cápsulas.** Desde 2.0 nada es una píldora: botones y controles con radio 8, campos e ítems de lista con 10, cards y diálogos con 11, menús y popovers con 12 (los de iCloud).
 
 **`variant="destructive"` solo cuando la acción borra algo**, y siempre detrás de un `AlertDialog`.
 

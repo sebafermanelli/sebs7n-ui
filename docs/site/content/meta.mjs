@@ -122,7 +122,6 @@ export const COMPONENTS = {
     usage: [
       "**Un solo acento sólido por pantalla.** `default` es el primario de iCloud (el acento sólido) y va en la acción principal; las demás son `secondary` (gris) o `plain` (texto de acento). iCloud no tiene botón con borde: la jerarquía es acento sólido → gris → texto de acento → ícono.",
       "**Botón de ícono de una toolbar:** `size=\"icon-sm\" variant=\"plain\"` (28 × 28, glifo en el acento, gris claro con el puntero), como los de Drive. `variant=\"ghost\"` para el glifo neutro: la X de un diálogo, la barra global (`icon-md`, 36).",
-      "**`shape=\"pill\"` solo en los CTA de un hero o de una sección de marketing.** Nunca en el chrome de una app —nav, tablas, formularios, diálogos—: dos formas de botón en la misma pantalla se leen como un descuido.",
       "**Un link con forma de botón es un `<a>`**: `className={buttonVariants({ variant })}` sobre `<Link>`. No uses `render` para links: con el `nativeButton` que trae el `Button` por defecto, Base UI le pone `type=\"button\"` al `<a>` y avisa por consola en desarrollo.",
       "`variant=\"destructive\"` (gris con el texto rojo) solo cuando la acción borra algo, y siempre detrás de un `AlertDialog`; adentro de la alerta es la acción (`AlertDialogAction variant=\"destructive\"`). `destructive-plain` es el texto rojo sin fondo, al final de una lista o de un panel.",
       "`loading` no reemplaza al `disabled` del formulario: deshabilitá también el submit si no querés dobles envíos.",

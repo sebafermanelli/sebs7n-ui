@@ -91,23 +91,6 @@ export function Carga() {
 }
 
 /**
- * Píldora, solo para marketing
- * `shape="pill"` en los CTA de un hero. Nunca en el chrome de una app.
- */
-export function Pildora() {
-  return (
-    <div className="flex flex-wrap items-center gap-3">
-      <Button shape="pill" size="lg">
-        Empezar gratis
-      </Button>
-      <Button shape="pill" size="lg" variant="secondary">
-        Hablar con ventas
-      </Button>
-    </div>
-  )
-}
-
-/**
  * Un link con forma de botón
  * `buttonVariants()` sobre un `<a>`: sigue siendo un link para el lector de pantalla.
  */

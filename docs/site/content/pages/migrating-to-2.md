@@ -153,6 +153,8 @@ Texto 14 e íconos 16 en los tres (el `lg` ya no sube de tamaño de letra). **El
 <Button variant="plain">Exportar</Button>
 ```
 
+`shape` se fue: borrá `shape="pill"` y `shape="rect"`. El botón tiene una sola forma, el rectángulo de radio 8; si un CTA de hero necesitaba más aire, `className="px-6"`.
+
 Si en una pantalla convivían `default` (negro) y `accent`, ahora son dos acentos: el que no es la acción principal pasa a `secondary` o `plain`. El negro a propósito: `className="bg-label text-surface hover:bg-label/85"`.
 
 ### Tabs

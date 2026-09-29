@@ -63,43 +63,22 @@ describe("variantes exportadas pasan por cn()", () => {
    * —el acento sólido, antes el negro— y el deshabilitado es `opacity-40`; el anillo es el inverso
    * (`focus-ring-inverse`), que `cn()` deja en lugar del de la base.
    */
-  const SIN_SHAPE = {
+  const CADENA = {
     "default/md":
       "relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-control border border-transparent whitespace-nowrap outline-none select-none transition-surface data-disabled:cursor-not-allowed data-disabled:opacity-40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 bg-brand-700 text-brand-contrast hover:bg-brand-800 active:bg-brand-800 focus-visible:focus-ring-inverse h-9 px-3 text-callout touch-target",
   } as const
 
-  it("sin shape, buttonVariants emite la cadena fijada", () => {
-    expect(buttonVariants()).toBe(SIN_SHAPE["default/md"])
-    expect(buttonVariants({ variant: "default", size: "md" })).toBe(SIN_SHAPE["default/md"])
-    expect(buttonVariants({ shape: "default" })).toBe(SIN_SHAPE["default/md"])
-    // Y el botón es una cápsula en todos los tamaños, los de ícono incluidos.
+  it("buttonVariants emite la cadena fijada", () => {
+    expect(buttonVariants()).toBe(CADENA["default/md"])
+    expect(buttonVariants({ variant: "default", size: "md" })).toBe(CADENA["default/md"])
+    // Y el botón es el rectángulo de iCloud en todos los tamaños, los de ícono incluidos.
     for (const size of ["sm", "md", "lg", "icon-sm", "icon-md", "icon-lg"] as const) {
       expect(classes(buttonVariants({ size })), size).toContain("rounded-control")
     }
   })
 
-  it("shape pill suma aire horizontal y no toca el radio", () => {
-    for (const size of ["sm", "md", "lg"] as const) {
-      const out = classes(buttonVariants({ size, shape: "pill" }))
-      expect(out.filter((c) => c.startsWith("rounded-")), size).toEqual(["rounded-control"])
-    }
-    // Un escalón más de padding por tamaño, y uno solo.
-    const padding = (size: "sm" | "md" | "lg") =>
-      classes(buttonVariants({ size, shape: "pill" })).filter((c) => /^px-\d/.test(c))
-    expect(padding("sm")).toEqual(["px-4"])
-    expect(padding("md")).toEqual(["px-5"])
-    expect(padding("lg")).toEqual(["px-6"])
-  })
-
-  it("shape rect devuelve el rectángulo, con el radio de los controles", () => {
-    for (const variant of ["default", "secondary", "plain", "ghost", "destructive", "destructive-plain"] as const) {
-      const out = classes(buttonVariants({ variant, shape: "rect" }))
-      // tailwind-merge tiene que haber resuelto el radio: si sobrevive el de la base, cuál
-      // gana depende del orden en la hoja compilada.
-      expect(out.filter((c) => c.startsWith("rounded-")), variant).toEqual(["rounded-control"])
-      // La variante sigue poniendo su color: `shape` es ortogonal.
-      expect(out.length, variant).toBeGreaterThan(18)
-    }
+  it("no hay prop shape: el botón tiene una sola forma", () => {
+    expectTypeOf<VariantProps<typeof buttonVariants>>().not.toHaveProperty("shape")
   })
 
   it("VariantProps sigue funcionando", () => {

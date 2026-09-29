@@ -350,6 +350,8 @@ para no pasar el tope de 55 kB gzip del barrel (sus textos de `labels` sí entra
   `glass-dense`, `glass-control`, `glass-rim`, `sheen`, `thumb-lens`, `glassAlpha`, `glassSurface`.
 - Sombras `shadow-button`, `shadow-button-inverted`, `shadow-button-accent`, `shadow-chip`,
   `shadow-track`.
+- `Button shape` (y el tipo `ButtonShape`): con el radio de iCloud `pill` y `rect` ya no
+  cambiaban la forma. Una sola forma de botón.
 - `Button variant="outline"`; `variant="floating"` de Sidebar, AppShell y Navbar;
   `useNavbar().floating`; `data-sf-modality`.
 - El peer opcional `geist`.
@@ -362,7 +364,7 @@ Paso a paso, con el antes y el después de cada componente y una lista para revi
 1. Cargar Inter (`next/font/google` con `variable: "--font-inter"`, o `@fontsource-variable/inter`)
    y sacar `geist`.
 2. Reemplazar `glass*` y `shadow-button*` propios por las superficies y sombras de la tabla.
-3. `Button variant="outline"` → `"secondary"`; borrar `variant="floating"`.
+3. `Button variant="outline"` → `"secondary"`; borrar `variant="floating"` y `shape`.
 4. Tabs que dependían del segmentado por defecto → `variant="segmented"`.
 5. Revisar alturas (`lg` 48 → 40), la Table (bordes y fondos en celdas) y las alertas.
 

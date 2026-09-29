@@ -60,7 +60,6 @@ function Button<S extends ButtonSize = ButtonSize>({
   className,
   variant,
   size,
-  shape,
   loading = false,
   onClick,
   children,
@@ -76,7 +75,7 @@ function Button<S extends ButtonSize = ButtonSize>({
       aria-busy={loading || undefined}
       aria-disabled={loading || undefined}
       onClick={loading ? (event) => event.preventDefault() : onClick}
-      className={cn(buttonVariants({ variant, size, shape }), loading && "cursor-progress", className)}
+      className={cn(buttonVariants({ variant, size }), loading && "cursor-progress", className)}
       {...props}
     >
       {/* El mismo Spinner del sistema, sin nombre accesible: quien anuncia la espera es el
