@@ -238,9 +238,12 @@ describe("Carousel controls=overlay", () => {
   it("flechas opacas oscuras con blur, a la vista con el puntero encima o con foco", () => {
     render(<Plans bleed controls="overlay" />)
     const previous = screen.getByRole("button", { name: "Diapositiva anterior" })
-    expect(previous).toHaveClass("bg-tooltip/90", "text-on-tooltip", "backdrop-blur-md")
+    expect(previous).toHaveClass("bg-tooltip", "ring-1", "ring-white/50", "text-on-tooltip")
     expect(previous).not.toHaveClass("material-translucent")
-    expect(previous).toHaveClass("pointer-fine:opacity-0", "pointer-fine:group-hover/carousel:opacity-100", "focus-visible:opacity-100")
+    expect(previous).toHaveClass("opacity-0", "pointer-fine:group-hover/carousel:opacity-100", "focus-visible:opacity-100")
+    // Con el dedo no tapan la foto ni se tocan sin querer, pero con un teclado (un iPad) aparecen al enfocarlas.
+    expect(previous).not.toHaveClass("pointer-coarse:hidden")
+    expect(previous).toHaveClass("pointer-coarse:pointer-events-none")
     expect(document.querySelector("[data-slot=carousel]")).toHaveClass("group/carousel")
     expect(document.querySelector("[data-slot=carousel]")).toHaveAttribute("data-controls", "overlay")
   })
@@ -248,9 +251,13 @@ describe("Carousel controls=overlay", () => {
   it("los puntos encima de la foto, abajo al centro, en una pastilla oscura", () => {
     render(<Plans bleed controls="overlay" />)
     const dots = document.querySelector("[data-slot=carousel-dots]")!
-    expect(dots).toHaveClass("absolute", "bottom-2", "left-1/2", "-translate-x-1/2", "bg-tooltip/90")
+    // Opaca con filo blanco: contraste de 3:1 sobre una foto blanca (el gris) y sobre una negra (el filo).
+    expect(dots).toHaveClass("absolute", "bottom-2", "left-1/2", "-translate-x-1/2", "bg-tooltip", "ring-1", "ring-white/50")
     expect(dots).not.toHaveClass("-mt-9")
-    expect(document.querySelector("[data-slot=carousel-dot]")).toHaveClass("before:bg-white/50", "aria-current:before:bg-white")
+    const dot = document.querySelector("[data-slot=carousel-dot]")!
+    expect(dot).toHaveClass("before:bg-white/60", "aria-current:before:bg-white")
+    // El foco, blanco y adentro del punto: queda sobre la pastilla, no sobre la foto.
+    expect(dot).toHaveClass("focus-visible:outline-white", "focus-visible:-outline-offset-2")
   })
 
   it("sin controls, las flechas y los puntos de 2.0", () => {

@@ -220,12 +220,13 @@ type CarouselArrowProps = Omit<React.ComponentProps<typeof Button>, "size" | "ch
 const arrowClassName =
   "absolute z-10 material-translucent text-label shadow-menu hover:bg-fill-2 disabled:opacity-0 data-disabled:opacity-0 motion-safe:transition-opacity"
 
-// Encima de una foto el material translúcido no garantiza el contraste del ícono: el gris oscuro del
-// tooltip, casi opaco. Con puntero fino aparecen al pasar por el carrusel o con foco; con el dedo no
-// están (se desliza, y los puntos siguen). En la punta, `invisible` y no `opacity-0`: el hover del
-// grupo le ganaría.
+// Encima de una foto el material translúcido no garantiza el contraste del ícono: el gris opaco del
+// tooltip, con un filo blanco al 50 % que lo separa de una foto oscura (≥ 3:1 sobre blanco y sobre
+// negro, lo cubre contrast.test.ts). Aparecen con el puntero encima del carrusel o con foco de teclado,
+// también con puntero grueso (un iPad con teclado); con el dedo no se ven ni se tocan (se desliza, y
+// los puntos siguen). En la punta, `invisible` y no `opacity-0`: el hover del grupo le ganaría.
 const overlayArrowClassName =
-  "absolute z-10 bg-tooltip/90 text-on-tooltip backdrop-blur-md shadow-menu hover:bg-tooltip disabled:invisible data-disabled:invisible pointer-coarse:hidden pointer-fine:opacity-0 pointer-fine:group-hover/carousel:opacity-100 focus-visible:opacity-100 motion-safe:transition-opacity"
+  "absolute z-10 bg-tooltip text-on-tooltip ring-1 ring-white/50 shadow-menu hover:bg-tooltip disabled:invisible data-disabled:invisible opacity-0 pointer-fine:group-hover/carousel:opacity-100 focus-visible:opacity-100 pointer-coarse:pointer-events-none motion-safe:transition-opacity"
 
 function CarouselPrevious({ className, variant = "ghost", ...props }: CarouselArrowProps) {
   const { orientation, scrollPrev, canScrollPrev, labels, overlay } = useCarousel()
@@ -280,7 +281,7 @@ function CarouselDots({ className, ...props }: React.ComponentProps<"div">) {
       data-slot="carousel-dots"
       className={cn(
         overlay
-          ? "absolute bottom-2 left-1/2 z-10 flex -translate-x-1/2 items-center rounded-control bg-tooltip/90 px-0.5 backdrop-blur-md"
+          ? "absolute bottom-2 left-1/2 z-10 flex -translate-x-1/2 items-center rounded-control bg-tooltip px-0.5 ring-1 ring-white/50"
           : "relative -mt-9 flex items-center justify-center pt-2",
         className
       )}
@@ -297,7 +298,10 @@ function CarouselDots({ className, ...props }: React.ComponentProps<"div">) {
           // El botón mide 24 (el área táctil mínima, WCAG 2.5.8) y el punto de adentro 8.
           className={cn(
             "flex size-6 cursor-pointer items-center justify-center rounded-full outline-none before:size-2 before:rounded-full before:bg-label-tertiary before:transition-control hover:before:bg-label-secondary focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-(color:--sf-focus) aria-current:before:bg-label",
-            overlay && "before:size-1.5 before:bg-white/50 hover:before:bg-white/80 aria-current:before:bg-white"
+            // Sobre la pastilla: el inactivo al 60 % (≥ 3:1) y el foco blanco hacia adentro, así queda sobre el
+            // gris y no sobre la foto.
+            overlay &&
+              "before:size-1.5 before:bg-white/60 hover:before:bg-white/80 aria-current:before:bg-white focus-visible:outline-white focus-visible:-outline-offset-2"
           )}
         />
       ))}

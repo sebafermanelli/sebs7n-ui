@@ -780,3 +780,22 @@ describe("Footer: el texto sobre surface-header", () => {
     }
   }
 })
+
+// Carousel `controls="overlay"` (2.1): la pastilla de los puntos y las flechas van encima de una foto,
+// que puede ser blanca o negra. La pastilla es el gris opaco del tooltip con un filo blanco al 50 %: sobre
+// una foto clara la separa el gris; sobre una negra, el filo. Los puntos inactivos, blanco al 60 %.
+// Los alfas son los de las clases (`ring-white/50`, `before:bg-white/60`), que fija carousel.test.tsx.
+describe("Carousel overlay sobre la peor foto (WCAG 1.4.11)", () => {
+  const carouselOverlayColors = { ring: "80", dot: "99" }
+  for (const theme of ["light", "dark"] as const) {
+    const pill = paleta[theme]["--sf-tooltip"]!
+    it(`${theme} · la pastilla se separa de una foto blanca por el gris y de una negra por el filo`, () => {
+      expect(ratio(pill, "#ffffff")).toBeGreaterThanOrEqual(3)
+      expect(ratio(flattenAlpha(`#ffffff${carouselOverlayColors.ring}`, "#000000"), "#000000")).toBeGreaterThanOrEqual(3)
+    })
+    it(`${theme} · el punto inactivo y el anillo de foco sobre la pastilla`, () => {
+      expect(ratio(flattenAlpha(`#ffffff${carouselOverlayColors.dot}`, pill), pill)).toBeGreaterThanOrEqual(3)
+      expect(ratio("#ffffff", pill)).toBeGreaterThanOrEqual(3)
+    })
+  }
+})
