@@ -106,3 +106,29 @@ describe.each([false, true])("SSR del shell (colapsado: %s)", (collapsed) => {
     expect(ids(container.innerHTML)).toEqual(ids(before))
   })
 })
+
+// El día inicial de CalendarView salía de `new Date()` en el render: el server (otra hora, otra zona)
+// y el cliente podían caer en días —o meses— distintos, y la hidratación no coincidía.
+describe("SSR de CalendarView sin fecha", () => {
+  it("el server y el cliente arrancan en el mismo marcador, y después va al mes de hoy", async () => {
+    const { CalendarView } = await import("../../src/components/calendar-view")
+    const ui = <CalendarView locale="es-AR" />
+    // Otro «hoy» en el server: justo lo que pasa entre zonas horarias.
+    vi.useFakeTimers({ toFake: ["Date"] })
+    vi.setSystemTime(new Date(2031, 2, 15, 23, 59))
+    const html = renderToString(ui)
+    vi.useRealTimers()
+    const container = document.createElement("div")
+    container.innerHTML = html
+    document.body.append(container)
+    const recoverable = vi.fn()
+    const errors = vi.spyOn(console, "error").mockImplementation(() => {})
+    await hidratar(container, ui, { onRecoverableError: recoverable })
+    expect(recoverable).not.toHaveBeenCalled()
+    expect(errors.mock.calls.filter(([message]) => /hydrat|did not match/i.test(String(message)))).toEqual([])
+    const hoy = new Date()
+    const mes = new Intl.DateTimeFormat("es-AR", { month: "long" }).format(hoy)
+    expect(container.querySelector("h2")!.textContent!.toLowerCase()).toContain(mes)
+    expect(container.querySelector("h2")!.textContent).toContain(String(hoy.getFullYear()))
+  })
+})

@@ -62,6 +62,8 @@ type CalendarViewProps = Omit<React.ComponentProps<"div">, "children" | "default
 }
 
 const HOUR = 61
+/** El mes que se dibuja (invisible) antes de saber qué día es hoy: igual en el server y el cliente. */
+const PLACEHOLDER = new Date(2000, 0, 1)
 const MAX_IN_DAY = 3
 
 const capitalize = (text: string) => text.charAt(0).toUpperCase() + text.slice(1)
@@ -134,8 +136,12 @@ function CalendarView({
   const now = useNow(nowProp)
   const [ownView, setOwnView] = React.useState(defaultView)
   const view = viewProp ?? ownView
-  const [ownDate, setOwnDate] = React.useState(() => startOfDay(defaultDate ?? nowProp ?? new Date()))
-  const date = dateProp ? startOfDay(dateProp) : ownDate
+  // Sin `date`, `defaultDate` ni `now`, el día inicial es «hoy», y hoy no se puede leer en el render:
+  // el server (otra hora, otra zona) y el cliente caerían en días distintos y la hidratación no
+  // coincidiría. Hasta montar se dibuja un marcador fijo, invisible, y el reloj lo reemplaza.
+  const [ownDate, setOwnDate] = React.useState<Date | null>(() => (defaultDate ?? nowProp ? startOfDay((defaultDate ?? nowProp)!) : null))
+  const pending = !dateProp && !ownDate && !now
+  const date = dateProp ? startOfDay(dateProp) : (ownDate ?? (now ? startOfDay(now) : PLACEHOLDER))
   const gridRef = React.useRef<HTMLDivElement>(null)
   const scrollRef = React.useRef<HTMLDivElement>(null)
   const focusAfter = React.useRef(false)
@@ -416,7 +422,8 @@ function CalendarView({
     <Tabs
       data-slot="calendar-view"
       data-view={view}
-      className={cn("flex h-full min-h-0 w-full flex-col gap-0 bg-surface text-label", className)}
+      aria-busy={pending || undefined}
+      className={cn("flex h-full min-h-0 w-full flex-col gap-0 bg-surface text-label", pending && "invisible", className)}
       onValueChange={(value) => setView(value as CalendarViewMode)}
       value={view}
       {...(props as Omit<React.ComponentProps<typeof Tabs>, "value" | "defaultValue" | "onValueChange">)}

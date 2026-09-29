@@ -2354,6 +2354,7 @@ export const COMPONENTS = {
       "‹ y › se llaman «Mes anterior»/«Mes siguiente» (o semana), desde el `LabelsProvider` (`calendarView`).",
     ],
     usage: [
+      "**Con SSR, pasá `now` o `defaultDate`** (la fecha del request): sin ellas el calendario no puede saber qué día es hoy hasta montar, y se dibuja invisible hasta entonces para que el server y el cliente coincidan.",
       "**Para ver fechas con cosas encima**: vencimientos, cobros, turnos. Para elegir una fecha, es `Calendar` o `DatePicker`.",
       "Los eventos son datos (`events`): `{ id, title, start, end?, allDay?, color? }`. El componente no crea ni arrastra eventos: `onDayOpen` y `onEventClick` son para que la app lo haga.",
       "`now` para tests y para servidores con otro huso: sin él, hoy y la línea de ahora salen del reloj del navegador después de montar (no hay desfase de hidratación).",
