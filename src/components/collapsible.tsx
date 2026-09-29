@@ -1,6 +1,7 @@
 "use client"
 
 import { Collapsible as CollapsiblePrimitive } from "@base-ui/react/collapsible"
+import { ChevronRightIcon } from "lucide-react"
 
 import { cn, type WithClassName } from "../lib/utils.js"
 
@@ -23,8 +24,32 @@ function Collapsible({ className, ...props }: CollapsibleProps) {
   return <CollapsiblePrimitive.Root data-slot="collapsible" className={cn("flex flex-col", className)} {...props} />
 }
 
-function CollapsibleTrigger(props: CollapsiblePrimitive.Trigger.Props) {
-  return <CollapsiblePrimitive.Trigger data-slot="collapsible-trigger" {...props} />
+const disclosureClassName =
+  "group/collapsible-trigger inline-flex cursor-pointer items-center gap-1.5 rounded-control text-left outline-none focus-visible:focus-ring"
+
+type CollapsibleTriggerProps = CollapsiblePrimitive.Trigger.Props & {
+  /**
+   * Suma el disclosure de iCloud después del texto: un chevron › que gira a ⌄ al abrir (sin
+   * recorrido con movimiento reducido). Sin él, el trigger no trae estilo: lo pone el `render`.
+   */
+  chevron?: boolean
+}
+
+function CollapsibleTrigger({ chevron = false, className, children, ...props }: CollapsibleTriggerProps) {
+  if (!chevron) return <CollapsiblePrimitive.Trigger data-slot="collapsible-trigger" className={className} {...props}>{children}</CollapsiblePrimitive.Trigger>
+  return (
+    <CollapsiblePrimitive.Trigger
+      data-slot="collapsible-trigger"
+      className={typeof className === "function" ? (state) => cn(disclosureClassName, className(state)) : cn(disclosureClassName, className)}
+      {...props}
+    >
+      {children}
+      <ChevronRightIcon
+        aria-hidden="true"
+        className="size-3.5 shrink-0 text-label-secondary transition-transform duration-150 ease-out motion-reduce:transition-none group-data-panel-open/collapsible-trigger:rotate-90"
+      />
+    </CollapsiblePrimitive.Trigger>
+  )
 }
 
 type CollapsibleContentProps = WithClassName<CollapsiblePrimitive.Panel.Props> & {
@@ -61,4 +86,4 @@ function CollapsibleContent({ className, children, panelClassName, ...props }: C
   )
 }
 
-export { Collapsible, CollapsibleContent, CollapsibleTrigger, type CollapsibleContentProps, type CollapsibleProps }
+export { Collapsible, CollapsibleContent, CollapsibleTrigger, type CollapsibleContentProps, type CollapsibleProps, type CollapsibleTriggerProps }

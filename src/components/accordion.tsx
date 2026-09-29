@@ -1,7 +1,7 @@
 "use client"
 
 import { Accordion as AccordionPrimitive } from "@base-ui/react/accordion"
-import { ChevronDownIcon } from "lucide-react"
+import { ChevronRightIcon } from "lucide-react"
 
 import { cn, type WithClassName } from "../lib/utils.js"
 
@@ -13,8 +13,11 @@ import { cn, type WithClassName } from "../lib/utils.js"
  * Por defecto se abre **una sola** sección (abrir una cierra la anterior);
  * `multiple` deja varias abiertas. Cuando hay una sola sección, `Collapsible`.
  *
+ * Es el disclosure de iCloud y del Finder (2.0): filas de 44 con un separador a todo el ancho, el
+ * título en 17/600 y un chevron › al final que gira a ⌄ al abrir.
+ *
  * El movimiento: el alto lo anima Base UI con `--accordion-panel-height` y el
- * chevron gira 180°. Las dos cosas pasan por `motion-reduce`, además del reset
+ * chevron gira 90°. Las dos cosas pasan por `motion-reduce`, además del reset
  * global del paquete, así que con movimiento reducido el panel aparece y
  * desaparece sin recorrido.
  */
@@ -54,8 +57,8 @@ function AccordionTrigger({ className, chevron = true, children, headerClassName
       <AccordionPrimitive.Trigger
         data-slot="accordion-trigger"
         className={cn(
-          "group/accordion-trigger flex flex-1 cursor-pointer items-center justify-between gap-3 rounded-control px-1 py-4 text-left text-headline text-label outline-none select-none transition-control",
-          "hover:text-label-secondary focus-visible:focus-ring",
+          "group/accordion-trigger flex min-h-11 flex-1 cursor-pointer items-center justify-between gap-3 rounded-control px-1 py-2.5 text-left text-headline text-label outline-none select-none transition-control",
+          "focus-visible:focus-ring",
           "data-disabled:cursor-not-allowed data-disabled:text-label-tertiary data-disabled:hover:text-label-tertiary",
           "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
           className
@@ -64,9 +67,9 @@ function AccordionTrigger({ className, chevron = true, children, headerClassName
       >
         {children}
         {chevron && (
-          <ChevronDownIcon
+          <ChevronRightIcon
             aria-hidden="true"
-            className="text-label-secondary transition-transform duration-150 ease-out motion-reduce:transition-none group-data-panel-open/accordion-trigger:rotate-180"
+            className="size-3.5 text-label-secondary transition-transform duration-150 ease-out motion-reduce:transition-none group-data-panel-open/accordion-trigger:rotate-90"
           />
         )}
       </AccordionPrimitive.Trigger>
@@ -96,7 +99,7 @@ function AccordionContent({ className, children, panelClassName, ...props }: Acc
       )}
       {...props}
     >
-      <div data-slot="accordion-content-inner" className={cn("px-1 pb-4 text-body text-label-secondary", className)}>
+      <div data-slot="accordion-content-inner" className={cn("px-1 pb-3 text-callout text-label-secondary", className)}>
         {children}
       </div>
     </AccordionPrimitive.Panel>

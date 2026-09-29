@@ -35,6 +35,30 @@ describe("Collapsible", () => {
     expect(screen.getByRole("button", { name: "Más" })).toHaveClass("h-7", "text-callout")
   })
 
+  it("chevron: el disclosure de iCloud al lado del texto, que gira al abrir", async () => {
+    render(
+      <Collapsible>
+        <CollapsibleTrigger chevron>Filtros avanzados</CollapsibleTrigger>
+        <CollapsibleContent>x</CollapsibleContent>
+      </Collapsible>
+    )
+    const trigger = screen.getByRole("button", { name: "Filtros avanzados" })
+    const chevron = trigger.querySelector("svg")!
+    expect(chevron).toHaveClass("lucide-chevron-right", "group-data-panel-open/collapsible-trigger:rotate-90")
+    expect(trigger).toHaveClass("group/collapsible-trigger")
+    await userEvent.click(trigger)
+    expect(trigger).toHaveAttribute("data-panel-open")
+  })
+
+  it("sin chevron el trigger no trae estilo propio", () => {
+    render(
+      <Collapsible>
+        <CollapsibleTrigger>Ver</CollapsibleTrigger>
+      </Collapsible>
+    )
+    expect(screen.getByRole("button", { name: "Ver" }).querySelector("svg")).toBeNull()
+  })
+
   it("teclado: abre con Enter y cierra con Espacio, sin salir del trigger", async () => {
     render(
       <Collapsible>
