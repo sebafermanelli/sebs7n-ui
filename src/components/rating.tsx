@@ -23,7 +23,10 @@ type RatingProps = Omit<React.ComponentProps<"div">, "defaultValue" | "onChange"
   onValueChange?: (value: number) => void
   /** Cuántas estrellas. Por defecto, 5. */
   max?: number
-  /** Solo muestra el valor (el de una reseña): una imagen con el valor en palabras, sin foco. */
+  /**
+   * Solo muestra el valor (el de una reseña): una imagen con el valor en palabras, sin foco. Es un dato
+   * mostrado, no una respuesta: no se registra en `Form` ni viaja en el form nativo, aunque tenga `name`.
+   */
   readOnly?: boolean
   disabled?: boolean
   /** Sin valor no se puede enviar: dentro de un `Form`, el campo queda inválido y `Form` lo enfoca. */
@@ -100,7 +103,8 @@ function Rating({
     }),
     []
   )
-  const field = useFieldControl({ id, name, value, filled: value != null, disabled: disabledProp, controlRef: focusTarget, labelable: false })
+  // De solo lectura no se registra (como uno deshabilitado): no es algo que la persona respondió.
+  const field = useFieldControl({ id, name, value, filled: value != null, disabled: disabledProp || readOnly, controlRef: focusTarget, labelable: false })
   const disabled = field.disabled
   const resetRef = useFormReset(() => {
     if (valueProp === undefined) setOwn(defaultValue)

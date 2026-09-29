@@ -146,3 +146,24 @@ describe("Rating como campo", () => {
     expect(recoverable).not.toHaveBeenCalled()
   })
 })
+
+describe("Rating readOnly en un formulario", () => {
+  it("es un dato mostrado: no se registra en Form ni viaja en el form nativo", async () => {
+    const user = userEvent.setup()
+    const onFormSubmit = vi.fn()
+    render(
+      <Form onFormSubmit={onFormSubmit}>
+        <Field name="score">
+          <FieldLabel>Promedio</FieldLabel>
+          <Rating readOnly value={4} />
+        </Field>
+        <Rating name="own" readOnly value={3} />
+        <button type="submit">Guardar</button>
+      </Form>
+    )
+    await user.click(screen.getByRole("button", { name: "Guardar" }))
+    expect(onFormSubmit.mock.calls[0]![0]).toEqual({})
+    expect(document.querySelector("input[name]")).toBeNull()
+  })
+})
+
