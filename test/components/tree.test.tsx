@@ -1,9 +1,11 @@
 import { act, render, screen, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { useState } from "react"
+import { renderToString } from "react-dom/server"
 import { describe, expect, it, vi } from "vitest"
 
 import { Tree, type TreeNode } from "../../src/components/tree"
+import { hidratar } from "../hidratar"
 
 const ITEMS: TreeNode[] = [
   {
@@ -271,5 +273,219 @@ describe("Tree · revisión de R5b", () => {
     const { rerender } = render(<Tree aria-label="Archivos" defaultSelected="notas" items={ITEMS} onSelectedChange={onSelectedChange} />)
     rerender(<Tree aria-label="Archivos" defaultSelected="notas" items={ITEMS.filter((node) => node.id !== "notas")} onSelectedChange={onSelectedChange} />)
     expect(onSelectedChange).toHaveBeenCalledWith(null, null)
+  })
+})
+
+describe("Tree · selección múltiple", () => {
+  const elegidos = () => screen.getAllByRole("treeitem").filter((el) => el.getAttribute("aria-selected") === "true").map((el) => el.textContent)
+
+  it("aria-multiselectable solo con selectionMode=multiple", () => {
+    const { rerender } = render(<Tree aria-label="Archivos" items={ITEMS} />)
+    expect(screen.getByRole("tree")).not.toHaveAttribute("aria-multiselectable")
+    rerender(<Tree aria-label="Archivos" items={ITEMS} selectionMode="multiple" />)
+    expect(screen.getByRole("tree")).toHaveAttribute("aria-multiselectable", "true")
+  })
+
+  it("click, ⌘/Ctrl+click y ⇧+click sobre lo visible, en el orden en que se ve", async () => {
+    const onSelectedChange = vi.fn()
+    const user = userEvent.setup()
+    render(<Tree aria-label="Archivos" defaultExpanded={["facturas"]} items={ITEMS} onSelectedChange={onSelectedChange} selectionMode="multiple" />)
+    await user.click(screen.getByText("Notas.txt"))
+    expect(onSelectedChange).toHaveBeenLastCalledWith(["notas"], [expect.objectContaining({ id: "notas" })])
+    await user.keyboard("{Meta>}")
+    await user.click(screen.getByText("2026"))
+    await user.keyboard("{/Meta}")
+    // En el orden visible: «2026» está arriba de «Notas.txt».
+    expect(onSelectedChange).toHaveBeenLastCalledWith(["f-2026", "notas"], expect.any(Array))
+    await user.keyboard("{Shift>}")
+    await user.click(screen.getByText("Contratos"))
+    await user.keyboard("{/Shift}")
+    expect(onSelectedChange).toHaveBeenLastCalledWith(["f-2026", "f-0001", "contratos"], expect.any(Array))
+    expect(elegidos()).toEqual(["2026", "Factura 0001.pdf", "Contratos"])
+  })
+
+  it("teclado: ↓ mueve sin elegir, Espacio suma, ⇧+↓ extiende, ⌘A elige todo lo visible", async () => {
+    render(<Tree aria-label="Archivos" items={ITEMS} selectionMode="multiple" />)
+    await userEvent.tab()
+    await userEvent.keyboard("{ArrowDown}")
+    expect(item("Contratos")).toHaveFocus()
+    expect(elegidos()).toEqual([])
+    await userEvent.keyboard(" ")
+    expect(elegidos()).toEqual(["Contratos"])
+    await userEvent.keyboard("{Shift>}{ArrowDown}{/Shift}")
+    expect(elegidos()).toEqual(["Contratos", "Notas.txt"])
+    await userEvent.keyboard("{Shift>}{Home}{/Shift}")
+    expect(elegidos()).toEqual(["Facturas", "Contratos"])
+    await userEvent.keyboard("{Control>}a{/Control}")
+    expect(elegidos()).toEqual(["Facturas", "Contratos", "Notas.txt"])
+  })
+
+  it("en simple, ⇧+↓ y ⌘+click siguen eligiendo uno solo (la API de siempre)", async () => {
+    const user = userEvent.setup()
+    render(<Tree aria-label="Archivos" items={ITEMS} />)
+    await user.tab()
+    await user.keyboard("{Shift>}{ArrowDown}{/Shift}")
+    expect(elegidos()).toEqual(["Contratos"])
+    await user.keyboard("{Meta>}")
+    await user.click(screen.getByText("Notas.txt"))
+    expect(elegidos()).toEqual(["Notas.txt"])
+  })
+
+  it("varias elegidas seguidas son un bloque: sin radio donde se tocan", () => {
+    render(<Tree aria-label="Archivos" defaultSelected={["contratos", "notas"]} items={ITEMS} selectionMode="multiple" />)
+    expect(item("Contratos").className).toContain("data-[state=selected]:has-[+[data-state=selected]]:rounded-b-none")
+    expect(item("Notas.txt").className).toContain("data-[state=selected]:[[data-state=selected]+&]:rounded-t-none")
+  })
+
+  it("si un elegido desaparece de items, sale de la selección y se avisa", () => {
+    const onSelectedChange = vi.fn()
+    const { rerender } = render(<Tree aria-label="Archivos" defaultSelected={["contratos", "notas"]} items={ITEMS} onSelectedChange={onSelectedChange} selectionMode="multiple" />)
+    rerender(
+      <Tree
+        aria-label="Archivos"
+        defaultSelected={["contratos", "notas"]}
+        items={ITEMS.filter((node) => node.id !== "notas")}
+        onSelectedChange={onSelectedChange}
+        selectionMode="multiple"
+      />
+    )
+    expect(onSelectedChange).toHaveBeenCalledWith(["contratos"], [expect.objectContaining({ id: "contratos" })])
+  })
+
+  it("tipos: multiple exige arrays; grid exige columns", () => {
+    // @ts-expect-error -- con selectionMode="multiple", selected es un array
+    ;<Tree aria-label="Archivos" items={ITEMS} selected="notas" selectionMode="multiple" />
+    // @ts-expect-error -- grid sin columns
+    ;<Tree aria-label="Archivos" grid items={ITEMS} />
+    ;<Tree aria-label="Archivos" columns={[{ header: "Tipo" }]} grid items={ITEMS} onSelectedChange={(ids: string[]) => ids} selectionMode="multiple" />
+  })
+})
+
+describe("Tree · treegrid", () => {
+  const COLUMNAS = [{ header: "Tipo", width: 120 }, { header: "Tamaño", width: 90, numeric: true }]
+  const CON_COLUMNAS: TreeNode[] = [
+    { id: "facturas", label: "Facturas", columns: ["Carpeta", "—"], children: [{ id: "f-0012", label: "Factura 0012.pdf", columns: ["PDF", "128 KB"] }] },
+    { id: "notas", label: "Notas.txt", columns: ["Texto", "2 KB"] },
+  ]
+  const fila = (name: string) => screen.getByRole("row", { name: new RegExp(`^${name}`) })
+  const celdas = (name: string) => within(fila(name)).getAllByRole("gridcell")
+
+  it("treegrid con cabeceras que se leen; filas con nivel, posición, tamaño y aria-expanded; celdas gridcell", () => {
+    render(<Tree aria-label="Archivos" columns={COLUMNAS} defaultExpanded={["facturas"]} grid items={CON_COLUMNAS} nameHeader="Nombre" />)
+    const grilla = screen.getByRole("treegrid", { name: "Archivos" })
+    expect(within(grilla).getAllByRole("columnheader").map((el) => el.textContent)).toEqual(["Nombre", "Tipo", "Tamaño"])
+    expect(document.querySelector("[data-slot=tree-header]")).not.toHaveAttribute("aria-hidden")
+    expect(fila("Facturas")).toHaveAttribute("aria-level", "1")
+    expect(fila("Facturas")).toHaveAttribute("aria-expanded", "true")
+    expect(fila("Facturas")).toHaveAttribute("aria-setsize", "2")
+    expect(fila("Factura 0012.pdf")).toHaveAttribute("aria-level", "2")
+    expect(fila("Factura 0012.pdf")).toHaveAttribute("aria-posinset", "1")
+    expect(fila("Notas.txt")).not.toHaveAttribute("aria-expanded")
+    expect(celdas("Notas.txt").map((el) => el.textContent)).toEqual(["Notas.txt", "Texto", "2 KB"])
+    expect(screen.queryByRole("treeitem")).not.toBeInTheDocument()
+  })
+
+  it("→ abre, → entra a la primera celda, → recorre y ← vuelve a la fila; ← en la fila cierra", async () => {
+    render(<Tree aria-label="Archivos" columns={COLUMNAS} grid items={CON_COLUMNAS} />)
+    await userEvent.tab()
+    expect(fila("Facturas")).toHaveFocus()
+    await userEvent.keyboard("{ArrowRight}")
+    expect(fila("Facturas")).toHaveAttribute("aria-expanded", "true")
+    expect(fila("Facturas")).toHaveFocus()
+    await userEvent.keyboard("{ArrowRight}")
+    expect(celdas("Facturas")[0]).toHaveFocus()
+    await userEvent.keyboard("{ArrowRight}{ArrowRight}{ArrowRight}")
+    expect(celdas("Facturas")[2]).toHaveFocus()
+    await userEvent.keyboard("{ArrowLeft}{ArrowLeft}{ArrowLeft}")
+    expect(fila("Facturas")).toHaveFocus()
+    await userEvent.keyboard("{ArrowLeft}")
+    expect(fila("Facturas")).toHaveAttribute("aria-expanded", "false")
+  })
+
+  it("en una celda, ↓↑ van a la misma celda de otra fila (la selección sigue a la fila); Home/End recorren la fila", async () => {
+    render(<Tree aria-label="Archivos" columns={COLUMNAS} defaultExpanded={["facturas"]} grid items={CON_COLUMNAS} />)
+    await userEvent.tab()
+    await userEvent.keyboard("{ArrowRight}{ArrowRight}")
+    expect(celdas("Facturas")[1]).toHaveFocus()
+    await userEvent.keyboard("{ArrowDown}")
+    expect(celdas("Factura 0012.pdf")[1]).toHaveFocus()
+    expect(fila("Factura 0012.pdf")).toHaveAttribute("aria-selected", "true")
+    await userEvent.keyboard("{End}")
+    expect(celdas("Factura 0012.pdf")[2]).toHaveFocus()
+    await userEvent.keyboard("{Home}")
+    expect(celdas("Factura 0012.pdf")[0]).toHaveFocus()
+    await userEvent.keyboard("{Control>}{End}{/Control}")
+    expect(celdas("Notas.txt")[0]).toHaveFocus()
+  })
+
+  it("foco itinerante: un solo elemento con tabIndex 0 (fila o celda) y Tab sale de una", async () => {
+    render(
+      <>
+        <Tree aria-label="Archivos" columns={COLUMNAS} grid items={CON_COLUMNAS} />
+        <button type="button">Después</button>
+      </>
+    )
+    const conTab = () => [...screen.getByRole("treegrid").querySelectorAll("[tabindex='0']")]
+    expect(conTab()).toEqual([fila("Facturas")])
+    await userEvent.tab()
+    await userEvent.keyboard("{ArrowDown}{ArrowRight}")
+    expect(conTab()).toEqual([celdas("Notas.txt")[0]])
+    await userEvent.tab()
+    expect(screen.getByRole("button", { name: "Después" })).toHaveFocus()
+    await userEvent.tab({ shift: true })
+    expect(celdas("Notas.txt")[0]).toHaveFocus()
+  })
+
+  it("Enter en una celda abre la fila; un click en una celda elige la fila", async () => {
+    const onOpen = vi.fn()
+    render(<Tree aria-label="Archivos" columns={COLUMNAS} grid items={CON_COLUMNAS} onOpen={onOpen} />)
+    await userEvent.click(screen.getByText("2 KB"))
+    expect(fila("Notas.txt")).toHaveAttribute("aria-selected", "true")
+    expect(celdas("Notas.txt")[2]).toHaveFocus()
+    await userEvent.keyboard("{Enter}")
+    expect(onOpen).toHaveBeenCalledWith(expect.objectContaining({ id: "notas" }))
+  })
+
+  it("un click en el nombre enfoca la fila (↓ sigue por filas); en un valor, esa celda (↓ sigue por celda)", async () => {
+    render(<Tree aria-label="Archivos" columns={COLUMNAS} defaultExpanded={["facturas"]} grid items={CON_COLUMNAS} />)
+    await userEvent.click(screen.getByText("Factura 0012.pdf"))
+    expect(fila("Factura 0012.pdf")).toHaveFocus()
+    expect(fila("Factura 0012.pdf")).toHaveAttribute("tabindex", "0")
+    await userEvent.keyboard("{ArrowDown}")
+    expect(fila("Notas.txt")).toHaveFocus()
+    await userEvent.click(screen.getByText("128 KB"))
+    expect(celdas("Factura 0012.pdf")[2]).toHaveFocus()
+    await userEvent.keyboard("{ArrowDown}")
+    expect(celdas("Notas.txt")[2]).toHaveFocus()
+  })
+
+  it("con grid y selección múltiple: aria-multiselectable en el treegrid y Espacio en una celda suma la fila", async () => {
+    render(<Tree aria-label="Archivos" columns={COLUMNAS} grid items={CON_COLUMNAS} selectionMode="multiple" />)
+    expect(screen.getByRole("treegrid")).toHaveAttribute("aria-multiselectable", "true")
+    await userEvent.tab()
+    await userEvent.keyboard("{ArrowDown}{ArrowRight} ")
+    expect(fila("Notas.txt")).toHaveAttribute("aria-selected", "true")
+  })
+})
+
+describe("Tree · hidratación", () => {
+  it("hidrata sin mismatch como árbol, con selección múltiple y como treegrid", async () => {
+    const casos = [
+      <Tree key="a" aria-label="Archivos" defaultSelected="notas" items={ITEMS} />,
+      <Tree key="b" aria-label="Archivos" defaultSelected={["contratos", "notas"]} items={ITEMS} selectionMode="multiple" />,
+      <Tree key="c" aria-label="Archivos" columns={[{ header: "Tipo" }]} defaultExpanded={["facturas"]} grid items={ITEMS} nameHeader="Nombre" />,
+    ]
+    for (const ui of casos) {
+      const container = document.createElement("div")
+      container.innerHTML = renderToString(ui)
+      document.body.append(container)
+      const errors = vi.spyOn(console, "error").mockImplementation(() => {})
+      const recoverable = vi.fn()
+      await hidratar(container, ui, { onRecoverableError: recoverable })
+      expect(recoverable).not.toHaveBeenCalled()
+      expect(errors.mock.calls.filter(([message]) => /hydrat|did not match/i.test(String(message)))).toEqual([])
+      errors.mockRestore()
+      container.remove()
+    }
   })
 })
