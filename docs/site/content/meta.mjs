@@ -790,7 +790,7 @@ export const COMPONENTS = {
     group: "formularios",
     description: "Un país de la lista ISO, con su bandera y el nombre en el idioma de la app. Se escribe para filtrar, sin tildes.",
     keyboard: [
-      ["a–z", "Filtran por nombre, sin tildes ni mayúsculas; la primera coincidencia queda resaltada."],
+      ["a–z", "Filtran por nombre, sin tildes ni mayúsculas, o por código ISO («US» es Estados Unidos, y va primero); la primera coincidencia queda resaltada."],
       ["↓ / ↑", "Abren la lista y la recorren."],
       ["Enter", "Elige el país resaltado."],
       ["Escape", "Cierra la lista."],

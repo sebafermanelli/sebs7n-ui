@@ -37,7 +37,8 @@ type CountryPickerProps = {
 const normalize = (text: string) => text.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase()
 
 /**
- * Un país de la lista ISO: se escribe para filtrar (sin tildes), ↓/↑ recorren y Enter elige. Es un
+ * Un país de la lista ISO: se escribe para filtrar (sin tildes, por nombre o por código), ↓/↑
+ * recorren y Enter elige. Es un
  * `Combobox` con los nombres de `Intl.DisplayNames` en el idioma de la app y la bandera armada con
  * el código. El valor es el código («AR»), que es lo que se guarda.
  */
@@ -68,15 +69,21 @@ function CountryPicker({
     return { names, items: [...names.keys()].sort((a, b) => collator.compare(names.get(a)!, names.get(b)!)) }
   }, [countries, locale])
   const nameOf = (code: string) => names.get(code) ?? code
+  // El código ISO también encuentra («US», «uy»), y el país de ese código va primero: si no,
+  // «US» resaltaba Australia, que lo lleva en el nombre.
+  const [query, setQuery] = React.useState("")
+  const code = query.trim().toUpperCase()
+  const sorted = names.has(code) ? [code, ...items.filter((item) => item !== code)] : items
 
   return (
     <Combobox<string>
       autoHighlight
       disabled={disabled}
-      filter={(code, query) => normalize(nameOf(code)).includes(normalize(query.trim()))}
-      items={items}
+      filter={(item, text) => item === text.trim().toUpperCase() || normalize(nameOf(item)).includes(normalize(text.trim()))}
+      items={sorted}
       itemToStringLabel={nameOf}
       name={name}
+      onInputValueChange={setQuery}
       onValueChange={(next) => {
         if (valueProp === undefined) setOwn(next)
         onValueChange?.(next)
@@ -96,12 +103,12 @@ function CountryPicker({
       <ComboboxContent>
         <ComboboxEmpty />
         <ComboboxList className="max-h-64 overflow-y-auto">
-          {(code: string) => (
-            <ComboboxItem key={code} value={code}>
+          {(item: string) => (
+            <ComboboxItem key={item} value={item}>
               <span aria-hidden="true" data-slot="country-flag" className="w-5 shrink-0 text-center">
-                {countryFlag(code)}
+                {countryFlag(item)}
               </span>
-              <span className="truncate">{nameOf(code)}</span>
+              <span className="truncate">{nameOf(item)}</span>
             </ComboboxItem>
           )}
         </ComboboxList>

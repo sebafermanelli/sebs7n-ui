@@ -55,6 +55,16 @@ describe("CountryPicker", () => {
     expect(field()).toHaveValue("Perú")
   })
 
+  it("el código ISO también encuentra: «US» es Estados Unidos", async () => {
+    const user = userEvent.setup()
+    const onValueChange = vi.fn()
+    render(<CountryPicker aria-label="País" onValueChange={onValueChange} />)
+    await user.type(field(), "US")
+    expect(options()[0]).toBe(`${countryFlag("US")}Estados Unidos`)
+    await user.keyboard("{Enter}")
+    expect(onValueChange).toHaveBeenLastCalledWith("US")
+  })
+
   it("↓ y ↑ recorren la lista", async () => {
     const user = userEvent.setup()
     const onValueChange = vi.fn()
