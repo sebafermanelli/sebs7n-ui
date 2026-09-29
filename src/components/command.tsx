@@ -50,23 +50,39 @@ type Result = { title: string; description?: string }
 /**
  * Los resultados que se están viendo, por `value`. Un store externo y no estado de React: cada
  * ítem se anota en su efecto, y con `useState` en el root cada anotación re-renderizaría la lista
- * entera; así solo se enteran el vacío y la sugerencia.
+ * entera; así solo se enteran el vacío, la sugerencia y el root.
+ *
+ * `values()` los da en el orden del DOM, que es el que usa Base UI para el índice resaltado. El root
+ * se los pasa como `filteredItems`: sin eso, Base UI 1.8 no se entera de una lista JSX que pasa de
+ * vacía a llena con la misma consulta —el índice del buscador que llega después de la primera
+ * tecla— y no queda nada elegido; y cuando el elegido desaparece al filtrar, el valor que anuncia
+ * tiene que ser el de la fila que quedó en su lugar.
  */
 function createResults() {
-  const visible = new Map<string, Result>()
+  const visible = new Map<string, { result: Result; element: Element }>()
   const listeners = new Set<() => void>()
-  const notify = () => listeners.forEach((listener) => listener())
+  let ordered: string[] | null = null
+  const notify = () => {
+    ordered = null
+    listeners.forEach((listener) => listener())
+  }
   return {
-    add(value: string, result: Result) {
-      visible.set(value, result)
+    add(value: string, result: Result, element: Element) {
+      visible.set(value, { result, element })
       notify()
     },
     remove(value: string) {
       visible.delete(value)
       notify()
     },
-    get: (value: string | undefined) => (value === undefined ? undefined : visible.get(value)),
+    get: (value: string | undefined) => (value === undefined ? undefined : visible.get(value)?.result),
     count: () => visible.size,
+    values() {
+      ordered ??= [...visible]
+        .sort(([, a], [, b]) => (a.element.compareDocumentPosition(b.element) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1))
+        .map(([value]) => value)
+      return ordered
+    },
     subscribe(listener: () => void) {
       listeners.add(listener)
       return () => {
@@ -75,6 +91,8 @@ function createResults() {
     },
   }
 }
+
+const NO_VALUES: string[] = []
 
 type Results = ReturnType<typeof createResults>
 
@@ -157,6 +175,7 @@ function Command({ value, defaultValue = "", onValueChange, shouldFilter = true,
     () => undefined
   )
   const completion = completionOf(query, highlighted, result)
+  const values = React.useSyncExternalStore(results.subscribe, results.values, () => NO_VALUES)
 
   const context = React.useMemo<CommandContextValue>(
     () => ({ query, setQuery, shouldFilter, results, completion, labels: { ...provided, ...labels } }),
@@ -171,6 +190,8 @@ function Command({ value, defaultValue = "", onValueChange, shouldFilter = true,
         // `inline` + `open`: la lista es parte del panel y está siempre a la vista.
         inline
         open
+        // Los valores visibles en orden, ya filtrados por los ítems: ver `createResults`.
+        filteredItems={values}
         value={query}
         onValueChange={(next, details) => {
           // Elegir un ítem no escribe su `value` en el campo: acá el valor es un id («f-0012»), no
@@ -335,15 +356,25 @@ type CommandItemProps = Omit<WithClassName<AutocompletePrimitive.Item.Props>, "v
   onSelect?: (value: string) => void
 }
 
-function CommandItem({ value, keywords, description, icon, textValue, onSelect, onClick, className, children, ...props }: CommandItemProps) {
+function CommandItem({ value, keywords, description, icon, textValue, onSelect, onClick, className, children, ref, ...props }: CommandItemProps) {
   const { query, shouldFilter, results, completion } = useCommand("CommandItem")
+  const element = React.useRef<HTMLDivElement | null>(null)
+  // El registro necesita el elemento para ordenar por el DOM; la `ref` de la app sigue llegando.
+  const setRef = React.useCallback(
+    (node: HTMLDivElement | null) => {
+      element.current = node
+      if (typeof ref === "function") ref(node)
+      else if (ref) ref.current = node
+    },
+    [ref]
+  )
   const title = textValue ?? textOf(children)
   const detail = textOf(description)
   const visible = !shouldFilter || matches(query, [title, ...(keywords ?? [])])
 
   useIsoLayoutEffect(() => {
-    if (!visible) return
-    results.add(value, { title, description: detail || undefined })
+    if (!visible || !element.current) return
+    results.add(value, { title, description: detail || undefined }, element.current)
     return () => results.remove(value)
   }, [visible, value, title, detail, results])
 
@@ -351,6 +382,7 @@ function CommandItem({ value, keywords, description, icon, textValue, onSelect, 
   return (
     <AutocompletePrimitive.Item
       data-slot="command-item"
+      ref={setRef}
       value={value}
       onClick={(event) => {
         onClick?.(event)

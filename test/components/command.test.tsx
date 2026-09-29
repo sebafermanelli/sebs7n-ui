@@ -231,6 +231,40 @@ describe("Command", () => {
     expect(screen.queryAllByRole("option")).toHaveLength(0)
   })
 
+  it("ítems que llegan tarde (índice async) quedan con el primero elegido", async () => {
+    const abrir = vi.fn()
+    function Tardio({ listo }: { listo: boolean }) {
+      return (
+        <Command shouldFilter={false}>
+          <CommandInput />
+          <CommandList>
+            {listo && (
+              <>
+                <CommandItem description="Acme S.A." onSelect={abrir} value="f-0012">
+                  Factura 0012
+                </CommandItem>
+                <CommandItem onSelect={abrir} value="f-0013">
+                  Factura 0013
+                </CommandItem>
+              </>
+            )}
+          </CommandList>
+          <CommandEmpty />
+        </Command>
+      )
+    }
+    const { rerender } = render(<Tardio listo={false} />)
+    const campo = screen.getByRole("combobox")
+    // Se escribe antes de que llegue el índice.
+    await userEvent.type(campo, "fact")
+    expect(screen.queryAllByRole("option")).toHaveLength(0)
+    rerender(<Tardio listo />)
+    await waitFor(() => expect(screen.getAllByRole("option")[0]).toHaveAttribute("data-highlighted"))
+    expect(completion()).toHaveTextContent("ura 0012 — Acme S.A.")
+    await userEvent.keyboard("{Enter}")
+    expect(abrir).toHaveBeenCalledWith("f-0012")
+  })
+
   it("shouldFilter={false} deja los ítems como vienen, en su orden", async () => {
     render(
       <Command shouldFilter={false}>
