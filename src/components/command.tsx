@@ -9,18 +9,24 @@ import { SearchIcon } from "lucide-react"
 
 import { useLabels, type Labels } from "../lib/labels.js"
 import { cn, type WithClassName } from "../lib/utils.js"
-import { commandDialogPopupClassName, commandItemClassName, commandItemIconClassName } from "../variants/command.js"
+import {
+  commandDialogPopupClassName,
+  commandFilterClassName,
+  commandInputClassName,
+  commandItemClassName,
+  commandItemIconClassName,
+} from "../variants/command.js"
 import { menuLabelClassName } from "../variants/menu.js"
-import { toggleVariants } from "../variants/toggle.js"
-import { Kbd } from "./kbd.js"
 
-// La paleta de comandos estilo Spotlight (2.0).
+// La búsqueda de iCloud (2.0, R2): el search field arriba y los resultados como filas de menú, en un
+// panel con la superficie de un popover. Hasta R1 era la paleta estilo Spotlight (campo como
+// cabecera, sugerencia en línea, pista `tab`); iCloud no completa en línea.
 //
 // Teclado, foco y ARIA de combobox + listbox son de `@base-ui/react/autocomplete` en modo `inline`:
 // la lista vive adentro del panel, siempre abierta, sin popup propio. El filtrado NO es el de Base
 // UI: el suyo trabaja sobre un array `items`, y acá los ítems son JSX con `keywords`, íconos y
 // grupos, como en cmdk. Cada `CommandItem` decide si coincide con lo escrito y se anota en un
-// registro chico cuando se ve; de ese registro salen el vacío y la sugerencia en línea.
+// registro chico cuando se ve; de ese registro sale el vacío.
 
 /** Minúsculas y sin tildes: el mismo criterio que el buscador del sitio de docs. */
 function normalize(text: string) {
@@ -35,7 +41,7 @@ function matches(query: string, texts: readonly string[]) {
   return terms.every((term) => haystack.includes(term))
 }
 
-/** El texto plano de un nodo de React: lo que se filtra y lo que se sugiere en línea. */
+/** El texto plano de un nodo de React: lo que se filtra. */
 function textOf(node: React.ReactNode): string {
   if (typeof node === "string" || typeof node === "number") return String(node)
   if (Array.isArray(node)) return node.map(textOf).join("")
@@ -46,53 +52,40 @@ function textOf(node: React.ReactNode): string {
 // En el servidor `useLayoutEffect` avisa y no corre; el registro se llena recién en el cliente.
 const useIsoLayoutEffect = typeof window === "undefined" ? React.useEffect : React.useLayoutEffect
 
-type Result = { title: string; description?: string }
-
 /**
- * Los resultados que se están viendo, por `value`. Un store externo y no estado de React: cada
- * ítem se anota en su efecto, y con `useState` en el root cada anotación re-renderizaría la lista
- * entera; así solo se enteran el vacío, la sugerencia y el root.
+ * Los resultados que se están viendo. Un store externo y no estado de React: cada ítem se anota en
+ * su efecto, y con `useState` en el root cada anotación re-renderizaría la lista entera; así solo se
+ * enteran el vacío y el root.
  *
  * `values()` los da en el orden del DOM, que es el que usa Base UI para el índice resaltado. El root
  * se los pasa como `filteredItems`: sin eso, Base UI 1.8 no se entera de una lista JSX que pasa de
  * vacía a llena con la misma consulta —el índice del buscador que llega después de la primera
- * tecla— y no queda nada elegido; y cuando el elegido desaparece al filtrar, el valor que anuncia
- * tiene que ser el de la fila que quedó en su lugar.
+ * tecla— y no queda nada elegido.
  */
 function createResults() {
   // Por ítem y no por `value`: dos ítems con el mismo `value` (el mismo cliente en dos grupos)
   // son dos entradas, y que uno se esconda al filtrar no borra al otro.
-  const visible = new Map<string, { value: string; result: Result; element: Element }>()
+  const visible = new Map<string, { value: string; element: Element }>()
   const listeners = new Set<() => void>()
-  let ordered: { value: string; result: Result }[] | null = null
-  let values: string[] = []
+  let values: string[] | null = null
   const notify = () => {
-    ordered = null
+    values = null
     listeners.forEach((listener) => listener())
   }
-  const inOrder = () => {
-    if (!ordered) {
-      ordered = [...visible.values()].sort((a, b) =>
-        a.element.compareDocumentPosition(b.element) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1
-      )
-      values = ordered.map((entry) => entry.value)
-    }
-    return ordered
-  }
   return {
-    add(id: string, value: string, result: Result, element: Element) {
-      visible.set(id, { value, result, element })
+    add(id: string, value: string, element: Element) {
+      visible.set(id, { value, element })
       notify()
     },
     remove(id: string) {
       visible.delete(id)
       notify()
     },
-    /** El primero en pantalla con ese `value`. */
-    get: (value: string | undefined) => (value === undefined ? undefined : inOrder().find((entry) => entry.value === value)?.result),
     count: () => visible.size,
     values() {
-      inOrder()
+      values ??= [...visible.values()]
+        .sort((a, b) => (a.element.compareDocumentPosition(b.element) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1))
+        .map((entry) => entry.value)
       return values
     },
     subscribe(listener: () => void) {
@@ -108,20 +101,10 @@ const NO_VALUES: string[] = []
 
 type Results = ReturnType<typeof createResults>
 
-/**
- * Lo que el resultado elegido completa en línea: el resto del título y su detalle. `accepts` dice si
- * Tab o → hacen algo: con el título entero ya escrito solo queda el detalle, que se ve pero no se
- * completa, y ahí Tab tiene que seguir moviendo el foco y la pista `tab` no se muestra.
- */
-type Completion = { value: string; title: string; text: string; accepts: boolean }
-
 type CommandContextValue = {
   query: string
-  setQuery: (query: string) => void
   shouldFilter: boolean
   results: Results
-  completion: Completion | null
-  setOverflowing: (overflowing: boolean) => void
   labels: Labels["command"]
 }
 
@@ -131,20 +114,6 @@ function useCommand(part: string) {
   const context = React.useContext(CommandContext)
   if (!context) throw new Error(`${part} va adentro de <Command> o <CommandDialog>`)
   return context
-}
-
-/**
- * La sugerencia en línea de Spotlight («set|ting — System Settings.app»): si lo escrito es el
- * principio del título del elegido —sin distinguir mayúsculas ni tildes—, el resto del título y
- * « — » con su detalle. Sigue al elegido y no al primer resultado: con las flechas cambia, como en
- * Spotlight, y así la pista `tab` de la fila dice la verdad sobre lo que va a completar.
- */
-function completionOf(query: string, value: string | undefined, result: Result | undefined): Completion | null {
-  if (!query || value === undefined || !result) return null
-  const { title, description } = result
-  if (title.length < query.length || normalize(title.slice(0, query.length)) !== normalize(query)) return null
-  const text = title.slice(query.length) + (description ? ` — ${description}` : "")
-  return text ? { value, title, text, accepts: normalize(title) !== normalize(query) } : null
 }
 
 type CommandProps = Omit<React.ComponentProps<"div">, "defaultValue" | "onChange"> & {
@@ -168,9 +137,6 @@ function Command({ value, defaultValue = "", onValueChange, shouldFilter = true,
   const [uncontrolled, setUncontrolled] = React.useState(defaultValue)
   const query = value ?? uncontrolled
   const [results] = React.useState(createResults)
-  const [highlighted, setHighlighted] = React.useState<string | undefined>(undefined)
-  // Lo escrito no entra en el campo: ver `CommandInput`.
-  const [overflowing, setOverflowing] = React.useState(false)
   const provided = useLabels().command
 
   const onValueChangeRef = React.useRef(onValueChange)
@@ -184,19 +150,13 @@ function Command({ value, defaultValue = "", onValueChange, shouldFilter = true,
     [controlled]
   )
 
-  const result = React.useSyncExternalStore(
-    results.subscribe,
-    () => results.get(highlighted),
-    () => undefined
-  )
-  const completion = overflowing ? null : completionOf(query, highlighted, result)
   const values = React.useSyncExternalStore(results.subscribe, results.values, () => NO_VALUES)
 
   const context = React.useMemo<CommandContextValue>(
-    () => ({ query, setQuery, shouldFilter, results, completion, setOverflowing, labels: { ...provided, ...labels } }),
+    () => ({ query, shouldFilter, results, labels: { ...provided, ...labels } }),
     // `labels` se compara por contenido: es un objeto literal en casi todos los usos.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [query, setQuery, shouldFilter, results, completion?.value, completion?.text, completion?.accepts, provided, labels?.placeholder, labels?.empty, labels?.dialog, labels?.filters]
+    [query, shouldFilter, results, provided, labels?.placeholder, labels?.empty, labels?.dialog, labels?.filters]
   )
 
   return (
@@ -214,12 +174,11 @@ function Command({ value, defaultValue = "", onValueChange, shouldFilter = true,
           if (details.reason === "item-press") return
           setQuery(next)
         }}
-        // Como Spotlight: el primer resultado está elegido desde la primera tecla y Enter lo abre.
+        // El primer resultado está elegido desde la primera tecla y Enter lo abre.
         autoHighlight="always"
         keepHighlight
-        onItemHighlighted={(next) => setHighlighted(next === undefined ? undefined : String(next))}
       >
-        <div data-slot="command" className={cn("flex min-h-0 flex-col text-label", className)} {...props}>
+        <div data-slot="command" className={cn("flex min-h-0 flex-col gap-1 text-label", className)} {...props}>
           {children}
         </div>
       </AutocompletePrimitive.Root>
@@ -229,80 +188,33 @@ function Command({ value, defaultValue = "", onValueChange, shouldFilter = true,
 
 type CommandInputProps = Omit<AutocompletePrimitive.Input.Props, "className"> & {
   className?: string
-  /** Clases de la cabecera que envuelve lupa y campo. */
+  /** Clases de la caja del campo, la que lleva el relleno, la lupa y el anillo de foco. */
   wrapperClassName?: string
 }
 
 /**
- * El campo ES la cabecera del panel, como en Spotlight: sin caja propia, 48 px, la lupa a la
- * izquierda y una línea abajo. Con borde y fondo sería una caja de radio 10 a pocos píxeles del
- * borde de otra de 26: dos curvas que no se acompañan.
- *
- * El texto es `body-large` (15 px regular) y no `title-2` con `font-normal`: Spotlight escribe en
- * regular, y un rol trae su peso —pisarlo es usar un título como cuerpo (ver
- * `test/typography.test.ts`)—. `body-large` es el cuerpo regular más grande que tiene la escala.
- *
- * La sugerencia en línea es un `<span aria-hidden>` encima del campo que repite lo escrito en
- * transparente —para empezar justo donde termina el texto— y sigue en gris. El valor del campo no
- * cambia hasta aceptarla con `Tab` o `→` al final: el lector de pantalla oye lo que se escribió, y
- * el resultado elegido ya lo anuncia el listbox.
+ * El search field de iCloud (catálogo §2.13): 36 px, radio 10, relleno `fill-1`, la lupa de 16 a la
+ * izquierda y el texto en 14. Con el foco el relleno se va y queda el anillo interior, como en Mail.
+ * La caja es el `div` y no el `input`: la lupa va adentro.
  */
-function CommandInput({ className, wrapperClassName, placeholder, onKeyDown, ref, ...props }: CommandInputProps) {
-  const { query, setQuery, completion, setOverflowing, labels } = useCommand("CommandInput")
-  const input = React.useRef<HTMLInputElement | null>(null)
-  const setRef = React.useCallback(
-    (node: HTMLInputElement | null) => {
-      input.current = node
-      if (typeof ref === "function") ref(node)
-      else if (ref) ref.current = node
-    },
-    [ref]
-  )
-  // Si lo escrito no entra, el navegador desplaza el texto adentro del campo y la superposición
-  // —que arranca en el borde— ya no quedaría pegada al cursor. Ahí la sugerencia se esconde (y con
-  // ella Tab y la pista): se mide en cada tecla, antes de pintar.
-  useIsoLayoutEffect(() => {
-    const node = input.current
-    setOverflowing(!!node && node.scrollWidth > node.clientWidth)
-  }, [query, setOverflowing])
+function CommandInput({ className, wrapperClassName, placeholder, ...props }: CommandInputProps) {
+  const { labels } = useCommand("CommandInput")
   return (
-    <div data-slot="command-input-wrapper" className={cn("flex h-12 shrink-0 items-center gap-3 border-b border-separator px-4", wrapperClassName)}>
-      <SearchIcon aria-hidden="true" className="size-5 shrink-0 text-label-secondary" />
-      <div className="relative flex h-full min-w-0 flex-1 items-center">
-        <AutocompletePrimitive.Input
-          data-slot="command-input"
-          ref={setRef}
-          // El nombre es lo que dice el campo vacío: un placeholder no alcanza como nombre para todos
-          // los lectores, así que se repite en `aria-label`. Un `aria-label` de la app le gana.
-          aria-label={placeholder ?? labels.placeholder}
-          placeholder={placeholder ?? labels.placeholder}
-          autoComplete="off"
-          autoCapitalize="off"
-          spellCheck={false}
-          enterKeyHint="search"
-          className={cn("h-full w-full min-w-0 bg-transparent text-body-large text-label outline-none placeholder:text-label-tertiary", className)}
-          onKeyDown={(event) => {
-            onKeyDown?.(event)
-            // Con un IME (japonés, chino, acentos con tecla muerta) las teclas son de la composición.
-            if (event.defaultPrevented || event.nativeEvent.isComposing || !completion) return
-            const input = event.currentTarget
-            const atEnd = input.selectionStart === input.value.length && input.selectionEnd === input.value.length
-            const acceptKey = (event.key === "Tab" && !event.shiftKey) || event.key === "ArrowRight"
-            if (!acceptKey || !atEnd || !completion.accepts) return
-            event.preventDefault()
-            setQuery(completion.title)
-          }}
-          {...props}
-        />
-        {completion && (
-          <span aria-hidden="true" className="pointer-events-none absolute inset-0 flex items-center overflow-hidden text-body-large whitespace-pre">
-            <span className="invisible">{query}</span>
-            <span data-slot="command-completion" className="truncate text-label-tertiary">
-              {completion.text}
-            </span>
-          </span>
-        )}
-      </div>
+    <div data-slot="command-input-wrapper" className={cn(commandInputClassName, wrapperClassName)}>
+      <SearchIcon aria-hidden="true" className="size-4 shrink-0 text-label-tertiary" />
+      <AutocompletePrimitive.Input
+        data-slot="command-input"
+        // El nombre es lo que dice el campo vacío: un placeholder no alcanza como nombre para todos
+        // los lectores, así que se repite en `aria-label`. Un `aria-label` de la app le gana.
+        aria-label={placeholder ?? labels.placeholder}
+        placeholder={placeholder ?? labels.placeholder}
+        autoComplete="off"
+        autoCapitalize="off"
+        spellCheck={false}
+        enterKeyHint="search"
+        className={cn("h-full w-full min-w-0 bg-transparent text-callout text-label outline-none placeholder:text-label-tertiary", className)}
+        {...props}
+      />
     </div>
   )
 }
@@ -313,12 +225,14 @@ type CommandFiltersProps = Omit<WithClassName<RadioGroupPrimitive.Props<string>>
 }
 
 /**
- * Los chips de Spotlight: una fila de una sola opción, con scroll horizontal si no entran.
+ * Los filtros de la búsqueda: una fila de una sola opción, con scroll horizontal si no entran. iCloud
+ * acota la búsqueda con tokens (catálogo §2.13); acá van en una fila abajo del campo y no adentro,
+ * para que el campo siga siendo un `input` común.
  *
  * Un `radiogroup` y no un grupo de toggles: siempre hay exactamente uno prendido —«ninguno» sería lo
  * mismo que «Todo»—, y eso es lo que anuncia un grupo de radios («Facturas, radio, 2 de 3,
- * marcado»). Las flechas recorren los chips y Tab sale del grupo, como en cualquier radiogroup.
- * Se ven como los chips de `Toggle`. El nombre del grupo sale de `labels.filters` («Filtros»).
+ * marcado»). Las flechas recorren los filtros y Tab sale del grupo, como en cualquier radiogroup.
+ * El nombre del grupo sale de `labels.filters` («Filtros»).
  */
 function CommandFilters({ onValueChange, className, ...props }: CommandFiltersProps) {
   const { labels } = useCommand("CommandFilters")
@@ -327,7 +241,7 @@ function CommandFilters({ onValueChange, className, ...props }: CommandFiltersPr
       data-slot="command-filters"
       aria-label={labels.filters}
       onValueChange={(value) => onValueChange?.(value)}
-      className={cn("flex shrink-0 items-center gap-2 overflow-x-auto px-4 pt-2.5 pb-1 [scrollbar-width:none]", className)}
+      className={cn("flex shrink-0 items-center gap-1.5 overflow-x-auto px-1 py-1 [scrollbar-width:none]", className)}
       {...props}
     />
   )
@@ -335,19 +249,9 @@ function CommandFilters({ onValueChange, className, ...props }: CommandFiltersPr
 
 type CommandFilterProps = WithClassName<RadioPrimitive.Root.Props>
 
-/** Un chip: el mismo dibujo que `Toggle`, con `data-checked` (el del radio) en lugar de `data-pressed`. */
+/** Un token: gris, y el prendido en el acento sólido (`data-checked`, el del radio). */
 function CommandFilter({ className, ...props }: CommandFilterProps) {
-  return (
-    <RadioPrimitive.Root
-      data-slot="command-filter"
-      className={cn(
-        toggleVariants(),
-        "data-checked:border-label data-checked:bg-fill-2 data-checked:text-label data-checked:hover:bg-fill-3",
-        className
-      )}
-      {...props}
-    />
-  )
+  return <RadioPrimitive.Root data-slot="command-filter" className={cn(commandFilterClassName, className)} {...props} />
 }
 
 type CommandListProps = WithClassName<AutocompletePrimitive.List.Props>
@@ -358,9 +262,9 @@ function CommandList({ className, ...props }: CommandListProps) {
   return (
     <AutocompletePrimitive.List
       data-slot="command-list"
-      // Sin resultados la lista no ocupa lugar: el vacío va aparte y no quedan 12 px de padding.
+      // Sin resultados la lista no ocupa lugar: el vacío va aparte.
       data-no-results={count === 0 ? "" : undefined}
-      className={cn("max-h-96 min-h-0 flex-1 scroll-py-1.5 overflow-y-auto overscroll-contain p-1.5 data-no-results:p-0", className)}
+      className={cn("max-h-80 min-h-0 flex-1 overflow-y-auto overscroll-contain data-no-results:hidden", className)}
       {...props}
     />
   )
@@ -389,18 +293,18 @@ type CommandItemProps = Omit<WithClassName<AutocompletePrimitive.Item.Props>, "v
   value: string
   /** Palabras que también lo encuentran, además del título. */
   keywords?: readonly string[]
-  /** El detalle en gris debajo del título; también es lo que sigue a « — » en la sugerencia. */
+  /** El detalle en gris debajo del título. */
   description?: React.ReactNode
-  /** 32×32 con radio 8. Un ícono de lucide va a 20 px. */
+  /** En una caja de 30 px, en el acento, como los íconos de los menús de iCloud. Un ícono de lucide va a 16 px. */
   icon?: React.ReactNode
-  /** El título en texto plano, si `children` no es un string. Es lo que se filtra y se sugiere. */
+  /** El título en texto plano, si `children` no es un string. Es lo que se filtra. */
   textValue?: string
   /** Enter o click. */
   onSelect?: (value: string) => void
 }
 
 function CommandItem({ value, keywords, description, icon, textValue, onSelect, onClick, className, children, ref, ...props }: CommandItemProps) {
-  const { query, shouldFilter, results, completion } = useCommand("CommandItem")
+  const { query, shouldFilter, results } = useCommand("CommandItem")
   const id = React.useId()
   const element = React.useRef<HTMLDivElement | null>(null)
   // El registro necesita el elemento para ordenar por el DOM; la `ref` de la app sigue llegando.
@@ -413,14 +317,13 @@ function CommandItem({ value, keywords, description, icon, textValue, onSelect, 
     [ref]
   )
   const title = textValue ?? textOf(children)
-  const detail = textOf(description)
   const visible = !shouldFilter || matches(query, [title, ...(keywords ?? [])])
 
   useIsoLayoutEffect(() => {
     if (!visible || !element.current) return
-    results.add(id, value, { title, description: detail || undefined }, element.current)
+    results.add(id, value, element.current)
     return () => results.remove(id)
-  }, [visible, id, value, title, detail, results])
+  }, [visible, id, value, results])
 
   if (!visible) return null
   return (
@@ -441,15 +344,9 @@ function CommandItem({ value, keywords, description, icon, textValue, onSelect, 
         </span>
       )}
       <span className="flex min-w-0 flex-1 flex-col">
-        <span className="truncate text-callout font-medium">{children}</span>
-        {description != null && <span className="truncate text-callout text-label-secondary">{description}</span>}
+        <span className="truncate">{children}</span>
+        {description != null && <span className="truncate text-footnote text-label-secondary">{description}</span>}
       </span>
-      {/* Solo cuando Tab hace algo: en el elegido, si su título completa lo escrito. */}
-      {completion?.value === value && completion.accepts && (
-        <Kbd data-slot="command-item-hint" aria-hidden="true" size="sm" className="hidden group-data-highlighted/command-item:inline-flex">
-          tab
-        </Kbd>
-      )}
     </AutocompletePrimitive.Item>
   )
 }
@@ -486,8 +383,9 @@ type CommandDialogProps = Omit<DialogPrimitive.Root.Props, "children"> &
   }
 
 /**
- * `Command` adentro de un diálogo de Base UI, anclado arriba como Spotlight. Sin X —Escape y un
- * click afuera cierran— y sin velo: la búsqueda flota sobre la pantalla y no la apaga. Base UI
+ * `Command` adentro de un diálogo de Base UI, anclado arriba: el campo de búsqueda con sus
+ * resultados en la superficie de un popover de iCloud. Sin X —Escape y un click afuera cierran— y
+ * sin velo: la búsqueda flota sobre la pantalla y no la apaga, como los popovers. Base UI
  * soporta este armado a propósito (combobox `inline` dentro de un `role="dialog"`), y el foco
  * inicial va al campo.
  *

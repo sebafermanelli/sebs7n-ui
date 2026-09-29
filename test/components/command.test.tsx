@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor, within } from "@testing-library/react"
+import { render, screen, waitFor, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import * as React from "react"
 import { describe, expect, it, vi } from "vitest"
@@ -16,10 +16,6 @@ import {
 } from "../../src/components/command"
 import { LabelsProvider } from "../../src/lib/labels"
 import { menuLabelClassName } from "../../src/variants/menu"
-
-function completion() {
-  return document.querySelector("[data-slot='command-completion']")
-}
 
 describe("Command", () => {
   const items = (
@@ -61,96 +57,6 @@ describe("Command", () => {
     expect(screen.getByRole("option", { name: /Cliente mayorista/ })).toBeInTheDocument()
   })
 
-  it("sugiere en línea el resto del resultado elegido y Tab lo acepta", async () => {
-    render(
-      <Command>
-        <CommandInput />
-        {items}
-      </Command>
-    )
-    const campo = screen.getByRole("combobox")
-    await userEvent.type(campo, "Fact")
-    expect(completion()).toHaveTextContent("ura 0012 — Acme S.A.")
-    // Es solo visual: el valor del campo sigue siendo lo escrito y el lector no la lee.
-    expect(campo).toHaveValue("Fact")
-    expect(completion()?.closest("[aria-hidden='true']")).not.toBeNull()
-    await userEvent.keyboard("{Tab}")
-    expect(campo).toHaveValue("Factura 0012")
-    expect(campo).toHaveFocus()
-  })
-
-  it("→ al final del texto también completa; sin sugerencia, Tab no se traba", async () => {
-    render(
-      <Command>
-        <CommandInput />
-        {items}
-      </Command>
-    )
-    const campo = screen.getByRole("combobox")
-    await userEvent.type(campo, "fáct")
-    await userEvent.keyboard("{ArrowRight}")
-    expect(campo).toHaveValue("Factura 0012")
-
-    await userEvent.clear(campo)
-    // «digital» encuentra por keyword, pero el título no empieza así: no hay nada que completar.
-    await userEvent.type(campo, "digital")
-    expect(completion()).toBeNull()
-  })
-
-  it("si lo escrito no entra en el campo, la sugerencia se esconde", async () => {
-    render(
-      <Command>
-        <CommandInput />
-        {items}
-      </Command>
-    )
-    const campo = screen.getByRole("combobox")
-    // Lo escrito desborda: el texto del campo se desplaza y la superposición ya no coincidiría.
-    Object.defineProperty(campo, "clientWidth", { configurable: true, get: () => 100 })
-    Object.defineProperty(campo, "scrollWidth", { configurable: true, get: () => 180 })
-    await userEvent.type(campo, "Fact")
-    expect(completion()).toBeNull()
-    // Sin sugerencia visible, Tab no completa nada.
-    await userEvent.keyboard("{Tab}")
-    expect(campo).toHaveValue("Fact")
-  })
-
-  it("mientras se compone con un IME, Tab y → no aceptan la sugerencia", async () => {
-    render(
-      <Command>
-        <CommandInput />
-        {items}
-      </Command>
-    )
-    const campo = screen.getByRole("combobox")
-    await userEvent.type(campo, "Fact")
-    fireEvent.keyDown(campo, { key: "ArrowRight", isComposing: true })
-    fireEvent.keyDown(campo, { key: "Tab", isComposing: true })
-    expect(campo).toHaveValue("Fact")
-  })
-
-  it("con el título entero escrito no hay pista tab y Tab sale del campo", async () => {
-    render(
-      <>
-        <Command>
-          <CommandInput />
-          {items}
-        </Command>
-        <button type="button">Después</button>
-      </>
-    )
-    const campo = screen.getByRole("combobox")
-    await userEvent.type(campo, "factura 0012")
-    const elegido = screen.getByRole("option", { name: /Factura 0012/ })
-    expect(elegido).toHaveAttribute("data-highlighted")
-    // El detalle se sigue viendo, como en Spotlight, pero Tab ya no completa nada.
-    expect(completion()).toHaveTextContent("— Acme S.A.")
-    expect(elegido.querySelector("[data-slot='command-item-hint']")).toBeNull()
-    await userEvent.keyboard("{Tab}")
-    expect(campo).toHaveValue("factura 0012")
-    expect(campo).not.toHaveFocus()
-  })
-
   it("Enter ejecuta el elegido y las flechas mueven la elección", async () => {
     const abrir = vi.fn()
     render(
@@ -174,34 +80,27 @@ describe("Command", () => {
     expect(campo).toHaveValue("fact")
   })
 
-  it("la sugerencia en línea sigue al elegido", async () => {
+  // R2: iCloud no completa en línea (eso era de Spotlight). Tab sale del campo como en cualquier
+  // combobox y no hay pista `tab`.
+  it("no hay sugerencia en línea: Tab no completa y sale del campo", async () => {
     render(
-      <Command>
-        <CommandInput />
-        {items}
-      </Command>
-    )
-    await userEvent.type(screen.getByRole("combobox"), "fact")
-    await userEvent.keyboard("{ArrowDown}")
-    expect(completion()).toHaveTextContent("ura 0013 — Nube Digital")
-  })
-
-  it("si el elegido desaparece al filtrar, la sugerencia pasa al que quedó", async () => {
-    render(
-      <Command>
-        <CommandInput />
-        {items}
-      </Command>
+      <>
+        <Command>
+          <CommandInput />
+          {items}
+        </Command>
+        <button type="button">Después</button>
+      </>
     )
     const campo = screen.getByRole("combobox")
-    await userEvent.type(campo, "fact")
-    await userEvent.keyboard("{ArrowDown}")
-    await userEvent.type(campo, "ura 0012")
-    expect(screen.getByRole("option", { name: /Factura 0012/ })).toHaveAttribute("data-highlighted")
-    expect(completion()).toHaveTextContent("— Acme S.A.")
+    await userEvent.type(campo, "Fact")
+    expect(document.querySelector("[data-slot='command-completion'], [data-slot='command-item-hint']")).toBeNull()
+    await userEvent.keyboard("{ArrowRight}{Tab}")
+    expect(campo).toHaveValue("Fact")
+    expect(campo).not.toHaveFocus()
   })
 
-  it("el elegido va en gris translúcido con la pista tab, no en acento", async () => {
+  it("el elegido va en el gris del resaltado de menú, no en acento", async () => {
     render(
       <Command>
         <CommandInput />
@@ -213,14 +112,12 @@ describe("Command", () => {
     expect(elegido).toHaveAttribute("data-highlighted")
     expect(elegido.className).toMatch(/data-highlighted:bg-fill-2/)
     expect(elegido.className).not.toMatch(/bg-selection/)
-    const pista = elegido.querySelector("[data-slot='command-item-hint']")
-    expect(pista).toHaveTextContent("tab")
-    expect(pista).toHaveAttribute("aria-hidden", "true")
-    // El nombre de la opción no incluye la pista.
     expect(elegido).toHaveAccessibleName(/^Factura 0012/)
   })
 
-  it("fila de 40 px con ícono de 32, título y descripción", () => {
+  // Las filas de resultados son las del menú de iCloud (§2.8): 30 px, radio 8, 14/400, ícono en una
+  // caja de 30 con el glifo en el acento. Con detalle, un segundo renglón de 12 en gris.
+  it("fila de menú de iCloud: 30 px, radio 8, ícono en acento, título y detalle", () => {
     render(
       <Command>
         <CommandInput />
@@ -232,10 +129,11 @@ describe("Command", () => {
       </Command>
     )
     const fila = screen.getByRole("option")
-    expect(fila).toHaveClass("h-10")
-    expect(screen.getByTestId("icono").parentElement).toHaveClass("size-8")
-    expect(within(fila).getByText("Factura 0012")).toHaveClass("text-callout", "font-medium")
-    expect(within(fila).getByText("Acme S.A.")).toHaveClass("text-callout", "text-label-secondary")
+    expect(fila).toHaveClass("min-h-7.5", "rounded-menu-item", "px-2.5", "text-callout")
+    expect(fila).not.toHaveClass("h-10")
+    expect(screen.getByTestId("icono").parentElement).toHaveClass("size-7.5", "text-brand-900")
+    expect(within(fila).getByText("Factura 0012")).not.toHaveClass("font-medium")
+    expect(within(fila).getByText("Acme S.A.")).toHaveClass("text-footnote", "text-label-secondary")
   })
 
   it("los grupos llevan el título de sección de los menús", () => {
@@ -292,7 +190,6 @@ describe("Command", () => {
     expect(screen.queryAllByRole("option")).toHaveLength(0)
     rerender(<Tardio listo />)
     await waitFor(() => expect(screen.getAllByRole("option")[0]).toHaveAttribute("data-highlighted"))
-    expect(completion()).toHaveTextContent("ura 0012 — Acme S.A.")
     await userEvent.keyboard("{Enter}")
     expect(abrir).toHaveBeenCalledWith("f-0012")
   })
@@ -331,7 +228,9 @@ describe("Command", () => {
     ])
   })
 
-  it("el campo es la cabecera: 48 px, cuerpo grande regular y la lupa a la izquierda", () => {
+  // El search field de iCloud (§2.13): 36 px, radio 10, relleno fill-1, lupa de 16 y texto 14; con
+  // el foco pierde el relleno y queda el anillo interior.
+  it("el campo es el search field de iCloud", () => {
     render(
       <Command>
         <CommandInput />
@@ -339,13 +238,13 @@ describe("Command", () => {
       </Command>
     )
     const campo = screen.getByRole("combobox")
-    // `body-large` y no `title-2 font-normal`: un rol no se pisa de peso (typography.test.ts).
-    expect(campo).toHaveClass("text-body-large")
+    expect(campo).toHaveClass("text-callout", "placeholder:text-label-tertiary")
     expect(campo).toHaveAccessibleName("Buscar")
     expect(campo).toHaveAttribute("placeholder", "Buscar")
-    const cabecera = campo.closest("[data-slot='command-input-wrapper']")!
-    expect(cabecera).toHaveClass("h-12")
-    expect(cabecera.querySelector("svg.lucide-search")).toHaveClass("size-5")
+    const caja = campo.closest("[data-slot='command-input-wrapper']")!
+    expect(caja).toHaveClass("h-9", "rounded-field", "bg-fill-1", "focus-within:bg-transparent", "focus-within:focus-ring")
+    expect(caja).not.toHaveClass("h-12", "border-b")
+    expect(caja.querySelector("svg.lucide-search")).toHaveClass("size-4", "text-label-tertiary")
   })
 
   it("el nombre del campo es su placeholder si lo trae; un aria-label le gana", () => {
@@ -379,8 +278,8 @@ describe("Command", () => {
     expect(screen.getByRole("radiogroup", { name: "Filtros" })).toBeInTheDocument()
     const todo = screen.getByRole("radio", { name: "Todo" })
     expect(todo).toHaveAttribute("aria-checked", "true")
-    // Se ven como los chips de Toggle.
-    expect(todo).toHaveClass("rounded-control", "data-checked:bg-fill-2")
+    // Son los tokens del search field de iCloud: gris, y el prendido en el acento sólido.
+    expect(todo).toHaveClass("h-6", "bg-fill-1", "data-checked:bg-brand-700", "data-checked:text-brand-contrast")
     await userEvent.click(screen.getByRole("radio", { name: "Facturas" }))
     expect(onValueChange).toHaveBeenLastCalledWith("facturas")
     expect(todo).toHaveAttribute("aria-checked", "false")
@@ -453,14 +352,15 @@ describe("CommandDialog", () => {
     expect(onOpenChange).toHaveBeenCalledWith(false, expect.anything())
   })
 
-  it("se nombra con labels y va anclado arriba, opaco como un popover", () => {
+  it("se nombra con labels y va anclado arriba: el popover de búsqueda de iCloud", () => {
     render(
       <CommandDialog open labels={{ dialog: "Buscar en facturación" }}>
         {contenido}
       </CommandDialog>
     )
     const dialogo = screen.getByRole("dialog", { name: "Buscar en facturación" })
-    expect(dialogo).toHaveClass("top-[18vh]", "bg-surface", "rounded-panel")
-    expect(dialogo.className).toMatch(/w-\[min\(640px,calc\(100%-2rem\)\)\]/)
+    expect(dialogo).toHaveClass("top-[18vh]", "bg-surface", "rounded-menu", "shadow-menu", "p-1")
+    expect(dialogo).not.toHaveClass("rounded-panel", "shadow-modal")
+    expect(dialogo.className).toMatch(/w-\[min\(560px,calc\(100%-2rem\)\)\]/)
   })
 })

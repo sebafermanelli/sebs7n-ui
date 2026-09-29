@@ -41,7 +41,13 @@ export {
 export { badgeDotColor, badgeVariants, BADGE_COLORS, type BadgeColor } from "./variants/badge.js"
 export { buttonVariants, type ButtonIconSize, type ButtonShape, type ButtonSize, type ButtonTextSize, type ButtonVariantProps } from "./variants/button.js"
 export { cardVariants } from "./variants/card.js"
-export { commandDialogPopupClassName, commandItemClassName, commandItemIconClassName } from "./variants/command.js"
+export {
+  commandDialogPopupClassName,
+  commandFilterClassName,
+  commandInputClassName,
+  commandItemClassName,
+  commandItemIconClassName,
+} from "./variants/command.js"
 export { linkVariants } from "./variants/link.js"
 export { segmentedThumbClassName, segmentedTrackClassName } from "./variants/segmented.js"
 export { sliderThumbClassName, sliderThumbDraggingClassName, sliderThumbPeerActiveClassName } from "./variants/slider.js"

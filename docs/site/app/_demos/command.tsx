@@ -32,7 +32,7 @@ const ACCIONES = [
   { value: "a-cliente", title: "Nuevo cliente", icon: <UserPlusIcon />, keywords: ["crear", "alta"] },
 ]
 
-/** Los chips no filtran solos: la app decide qué grupos pasa según el valor. */
+/** Los filtros no filtran solos: la app decide qué grupos pasa según el valor. */
 function Resultados({ filtro, onSelect }: { filtro: string; onSelect: (value: string) => void }) {
   return (
     <>
@@ -79,9 +79,9 @@ function Resultados({ filtro, onSelect }: { filtro: string; onSelect: (value: st
 
 /**
  * Buscar en facturación
- * `CommandDialog` abierto por un botón o por ⌘J. Escribí «fact» y mirá la sugerencia en línea:
- * Tab la completa, Enter abre el elegido. En una app el atajo es ⌘K; acá ⌘K ya es el buscador del
- * sitio, que también es un `CommandDialog`.
+ * `CommandDialog` abierto por un botón o por ⌘J: el campo de búsqueda de iCloud, los filtros y los
+ * resultados como filas de menú. Enter abre el elegido. En una app el atajo es ⌘K; acá ⌘K ya es el
+ * buscador del sitio, que también es un `CommandDialog`.
  */
 export function Basico() {
   const [abierto, setAbierto] = useState(false)
@@ -129,13 +129,14 @@ export function Basico() {
 
 /**
  * Incrustado
- * `Command` sin diálogo, adentro de una superficie que pone quien lo ubica.
+ * `Command` sin diálogo, adentro de una superficie que pone quien lo ubica. El campo trae su propio
+ * relleno, así que se ve igual sobre cualquier fondo.
  */
 export function Incrustado() {
   const [elegido, setElegido] = useState<string | null>(null)
   return (
     <div className="flex w-full max-w-md flex-col gap-2">
-      <Command className="rounded-surface bg-grouped">
+      <Command className="rounded-surface bg-grouped p-1">
         <CommandInput />
         <Resultados filtro="todo" onSelect={setElegido} />
       </Command>

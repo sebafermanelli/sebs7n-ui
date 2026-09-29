@@ -144,7 +144,7 @@ export type Labels = {
     empty: string
     /** Nombre del diálogo de `CommandDialog`, para quien no lo ve. */
     dialog: string
-    /** Nombre del grupo de chips de `CommandFilters`. */
+    /** Nombre del grupo de filtros de `CommandFilters`. */
     filters: string
   }
   datePicker: {
