@@ -68,3 +68,18 @@ export function Limites() {
     </Card>
   )
 }
+
+/**
+ * Una fecha lejana
+ * El título abre una grilla de meses, y su año una de doce años: el alta de un cliente de hace veinte años está a cinco clics. `max` apaga los meses y años que todavía no llegaron.
+ */
+export function FechaLejana() {
+  const [alta, setAlta] = useState<Date | null>(new Date(2006, 3, 12))
+  return (
+    <Card size="sm">
+      <CardContent>
+        <Calendar aria-label="Fecha de alta del cliente" max={new Date(2026, 8, 29)} onValueChange={setAlta} value={alta} />
+      </CardContent>
+    </Card>
+  )
+}

@@ -63,3 +63,17 @@ export function TamanosYFormato() {
     </div>
   )
 }
+
+/**
+ * Una fecha lejana
+ * En el calendario, el título abre la grilla de meses y su año la de años. Escape vuelve a los días sin cerrar el panel.
+ */
+export function FechaDeAlta() {
+  const id = useId()
+  return (
+    <div className="flex w-full max-w-xs flex-col gap-2">
+      <Label htmlFor={id}>Fecha de alta del cliente</Label>
+      <DatePicker defaultValue={new Date(2006, 3, 12)} id={id} max={new Date(2026, 8, 29)} name="alta" />
+    </div>
+  )
+}

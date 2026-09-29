@@ -897,13 +897,17 @@ export const COMPONENTS = {
       ["← → ↑ ↓", "Un día o una semana. Al salir de los meses a la vista, la vista se corre."],
       ["Inicio · Fin", "Primer y último día de la semana."],
       ["Re Pág · Av Pág", "Un mes atrás o adelante. Con Shift, un año."],
-      ["Enter · Espacio", "Elige el día enfocado."],
-      ["Tab", "Entra a la grilla y sale: adentro es una sola parada."],
+      ["Enter · Espacio", "Elige el día enfocado. En el título, abre la grilla de meses; en su año, la de años."],
+      ["← → ↑ ↓ (meses y años)", "Una celda o una fila de tres. Al pasar el borde, cambia el año o la página de doce años."],
+      ["Re Pág · Av Pág (meses y años)", "Un año, o doce, atrás o adelante."],
+      ["Escape (meses y años)", "Vuelve a los días sin cambiar nada, con el foco en el título. Adentro de un `DatePicker` no cierra el panel."],
+      ["Tab", "Entra a la grilla y sale: adentro es una sola parada. El título es una parada propia."],
     ],
     a11y: [
       "Sigue el patrón de grilla de fechas de WAI-ARIA: `role=\"grid\"`, una sola parada de tabulación y flechas adentro.",
       "Cada día se llama por su fecha entera —«domingo, 27 de septiembre de 2026»— y los encabezados de columna llevan el nombre del día en `abbr`.",
       "Hoy lleva `aria-current=\"date\"`; el título del mes, `aria-live`, así cambiar de mes con los botones se anuncia.",
+      "El título es un botón con `aria-expanded` y se llama «septiembre de 2026, Elegir mes y año». La grilla de meses y la de años son `role=\"grid\"` de 4 filas por 3, con una sola parada; el mes de hoy lleva `aria-current` y el que está a la vista, `aria-selected`.",
       "Una fecha apagada usa `aria-disabled` y no `disabled`: sigue siendo enfocable, que es lo que deja pasar por arriba con las flechas.",
       "Los días de los meses vecinos completan las semanas pero están fuera del árbol de accesibilidad.",
       "Con varios meses hay una grilla por mes, cada una con su nombre, y siguen siendo una sola parada de tabulación entre todas.",
@@ -914,6 +918,7 @@ export const COMPONENTS = {
       "Siempre son seis semanas, aunque el mes entre en cinco: con un alto fijo, lo que está debajo no se mueve al cambiar de mes.",
       "`numberOfMonths={2}` para un rango que suele cruzar de un mes al otro: una estadía, un alquiler. Cada fecha aparece una sola vez; los huecos de un mes quedan vacíos.",
       "En un teléfono va un solo mes: dos no entran a lo ancho y quedan uno debajo del otro.",
+      "Para una fecha lejana —el alta de un cliente de hace años—, el título abre una grilla de meses y su año una de doce años: veinte años atrás son cinco clics, no 240. Con varios meses, solo el título del primero la abre, porque la vista se mueve entera. La grilla tapa a los días sin cambiar el tamaño.",
     ],
     props: {
       Calendar: {
@@ -930,6 +935,7 @@ export const COMPONENTS = {
       ["Enter · Espacio", "Abre el calendario, con el foco en la fecha elegida."],
       ["Escape", "Cierra y devuelve el foco al campo."],
       ["← → ↑ ↓", "Se mueve por los días. Ver `Calendar`."],
+      ["Escape (meses y años)", "Vuelve a los días; el segundo Escape cierra."],
     ],
     a11y: [
       "El campo es un botón: necesita `aria-label`, `aria-labelledby` o un `<Label htmlFor>` apuntando a su `id`.",
@@ -938,7 +944,7 @@ export const COMPONENTS = {
     ],
     usage: [
       "Para fechas que se eligen mirando un calendario: un turno, un vencimiento cercano, un período.",
-      "Para una fecha que se tipea —un nacimiento, un vencimiento que se copia de un papel— va un `Input`: recorrer cuarenta años de a un mes es peor que escribir ocho números.",
+      "Una fecha lejana no se recorre mes por mes: el título del calendario abre la grilla de meses, y su año la de años. Si lo normal es tipearla —un vencimiento que se copia de un papel—, va un `Input`.",
       "`mode=\"range\"` elige desde y hasta en el mismo calendario, y se cierra recién con el segundo clic.",
       "Con `name`, la fecha viaja en el formulario como `2026-09-27`. En rango salen dos campos: `nombre-desde` y `nombre-hasta`.",
       "Con `clearable`, el pie del calendario ofrece «Limpiar» cuando hay fecha: para filtros y campos opcionales.",
