@@ -539,3 +539,87 @@ describe("El ítem externo de un menú: acento sobre el panel y sobre el resalta
     }
   }
 })
+
+/**
+ * W · El wallpaper de la home (spec 2026-09-29). Cada superficie translúcida se compone sobre los
+ * puntos extremos del wallpaper —sus cuatro tonos y la página lisa (`--ambient: 0`)— con las cinco
+ * marcas, en claro y en oscuro. Con `--ambient` entre 0 y 1 cada punto queda entre su tono y la
+ * página, y un degradado queda entre dos tonos: si los extremos pasan, pasa lo del medio. El blur
+ * promedia lo de abajo, así que tampoco puede dar un fondo peor que el peor punto.
+ *
+ * El texto suelto sobre el wallpaper (el título de la home, lo que la app ponga sin card) también
+ * tiene que llegar: la L de los tonos está elegida para eso.
+ */
+describe("Sobre el wallpaper: superficies translúcidas y texto (WCAG 1.4.3)", () => {
+  const css = read("theme.css")
+  const cuerpo = (theme: "light" | "dark") => {
+    const inicio = css.indexOf(theme === "light" ? ":root {" : ".dark {")
+    return css.slice(inicio, css.indexOf("\n  }", inicio))
+  }
+  /** `--sf-wallpaper-N: oklch(from var(--sf-brand-src) L calc(c * K) h | calc(h ± D));` */
+  const tonos = (theme: "light" | "dark") =>
+    [...cuerpo(theme).matchAll(/--sf-wallpaper-\d: oklch\(from var\(--sf-brand-src\) ([\d.]+) calc\(c \* ([\d.]+)\) (?:h|calc\(h ([+-]) (\d+)\))\);/g)].map(
+      ([, l, k, signo, d]) => ({ l: Number(l), k: Number(k), d: d ? (signo === "-" ? -1 : 1) * Number(d) : 0 })
+    )
+  const [, l, c, h] = css.match(/--brand-base: oklch\(([\d.]+) ([\d.]+) ([\d.]+)\);/) ?? []
+  const porDefecto = [l, c, h].map(Number)
+  const marcas: Record<string, Record<"light" | "dark", number[]>> = {
+    "por defecto": { light: porDefecto, dark: porDefecto },
+    ...Object.fromEntries(
+      Object.entries(brands as Record<string, Record<"light" | "dark", { base: number[] }>>).map(([m, t]) => [m, { light: t.light.base, dark: t.dark.base }])
+    ),
+  }
+
+  for (const theme of ["light", "dark"] as const) {
+    const p = paleta[theme]
+
+    it(`${theme}: el wallpaper tiene cuatro tonos`, () => {
+      expect(tonos(theme)).toHaveLength(4)
+    })
+
+    const puntos: [string, string][] = Object.entries(marcas).flatMap(([marca, temas]) => {
+      const [, cb, hb] = temas[theme]
+      return tonos(theme).map((t, i): [string, string] => [`${marca} · tono ${i + 1}`, hexOfOklch([t.l, cb! * t.k, hb! + t.d] as unknown as Oklch)])
+    })
+    puntos.push(["página lisa", p["--sf-background"]!])
+
+    const cuerpoSobre = (wp: string) => flattenAlpha(p["--sf-translucent-body"]!, wp)
+    const superficies: Record<string, (wp: string) => string> = {
+      "el wallpaper, directo": (wp) => wp,
+      "material-translucent (barra del AppShell, Toolbar)": (wp) => flattenAlpha(p["--sf-translucent"]!, wp),
+      "material-translucent-body (cuerpo de Card, Sidebar)": cuerpoSobre,
+      "la franja de la Card sobre el cuerpo": (wp) => flattenAlpha(p["--sf-translucent-strip"]!, cuerpoSobre(wp)),
+    }
+
+    for (const [superficie, componer] of Object.entries(superficies)) {
+      for (const rol of ["--sf-label", "--sf-label-secondary"] as const) {
+        it(`${theme} · ${rol.slice(5)} sobre ${superficie} llega a 4.5:1 en todos los puntos`, () => {
+          const fallas = puntos.flatMap(([donde, wp]) => {
+            const bg = componer(wp)
+            const valor = ratio(flattenAlpha(p[rol]!, bg), bg)
+            return valor < 4.5 ? [`${donde} (${wp} → ${bg}): ${valor.toFixed(2)}`] : []
+          })
+          expect(fallas).toEqual([])
+        })
+      }
+    }
+
+    // Stat no trae superficie: sobre el wallpaper va adentro de una Card, y la variación en color se
+    // tiene que leer sobre ese cuerpo. Directo sobre el wallpaper no llega, y la doc lo dice.
+    for (const tinta of ["--sf-green-900", "--sf-red-900"] as const) {
+      it(`${theme} · la variación de Stat (${tinta.slice(5)}) sobre el cuerpo de la Card llega a 4.5:1`, () => {
+        const fallas = puntos.flatMap(([donde, wp]) => {
+          const valor = ratio(p[tinta]!, cuerpoSobre(wp))
+          return valor < 4.5 ? [`${donde}: ${valor.toFixed(2)}`] : []
+        })
+        expect(fallas).toEqual([])
+      })
+    }
+
+    // Con menos transparencia el cuerpo es `surface` opaco y la franja queda encima.
+    it(`${theme} · sin transparencia: el secundario sobre la franja y la superficie opaca llega a 4.5:1`, () => {
+      const bg = flattenAlpha(p["--sf-translucent-strip"]!, p["--sf-surface"]!)
+      expect(ratio(flattenAlpha(p["--sf-label-secondary"]!, bg), bg)).toBeGreaterThanOrEqual(4.5)
+    })
+  }
+})
