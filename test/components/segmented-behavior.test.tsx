@@ -45,7 +45,7 @@ describe("el halo de foco de un campo es del teclado", () => {
       const inicio = theme.indexOf(`@utility ${name} {`)
       const cuerpo = theme.slice(inicio, theme.indexOf("\n}", inicio))
       expect(cuerpo, name).toContain("border-color:")
-      expect(cuerpo, name).toContain("box-shadow: inset 0 0 0 2px")
+      expect(cuerpo, name).toContain("--tw-inset-ring-shadow: inset 0 0 0 2px")
       expect(cuerpo, name).not.toContain("data-sf-modality")
     }
   })

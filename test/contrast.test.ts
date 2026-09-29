@@ -107,8 +107,25 @@ const PALETAS = ["gray", "brand", "red", "amber", "green", "blue", "teal", "purp
  * Las cuatro marcas de `tokens/brands.json` son las de ejemplo; una app define la suya y no toca
  * este archivo, pero el umbral es el mismo. Se calcula en OKLCH porque así se declaran.
  */
+/**
+ * Revisión de R1: el anillo va en `--tw-inset-ring-shadow` y el `box-shadow` es la composición de
+ * Tailwind, así un elemento con sombra (el panel de NavigationMenu, un popover enfocado) conserva
+ * su `shadow-menu` y su filo mientras tiene el foco. Antes el anillo la reemplazaba.
+ */
+const COMPUESTA = "var(--tw-inset-shadow, 0 0 #0000), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow, 0 0 #0000)"
+
 describe("Anillo de foco interior en las cuatro marcas (WCAG 1.4.11)", () => {
   const css = read("theme.css")
+
+  it("se compone con la sombra: el panel de NavigationMenu enfocado sigue con shadow-menu", () => {
+    const panel = readFileSync(join(root, "src/components/navigation-menu.tsx"), "utf8")
+    expect(panel).toContain("shadow-menu outline-none focus-visible:focus-ring")
+    for (const nombre of ["focus-ring", "focus-ring-inverse", "focus-border", "focus-border-error"]) {
+      const util = css.slice(css.indexOf(`@utility ${nombre} {`), css.indexOf("\n}", css.indexOf(`@utility ${nombre} {`)))
+      expect(util, nombre).toContain("var(--tw-shadow, 0 0 #0000)")
+      expect(util, nombre).not.toMatch(/box-shadow: inset/)
+    }
+  })
   const alfa = (theme: "light" | "dark") => {
     const inicio = css.indexOf(theme === "light" ? ":root {" : ".dark {")
     const cuerpo = css.slice(inicio, css.indexOf("\n  }", inicio))
@@ -119,14 +136,16 @@ describe("Anillo de foco interior en las cuatro marcas (WCAG 1.4.11)", () => {
   it("focus-ring es el anillo interior de 3px, sin outline", () => {
     const util = css.slice(css.indexOf("@utility focus-ring {"), css.indexOf("\n}", css.indexOf("@utility focus-ring {")))
     expect(util).toContain("outline: none;")
-    expect(util).toContain("box-shadow: inset 0 0 0 3px var(--sf-focus);")
+    expect(util).toContain("--tw-inset-ring-shadow: inset 0 0 0 3px var(--sf-focus);")
+    expect(util).toContain(`box-shadow: ${COMPUESTA};`)
     expect(css).toContain("--sf-focus: color-mix(in srgb, var(--sf-brand-700) var(--sf-focus-alpha), transparent);")
   })
 
   it("los campos llevan el mismo anillo: 1px de borde y 2 de sombra interior, 3 desde el filo", () => {
     const util = css.slice(css.indexOf("@utility focus-border {"), css.indexOf("\n}", css.indexOf("@utility focus-border {")))
     expect(util).toContain("border-color: var(--sf-focus);")
-    expect(util).toContain("box-shadow: inset 0 0 0 2px var(--sf-focus);")
+    expect(util).toContain("--tw-inset-ring-shadow: inset 0 0 0 2px var(--sf-focus);")
+    expect(util).toContain(`box-shadow: ${COMPUESTA};`)
     expect(util).not.toContain("data-sf-modality")
   })
 
@@ -135,7 +154,8 @@ describe("Anillo de foco interior en las cuatro marcas (WCAG 1.4.11)", () => {
   // lleva a 4,5:1. Sobre el rojo destructivo, el blanco del botón.
   it("sobre la marca, el anillo es el color de contraste (focus-ring-inverse)", () => {
     const util = css.slice(css.indexOf("@utility focus-ring-inverse {"), css.indexOf("\n}", css.indexOf("@utility focus-ring-inverse {")))
-    expect(util).toContain("box-shadow: inset 0 0 0 3px var(--sf-focus-inverse, var(--sf-brand-fg));")
+    expect(util).toContain("--tw-inset-ring-shadow: inset 0 0 0 3px var(--sf-focus-inverse, var(--sf-brand-fg));")
+    expect(util).toContain(`box-shadow: ${COMPUESTA};`)
     for (const variant of ["accent", "destructive"] as const) {
       expect(buttonVariants({ variant }).split(" "), variant).toContain("focus-visible:focus-ring-inverse")
       expect(buttonVariants({ variant }).split(" "), variant).not.toContain("focus-visible:focus-ring")
