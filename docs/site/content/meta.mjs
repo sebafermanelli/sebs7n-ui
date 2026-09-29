@@ -2451,7 +2451,7 @@ export const COMPONENTS = {
     description: "El índice A–Z de Contactos: una tira de letras junto a una lista agrupada, cada una un link a su sección, las vacías apagadas y, con el dedo, se desliza.",
     keyboard: [
       ["Tab", "Recorre las letras que tienen sección; las apagadas no son paradas."],
-      ["Enter", "Sigue el link: la lista va a la sección de esa letra."],
+      ["Enter", "Sigue el link: la lista va a la sección de esa letra y el foco pasa a la sección (Tab sigue desde ahí)."],
     ],
     a11y: [
       "Es un `<nav>` llamado «Índice alfabético» (`labels.listIndex.label`) con una `<ol>` de links: el lector lo ofrece en su lista de regiones y dice cuántas letras hay.",
@@ -2463,7 +2463,7 @@ export const COMPONENTS = {
       "**Para listas largas ordenadas por nombre** (clientes, proveedores) que ya están agrupadas por inicial: cada `ListSection` lleva `id` con su letra (`id=\"A\"`), o el que devuelva `getHref`.",
       "`available` son las letras que tienen sección; `letters` cambia la tira (sumá `#` o `Ñ` si tu lista las usa).",
       "Ponela al costado de la lista que scrollea, pegada con `sticky` o `absolute` y con el alto de la lista. La tira no scrollea: se reparte el alto que le den.",
-      "Si la lista scrollea en su propia caja (`overflow-y: auto`), una letra mueve **solo esa caja** hasta la sección (respeta `scroll-margin-top` y `scroll-smooth`): la página no salta. Si la sección está en la página, es el ancla de siempre.",
+      "Si la lista scrollea en su propia caja (`overflow-y` `auto`, `scroll` u `overlay`), una letra mueve **solo esa caja** hasta la sección (respeta `scroll-margin-top` y `scroll-smooth`): la página no salta. Si la sección está en la página, es el ancla de siempre.",
       "Con el dedo (`pointer: coarse`) se desliza: la lista sigue a la letra que está bajo el dedo sin sumar entradas al historial.",
       "Solo por subpath (`sebs7n-ui/list-index`).",
     ],
@@ -2471,7 +2471,7 @@ export const COMPONENTS = {
       ListIndex: {
         available: "Las letras que tienen sección. Las demás se ven apagadas y no son links.",
         letters: "Todas las letras de la tira, en orden. Por defecto, A–Z.",
-        getHref: "El destino de cada letra. Por defecto `#A`, `#B`…: la sección lleva ese `id`.",
+        getHref: "El destino de cada letra. Por defecto `#A`, `#B`…: la sección lleva ese `id`. Deslizar, mover solo la caja y pasar el foco con Enter necesitan un `#…` a un id de la página; con otro destino, la letra es un link común.",
         labels: "Textos: `label` (el nombre del `nav`, «Índice alfabético»). El que viene por defecto es `listIndexLabels`.",
         onPointerDown: "Corre antes de empezar a deslizar: con `event.preventDefault()` la tira no se desliza.",
       },

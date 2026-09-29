@@ -112,6 +112,83 @@ describe("ListIndex", () => {
     expect(scroll).not.toHaveBeenCalled()
   })
 
+  it("los onPointerMove/Up/Cancel de la app se suman: el deslizamiento se sigue reseteando", () => {
+    const app = { onPointerMove: vi.fn(), onPointerUp: vi.fn(), onPointerCancel: vi.fn() }
+    render(
+      <>
+        {CON_SECCION.map((letter) => (
+          <section key={letter} id={letter} />
+        ))}
+        <ListIndex available={CON_SECCION} {...app} />
+      </>
+    )
+    const nav = screen.getByRole("navigation")
+    const bajoElDedo = vi.fn<(x: number, y: number) => Element | null>(() => screen.getByRole("link", { name: "A" }))
+    document.elementFromPoint = bajoElDedo
+    Element.prototype.scrollIntoView = vi.fn()
+    fireEvent.pointerDown(nav, { pointerType: "touch", pointerId: 1 })
+    bajoElDedo.mockReturnValue(screen.getByRole("link", { name: "C" }))
+    fireEvent.pointerMove(nav, { pointerType: "touch", pointerId: 1 })
+    expect(app.onPointerMove).toHaveBeenCalledTimes(1)
+    expect(screen.getByRole("link", { name: "C" })).toHaveAttribute("data-active", "true")
+    fireEvent.pointerUp(nav, { pointerType: "touch", pointerId: 1 })
+    expect(app.onPointerUp).toHaveBeenCalledTimes(1)
+    expect(nav).not.toHaveAttribute("data-scrubbing")
+    fireEvent.pointerDown(nav, { pointerType: "touch", pointerId: 2 })
+    fireEvent.pointerCancel(nav, { pointerType: "touch", pointerId: 2 })
+    expect(app.onPointerCancel).toHaveBeenCalledTimes(1)
+    expect(nav).not.toHaveAttribute("data-scrubbing")
+  })
+
+  it("con Enter (detail 0) el foco pasa a la sección: tabindex -1 si no tiene y sin scrollear de nuevo", () => {
+    render(
+      <>
+        <div data-testid="caja" style={{ overflowY: "auto" }}>
+          <section id="A" />
+          <section id="C" tabIndex={0} />
+          <section id="F" />
+        </div>
+        <ListIndex available={["A", "C", "F"]} />
+      </>
+    )
+    screen.getByTestId("caja").scrollTo = vi.fn() as HTMLElement["scrollTo"]
+    const f = document.getElementById("F")!
+    const focus = vi.spyOn(f, "focus")
+    fireEvent.click(screen.getByRole("link", { name: "F" }), { detail: 0 })
+    expect(f).toHaveAttribute("tabindex", "-1")
+    expect(focus).toHaveBeenCalledWith({ preventScroll: true })
+    expect(f).toHaveFocus()
+    // Una sección que ya es enfocable conserva su tabindex.
+    fireEvent.click(screen.getByRole("link", { name: "C" }), { detail: 0 })
+    expect(document.getElementById("C")).toHaveAttribute("tabindex", "0")
+    expect(document.getElementById("C")).toHaveFocus()
+    // Con el mouse (detail 1) el foco no se mueve.
+    fireEvent.click(screen.getByRole("link", { name: "A" }), { detail: 1 })
+    expect(document.getElementById("A")).not.toHaveAttribute("tabindex")
+    expect(document.getElementById("C")).toHaveFocus()
+  })
+
+  it("una caja con overflow-y: overlay también es la que scrollea", () => {
+    render(
+      <>
+        <div data-testid="caja">
+          <section id="M" />
+        </div>
+        <ListIndex available={["M"]} />
+      </>
+    )
+    const caja = screen.getByTestId("caja")
+    const scrollTo = vi.fn()
+    caja.scrollTo = scrollTo as typeof caja.scrollTo
+    const real = window.getComputedStyle
+    vi.spyOn(window, "getComputedStyle").mockImplementation((element, pseudo) => {
+      const style = real(element, pseudo)
+      return element === caja ? ({ ...style, overflowY: "overlay" } as CSSStyleDeclaration) : style
+    })
+    expect(fireEvent.click(screen.getByRole("link", { name: "M" }))).toBe(false)
+    expect(scrollTo).toHaveBeenCalled()
+  })
+
   it("si la sección está en la página (sin caja que scrollee), el link es el ancla de siempre", () => {
     render(<Clientes />)
     expect(fireEvent.click(screen.getByRole("link", { name: "M" }))).toBe(true)

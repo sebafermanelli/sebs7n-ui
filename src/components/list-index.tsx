@@ -18,7 +18,11 @@ type ListIndexProps = Omit<React.ComponentProps<"nav">, "children"> & {
   available: readonly string[]
   /** Todas las letras de la tira, en orden. Por defecto, A–Z. */
   letters?: readonly string[]
-  /** El destino de cada letra. Por defecto `#${letter}`: la sección lleva `id="A"`. */
+  /**
+   * El destino de cada letra. Por defecto `#${letter}`: la sección lleva `id="A"`. Deslizar con el
+   * dedo, mover solo la caja que scrollea y pasarle el foco a la sección con Enter necesitan un
+   * `#…` que apunte a un id de la página; con otro destino, la letra es un link común.
+   */
   getHref?: (letter: string) => string
   labels?: Partial<NonNullable<Labels["listIndex"]>>
 }
@@ -31,10 +35,10 @@ const defaultHref = (letter: string) => `#${letter}`
 
 const sectionOf = (href: string | null) => (href?.startsWith("#") ? document.getElementById(decodeURIComponent(href.slice(1))) : null)
 
-/** La caja que scrollea a la sección (la lista con `overflow-y: auto`), si no es la página. */
+/** La caja que scrollea a la sección (la lista con `overflow-y` `auto`, `scroll` u `overlay`), si no es la página. */
 function scrollBox(section: HTMLElement) {
   for (let box = section.parentElement; box && box !== document.body && box !== document.documentElement; box = box.parentElement) {
-    if (/^(auto|scroll)$/.test(getComputedStyle(box).overflowY)) return box
+    if (/^(auto|scroll|overlay)$/.test(getComputedStyle(box).overflowY)) return box
   }
   return null
 }
@@ -52,7 +56,18 @@ function reveal(section: HTMLElement) {
   return true
 }
 
-function ListIndex({ className, available, letters = ALPHABET, getHref = defaultHref, labels: labelsProp, onPointerDown, ...props }: ListIndexProps) {
+function ListIndex({
+  className,
+  available,
+  letters = ALPHABET,
+  getHref = defaultHref,
+  labels: labelsProp,
+  onPointerDown,
+  onPointerMove,
+  onPointerUp,
+  onPointerCancel,
+  ...props
+}: ListIndexProps) {
   const labels = { ...listIndexLabels, ...useLabels().listIndex, ...labelsProp }
   const enabled = new Set(available)
   const [scrubbing, setScrubbing] = React.useState<string | null>(null)
@@ -69,10 +84,16 @@ function ListIndex({ className, available, letters = ALPHABET, getHref = default
   }
 
   // El click (o Enter) en una letra: si la lista scrollea en su propia caja, se mueve solo esa caja
-  // en vez de seguir el ancla, que hacía saltar la página.
+  // en vez de seguir el ancla, que hacía saltar la página. Con Enter (`detail` 0: no hubo puntero)
+  // el foco pasa a la sección, así Tab sigue desde ahí y el lector lee lo que se ve; el ancla sola
+  // no lo mueve, y con `preventDefault` tampoco el punto de partida de Tab.
   const onLetterClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
     const section = sectionOf(event.currentTarget.getAttribute("href"))
-    if (section && reveal(section)) event.preventDefault()
+    if (!section) return
+    if (reveal(section)) event.preventDefault()
+    if (event.detail !== 0) return
+    if (!section.hasAttribute("tabindex")) section.setAttribute("tabindex", "-1")
+    section.focus({ preventScroll: true })
   }
 
   return (
@@ -86,12 +107,21 @@ function ListIndex({ className, available, letters = ALPHABET, getHref = default
         event.currentTarget.setPointerCapture?.(event.pointerId)
         scrubTo(event.clientX, event.clientY)
       }}
+      // Los de la app se suman a los nuestros (antes, por venir en `...props` después, los
+      // reemplazaban y el deslizamiento nunca terminaba).
       onPointerMove={(event) => {
-        if (scrubbing == null) return
+        onPointerMove?.(event)
+        if (scrubbing == null || event.defaultPrevented) return
         scrubTo(event.clientX, event.clientY)
       }}
-      onPointerUp={() => setScrubbing(null)}
-      onPointerCancel={() => setScrubbing(null)}
+      onPointerUp={(event) => {
+        onPointerUp?.(event)
+        setScrubbing(null)
+      }}
+      onPointerCancel={(event) => {
+        onPointerCancel?.(event)
+        setScrubbing(null)
+      }}
       className={cn("flex w-6 flex-col select-none pointer-coarse:touch-none", className)}
       {...props}
     >
