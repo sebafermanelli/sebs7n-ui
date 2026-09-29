@@ -2,7 +2,16 @@
 
 import type * as React from "react"
 
-import { SortableBase, sortableLabels, type SortableItemState, type SortableLabels, type SortableProps } from "../internal/sortable.js"
+import {
+  SortableAddButton,
+  SortableBase,
+  sortableLabels,
+  type SortableAddButtonProps,
+  type SortableAddItem,
+  type SortableItemState,
+  type SortableLabels,
+  type SortableProps,
+} from "../internal/sortable.js"
 
 /**
  * Tarjetas en una grilla que se reordenan arrastrando: las demás se corren mientras arrastrás, como
@@ -11,8 +20,8 @@ import { SortableBase, sortableLabels, type SortableItemState, type SortableLabe
  *
  * **Solo en modo edición**, como la pantalla de inicio de iOS: se entra con el botón de la app
  * (`editing`) o manteniendo apretada una tarjeta ~0,5 s, y se sale con «Listo», Esc o un clic en un
- * espacio vacío. En edición las tarjetas tiemblan, `onRemove` pone un «−» en cada una y `onAdd` una
- * celda «+ Agregar» al final. Se edita una grilla por vez: entrar en otra saca a esta.
+ * espacio vacío. En edición las tarjetas tiemblan, `onRemove` pone un «−» en cada una, y
+ * `SortableAddButton` es el «+» para poner al lado del «Listo». Se edita una grilla por vez: entrar en otra saca a esta.
  *
  * **Con teclado no hay «mantener apretado»:** la app tiene que dar su botón «Editar»/«Listo» y
  * controlar `editing` (`onEditingChange`), si no quien no usa puntero nunca entra en edición.
@@ -43,4 +52,4 @@ function SortableGrid<T>({ columns, handle = false, style, ...props }: SortableG
   )
 }
 
-export { SortableGrid, sortableLabels, type SortableGridProps, type SortableItemState, type SortableLabels }
+export { SortableAddButton, SortableGrid, sortableLabels, type SortableAddButtonProps, type SortableAddItem, type SortableGridProps, type SortableItemState, type SortableLabels }

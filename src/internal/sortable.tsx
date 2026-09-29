@@ -28,7 +28,10 @@ import {
 import { CSS } from "@dnd-kit/utilities"
 import { GripVerticalIcon, MinusIcon, PlusIcon } from "lucide-react"
 
+import { Button } from "../components/button.js"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../components/dropdown-menu.js"
 import { List, ListRow } from "../components/list-row.js"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../components/tooltip.js"
 import { useLabels, type Labels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
 import { defined } from "../internal/defined.js"
@@ -60,6 +63,8 @@ const sortableLabels: SortableLabels = {
   remove: "Sacar",
   removed: "Se sacó",
   add: "Agregar",
+  added: "Se agregó",
+  nothingToAdd: "No hay más para agregar",
   editing: "Modo edición. Arrastrá para ordenar.",
   done: "Listo.",
 }
@@ -110,8 +115,6 @@ type SortableProps<T> = {
    * «Se sacó <nombre>».
    */
   onRemove?: (key: string) => void
-  /** Con esto, en edición aparece al final una celda «+ Agregar» (una fila en la lista); la app decide qué abre. */
-  onAdd?: () => void
   labels?: Partial<SortableLabels>
 }
 
@@ -140,7 +143,6 @@ function SortableBase<T>({
   defaultEditing = false,
   onEditingChange,
   onRemove,
-  onAdd,
   labels: labelsProp,
   itemClassName,
   className,
@@ -267,8 +269,8 @@ function SortableBase<T>({
     }
   }
 
-  // Al sacar uno, el foco pasa al «−» que queda en su lugar (o al último, o al «+ Agregar», o a la
-  // grilla si quedó vacía): si no, se iba al `<body>` con el botón que desaparece. Se resuelve
+  // Al sacar uno, el foco pasa al «−» que queda en su lugar (o al último, o a la grilla si quedó
+  // vacía): si no, se iba al `<body>` con el botón que desaparece. Se resuelve
   // cuando la clave ya no está en `items`, no en el render que sigue: la app puede sacarlo tarde
   // (después de guardar), y mientras tanto el foco se queda en su «−».
   const focusAfterRemove = React.useRef<{ key: string; index: number } | null>(null)
@@ -283,8 +285,20 @@ function SortableBase<T>({
     focusAfterRemove.current = null
     const root = container.current
     const buttons = root?.querySelectorAll<HTMLElement>("[data-slot=sortable-remove]") ?? []
-    const next = buttons[Math.min(pending.index, buttons.length - 1)] ?? root?.querySelector<HTMLElement>("[data-slot=sortable-add] button") ?? root
+    const next = buttons[Math.min(pending.index, buttons.length - 1)] ?? root
     next?.focus()
+  })
+
+  // Lo que se eligió en un `SortableAddButton`: cuando aparece acá, el foco va a su «−» (o a la
+  // tarjeta, o a la manija) y se anuncia. Si la app no lo agrega a esta grilla, no pasa nada.
+  React.useEffect(() => {
+    const key = addedKey.current
+    if (key === null || !keys.includes(key)) return
+    addedKey.current = null
+    const item = container.current?.querySelectorAll<HTMLElement>("[data-slot=sortable-list-item], [data-slot=sortable-grid-item]")[keys.indexOf(key)]
+    const target = item?.querySelector<HTMLElement>("[data-slot=sortable-remove], [data-slot=sortable-handle]") ?? (item?.tabIndex === 0 ? item : null)
+    target?.focus()
+    setStatus(`${labels.added} ${nameOf(key)}.`)
   })
 
   // Entrar y salir de la edición se anuncia (no al montar: arrancar editando no es un cambio). Una
@@ -355,23 +369,6 @@ function SortableBase<T>({
                 </SortableItem>
               )
             })}
-            {editing &&
-              onAdd &&
-              (variant === "list" ? (
-                <ListRow data-slot="sortable-add" icon={<PlusIcon />} onClick={onAdd} title={labels.add} />
-              ) : (
-                // El mismo radio que las tarjetas; estira al alto de la fila de la grilla.
-                <li className="min-w-0" data-slot="sortable-add">
-                  <button
-                    type="button"
-                    onClick={onAdd}
-                    className="flex size-full min-h-32 items-center justify-center gap-2 rounded-surface border-2 border-dashed border-label-tertiary text-callout text-label-secondary outline-none transition-control hover:bg-fill-1 hover:text-label focus-visible:focus-ring"
-                  >
-                    <PlusIcon aria-hidden="true" className="size-4" />
-                    {labels.add}
-                  </button>
-                </li>
-              ))}
           </Container>
         </SortableContext>
       </DndContext>
@@ -386,9 +383,12 @@ function SortableBase<T>({
 const LONG_PRESS = 500
 /** Lo que se puede mover el puntero mientras tanto: más es un scroll o un arrastre, no apretar. */
 const SLOP = 8
-const ITEM = "[data-slot=sortable-list-item], [data-slot=sortable-grid-item], [data-slot=sortable-add]"
-/** Lo que flota encima (un diálogo, un menú): su Esc y sus clics son suyos, no salen de la edición. */
-const LAYER = "[role=dialog], [role=alertdialog], [role=menu], [role=listbox], [data-slot$=-overlay], [data-sonner-toaster]"
+const ITEM = "[data-slot=sortable-list-item], [data-slot=sortable-grid-item]"
+/**
+ * Lo que flota encima (un diálogo, un menú, un toast) y el «+» de `SortableAddButton`: su Esc y sus
+ * clics son suyos, no salen de la edición.
+ */
+const LAYER = "[role=dialog], [role=alertdialog], [role=menu], [role=listbox], [data-slot$=-overlay], [data-sonner-toaster], [data-sortable-add]"
 
 /**
  * La que está en edición ahora, de todas las de la página: como en iOS, se edita una por vez.
@@ -542,6 +542,83 @@ function jiggleAngle(width: number) {
   return Math.max(0.3, 250 / width)
 }
 
+/**
+ * La clave elegida en el último `SortableAddButton`, hasta que la grilla o la lista que la recibe
+ * la ve llegar en `items` (ver el efecto en `SortableBase`). De módulo: el botón vive afuera, al
+ * lado del «Listo» de la app, y se edita una grilla por vez.
+ */
+const addedKey: { current: string | null } = { current: null }
+
+type SortableAddItem = { id: string; label: string; icon?: React.ReactNode }
+
+type SortableAddButtonProps = {
+  /** Lo que se puede agregar (lo que se sacó, lo que falta). Vacío, el «+» se deshabilita y dice por qué. */
+  items: readonly SortableAddItem[]
+  /**
+   * Recibe el id elegido; la app lo suma a `items` de la grilla. Si el id es la clave del ítem
+   * (`getKey`), cuando aparece el foco va a su «−» y se anuncia «Se agregó …».
+   */
+  onSelect: (id: string) => void
+  /** `icon-md` (36) como los botones de una barra; `icon-sm` (28) al lado de un «Listo» `sm`. */
+  size?: "icon-sm" | "icon-md"
+  labels?: Partial<Pick<SortableLabels, "add" | "nothingToAdd">>
+  className?: string
+}
+
+/**
+ * El «+» del modo edición, para poner al lado del «Listo» de la app: un botón de ícono que abre un
+ * menú con lo que se puede agregar, como el «Editar widgets» de iOS. Reemplaza a la celda «+
+ * Agregar» del final: un lugar fijo, que no se corre con la grilla.
+ */
+function SortableAddButton({ items, onSelect, size = "icon-md", labels: labelsProp, className }: SortableAddButtonProps) {
+  const labels = { ...sortableLabels, ...useLabels().sortable, ...defined(labelsProp) }
+  const why = React.useId()
+  const chosen = React.useRef(false)
+  if (items.length === 0) {
+    // Deshabilitado pero enfocable (`focusableWhenDisabled`): así el teclado y el lector llegan y
+    // escuchan por qué; el tooltip lo dice al puntero.
+    return (
+      <Tooltip>
+        <TooltipTrigger
+          render={
+            <Button aria-describedby={why} aria-disabled aria-label={labels.add} className={className} data-sortable-add="" disabled focusableWhenDisabled size={size} variant="plain" />
+          }
+        >
+          <PlusIcon />
+          <span hidden id={why}>
+            {labels.nothingToAdd}
+          </span>
+        </TooltipTrigger>
+        <TooltipContent>{labels.nothingToAdd}</TooltipContent>
+      </Tooltip>
+    )
+  }
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger render={<Button aria-label={labels.add} className={className} data-sortable-add="" size={size} variant="plain" />}>
+        <PlusIcon />
+      </DropdownMenuTrigger>
+      {/* Si se eligió uno, el foco lo mueve la grilla a lo agregado: el menú no lo devuelve al «+». */}
+      <DropdownMenuContent align="end" finalFocus={() => !chosen.current}>
+        {items.map((item) => (
+          <DropdownMenuItem
+            key={item.id}
+            onClick={() => {
+              chosen.current = true
+              addedKey.current = item.id
+              onSelect(item.id)
+              window.setTimeout(() => (chosen.current = false), 500)
+            }}
+          >
+            {item.icon}
+            {item.label}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+
 // La grilla no corre a nadie con transformaciones (el orden ya cambió en el DOM)…
 const inPlace: SortingStrategy = () => null
 // …y cada tarjeta que cambió de lugar se desliza desde donde estaba, no salta.
@@ -672,4 +749,4 @@ function SortableItem({ id, onRemove, press, editing, draggable, index, label, l
   )
 }
 
-export { jiggleAngle, SortableBase, sortableLabels, type SortableItemState, type SortableLabels, type SortableProps }
+export { jiggleAngle, SortableAddButton, SortableBase, sortableLabels, type SortableAddButtonProps, type SortableAddItem, type SortableItemState, type SortableLabels, type SortableProps }

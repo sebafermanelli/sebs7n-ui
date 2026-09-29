@@ -355,8 +355,12 @@ export type Labels = {
     remove: string
     /** Lo que se anuncia al sacar uno, antes del nombre: «Se sacó Clientes.» */
     removed: string
-    /** La celda del final en modo edición, cuando hay `onAdd`. */
+    /** El nombre del «+» de `SortableAddButton`. */
     add: string
+    /** Lo que se anuncia al agregar uno desde el «+», antes del nombre: «Se agregó Clientes.» */
+    added: string
+    /** Por qué el «+» está deshabilitado cuando no queda nada para agregar. */
+    nothingToAdd: string
     /** Lo que se anuncia al entrar en modo edición. */
     editing: string
     /** Lo que se anuncia al salir del modo edición. */
