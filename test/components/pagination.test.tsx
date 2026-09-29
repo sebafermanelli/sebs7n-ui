@@ -12,7 +12,7 @@ describe("Pagination", () => {
     expect(screen.getByRole("button", { name: "Página 2" })).toBeInTheDocument()
   })
 
-  // Una fila de números en un teléfono: con `touch-target` los `::after` de 44 se pisaban (32 + 4
+  // Una fila de números en un teléfono: con `touch-target` los `::after` de 44 se pisaban (36 + 4
   // de gap), y con gap de 12 los nueve controles ya no entran en 390 px. `touch-target-y` crece
   // solo en alto y conserva el ancho del número.
   it("en táctil los controles crecen en alto sin meterse en el de al lado", () => {
@@ -65,6 +65,26 @@ describe("Pagination", () => {
     expect(anterior).toHaveFocus()
     await userEvent.keyboard("{Enter}")
     expect(onPageChange).not.toHaveBeenCalled()
+  })
+
+  // Los «…» ocupan lo mismo que un número: 36 en `md` y 28 en `sm` (la escala de alto de R1).
+  it("los «…» miden lo mismo que un número", () => {
+    const { container } = render(<Pagination page={50} pageCount={100} />)
+    const numero = screen.getByRole("button", { name: "Página 50" })
+    expect(numero).toHaveClass("size-9")
+    for (const hueco of container.querySelectorAll("[data-slot=pagination-ellipsis]")) expect(hueco).toHaveClass("size-9")
+    const { container: chico } = render(<Pagination page={50} pageCount={100} size="sm" />)
+    for (const hueco of chico.querySelectorAll("[data-slot=pagination-ellipsis]")) expect(hueco).toHaveClass("size-7")
+  })
+
+  // Nueve controles (anterior, 1, …, 49, 50, 51, …, 100, siguiente) de 36 con 4 de gap:
+  // 9 × 36 + 8 × 4 = 356, y en un teléfono de 390 con 16 de margen a cada lado quedan 358.
+  it("los nueve controles entran en una fila de 390 px", () => {
+    const { container } = render(<Pagination page={50} pageCount={100} />)
+    const lista = container.querySelector("[data-slot=pagination-list]")!
+    expect(lista).toHaveClass("gap-1")
+    expect(lista.children).toHaveLength(9)
+    expect(9 * 36 + 8 * 4).toBeLessThanOrEqual(390 - 2 * 16)
   })
 
   it("los «…» son decorativos y tienen nombre accesible", () => {

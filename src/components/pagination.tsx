@@ -24,7 +24,7 @@ type PaginationProps = Omit<React.ComponentProps<"nav">, "children"> & {
   siblings?: number
   /** Cuántas páginas fijas en cada punta. */
   boundaries?: number
-  /** `sm` 24px · `md` 32px. */
+  /** `sm` 28px · `md` 36px (la escala de alto de los controles). */
   size?: "sm" | "md"
   /** Modo botones: se llama con la página destino. */
   onPageChange?: (page: number) => void
@@ -77,8 +77,9 @@ function Pagination({
       "aria-current": options.active ? ("page" as const) : undefined,
       className: cn(
         buttonVariants({ variant: options.active ? "secondary" : "ghost", size: iconSize }),
-        // Crece solo en alto: nueve controles de 32 con 12 px entre sí (lo que haría falta para
-        // áreas de 44 × 44) ya no entran en un teléfono de 390, y la fila se partía en dos.
+        // Crece solo en alto: nueve controles de 36 con 4 px entre sí suman 356 y entran en un
+        // teléfono de 390 (358 con los márgenes); con 12 px (lo que haría falta para áreas de
+        // 44 × 44) ya no entran, y la fila se partía en dos.
         "touch-target-y text-callout tabular-nums",
         !options.active && "text-label-secondary hover:text-label",
         off && "text-label-tertiary pointer-events-none"
@@ -110,7 +111,7 @@ function Pagination({
               // `gray-900` y no `gray-700`: los puntos son `aria-hidden`, pero
               // se ven, y en claro `gray-700` sobre la página da 3,23:1. Que al
               // lado haya un `sr-only` resuelve a quien escucha, no a quien mira.
-              className={cn("inline-flex items-center justify-center text-label-secondary", size === "sm" ? "size-6" : "size-8")}
+              className={cn("inline-flex items-center justify-center text-label-secondary", size === "sm" ? "size-7" : "size-9")}
               key={`ellipsis-${slot.side}`}
             >
               <span aria-hidden="true">…</span>
