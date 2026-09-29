@@ -53,6 +53,15 @@ describe("Breadcrumb", () => {
     expect(actual.tagName).toBe("SPAN")
   })
 
+  it("el breadcrumb de Settings de iCloud: 12 secundario con chevrons de 10", () => {
+    render(<Migas />)
+    const lista = screen.getByRole("list")
+    expect(lista).toHaveClass("text-footnote", "text-label-secondary", "gap-1")
+    expect(lista.className).not.toMatch(/text-callout/)
+    const sep = document.querySelector("[data-slot=breadcrumb-separator]")!
+    expect(sep).toHaveClass("[&>svg]:size-2.5")
+  })
+
   it("los links usan linkVariants subtle, no un estilo propio", () => {
     render(<Migas />)
     const link = screen.getByRole("link", { name: "Clientes" })

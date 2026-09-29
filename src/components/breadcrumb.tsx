@@ -76,7 +76,7 @@ function BreadcrumbList({
   return (
     <ol
       data-slot="breadcrumb-list"
-      className={cn("flex min-w-0 flex-wrap items-center gap-1.5 text-callout text-label-secondary", className)}
+      className={cn("flex min-w-0 flex-wrap items-center gap-1 text-footnote text-label-secondary", className)}
       {...props}
     >
       {visible.map((item, index) => (
@@ -91,7 +91,7 @@ function BreadcrumbList({
 
 /** Un nivel: adentro va un `BreadcrumbLink` o, en el último, un `BreadcrumbPage`. */
 function BreadcrumbItem({ className, ...props }: React.ComponentProps<"li">) {
-  return <li data-slot="breadcrumb-item" className={cn("inline-flex min-w-0 items-center gap-1.5", className)} {...props} />
+  return <li data-slot="breadcrumb-item" className={cn("inline-flex min-w-0 items-center gap-1", className)} {...props} />
 }
 
 type BreadcrumbLinkProps = WithClassName<React.ComponentProps<"a">> & {
@@ -138,7 +138,7 @@ function BreadcrumbSeparator({ className, children, ...props }: React.ComponentP
       data-slot="breadcrumb-separator"
       role="presentation"
       aria-hidden="true"
-      className={cn("inline-flex shrink-0 items-center text-label-tertiary [&>svg]:size-3.5", className)}
+      className={cn("inline-flex shrink-0 items-center text-label-tertiary [&>svg]:size-2.5", className)}
       {...props}
     >
       {children ?? <ChevronRightIcon />}
