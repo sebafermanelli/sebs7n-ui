@@ -203,6 +203,17 @@ export type Labels = {
     /** Placeholder del buscador del sidebar. */
     search: string
   }
+  stepper: {
+    /** Nombre de la lista de pasos, si no trae `aria-label`. */
+    label: string
+    /**
+     * Lo que se lee después del título de cada paso, según su estado: «Cliente, completado». El
+     * actual no lleva texto: lo dice `aria-current="step"`.
+     */
+    complete: string
+    upcoming: string
+    error: string
+  }
   themeSwitcher: {
     /** Nombre del grupo de opciones. */
     group: string
@@ -299,6 +310,12 @@ export const defaultLabels: Labels = {
   sidebar: {
     nav: "Navegación principal",
     search: "Buscar…",
+  },
+  stepper: {
+    label: "Pasos",
+    complete: "completado",
+    upcoming: "pendiente",
+    error: "con error",
   },
   themeSwitcher: {
     group: "Tema",

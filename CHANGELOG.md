@@ -556,6 +556,11 @@ las fases R2–R5 rehacen diálogos, menús, controles y listas con las medidas 
   borde izquierdo de 3 repartidos si se pisan y la línea roja de ahora. `role="grid"` con foco
   itinerante (flechas, Home/End, PageUp/PageDown, Enter → `onDayOpen`), `view`/`date` controlables,
   `now` inyectable, `hour12`, `onEventClick`. Labels `calendarView`.
+- **`Stepper`** (`sebs7n-ui/stepper`, **solo por subpath**), los pasos de un asistente (R6): `<ol>`
+  nombrada, círculo de 24 (completo = acento con tilde, actual = aro de acento con el número y
+  `aria-current="step"`, pendiente = `fill-2`, error = rojo con «!»), conector de 1 px en el acento
+  después de un completo, `horizontal`/`vertical`, `icon` por paso y `onStepClick` para volver a un
+  paso completo. Estado en texto para el lector. Labels `stepper: { label, complete, upcoming, error }`.
 - La tabla de subpaths del README dice qué componentes no están en el barrel (la lee de `src/index.ts`).
 - El variant `inside-selection` también mira las listas de filas (`group/list`: `List`, `Tree`,
   `FileGrid`), no solo la `Table`.

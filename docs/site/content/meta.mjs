@@ -1651,6 +1651,38 @@ export const COMPONENTS = {
     },
     related: ["toggle-group", "navigation-menu"],
   },
+  stepper: {
+    title: "Stepper",
+    group: "navegacion",
+    description: "Los pasos de un asistente: completos en el acento con el tilde, el actual con un aro de acento, los que faltan en gris y el que tiene un error en rojo, unidos por una línea de 1 px.",
+    keyboard: [
+      ["Tab", "Con `onStepClick`, recorre los pasos completos (son botones). Sin él, el Stepper no tiene paradas: es información."],
+      ["Enter / Espacio", "En un paso completo, vuelve a él."],
+    ],
+    a11y: [
+      "Es una `<ol>` con nombre (`aria-label`, por defecto «Pasos»): el lector cuenta los pasos («2 de 4»).",
+      "El actual lleva `aria-current=\"step\"`. Los demás dicen su estado en texto `sr-only` después del título («Cliente, completado», «Impuestos, con error»): el color y el tilde no son la única señal.",
+      "El círculo (número, tilde o ícono) y el conector son decorativos (`aria-hidden`).",
+      "Los colores: el número del actual va en `brand-ink` (4,5:1), el tilde en `brand-contrast` sobre el acento, el error en blanco sobre `red-800`.",
+    ],
+    usage: [
+      "**Para un proceso de 3 a 6 pasos con orden**: emitir una factura, dar de alta un cliente. Si los pasos se pueden hacer en cualquier orden, son `Tabs`.",
+      "El Stepper no navega solo: `current` lo maneja la pantalla, y los botones Anterior/Siguiente van aparte.",
+      "`onStepClick` deja volver a un paso completo; a uno pendiente no se salta.",
+      "`vertical` para un costado o un teléfono con descripciones largas; `horizontal` (default) arriba del formulario.",
+      "Solo por subpath (`sebs7n-ui/stepper`): no está en el barrel, por peso.",
+    ],
+    props: {
+      Stepper: {
+        steps: "Los pasos: `title`, `description`, `icon` (en lugar del número) y `status` (`complete`, `current`, `upcoming`, `error`) para forzar el estado.",
+        current: "El índice del paso actual, en base 0. Los de antes quedan completos y los de después pendientes.",
+        orientation: "`horizontal` (default) o `vertical`.",
+        onStepClick: "Vuelve botones los pasos completos y los que tienen error; se llama con el índice.",
+        labels: "Textos: `label` (el nombre de la lista), `complete`, `upcoming`, `error`.",
+      },
+    },
+    related: ["tabs", "progress"],
+  },
   sidebar: {
     title: "Sidebar",
     group: "navegacion",

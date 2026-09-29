@@ -177,3 +177,6 @@ export * from "./components/widget-card.js"
 //   `split-view`      sebs7n-ui/split-view (+0,70 kB)
 //   `file-grid`       sebs7n-ui/file-grid (+1,16 kB)
 //   `calendar-view`   sebs7n-ui/calendar-view (+2,84 kB)
+// Y los de R6, que nacieron afuera (el barrel ya estaba en 54,38 de 55): solo sus textos de
+// `labels` entran al barrel.
+//   `stepper`         sebs7n-ui/stepper

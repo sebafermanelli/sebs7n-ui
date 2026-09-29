@@ -201,6 +201,7 @@ describe("LabelsProvider", () => {
       "pageHeader",
       "sheet",
       "sidebar",
+      "stepper",
       "themeSwitcher",
       "userMenu",
     ])
