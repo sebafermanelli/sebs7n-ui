@@ -63,7 +63,8 @@ function cssDe(pisadas: Record<string, string>): string {
   return [":root {", ...lineas.map(([nombre, valor]) => `  ${`${nombre}:`.padEnd(ancho + 1)} ${valor};`), "}"].join("\n")
 }
 
-export function Playground() {
+/** `children` va dentro del mismo contenedor que el panel, para que el panel siga pegado mientras se recorre. */
+export function Playground({ children }: { children?: React.ReactNode }) {
   const { config, set, reset, esDefault } = useGlassConfig()
   const { resolvedTheme } = useTheme()
   // El tema recién se conoce en el cliente. Hasta entonces se asume claro, que es lo que
@@ -77,9 +78,11 @@ export function Playground() {
 
   return (
     <div className="flex flex-col gap-10">
+      {/* Se pega debajo de la barra del AppShell (44 en mobile y en escritorio): con un `top` fijo
+          quedaba tapado por la barra de arriba, que está en una capa superior. */}
       <section
         aria-label="Configuración"
-        className="sticky top-16 z-30 flex flex-col gap-5 rounded-panel border border-separator bg-surface p-5 shadow-menu lg:top-4"
+        className="sticky top-[calc(var(--app-shell-header,0px)+--spacing(3))] z-30 flex flex-col gap-5 rounded-panel border border-separator bg-surface p-5 shadow-menu"
       >
         <div className="flex flex-wrap items-end gap-x-8 gap-y-4">
           {/* Ancho fijo: el rótulo cambia con el tema («claro», «oscuro») y, midiendo lo que mide su
@@ -146,6 +149,7 @@ export function Playground() {
       </section>
 
       <Muestra />
+      {children}
     </div>
   )
 }

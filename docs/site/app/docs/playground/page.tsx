@@ -21,8 +21,9 @@ export default function PlaygroundPage() {
             Todo el material sale de dos números y un color. Movelos, mirá cómo cambian los componentes y llevate el CSS.
           </p>
         </header>
-        <Playground />
-        <AllComponents groups={allComponents(site)} />
+        <Playground>
+          <AllComponents groups={allComponents(site)} />
+        </Playground>
       </div>
     </ViewTransition>
   )
