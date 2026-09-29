@@ -2866,6 +2866,7 @@ export const COMPONENTS = {
       "Con movimiento reducido salta en vez de deslizar.",
     ],
     usage: [
+      "Para fotos (la de una card de producto): `bleed` saca el aire para la sombra, la máscara de los costados y la separación entre diapositivas; `controls=\"overlay\"` pone flechas y puntos encima de la imagen, sobre el gris oscuro del tooltip, con contraste sobre cualquier foto. Las flechas aparecen con el puntero encima o con foco; con el dedo no están (se desliza).",
       "Para mirar de a uno algo que se compara poco: planes, fotos de un comprobante. Si hay que comparar, es una grilla.",
       "`opts` y `plugins` van derecho a Embla (`loop`, `align`, autoplay); `setApi` da su API. `basis-1/2` en `CarouselItem` para ver dos.",
       "No pasa solo: un carrusel que rota necesita un botón de pausa, y eso es de la app con el plugin de autoplay.",

@@ -62,3 +62,37 @@ export function Several() {
     </Carousel>
   )
 }
+
+// Sin fotos de verdad en el sitio: tres «imágenes» de degradé, con el mismo contraste arbitrario que una foto.
+const PAGES = [
+  { name: "Página 1 de la factura", background: "linear-gradient(135deg, #f5d0a9, #e07b39)" },
+  { name: "Página 2 de la factura", background: "linear-gradient(135deg, #f8f8f8, #d9dde3)" },
+  { name: "Página 3 de la factura", background: "linear-gradient(135deg, #1f2937, #4b5563)" },
+]
+
+/**
+ * Sobre la foto
+ * `bleed` y `controls="overlay"`: la imagen de borde a borde de la card y las flechas y los puntos encima, sobre el gris del tooltip. Con el puntero, las flechas aparecen al pasar; con el dedo, se desliza.
+ */
+export function Photos() {
+  return (
+    <Card className="w-full max-w-xs gap-0 overflow-hidden py-0">
+      <Carousel aria-label="Factura 0012 escaneada" bleed controls="overlay" opts={{ loop: true }}>
+        <CarouselContent>
+          {PAGES.map((page) => (
+            <CarouselItem key={page.name}>
+              <div aria-label={page.name} className="aspect-4/3" role="img" style={{ background: page.background }} />
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <CarouselPrevious />
+        <CarouselNext />
+        <CarouselDots />
+      </Carousel>
+      <CardContent className="p-4">
+        <p className="text-headline text-label">Factura 0012</p>
+        <p className="text-callout text-label-secondary">Acme S.A. · 3 páginas</p>
+      </CardContent>
+    </Card>
+  )
+}

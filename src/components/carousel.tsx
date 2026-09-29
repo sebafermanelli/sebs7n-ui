@@ -42,6 +42,12 @@ type CarouselProps = React.ComponentProps<"div"> & {
    * separación. Para fotos de borde a borde, como la de una card de producto.
    */
   bleed?: boolean
+  /**
+   * `overlay`: las flechas y los puntos van encima de la foto, sobre el gris oscuro del tooltip con
+   * desenfoque (contraste garantizado sobre cualquier imagen); las flechas aparecen con el puntero
+   * encima o con foco, y con el dedo se desliza. Por defecto (`outside`), los de 2.0.
+   */
+  controls?: "outside" | "overlay"
   labels?: Partial<CarouselLabels>
 }
 
@@ -58,6 +64,7 @@ type CarouselContextValue = {
   snaps: number
   labels: CarouselLabels
   bleed: boolean
+  overlay: boolean
 }
 
 const CarouselContext = React.createContext<CarouselContextValue | null>(null)
@@ -93,6 +100,7 @@ function Carousel({
   plugins,
   labels: labelsProp,
   bleed = false,
+  controls = "outside",
   className,
   children,
   onKeyDown,
@@ -101,6 +109,7 @@ function Carousel({
   ...props
 }: CarouselProps) {
   const labels = { ...carouselLabels, ...useLabels().carousel, ...defined(labelsProp) }
+  const overlay = controls === "overlay"
   const [carouselRef, api] = useEmblaCarousel({ ...opts, axis: orientation === "horizontal" ? "x" : "y" }, plugins)
   const [state, setState] = React.useState({ canScrollPrev: false, canScrollNext: false, selected: 0, snaps: 0 })
 
@@ -139,17 +148,18 @@ function Carousel({
   }
 
   return (
-    <CarouselContext.Provider value={{ carouselRef, api, orientation, scrollPrev, scrollNext, scrollTo, labels, bleed, ...state }}>
+    <CarouselContext.Provider value={{ carouselRef, api, orientation, scrollPrev, scrollNext, scrollTo, labels, bleed, overlay, ...state }}>
       <div
         aria-roledescription={labels.carousel}
         data-bleed={bleed ? "" : undefined}
+        data-controls={overlay ? "overlay" : undefined}
         data-orientation={orientation}
         data-slot="carousel"
         role="region"
         aria-label={ariaLabel ?? (ariaLabelledby ? undefined : labels.label)}
         aria-labelledby={ariaLabelledby}
         onKeyDown={keyDown}
-        className={cn("relative", className)}
+        className={cn("relative", overlay && "group/carousel", className)}
         {...props}
       >
         {children}
@@ -210,8 +220,15 @@ type CarouselArrowProps = Omit<React.ComponentProps<typeof Button>, "size" | "ch
 const arrowClassName =
   "absolute z-10 material-translucent text-label shadow-menu hover:bg-fill-2 disabled:opacity-0 data-disabled:opacity-0 motion-safe:transition-opacity"
 
+// Encima de una foto el material translúcido no garantiza el contraste del ícono: el gris oscuro del
+// tooltip, casi opaco. Con puntero fino aparecen al pasar por el carrusel o con foco; con el dedo no
+// están (se desliza, y los puntos siguen). En la punta, `invisible` y no `opacity-0`: el hover del
+// grupo le ganaría.
+const overlayArrowClassName =
+  "absolute z-10 bg-tooltip/90 text-on-tooltip backdrop-blur-md shadow-menu hover:bg-tooltip disabled:invisible data-disabled:invisible pointer-coarse:hidden pointer-fine:opacity-0 pointer-fine:group-hover/carousel:opacity-100 focus-visible:opacity-100 motion-safe:transition-opacity"
+
 function CarouselPrevious({ className, variant = "ghost", ...props }: CarouselArrowProps) {
-  const { orientation, scrollPrev, canScrollPrev, labels } = useCarousel()
+  const { orientation, scrollPrev, canScrollPrev, labels, overlay } = useCarousel()
   return (
     <Button
       aria-label={labels.previous}
@@ -221,7 +238,7 @@ function CarouselPrevious({ className, variant = "ghost", ...props }: CarouselAr
       size="icon-sm"
       type="button"
       variant={variant}
-      className={cn(arrowClassName, orientation === "horizontal" ? "start-2 top-1/2 -translate-y-1/2" : "top-2 left-1/2 -translate-x-1/2 rotate-90", className)}
+      className={cn(overlay ? overlayArrowClassName : arrowClassName, orientation === "horizontal" ? "start-2 top-1/2 -translate-y-1/2" : "top-2 left-1/2 -translate-x-1/2 rotate-90", className)}
       {...props}
     >
       <ChevronLeftIcon />
@@ -230,7 +247,7 @@ function CarouselPrevious({ className, variant = "ghost", ...props }: CarouselAr
 }
 
 function CarouselNext({ className, variant = "ghost", ...props }: CarouselArrowProps) {
-  const { orientation, scrollNext, canScrollNext, labels } = useCarousel()
+  const { orientation, scrollNext, canScrollNext, labels, overlay } = useCarousel()
   return (
     <Button
       aria-label={labels.next}
@@ -240,7 +257,7 @@ function CarouselNext({ className, variant = "ghost", ...props }: CarouselArrowP
       size="icon-sm"
       type="button"
       variant={variant}
-      className={cn(arrowClassName, orientation === "horizontal" ? "end-2 top-1/2 -translate-y-1/2" : "bottom-2 left-1/2 -translate-x-1/2 rotate-90", className)}
+      className={cn(overlay ? overlayArrowClassName : arrowClassName, orientation === "horizontal" ? "end-2 top-1/2 -translate-y-1/2" : "bottom-2 left-1/2 -translate-x-1/2 rotate-90", className)}
       {...props}
     >
       <ChevronRightIcon />
@@ -254,11 +271,21 @@ function CarouselNext({ className, variant = "ghost", ...props }: CarouselArrowP
  * diapositivas. Con una sola parada no se dibuja.
  */
 function CarouselDots({ className, ...props }: React.ComponentProps<"div">) {
-  const { snaps, selected, scrollTo, labels } = useCarousel()
+  const { snaps, selected, scrollTo, labels, overlay } = useCarousel()
   if (snaps < 2) return null
   return (
-    // `relative` y hacia arriba: los puntos suben al aire de la sombra y quedan encima de la vista.
-    <div data-slot="carousel-dots" className={cn("relative -mt-9 flex items-center justify-center pt-2", className)} {...props}>
+    // `relative` y hacia arriba: los puntos suben al aire de la sombra y quedan encima de la vista. Con
+    // `overlay`, encima de la foto, abajo al centro, en una pastilla del gris del tooltip.
+    <div
+      data-slot="carousel-dots"
+      className={cn(
+        overlay
+          ? "absolute bottom-2 left-1/2 z-10 flex -translate-x-1/2 items-center rounded-control bg-tooltip/90 px-0.5 backdrop-blur-md"
+          : "relative -mt-9 flex items-center justify-center pt-2",
+        className
+      )}
+      {...props}
+    >
       {Array.from({ length: snaps }, (_, index) => (
         <button
           aria-current={index === selected ? "true" : undefined}
@@ -268,7 +295,10 @@ function CarouselDots({ className, ...props }: React.ComponentProps<"div">) {
           onClick={() => scrollTo(index)}
           type="button"
           // El botón mide 24 (el área táctil mínima, WCAG 2.5.8) y el punto de adentro 8.
-          className="flex size-6 cursor-pointer items-center justify-center rounded-full outline-none before:size-2 before:rounded-full before:bg-label-tertiary before:transition-control hover:before:bg-label-secondary focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-(color:--sf-focus) aria-current:before:bg-label"
+          className={cn(
+            "flex size-6 cursor-pointer items-center justify-center rounded-full outline-none before:size-2 before:rounded-full before:bg-label-tertiary before:transition-control hover:before:bg-label-secondary focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-(color:--sf-focus) aria-current:before:bg-label",
+            overlay && "before:size-1.5 before:bg-white/50 hover:before:bg-white/80 aria-current:before:bg-white"
+          )}
         />
       ))}
     </div>

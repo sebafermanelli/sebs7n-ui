@@ -233,3 +233,29 @@ describe("Carousel bleed", () => {
     expect(document.querySelector("[data-slot=carousel-item]")).toHaveClass("ps-4")
   })
 })
+
+describe("Carousel controls=overlay", () => {
+  it("flechas opacas oscuras con blur, a la vista con el puntero encima o con foco", () => {
+    render(<Plans bleed controls="overlay" />)
+    const previous = screen.getByRole("button", { name: "Diapositiva anterior" })
+    expect(previous).toHaveClass("bg-tooltip/90", "text-on-tooltip", "backdrop-blur-md")
+    expect(previous).not.toHaveClass("material-translucent")
+    expect(previous).toHaveClass("pointer-fine:opacity-0", "pointer-fine:group-hover/carousel:opacity-100", "focus-visible:opacity-100")
+    expect(document.querySelector("[data-slot=carousel]")).toHaveClass("group/carousel")
+    expect(document.querySelector("[data-slot=carousel]")).toHaveAttribute("data-controls", "overlay")
+  })
+
+  it("los puntos encima de la foto, abajo al centro, en una pastilla oscura", () => {
+    render(<Plans bleed controls="overlay" />)
+    const dots = document.querySelector("[data-slot=carousel-dots]")!
+    expect(dots).toHaveClass("absolute", "bottom-2", "left-1/2", "-translate-x-1/2", "bg-tooltip/90")
+    expect(dots).not.toHaveClass("-mt-9")
+    expect(document.querySelector("[data-slot=carousel-dot]")).toHaveClass("before:bg-white/50", "aria-current:before:bg-white")
+  })
+
+  it("sin controls, las flechas y los puntos de 2.0", () => {
+    render(<Plans />)
+    expect(screen.getByRole("button", { name: "Diapositiva anterior" })).toHaveClass("material-translucent")
+    expect(document.querySelector("[data-slot=carousel-dots]")).toHaveClass("-mt-9")
+  })
+})
