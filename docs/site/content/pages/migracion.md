@@ -50,7 +50,7 @@ Sin tocar nada más, la app compila y los componentes del paquete se ven de vidr
 | `Input` · `Select` · `Combobox` · `DatePicker` · `NumberField` | Son cápsulas, con 16px de padding horizontal. | Nada. `--radius-field: 10px` los devuelve al rectángulo. |
 | `Textarea` | Radio de 20px. | Nada. |
 | `Button` | Es una cápsula. | Nada, o `shape="rect"` donde una cápsula no entra. |
-| `Tabs` | La lista es una pista segmentada y ya no mide `w-full`. | `<TabsList variant="line">` para la navegación de una página entera. |
+| `Tabs` | La lista es una pista segmentada y ya no mide `w-full`. | `<TabsList variant="line">` para la navegación de una página entera. **En 2.0 se invierte:** la línea de Settings de iCloud es el default y el segmentado se pide con `variant="segmented"` (ver el CHANGELOG). |
 | `Switch` | Prende con el brand. `variant="accent"` es igual al default. | `variant="neutral"` si el color molesta. |
 | `Checkbox` · `Radio` · `Slider` · `Progress` · `Meter` | Lo prendido usa el brand. | Nada. |
 | `Badge` · `Tag` | Vidrio teñido: fondo y borde en alfa, texto en la tinta de la paleta. | Nada. Si copiaste el cuerpo a mano (`bg-red-100 text-red-900 border-red-400`), pasalo a `badgeVariants({ color: "red" })`. |

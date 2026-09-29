@@ -246,10 +246,16 @@ estos controles (Toggle con borde, perilla en cápsula, botón `outline`), que n
   El segmentado es el de Calendar: pista de **28** (antes 32), segmentos de 24 **del mismo ancho**,
   activo en semibold y separadores de 1 × 16 entre los que no tocan al activo; la pista ya no tiene
   espacio entre segmentos (`segmentedTrackClassName` sin `gap-0.5`). ThemeSwitcher igual: segmentos
-  de 24 × 32 (antes 28 × 28), 40 × 44 con el dedo.
-- **ToggleGroup es el segmentado** (antes una fila de chips con `gap-2`): la pista de
-  `segmentedTrackClassName` y cada ítem prendido se eleva con `bg-segment` + `shadow-segment`
-  (`segmentedItemClassName`, nuevo); admite varios prendidos. **Toggle** suelto es el token de la
+  de 24 × 32 (antes 28 × 28), 40 × 44 con el dedo. **La lista ya no lleva `group/tabs-list`:** una
+  app que pintaba las pestañas con `group-data-[…]/tabs-list:` pasa a mirar el `data-variant` de la
+  lista (`in-data-[variant=line]:…`). La de línea scrollea de costado con muchas pestañas y se sale
+  8 px de cada lado (`-mx-2`); el segmentado recorta con «…» el texto que no entra.
+- **ToggleGroup es el segmentado** (antes una fila de chips con `flex-wrap gap-2`): la pista de
+  `segmentedTrackClassName` con segmentos del mismo ancho (`segmentedGroupClassName`) y cada ítem
+  prendido en el **acento sólido** (`segmentedItemClassName`, nuevo; en oscuro `brand-900` con el
+  texto oscuro, para llegar a 3:1 contra la pista); admite varios prendidos. **Ya no envuelve en
+  varias filas:** para filtros sueltos que envuelven, `Toggle` de a uno en un
+  `<div className="flex flex-wrap gap-2">`. **Toggle** suelto es el token de la
   búsqueda de iCloud: `fill-1` sin borde, `fill-2` con el puntero y **el acento sólido prendido**
   (antes borde gris lleno que se oscurecía).
 - **Checkbox y Radio** marcados sin borde (el relleno es el contorno) y **deshabilitados a .4**;
@@ -258,7 +264,10 @@ estos controles (Toggle con borde, perilla en cápsula, botón `outline`), que n
 - **Slider = el de Photos**: pista de **2 px** (antes 4/6) en `label/32`, progreso en el **label**
   (antes `brand-700`), perilla **círculo de 14** con borde de 2 px en el label y centro `surface`
   (antes cápsula blanca de 20 × 28), que crece al arrastrar; área de toque por `::after` (34, 46
-  con el dedo); **el foco va por fuera** (como el Switch). `sliderThumbClassName` cambia y el matiz
+  con el dedo); **el foco va por fuera** (como el Switch). Sus estados salen de
+  `sliderThumbDraggingClassName` (`data-dragging:scale-125`) y `sliderThumbPeerActiveClassName`
+  (`peer-active:scale-125`), que cambiaron de valor junto con la perilla: si una app los usaba en un
+  slider propio, ahora escalan la perilla de 14. `sliderThumbClassName` cambia y el matiz
   del ColorPicker lo sigue. Deshabilitado a .4.
 - **Campos: con el foco pierden el relleno.** `focus-border` y `focus-border-error` ponen
   `background-color: transparent` y queda solo el anillo interior, como la búsqueda de iCloud.
