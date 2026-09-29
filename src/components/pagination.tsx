@@ -79,7 +79,8 @@ function Pagination({
         buttonVariants({ variant: options.active ? "secondary" : "ghost", size: iconSize }),
         // Crece solo en alto: nueve controles de 36 con 4 px entre sí suman 356 y entran en un
         // teléfono de 390 (358 con los márgenes); con 12 px (lo que haría falta para áreas de
-        // 44 × 44) ya no entran, y la fila se partía en dos.
+        // 44 × 44) ya no entran. En 375 y 360 (343 y 328 con los márgenes) no entran ni así: la
+        // lista es `flex-wrap` y la fila pasa a dos renglones, que es lo que se acepta ahí.
         "touch-target-y text-callout tabular-nums",
         !options.active && "text-label-secondary hover:text-label",
         off && "text-label-tertiary pointer-events-none"
