@@ -26,7 +26,7 @@ import {
   type SortingStrategy,
 } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
-import { GripVerticalIcon } from "lucide-react"
+import { GripVerticalIcon, MinusIcon } from "lucide-react"
 
 import { List, ListRow } from "../components/list-row.js"
 import { useLabels, type Labels } from "../lib/labels.js"
@@ -102,6 +102,12 @@ type SortableProps<T> = {
   defaultEditing?: boolean
   /** Cuando se entra (mantener apretado un ítem ~0,5 s) o se sale (Esc, clic en un espacio vacío). */
   onEditingChange?: (editing: boolean) => void
+  /**
+   * Con esto, en edición cada ítem trae un «−» (arriba a la izquierda en la grilla, adelante en la
+   * lista) que lo saca sin confirmar: recibe su clave, la app lo saca de `items`, y se anuncia
+   * «Se sacó <nombre>».
+   */
+  onRemove?: (key: string) => void
   labels?: Partial<SortableLabels>
 }
 
@@ -129,6 +135,7 @@ function SortableBase<T>({
   editing: editingProp,
   defaultEditing = false,
   onEditingChange,
+  onRemove,
   labels: labelsProp,
   itemClassName,
   className,
@@ -255,6 +262,23 @@ function SortableBase<T>({
     }
   }
 
+  // Al sacar uno, el foco pasa al «−» que queda en su lugar (o al último): si no, se iba al `<body>`
+  // con el botón que desaparece.
+  const focusAfterRemove = React.useRef<number | null>(null)
+  const removeItem = (key: string, index: number, name: string) => {
+    focusAfterRemove.current = index
+    setStatus(`${labels.removed} ${name}.`)
+    onRemove?.(key)
+  }
+  React.useEffect(() => {
+    const index = focusAfterRemove.current
+    if (index === null) return
+    focusAfterRemove.current = null
+    const buttons = container.current?.querySelectorAll<HTMLElement>("[data-slot=sortable-remove]") ?? []
+    const next = buttons[Math.min(index, buttons.length - 1)] ?? container.current?.querySelector<HTMLElement>("[data-slot=sortable-add] button")
+    next?.focus()
+  })
+
   const settle = () => window.setTimeout(() => (dragging.current = false))
 
   const Container = variant === "list" ? List : "ul"
@@ -295,6 +319,7 @@ function SortableBase<T>({
               const key = keys[index]!
               return (
                 <SortableItem
+                  onRemove={onRemove && editing ? () => removeItem(key, index, getLabel(item)) : undefined}
                   press={press}
                   draggable={draggable}
                   editing={editing}
@@ -457,6 +482,7 @@ const animateAlways: AnimateLayoutChanges = (args) => defaultAnimateLayoutChange
 
 type SortableItemProps = {
   id: string
+  onRemove: (() => void) | undefined
   press: PressHandlers
   editing: boolean
   draggable: boolean
@@ -469,7 +495,7 @@ type SortableItemProps = {
   children: (state: SortableItemState) => React.ReactNode
 }
 
-function SortableItem({ id, press, editing, draggable, index, label, labels, variant, handle, className, children }: SortableItemProps) {
+function SortableItem({ id, onRemove, press, editing, draggable, index, label, labels, variant, handle, className, children }: SortableItemProps) {
   const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } = useSortable({
     id,
     animateLayoutChanges: variant === "grid" ? animateAlways : undefined,
@@ -503,6 +529,23 @@ function SortableItem({ id, press, editing, draggable, index, label, labels, var
   ) : null
   const content = children({ handle: variant === "list" ? null : grip, dragging: isDragging, index, editing })
   const wholeItem = !handle && draggable
+  // El «−» de iOS: un círculo gris de 22 (el área de toque la agranda `touch-target`). No va en la
+  // que se arrastra.
+  const remove =
+    onRemove && !isDragging ? (
+      <button
+        type="button"
+        aria-label={`${labels.remove} ${label}`}
+        data-slot="sortable-remove"
+        onClick={onRemove}
+        className={cn(
+          "relative z-10 flex size-[22px] shrink-0 items-center justify-center rounded-full bg-surface-bar text-label shadow-menu outline-none transition-control touch-target hover:bg-fill-3 focus-visible:focus-ring",
+          variant === "grid" && "absolute -top-2 -left-2"
+        )}
+      >
+        <MinusIcon aria-hidden="true" className="size-3.5" strokeWidth={3} />
+      </button>
+    ) : null
 
   if (variant === "list") {
     return (
@@ -514,8 +557,10 @@ function SortableItem({ id, press, editing, draggable, index, label, labels, var
         {...press}
         className={cn("data-dragging:z-10 data-dragging:bg-surface data-dragging:shadow-menu", motion, className)}
       >
-        {grip}
+        {remove}
         <div className="flex min-w-0 flex-1 items-center gap-3">{content}</div>
+        {/* La manija al final, como la tabla de iOS en edición: adelante va el «−». */}
+        {grip}
       </ListRow>
     )
   }
@@ -540,6 +585,7 @@ function SortableItem({ id, press, editing, draggable, index, label, labels, var
       )}
     >
       {content}
+      {remove}
       {wholeItem && pressed && (
         <span hidden id={grabbedId}>
           {labels.grabbed}

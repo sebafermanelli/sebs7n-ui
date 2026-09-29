@@ -414,6 +414,46 @@ describe("SortableGrid", () => {
       expect(reduced).toMatch(/&::after \{[^}]*border: 1px dashed var\(--color-label-tertiary\)/)
     })
 
+    it("onRemove: en edición cada tarjeta trae un «−» con su nombre que la saca directo, lo anuncia y deja el foco en el siguiente", async () => {
+      const user = userEvent.setup()
+      function Removable() {
+        const [items, setItems] = React.useState(WIDGETS)
+        return <Widgets items={items} onRemove={(id) => setItems((all) => all.filter((widget) => widget.id !== id))} />
+      }
+      render(<Removable />)
+      const remove = screen.getByRole("button", { name: "Sacar Clientes" })
+      expect(remove).toHaveAttribute("data-slot", "sortable-remove")
+      expect(remove).toHaveClass("absolute", "-top-2", "-left-2", "size-[22px]", "rounded-full", "touch-target")
+      await user.click(remove)
+      expect(order()).toEqual(["Facturas", "Calendario", "Archivos"])
+      expect(status()).toHaveTextContent("Se sacó Clientes.")
+      expect(screen.getByRole("button", { name: "Sacar Calendario" })).toHaveFocus()
+      // Sacar no es un clic afuera: sigue en edición.
+      expect(screen.getAllByRole("listitem")[0]).toHaveClass("animate-jiggle")
+      await user.click(screen.getByRole("button", { name: "Sacar Archivos" }))
+      expect(screen.getByRole("button", { name: "Sacar Calendario" })).toHaveFocus()
+    })
+
+    it("sin onRemove o fuera de edición no hay «−»", () => {
+      const { rerender } = render(<Widgets />)
+      expect(screen.queryByRole("button", { name: /^Sacar/ })).toBeNull()
+      rerender(<Widgets editing={false} onRemove={() => {}} />)
+      expect(screen.queryByRole("button", { name: /^Sacar/ })).toBeNull()
+    })
+
+    it("labels.remove y labels.removed se traducen", async () => {
+      const user = userEvent.setup()
+      const onRemove = vi.fn()
+      render(
+        <LabelsProvider value={{ sortable: { remove: "Remove", removed: "Removed" } }}>
+          <Widgets onRemove={onRemove} />
+        </LabelsProvider>
+      )
+      await user.click(screen.getByRole("button", { name: "Remove Facturas" }))
+      expect(onRemove).toHaveBeenCalledWith("invoices")
+      expect(status()).toHaveTextContent("Removed Facturas.")
+    })
+
     it("controlado: editing manda y renderItem recibe state.editing", () => {
       const seen: boolean[] = []
       const renderItem = (widget: Widget, state: { editing: boolean }) => {

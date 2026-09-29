@@ -166,6 +166,21 @@ describe("SortableList", () => {
       }
     })
 
+    it("onRemove: en edición cada fila va «−» adelante y la manija al final; sacar anuncia", async () => {
+      const user = userEvent.setup()
+      const onRemove = vi.fn()
+      render(<Invoices onRemove={onRemove} />)
+      const row = screen.getAllByRole("listitem")[1]!
+      const remove = within(row).getByRole("button", { name: "Sacar Factura 0013" })
+      const buttons = within(row).getAllByRole("button")
+      expect(buttons[0]).toBe(remove)
+      expect(buttons.at(-1)).toHaveAccessibleName("Reordenar Factura 0013")
+      expect(remove).not.toHaveClass("absolute")
+      await user.click(remove)
+      expect(onRemove).toHaveBeenCalledWith("0013")
+      expect(status()).toHaveTextContent("Se sacó Factura 0013.")
+    })
+
     it("controlado: con editing aparece la manija", () => {
       const { rerender } = render(<Invoices editing={false} />)
       expect(screen.queryByRole("button", { name: /Reordenar/ })).toBeNull()
