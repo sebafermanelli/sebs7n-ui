@@ -168,6 +168,15 @@ describe("NumberField", () => {
     expect(input()).toHaveValue("4")
   })
 
+  // Revisión de R4 (M3): los steppers miden 20, bien con el mouse; con el dedo crecen a 28, arriba
+  // de los 24 del mínimo de WCAG 2.5.8 (también los botones de Combobox y Autocomplete).
+  it("con el dedo los steppers crecen a 28", () => {
+    render(<NumberField aria-label="Cantidad" />)
+    for (const nombre of ["Aumentar", "Disminuir"]) {
+      expect(screen.getByRole("button", { name: nombre })).toHaveClass("size-5", "pointer-coarse:size-7")
+    }
+  })
+
   it("los steppers están fuera del orden de tabulación: la única parada es el input", async () => {
     render(<NumberField aria-label="Cantidad" defaultValue={1} />)
     expect(screen.getByRole("button", { name: "Aumentar" })).toHaveAttribute("tabindex", "-1")
