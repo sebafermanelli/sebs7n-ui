@@ -568,6 +568,11 @@ las fases R2–R5 rehacen diálogos, menús, controles y listas con las medidas 
   `Checkbox` (la de todas en `mixed`, la fila elegida en el acento), `empty`, `loading` con esqueletos y
   `aria-busy`, y `groupBy` con `TableGroupHeader`. Orden, búsqueda, página y selección controlables.
   Labels `dataTable`.
+- **`InputGroup`** (`sebs7n-ui/input-group`, **solo por subpath**), un campo con addons (R6):
+  `InputGroup` (la superficie de campo de iCloud con el foco y el inválido en el grupo; `size`
+  28/36/40, `disabled`), `InputGroupAddon` (texto, ícono, `Kbd`; un click enfoca el campo),
+  `InputGroupInput` (transparente, se integra con `Field`) e `InputGroupButton` (`ghost`, `plain`,
+  `default`, a escala del campo).
 - La tabla de subpaths del README dice qué componentes no están en el barrel (la lee de `src/index.ts`).
 - El variant `inside-selection` también mira las listas de filas (`group/list`: `List`, `Tree`,
   `FileGrid`), no solo la `Table`.

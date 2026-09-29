@@ -181,3 +181,4 @@ export * from "./components/widget-card.js"
 // `labels` entran al barrel.
 //   `stepper`         sebs7n-ui/stepper
 //   `data-table`      sebs7n-ui/data-table
+//   `input-group`     sebs7n-ui/input-group

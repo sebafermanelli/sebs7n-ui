@@ -477,6 +477,40 @@ export const COMPONENTS = {
     props: { Input: { size: "`sm` 28 px · `md` 36 px · `lg` 40 px, con el texto en 14 en los tres. Los comparten todos los campos y el `Button`." } },
     related: ["field", "label", "textarea", "select", "combobox"],
   },
+  "input-group": {
+    title: "InputGroup",
+    group: "formularios",
+    description: "Un campo con cosas pegadas adentro —«$», «.com», la lupa, un ⌘K o un botón—, con la superficie y el foco de iCloud en el grupo.",
+    keyboard: [
+      ["Tab", "Entra al campo y sigue a los botones de adentro, en el orden en que están."],
+    ],
+    a11y: [
+      "El nombre es el del campo: `FieldLabel` en un `Field`, o `aria-label` en `InputGroupInput`. Un addon de texto («$», «.com») **no** lo nombra: si hace falta que se lea, ponelo en el label («Importe en pesos»).",
+      "Los íconos de un addon son decorativos; un `InputGroupButton` de solo ícono necesita `aria-label`.",
+      "El foco se ve en el grupo (el anillo interior de 3 px, sin relleno) aunque lo tenga el `<input>` de adentro; el inválido (`aria-invalid` en el input) pone el borde rojo al grupo.",
+      "Un click en un addon de texto o ícono enfoca el campo; en un botón, hace lo del botón.",
+    ],
+    usage: [
+      "**Para un dato con unidad o formato fijo** (moneda, dominio, prefijo) o una acción que es del campo (copiar, aplicar un cupón). Una acción de todo el formulario va afuera, en un `Button`.",
+      "Los addons van en el orden del DOM: antes del `InputGroupInput` quedan a la izquierda, después a la derecha.",
+      "`size` 28/36/40 como los botones; el botón de adentro escala solo (20/28/32).",
+      "Para buscar con sugerencias es `Combobox` o `Autocomplete`, que ya usan esta misma superficie.",
+      "Solo por subpath (`sebs7n-ui/input-group`): no está en el barrel, por peso.",
+    ],
+    props: {
+      InputGroup: {
+        size: "`sm` 28, `md` 36 (default), `lg` 40.",
+        disabled: "Apaga el campo, los botones de adentro y la superficie (a .4).",
+      },
+      InputGroupAddon: {
+        onMouseDown: "Se llama antes de enfocar el campo. Con `event.preventDefault()`, el click no lo enfoca.",
+      },
+      InputGroupButton: {
+        variant: "`ghost` (default, neutro), `plain` (texto en el acento) o `default` (acento sólido).",
+      },
+    },
+    related: ["input", "field", "kbd"],
+  },
   textarea: {
     title: "Textarea",
     group: "formularios",
