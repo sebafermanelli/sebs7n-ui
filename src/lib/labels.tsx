@@ -128,6 +128,14 @@ export type Labels = {
     weekOf: string
     /** Después del número de eventos que no entran en un día del mes: «+2 más». */
     more: string
+    /**
+     * Los de la vista Día (R9) son **opcionales**: sus textos en español viven en
+     * `calendarViewDayLabels` de `sebs7n-ui/calendar-view` y no en `defaultLabels`, porque el barrel
+     * está en su tope de 56 kB (ver `carousel`). El provider y la prop `labels` los cambian igual.
+     */
+    day?: string
+    previousDay?: string
+    nextDay?: string
   }
   /**
    * Los tres grupos de R8 (`carousel`, `dropZone`, `sortable`) son **opcionales**: sus textos en
@@ -268,6 +276,11 @@ export type Labels = {
     tooMany: string
     /** El idioma de los tamaños: «1,3 MB». */
     locale: string
+  }
+  /** Opcional: `ListIndex`; el texto por defecto es `listIndexLabels` de `sebs7n-ui/list-index` (ver `carousel`). */
+  listIndex?: {
+    /** El nombre del `nav`: «Índice alfabético». */
+    label: string
   }
   meter: {
     /** «Libre», en la cabecera de `StackedMeter`. */

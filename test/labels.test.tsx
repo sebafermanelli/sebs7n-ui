@@ -240,4 +240,24 @@ describe("LabelsProvider", () => {
     expect(received?.sortable).toEqual({ handle: "Reorder" })
     expect(received?.carousel).toBeUndefined()
   })
+
+  it("los textos de R9 (vista Día y ListIndex) tampoco están en defaultLabels, y el provider los lleva igual", () => {
+    expect(defaultLabels.calendarView).not.toHaveProperty("day")
+    expect(defaultLabels).not.toHaveProperty("listIndex")
+    let received: ReturnType<typeof useLabels> | undefined
+    function Reader() {
+      received = useLabels()
+      return null
+    }
+    render(
+      <LabelsProvider value={{ calendarView: { day: "Day" } }}>
+        <LabelsProvider value={{ listIndex: { label: "Index" } }}>
+          <Reader />
+        </LabelsProvider>
+      </LabelsProvider>
+    )
+    expect(received?.calendarView.day).toBe("Day")
+    expect(received?.calendarView.today).toBe("Hoy")
+    expect(received?.listIndex).toEqual({ label: "Index" })
+  })
 })
