@@ -126,17 +126,18 @@ const LISTA_COLUMNAS = [
 /** iCloud Drive: la lista de fuentes, la barra con la vista y las acciones, las carpetas y los archivos. */
 export function FilesShowcase() {
   const [carpeta, setCarpeta] = useState("septiembre")
-  const [elegido, setElegido] = useState<string | null>("f-0013")
+  // Varios elegidos, como en Drive: ⌘/Ctrl+click, ⇧+click y ⌘A, en la grilla y en la lista.
+  const [elegidos, setElegidos] = useState<string[]>(["f-0013"])
   const [vista, setVista] = useState<"grid" | "list">("grid")
   const ruta = rutaDe(carpeta) ?? []
   const items = useMemo(() => contenidoDe(carpeta), [carpeta])
   const abrir = (item: FileGridItem) => {
     if (item.folder) {
       setCarpeta(item.id)
-      setElegido(null)
+      setElegidos([])
     }
   }
-  const nombreElegido = items.find((item) => item.id === elegido)?.name
+  const hayElegidos = elegidos.length > 0
 
   const sidebar = (
     <Sidebar>
@@ -207,9 +208,9 @@ export function FilesShowcase() {
           </ToggleGroup>
           <ToolbarSeparator />
           <ToolbarGroup aria-label="Selección" className="mx-auto flex items-center gap-1.5">
-            <ToolButton disabled={!elegido} icon={ShareIcon} label="Compartir" />
-            <ToolButton disabled={!elegido} icon={DownloadIcon} label="Descargar" />
-            <ToolButton disabled={!elegido} icon={Trash2Icon} label="Eliminar" />
+            <ToolButton disabled={!hayElegidos} icon={ShareIcon} label="Compartir" />
+            <ToolButton disabled={!hayElegidos} icon={DownloadIcon} label="Descargar" />
+            <ToolButton disabled={!hayElegidos} icon={Trash2Icon} label="Eliminar" />
           </ToolbarGroup>
           <ToolButton icon={SearchIcon} label="Buscar" shortcut={<Kbd>⌘F</Kbd>} />
           <ToolButton icon={FolderPlusIcon} label="Nueva carpeta" />
@@ -225,7 +226,7 @@ export function FilesShowcase() {
               onSelectedChange={(id) => {
                 if (!id) return
                 setCarpeta(id)
-                setElegido(null)
+                setElegidos([])
               }}
               selected={carpeta}
             />
@@ -252,7 +253,9 @@ export function FilesShowcase() {
                 </BreadcrumbList>
               </Breadcrumb>
               <h3 className="text-title-1 text-label">{ruta.at(-1)?.label}</h3>
-              <p className="text-callout text-label-secondary">{items.length} ítems · 1,2 GB disponibles</p>
+              <p className="text-callout text-label-secondary" role="status">
+                {hayElegidos ? `${elegidos.length} de ${items.length} elegidos` : `${items.length} ítems`} · 1,2 GB disponibles
+              </p>
             </div>
 
             <ContextMenu>
@@ -267,13 +270,15 @@ export function FilesShowcase() {
                     aria-label={`Archivos de ${ruta.at(-1)?.label ?? ""}`}
                     items={items}
                     onOpen={abrir}
-                    onSelectedChange={setElegido}
-                    selected={elegido}
+                    onSelectedChange={(ids) => setElegidos(ids)}
+                    selected={elegidos}
+                    selectionMode="multiple"
                   />
                 ) : (
                   <Tree
                     aria-label={`Archivos de ${ruta.at(-1)?.label ?? ""}`}
                     columns={LISTA_COLUMNAS}
+                    grid
                     items={items.map((item) => ({
                       id: item.id,
                       label: item.name,
@@ -282,21 +287,22 @@ export function FilesShowcase() {
                     }))}
                     nameHeader="Nombre"
                     onOpen={(nodo) => abrir({ id: nodo.id, name: String(nodo.label), folder: nodo.children !== undefined })}
-                    onSelectedChange={setElegido}
-                    selected={elegido}
+                    onSelectedChange={(ids) => setElegidos(ids)}
+                    selected={elegidos}
+                    selectionMode="multiple"
                   />
                 )}
               </ContextMenuTrigger>
               <ContextMenuContent>
-                <ContextMenuItem disabled={!nombreElegido}>Abrir</ContextMenuItem>
-                <ContextMenuItem disabled={!nombreElegido}>
+                <ContextMenuItem disabled={!hayElegidos}>Abrir</ContextMenuItem>
+                <ContextMenuItem disabled={!hayElegidos}>
                   Descargar
                   <ContextMenuShortcut>⌘D</ContextMenuShortcut>
                 </ContextMenuItem>
-                <ContextMenuItem disabled={!nombreElegido}>Compartir…</ContextMenuItem>
-                <ContextMenuItem disabled={!nombreElegido}>Cambiar el nombre</ContextMenuItem>
+                <ContextMenuItem disabled={!hayElegidos}>Compartir…</ContextMenuItem>
+                <ContextMenuItem disabled={!hayElegidos}>Cambiar el nombre</ContextMenuItem>
                 <ContextMenuSeparator />
-                <ContextMenuItem disabled={!nombreElegido} variant="destructive">
+                <ContextMenuItem disabled={!hayElegidos} variant="destructive">
                   Eliminar
                 </ContextMenuItem>
               </ContextMenuContent>
