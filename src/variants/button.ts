@@ -25,15 +25,6 @@ const buttonVariantsBase = cva(
           "bg-brand-700 text-brand-contrast hover:bg-brand-800 active:bg-brand-800 focus-visible:focus-ring-inverse",
         destructive:
           "bg-red-800 text-button-error-fg hover:bg-button-error-hover active:bg-button-error-active focus-visible:focus-ring-inverse [--sf-focus-inverse:var(--sf-button-error-fg)]",
-        // Lo que pide la acción peligrosa de una alerta: texto rojo sobre un fondo con
-        // tinte rojo. No grita como el rojo sólido: la alerta ya es la advertencia, el botón solo
-        // nombra la acción. El texto es la tinta (`-ink`) y no `-900`: sobre el tinte, `-900` no
-        // llega a 4,5:1 en claro. El tinte es el mismo que el del Badge (`--sf-tint-*`).
-        "destructive-tinted":
-          "bg-red-700/(--sf-tint-fill) text-red-ink hover:bg-red-700/(--sf-tint-hover) active:bg-red-700/(--sf-tint-active)",
-        // Lo mismo con el acento: una acción que importa sin ser la principal de la pantalla.
-        tinted:
-          "bg-brand-700/(--sf-tint-fill) text-brand-ink hover:bg-brand-700/(--sf-tint-hover) active:bg-brand-700/(--sf-tint-active)",
         link: "h-auto! rounded-sm border-0 px-0! text-brand-900 underline-offset-4 hover:text-brand-1000 hover:underline data-disabled:bg-transparent",
       },
       size: {
@@ -69,7 +60,7 @@ const buttonVariantsBase = cva(
       // `::after` de 44 px taparía la línea de arriba y la de abajo. Va acá y no en la base porque
       // una clase de la base no se puede sacar desde una variante.
       {
-        variant: ["default", "outline", "secondary", "ghost", "accent", "destructive", "tinted", "destructive-tinted"],
+        variant: ["default", "outline", "secondary", "ghost", "accent", "destructive"],
         className: "touch-target",
       },
       // Un escalón más de aire, por tamaño. `lg` ya es ancho, así que sube

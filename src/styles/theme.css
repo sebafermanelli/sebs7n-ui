@@ -406,14 +406,6 @@
      */
     --sf-tint-fill: 12%;
     --sf-tint-border: 24%;
-    /**
-     * Los dos estados de un botón teñido (`tinted`, `destructive-tinted`), que reposa en
-     * `--sf-tint-fill`. Suben de a seis puntos: menos no se nota con el puntero. El techo lo
-     * pone el contraste de la tinta encima (`test/contrast.test.ts`): con el teal de ejemplo el
-     * apretado queda en 5,23:1.
-     */
-    --sf-tint-hover: 18%;
-    --sf-tint-active: 24%;
 
     --sf-ai: oklch(0.56 0.22 293);
     --sf-ai-2: oklch(0.62 0.24 330);
@@ -528,8 +520,6 @@
     --sf-on-selection: var(--sf-brand-fg);
     --sf-tint-fill: 22%;
     --sf-tint-border: 34%;
-    --sf-tint-hover: 28%;
-    --sf-tint-active: 34%;
 
     --sf-ai: oklch(0.68 0.19 293);
     --sf-ai-2: oklch(0.72 0.2 330);

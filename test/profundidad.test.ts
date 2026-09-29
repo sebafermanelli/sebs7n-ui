@@ -61,7 +61,7 @@ describe("sombras de iCloud", () => {
 
 describe("plano en reposo, flota lo que se abre", () => {
   it("botones, campos, chips y cards sin sombra ni hundimiento", () => {
-    for (const variant of ["default", "outline", "secondary", "ghost", "accent", "destructive", "tinted", "destructive-tinted", "link"] as const) {
+    for (const variant of ["default", "outline", "secondary", "ghost", "accent", "destructive", "link"] as const) {
       expect(buttonVariants({ variant }), variant).not.toMatch(/shadow-|translate-y-px/)
     }
     expect(inputControlClassName).not.toMatch(/shadow-/)

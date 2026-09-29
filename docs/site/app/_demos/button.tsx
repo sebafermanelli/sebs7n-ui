@@ -15,8 +15,6 @@ export function Variantes() {
       <Button variant="secondary">Duplicar</Button>
       <Button variant="ghost">Cancelar</Button>
       <Button variant="destructive">Eliminar</Button>
-      <Button variant="tinted">Enviar por mail</Button>
-      <Button variant="destructive-tinted">Anular</Button>
       <Button variant="link">Ver detalle</Button>
     </div>
   )

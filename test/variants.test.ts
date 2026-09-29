@@ -89,7 +89,7 @@ describe("variantes exportadas pasan por cn()", () => {
   })
 
   it("shape rect devuelve el rectángulo, con el radio de los controles", () => {
-    for (const variant of ["default", "outline", "secondary", "ghost", "accent", "destructive", "tinted", "destructive-tinted"] as const) {
+    for (const variant of ["default", "outline", "secondary", "ghost", "accent", "destructive"] as const) {
       const out = classes(buttonVariants({ variant, shape: "rect" }))
       // tailwind-merge tiene que haber resuelto el radio: si sobrevive el de la base, cuál
       // gana depende del orden en la hoja compilada.
@@ -107,8 +107,6 @@ describe("variantes exportadas pasan por cn()", () => {
       | "ghost"
       | "accent"
       | "destructive"
-      | "tinted"
-      | "destructive-tinted"
       | "link"
       | null
       | undefined
@@ -139,7 +137,7 @@ describe("densidad macOS (2.0)", () => {
   })
 
   it("área táctil: el botón agranda su área con el dedo y el campo sube de alto", () => {
-    for (const variant of ["default", "outline", "secondary", "ghost", "accent", "destructive", "tinted", "destructive-tinted"] as const) {
+    for (const variant of ["default", "outline", "secondary", "ghost", "accent", "destructive"] as const) {
       expect(classes(buttonVariants({ variant })), variant).toContain("touch-target")
     }
     expect(classes(toggleVariants())).toContain("touch-target")
@@ -166,25 +164,13 @@ describe("densidad macOS (2.0)", () => {
   })
 })
 
-// El texto es la tinta (`-ink`) y no `-900`: sobre el tinte, `-900` no llega a 4,5:1 en claro
-// (el rojo da 4,23 sobre el 12 % y el teal de ejemplo 3,99). La cuenta está en contrast.test.ts.
-describe("variantes tintadas (2.0)", () => {
-  it("destructive-tinted: texto rojo sobre tinte rojo, sin relleno sólido", () => {
-    const c = classes(buttonVariants({ variant: "destructive-tinted" }))
-    expect(c).toContain("text-red-ink")
-    expect(c).toContain("bg-red-700/(--sf-tint-fill)")
-    expect(c).toContain("hover:bg-red-700/(--sf-tint-hover)")
-    expect(c).toContain("active:bg-red-700/(--sf-tint-active)")
-    expect(c).not.toContain("bg-red-800")
-    expect(c).toContain("touch-target")
-  })
-
-  it("tinted: texto de acento sobre tinte de acento", () => {
-    const c = classes(buttonVariants({ variant: "tinted" }))
-    expect(c).toContain("text-brand-ink")
-    expect(c).toContain("bg-brand-700/(--sf-tint-fill)")
-    expect(c).toContain("hover:bg-brand-700/(--sf-tint-hover)")
-    expect(c).toContain("active:bg-brand-700/(--sf-tint-active)")
-    expect(c).toContain("touch-target")
+// iCloud no tiene botón teñido (catálogo §2.12: fill accent → texto accent → ícono). `tinted` y
+// `destructive-tinted` eran de la fase 2 y no llegaron a publicarse: se fueron en R2.
+describe("sin variantes tintadas (R2)", () => {
+  it("tinted y destructive-tinted no existen", () => {
+    for (const variant of ["tinted", "destructive-tinted"]) {
+      const c = classes(buttonVariants({ variant } as never))
+      expect(c.join(" "), variant).not.toMatch(/tint|-ink/)
+    }
   })
 })

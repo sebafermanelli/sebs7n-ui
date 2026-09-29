@@ -210,16 +210,11 @@ describe("Button variant=\"destructive\" (WCAG 1.4.3, texto normal)", () => {
   }
 })
 
-// Los botones `tinted` y `destructive-tinted` (2.0): la tinta sobre el tinte de su color (lo
-// que era el Badge `subtle` hasta la fase 3), pero con tres estados —reposo, hover y apretado— porque un botón cambia de
-// fondo bajo el texto. El apretado es el más oscuro en claro y el más claro en oscuro: es el
-// que decide. Los porcentajes se leen de theme.css, así que subirlos «para que se note» aparece
-// acá. Con `-900` en vez de la tinta no pasaba: 4,23:1 el rojo sobre el 12 % en claro.
-describe("Botones tintados: la tinta sobre el tinte, en los tres estados (WCAG 1.4.3)", () => {
+// La tinta de cada paleta (`--color-*-ink`) sale de una sola mezcla de `-900` y `-1000`. La usaban
+// los botones tintados de la fase 2, que se fueron en R2; el token queda para la app.
+describe("La tinta de las paletas", () => {
   const css = read("theme.css")
   const mezcla = Number(css.match(/--color-red-ink: color-mix\(in srgb, var\(--sf-red-900\) (\d+)%/)![1]) / 100
-  const marcas = brands as Record<string, Record<string, { base: number[] }>>
-  const ESCALA = { light: { 900: [0.535, 0.945], 1000: [0.269, 0.433] }, dark: { 900: [0.717, 0.705], 1000: [0.968, 0.077] } } as const
 
   it("la tinta de las ocho paletas de color sale de la misma mezcla", () => {
     for (const color of PALETAS) {
@@ -228,38 +223,9 @@ describe("Botones tintados: la tinta sobre el tinte, en los tres estados (WCAG 1
     }
   })
 
-  for (const theme of ["light", "dark"] as const) {
-    const inicio = css.indexOf(theme === "light" ? ":root {" : ".dark {")
-    const cuerpo = css.slice(inicio, css.indexOf("\n  }", inicio))
-    const pct = (token: string) => Number(cuerpo.match(new RegExp(`${token}: (\\d+)%`))![1]) / 100
-    const estados = { reposo: pct("--sf-tint-fill"), hover: pct("--sf-tint-hover"), apretado: pct("--sf-tint-active") }
-
-    it(`${theme} · los tres estados suben de a uno`, () => {
-      expect(estados.reposo).toBeLessThan(estados.hover)
-      expect(estados.hover).toBeLessThan(estados.apretado)
-    })
-
-    for (const [donde, token] of Object.entries(FONDOS)) {
-      const debajo = paleta[theme][token]!
-      for (const [estado, tinte] of Object.entries(estados)) {
-        const rojo = (n: number) => paleta[theme][`--sf-red-${n}`]!
-        const tinta = composite(rojo(900), mezcla, rojo(1000))
-        const fondo = composite(rojo(700), tinte, debajo)
-        it(`${theme} · destructive-tinted ${estado} sobre ${donde}: ${tinta} sobre ${fondo} llega a 4.5:1`, () => {
-          expect(ratio(tinta, fondo)).toBeGreaterThanOrEqual(4.5)
-        })
-        for (const [marca, temas] of Object.entries(marcas)) {
-          const base = temas[theme]!.base
-          const paso = (n: 900 | 1000) => hexOfOklch([ESCALA[theme][n][0], base[1]! * ESCALA[theme][n][1], base[2]!] as unknown as Oklch)
-          const tintaMarca = composite(paso(900), mezcla, paso(1000))
-          const fondoMarca = composite(hexOfOklch(base as unknown as Oklch), tinte, debajo)
-          it(`${theme} · tinted ${marca} ${estado} sobre ${donde}: ${tintaMarca} sobre ${fondoMarca} llega a 4.5:1`, () => {
-            expect(ratio(tintaMarca, fondoMarca)).toBeGreaterThanOrEqual(4.5)
-          })
-        }
-      }
-    }
-  }
+  it("se fueron los estados del botón teñido", () => {
+    expect(css).not.toMatch(/--sf-tint-(hover|active)/)
+  })
 })
 
 // El brand en tinte (`--sf-highlight`): el tramo del medio de un rango en Calendar, la burbuja del

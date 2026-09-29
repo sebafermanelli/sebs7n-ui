@@ -60,7 +60,7 @@ describe("Button", () => {
   })
 
   it("planos, como en iCloud: sin sombra y sin hundirse al apretar", () => {
-    for (const variant of ["default", "outline", "secondary", "ghost", "accent", "destructive", "tinted", "destructive-tinted", "link"] as const) {
+    for (const variant of ["default", "outline", "secondary", "ghost", "accent", "destructive", "link"] as const) {
       expect(buttonVariants({ variant }), variant).not.toMatch(/shadow-|translate-y-px|sheen/)
     }
   })
