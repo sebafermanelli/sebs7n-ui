@@ -14,6 +14,7 @@ import {
 } from "sebs7n-ui/sidebar"
 import { ThemeSwitcher } from "sebs7n-ui/theme-switcher"
 
+import { docsWallpaper } from "../_lib/wallpaper"
 import { DocsNav } from "./docs-nav"
 import { useGlassConfig } from "./glass-config"
 import { SearchButton, useSearch } from "./search"
@@ -81,7 +82,8 @@ export function DocsShell({ nav, version, children }: { nav: Grupo[]; version: s
   const { config } = useGlassConfig()
   return (
     <AppShell
-      ambient={config.ambient}
+      // El wallpaper solo en el Playground (con su switch); el resto de las docs es opaco (W).
+      ambient={docsWallpaper(pathname, config.ambient)}
       header={
         <>
           <Marca version={version} />

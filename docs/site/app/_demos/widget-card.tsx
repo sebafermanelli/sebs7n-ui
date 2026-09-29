@@ -39,11 +39,11 @@ export function Basico() {
 
 /**
  * Sobre el wallpaper
- * Adentro de `AppShell ambient` (acá, un `data-ambient` con `bg-ambient`) la franja pasa al material translúcido y el cuerpo, en oscuro, a negro al 75 % con blur: el widget de Home de iCloud. Grande, con dos columnas.
+ * Adentro de `AppShell ambient` (acá, una caja con `bg-ambient` y `data-ambient`) el cuerpo pasa a translúcido con blur y la franja a una capa más clara encima: el widget de Home de iCloud. Grande, con dos columnas. La caja lleva `[contain:paint]` para que el wallpaper, que es fijo a la ventana, quede adentro de ella.
  */
 export function SobreElWallpaper() {
   return (
-    <div className="w-full rounded-surface bg-ambient p-6 sm:p-8" data-ambient="">
+    <div className="w-full rounded-surface bg-ambient p-6 [contain:paint] sm:p-8" data-ambient="">
       <WidgetCard action={Nueva} className="w-full" columns={2} icon={IconoFacturas} more={Mas} subtitle="Últimos 7 días" title="Cobranzas">
         <CardRow description="Transferencia" title="Acme S.A." trailing="$ 128.400" />
         <CardRow description="Tarjeta" title="Nube Digital" trailing="$ 96.000" />

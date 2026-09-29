@@ -18,9 +18,8 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "sw
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html className={inter.variable} lang="es" suppressHydrationWarning>
-      {/* Lisa, como las apps de iCloud: el wallpaper (`bg-ambient`) es opcional y lo prende el
-          Playground (glass-config lo pone en el body). Con la clase acá, la página arrancaba con el
-          wallpaper y lo sacaba al hidratar. */}
+      {/* Lisa, como las apps de iCloud. El wallpaper (`bg-ambient` + `data-ambient`) lo lleva la home
+          en su contenedor y el Playground en su `AppShell ambient` (`_lib/wallpaper.ts`). */}
       <body>
         {/* El header propio vive en el home; /docs usa el AppShell del paquete. */}
         <Providers>{children}</Providers>

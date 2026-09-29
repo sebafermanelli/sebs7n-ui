@@ -3,6 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react"
 
 import { cssOfOklch, textoSobre, type Oklch } from "../_lib/color"
+import { ambientGuardado, CONFIG_VERSION } from "../_lib/wallpaper"
 
 /**
  * La configuración del material que el visitante arma en el Playground.
@@ -19,7 +20,10 @@ export type GlassConfig = {
   /** `null` = el brand del sitio, sin pisar. */
   brand: Oklch | null
   brandDark: Oklch | null
-  /** El wallpaper opcional (`bg-ambient`). Desde 2.0 arranca apagado: las apps de iCloud son lisas. */
+  /**
+   * El wallpaper del Playground (`AppShell ambient`). Arranca prendido (W): es la home de iCloud.
+   * Las otras páginas de docs son opacas siempre, y la home lo lleva siempre (`_lib/wallpaper.ts`).
+   */
   ambient: boolean
   /** `--ambient`: cuánto color lleva el wallpaper, de 0 a 1. */
   luz: number
@@ -27,7 +31,7 @@ export type GlassConfig = {
   recientes: Oklch[]
 }
 
-export const DEFAULTS: GlassConfig = { brand: null, brandDark: null, ambient: false, luz: 1, recientes: [] }
+export const DEFAULTS: GlassConfig = { brand: null, brandDark: null, ambient: true, luz: 1, recientes: [] }
 
 const CLAVE = "sebs7n-ui:playground"
 
@@ -78,11 +82,11 @@ function leer(): GlassConfig {
     const crudo = localStorage.getItem(CLAVE)
     if (!crudo) return DEFAULTS
     // Solo las claves de hoy: lo guardado por la 1.x (`glass`, `tint`, `radios`) se ignora.
-    const guardado = JSON.parse(crudo) as Partial<GlassConfig>
+    const guardado = JSON.parse(crudo) as Partial<GlassConfig> & { v?: unknown }
     return {
       brand: guardado.brand ?? null,
       brandDark: guardado.brandDark ?? null,
-      ambient: guardado.ambient ?? DEFAULTS.ambient,
+      ambient: ambientGuardado(guardado),
       luz: guardado.luz ?? DEFAULTS.luz,
       recientes: guardado.recientes ?? [],
     }
@@ -106,14 +110,13 @@ export function GlassConfigProvider({ children }: { children: ReactNode }) {
       if (nombre in pisadas) raiz.style.setProperty(nombre, pisadas[nombre]!)
       else raiz.style.removeProperty(nombre)
     }
-    document.body.classList.toggle("bg-ambient", config.ambient)
   }, [config])
 
   const set = useCallback((cambios: Partial<GlassConfig>) => {
     setConfig((actual) => {
       const siguiente = { ...actual, ...cambios }
       try {
-        localStorage.setItem(CLAVE, JSON.stringify(siguiente))
+        localStorage.setItem(CLAVE, JSON.stringify({ ...siguiente, v: CONFIG_VERSION }))
       } catch {
         // Sin almacenamiento la configuración vale hasta recargar. No es un error que mostrar.
       }

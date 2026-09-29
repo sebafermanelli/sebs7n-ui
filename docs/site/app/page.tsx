@@ -41,7 +41,10 @@ const INSTALL = `pnpm add sebs7n-ui @base-ui/react next-themes sonner`
 export default function Home() {
   const destacados = site.components.filter((component) => component.detallado).slice(0, 6)
   return (
-    <>
+    // La home de iCloud (W): el wallpaper detrás de todo y, encima, la barra y las cards translúcidas.
+    // Va en el HTML del servidor y no lo prende JavaScript, así la página no arranca lisa y cambia al
+    // hidratar. El texto suelto (título, párrafos) llega a 4,5:1 sobre cualquier punto del wallpaper.
+    <div className="min-h-dvh bg-ambient" data-ambient="">
       <SiteHeader version={site.version} />
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-20 px-4 py-16 md:px-6 md:py-24">
         <section className="flex flex-col items-start gap-6">
@@ -166,6 +169,6 @@ export default function Home() {
           </a>
         </footer>
       </div>
-    </>
+    </div>
   )
 }

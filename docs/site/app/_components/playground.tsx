@@ -143,8 +143,9 @@ export function Playground({ children }: { children?: React.ReactNode }) {
           </p>
         </div>
         <CodeBlock code={cssDe(pisadas)} label="Copiar la configuración" />
-        {/* Prender el wallpaper no es una variable: es una prop del AppShell (o `bg-ambient` en el
-            body). Cuánto color, sí: `--ambient`, que sale arriba con el resto. */}
+        {/* Prender el wallpaper no es una variable: es una prop del AppShell (o `bg-ambient` con
+            `data-ambient` en el contenedor de la página). Cuánto color, sí: `--ambient`, que sale
+            arriba con el resto. */}
         {config.ambient && <CodeBlock code={`<AppShell ambient sidebar={…}>`} label="Copiar la prop del wallpaper" />}
       </section>
 
