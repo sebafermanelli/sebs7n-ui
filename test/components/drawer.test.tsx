@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event"
 import { describe, expect, it } from "vitest"
 
 import { Button } from "../../src/components/button"
-import { floatingSheetGapClassName, overlayCloseClassName } from "../../src/variants/overlay"
+import { overlayCloseClassName } from "../../src/variants/overlay"
 import {
   Drawer,
   DrawerBody,
@@ -58,7 +58,7 @@ function DrawerDePrueba(props: React.ComponentProps<typeof Drawer>) {
   )
 }
 
-describe("Drawer al estilo macOS (2.0)", () => {
+describe("Drawer al estilo iCloud (2.0)", () => {
   it("título title-3, padding de la hoja y pie sin línea", async () => {
     render(<DrawerDePrueba defaultOpen />)
     const hoja = await screen.findByRole("dialog")
@@ -123,29 +123,29 @@ describe("Drawer", () => {
     expect(await screen.findByRole("dialog")).toHaveAttribute("data-swipe-direction", "right")
   })
 
-  // 2.0: flota como las hojas de iOS 26. 8 px de margen (o el área segura) en cada borde que
-  // toca, las cuatro esquinas redondeadas, y cerrada sale entera: el `transform` de afuera suma el
-  // margen. El del arrastre sigue siendo el de Base UI (snap point + movimiento) sin tocar.
+  // R2: pegada al borde como la hoja (iCloud no tiene panel lateral), con el radio del panel solo
+  // en las esquinas de adentro. Cerrada sale su tamaño entero. El `transform` del arrastre sigue
+  // siendo el de Base UI (snap point + movimiento) sin tocar.
   it.each([
-    ["down", ["bottom-(--sheet-gap-b)", "left-(--sheet-gap-l)", "right-(--sheet-gap-r)"], "[transform:translateY(calc(100%_+_var(--sheet-gap-b)))]"],
-    ["up", ["top-(--sheet-gap-t)", "left-(--sheet-gap-l)", "right-(--sheet-gap-r)"], "[transform:translateY(calc(-100%_-_var(--sheet-gap-t)))]"],
-    ["left", ["top-(--sheet-gap-t)", "bottom-(--sheet-gap-b)", "left-(--sheet-gap-l)"], "[transform:translateX(calc(-100%_-_var(--sheet-gap-l)))]"],
-    ["right", ["top-(--sheet-gap-t)", "bottom-(--sheet-gap-b)", "right-(--sheet-gap-r)"], "[transform:translateX(calc(100%_+_var(--sheet-gap-r)))]"],
-  ] as const)("flota hacia %s: margen, las cuatro esquinas y sale entera", async (dir, bordes, fuera) => {
+    ["down", ["bottom-0", "inset-x-0", "rounded-t-panel"], "[transform:translateY(100%)]"],
+    ["up", ["top-0", "inset-x-0", "rounded-b-panel"], "[transform:translateY(-100%)]"],
+    ["left", ["inset-y-0", "left-0", "rounded-r-panel"], "[transform:translateX(-100%)]"],
+    ["right", ["inset-y-0", "right-0", "rounded-l-panel"], "[transform:translateX(100%)]"],
+  ] as const)("pegado hacia %s, con las esquinas de adentro redondeadas, y sale entero", async (dir, bordes, fuera) => {
     render(<DrawerDePrueba swipeDirection={dir} />)
     await userEvent.click(screen.getByRole("button", { name: "Filtros" }))
     const hoja = await screen.findByRole("dialog")
-    expect(hoja).toHaveClass("rounded-panel", "shadow-modal", ...floatingSheetGapClassName.split(" "))
+    expect(hoja).toHaveClass("bg-surface", "shadow-modal")
     const d = `data-[swipe-direction=${dir}]`
     for (const borde of bordes) expect(hoja).toHaveClass(`${d}:${borde}`)
     expect(hoja).toHaveClass(`${d}:data-starting-style:${fuera}`, `${d}:data-ending-style:${fuera}`)
     // El gesto sigue igual: el snap point y el movimiento del arrastre los escribe Base UI.
     expect(hoja.className).toContain("--drawer-swipe-movement-")
-    expect(hoja.className).not.toMatch(/rounded-(t|b|l|r)-|inset-(x|y)-0|(top|bottom|left|right)-0(\s|$)|translate(X|Y)\((-)?100%\)/)
-    // La X sigue siendo hija de la hoja, en la línea del título.
+    expect(hoja.className).not.toMatch(/sheet-gap|(^|\s)rounded-panel(\s|$)/)
+    // La X sigue siendo hija de la hoja, arriba a la derecha y de 28 × 28.
     const x = screen.getByRole("button", { name: "Cerrar" })
     expect(x.parentElement).toBe(hoja)
-    expect(x).toHaveClass(...overlayCloseClassName.split(" "))
+    expect(x).toHaveClass(...overlayCloseClassName.split(" "), "size-7")
   })
 
   it("el handle se ve pero no se anuncia ni recibe foco: no es el control de cierre", async () => {

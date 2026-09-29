@@ -74,7 +74,6 @@ export {
   closeButtonClassName,
   dialogCloseClassName,
   floatingPopupClassName,
-  floatingSheetGapClassName,
   modalFooterClassName,
   modalPopupClassName,
   overlayCloseClassName,

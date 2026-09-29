@@ -1040,7 +1040,7 @@ export const COMPONENTS = {
       "Un formulario largo o una lista de filtros sin perder la tabla de atrás.",
       "`side=\"left\"` es el del menú mobile —lo usa `AppShell`—; para contenido, `right`.",
       "En desktop, más de 640px de ancho es una página, no un panel.",
-      "Flota (2.0): 8 px de cada borde que toca —o el área segura del teléfono, si es más grande— y las cuatro esquinas con el radio del panel, como la píldora del `Sidebar`. Si ponés contenido que llega al borde (una imagen, una lista con fondo), `overflow-hidden` en el `SheetContent` lo recorta a la curva.",
+      "Va pegada al borde (2.0): opaca, con la sombra de popover y el radio del panel (11) solo en las esquinas de adentro. iCloud no tiene panel lateral; esto sale de sus tokens. El área segura del teléfono va de padding del lado de la pantalla. La X va arriba a la derecha, en la línea del título. Si ponés contenido que llega al borde (una imagen, una lista con fondo), `overflow-hidden` en el `SheetContent` lo recorta a la curva.",
       "El contenido entre `SheetHeader` y `SheetFooter` va con `px-5`, el mismo aire que el header: así el título, los campos y el pie quedan en una sola columna. El pie no lleva línea arriba.",
     ],
     props: {
@@ -1080,7 +1080,7 @@ export const COMPONENTS = {
       "En desktop, casi siempre querés `Sheet`: nadie arrastra una hoja con el mouse. `Drawer` es para la mano.",
       "Lo que scrollea va adentro de `DrawerBody`. Es la zona donde el dedo mueve el contenido en vez de la hoja; sin eso, cada intento de scrollear cierra el drawer.",
       "`snapPoints` solo tiene sentido con `swipeDirection` vertical (`down` o `up`), que es el default.",
-      "Flota como las hojas de iOS 26 (2.0): 8 px de cada borde que toca —o el área segura, si es más grande— y las cuatro esquinas redondeadas. Un snap point mide desde abajo de la hoja, así que la parte visible queda 8 px más arriba que con la hoja pegada.",
+      "Va pegado al borde (2.0), como `Sheet`: el radio del panel solo en las esquinas de adentro y el área segura de padding del lado de la pantalla. El gesto, los snap points y el handle no cambian.",
       "El lado sale de `swipeDirection` del root, no de una prop del contenido: una sola fuente de verdad para de dónde entra y hacia dónde se descarta.",
       "`DrawerSwipeArea` abre con un swipe desde el borde, pero nunca va sola: sin un `DrawerTrigger` al lado, el drawer no existe para quien usa teclado.",
     ],

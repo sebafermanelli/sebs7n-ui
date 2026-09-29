@@ -72,19 +72,6 @@ export const dialogCloseClassName = "absolute top-4.5 left-4.5"
 export const overlayCloseClassName = "absolute top-4.5 right-4.5"
 
 /**
- * El margen de una hoja flotante (2.0): Sheet y Drawer se despegan 8 px de cada borde de la
- * pantalla que tocan, como la píldora del Sidebar y las hojas de iOS 26. Pegadas y cuadradas se
- * leían toscas, y con las esquinas redondeadas contra el borde quedaba una franja de fondo.
- *
- * Son cuatro variables y no un `m-2` porque el mismo número se usa dos veces: para ubicar la hoja
- * y para sacarla entera al cerrar (`translate` de su ancho **más** el margen; con el ancho solo
- * quedaban 8 px asomados). En un teléfono con muesca o barra de inicio el margen es el área
- * segura cuando es más grande: la hoja no se mete abajo de la barra de estado ni del indicador.
- */
-export const floatingSheetGapClassName =
-  "[--sheet-gap-t:max(--spacing(2),env(safe-area-inset-top))] [--sheet-gap-r:max(--spacing(2),env(safe-area-inset-right))] [--sheet-gap-b:max(--spacing(2),env(safe-area-inset-bottom))] [--sheet-gap-l:max(--spacing(2),env(safe-area-inset-left))]"
-
-/**
  * El popup anclado a un disparador: Popover y HoverCard, que son el mismo objeto.
  *
  * `focus-visible:focus-ring` no es opcional: si adentro no hay nada tabulable, Base UI enfoca

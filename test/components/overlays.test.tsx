@@ -5,7 +5,7 @@ import userEvent from "@testing-library/user-event"
 import { toast } from "sonner"
 import { describe, expect, it, onTestFinished, vi } from "vitest"
 
-import { floatingSheetGapClassName, overlayCloseClassName, tooltipSurfaceClassName } from "../../src/variants/overlay"
+import { overlayCloseClassName, tooltipSurfaceClassName } from "../../src/variants/overlay"
 
 import { Button } from "../../src/components/button"
 import {
@@ -361,15 +361,15 @@ describe("Sheet", () => {
     expect(await screen.findByRole("dialog")).toHaveAttribute("data-side", "left")
   })
 
-  // 2.0: la hoja flota, como la píldora del Sidebar. 8 px de margen en cada borde que toca (o el
-  // área segura, si es más grande), las cuatro esquinas con el radio del panel, y al cerrar sale
-  // entera: el desplazamiento suma el margen, o quedaba una franja de 8 px asomada.
+  // R2: iCloud no tiene panel lateral (catálogo §2.24), así que la hoja se deriva de sus tokens:
+  // pegada al borde, sin margen, con el radio del panel solo en las esquinas de adentro, opaca y
+  // con la sombra de popover. Al cerrar sale su tamaño entero.
   it.each([
-    ["right", ["top-(--sheet-gap-t)", "bottom-(--sheet-gap-b)", "right-(--sheet-gap-r)"], "translate-x-[calc(100%+var(--sheet-gap-r))]"],
-    ["left", ["top-(--sheet-gap-t)", "bottom-(--sheet-gap-b)", "left-(--sheet-gap-l)"], "-translate-x-[calc(100%+var(--sheet-gap-l))]"],
-    ["top", ["top-(--sheet-gap-t)", "left-(--sheet-gap-l)", "right-(--sheet-gap-r)"], "-translate-y-[calc(100%+var(--sheet-gap-t))]"],
-    ["bottom", ["bottom-(--sheet-gap-b)", "left-(--sheet-gap-l)", "right-(--sheet-gap-r)"], "translate-y-[calc(100%+var(--sheet-gap-b))]"],
-  ] as const)("flota del lado %s: margen, las cuatro esquinas redondeadas y sale entera", async (side, bordes, fuera) => {
+    ["right", ["inset-y-0", "right-0", "rounded-l-panel"], "translate-x-full"],
+    ["left", ["inset-y-0", "left-0", "rounded-r-panel"], "-translate-x-full"],
+    ["top", ["inset-x-0", "top-0", "rounded-b-panel"], "-translate-y-full"],
+    ["bottom", ["inset-x-0", "bottom-0", "rounded-t-panel"], "translate-y-full"],
+  ] as const)("pegada del lado %s, con las esquinas de adentro redondeadas, y sale entera", async (side, bordes, fuera) => {
     render(
       <Sheet defaultOpen>
         <SheetContent side={side}>
@@ -378,32 +378,20 @@ describe("Sheet", () => {
       </Sheet>
     )
     const hoja = await screen.findByRole("dialog")
-    expect(hoja).toHaveClass("rounded-panel", "shadow-modal", ...floatingSheetGapClassName.split(" "))
+    expect(hoja).toHaveClass("bg-surface", "shadow-modal")
     for (const borde of bordes) expect(hoja).toHaveClass(`data-[side=${side}]:${borde}`)
     expect(hoja).toHaveClass(`data-[side=${side}]:data-starting-style:${fuera}`, `data-[side=${side}]:data-ending-style:${fuera}`)
-    expect(hoja.className).not.toMatch(/rounded-(t|b|l|r)-|inset-(x|y)-0|(top|bottom|left|right)-0(\s|$)|translate-(x|y)-full/)
+    expect(hoja.className).not.toMatch(/sheet-gap|(^|\s)rounded-panel(\s|$)/)
   })
 })
 
-describe("Hojas flotantes: el margen y la X", () => {
-  it("el margen es 8 px o el área segura, lo que sea más grande, en los cuatro bordes", () => {
-    for (const [lado, env] of [["t", "top"], ["r", "right"], ["b", "bottom"], ["l", "left"]]) {
-      expect(floatingSheetGapClassName).toContain(`[--sheet-gap-${lado}:max(--spacing(2),env(safe-area-inset-${env}))]`)
-    }
+describe("Hojas pegadas: la X", () => {
+  it("se fue el margen de la hoja flotante", async () => {
+    const overlay = await import("../../src/variants/overlay")
+    expect("floatingSheetGapClassName" in overlay).toBe(false)
   })
 
-  // La X sigue en la línea del título (`overlayCloseClassName`), pero ahora la esquina de la hoja
-  // es curva: su caja, con los 4 px del anillo de foco, tiene que quedar adentro del arco del
-  // radio del panel, o el anillo se corta contra la curva.
-  it("la X, con su anillo de foco, queda adentro de la esquina redondeada", () => {
-    const radio = Number(/--radius-panel:\s*(\d+)px;/.exec(readFileSync("src/styles/theme.css", "utf8"))![1])
-    const inset = Number(/top-([\d.]+)/.exec(overlayCloseClassName)![1]) * 4
-    expect(overlayCloseClassName).toContain(`right-${inset / 4}`)
-    const esquina = inset - 4
-    expect(Math.hypot(radio - esquina, radio - esquina)).toBeLessThanOrEqual(radio)
-  })
-
-  it("la X es hija de la hoja, que es la que la posiciona", async () => {
+  it("la X es hija de la hoja, arriba a la derecha y de 28 × 28", async () => {
     render(
       <Sheet defaultOpen>
         <SheetContent>
@@ -414,12 +402,12 @@ describe("Hojas flotantes: el margen y la X", () => {
     const hoja = await screen.findByRole("dialog")
     const x = screen.getByRole("button", { name: "Cerrar" })
     expect(x.parentElement).toBe(hoja)
-    expect(x).toHaveClass(...overlayCloseClassName.split(" "))
+    expect(x).toHaveClass(...overlayCloseClassName.split(" "), "size-7")
     expect(hoja).toHaveClass("fixed")
   })
 })
 
-describe("Sheet, Popover al estilo macOS (2.0)", () => {
+describe("Sheet, Popover al estilo iCloud (2.0)", () => {
   it("Sheet: header con el padding de la hoja, título title-3 y pie sin línea", async () => {
     render(
       <Sheet defaultOpen>

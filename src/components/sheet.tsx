@@ -7,7 +7,7 @@ import { XIcon } from "lucide-react"
 import { useAvisoDeNombre } from "../internal/dialog-name-warning.js"
 import { useLabels } from "../lib/labels.js"
 import { cn, type WithClassName } from "../lib/utils.js"
-import { backdropClassName, floatingSheetGapClassName, overlayCloseClassName } from "../variants/overlay.js"
+import { backdropClassName, closeButtonClassName, overlayCloseClassName } from "../variants/overlay.js"
 import { Button } from "./button.js"
 
 function Sheet(props: SheetPrimitive.Root.Props) {
@@ -47,15 +47,15 @@ function SheetContent({ className, children, side = "right", showCloseButton = t
         data-side={side}
         ref={ref}
         className={cn(
-          // Flotante (2.0): despegada 8 px de cada borde que toca y con las cuatro esquinas del
-          // radio del panel, el mismo de la píldora del Sidebar. Hasta 1.x iba de punta a punta y
-          // cuadrada. Al cerrar se desplaza su tamaño más el margen, para salir entera.
-          "fixed z-50 flex flex-col gap-4 rounded-panel bg-surface text-callout text-label shadow-modal outline-none transition-[translate] duration-200 ease-out",
-          floatingSheetGapClassName,
-          "data-[side=right]:top-(--sheet-gap-t) data-[side=right]:bottom-(--sheet-gap-b) data-[side=right]:right-(--sheet-gap-r) data-[side=right]:w-3/4 data-[side=right]:sm:max-w-sm data-[side=right]:data-ending-style:translate-x-[calc(100%+var(--sheet-gap-r))] data-[side=right]:data-starting-style:translate-x-[calc(100%+var(--sheet-gap-r))]",
-          "data-[side=left]:top-(--sheet-gap-t) data-[side=left]:bottom-(--sheet-gap-b) data-[side=left]:left-(--sheet-gap-l) data-[side=left]:w-3/4 data-[side=left]:sm:max-w-sm data-[side=left]:data-ending-style:-translate-x-[calc(100%+var(--sheet-gap-l))] data-[side=left]:data-starting-style:-translate-x-[calc(100%+var(--sheet-gap-l))]",
-          "data-[side=top]:top-(--sheet-gap-t) data-[side=top]:left-(--sheet-gap-l) data-[side=top]:right-(--sheet-gap-r) data-[side=top]:data-ending-style:-translate-y-[calc(100%+var(--sheet-gap-t))] data-[side=top]:data-starting-style:-translate-y-[calc(100%+var(--sheet-gap-t))]",
-          "data-[side=bottom]:bottom-(--sheet-gap-b) data-[side=bottom]:left-(--sheet-gap-l) data-[side=bottom]:right-(--sheet-gap-r) data-[side=bottom]:data-ending-style:translate-y-[calc(100%+var(--sheet-gap-b))] data-[side=bottom]:data-starting-style:translate-y-[calc(100%+var(--sheet-gap-b))]",
+          // Pegada al borde (2.0, R2): iCloud no tiene panel lateral, así que se deriva de sus tokens
+          // —opaca, la sombra de popover y el radio del panel (11) solo en las esquinas de adentro—.
+          // La flotante de las fases 1–3 se despegaba 8 px, como las hojas de iOS 26. El área segura
+          // va de padding del lado de la pantalla, así el contenido no queda bajo la muesca.
+          "fixed z-50 flex flex-col gap-4 bg-surface text-callout text-label shadow-modal outline-none transition-[translate] duration-200 ease-out",
+          "data-[side=right]:inset-y-0 data-[side=right]:right-0 data-[side=right]:w-3/4 data-[side=right]:rounded-l-panel data-[side=right]:pt-[env(safe-area-inset-top)] data-[side=right]:pr-[env(safe-area-inset-right)] data-[side=right]:pb-[env(safe-area-inset-bottom)] data-[side=right]:sm:max-w-sm data-[side=right]:data-ending-style:translate-x-full data-[side=right]:data-starting-style:translate-x-full",
+          "data-[side=left]:inset-y-0 data-[side=left]:left-0 data-[side=left]:w-3/4 data-[side=left]:rounded-r-panel data-[side=left]:pt-[env(safe-area-inset-top)] data-[side=left]:pb-[env(safe-area-inset-bottom)] data-[side=left]:pl-[env(safe-area-inset-left)] data-[side=left]:sm:max-w-sm data-[side=left]:data-ending-style:-translate-x-full data-[side=left]:data-starting-style:-translate-x-full",
+          "data-[side=top]:inset-x-0 data-[side=top]:top-0 data-[side=top]:rounded-b-panel data-[side=top]:pt-[env(safe-area-inset-top)] data-[side=top]:data-ending-style:-translate-y-full data-[side=top]:data-starting-style:-translate-y-full",
+          "data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-0 data-[side=bottom]:rounded-t-panel data-[side=bottom]:pb-[env(safe-area-inset-bottom)] data-[side=bottom]:data-ending-style:translate-y-full data-[side=bottom]:data-starting-style:translate-y-full",
           className
         )}
         {...props}
@@ -65,7 +65,7 @@ function SheetContent({ className, children, side = "right", showCloseButton = t
           <SheetPrimitive.Close
             data-slot="sheet-close-button"
             // Mismo motivo que en Dialog: el nombre en `aria-label`, que es lo que el tipo exige.
-            render={<Button variant="ghost" size="icon-sm" aria-label={labels?.close ?? l.close} className={overlayCloseClassName} />}
+            render={<Button variant="ghost" size="icon-sm" aria-label={labels?.close ?? l.close} className={cn(closeButtonClassName, overlayCloseClassName)} />}
           >
             <XIcon />
           </SheetPrimitive.Close>
@@ -75,9 +75,9 @@ function SheetContent({ className, children, side = "right", showCloseButton = t
   )
 }
 
-// Mismo padding (20 px), título y pie que la hoja de Dialog (2.0): el pie va sin línea arriba,
-// como en macOS, y con 12 px entre botones para que, apilados, las áreas de 44 no se pisen.
-// `pr-12` deja lugar a la X, que queda en la línea del título.
+// Mismo padding (20 px) y título que Dialog (2.0): el pie va sin línea arriba y con 12 px entre
+// botones para que, apilados, las áreas de 44 no se pisen. El título va a la izquierda y `pr-12`
+// deja lugar a la X, que queda en su línea, del otro lado.
 function SheetHeader({ className, ...props }: React.ComponentProps<"div">) {
   return <div data-slot="sheet-header" className={cn("flex flex-col gap-1 p-5 pr-12", className)} {...props} />
 }
