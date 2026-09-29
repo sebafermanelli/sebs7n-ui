@@ -50,6 +50,8 @@ describe("SortableList", () => {
     const rows = within(list).getAllByRole("listitem")
     expect(rows).toHaveLength(3)
     expect(rows[0]).toHaveAttribute("data-slot", "sortable-list-item")
+    // Mantener apretada una fila (para entrar en edición) no selecciona texto ni abre el globo de iOS.
+    expect(rows[0]).toHaveClass("select-none", "[-webkit-touch-callout:none]")
     const handle = screen.getByRole("button", { name: "Reordenar Factura 0012" })
     expect(handle).toHaveClass("size-7", "rounded-control", "touch-none")
     expect(handle).not.toHaveAttribute("aria-roledescription")

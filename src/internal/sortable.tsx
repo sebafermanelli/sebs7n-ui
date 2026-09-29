@@ -452,6 +452,9 @@ function useEditMode({ editingProp, defaultEditing, onEditingChange, disabled, c
     onClickCapture: (event) => {
       if (!longPressed.current) return
       longPressed.current = false
+      // `detail` 0 es un clic de teclado (Enter, Espacio): no es el que llega al soltar el dedo. Si
+      // se soltó afuera, ese clic nunca vino y la marca quedó prendida.
+      if (event.detail === 0) return
       event.preventDefault()
       event.stopPropagation()
     },
@@ -476,11 +479,12 @@ function useEditMode({ editingProp, defaultEditing, onEditingChange, disabled, c
           onPointerUp: cancelPress,
           onPointerCancel: cancelPress,
           onPointerLeave: cancelPress,
-          // En táctil, apretar largo abre el menú del sistema (Android) justo cuando entra en edición.
-          onContextMenu: (event) => {
-            if (press.current) event.preventDefault()
-          },
         } satisfies PressHandlers)),
+    // En táctil, apretar largo abre el menú del sistema (Android): llega a los ≥ 500 ms, cuando el
+    // timer ya limpió `press` y la edición ya entró. Por eso va siempre y mira también `longPressed`.
+    onContextMenu: (event) => {
+      if (press.current || longPressed.current) event.preventDefault()
+    },
   }
   return { editing, press: handlers }
 }
@@ -593,7 +597,8 @@ function SortableItem({ id, onRemove, press, editing, draggable, index, label, l
         data-dragging={isDragging ? "" : undefined}
         data-slot="sortable-list-item"
         {...press}
-        className={cn("data-dragging:z-10 data-dragging:bg-surface data-dragging:shadow-menu", motion, className)}
+        // Mantenerla apretada entra en edición: sin seleccionar texto ni el globo de iOS.
+        className={cn("select-none [-webkit-touch-callout:none] data-dragging:z-10 data-dragging:bg-surface data-dragging:shadow-menu", motion, className)}
       >
         {remove}
         <div className="flex min-w-0 flex-1 items-center gap-3">{content}</div>
@@ -615,7 +620,7 @@ function SortableItem({ id, onRemove, press, editing, draggable, index, label, l
       {...press}
       {...(wholeItem ? { ...a11y, ...listeners, "aria-describedby": cn(pressed && grabbedId, a11y["aria-describedby"]) || undefined } : {})}
       className={cn(
-        "relative min-w-0 rounded-surface [-webkit-touch-callout:none] data-dragging:z-10 data-dragging:[&>*]:shadow-modal",
+        "relative min-w-0 rounded-surface select-none [-webkit-touch-callout:none] data-dragging:z-10 data-dragging:[&>*]:shadow-modal",
         wholeItem && "cursor-grab outline-none active:cursor-grabbing focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(color:--sf-focus)",
         // En edición tiembla, salvo la que se arrastra (ver `animate-jiggle` en theme.css).
         editing && !isDragging && "animate-jiggle",

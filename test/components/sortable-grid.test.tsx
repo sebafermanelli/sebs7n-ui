@@ -251,11 +251,12 @@ describe("SortableGrid", () => {
         // Ya en edición (sin controlar): la tarjeta es parada de Tab.
         expect(screen.getAllByRole("listitem")[1]).toHaveAttribute("tabindex", "0")
         fireEvent.pointerUp(open)
-        fireEvent.click(open)
+        // `detail` 1: el clic del puntero (el de teclado llega con 0 y no se traga).
+        fireEvent.click(open, { detail: 1 })
         expect(onOpen).not.toHaveBeenCalled()
         // El próximo clic es un clic.
         fireEvent.pointerDown(open, down)
-        fireEvent.click(open)
+        fireEvent.click(open, { detail: 1 })
         expect(onOpen).toHaveBeenCalledTimes(1)
       } finally {
         vi.useRealTimers()
@@ -519,3 +520,46 @@ describe("SortableGrid · el temblor según el ancho", () => {
     expect(narrow!.style.getPropertyValue("--sf-jiggle-angle")).toBe("1deg")
   })
 })
+
+describe("SortableGrid · revisión R10: el toque largo", () => {
+  const down = { button: 0, isPrimary: true, clientX: 10, clientY: 10 }
+
+  it("el menú del sistema (Android, ≥ 500 ms) no se abre aunque la edición ya haya entrado", () => {
+    vi.useFakeTimers()
+    try {
+      render(<Widgets defaultEditing={false} />)
+      const open = screen.getByRole("button", { name: "Abrir Clientes" })
+      fireEvent.pointerDown(open, down)
+      act(() => vi.advanceTimersByTime(500))
+      expect(screen.getAllByRole("listitem")[1]).toHaveClass("animate-jiggle")
+      // `fireEvent` devuelve `false` si alguien llamó a `preventDefault()`.
+      expect(fireEvent.contextMenu(open)).toBe(false)
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it("la tarjeta no selecciona texto ni muestra el globo de iOS al mantenerla apretada", () => {
+    render(<Widgets defaultEditing={false} />)
+    for (const card of screen.getAllByRole("listitem")) expect(card).toHaveClass("select-none", "[-webkit-touch-callout:none]")
+  })
+
+  it("un clic de teclado después de un toque largo sin clic no se traga", () => {
+    vi.useFakeTimers()
+    try {
+      const onOpen = vi.fn()
+      render(<Widgets defaultEditing={false} onOpen={onOpen} />)
+      const open = screen.getByRole("button", { name: "Abrir Clientes" })
+      fireEvent.pointerDown(open, down)
+      act(() => vi.advanceTimersByTime(500))
+      // Soltó afuera: el navegador no manda el `click` que se iba a tragar.
+      fireEvent.pointerUp(document.body)
+      // Enter sobre el botón: un `click` con `detail` 0.
+      fireEvent.click(open, { detail: 0 })
+      expect(onOpen).toHaveBeenCalledTimes(1)
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+})
+
