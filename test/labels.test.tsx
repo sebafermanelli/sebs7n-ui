@@ -219,4 +219,25 @@ describe("LabelsProvider", () => {
       for (const texto of Object.values(grupo)) expect(texto).not.toBe("")
     }
   })
+
+  it("los grupos de R8 no están en defaultLabels (el barrel no tenía lugar) y el provider los lleva igual", () => {
+    expect(defaultLabels).not.toHaveProperty("carousel")
+    expect(defaultLabels).not.toHaveProperty("dropZone")
+    expect(defaultLabels).not.toHaveProperty("sortable")
+    let leidos: ReturnType<typeof useLabels> | undefined
+    function Lector() {
+      leidos = useLabels()
+      return null
+    }
+    render(
+      <LabelsProvider value={{ dropZone: { remove: "Remove" } }}>
+        <LabelsProvider value={{ sortable: { handle: "Reorder" } }}>
+          <Lector />
+        </LabelsProvider>
+      </LabelsProvider>
+    )
+    expect(leidos?.dropZone).toEqual({ remove: "Remove" })
+    expect(leidos?.sortable).toEqual({ handle: "Reorder" })
+    expect(leidos?.carousel).toBeUndefined()
+  })
 })

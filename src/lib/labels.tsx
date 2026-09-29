@@ -129,6 +129,24 @@ export type Labels = {
     /** Después del número de eventos que no entran en un día del mes: «+2 más». */
     more: string
   }
+  /**
+   * Los tres grupos de R8 (`carousel`, `dropZone`, `sortable`) son **opcionales**: sus textos en
+   * español viven en su componente (`carouselLabels`, `dropZoneLabels`, `sortableLabels`) y no en
+   * `defaultLabels`, porque el barrel está en su tope de 56 kB y los tres juntos le sumaban 0,31 kB.
+   * El provider y la prop `labels` los cambian igual que al resto.
+   */
+  carousel?: {
+    /** `aria-roledescription` del carrusel: lo que el lector dice en vez de «región». */
+    carousel: string
+    /** `aria-roledescription` de cada diapositiva. */
+    slide: string
+    previous: string
+    next: string
+    /** Entre la posición y el total, en el nombre de cada diapositiva: «2 de 5». */
+    of: string
+    /** Antes del número, en el nombre de cada punto: «Ir a la diapositiva 2». */
+    goTo: string
+  }
   colorPicker: {
     /** Nombre del panel que se abre, para quien no lo ve. */
     popup: string
@@ -228,6 +246,27 @@ export type Labels = {
     close: string
   }
   drawer: { close: string }
+  /** Opcional: los textos por defecto son `dropZoneLabels` de `sebs7n-ui/drop-zone` (ver `carousel`). */
+  dropZone?: {
+    /** El texto del recuadro. */
+    prompt: string
+    /** El texto del recuadro mientras se arrastra un archivo encima. */
+    drop: string
+    /** Antes del nombre, en el botón de quitar cada archivo: «Quitar factura.pdf». */
+    remove: string
+    /** Lo que se anuncia al agregar, antes de los nombres. */
+    added: string
+    /** Lo que se anuncia al quitar, antes del nombre. */
+    removed: string
+    /** Los errores en línea, después del nombre del archivo. */
+    invalidType: string
+    /** Seguido del tamaño máximo: «factura.pdf pesa más de 5 MB». */
+    tooLarge: string
+    /** Seguido de `maxFiles`: «d.pdf no entra: el máximo es 3». */
+    tooMany: string
+    /** El idioma de los tamaños: «1,3 MB». */
+    locale: string
+  }
   meter: {
     /** «Libre», en la cabecera de `StackedMeter`. */
     free: string
@@ -277,6 +316,22 @@ export type Labels = {
     nav: string
     /** Placeholder del buscador del sidebar. */
     search: string
+  }
+  /** Opcional: `SortableList` y `SortableGrid`; los textos por defecto son `sortableLabels` (ver `carousel`). */
+  sortable?: {
+    /** Antes del nombre del ítem, en la manija: «Reordenar Factura 0012». */
+    handle: string
+    /** Cómo se mueve con el teclado; se lee al llegar a un ítem (`aria-describedby`). */
+    instructions: string
+    /** Los anuncios: «Tomaste Factura 0012, posición 2 de 5.» */
+    picked: string
+    dropped: string
+    /** «Volvió a su lugar: Factura 0012.» */
+    canceled: string
+    position: string
+    of: string
+    /** Lo que se anuncia cuando `onReorder` falla y vuelve el orden anterior. */
+    failed: string
   }
   stepper: {
     /** Nombre de la lista de pasos, si no trae `aria-label`. */
