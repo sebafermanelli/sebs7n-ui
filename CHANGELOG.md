@@ -117,6 +117,70 @@ Fase 3 de 2.0: menús y búsqueda.
 - **El título abierto de `Menubar` es una pastilla gris** (`gray-alpha-200`, hover
   `gray-alpha-100`), no el acento.
 
+Ajustes de 2.0: menús, etiquetas y hojas.
+
+- **Radios de menú de macOS.** El resaltado de un ítem pasa de `rounded-control` (10 px) a
+  `rounded-menu-item` (6 px) y el panel, de 16 a 12: `rounded-[calc(var(--radius-menu-item)+--spacing(1.5))]`,
+  el radio del ítem más el `p-1.5`, así que siguen siendo concéntricos. Vale para los seis menús
+  (`DropdownMenu`, `ContextMenu`, `Menubar`, `Select`, `Combobox`, `Autocomplete`), que salen de
+  `menuItemClassName` y `menuPopupClassName`. `NavigationMenu` y `Command` no cambian: sus links
+  y filas no son ítems de menú. Si la app pisaba `--radius-control` para achicar los menús, ahora
+  es `--radius-menu-item`.
+- **El ítem destructivo va sin rojo.** En `DropdownMenu`, `ContextMenu` y `Menubar`,
+  `variant="destructive"` ya no cambia cómo se ve: texto común y, resaltado, el mismo acento que
+  cualquier ítem, como el «Eliminar» de Mail. El peligro lo muestra la alerta que confirma: poné
+  «…» en el ítem y abrí un `AlertDialog` con `AlertDialogAction variant="destructive"`. La prop
+  se sigue aceptando (y sale como `data-variant`), pero está **obsoleta** y se va en la próxima
+  major.
+- **Badge y Tag sólidos, como las etiquetas del Finder.** Relleno lleno, sin borde, sin brillo
+  (`sheen`, `shadow-chip`, `shadow-button`) y sin vidrio, con 4 px de radio (`rounded-tag`, antes
+  `rounded-full`). La tinta es blanca o negra al 85 %, la que llega a 4,5:1 en los dos temas:
+
+  | color | relleno | tinta | claro | oscuro |
+  |---|---|---|---|---|
+  | `gray` | `gray-700` | negra | 5,65:1 | 5,65:1 |
+  | `brand` | `brand-700` | `brand-contrast` | el par del botón `accent` | |
+  | `red` | `red-800` | blanca | 4,75:1 | 4,79:1 |
+  | `amber` | `amber-700` | negra | 9,38:1 | 9,38:1 |
+  | `green` | `green-700` | negra | 5,96:1 | 5,99:1 |
+  | `blue` | `blue-800` | blanca | 5,78:1 | 5,79:1 |
+  | `teal` | `teal-700` | negra | 5,98:1 | 6,04:1 |
+  | `purple` | `purple-700` | blanca | 5,55:1 | 5,31:1 |
+  | `pink` | `pink-800` | blanca | 4,57:1 | 4,58:1 |
+
+  Cómo se mapean las variantes:
+  - `variant="subtle"` (el default de 1.x) **se ve igual que `solid`** y queda obsoleto. El default
+    pasa a `solid`. No hace falta tocar nada para que compile, pero cada badge que era tenue ahora
+    es lleno: revisá las pantallas con muchos.
+  - `variant="solid"` ya vale en los nueve colores (antes el tipo solo dejaba `gray` y `brand`).
+  - `solid` `gray` deja de ser el negro invertido (`gray-1000` con texto de superficie) y pasa al
+    gris del Finder. Para el negro de antes: `className="bg-gray-1000 text-background-100"`.
+  - El punto de `dot` va en la tinta (`bg-current`), no en el `-700` del color, que sobre el relleno
+    no se veía. `badgeDotColor` sigue exportado para puntos sueltos.
+  - Adentro de un ítem seleccionado el badge **conserva su relleno y su tinta** (reemplaza al
+    contorno de la fase 1); solo `brand`, que es el color de la selección, se invierte. Un ícono
+    adentro del badge conserva la tinta aunque el ítem de menú resaltado pinte sus `svg` de
+    `on-selection`.
+  - `Tag` y `ComboboxChip` salen de `tagVariants`, que ahora usa este cuerpo. El hover del botón
+    de quitar pasa de `gray-alpha-300` a `--sf-tag-press`, un velo del lado contrario a la tinta
+    (oscurece bajo la X blanca, aclara bajo la negra): la X queda arriba de 4,5:1 también en hover.
+    El área de 24 × 24 y el anillo de foco no cambian.
+  - `--sf-tint-border` ya no lo usa ningún componente; sigue declarado.
+- **Sheet y Drawer flotantes.** Se despegan 8 px de cada borde que tocan (una hoja derecha: arriba,
+  a la derecha y abajo) y llevan las **cuatro** esquinas con `rounded-panel`, el radio de la
+  píldora del `Sidebar`. En un teléfono el margen es el área segura (`env(safe-area-inset-*)`)
+  cuando es más grande. Cerradas se desplazan su tamaño más el margen, así salen enteras. Antes iban
+  de borde a borde (`inset-y-0`, `right-0`…), el Sheet cuadrado y el Drawer redondeado solo del
+  lado de adentro.
+  - En el `Drawer` el gesto no cambia: el `transform` del arrastre sigue siendo el snap point más
+    el movimiento que escribe Base UI; solo la posición de reposo y la de afuera suman el margen.
+    Como un snap point mide desde abajo de la hoja, la parte visible queda 8 px más arriba.
+  - La X sigue en `top-4.5 right-4.5`, adentro del arco de 26 px aun con su anillo de foco.
+  - Si la app ponía contenido que llega al borde (una imagen, un fondo), sumale `overflow-hidden`
+    al `SheetContent` para recortarlo a la curva (el `AppShell` ya lo hace).
+  - Si la app pisaba `inset-y-0`, `right-0` o `translate-x-full` con `className`, ahora son
+    `top-(--sheet-gap-t)`, `right-(--sheet-gap-r)` y `translate-x-[calc(100%+var(--sheet-gap-r))]`.
+
 ### Added (2.0)
 
 - **`Command`**, la paleta de comandos estilo Spotlight (`sebs7n-ui/command`): `Command`
@@ -145,6 +209,10 @@ Fase 3 de 2.0: menús y búsqueda.
 - `commandDialogPopupClassName`, `commandItemClassName` y `commandItemIconClassName`
   (`variants/command`, también en el barrel).
 - `menuGutterClassName`, `menuInsetClassName` y `menuIndicatorClassName` (`variants/menu`).
+- Tokens `--radius-menu-item` (6 px) y `--radius-tag` (4 px), con sus utilidades `rounded-menu-item`
+  y `rounded-tag`; `cn()` los fusiona como los otros radios.
+- `floatingSheetGapClassName` (`variants/overlay`, también en el barrel): las cuatro variables
+  `--sheet-gap-*` del margen de una hoja flotante, para armar una a mano con Sheet o Drawer.
 - `touch-target` (área de 44 con el dedo, sin cambiar lo que se ve) y `touch-target-y` (solo en
   alto, para controles en fila que no se pueden separar; con `cn()` reemplaza al otro).
 - `menuItemSecondaryClassName` (el atajo de un ítem de menú) y `selectionSecondaryClassName`
