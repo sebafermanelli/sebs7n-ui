@@ -9,7 +9,7 @@ export const TYPE_SCALE = [
   "label-14-mono", "label-13-mono", "label-12-mono",
   "copy-24", "copy-20", "copy-18", "copy-16", "copy-14", "copy-13",
   "copy-14-mono", "copy-13-mono",
-  // Roles tipográficos de macOS (2.0): ver theme.css.
+  // Roles tipográficos de iCloud (2.0): ver theme.css.
   "large-title", "title-1", "title-2", "title-3", "headline", "body", "body-large", "callout",
   "subheadline", "footnote", "caption", "mono-body", "mono-callout",
 ] as const
@@ -26,8 +26,9 @@ const twMerge = extendTailwindMerge<"touch-target" | "focus-ring">({
       // convive con ellos y gana el que Tailwind haya emitido último, que no se elige.
       // Las dos formas del área táctil pelean por el mismo `::after`: la que se pase después gana.
       "touch-target": ["touch-target", "touch-target-y"],
-      // Los dos anillos pintan el mismo `box-shadow`: el de la variante (sobre la marca) reemplaza al de la base.
-      "focus-ring": ["focus-ring", "focus-ring-inverse"],
+      // Los anillos pintan el mismo `box-shadow`: el de la variante (sobre la marca, o el del campo)
+      // reemplaza al de la base.
+      "focus-ring": ["focus-ring", "focus-ring-inverse", "focus-border", "focus-border-error"],
       "bg-color": ["material-translucent", "bg-ambient"],
     },
   },

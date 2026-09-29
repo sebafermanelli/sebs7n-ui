@@ -16,6 +16,14 @@ describe("cn", () => {
     expect(cn("shadow-menu", "shadow-modal")).toBe("shadow-modal")
   })
 
+  // Los cuatro anillos pintan el mismo `box-shadow`: con dos, gana el que Tailwind haya emitido
+  // último, que no se elige. `cn()` deja el que se pasó después.
+  it("focus-ring, focus-ring-inverse, focus-border y focus-border-error son un solo grupo", () => {
+    expect(cn("focus-visible:focus-ring", "focus-visible:focus-border")).toBe("focus-visible:focus-border")
+    expect(cn("focus-border", "focus-border-error")).toBe("focus-border-error")
+    expect(cn("focus-border-error", "focus-ring-inverse")).toBe("focus-ring-inverse")
+  })
+
   it("descarta los valores falsy", () => {
     expect(cn("a", false, undefined, "b")).toBe("a b")
   })
