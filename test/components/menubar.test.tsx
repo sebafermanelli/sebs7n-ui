@@ -180,13 +180,13 @@ describe("Menubar", () => {
     expect(titulo("Archivo")).toHaveAttribute("data-popup-open")
   })
 
-  it("el destructivo se ve como cualquier ítem: sin rojo, el mismo acento al resaltarlo", async () => {
+  it("el destructivo va en rojo, como el «Delete Selected» de iCloud, y se resalta en el mismo gris", async () => {
     render(<Editor />)
     await userEvent.click(titulo("Archivo"))
 
     const descartar = await screen.findByRole("menuitem", { name: "Descartar borrador" })
-    const comun = screen.getByRole("menuitem", { name: /Nuevo informe/ })
-    expect(descartar.className).not.toMatch(/red|error/)
-    expect(descartar.className).toBe(comun.className)
+    expect(descartar).toHaveAttribute("data-variant", "destructive")
+    expect(descartar).toHaveClass("text-red-ink", "[&>svg:first-child]:text-current", "data-highlighted:bg-fill-2")
+    expect(screen.getByRole("menuitem", { name: /Nuevo informe/ }).className).not.toMatch(/red/)
   })
 })

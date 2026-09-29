@@ -385,3 +385,25 @@ describe("La acción destructiva de la alerta: rojo sobre gris (WCAG 1.4.3)", ()
     }
   }
 })
+
+// El ítem destructivo de un menú (R3, el «Delete Selected» de Drive): texto rojo sobre el panel en
+// reposo y sobre el gris del resaltado (fill-2) y del apretado (fill-3). Misma tinta que la acción
+// destructiva de la alerta: `red-900` no llegaba a 4,5:1 sobre el resaltado en oscuro.
+describe("El ítem destructivo de un menú: rojo sobre el panel y sobre el resaltado (WCAG 1.4.3)", () => {
+  const css = read("theme.css")
+  const mezcla = Number(css.match(/--color-red-ink: color-mix\(in srgb, var\(--sf-red-900\) (\d+)%/)![1]) / 100
+  for (const theme of ["light", "dark"] as const) {
+    const tinta = composite(paleta[theme]["--sf-red-900"]!, mezcla, paleta[theme]["--sf-red-1000"]!)
+    const panel = paleta[theme]["--sf-surface"]!
+    const fondos = {
+      panel,
+      resaltado: flattenAlpha(paleta[theme]["--sf-fill-2"]!, panel),
+      apretado: flattenAlpha(paleta[theme]["--sf-fill-3"]!, panel),
+    }
+    for (const [estado, fondo] of Object.entries(fondos)) {
+      it(`${theme} · ${estado}: ${tinta} sobre ${fondo} llega a 4.5:1`, () => {
+        expect(ratio(tinta, fondo)).toBeGreaterThanOrEqual(4.5)
+      })
+    }
+  }
+})

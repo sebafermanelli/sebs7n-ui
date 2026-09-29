@@ -31,6 +31,17 @@ export const menuItemClassName =
   "group/menu-item group/selectable relative flex h-7.5 pointer-coarse:h-11 cursor-pointer items-center gap-2.5 rounded-menu-item px-2.5 text-callout text-label outline-none select-none transition-control data-highlighted:bg-fill-2 active:bg-fill-3 data-disabled:cursor-not-allowed data-disabled:opacity-30 data-disabled:active:bg-transparent data-disabled:data-highlighted:bg-transparent [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&>svg:first-child]:text-brand-900"
 
 /**
+ * El ítem que destruye (`variant="destructive"`): texto e ícono en rojo, como el «Delete Selected»
+ * del menú de fila de Drive. Va al final, después de un separador. Se resalta en el mismo gris que
+ * los demás y el rojo no cambia.
+ *
+ * La tinta es `red-ink`, la misma de la acción destructiva de la alerta: llega a 4,5:1 sobre el
+ * panel, sobre `fill-2` y sobre `fill-3`, en claro y en oscuro (`test/contrast.test.ts`); el rojo de
+ * iCloud (`rgb(255,48,55)`) se queda en 3,2:1 sobre el resaltado oscuro.
+ */
+export const menuItemDestructiveClassName = "text-red-ink [&>svg:first-child]:text-current"
+
+/**
  * El texto secundario de un ítem —el atajo de teclado—: `label-secondary`, también resaltado.
  * Con el resaltado gris de iCloud el texto no cambia de color, y sobre `fill-2` el secundario
  * sigue arriba de 4,5:1 (`test/surfaces.test.ts`).

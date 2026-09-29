@@ -11,6 +11,7 @@ import {
   menuIndicatorClassName,
   menuInsetClassName,
   menuItemClassName,
+  menuItemDestructiveClassName,
   menuItemSecondaryClassName,
   menuLabelClassName,
   menuPopupClassName,
@@ -143,10 +144,9 @@ function ContextMenuLabel({ className, inset, ...props }: ContextMenuLabelProps)
 type ContextMenuItemProps = WithClassName<ContextMenuPrimitive.Item.Props> &
   MenuInsetProps & {
     /**
-     * @deprecated Desde 2.0 no cambia cómo se ve: el ítem destructivo va en texto común y se
-     * resalta con el mismo acento que los demás, como el «Eliminar» de Mail. El peligro lo
-     * muestra un `AlertDialog` que confirma la acción. Se sigue aceptando (y sale como
-     * `data-variant`) para no romper a quien lo pasa; se va en la próxima major.
+     * `destructive`: texto e ícono en rojo (`menuItemDestructiveClassName`), como el «Delete
+     * Selected» de iCloud. Para la acción que borra; va al final, después de un separador, y si
+     * no se puede deshacer la confirma un `AlertDialog`. Sale también como `data-variant`.
      */
     variant?: "default" | "destructive"
   }
@@ -159,8 +159,7 @@ function ContextMenuItem({ className, inset, variant = "default", ...props }: Co
       data-variant={variant}
       className={cn(
         menuItemClassName,
-        // Sin rojo (2.0): en macOS «Eliminar» es un ítem más y lo que avisa es la alerta que sigue.
-        // Un ítem rojo entre ítems negros, además, se lee como un error y no como una opción.
+        variant === "destructive" && menuItemDestructiveClassName,
         menuInsetClassName,
         className
       )}

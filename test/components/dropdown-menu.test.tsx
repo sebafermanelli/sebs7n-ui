@@ -168,11 +168,14 @@ describe("DropdownMenu", () => {
     }
   })
 
-  it("el ítem destructivo se marca por data-variant, no solo por color", async () => {
+  it("el ítem destructivo va en rojo y se marca también por data-variant", async () => {
     render(<Acciones />)
     await abrir()
 
-    expect(screen.getByRole("menuitem", { name: "Eliminar" })).toHaveAttribute("data-variant", "destructive")
+    const eliminar = screen.getByRole("menuitem", { name: "Eliminar" })
+    expect(eliminar).toHaveAttribute("data-variant", "destructive")
+    // Texto e ícono en la tinta roja (el ícono deja el acento), sobre el mismo gris al resaltarlo.
+    expect(eliminar).toHaveClass("text-red-ink", "[&>svg:first-child]:text-current", "data-highlighted:bg-fill-2")
   })
 
   it("Escape cierra y devuelve el foco al disparador", async () => {
