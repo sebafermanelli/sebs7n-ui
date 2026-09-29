@@ -59,7 +59,7 @@ function UserMenu({ user, collapsed: collapsedProp, side, align, children, signO
   const avatar = (
     // Colapsado, el avatar baja a 24 adentro del botón de 32: del mismo tamaño que el botón, el
     // hover no tenía dónde verse.
-    <Avatar aria-hidden="true" size={collapsed ? "sm" : "md"}>
+    <Avatar aria-hidden="true" size={collapsed ? "sm" : "md"} className={collapsed ? "size-6" : undefined}>
       {user.image && <AvatarImage src={user.image} alt="" />}
       <AvatarFallback>{initials(user.name)}</AvatarFallback>
     </Avatar>
@@ -125,8 +125,10 @@ function UserMenu({ user, collapsed: collapsedProp, side, align, children, signO
           [
             [
               "header",
-              <div data-slot="user-menu-header" className="flex min-w-0 flex-col px-2 py-1.5">
-                <span className="truncate text-callout text-label">{user.name}</span>
+              // La cabecera de cuenta de iCloud (catálogo §2.8): 72 de alto, fondo fill-2 con el radio
+              // de arriba del panel (12 − 5 de padding), nombre 17/600 y mail 14 secundario.
+              <div data-slot="user-menu-header" className="flex min-h-18 min-w-0 flex-col justify-center rounded-t-[7px] bg-fill-2 px-2.5 py-2">
+                <span className="truncate text-headline text-label">{user.name}</span>
                 {user.email && <span className="truncate text-callout text-label-secondary">{user.email}</span>}
               </div>,
             ],

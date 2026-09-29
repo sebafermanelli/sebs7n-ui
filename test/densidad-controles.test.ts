@@ -75,6 +75,8 @@ const PERMITIDOS: Record<string, string[]> = {
   // R4: las pestañas de línea son la navegación de una página, como las de Settings de iCloud, que
   // van en 17 (medido). La segmentada, que sí es un control, sigue en 14.
   "components/tabs.tsx": ["text-body"],
+  // R5a: la cabecera de cuenta del menú de iCloud lleva el nombre en 17/600 (no es un control).
+  "components/user-menu.tsx": ["text-headline"],
 }
 
 describe("el texto de un control no pasa de 15 px", () => {
