@@ -196,5 +196,6 @@ export * from "./components/widget-card.js"
 // opcionales (`@dnd-kit/*`, `embla-carousel-react`), así que tampoco podrían estar: ver `chart`.
 // Sus textos no entran al barrel: viven en cada componente (ver el tipo `Labels`).
 //   `sortable-list`     sebs7n-ui/sortable-list
+//   `sortable-grid`     sebs7n-ui/sortable-grid
 // `lib/countries` y `lib/phone` tampoco entran: son los únicos de `lib/` solo por subpath (ver
 // `test/api-publica.test.ts`).

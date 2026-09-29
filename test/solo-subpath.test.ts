@@ -33,6 +33,7 @@ const SOLO_SUBPATH = [
   "country-picker",
   "phone-input",
   "sortable-list",
+  "sortable-grid",
 ]
 
 describe("componentes solo por subpath", () => {
