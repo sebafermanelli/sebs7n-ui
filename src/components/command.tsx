@@ -78,8 +78,12 @@ function createResults() {
 
 type Results = ReturnType<typeof createResults>
 
-/** Lo que el resultado elegido completa en línea: el resto del título y su detalle. */
-type Completion = { value: string; title: string; text: string }
+/**
+ * Lo que el resultado elegido completa en línea: el resto del título y su detalle. `accepts` dice si
+ * Tab o → hacen algo: con el título entero ya escrito solo queda el detalle, que se ve pero no se
+ * completa, y ahí Tab tiene que seguir moviendo el foco y la pista `tab` no se muestra.
+ */
+type Completion = { value: string; title: string; text: string; accepts: boolean }
 
 type CommandContextValue = {
   query: string
@@ -109,7 +113,7 @@ function completionOf(query: string, value: string | undefined, result: Result |
   const { title, description } = result
   if (title.length < query.length || normalize(title.slice(0, query.length)) !== normalize(query)) return null
   const text = title.slice(query.length) + (description ? ` — ${description}` : "")
-  return text ? { value, title, text } : null
+  return text ? { value, title, text, accepts: normalize(title) !== normalize(query) } : null
 }
 
 type CommandProps = Omit<React.ComponentProps<"div">, "defaultValue" | "onChange"> & {
@@ -158,7 +162,7 @@ function Command({ value, defaultValue = "", onValueChange, shouldFilter = true,
     () => ({ query, setQuery, shouldFilter, results, completion, labels: { ...provided, ...labels } }),
     // `labels` se compara por contenido: es un objeto literal en casi todos los usos.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [query, setQuery, shouldFilter, results, completion?.value, completion?.text, provided, labels?.placeholder, labels?.empty, labels?.dialog]
+    [query, setQuery, shouldFilter, results, completion?.value, completion?.text, completion?.accepts, provided, labels?.placeholder, labels?.empty, labels?.dialog]
   )
 
   return (
@@ -227,8 +231,8 @@ function CommandInput({ className, wrapperClassName, placeholder, onKeyDown, ...
             if (event.defaultPrevented || !completion) return
             const input = event.currentTarget
             const atEnd = input.selectionStart === input.value.length && input.selectionEnd === input.value.length
-            const accepts = (event.key === "Tab" && !event.shiftKey) || event.key === "ArrowRight"
-            if (!accepts || !atEnd || completion.title === query) return
+            const acceptKey = (event.key === "Tab" && !event.shiftKey) || event.key === "ArrowRight"
+            if (!acceptKey || !atEnd || !completion.accepts) return
             event.preventDefault()
             setQuery(completion.title)
           }}
@@ -365,7 +369,7 @@ function CommandItem({ value, keywords, description, icon, textValue, onSelect, 
         {description != null && <span className="truncate text-callout text-gray-900">{description}</span>}
       </span>
       {/* Solo cuando Tab hace algo: en el elegido, si su título completa lo escrito. */}
-      {completion?.value === value && (
+      {completion?.value === value && completion.accepts && (
         <Kbd data-slot="command-item-hint" aria-hidden="true" size="sm" className="hidden group-data-highlighted/command-item:inline-flex">
           tab
         </Kbd>

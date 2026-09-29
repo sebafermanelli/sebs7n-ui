@@ -97,6 +97,28 @@ describe("Command", () => {
     expect(completion()).toBeNull()
   })
 
+  it("con el título entero escrito no hay pista tab y Tab sale del campo", async () => {
+    render(
+      <>
+        <Command>
+          <CommandInput />
+          {items}
+        </Command>
+        <button type="button">Después</button>
+      </>
+    )
+    const campo = screen.getByRole("combobox")
+    await userEvent.type(campo, "factura 0012")
+    const elegido = screen.getByRole("option", { name: /Factura 0012/ })
+    expect(elegido).toHaveAttribute("data-highlighted")
+    // El detalle se sigue viendo, como en Spotlight, pero Tab ya no completa nada.
+    expect(completion()).toHaveTextContent("— Acme S.A.")
+    expect(elegido.querySelector("[data-slot='command-item-hint']")).toBeNull()
+    await userEvent.keyboard("{Tab}")
+    expect(campo).toHaveValue("factura 0012")
+    expect(campo).not.toHaveFocus()
+  })
+
   it("Enter ejecuta el elegido y las flechas mueven la elección", async () => {
     const abrir = vi.fn()
     render(
