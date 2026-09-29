@@ -244,6 +244,31 @@ describe("CalendarView · semana", () => {
     expect(screen.getByText("22:07")).toHaveClass("text-red-ink")
   })
 
+  it("un evento corto va en una línea (hora + título, con «…»); uno mínimo, solo el título", () => {
+    const cortos: CalendarEvent[] = [
+      { id: "cobro", title: "Recordatorio de cobro a clientes", start: new Date(2026, 8, 29, 15, 30), end: new Date(2026, 8, 29, 16) },
+      { id: "aviso", title: "Aviso", start: new Date(2026, 8, 30, 9, 0), end: new Date(2026, 8, 30, 9, 15) },
+    ]
+    render(<CalendarView defaultDate={AHORA} defaultView="week" events={[...EVENTOS, ...cortos]} hour12={false} locale="es-AR" now={AHORA} />)
+    // 30 min = 30,5 px: dos líneas de 16 no entran y el título pisaba la hora.
+    const corto = screen.getByText("Recordatorio de cobro a clientes").closest("[data-slot=calendar-view-event]") as HTMLElement
+    expect(corto).toHaveAttribute("data-size", "short")
+    expect(corto).toHaveClass("flex-row", "items-baseline", "gap-1")
+    expect(corto).not.toHaveClass("flex-col")
+    expect(corto.textContent).toBe("15:30Recordatorio de cobro a clientes")
+    expect(screen.getByText("Recordatorio de cobro a clientes")).toHaveClass("truncate", "min-w-0")
+    // 15 min queda en el mínimo de 20 px: solo entra el título.
+    const minimo = screen.getByText("Aviso").closest("[data-slot=calendar-view-event]") as HTMLElement
+    expect(minimo).toHaveAttribute("data-size", "tiny")
+    expect(minimo.textContent).toBe("Aviso")
+    expect(minimo.style.height).toBe("20px")
+    // Uno largo sigue en dos líneas: título arriba, hora abajo.
+    const largo = screen.getByText("Reunión con Acme").closest("[data-slot=calendar-view-event]") as HTMLElement
+    expect(largo).not.toHaveAttribute("data-size")
+    expect(largo).toHaveClass("flex-col")
+    expect(largo.textContent).toBe("Reunión con Acme18:30")
+  })
+
   it("teclado: ←→ recorren los días y cruzan de semana", async () => {
     render(<CalendarView defaultDate={new Date(2026, 8, 28)} defaultView="week" locale="es-AR" now={AHORA} />)
     celda(/28 de septiembre/).focus()

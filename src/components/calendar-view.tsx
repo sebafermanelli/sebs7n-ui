@@ -290,13 +290,26 @@ function CalendarView({
   }
   const shift = (direction: 1 | -1) => go(view === "month" ? addMonths(date, direction) : addDays(date, (view === "day" ? 1 : 7) * direction))
 
-  const renderEvent = (item: CalendarEvent & { origin?: Date }, variant: "chip" | "line" | "block", style?: React.CSSProperties) => {
+  // `size` es solo de los bloques: "short" (menos de dos líneas de alto) va en una línea con la hora
+  // adelante, y "tiny" (el mínimo de 20) solo con el título, como los eventos cortos de iCloud.
+  const renderEvent = (
+    item: CalendarEvent & { origin?: Date },
+    variant: "chip" | "line" | "block",
+    style?: React.CSSProperties,
+    size?: "short" | "tiny"
+  ) => {
     const color = item.color ?? "brand"
+    const timeText = !item.allDay && variant !== "chip" && size !== "tiny" && (
+      <span className={cn("shrink-0 tabular-nums", variant === "line" ? "text-caption text-label-secondary" : "font-normal")}>
+        {time.format(item.origin ?? item.start)}
+      </span>
+    )
     const Tag = onEventClick ? "button" : "div"
     return (
       <Tag
         key={item.id}
         data-slot="calendar-view-event"
+        data-size={size}
         {...(onEventClick
           ? {
               type: "button" as const,
@@ -312,17 +325,18 @@ function CalendarView({
           "flex min-w-0 text-start text-footnote",
           variant === "chip" && ["h-[18px] shrink-0 items-center rounded-tag px-1 font-semibold", categoryChip[color]],
           variant === "line" && "h-[18px] shrink-0 items-center gap-1 text-label",
-          variant === "block" && ["absolute flex-col overflow-hidden rounded-tag border-s-[3px] px-1.5 py-0.5 font-semibold", categoryChip[color]],
+          variant === "block" && [
+            "absolute overflow-hidden rounded-tag border-s-[3px] px-1.5 py-0.5 font-semibold",
+            size ? "flex-row items-baseline gap-1" : "flex-col",
+            categoryChip[color],
+          ],
           onEventClick && "cursor-pointer"
         )}
       >
         {variant === "line" && <span data-slot="calendar-view-dot" aria-hidden="true" className={cn("size-2 shrink-0 rounded-full", categoryFill[color])} />}
+        {size === "short" && timeText}
         <span className={cn("min-w-0 truncate", variant === "line" && "flex-1")}>{item.title}</span>
-        {!item.allDay && variant !== "chip" && (
-          <span className={cn("shrink-0 tabular-nums", variant === "line" ? "text-caption text-label-secondary" : "font-normal")}>
-            {time.format(item.origin ?? item.start)}
-          </span>
-        )}
+        {!size && timeText}
       </Tag>
     )
   }
@@ -476,14 +490,22 @@ function CalendarView({
                 key={day.getTime()}
                 className="relative border-s border-separator bg-[linear-gradient(to_bottom,var(--color-separator)_1px,transparent_1px)] bg-size-[100%_61px]"
               >
-                {layoutDay(segmentsOf(events, day)).map(({ event: item, column, columns }) =>
-                  renderEvent(item, "block", {
-                    top: (minutes(item.start) / 60) * HOUR,
-                    height: Math.max((wallMinutes(item.start, endOf(item)) / 60) * HOUR, 20),
-                    insetInlineStart: `calc(${(column / columns) * 100}% + 1px)`,
-                    width: `calc(${100 / columns}% - 2px)`,
-                  })
-                )}
+                {layoutDay(segmentsOf(events, day)).map(({ event: item, column, columns }) => {
+                  const height = (wallMinutes(item.start, endOf(item)) / 60) * HOUR
+                  // Título y hora en dos líneas de 16 más el padding piden 36: menos, una línea.
+                  const size = height <= 20 ? "tiny" : height < 36 ? "short" : undefined
+                  return renderEvent(
+                    item,
+                    "block",
+                    {
+                      top: (minutes(item.start) / 60) * HOUR,
+                      height: Math.max(height, 20),
+                      insetInlineStart: `calc(${(column / columns) * 100}% + 1px)`,
+                      width: `calc(${100 / columns}% - 2px)`,
+                    },
+                    size
+                  )
+                })}
               </div>
             ))}
             {todayIndex >= 0 && (
