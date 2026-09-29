@@ -127,17 +127,17 @@ const LISTA_COLUMNAS = [
 export function FilesShowcase() {
   const [carpeta, setCarpeta] = useState("septiembre")
   // Varios elegidos, como en Drive: ⌘/Ctrl+click, ⇧+click y ⌘A, en la grilla y en la lista.
-  const [elegidos, setElegidos] = useState<string[]>(["f-0013"])
+  const [selected, setSelected] = useState<string[]>(["f-0013"])
   const [vista, setVista] = useState<"grid" | "list">("grid")
   const ruta = rutaDe(carpeta) ?? []
   const items = useMemo(() => contenidoDe(carpeta), [carpeta])
   const abrir = (item: FileGridItem) => {
     if (item.folder) {
       setCarpeta(item.id)
-      setElegidos([])
+      setSelected([])
     }
   }
-  const hayElegidos = elegidos.length > 0
+  const hasSelection = selected.length > 0
 
   const sidebar = (
     <Sidebar>
@@ -208,9 +208,9 @@ export function FilesShowcase() {
           </ToggleGroup>
           <ToolbarSeparator />
           <ToolbarGroup aria-label="Selección" className="mx-auto flex items-center gap-1.5">
-            <ToolButton disabled={!hayElegidos} icon={ShareIcon} label="Compartir" />
-            <ToolButton disabled={!hayElegidos} icon={DownloadIcon} label="Descargar" />
-            <ToolButton disabled={!hayElegidos} icon={Trash2Icon} label="Eliminar" />
+            <ToolButton disabled={!hasSelection} icon={ShareIcon} label="Compartir" />
+            <ToolButton disabled={!hasSelection} icon={DownloadIcon} label="Descargar" />
+            <ToolButton disabled={!hasSelection} icon={Trash2Icon} label="Eliminar" />
           </ToolbarGroup>
           <ToolButton icon={SearchIcon} label="Buscar" shortcut={<Kbd>⌘F</Kbd>} />
           <ToolButton icon={FolderPlusIcon} label="Nueva carpeta" />
@@ -226,7 +226,7 @@ export function FilesShowcase() {
               onSelectedChange={(id) => {
                 if (!id) return
                 setCarpeta(id)
-                setElegidos([])
+                setSelected([])
               }}
               selected={carpeta}
             />
@@ -254,7 +254,7 @@ export function FilesShowcase() {
               </Breadcrumb>
               <h3 className="text-title-1 text-label">{ruta.at(-1)?.label}</h3>
               <p className="text-callout text-label-secondary" role="status">
-                {hayElegidos ? `${elegidos.length} de ${items.length} elegidos` : `${items.length} ítems`} · 1,2 GB disponibles
+                {hasSelection ? `${selected.length} de ${items.length} elegidos` : `${items.length} ítems`} · 1,2 GB disponibles
               </p>
             </div>
 
@@ -270,8 +270,8 @@ export function FilesShowcase() {
                     aria-label={`Archivos de ${ruta.at(-1)?.label ?? ""}`}
                     items={items}
                     onOpen={abrir}
-                    onSelectedChange={(ids) => setElegidos(ids)}
-                    selected={elegidos}
+                    onSelectedChange={(ids) => setSelected(ids)}
+                    selected={selected}
                     selectionMode="multiple"
                   />
                 ) : (
@@ -287,22 +287,22 @@ export function FilesShowcase() {
                     }))}
                     nameHeader="Nombre"
                     onOpen={(nodo) => abrir({ id: nodo.id, name: String(nodo.label), folder: nodo.children !== undefined })}
-                    onSelectedChange={(ids) => setElegidos(ids)}
-                    selected={elegidos}
+                    onSelectedChange={(ids) => setSelected(ids)}
+                    selected={selected}
                     selectionMode="multiple"
                   />
                 )}
               </ContextMenuTrigger>
               <ContextMenuContent>
-                <ContextMenuItem disabled={!hayElegidos}>Abrir</ContextMenuItem>
-                <ContextMenuItem disabled={!hayElegidos}>
+                <ContextMenuItem disabled={!hasSelection}>Abrir</ContextMenuItem>
+                <ContextMenuItem disabled={!hasSelection}>
                   Descargar
                   <ContextMenuShortcut>⌘D</ContextMenuShortcut>
                 </ContextMenuItem>
-                <ContextMenuItem disabled={!hayElegidos}>Compartir…</ContextMenuItem>
-                <ContextMenuItem disabled={!hayElegidos}>Cambiar el nombre</ContextMenuItem>
+                <ContextMenuItem disabled={!hasSelection}>Compartir…</ContextMenuItem>
+                <ContextMenuItem disabled={!hasSelection}>Cambiar el nombre</ContextMenuItem>
                 <ContextMenuSeparator />
-                <ContextMenuItem disabled={!hayElegidos} variant="destructive">
+                <ContextMenuItem disabled={!hasSelection} variant="destructive">
                   Eliminar
                 </ContextMenuItem>
               </ContextMenuContent>

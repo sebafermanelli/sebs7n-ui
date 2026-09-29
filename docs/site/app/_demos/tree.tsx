@@ -81,7 +81,7 @@ export function Perezoso() {
  * `selectionMode="multiple"`: ⌘ (o Ctrl) + click suma o saca, ⇧ + click elige el rango y ⌘A todo lo visible. Con el teclado, las flechas mueven sin elegir, Espacio suma o saca y ⇧ + ↑↓ extiende. Las elegidas seguidas son un solo bloque, como en el Finder.
  */
 export function Varios() {
-  const [elegidos, setElegidos] = useState<string[]>(["f-0012", "f-0013"])
+  const [selected, setSelected] = useState<string[]>(["f-0012", "f-0013"])
   return (
     <div className="flex w-full flex-col gap-3">
       <Tree
@@ -89,12 +89,12 @@ export function Varios() {
         className="w-full"
         defaultExpanded={["facturas", "facturas-2026"]}
         items={ARCHIVOS}
-        onSelectedChange={(ids) => setElegidos(ids)}
-        selected={elegidos}
+        onSelectedChange={(ids) => setSelected(ids)}
+        selected={selected}
         selectionMode="multiple"
       />
       <p className="text-callout text-label-secondary" role="status">
-        {elegidos.length === 1 ? "1 elegido" : `${elegidos.length} elegidos`}
+        {selected.length === 1 ? "1 elegido" : `${selected.length} elegidos`}
       </p>
     </div>
   )

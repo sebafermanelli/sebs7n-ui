@@ -115,7 +115,7 @@ describe("FileGrid · revisión de R5b", () => {
   const ARCHIVOS: FileGridItem[] = [
     { id: "a", name: "Acme.pdf" },
     { id: "b", name: "Balance.xlsx" },
-    { id: "c", name: "Arcor.pdf" },
+    { id: "c", name: "Alfa.pdf" },
   ]
 
   it("en RTL → va al anterior y ← al siguiente", async () => {
@@ -128,16 +128,16 @@ describe("FileGrid · revisión de R5b", () => {
     await userEvent.keyboard("{ArrowRight}")
     expect(screen.getByRole("option", { name: /Acme/ })).toHaveFocus()
     await userEvent.keyboard("{ArrowLeft}{ArrowLeft}")
-    expect(screen.getByRole("option", { name: /Arcor/ })).toHaveFocus()
+    expect(screen.getByRole("option", { name: /Alfa/ })).toHaveFocus()
   })
 
   it("type-ahead: salta al siguiente cuyo nombre empieza con lo tipeado", async () => {
     render(<FileGrid aria-label="Archivos" items={ARCHIVOS} />)
     screen.getByRole("option", { name: /Acme/ }).focus()
     await userEvent.keyboard("a")
-    expect(screen.getByRole("option", { name: /Arcor/ })).toHaveFocus()
+    expect(screen.getByRole("option", { name: /Alfa/ })).toHaveFocus()
     await userEvent.keyboard("b")
-    expect(screen.getByRole("option", { name: /Arcor/ })).toHaveFocus()
+    expect(screen.getByRole("option", { name: /Alfa/ })).toHaveFocus()
   })
 
   it("un click en el «…» no le deja el foco a lo que el lector no ve", () => {

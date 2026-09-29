@@ -1,10 +1,10 @@
 import { ListIndex } from "sebs7n-ui/list-index"
 import { List, ListRow, ListSection } from "sebs7n-ui/list-row"
 
-const CLIENTES = [
+const CUSTOMERS = [
   "Acme S.A.",
   "Almacén Norte",
-  "Arcor Distribución",
+  "Alfa Distribución",
   "Bodega del Sur",
   "Cooperativa Centro",
   "Constructora Río",
@@ -26,8 +26,8 @@ const CLIENTES = [
 ]
 
 // La inicial sin tilde: «Óptica» va con la O.
-const inicial = (nombre: string) => nombre.normalize("NFD").charAt(0).toUpperCase()
-const SECCIONES = Object.entries(Object.groupBy(CLIENTES, inicial)) as [string, string[]][]
+const initialOf = (name: string) => name.normalize("NFD").charAt(0).toUpperCase()
+const SECTIONS = Object.entries(Object.groupBy(CUSTOMERS, initialOf)) as [string, string[]][]
 
 /**
  * Clientes de la A a la Z
@@ -38,19 +38,19 @@ export function Clientes() {
     <div className="relative h-[660px] w-full max-w-md overflow-hidden rounded-surface border border-separator">
       <div className="h-full overflow-y-auto scroll-smooth pe-8 motion-reduce:scroll-auto">
         <List aria-label="Clientes">
-          {SECCIONES.map(([letra, nombres]) => (
-            <ListSection className="scroll-mt-2" id={`cliente-${letra}`} key={letra} title={letra}>
-              {nombres.map((nombre) => (
-                <ListRow key={nombre} title={nombre} />
+          {SECTIONS.map(([letter, names]) => (
+            <ListSection className="scroll-mt-2" id={`customer-${letter}`} key={letter} title={letter}>
+              {names.map((name) => (
+                <ListRow key={name} title={name} />
               ))}
             </ListSection>
           ))}
         </List>
       </div>
       <ListIndex
-        available={SECCIONES.map(([letra]) => letra)}
+        available={SECTIONS.map(([letter]) => letter)}
         className="absolute inset-y-2 end-1"
-        getHref={(letra) => `#cliente-${letra}`}
+        getHref={(letter) => `#customer-${letter}`}
       />
     </div>
   )

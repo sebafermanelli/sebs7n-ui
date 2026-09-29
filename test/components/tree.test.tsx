@@ -242,12 +242,12 @@ describe("Tree · revisión de R5b", () => {
   })
 
   it("type-ahead: la misma letra otra vez va al siguiente que empieza con ella", async () => {
-    render(<Tree aria-label="Archivos" items={[{ id: "a", label: "Acme" }, { id: "b", label: "Arcor" }, { id: "c", label: "Aysa" }]} />)
+    render(<Tree aria-label="Archivos" items={[{ id: "a", label: "Acme" }, { id: "b", label: "Alfa" }, { id: "c", label: "Atlas" }]} />)
     await userEvent.tab()
     await userEvent.keyboard("a")
-    expect(item("Arcor")).toHaveFocus()
+    expect(item("Alfa")).toHaveFocus()
     await userEvent.keyboard("a")
-    expect(item("Aysa")).toHaveFocus()
+    expect(item("Atlas")).toHaveFocus()
   })
 
   it("si se cierra (controlado) la carpeta del ítem con foco, el foco sube a la carpeta", async () => {
