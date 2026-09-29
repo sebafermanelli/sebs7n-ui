@@ -226,6 +226,36 @@ describe("FileGrid · selección múltiple", () => {
     expect(elegidos()).toHaveLength(2)
   })
 
+  it("un id controlado que ya no está en items no se emite: ids e items van alineados", async () => {
+    const onSelectedChange = vi.fn()
+    const user = userEvent.setup()
+    render(<FileGrid aria-label="Archivos" items={ITEMS} onSelectedChange={onSelectedChange} selected={["borrado", "a"]} selectionMode="multiple" />)
+    onSelectedChange.mockClear()
+    await user.keyboard("{Meta>}")
+    await user.click(screen.getByText("Notas.txt"))
+    await user.keyboard("{/Meta}")
+    expect(onSelectedChange).toHaveBeenLastCalledWith(["a", "e"], [expect.objectContaining({ id: "a" }), expect.objectContaining({ id: "e" })])
+  })
+
+  it("si un elegido deja de estar en items, sale de la selección y se avisa (como en Tree)", () => {
+    const onSelectedChange = vi.fn()
+    const { rerender } = render(
+      <FileGrid aria-label="Archivos" defaultSelected={["a", "b"]} items={ITEMS} onSelectedChange={onSelectedChange} selectionMode="multiple" />
+    )
+    expect(onSelectedChange).not.toHaveBeenCalled()
+    rerender(
+      <FileGrid
+        aria-label="Archivos"
+        defaultSelected={["a", "b"]}
+        items={ITEMS.filter((item) => item.id !== "b")}
+        onSelectedChange={onSelectedChange}
+        selectionMode="multiple"
+      />
+    )
+    expect(onSelectedChange).toHaveBeenLastCalledWith(["a"], [expect.objectContaining({ id: "a" })])
+    expect(elegidos()).toEqual(["Factura 0012.pdfPDF"])
+  })
+
   it("tipos: con multiple, selected es string[] y onSelectedChange recibe ids", () => {
     // @ts-expect-error -- con selectionMode="multiple", selected es un array
     ;<FileGrid aria-label="Archivos" items={ITEMS} selected="a" selectionMode="multiple" />

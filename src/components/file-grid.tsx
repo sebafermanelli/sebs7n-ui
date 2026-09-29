@@ -63,6 +63,13 @@ function FileGrid({
     (id) => items.find((item) => item.id === id)
   )
   const [focused, setFocused] = React.useState<string | null>(null)
+
+  // Si un elegido ya no está en `items`, sale de la selección y se avisa (igual que en `Tree`).
+  React.useEffect(() => {
+    const exists = new Set(items.map((item) => item.id))
+    selection.prune((id) => exists.has(id))
+  })
+
   const refs = React.useRef(new Map<string, HTMLDivElement>())
   const typed = React.useRef({ text: "", at: 0 })
 

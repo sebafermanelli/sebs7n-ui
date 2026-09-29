@@ -352,6 +352,31 @@ describe("Tree · selección múltiple", () => {
     expect(onSelectedChange).toHaveBeenCalledWith(["contratos"], [expect.objectContaining({ id: "contratos" })])
   })
 
+  it("⇧+click sobre un rango con un deshabilitado en el medio lo saltea", async () => {
+    const onSelectedChange = vi.fn()
+    const user = userEvent.setup()
+    const conDeshabilitado = ITEMS.map((node) => (node.id === "contratos" ? { ...node, disabled: true } : node))
+    render(<Tree aria-label="Archivos" items={conDeshabilitado} onSelectedChange={onSelectedChange} selectionMode="multiple" />)
+    await user.click(screen.getByText("Facturas"))
+    await user.keyboard("{Shift>}")
+    await user.click(screen.getByText("Notas.txt"))
+    await user.keyboard("{/Shift}")
+    expect(onSelectedChange).toHaveBeenLastCalledWith(["facturas", "notas"], [expect.objectContaining({ id: "facturas" }), expect.objectContaining({ id: "notas" })])
+    expect(elegidos()).toEqual(["Facturas", "Notas.txt"])
+  })
+
+  it("⌘A dos veces: suma y después saca solo lo visible; lo elegido dentro de una carpeta cerrada queda", async () => {
+    const onSelectedChange = vi.fn()
+    render(<Tree aria-label="Archivos" defaultSelected={["f-0012"]} items={ITEMS} onSelectedChange={onSelectedChange} selectionMode="multiple" />)
+    await userEvent.tab()
+    await userEvent.keyboard("{Meta>}a{/Meta}")
+    expect(onSelectedChange).toHaveBeenLastCalledWith(["facturas", "contratos", "notas", "f-0012"], expect.any(Array))
+    expect(elegidos()).toEqual(["Facturas", "Contratos", "Notas.txt"])
+    await userEvent.keyboard("{Meta>}a{/Meta}")
+    expect(onSelectedChange).toHaveBeenLastCalledWith(["f-0012"], [expect.objectContaining({ id: "f-0012" })])
+    expect(elegidos()).toEqual([])
+  })
+
   it("tipos: multiple exige arrays; grid exige columns", () => {
     // @ts-expect-error -- con selectionMode="multiple", selected es un array
     ;<Tree aria-label="Archivos" items={ITEMS} selected="notas" selectionMode="multiple" />
@@ -416,6 +441,43 @@ describe("Tree · treegrid", () => {
     expect(celdas("Factura 0012.pdf")[0]).toHaveFocus()
     await userEvent.keyboard("{Control>}{End}{/Control}")
     expect(celdas("Notas.txt")[0]).toHaveFocus()
+  })
+
+  it("Ctrl+Home y Ctrl+End en una celda van a la misma celda de la primera y la última fila", async () => {
+    render(<Tree aria-label="Archivos" columns={COLUMNAS} defaultExpanded={["facturas"]} grid items={CON_COLUMNAS} />)
+    await userEvent.click(screen.getByText("128 KB"))
+    expect(celdas("Factura 0012.pdf")[2]).toHaveFocus()
+    await userEvent.keyboard("{Control>}{Home}{/Control}")
+    expect(celdas("Facturas")[2]).toHaveFocus()
+    expect(fila("Facturas")).toHaveAttribute("aria-selected", "true")
+    await userEvent.keyboard("{Control>}{End}{/Control}")
+    expect(celdas("Notas.txt")[2]).toHaveFocus()
+    expect(fila("Notas.txt")).toHaveAttribute("aria-selected", "true")
+  })
+
+  it("→ en una carpeta perezosa: la abre y pide sus hijos; cuando llegan, → entra a la primera celda", async () => {
+    let resolver: () => void = () => {}
+    function Perezoso() {
+      const [items, setItems] = useState<TreeNode[]>([{ id: "remota", label: "Remota", hasChildren: true, columns: ["Carpeta", "—"] }])
+      const onLoadChildren = () =>
+        new Promise<void>((resolve) => {
+          resolver = () => {
+            setItems([{ id: "remota", label: "Remota", columns: ["Carpeta", "—"], children: [{ id: "r-1", label: "Recibo 1.pdf", columns: ["PDF", "8 KB"] }] }])
+            resolve()
+          }
+        })
+      return <Tree aria-label="Archivos" columns={COLUMNAS} grid items={items} onLoadChildren={onLoadChildren} />
+    }
+    render(<Perezoso />)
+    await userEvent.tab()
+    await userEvent.keyboard("{ArrowRight}")
+    expect(fila("Remota")).toHaveAttribute("aria-expanded", "true")
+    expect(fila("Remota")).toHaveAttribute("aria-busy", "true")
+    expect(fila("Remota")).toHaveFocus()
+    await act(async () => resolver())
+    expect(fila("Recibo 1.pdf")).toHaveAttribute("aria-level", "2")
+    await userEvent.keyboard("{ArrowRight}")
+    expect(celdas("Remota")[0]).toHaveFocus()
   })
 
   it("foco itinerante: un solo elemento con tabIndex 0 (fila o celda) y Tab sale de una", async () => {

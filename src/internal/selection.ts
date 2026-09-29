@@ -46,9 +46,17 @@ export function useSelection<T extends Selectable>(props: SelectionProps<T>, fin
   const anchor = React.useRef<string | null>(ids[0] ?? null)
 
   const commit = (next: string[]) => {
-    if (!controlled) setOwn(next)
-    if (props.selectionMode === "multiple") props.onSelectedChange?.(next, next.map(find).filter((item): item is T => item != null))
-    else props.onSelectedChange?.(next[0] ?? null, (next[0] != null && find(next[0])) || null)
+    if (props.selectionMode === "multiple") {
+      // Solo los ids que existen: un `selected` controlado puede traer uno que la app ya borró, y
+      // filtrar solo los ítems dejaba `ids[i]` y `items[i]` desalineados.
+      const found = next.map((id) => [id, find(id)] as const).filter((entry): entry is readonly [string, T] => entry[1] != null)
+      const kept = found.map(([id]) => id)
+      if (!controlled) setOwn(kept)
+      props.onSelectedChange?.(kept, found.map(([, item]) => item))
+    } else {
+      if (!controlled) setOwn(next)
+      props.onSelectedChange?.(next[0] ?? null, (next[0] != null && find(next[0])) || null)
+    }
   }
 
   const enabledIds = (order: readonly T[]) => order.filter((item) => !item.disabled).map((item) => item.id)
@@ -78,10 +86,23 @@ export function useSelection<T extends Selectable>(props: SelectionProps<T>, fin
     commit(enabledIds(order.slice(Math.min(start, end), Math.max(start, end) + 1)))
   }
 
-  /** ⌘/Ctrl+A: todos los habilitados; si ya estaban todos, ninguno. */
+  /**
+   * ⌘/Ctrl+A: suma todos los habilitados visibles; si ya estaban todos, los saca. Solo toca lo que se
+   * ve: lo elegido dentro de una carpeta cerrada del árbol se queda (antes ⌘A lo reemplazaba y el
+   * segundo ⌘A lo borraba sin que se viera).
+   */
   const all = (order: readonly T[]) => {
     const every = enabledIds(order)
-    commit(every.length > 0 && every.every((id) => set.has(id)) ? [] : every)
+    if (every.length > 0 && every.every((id) => set.has(id))) {
+      const visible = new Set(every)
+      commit(ids.filter((id) => !visible.has(id)))
+      return
+    }
+    // Lo visible en el orden en que se ve; lo oculto, después y en el orden que tenía.
+    const position = new Map(order.map((candidate, index) => [candidate.id, index]))
+    const hidden = ids.filter((id) => !position.has(id))
+    const shown = [...new Set([...ids.filter((id) => position.has(id)), ...every])]
+    commit([...shown.sort((a, b) => position.get(a)! - position.get(b)!), ...hidden])
   }
 
   /** Saca los que ya no existen (el árbol, cuando cambian los `items`). */
