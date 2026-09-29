@@ -50,3 +50,11 @@ export function cn(...inputs: ClassValue[]) {
  * que estaba copiado 110 veces: un ajuste al contrato había que hacerlo 110 veces.
  */
 export type WithClassName<P> = Omit<P, "className"> & { className?: string }
+
+/**
+ * `Omit` que respeta las uniones: saca las claves de cada rama por separado. `Omit<>` común aplana la
+ * unión en un solo objeto y pierde la discriminación: sobre `TreeProps` o `FileGridProps` (unión por
+ * `selectionMode` y, en `Tree`, por `grid`), `selected` quedaba `string | string[] | null` para
+ * cualquier modo. Para envolver esos componentes: `DistributiveOmit<FileGridProps, "items">`.
+ */
+export type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never

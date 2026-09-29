@@ -1,7 +1,8 @@
 // @vitest-environment node
-import { describe, expect, it } from "vitest"
+import { describe, expect, expectTypeOf, it } from "vitest"
 
-import { cn } from "../src/lib/utils"
+import type { FileGridProps } from "../src/components/file-grid"
+import { cn, type DistributiveOmit } from "../src/lib/utils"
 
 describe("cn", () => {
   it("una clase de la escala tipográfica convive con un color de texto", () => {
@@ -26,5 +27,17 @@ describe("cn", () => {
 
   it("descarta los valores falsy", () => {
     expect(cn("a", false, undefined, "b")).toBe("a b")
+  })
+})
+
+describe("DistributiveOmit", () => {
+  it("saca una clave de cada rama de una unión sin mezclar las ramas (Omit<> las aplana)", () => {
+    type Sin = DistributiveOmit<FileGridProps, "items">
+    expectTypeOf<Sin>().not.toHaveProperty("items")
+    // Con Omit<> común, `selected` quedaba `string | string[] | null` sin importar selectionMode.
+    const multiple: Sin = { "aria-label": "Archivos", selectionMode: "multiple", selected: ["a"] }
+    // @ts-expect-error -- con selectionMode="multiple", selected sigue siendo un array
+    const mal: Sin = { "aria-label": "Archivos", selectionMode: "multiple", selected: "a" }
+    expect([multiple, mal]).toHaveLength(2)
   })
 })

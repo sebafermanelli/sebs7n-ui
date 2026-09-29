@@ -1,4 +1,4 @@
-export { cn, TYPE_SCALE, type WithClassName } from "./lib/utils.js"
+export { cn, TYPE_SCALE, type DistributiveOmit, type WithClassName } from "./lib/utils.js"
 export {
   composite,
   contrastRatio,
