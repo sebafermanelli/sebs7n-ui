@@ -44,10 +44,10 @@ todavía; la 2.0.0 sale al final de todas las fases, y con ella la guía de migr
   (cards), `--radius-panel` 26 → **11** (diálogos, hojas), `--radius-menu-item` 6 → **8**, y dos
   nuevos: `--radius-item` **10** (ítems del Sidebar, filas) y `--radius-menu` **12** (menús y
   popovers). Botones, chips (Toggle, filtros de Command), el segmentado y los botoncitos de los
-  campos dejan la cápsula; el segmento activo mide `control − 2` (6). El panel de menú es
-  `rounded-menu p-1` (antes `p-1.5` con radio calculado): 8 + 4 = 12, concéntrico; la lista de
-  Select y el contenido de NavigationMenu también pasan a `p-1`. Popover, HoverCard y el toast pasan
-  a `rounded-menu`. `shape="rect"` ya es igual al default.
+  campos dejan la cápsula; el segmento activo mide `control − 2` (6). El panel de menú pasa a
+  `rounded-menu` (12; en 1.x, `control + 4` = 14): el padding y las medidas de adentro están en
+  «Menús (R3)». Popover, HoverCard y el toast pasan a `rounded-menu`. `shape="rect"` ya es igual al
+  default.
 - **Se va el vidrio.** Desaparecen `--glass`, `--glass-tint`, todas las `--sf-glass-*`, las
   utilidades `glass`, `glass-thin`, `glass-thick`, `glass-dense`, `glass-control`, `glass-rim`,
   `sheen` y `thumb-lens`, las `material-bar`, `material-popover`, `material-modal` y
@@ -133,9 +133,9 @@ flotantes, la paleta de Spotlight, los botones teñidos) no llega a publicarse.
   `translateY(100%)`). La X sigue arriba a la derecha. El gesto del Drawer no cambia. **Se va**
   `floatingSheetGapClassName` con las variables `--sheet-gap-*`: si la app los usaba, `inset-y-0
   right-0` y `translate-x-full`.
-- **Popover y HoverCard**: `floatingPopupClassName` pasa de `p-3` a **`p-4`** (el inset de 16 de
-  los popovers de iCloud); siguen `rounded-menu`, opacos y `shadow-menu`, que ya trae el filo de
-  1 px medido como borde. `PopoverContent translucent` usa `material-translucent`, para el popover
+- **Popover y HoverCard**: `floatingPopupClassName` se queda en **`p-4`**, como en 1.x (el inset de
+  16 de los popovers de iCloud); pasan a `rounded-menu` (en 1.x `rounded-surface`), opacos (en 1.x
+  vidrio) y con `shadow-menu`, que ya trae el filo de 1 px medido como borde. `PopoverContent translucent` usa `material-translucent`, para el popover
   de acceso rápido sobre un wallpaper.
 - **Command es la búsqueda de iCloud**, no la paleta de Spotlight. `CommandInput` es el search
   field (36 px, radio 10, `fill-1`, lupa de 16, texto `text-callout`; con el foco pierde el
@@ -143,8 +143,8 @@ flotantes, la paleta de Spotlight, los botones teñidos) no llega a publicarse.
   **30 px** (`min-h-7.5`), `rounded-menu-item`, título `text-callout` regular (sin
   `font-medium`), detalle `text-footnote`, ícono en una caja de 30 con el glifo de 16 en el
   acento (`commandItemClassName`, `commandItemIconClassName`). `CommandDialog` es la superficie de
-  un popover: `rounded-menu`, `shadow-menu`, `p-1`, 560 px (antes `rounded-panel`,
-  `shadow-modal`, 640). Los filtros quedan como los tokens de búsqueda de iCloud: gris, y el
+  un popover: `rounded-menu`, `shadow-menu`, 560 px, con el padding del panel de menú (`p-1.25`,
+  «Menús (R3)»). Command es nuevo en 2.0: no hay valores de 1.x. Los filtros quedan como los tokens de búsqueda de iCloud: gris, y el
   marcado en el acento sólido (`commandFilterClassName`). **Se van** la sugerencia en línea, `Tab`
   y `→` para aceptarla y la pista `tab`: Tab sale del campo. La API, el filtrado, el teclado, los
   grupos y el vacío no cambian.
@@ -160,40 +160,44 @@ flotantes, la paleta de Spotlight, los botones teñidos) no llega a publicarse.
 - **Se van `Button variant="tinted"` y `"destructive-tinted"`** (y `--sf-tint-hover`,
   `--sf-tint-active`): iCloud no tiene botón teñido. Eran de la fase 2 y no llegaron a publicarse.
 
-**Menús (R3).** Medidos en los menús de iCloud Drive (menú de fila y «View as»). Reemplaza lo que
-las fases 1–3 decían de los menús (ítems de 24, tilde a la izquierda, destructivo sin rojo), que no
-llega a publicarse. Vale para DropdownMenu, ContextMenu, Menubar, Select, Combobox, Autocomplete y
-las filas de Command, que comparten `variants/menu`.
+**Menús (R3).** Medidos en los menús de iCloud Drive (menú de fila y «View as»). Es la única fuente
+de las medidas de los menús: lo que las fases 1–3 decían (ítems de 24, tilde a la izquierda,
+destructivo sin rojo) no llega a publicarse. Los «antes» son los de 1.x (1.13.1). Vale para
+DropdownMenu, ContextMenu, Menubar, Select, Combobox, Autocomplete y las filas de Command, que
+comparten `variants/menu`.
 
-- **Panel** (`menuPopupClassName`): `rounded-menu` (12) con **5 px** de padding (`p-1.25`, antes
-  `p-1`) y `min-w-52` (208, antes 192); opaco, con `shadow-menu` y su filo de 1 px. La lista de
-  Select, el contenido de NavigationMenu y `CommandDialog` pasan también a `p-1.25`.
-- **Ítem** (`menuItemClassName`): **30 px** (`h-7.5`, antes 24), `px-2.5`, `gap-2.5`, radio 8,
-  14/400, íconos de 16 y **el primero en el acento** (`text-brand-900`; los íconos del paquete
-  —chevron del submenú, flecha externa— llevan `data-slot` y quedan afuera). Resaltado `fill-2`,
-  apretado `fill-3`, el texto no cambia. **Deshabilitado al 30 %** (`opacity-30`, antes
-  `text-label-tertiary`). Vacío y «Cargando» de Combobox, a 30.
+- **Panel** (`menuPopupClassName`): `rounded-menu` (12, antes 14) con **5 px** de padding
+  (`p-1.25`, antes `p-1`) y `min-w-52` (208, antes 160); opaco (antes vidrio), con `shadow-menu` y
+  su filo de 1 px. La lista de Select, el contenido de NavigationMenu y `CommandDialog` usan el
+  mismo `p-1.25`.
+- **Ítem** (`menuItemClassName`): **30 px** (`h-7.5`, antes 32), `px-2.5` (antes `px-2`),
+  `gap-2.5` (antes `gap-2`), radio 8 (antes 10), 14/400, íconos de 16 y **el primero en el acento**
+  (`text-brand-900`; los íconos del paquete —chevron del submenú, flecha externa— llevan
+  `data-slot` y quedan afuera). Resaltado `fill-2` (antes el tinte de la marca, `bg-highlight`),
+  apretado `fill-3`, el texto no cambia. **Deshabilitado al 30 %** (`opacity-30`, antes el texto en
+  `gray-700`). Vacío y «Cargando» de Combobox, a 30.
 - **Título de grupo** (`menuLabelClassName`): una fila de 30, `px-2.5`, **14/600 en `text-label`**
-  (antes gris `label-secondary`, `pt-2 pb-1`).
+  (antes 12 en `gray-900`, `px-2 py-1.5`).
 - **Separador** (`menuSeparatorClassName`): `mx-2.75 my-1 h-px bg-fill-2` — 9 px de alto con la
-  línea al medio y 11 de margen (antes `mx-2` en `fill-3`).
+  línea al medio y 11 de margen (antes de borde a borde, `-mx-1`, en `gray-alpha-400`).
 - **El tilde es el círculo de acento a la derecha** (el «View as» de Drive, que es el Select de
-  iCloud), no la canaleta izquierda de la fase 3. `menuGutterClassName` pasa de `pl-7` a **`pr-9`**
-  (la columna del tilde, en todo ítem marcable y en todas las opciones de Select y Combobox),
-  `menuIndicatorClassName` a `right-2.5`, y el círculo es `menuCheckClassName` (nuevo): `brand-900`
-  con el tilde en el color de la superficie. **`inset` cambia de sentido**: `data-inset:pl-9`
-  alinea con el texto de los ítems **con ícono**; en un menú con tildes ya no hace falta. Los
-  títulos de Select y Combobox ya no llevan canaleta. En Menubar el atajo queda antes del tilde.
-- **`variant="destructive"` es rojo otra vez** y deja de estar obsoleta (DropdownMenuItem,
-  ContextMenuItem, MenubarItem): texto e ícono en `text-red-ink` (`menuItemDestructiveClassName`),
-  4,5:1 sobre el panel, `fill-2` y `fill-3` en los dos temas; el resaltado es el mismo gris.
-- **Atajo**: `text-callout` gris a la derecha (antes `text-mono-callout`, 12).
-- **Menubar**: títulos de **28** (`h-7`, antes 24), `px-2.5`, como un botón de la toolbar de
+  iCloud); en 1.x era un tilde suelto a la derecha (`right-2`). `menuGutterClassName` (nuevo)
+  reserva la columna del tilde (`pr-9`) en todo ítem marcable y en todas las opciones de Select y
+  Combobox, `menuIndicatorClassName` (nuevo) la ubica a `right-2.5`, y el círculo es
+  `menuCheckClassName` (nuevo): `brand-900` con el tilde en el color de la superficie. El tilde se
+  renderiza después del contenido del ítem (es absoluto): así el primer ícono no cambia de color al
+  marcar. **`inset`** pasa de `pl-8` a `data-inset:pl-9`, alineado con el texto de los ítems
+  **con ícono**. En Menubar el atajo queda antes del tilde.
+- **`variant="destructive"`** (DropdownMenuItem, ContextMenuItem, MenubarItem): texto e ícono en
+  `text-red-ink` (`menuItemDestructiveClassName`; antes `red-900`), 4,5:1 sobre el panel, `fill-2` y
+  `fill-3` en los dos temas; el resaltado es **el mismo gris** que el resto (antes `red-100`).
+- **Atajo**: `text-callout` gris a la derecha (antes 12 mono en `gray-900`).
+- **Menubar**: títulos de **28** (`h-7`, antes 32), `px-2.5`, como un botón de la toolbar de
   iCloud; deshabilitado al 30 %.
 - **NavigationMenu: el link suelto de la barra es idéntico al trigger** (28 px, 14/400
   `label-secondary` que sube a `label`; activo con `active` o `aria-current`). Antes
   `NavigationMenuLink` sin `title` solo traía radio y foco y heredaba el texto de la página. El
-  trigger pasa de `px-2 py-1.5` a `h-7 px-2.5`. El contenido con `keepMounted` cerrado lleva
+  trigger pasa de `px-2 py-1.5` (14 en `gray-900`) a `h-7 px-2.5`. El contenido con `keepMounted` cerrado lleva
   `[&[hidden]]:hidden`, para que una grilla en su `className` no le gane al `hidden`.
 
 **Controles (R4).** Medidos en el CSS de los botones de iCloud (`ui-button`), las pestañas de
@@ -355,8 +359,8 @@ las fases R2–R5 rehacen diálogos, menús, controles y listas con las medidas 
 - `PopoverContent translucent`.
 - `menuGutterClassName`, `menuInsetClassName`, `menuIndicatorClassName` y `menuCheckClassName`
   (`variants/menu`): la columna del tilde a la derecha, el círculo de acento e `inset`.
-- **`external`** en `DropdownMenuItem`, `ContextMenuItem` y `MenubarItem`: texto en el acento y ↗
-  al final, como «Manage Apple Account ↗» de iCloud. Es una prop y no se deduce de
+- **`external`** en `DropdownMenuItem`, `ContextMenuItem` y `MenubarItem`: texto en el acento
+  (`brand-ink`, que llega a 4,5:1 también sobre el resaltado) y ↗ al final, como «Manage Apple Account ↗» de iCloud. Es una prop y no se deduce de
   `target="_blank"`, porque el `<a>` llega por `render`. Con `menuItemExternalClassName` y
   `menuItemExternalIconClassName`.
 - `menuItemDestructiveClassName` (el rojo del ítem que borra).
