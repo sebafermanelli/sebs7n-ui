@@ -64,7 +64,9 @@ const SEPARATORS = /[,;\t\n\r]+/
 /**
  * Un campo de etiquetas libres: se escribe y Enter (o coma) la agrega como un `Tag`; Backspace con el
  * campo vacío quita la última; pegar una lista la separa. Valida cada una antes de agregarla
- * (repetidas, `max`, `validate`) con el error en línea, y con `name` viajan con el `<form>`.
+ * (repetidas, `max`, `validate`) con el error en línea, y con `name` viajan con el `<form>`. Una
+ * repetida lo es sin importar mayúsculas: «Urgente» no entra si ya está «urgente». Pegar inserta en el
+ * cursor, como en cualquier campo, y después separa.
  *
  * Es texto libre: para elegir de una lista, `Combobox multiple`. Dentro de un `Field` se registra como
  * su control (etiqueta, ayuda, error, el `name` del `Field` y el foco desde `Form`).
@@ -105,6 +107,14 @@ function TagsInput({
     setErrors([])
   })
 
+  // Un aviso igual al anterior no cambia el texto y el lector no lo repite: se limpia y se escribe
+  // en la vuelta siguiente.
+  const announce = (message: string) => {
+    if (message !== status) return setStatus(message)
+    setStatus("")
+    setTimeout(() => setStatus(message), 50)
+  }
+
   const commit = (next: string[]) => {
     if (valueProp === undefined) setOwn(next)
     onValueChange?.(next)
@@ -118,7 +128,7 @@ function TagsInput({
     for (const raw of texts) {
       const tag = raw.trim()
       if (!tag) continue
-      const message = next.includes(tag)
+      const message = next.some((other) => other.toLowerCase() === tag.toLowerCase())
         ? labels.duplicate
         : max !== undefined && next.length >= max
           ? `${labels.tooMany} ${max}`
@@ -133,14 +143,14 @@ function TagsInput({
     const added = next.slice(tags.length)
     if (added.length) {
       commit(next)
-      setStatus(`${labels.added} ${added.join(", ")}`)
+      announce(`${labels.added} ${added.join(", ")}`)
     }
   }
 
   const remove = (index: number) => {
     const tag = tags[index]!
     commit(tags.filter((_, other) => other !== index))
-    setStatus(`${labels.removed} ${tag}`)
+    announce(`${labels.removed} ${tag}`)
     setErrors([])
   }
 
@@ -170,7 +180,8 @@ function TagsInput({
         {tags.length > 0 && (
           <ul {...listLabel} data-slot="tags-input-list" role="list" className="contents">
             {tags.map((tag, index) => (
-              <li key={tag} className="flex">
+              // Índice y texto: una lista controlada puede traer repetidas.
+              <li key={`${index}-${tag}`} className="flex">
                 <Tag
                   onRemove={
                     disabled
@@ -232,7 +243,10 @@ function TagsInput({
             const text = event.clipboardData.getData("text")
             if (!SEPARATORS.test(text)) return
             event.preventDefault()
-            add([...(draft ? [draft] : []), ...text.split(SEPARATORS)])
+            // Lo pegado entra en el cursor (o reemplaza lo seleccionado) y recién ahí se separa.
+            const start = event.currentTarget.selectionStart ?? draft.length
+            const end = event.currentTarget.selectionEnd ?? start
+            add(`${draft.slice(0, start)}${text}${draft.slice(end)}`.split(SEPARATORS))
           }}
           onFocus={field.onFocus}
           onBlur={field.onBlur}
@@ -249,7 +263,7 @@ function TagsInput({
           ))}
         </div>
       )}
-      {field.name && tags.map((tag) => <input key={tag} name={field.name} type="hidden" value={tag} />)}
+      {field.name && tags.map((tag, index) => <input key={`${index}-${tag}`} name={field.name} type="hidden" value={tag} />)}
       {required && (
         // La validación nativa de `required`: fuera de la vista y del Tab, devuelve el foco al campo.
         <input

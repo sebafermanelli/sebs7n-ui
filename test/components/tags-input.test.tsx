@@ -1,4 +1,5 @@
-import { fireEvent, render, screen, within } from "@testing-library/react"
+import * as React from "react"
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { renderToString } from "react-dom/server"
 import { describe, expect, it, vi } from "vitest"
@@ -151,5 +152,53 @@ describe("TagsInput", () => {
     const recoverable = vi.fn()
     await hidratar(container, ui, { onRecoverableError: recoverable })
     expect(recoverable).not.toHaveBeenCalled()
+  })
+
+  it("repetidas sin importar mayúsculas: «Urgente» ya está si está «urgente»", async () => {
+    const user = userEvent.setup()
+    render(<TagsInput aria-label="Etiquetas" defaultValue={["urgente"]} />)
+    await user.type(input(), "Urgente{Enter}")
+    expect(tags()).toEqual(["urgente"])
+    expect(screen.getByRole("alert")).toHaveTextContent("Urgente ya está")
+  })
+
+  it("controlada con repetidas: las muestra todas sin chocar las keys", () => {
+    const error = vi.spyOn(console, "error").mockImplementation(() => {})
+    const { container } = render(
+      <form>
+        <TagsInput aria-label="Etiquetas" name="tags" value={["a", "a"]} />
+      </form>
+    )
+    expect(tags()).toEqual(["a", "a"])
+    expect(new FormData(container.querySelector("form")!).getAll("tags")).toEqual(["a", "a"])
+    expect(error.mock.calls.flat().join(" ")).not.toMatch(/same key/)
+    error.mockRestore()
+  })
+
+  it("pegar inserta en el cursor: lo tipeado antes y después se une con lo pegado", async () => {
+    const user = userEvent.setup()
+    render(<TagsInput aria-label="Correos" />)
+    await user.type(input(), "ana@.ar")
+    await user.keyboard("{ArrowLeft}{ArrowLeft}{ArrowLeft}")
+    await user.paste("acme.com, beto@acme")
+    expect(tags()).toEqual(["ana@acme.com", "beto@acme.ar"])
+  })
+
+  it("agregar lo mismo dos veces se vuelve a anunciar (limpia y escribe)", async () => {
+    const user = userEvent.setup()
+    const texts: string[] = []
+    function Fixed() {
+      // La app no guarda: la lista sigue vacía y cada Enter vuelve a agregar la misma.
+      const [value] = React.useState<string[]>([])
+      return <TagsInput aria-label="Etiquetas" value={value} />
+    }
+    render(<Fixed />)
+    const observer = new MutationObserver(() => texts.push(status()!.textContent ?? ""))
+    observer.observe(status()!, { childList: true, characterData: true, subtree: true })
+    await user.type(input(), "a{Enter}")
+    await waitFor(() => expect(status()).toHaveTextContent("Agregada: a"))
+    await user.type(input(), "a{Enter}")
+    await waitFor(() => expect(texts.filter((text) => text === "Agregada: a")).toHaveLength(2))
+    observer.disconnect()
   })
 })
