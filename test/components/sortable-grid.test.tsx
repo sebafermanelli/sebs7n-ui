@@ -1,10 +1,11 @@
-import { act, render, screen, within } from "@testing-library/react"
+import { act, fireEvent, render, screen, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import * as React from "react"
 import { renderToString } from "react-dom/server"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 import { SortableGrid } from "../../src/components/sortable-grid"
+import { Dialog, DialogContent, DialogTitle } from "../../src/components/dialog"
 import { LabelsProvider } from "../../src/lib/labels"
 import { hidratar } from "../hidratar"
 import { mockSortableRects } from "../sortable-rects"
@@ -229,6 +230,138 @@ describe("SortableGrid", () => {
   })
 
   describe("modo edición", () => {
+    // `isPrimary`: en jsdom un `PointerEvent` arranca en `false`; el mouse de verdad es primario.
+    const down = { button: 0, isPrimary: true, clientX: 10, clientY: 10 }
+
+    it("mantener apretada ~0,5 s entra en edición, y el clic que sigue no abre el botón de adentro", () => {
+      vi.useFakeTimers()
+      try {
+        const onEditingChange = vi.fn()
+        const onOpen = vi.fn()
+        render(<Widgets defaultEditing={false} onEditingChange={onEditingChange} onOpen={onOpen} />)
+        const open = screen.getByRole("button", { name: "Abrir Clientes" })
+        fireEvent.pointerDown(open, down)
+        act(() => vi.advanceTimersByTime(499))
+        expect(onEditingChange).not.toHaveBeenCalled()
+        act(() => vi.advanceTimersByTime(1))
+        expect(onEditingChange).toHaveBeenCalledWith(true)
+        // Ya en edición (sin controlar): la tarjeta es parada de Tab.
+        expect(screen.getAllByRole("listitem")[1]).toHaveAttribute("tabindex", "0")
+        fireEvent.pointerUp(open)
+        fireEvent.click(open)
+        expect(onOpen).not.toHaveBeenCalled()
+        // El próximo clic es un clic.
+        fireEvent.pointerDown(open, down)
+        fireEvent.click(open)
+        expect(onOpen).toHaveBeenCalledTimes(1)
+      } finally {
+        vi.useRealTimers()
+      }
+    })
+
+    it("un clic normal no entra, y moverse o soltar antes de tiempo cancela", () => {
+      vi.useFakeTimers()
+      try {
+        const onEditingChange = vi.fn()
+        const onOpen = vi.fn()
+        render(<Widgets defaultEditing={false} onEditingChange={onEditingChange} onOpen={onOpen} />)
+        const open = screen.getByRole("button", { name: "Abrir Facturas" })
+        fireEvent.pointerDown(open, down)
+        act(() => vi.advanceTimersByTime(200))
+        fireEvent.pointerUp(open)
+        fireEvent.click(open)
+        act(() => vi.advanceTimersByTime(1000))
+        expect(onOpen).toHaveBeenCalledTimes(1)
+        fireEvent.pointerDown(open, down)
+        fireEvent.pointerMove(open, { isPrimary: true, clientX: 30, clientY: 10 })
+        act(() => vi.advanceTimersByTime(600))
+        // El botón derecho y un segundo dedo tampoco.
+        fireEvent.pointerDown(open, { ...down, button: 2 })
+        act(() => vi.advanceTimersByTime(600))
+        fireEvent.pointerDown(open, { ...down, isPrimary: false })
+        act(() => vi.advanceTimersByTime(600))
+        expect(onEditingChange).not.toHaveBeenCalled()
+      } finally {
+        vi.useRealTimers()
+      }
+    })
+
+    const tick = () => act(() => new Promise((resolve) => setTimeout(resolve)))
+
+    it("un clic en una tarjeta sigue en edición; uno en el espacio vacío sale, y Esc también", async () => {
+      const user = userEvent.setup()
+      const onEditingChange = vi.fn()
+      render(<Widgets onEditingChange={onEditingChange} />)
+      await tick()
+      await user.click(screen.getByRole("button", { name: "Abrir Clientes" }))
+      expect(onEditingChange).not.toHaveBeenCalled()
+      await user.click(screen.getByRole("list", { name: "Widgets" }))
+      expect(onEditingChange).toHaveBeenLastCalledWith(false)
+      expect(screen.getAllByRole("listitem")[0]).not.toHaveAttribute("tabindex")
+    })
+
+    it("Esc sale de la edición", async () => {
+      const user = userEvent.setup()
+      const onEditingChange = vi.fn()
+      render(<Widgets onEditingChange={onEditingChange} />)
+      await tick()
+      await user.keyboard("{Escape}")
+      expect(onEditingChange).toHaveBeenCalledWith(false)
+    })
+
+    it("el clic que prende la edición (el «Editar» de la app) no la apaga al subir", async () => {
+      const user = userEvent.setup()
+      function App() {
+        const [editing, setEditing] = React.useState(false)
+        return (
+          <>
+            <button onClick={() => setEditing(!editing)} type="button">
+              {editing ? "Listo" : "Editar"}
+            </button>
+            <Widgets editing={editing} onEditingChange={setEditing} />
+          </>
+        )
+      }
+      render(<App />)
+      await user.click(screen.getByRole("button", { name: "Editar" }))
+      await tick()
+      expect(screen.getByRole("button", { name: "Listo" })).toBeInTheDocument()
+      await user.click(screen.getByRole("button", { name: "Listo" }))
+      await tick()
+      expect(screen.getByRole("button", { name: "Editar" })).toBeInTheDocument()
+    })
+
+    it("Esc durante un arrastre con teclado cancela el arrastre, no la edición", async () => {
+      const user = userEvent.setup()
+      const onEditingChange = vi.fn()
+      render(<Widgets onEditingChange={onEditingChange} />)
+      await tick()
+      screen.getAllByRole("listitem")[0]!.focus()
+      await user.keyboard(" {ArrowRight}{Escape}")
+      expect(live()).toHaveTextContent("Volvió a su lugar: Facturas.")
+      await tick()
+      expect(onEditingChange).not.toHaveBeenCalled()
+    })
+
+    it("Esc y los clics de un diálogo abierto encima son del diálogo", async () => {
+      const user = userEvent.setup()
+      const onEditingChange = vi.fn()
+      render(
+        <>
+          <Widgets onEditingChange={onEditingChange} />
+          <Dialog open>
+            <DialogContent>
+              <DialogTitle>Agregar un widget</DialogTitle>
+              <button type="button">Facturas</button>
+            </DialogContent>
+          </Dialog>
+        </>
+      )
+      await tick()
+      await user.click(screen.getByRole("button", { name: "Facturas" }))
+      await user.keyboard("{Escape}")
+      expect(onEditingChange).not.toHaveBeenCalled()
+    })
     it("fuera de edición no se arrastra: la tarjeta no es parada de Tab y Espacio no toma nada", async () => {
       const user = userEvent.setup()
       const onReorder = vi.fn()

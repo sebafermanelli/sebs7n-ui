@@ -1,4 +1,4 @@
-import { act, render, screen, within } from "@testing-library/react"
+import { act, fireEvent, render, screen, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import * as React from "react"
 import { renderToString } from "react-dom/server"
@@ -150,6 +150,20 @@ describe("SortableList", () => {
       render(<Invoices defaultEditing={false} />)
       expect(screen.getAllByRole("listitem")).toHaveLength(3)
       expect(screen.queryByRole("button", { name: /Reordenar/ })).toBeNull()
+    })
+
+    it("mantener apretada una fila ~0,5 s entra en edición y aparece la manija", () => {
+      vi.useFakeTimers()
+      try {
+        const onEditingChange = vi.fn()
+        render(<Invoices defaultEditing={false} onEditingChange={onEditingChange} />)
+        fireEvent.pointerDown(screen.getByText("Nube Digital"), { button: 0, isPrimary: true, clientX: 5, clientY: 5 })
+        act(() => vi.advanceTimersByTime(500))
+        expect(onEditingChange).toHaveBeenCalledWith(true)
+        expect(screen.getByRole("button", { name: "Reordenar Factura 0013" })).toBeInTheDocument()
+      } finally {
+        vi.useRealTimers()
+      }
     })
 
     it("controlado: con editing aparece la manija", () => {

@@ -132,11 +132,15 @@ function SortableBase<T>({
   labels: labelsProp,
   itemClassName,
   className,
+  ref,
   ...props
 }: SortableBaseProps<T>) {
   const labels = { ...sortableLabels, ...useLabels().sortable, ...defined(labelsProp) }
-  const [ownEditing, setOwnEditing] = React.useState(defaultEditing)
-  const editing = editingProp ?? ownEditing
+  const container = React.useRef<HTMLUListElement | null>(null)
+  // `true` desde que se toma un ítem hasta un tick después de soltarlo: el Esc que cancela un
+  // arrastre es del arrastre, no sale de la edición.
+  const dragging = React.useRef(false)
+  const { editing, press } = useEditMode({ editingProp, defaultEditing, onEditingChange, disabled, container, dragging })
   // Fuera de edición el arrastre no existe: ni manija, ni parada de Tab, ni sensores.
   const draggable = editing && !disabled
   // El id de dnd-kit sale de `useId`: sin él, su `DndDescribedBy-N` es un contador de módulo y el
@@ -251,6 +255,8 @@ function SortableBase<T>({
     }
   }
 
+  const settle = () => window.setTimeout(() => (dragging.current = false))
+
   const Container = variant === "list" ? List : "ul"
   return (
     <>
@@ -258,14 +264,29 @@ function SortableBase<T>({
         accessibility={{ announcements, screenReaderInstructions: { draggable: labels.instructions } }}
         collisionDetection={closestCenter}
         id={id}
-        onDragCancel={() => setDragTarget(null)}
-        onDragEnd={reorder}
+        onDragCancel={() => {
+          setDragTarget(null)
+          settle()
+        }}
+        onDragEnd={(event) => {
+          reorder(event)
+          settle()
+        }}
+        onDragStart={() => {
+          dragging.current = true
+        }}
         onDragOver={move}
         sensors={sensors}
       >
         <SortableContext disabled={!draggable} items={keys} strategy={variant === "list" ? verticalListSortingStrategy : inPlace}>
           <Container
             data-slot={`sortable-${variant}`}
+            data-editing={editing ? "" : undefined}
+            ref={(node: HTMLUListElement | null) => {
+              container.current = node
+              if (typeof ref === "function") return ref(node)
+              if (ref) ref.current = node
+            }}
             role="list"
             className={cn(variant === "grid" && "grid gap-5", className)}
             {...props}
@@ -274,6 +295,7 @@ function SortableBase<T>({
               const key = keys[index]!
               return (
                 <SortableItem
+                  press={press}
                   draggable={draggable}
                   editing={editing}
                   className={typeof itemClassName === "function" ? itemClassName(item, index) : itemClassName}
@@ -299,6 +321,125 @@ function SortableBase<T>({
   )
 }
 
+/** Cuánto hay que mantener apretado un ítem para entrar en edición, como en iOS. */
+const LONG_PRESS = 500
+/** Lo que se puede mover el puntero mientras tanto: más es un scroll o un arrastre, no apretar. */
+const SLOP = 8
+const ITEM = "[data-slot=sortable-list-item], [data-slot=sortable-grid-item], [data-slot=sortable-add]"
+/** Lo que flota encima (un diálogo, un menú): su Esc y sus clics son suyos, no salen de la edición. */
+const LAYER = "[role=dialog], [role=alertdialog], [role=menu], [role=listbox], [data-slot$=-overlay]"
+
+type PressHandlers = Pick<
+  React.DOMAttributes<HTMLElement>,
+  "onPointerDownCapture" | "onClickCapture" | "onPointerDown" | "onPointerMove" | "onPointerUp" | "onPointerCancel" | "onPointerLeave" | "onContextMenu"
+>
+
+type EditModeOptions = {
+  editingProp: boolean | undefined
+  defaultEditing: boolean
+  onEditingChange: ((editing: boolean) => void) | undefined
+  disabled: boolean
+  container: React.RefObject<HTMLElement | null>
+  dragging: React.RefObject<boolean>
+}
+
+/**
+ * El modo edición: controlable, se entra manteniendo apretado un ítem y se sale con Esc o con un
+ * clic en un espacio vacío. Devuelve los manejadores de puntero que va a llevar cada ítem.
+ */
+function useEditMode({ editingProp, defaultEditing, onEditingChange, disabled, container, dragging }: EditModeOptions) {
+  const [own, setOwn] = React.useState(defaultEditing)
+  const editing = editingProp ?? own
+  // Lo de ahora, para lo que corre fuera del render (el timer, los listeners de `document`).
+  const latest = React.useRef({ editing, editingProp, onEditingChange })
+  latest.current = { editing, editingProp, onEditingChange }
+  const setEditing = React.useCallback((next: boolean) => {
+    const current = latest.current
+    if (next === current.editing) return
+    // Dos avisos en el mismo evento (el «Listo» de la app y el clic afuera) dicen uno solo.
+    current.editing = next
+    if (current.editingProp === undefined) setOwn(next)
+    current.onEditingChange?.(next)
+  }, [])
+
+  const press = React.useRef<{ timer: number; x: number; y: number } | null>(null)
+  // `true` cuando el mantener apretado se cumplió: el `click` que llega al soltar no es un clic.
+  const longPressed = React.useRef(false)
+  const cancelPress = React.useCallback(() => {
+    if (press.current) window.clearTimeout(press.current.timer)
+    press.current = null
+  }, [])
+  React.useEffect(() => cancelPress, [cancelPress])
+
+  React.useEffect(() => {
+    if (!editing) return
+    const exit = () => setEditing(false)
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape" || event.defaultPrevented || dragging.current) return
+      if (event.target instanceof Element && event.target.closest(LAYER)) return
+      exit()
+    }
+    const onClick = (event: MouseEvent) => {
+      const target = event.target
+      // Desconectado: era el «−» de un ítem que ya se sacó.
+      if (!(target instanceof Element) || !target.isConnected || target.closest(LAYER)) return
+      const item = target.closest(ITEM)
+      if (item && container.current?.contains(item)) return
+      exit()
+    }
+    // Un tick después: el clic que prendió la edición (el «Editar» de la app) todavía está subiendo
+    // al `document`, y la apagaría en el acto.
+    const timer = window.setTimeout(() => {
+      document.addEventListener("keydown", onKeyDown)
+      document.addEventListener("click", onClick)
+    })
+    return () => {
+      window.clearTimeout(timer)
+      document.removeEventListener("keydown", onKeyDown)
+      document.removeEventListener("click", onClick)
+    }
+  }, [editing, setEditing, container, dragging])
+
+  const handlers: PressHandlers = {
+    onPointerDownCapture: () => {
+      longPressed.current = false
+    },
+    onClickCapture: (event) => {
+      if (!longPressed.current) return
+      longPressed.current = false
+      event.preventDefault()
+      event.stopPropagation()
+    },
+    ...(editing || disabled
+      ? {}
+      : ({
+          onPointerDown: (event) => {
+            if (event.button !== 0 || event.isPrimary === false) return
+            cancelPress()
+            const { clientX: x, clientY: y } = event
+            const timer = window.setTimeout(() => {
+              press.current = null
+              longPressed.current = true
+              setEditing(true)
+            }, LONG_PRESS)
+            press.current = { x, y, timer }
+          },
+          onPointerMove: (event) => {
+            const start = press.current
+            if (start && Math.hypot(event.clientX - start.x, event.clientY - start.y) > SLOP) cancelPress()
+          },
+          onPointerUp: cancelPress,
+          onPointerCancel: cancelPress,
+          onPointerLeave: cancelPress,
+          // En táctil, apretar largo abre el menú del sistema (Android) justo cuando entra en edición.
+          onContextMenu: (event) => {
+            if (press.current) event.preventDefault()
+          },
+        } satisfies PressHandlers)),
+  }
+  return { editing, press: handlers }
+}
+
 // La grilla no corre a nadie con transformaciones (el orden ya cambió en el DOM)…
 const inPlace: SortingStrategy = () => null
 // …y cada tarjeta que cambió de lugar se desliza desde donde estaba, no salta.
@@ -306,6 +447,7 @@ const animateAlways: AnimateLayoutChanges = (args) => defaultAnimateLayoutChange
 
 type SortableItemProps = {
   id: string
+  press: PressHandlers
   editing: boolean
   draggable: boolean
   index: number
@@ -317,7 +459,7 @@ type SortableItemProps = {
   children: (state: SortableItemState) => React.ReactNode
 }
 
-function SortableItem({ id, editing, draggable, index, label, labels, variant, handle, className, children }: SortableItemProps) {
+function SortableItem({ id, press, editing, draggable, index, label, labels, variant, handle, className, children }: SortableItemProps) {
   const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } = useSortable({
     id,
     animateLayoutChanges: variant === "grid" ? animateAlways : undefined,
@@ -359,6 +501,7 @@ function SortableItem({ id, editing, draggable, index, label, labels, variant, h
         style={style}
         data-dragging={isDragging ? "" : undefined}
         data-slot="sortable-list-item"
+        {...press}
         className={cn("data-dragging:z-10 data-dragging:bg-surface data-dragging:shadow-menu", motion, className)}
       >
         {grip}
@@ -375,9 +518,10 @@ function SortableItem({ id, editing, draggable, index, label, labels, variant, h
       style={style}
       data-dragging={isDragging ? "" : undefined}
       data-slot="sortable-grid-item"
+      {...press}
       {...(wholeItem ? { ...a11y, ...listeners, "aria-describedby": cn(pressed && grabbedId, a11y["aria-describedby"]) || undefined } : {})}
       className={cn(
-        "relative min-w-0 rounded-surface data-dragging:z-10 data-dragging:[&>*]:shadow-modal",
+        "relative min-w-0 rounded-surface [-webkit-touch-callout:none] data-dragging:z-10 data-dragging:[&>*]:shadow-modal",
         wholeItem && "cursor-grab outline-none active:cursor-grabbing focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(color:--sf-focus)",
         motion,
         className
