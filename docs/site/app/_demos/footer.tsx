@@ -38,11 +38,16 @@ export function Site() {
 
 /**
  * Sobre el wallpaper
- * Con `data-ambient` (lo pone `AppShell ambient`) el pie es `material-translucent`, como las barras: el wallpaper se ve a través y el texto sigue a 4,5:1.
+ * Adentro de `data-ambient` (lo pone `AppShell ambient`; acá, un degradé en su lugar) el pie es `material-translucent`, como las barras: el wallpaper se ve a través y el texto sigue a 4,5:1.
  */
 export function OnWallpaper() {
   return (
-    <div className="bg-ambient flex h-64 w-full flex-col justify-end overflow-hidden rounded-surface border border-separator" data-ambient="">
+    // Un degradé propio en vez de `bg-ambient`, que es el fondo de la ventana entera.
+    <div
+      className="flex h-64 w-full flex-col justify-end overflow-hidden rounded-surface border border-separator"
+      data-ambient=""
+      style={{ background: "radial-gradient(120% 90% at 20% 0%, #5e8cff 0%, #3a4fd8 45%, #1b1f5e 100%)" }}
+    >
       <Footer>
         <FooterContent className="py-6">
           <FooterBottom className="border-t-0 pt-0">
