@@ -114,6 +114,21 @@ describe("InputGroup", () => {
     expect(grupo()).toHaveAttribute("data-disabled")
   })
 
+  it("con el dedo el botón crece con el campo (36 → 44 y 28 → 36)", () => {
+    render(
+      <InputGroup>
+        <InputGroupInput aria-label="Cupón" />
+        <InputGroupAddon>
+          <InputGroupButton>Aplicar</InputGroupButton>
+        </InputGroupAddon>
+      </InputGroup>
+    )
+    expect(screen.getByRole("button")).toHaveClass(
+      "pointer-coarse:group-data-[size=md]/input-group:h-9",
+      "pointer-coarse:group-data-[size=sm]/input-group:h-7"
+    )
+  })
+
   it("inválido: el borde rojo lo pone el grupo cuando el input lo declara", () => {
     render(
       <InputGroup>

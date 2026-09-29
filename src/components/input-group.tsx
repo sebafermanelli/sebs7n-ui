@@ -105,7 +105,7 @@ const BUTTON_VARIANT = {
   default: "bg-brand-700 text-brand-contrast hover:bg-brand-800 focus-visible:focus-ring-inverse",
 }
 
-// Un botón a escala del campo: 20 en uno de 28, 28 en uno de 36 y 32 en uno de 40, con el radio del
+// Un botón a escala del campo: 20 en uno de 28, 28 en uno de 36 y 32 en uno de 40 (con el dedo, 28 y 36), con el radio del
 // campo menos el aire que lo separa del borde. Solo ícono: `aria-label`.
 function InputGroupButton({ className, variant = "ghost", disabled, ...props }: InputGroupButtonProps) {
   const group = React.useContext(GroupContext)
@@ -116,6 +116,8 @@ function InputGroupButton({ className, variant = "ghost", disabled, ...props }: 
       className={cn(
         "inline-flex h-7 min-w-7 shrink-0 cursor-pointer items-center justify-center gap-1 rounded-[calc(var(--radius-field)-4px)] px-2 text-callout outline-none transition-control focus-visible:focus-ring",
         "group-data-[size=sm]/input-group:h-5 group-data-[size=sm]/input-group:min-w-5 group-data-[size=sm]/input-group:px-1.5 group-data-[size=lg]/input-group:h-8 group-data-[size=lg]/input-group:min-w-8",
+        // Con el dedo el campo crece (sm 36, md 44): el botón lo sigue, como los de inputShellButtonClassName.
+        "pointer-coarse:group-data-[size=sm]/input-group:h-7 pointer-coarse:group-data-[size=sm]/input-group:min-w-7 pointer-coarse:group-data-[size=md]/input-group:h-9 pointer-coarse:group-data-[size=md]/input-group:min-w-9",
         "data-disabled:pointer-events-none data-disabled:opacity-40 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
         BUTTON_VARIANT[variant],
         className
