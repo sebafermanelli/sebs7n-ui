@@ -175,7 +175,7 @@ Son nombres propios y no pasos de la escala de Tailwind: redefinir `--radius-md`
 
 El panel de un menú no es concéntrico con sus ítems, igual que en iCloud: radio 12 con 5 de padding e ítems de 8.
 
-La navegación ya no tiene variantes flotantes: `Sidebar`, `Navbar` y `Toolbar` van a ras y a todo el ancho, y **no ponen `data-variant`** en su elemento. Para colgar estilos propios, usá su `data-slot`.
+La navegación ya no tiene variantes flotantes: `Sidebar`, `Navbar` y `Toolbar` van a ras y a todo el ancho. `Sidebar` y `Navbar` **ya no ponen `data-variant`** en su elemento (la `Toolbar` sí, con `bar` o `plain`): para colgar estilos propios, usá su `data-slot`.
 
 ## Densidad
 
