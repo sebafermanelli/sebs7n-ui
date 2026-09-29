@@ -281,6 +281,13 @@ describe("wallpaper (W)", () => {
     }
   })
 
+  // Los dos cuartos de adelante, abajo en las esquinas: un 15 % más grandes que en 2.0 (26 y 30).
+  it("los cuartos de abajo miden 30 y 35 vmax", () => {
+    const u = utility("bg-ambient")
+    expect(u).toContain("circle 30vmax at -2% 102%")
+    expect(u).toContain("circle 35vmax at 102% 102%")
+  })
+
   it("se fueron los focos de la luz ambiente de 1.x", () => {
     expect(theme).not.toMatch(/--sf-ambient-/)
   })
