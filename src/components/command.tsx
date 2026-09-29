@@ -120,6 +120,7 @@ type CommandContextValue = {
   shouldFilter: boolean
   results: Results
   completion: Completion | null
+  setOverflowing: (overflowing: boolean) => void
   labels: Labels["command"]
 }
 
@@ -167,6 +168,8 @@ function Command({ value, defaultValue = "", onValueChange, shouldFilter = true,
   const query = value ?? uncontrolled
   const [results] = React.useState(createResults)
   const [highlighted, setHighlighted] = React.useState<string | undefined>(undefined)
+  // Lo escrito no entra en el campo: ver `CommandInput`.
+  const [overflowing, setOverflowing] = React.useState(false)
   const provided = useLabels().command
 
   const onValueChangeRef = React.useRef(onValueChange)
@@ -185,11 +188,11 @@ function Command({ value, defaultValue = "", onValueChange, shouldFilter = true,
     () => results.get(highlighted),
     () => undefined
   )
-  const completion = completionOf(query, highlighted, result)
+  const completion = overflowing ? null : completionOf(query, highlighted, result)
   const values = React.useSyncExternalStore(results.subscribe, results.values, () => NO_VALUES)
 
   const context = React.useMemo<CommandContextValue>(
-    () => ({ query, setQuery, shouldFilter, results, completion, labels: { ...provided, ...labels } }),
+    () => ({ query, setQuery, shouldFilter, results, completion, setOverflowing, labels: { ...provided, ...labels } }),
     // `labels` se compara por contenido: es un objeto literal en casi todos los usos.
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [query, setQuery, shouldFilter, results, completion?.value, completion?.text, completion?.accepts, provided, labels?.placeholder, labels?.empty, labels?.dialog]
@@ -243,14 +246,31 @@ type CommandInputProps = Omit<AutocompletePrimitive.Input.Props, "className"> & 
  * cambia hasta aceptarla con `Tab` o `→` al final: el lector de pantalla oye lo que se escribió, y
  * el resultado elegido ya lo anuncia el listbox.
  */
-function CommandInput({ className, wrapperClassName, placeholder, onKeyDown, ...props }: CommandInputProps) {
-  const { query, setQuery, completion, labels } = useCommand("CommandInput")
+function CommandInput({ className, wrapperClassName, placeholder, onKeyDown, ref, ...props }: CommandInputProps) {
+  const { query, setQuery, completion, setOverflowing, labels } = useCommand("CommandInput")
+  const input = React.useRef<HTMLInputElement | null>(null)
+  const setRef = React.useCallback(
+    (node: HTMLInputElement | null) => {
+      input.current = node
+      if (typeof ref === "function") ref(node)
+      else if (ref) ref.current = node
+    },
+    [ref]
+  )
+  // Si lo escrito no entra, el navegador desplaza el texto adentro del campo y la superposición
+  // —que arranca en el borde— ya no quedaría pegada al cursor. Ahí la sugerencia se esconde (y con
+  // ella Tab y la pista): se mide en cada tecla, antes de pintar.
+  useIsoLayoutEffect(() => {
+    const node = input.current
+    setOverflowing(!!node && node.scrollWidth > node.clientWidth)
+  }, [query, setOverflowing])
   return (
     <div data-slot="command-input-wrapper" className={cn("flex h-12 shrink-0 items-center gap-3 border-b border-gray-alpha-400 px-4", wrapperClassName)}>
       <SearchIcon aria-hidden="true" className="size-5 shrink-0 text-gray-900" />
       <div className="relative flex h-full min-w-0 flex-1 items-center">
         <AutocompletePrimitive.Input
           data-slot="command-input"
+          ref={setRef}
           aria-label={labels.placeholder}
           placeholder={placeholder ?? labels.placeholder}
           autoComplete="off"

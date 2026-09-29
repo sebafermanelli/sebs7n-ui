@@ -1275,6 +1275,7 @@ export const COMPONENTS = {
       "**`CommandDialog` para una búsqueda global** que se abre con ⌘K y flota sobre cualquier pantalla; **`Command` incrustado** cuando la búsqueda es parte de la página (un panel lateral, una pantalla de «ir a»). El atajo lo registra la app.",
       "**El elegido va en gris translúcido, no en el acento de los menús.** Como en Spotlight: el primer resultado está elegido desde la primera tecla, y una franja de acento fija gritaría más que los resultados.",
       "**La sugerencia en línea sigue al elegido**: al escribir es el primer resultado; con las flechas cambia. La pista `tab` aparece solo cuando Tab completa algo, es decir cuando lo escrito es el principio del título del elegido.",
+      "**Si lo escrito no entra en el ancho del campo, la sugerencia se esconde** (y con ella Tab y la pista): el navegador desplaza el texto adentro del campo y la sugerencia ya no quedaría pegada al cursor.",
       "`CommandEmpty` va **al lado** de `CommandList`, no adentro: un listbox solo admite opciones y grupos.",
       "Los chips (`CommandFilters`) no filtran solos: exponen el valor con `onValueChange` y la app decide qué grupos o ítems pasa.",
       "`shouldFilter={false}` cuando la app ya filtró y ordenó —un ranking propio, una búsqueda en el servidor—: la paleta muestra los ítems como vienen.",

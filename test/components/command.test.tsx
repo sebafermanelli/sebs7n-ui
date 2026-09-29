@@ -97,6 +97,24 @@ describe("Command", () => {
     expect(completion()).toBeNull()
   })
 
+  it("si lo escrito no entra en el campo, la sugerencia se esconde", async () => {
+    render(
+      <Command>
+        <CommandInput />
+        {items}
+      </Command>
+    )
+    const campo = screen.getByRole("combobox")
+    // Lo escrito desborda: el texto del campo se desplaza y la superposición ya no coincidiría.
+    Object.defineProperty(campo, "clientWidth", { configurable: true, get: () => 100 })
+    Object.defineProperty(campo, "scrollWidth", { configurable: true, get: () => 180 })
+    await userEvent.type(campo, "Fact")
+    expect(completion()).toBeNull()
+    // Sin sugerencia visible, Tab no completa nada.
+    await userEvent.keyboard("{Tab}")
+    expect(campo).toHaveValue("Fact")
+  })
+
   it("mientras se compone con un IME, Tab y → no aceptan la sugerencia", async () => {
     render(
       <Command>
