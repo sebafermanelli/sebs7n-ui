@@ -263,7 +263,8 @@ describe("wallpaper (W)", () => {
     const u = utility("bg-ambient")
     for (const n of [1, 2, 3, 4]) expect(u, `tono ${n}`).toContain(`oklch(from var(--sf-wallpaper-${n}) l c h / var(--ambient))`)
     const circulos = u.match(/radial-gradient\(circle \d+vmax at /g) ?? []
-    expect(circulos.length).toBeGreaterThanOrEqual(3)
+    // Siete, como en iCloud: con cuatro quedaban grandes zonas lisas.
+    expect(circulos.length).toBeGreaterThanOrEqual(7)
     // El borde: el color llega al 100 % del radio y medio píxel después ya es transparente.
     expect(u.match(/100%, transparent calc\(100% \+ 0\.5px\)/g)?.length).toBe(circulos.length)
     expect(u).not.toMatch(/ondas|transparent 60%/)
