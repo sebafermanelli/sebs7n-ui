@@ -3,7 +3,7 @@
 import * as React from "react"
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
-import { SearchIcon } from "lucide-react"
+import { ChevronRightIcon, PlusIcon, SearchIcon } from "lucide-react"
 
 import { useLabels } from "../lib/labels.js"
 import { cn, type WithClassName } from "../lib/utils.js"
@@ -16,16 +16,17 @@ type SidebarProps = React.ComponentProps<"aside"> & {
   /** Solo íconos (64px). El ancho cambia sin animación: el spec prohíbe animar width. */
   collapsed?: boolean
   /**
-   * `floating` (el default): un panel despegado del borde, con margen, radio de panel y sombra.
-   * iCloud lo pone a ras (`bar`); R5 decide cuál queda de default.
-   *
-   * `bar`: a ras de la ventana, a todo el alto y con un borde a la derecha. El de antes de 1.10.
+   * @deprecated Desde 2.0 el Sidebar es siempre la lista de fuentes de iCloud, a ras de la ventana.
+   * `"bar"` se acepta y no hace nada; el panel flotante (`"floating"`) se fue. Se borra en 3.0.
    */
-  variant?: "floating" | "bar"
+  variant?: "bar"
 }
 
-// Adentro del Sheet mobile va transparente y a ras: el fondo ya lo pone la hoja.
-function Sidebar({ className, collapsed: collapsedProp = false, variant = "floating", ...props }: SidebarProps) {
+// La columna de la lista de fuentes de iCloud (catálogo §2.3): pegada arriba, a la izquierda y abajo
+// —sin margen, radio ni sombra—, en `surface-secondary` y con el borde entre paneles
+// (`separator-strong`) a la derecha. Adentro del Sheet mobile va transparente y sin borde: el fondo
+// ya lo pone la hoja.
+function Sidebar({ className, collapsed: collapsedProp = false, variant: _variant, ...props }: SidebarProps) {
   const inSheet = React.useContext(SidebarInSheetContext)
   const collapsed = inSheet ? false : collapsedProp
   const value = React.useMemo(() => ({ collapsed }), [collapsed])
@@ -34,15 +35,9 @@ function Sidebar({ className, collapsed: collapsedProp = false, variant = "float
       <aside
         data-slot="sidebar"
         data-collapsed={collapsed ? "" : undefined}
-        data-variant={inSheet ? undefined : variant}
         className={cn(
-          "group/sidebar relative flex h-full w-60 shrink-0 flex-col bg-surface-secondary text-label data-collapsed:w-16",
-          // Flotante: 12px de aire alrededor —a la derecha no, ahí empieza el contenido con su
-          // propio margen— y la forma del cromo. El alto descuenta el margen para no desbordar
-          // la columna sticky del AppShell.
-          variant === "floating" && "m-3 mr-0 h-[calc(100%-1.5rem)] overflow-hidden rounded-panel border border-separator shadow-menu",
-          variant === "bar" && "border-r border-separator",
-          inSheet && "m-0 h-full w-full rounded-none border-0 bg-transparent shadow-none",
+          "group/sidebar relative flex h-full w-60 shrink-0 flex-col border-r border-separator-strong bg-surface-secondary text-label data-collapsed:w-16",
+          inSheet && "w-full border-0 bg-transparent",
           className
         )}
         {...props}
@@ -55,7 +50,7 @@ function SidebarHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="sidebar-header"
-      className={cn("flex shrink-0 flex-col gap-2 p-2 pt-3 group-data-collapsed/sidebar:items-center", className)}
+      className={cn("flex shrink-0 flex-col gap-2 px-2.5 pt-3 pb-2 group-data-collapsed/sidebar:items-center", className)}
       {...props}
     />
   )
@@ -71,7 +66,8 @@ function SidebarContent({ className, "aria-label": ariaLabel, ...props }: Sideba
       data-slot="sidebar-content"
       aria-label={ariaLabel ?? l.nav}
       className={cn(
-        "flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto overscroll-contain scroll-fade p-2 group-data-collapsed/sidebar:items-center",
+        // 10 px a cada lado del ítem, el inset de iCloud; 20 entre secciones.
+        "flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto overscroll-contain scroll-fade px-2.5 py-2 group-data-collapsed/sidebar:items-center",
         className
       )}
       {...props}
@@ -83,7 +79,7 @@ function SidebarFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="sidebar-footer"
-      className={cn("flex shrink-0 flex-col gap-1 border-t border-separator p-2 group-data-collapsed/sidebar:items-center", className)}
+      className={cn("flex shrink-0 flex-col gap-1 border-t border-separator px-2.5 py-2 group-data-collapsed/sidebar:items-center", className)}
       {...props}
     />
   )
@@ -92,52 +88,158 @@ function SidebarFooter({ className, ...props }: React.ComponentProps<"div">) {
 // El id del label se decide en el render (useId + los hijos directos), igual en server y cliente:
 // sin SidebarGroupLabel no hay aria-labelledby apuntando a la nada, y no hay efecto que lo agregue
 // después de hidratar. Un label anidado en otro elemento no se detecta: pasá aria-labelledby a mano.
-const SidebarGroupContext = React.createContext<string | null>(null)
-
-function findGroupLabel(children: React.ReactNode): React.ReactElement<{ id?: string }> | undefined {
-  // El genérico de `isValidElement` hace de type guard: describe las dos props que este
-  // recorrido mira —el `id` del label y los `children` del fragment— y evita los dos casts
-  // que había acá, que decían lo mismo pero después del `if`.
-  for (const child of React.Children.toArray(children)) {
-    if (!React.isValidElement<{ id?: string; children?: React.ReactNode }>(child)) continue
-    if (child.type === SidebarGroupLabel) return child
-    if (child.type === React.Fragment) {
-      const nested = findGroupLabel(child.props.children)
-      if (nested) return nested
-    }
-  }
-  return undefined
+type SidebarGroupState = {
+  id: string
+  collapsible: boolean
+  open: boolean
+  panelId: string
+  toggle: () => void
 }
 
-function SidebarGroup({ className, children, ...props }: React.ComponentProps<"div">) {
+const SidebarGroupContext = React.createContext<SidebarGroupState | null>(null)
+
+function flatChildren(children: React.ReactNode): React.ReactNode[] {
+  return React.Children.toArray(children).flatMap((child) =>
+    React.isValidElement<{ children?: React.ReactNode }>(child) && child.type === React.Fragment ? flatChildren(child.props.children) : [child]
+  )
+}
+
+// El genérico de `isValidElement` hace de type guard: describe la prop que este recorrido mira.
+const isLabel = (child: React.ReactNode): child is React.ReactElement<{ id?: string }> =>
+  React.isValidElement<{ id?: string }>(child) && child.type === SidebarGroupLabel
+const isAction = (child: React.ReactNode) => React.isValidElement(child) && child.type === SidebarGroupAction
+
+type SidebarGroupProps = React.ComponentProps<"div"> & {
+  /**
+   * La sección se abre y se cierra desde su título, como las de iCloud (Photos, Drive): el
+   * `SidebarGroupLabel` pasa a ser un botón con un chevron que gira. Colapsado, el sidebar muestra
+   * los íconos igual —no hay título para volver a abrirla—.
+   */
+  collapsible?: boolean
+  /** Abierta al montar (no controlado). Por defecto, abierta. */
+  defaultOpen?: boolean
+  /** Controlado: si la sección está abierta. */
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+}
+
+// Con título colapsable o con acciones («+»), el título y las acciones van en una fila arriba y los
+// ítems en un panel abajo; si no, los hijos quedan en el orden en que llegaron, como en 1.x.
+function SidebarGroup({ className, children, collapsible = false, defaultOpen = true, open: openProp, onOpenChange, ...props }: SidebarGroupProps) {
   const generatedId = React.useId()
-  const label = findGroupLabel(children)
+  const panelId = `${generatedId}-panel`
+  const [openState, setOpenState] = React.useState(defaultOpen)
+  const open = openProp ?? openState
+  const collapsed = useSidebarContext()?.collapsed ?? false
+
+  const all = flatChildren(children)
+  const label = all.find(isLabel)
   const labelId = label ? (label.props.id ?? generatedId) : undefined
+  const actions = all.filter(isAction)
+  const partir = collapsible || actions.length > 0
+
+  const toggle = React.useCallback(() => {
+    const next = !open
+    if (openProp === undefined) setOpenState(next)
+    onOpenChange?.(next)
+  }, [open, openProp, onOpenChange])
+  const value = React.useMemo(() => ({ id: generatedId, collapsible, open, panelId, toggle }), [generatedId, collapsible, open, panelId, toggle])
+
   return (
-    <SidebarGroupContext.Provider value={generatedId}>
+    <SidebarGroupContext.Provider value={value}>
       <div
         data-slot="sidebar-group"
+        data-open={collapsible ? String(open) : undefined}
         role="group"
         aria-labelledby={labelId}
         className={cn("flex w-full flex-col gap-0.5 group-data-collapsed/sidebar:items-center", className)}
         {...props}
       >
-        {children}
+        {partir ? (
+          <>
+            <div data-slot="sidebar-group-header" className="flex items-center gap-1 group-data-collapsed/sidebar:hidden">
+              {label}
+              {actions}
+            </div>
+            <div
+              id={panelId}
+              data-slot="sidebar-group-panel"
+              hidden={collapsible && !open && !collapsed}
+              className="flex w-full flex-col gap-0.5 group-data-collapsed/sidebar:items-center"
+            >
+              {all.filter((child) => child !== label && !actions.includes(child))}
+            </div>
+          </>
+        ) : (
+          children
+        )}
       </div>
     </SidebarGroupContext.Provider>
   )
 }
 
-// label-12 gray-900, sin uppercase (spec de Menú). Colapsado se oculta pero sigue nombrando al grupo.
-function SidebarGroupLabel({ className, id, ...props }: React.ComponentProps<"div">) {
-  const groupId = React.useContext(SidebarGroupContext)
+// El título de sección de iCloud: 14/600 secundario, sin uppercase, a 16 px del borde (10 del
+// contenido + 6). Colapsado se oculta pero sigue nombrando al grupo. En una sección `collapsible` es
+// un botón con chevron (› cerrada, ⌄ abierta) que gira sin recorrido con movimiento reducido.
+function SidebarGroupLabel({ className, id, children, ...props }: React.ComponentProps<"div">) {
+  const group = React.useContext(SidebarGroupContext)
   return (
     <div
       data-slot="sidebar-group-label"
-      id={id ?? groupId ?? undefined}
-      className={cn("flex h-7 shrink-0 items-center px-2 text-callout font-semibold text-label-secondary group-data-collapsed/sidebar:hidden", className)}
+      id={id ?? group?.id ?? undefined}
+      className={cn(
+        "flex h-7 min-w-0 flex-1 shrink-0 items-center px-1.5 text-callout font-semibold text-label-secondary group-data-collapsed/sidebar:hidden",
+        group?.collapsible && "px-0",
+        className
+      )}
       {...props}
-    />
+    >
+      {group?.collapsible ? (
+        <button
+          type="button"
+          aria-expanded={group.open}
+          aria-controls={group.panelId}
+          onClick={group.toggle}
+          className="group/sidebar-section flex h-full min-w-0 flex-1 cursor-pointer items-center gap-1 rounded-control px-1.5 text-left outline-none transition-control hover:text-label focus-visible:focus-ring"
+        >
+          <span className="truncate">{children}</span>
+          <ChevronRightIcon
+            aria-hidden="true"
+            className="size-3 shrink-0 transition-transform duration-150 ease-out motion-reduce:transition-none group-aria-expanded/sidebar-section:rotate-90"
+          />
+        </button>
+      ) : (
+        children
+      )}
+    </div>
+  )
+}
+
+type SidebarGroupActionProps = React.ComponentProps<"button"> & {
+  /** Nombre del botón («Nueva carpeta»). Obligatorio: el «+» solo no dice qué crea. */
+  "aria-label": string
+}
+
+// El «+» de una sección de iCloud («Folders +»): un círculo gris con la cruz, a la derecha del título.
+// Queda fuera del panel, así que se puede crear aunque la sección esté cerrada. Con hijos, dibuja
+// esos hijos en vez de la cruz. Colapsado se oculta con el título.
+function SidebarGroupAction({ className, children, ...props }: SidebarGroupActionProps) {
+  return (
+    <button
+      type="button"
+      data-slot="sidebar-group-action"
+      className={cn(
+        "relative flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-control text-label-secondary outline-none transition-control touch-target hover:bg-fill-1 hover:text-label focus-visible:focus-ring group-data-collapsed/sidebar:hidden [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        className
+      )}
+      {...props}
+    >
+      {children ?? (
+        <span aria-hidden="true" className="flex size-[18px] items-center justify-center rounded-full bg-label-tertiary text-surface-secondary">
+          <PlusIcon className="size-3" strokeWidth={3} />
+        </span>
+      )}
+    </button>
   )
 }
 
@@ -175,15 +277,6 @@ function isNonZero(badge: React.ReactNode) {
   return value != null && value !== false && value !== "" && value !== 0 && value !== "0"
 }
 
-// Children.toArray no abre fragments: <>{label}{badge}</> tiene que separar el badge igual.
-function flattenFragments(children: React.ReactNode): React.ReactNode[] {
-  return React.Children.toArray(children).flatMap((child) =>
-    React.isValidElement<{ children?: React.ReactNode }>(child) && child.type === React.Fragment
-      ? flattenFragments(child.props.children)
-      : [child]
-  )
-}
-
 function textOf(nodes: React.ReactNode[]): string | undefined {
   const parts = nodes.filter((n) => typeof n === "string" || typeof n === "number")
   return parts.length === nodes.length && parts.length > 0 ? parts.join("").trim() : undefined
@@ -205,7 +298,8 @@ function SidebarItem({ className, icon, active = false, tooltip, render, childre
   const shell = React.useContext(AppShellContext)
   const collapsed = sidebar?.collapsed ?? false
 
-  const all = flattenFragments(children)
+  // Children.toArray no abre fragments: <>{label}{badge}</> tiene que separar el badge igual.
+  const all = flatChildren(children)
   const badges = all.filter((c) => React.isValidElement(c) && c.type === SidebarItemBadge)
   const label = all.filter((c) => !badges.includes(c))
 
@@ -285,12 +379,13 @@ function SidebarSearch({
       data-slot="sidebar-search"
       aria-keyshortcuts={keyshortcuts}
       className={cn(
-        // 32 px, el search field de la barra de Mail y el alto de los controles de una barra: a 28
-        // (el alto de un ítem) el ⌘K de 20 casi tocaba los bordes. Con el Kbd `sm` de 18 quedan
-        // 7 px de aire arriba y abajo.
-        "flex h-8 pointer-coarse:h-11 w-full min-w-0 cursor-pointer items-center gap-2 rounded-field bg-fill-1 px-3 text-left text-callout text-label-secondary outline-none transition-control hover:text-label focus-visible:focus-ring [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
-        // Colapsado es un ícono más de la columna: el cuadrado de 28 de los ítems, no un campo.
-        "group-data-collapsed/sidebar:h-7 group-data-collapsed/sidebar:w-7 pointer-coarse:group-data-collapsed/sidebar:h-11 pointer-coarse:group-data-collapsed/sidebar:w-11 group-data-collapsed/sidebar:justify-center group-data-collapsed/sidebar:px-0",
+        // El search field de iCloud (catálogo §2.13): 32 px, radio 10, `fill-1`, la lupa a 10 del
+        // borde y el texto en 14. Con el foco pierde el relleno y queda el anillo interior. Con el Kbd
+        // `sm` de 18 quedan 7 px de aire arriba y abajo. El texto va en secundario y no en terciario:
+        // es el nombre del botón, y el terciario no llega a 4,5:1.
+        "flex h-8 pointer-coarse:h-11 w-full min-w-0 cursor-pointer items-center gap-1.5 rounded-field bg-fill-1 px-2.5 text-left text-callout text-label-secondary outline-none transition-control hover:text-label focus-visible:bg-transparent focus-visible:focus-ring [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+        // Colapsado es un ícono más de la columna: el cuadrado de 32 de los ítems, no un campo.
+        "group-data-collapsed/sidebar:h-8 group-data-collapsed/sidebar:w-8 pointer-coarse:group-data-collapsed/sidebar:h-11 pointer-coarse:group-data-collapsed/sidebar:w-11 group-data-collapsed/sidebar:justify-center group-data-collapsed/sidebar:px-0",
         className
       )}
       {...props}
@@ -321,6 +416,7 @@ export {
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
+  SidebarGroupAction,
   SidebarGroupLabel,
   SidebarHeader,
   SidebarItem,
@@ -328,6 +424,8 @@ export {
   SidebarSearch,
   useSidebar,
   type SidebarContentProps,
+  type SidebarGroupActionProps,
+  type SidebarGroupProps,
   type SidebarItemBadgeProps,
   type SidebarItemProps,
   type SidebarProps,

@@ -135,9 +135,9 @@ describe("densidad macOS (2.0)", () => {
     expect(out).toContain("data-[size=lg]:h-10")
   })
 
-  it("ítems de menú a 30 (iCloud) y del sidebar a 28", () => {
+  it("ítems de menú a 30 y del sidebar a 32 (iCloud)", () => {
     expect(classes(menuItemClassName)).toContain("h-7.5")
-    expect(classes(sidebarItemVariants())).toContain("h-7")
+    expect(classes(sidebarItemVariants())).toContain("h-8")
   })
 
   it("área táctil: el botón agranda su área con el dedo y el campo sube de alto", () => {

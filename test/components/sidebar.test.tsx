@@ -8,6 +8,7 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
+  SidebarGroupAction,
   SidebarGroupLabel,
   SidebarHeader,
   SidebarItem,
@@ -25,7 +26,7 @@ function Example({
 }: {
   collapsed?: boolean
   onSearch?: () => void
-  variant?: "floating" | "bar"
+  variant?: "bar"
 }) {
   return (
     <TooltipProvider delay={0}>
@@ -52,24 +53,32 @@ function Example({
 }
 
 describe("Sidebar", () => {
-  it("flotante por defecto: un panel opaco despegado del borde", () => {
-    render(<Example />)
-    const aside = screen.getByRole("complementary")
-    expect(aside).toHaveAttribute("data-variant", "floating")
-    expect(aside).toHaveClass("m-3", "mr-0", "h-[calc(100%-1.5rem)]", "rounded-panel", "border", "shadow-menu", "bg-surface-secondary")
-    expect(aside).not.toHaveClass("border-r")
-  })
-
-  it("variant=bar: a ras, w-60, fondo de sidebar, borde derecho; colapsado w-16 sin animar el ancho", () => {
-    const { rerender } = render(<Example variant="bar" />)
+  it("lista de fuentes de iCloud: a ras, w-60, fondo de sidebar y borde derecho; colapsado w-16 sin animar el ancho", () => {
+    const { rerender } = render(<Example />)
     const aside = screen.getByRole("complementary")
     expect(aside).toHaveAttribute("data-slot", "sidebar")
-    expect(aside).toHaveClass("w-60", "data-collapsed:w-16", "bg-surface-secondary", "border-r", "border-separator", "flex-col", "h-full")
+    expect(aside).toHaveClass("w-60", "data-collapsed:w-16", "bg-surface-secondary", "border-r", "border-separator-strong", "flex-col", "h-full")
+    // 2.0: sin la píldora flotante de 1.x: ni margen, ni radio, ni sombra.
+    expect(aside.className).not.toMatch(/(^|\s)(m-3|mr-0|rounded-panel|shadow-menu)(\s|$)/)
+    expect(aside).not.toHaveAttribute("data-variant")
     expect(aside).not.toHaveAttribute("data-collapsed")
     expect(aside.className).not.toMatch(/transition(-all|-\[width)|duration/)
-    rerender(<Example collapsed variant="bar" />)
+    rerender(<Example collapsed />)
     expect(aside).toHaveAttribute("data-collapsed")
     expect(screen.getByText("pie").closest("[data-slot=sidebar-footer]")).toHaveClass("border-t", "border-separator")
+  })
+
+  it("variant=bar (obsoleta) no cambia nada y no llega al DOM", () => {
+    render(<Example variant="bar" />)
+    const aside = screen.getByRole("complementary")
+    expect(aside).not.toHaveAttribute("variant")
+    expect(aside).not.toHaveAttribute("data-variant")
+    expect(aside).toHaveClass("border-r")
+  })
+
+  it("el contenido deja 10 px a cada lado del ítem, como iCloud", () => {
+    render(<Example />)
+    expect(document.querySelector("[data-slot=sidebar-content]")).toHaveClass("px-2.5")
   })
 
   it("items: links con el activo marcado por aria-current y data-active, y badge tabular", () => {
@@ -81,14 +90,14 @@ describe("Sidebar", () => {
     const clients = screen.getByRole("link", { name: /Clientes/ })
     expect(clients).not.toHaveAttribute("aria-current")
     expect(clients).toHaveClass(
-      "h-7",
+      "h-8",
       "rounded-item",
-      "px-2",
-      "gap-2",
+      "ps-3.5",
+      "pe-2.5",
+      "gap-2.5",
       "text-subheadline",
-      "text-label-secondary",
+      "text-label",
       "hover:bg-fill-1",
-      "hover:text-label",
       "data-active:bg-fill-1",
       "aria-[current=page]:bg-fill-1",
       "focus-visible:focus-ring"
@@ -97,6 +106,9 @@ describe("Sidebar", () => {
     // contraste; nada de `brand-*` en el texto.
     expect(clients).toHaveClass("data-active:text-label", "aria-[current=page]:text-label")
     expect(clients.className).not.toMatch(/(^|\s)(data-active:|aria-\[current=page\]:)?text-brand/)
+    // En iCloud el texto es el principal siempre (no el secundario) y el ícono va en el acento, a 18.
+    expect(clients.className).not.toMatch(/(^|\s)text-label-secondary(\s|$)/)
+    expect(clients).toHaveClass("[&_svg]:text-brand-900", "[&_svg:not([class*='size-'])]:size-[18px]")
     expect(screen.getByText("3")).toHaveClass("ml-auto", "text-callout", "tabular-nums", "text-label-secondary")
     // Adentro del activo, el contador también pasa al color de contraste.
     expect(screen.getByText("3").className).not.toMatch(/selection/)
@@ -115,7 +127,7 @@ describe("Sidebar", () => {
     const home = screen.getByRole("link", { name: "Inicio" })
     expect(screen.getByText("Inicio")).toHaveClass("group-data-collapsed/sidebar:sr-only")
     // Colapsado, el buscador es un ícono más de la columna: el cuadrado de 28 de los ítems.
-    expect(screen.getByRole("button", { name: "Buscar…" })).toHaveClass("group-data-collapsed/sidebar:h-7", "group-data-collapsed/sidebar:w-7")
+    expect(screen.getByRole("button", { name: "Buscar…" })).toHaveClass("group-data-collapsed/sidebar:h-8", "group-data-collapsed/sidebar:w-8")
     await userEvent.tab() // búsqueda
     await userEvent.tab()
     expect(home).toHaveFocus()
@@ -233,7 +245,9 @@ describe("Sidebar", () => {
     render(<Example onSearch={onSearch} />)
     const search = screen.getByRole("button", { name: "Buscar…" })
     // 32 px, el alto de un campo `md`: a 28 el atajo de 20 tocaba los bordes. Con el dedo, 44.
-    expect(search).toHaveClass("h-8", "px-3", "pointer-coarse:h-11", "bg-fill-1", "rounded-field", "focus-visible:focus-ring")
+    expect(search).toHaveClass("h-8", "px-2.5", "pointer-coarse:h-11", "bg-fill-1", "rounded-field", "focus-visible:focus-ring")
+    // El campo de búsqueda de iCloud pierde el relleno con el foco y queda solo el anillo.
+    expect(search).toHaveClass("focus-visible:bg-transparent")
     expect(search).toHaveAttribute("aria-keyshortcuts", "Meta+K")
     expect(search.querySelector("kbd")).toHaveTextContent("⌘K")
     // El atajo chico (18 px) deja 7 px de aire arriba y abajo adentro de los 32.
@@ -334,7 +348,80 @@ describe("Sidebar", () => {
     expect(link).toHaveAttribute("href", "/admin/viajes")
     expect(link).toHaveAttribute("aria-current", "page")
     expect(link).toHaveAttribute("data-active")
-    expect(link).toHaveClass("extra", "h-7", "aria-[current=page]:bg-fill-1")
+    expect(link).toHaveClass("extra", "h-8", "aria-[current=page]:bg-fill-1")
+  })
+
+  it("sección colapsable: el título es un botón con chevron que abre y cierra los ítems", async () => {
+    render(
+      <Sidebar>
+        <SidebarGroup collapsible>
+          <SidebarGroupLabel>Carpetas</SidebarGroupLabel>
+          <SidebarGroupAction aria-label="Nueva carpeta" />
+          <SidebarItem href="/a">Archivo</SidebarItem>
+        </SidebarGroup>
+      </Sidebar>
+    )
+    const toggle = screen.getByRole("button", { name: "Carpetas" })
+    expect(toggle).toHaveAttribute("aria-expanded", "true")
+    const panel = document.getElementById(toggle.getAttribute("aria-controls")!)!
+    expect(panel).toContainElement(screen.getByRole("link", { name: "Archivo" }))
+    expect(toggle.querySelector("svg")).toHaveClass("group-aria-expanded/sidebar-section:rotate-90")
+    // El grupo se sigue nombrando por su título.
+    expect(screen.getByRole("group", { name: "Carpetas" })).toBeInTheDocument()
+    await userEvent.click(toggle)
+    expect(toggle).toHaveAttribute("aria-expanded", "false")
+    expect(panel).not.toBeVisible()
+    expect(screen.queryByRole("link", { name: "Archivo" })).toBeNull()
+    // El «+» queda fuera del panel: se puede crear aunque la sección esté cerrada.
+    expect(screen.getByRole("button", { name: "Nueva carpeta" })).toBeVisible()
+  })
+
+  it("sección colapsable controlada: open y onOpenChange", async () => {
+    const onOpenChange = vi.fn()
+    render(
+      <Sidebar>
+        <SidebarGroup collapsible open={false} onOpenChange={onOpenChange}>
+          <SidebarGroupLabel>Etiquetas</SidebarGroupLabel>
+          <SidebarItem href="/b">B</SidebarItem>
+        </SidebarGroup>
+      </Sidebar>
+    )
+    const toggle = screen.getByRole("button", { name: "Etiquetas" })
+    expect(toggle).toHaveAttribute("aria-expanded", "false")
+    await userEvent.click(toggle)
+    expect(onOpenChange).toHaveBeenCalledWith(true)
+    expect(toggle).toHaveAttribute("aria-expanded", "false")
+  })
+
+  it("título de sección: 14/600 secundario a 16 px del borde; el «+» es un botón de ícono gris", () => {
+    render(
+      <Sidebar>
+        <SidebarGroup>
+          <SidebarGroupLabel>Carpetas</SidebarGroupLabel>
+          <SidebarGroupAction aria-label="Nueva carpeta" />
+        </SidebarGroup>
+      </Sidebar>
+    )
+    expect(screen.getByText("Carpetas")).toHaveClass("text-callout", "font-semibold", "text-label-secondary", "px-1.5")
+    const mas = screen.getByRole("button", { name: "Nueva carpeta" })
+    expect(mas).toHaveAttribute("type", "button")
+    expect(mas).toHaveAttribute("data-slot", "sidebar-group-action")
+    expect(mas.querySelector("svg")).not.toBeNull()
+    expect(mas).toHaveClass("group-data-collapsed/sidebar:hidden", "focus-visible:focus-ring")
+  })
+
+  it("colapsado, una sección cerrada sigue mostrando sus íconos", () => {
+    render(
+      <Sidebar collapsed>
+        <SidebarGroup collapsible defaultOpen={false}>
+          <SidebarGroupLabel>Carpetas</SidebarGroupLabel>
+          <SidebarItem href="/a" tooltip="Archivo">
+            Archivo
+          </SidebarItem>
+        </SidebarGroup>
+      </Sidebar>
+    )
+    expect(screen.getByRole("link", { name: "Archivo" })).toBeInTheDocument()
   })
 
   it("sidebarItemVariants sirve para un Link propio", () => {
