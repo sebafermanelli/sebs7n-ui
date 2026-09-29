@@ -16,19 +16,34 @@ describe("Checkbox", () => {
     expect(box).toHaveAttribute("data-checked")
   })
 
+  // iCloud (Calendar): 16 px, esquinas de 4, el relleno del color con el tilde blanco. Marcada no
+  // lleva borde: el relleno ya es el contorno. Deshabilitada a .4, como los botones.
   it("tiene los estados de la tabla del spec", () => {
     render(<Checkbox aria-label="x" />)
-    expect(screen.getByRole("checkbox")).toHaveClass(
+    const box = screen.getByRole("checkbox")
+    expect(box).toHaveClass(
+      "size-4",
       "rounded-sm",
       "border-label-tertiary",
       "hover:border-label-secondary",
       "focus-visible:focus-ring",
       "bg-surface",
+      "data-checked:border-transparent",
       "data-checked:bg-brand-700",
       "data-checked:hover:bg-brand-800",
-      "data-disabled:bg-fill-1",
+      "data-disabled:opacity-40",
       "aria-invalid:border-red-800"
     )
+    expect(box.className).not.toMatch(/data-disabled:(bg|border|text)-/)
+  })
+
+  // El check circular de Reminders (§2.14): 22 px, borde fino gris, se llena del color al completar.
+  it("shape circle es el check de Reminders", () => {
+    render(<Checkbox aria-label="Comprar pan" shape="circle" />)
+    const box = screen.getByRole("checkbox", { name: "Comprar pan" })
+    expect(box).toHaveAttribute("data-shape", "circle")
+    expect(box).toHaveClass("size-5.5", "rounded-full", "border-[1.5px]")
+    expect(box).not.toHaveClass("size-4", "rounded-sm")
   })
 
   it("indeterminate se marca con data-indeterminate", () => {
@@ -48,6 +63,17 @@ describe("RadioGroup", () => {
     await userEvent.click(screen.getByRole("radio", { name: "B" }))
     expect(screen.getByRole("radio", { name: "B" })).toHaveAttribute("data-checked")
     expect(screen.getByRole("radio", { name: "A" })).not.toHaveAttribute("data-checked")
+  })
+
+  it("marcado sin borde, deshabilitado a .4", () => {
+    render(
+      <RadioGroup defaultValue="a" aria-label="Plan">
+        <RadioGroupItem value="a" aria-label="A" />
+      </RadioGroup>
+    )
+    const radio = screen.getByRole("radio", { name: "A" })
+    expect(radio).toHaveClass("size-4", "rounded-full", "data-checked:border-transparent", "data-checked:bg-brand-700", "data-disabled:opacity-40")
+    expect(radio.className).not.toMatch(/data-disabled:(bg|border)-/)
   })
 })
 
@@ -69,5 +95,13 @@ describe("Switch", () => {
   it("estado invalid también por data-invalid, como Checkbox y Radio", () => {
     render(<Switch aria-label="Avisos" />)
     expect(screen.getByRole("switch")).toHaveClass("aria-invalid:ring-red-800", "data-invalid:ring-red-800")
+  })
+
+  // iCloud no tiene Switch: se deriva. Apagado, como todo control del sistema, a .4.
+  it("deshabilitado a .4", () => {
+    render(<Switch aria-label="Avisos" disabled />)
+    const sw = screen.getByRole("switch")
+    expect(sw).toHaveClass("data-disabled:opacity-40")
+    expect(sw.className).not.toMatch(/data-disabled:bg-/)
   })
 })

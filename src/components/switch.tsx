@@ -37,7 +37,8 @@ function Switch({ className, size = "md", variant = "default", ...props }: Switc
         "data-checked:bg-brand-700 data-checked:hover:bg-brand-800",
         "data-[variant=neutral]:data-checked:bg-label data-[variant=neutral]:data-checked:hover:bg-button-primary-hover",
         "aria-invalid:ring-1 aria-invalid:ring-red-800 data-invalid:ring-1 data-invalid:ring-red-800",
-        "data-disabled:cursor-not-allowed data-disabled:bg-fill-1 data-disabled:hover:bg-fill-1",
+        // Apagado a .4, como todo control de iCloud: se sigue viendo si estaba prendido.
+        "data-disabled:cursor-not-allowed data-disabled:opacity-40",
         className
       )}
       {...props}
@@ -51,7 +52,7 @@ function Switch({ className, size = "md", variant = "default", ...props }: Switc
           "group-data-[size=md]/switch:size-4 group-data-[size=sm]/switch:size-3",
           "data-checked:bg-brand-contrast group-data-[variant=neutral]/switch:data-checked:bg-surface",
           "group-data-[size=md]/switch:data-checked:translate-x-4 group-data-[size=sm]/switch:data-checked:translate-x-3",
-          "data-disabled:bg-gray-400 group-data-disabled/switch:scale-100"
+          "group-data-disabled/switch:scale-100"
         )}
       />
     </SwitchPrimitive.Root>
