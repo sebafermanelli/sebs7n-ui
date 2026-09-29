@@ -68,13 +68,15 @@ export function SearchButton({ className, compact = false }: { className?: strin
   const { abrir } = useSearch()
   return (
     // El search field de iCloud (catálogo §2.13): relleno `fill-1`, sin borde, radio 10, la lupa y
-    // el texto en terciario. 32 px, el alto de todos los controles de la barra (el ThemeSwitcher y
-    // el link a GitHub), que es el del campo de búsqueda de la barra de Mail.
+    // el texto en terciario. Solo la lupa (el teléfono, la barra del shell) es un botón de ícono de 28,
+    // el alto de la hamburguesa y del ThemeSwitcher de al lado, también con el dedo: el área de 44 la
+    // pone `touch-target`, sin agrandar lo que se ve. Con el texto, desde `sm`, es el campo de 32 de la
+    // barra de Mail.
     <button
       aria-keyshortcuts="Meta+K"
       className={cn(
-        "inline-flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-field bg-fill-1 text-callout text-label-tertiary outline-none transition-control hover:bg-fill-2 focus-visible:focus-ring [&_svg]:size-4 [&_svg]:shrink-0",
-        !compact && "sm:w-56 sm:justify-start sm:px-2.5",
+        "inline-flex size-7 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-control bg-fill-1 text-callout text-label-tertiary outline-none transition-control touch-target hover:bg-fill-2 focus-visible:focus-ring [&_svg]:size-4 [&_svg]:shrink-0",
+        !compact && "sm:h-8 sm:w-56 sm:justify-start sm:rounded-field sm:px-2.5",
         className
       )}
       onClick={abrir}
