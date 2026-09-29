@@ -11,9 +11,9 @@ import { ContextMenu, ContextMenuContent, ContextMenuTrigger } from "./context-m
 /**
  * La vista de íconos de iCloud Drive: cada archivo es una miniatura en una caja de 96 (con el filo de
  * 1 px y radio 4 de las miniaturas de Drive, catálogo §1.6), el nombre en 14 hasta dos líneas y el tipo
- * en 12 gris. Con el puntero encima y en la elegida, una sola caja gris de radio 12 envuelve miniatura,
- * nombre y tipo, como Drive: el nombre sigue en `label` (sin la píldora del acento del Finder), y con
- * el foco se le suma el anillo.
+ * en 12 gris. Con el puntero encima, una sola caja gris de radio 12 envuelve miniatura, nombre y tipo,
+ * como Drive; la elegida lleva además un borde de 2 px del acento por dentro. El nombre sigue en
+ * `label` (sin la píldora del acento del Finder).
  *
  * Drive web no se midió en esta vista (cambiarla escribe la preferencia de la cuenta): las medidas
  * salen de la lista de Drive y de la grilla de Photos (§2.6).
@@ -44,7 +44,7 @@ type FileGridPropsBase = Omit<React.ComponentProps<"div">, "children" | "default
    * Las acciones de un ítem: los ítems de un menú (`ContextMenuItem`, o `DropdownMenuItem`, que es el
    * mismo componente de Base UI), sin el `ContextMenuContent`. Un solo juego que abren el click
    * derecho, Shift+F10 o la tecla de menú sobre el ítem enfocado, y el click en el «…» que la grilla
-   * pone arriba a la derecha de la caja (en la elegida y con el puntero; fuera del orden de Tab y del
+   * pone arriba a la derecha de la caja (con el puntero o el foco; fuera del orden de Tab y del
    * lector, porque el teclado ya tiene el menú contextual).
    *
    * Como Drive, abrirlo sobre un ítem que no estaba elegido lo elige. `selected` son los ítems sobre
@@ -249,8 +249,15 @@ function FileGrid({
               else if (menu) prepareMenu(item)
             }}
             onTouchStart={menu && !item.disabled ? () => prepareMenu(item, false) : undefined}
-            // La caja gris de Drive: una sola, radio 12, alrededor de miniatura, nombre y tipo.
-            className="group/selectable relative flex min-w-0 cursor-default flex-col items-center gap-1 rounded-menu p-1.5 pb-2 outline-none select-none hover:bg-fill-1 focus-visible:focus-ring aria-disabled:opacity-40 aria-disabled:hover:bg-transparent data-[state=selected]:bg-selection-inactive"
+            // La caja gris de Drive: una sola, radio 12, alrededor de miniatura, nombre y tipo. Con el
+            // puntero, solo la caja; elegida (una o varias), la caja más 2 px del acento por dentro
+            // (`inset-ring`: no corre el layout y sigue el radio). El foco en una no elegida es el
+            // anillo de siempre; en una elegida el borde ya es del acento, así que el foco lo duplica
+            // (2 → 4 px): en `multiple` hay varias elegidas y la enfocada se tiene que distinguir.
+            className={cn(
+              "group/selectable relative flex min-w-0 cursor-default flex-col items-center gap-1 rounded-menu p-1.5 pb-2 outline-none select-none hover:bg-fill-1 focus-visible:focus-ring aria-disabled:opacity-40 aria-disabled:hover:bg-transparent",
+              "data-[state=selected]:bg-selection-inactive data-[state=selected]:inset-ring-2 data-[state=selected]:inset-ring-selection-border data-[state=selected]:focus-visible:inset-ring-4"
+            )}
           >
             <div
               data-slot="file-grid-thumbnail"
@@ -267,12 +274,13 @@ function FileGrid({
                 ))}
             </div>
             {menu && !item.disabled && (
-              // El «…» de Drive: un círculo gris translúcido de 24 en la esquina de la caja. Es del
-              // puntero (el teclado tiene Shift+F10): fuera del lector y del orden de Tab.
+              // El «…» de Drive: un círculo gris translúcido de 24 en la esquina de la caja, solo en la
+              // del puntero o la del foco (no en cada elegida). Es del puntero (el teclado tiene
+              // Shift+F10): fuera del lector y del orden de Tab.
               <span
                 data-slot="file-grid-more"
                 aria-hidden="true"
-                className="absolute end-1.5 top-1.5 opacity-0 transition-opacity group-hover/selectable:opacity-100 group-data-[state=selected]/selectable:opacity-100 motion-reduce:transition-none"
+                className="absolute end-1.5 top-1.5 opacity-0 transition-opacity group-hover/selectable:opacity-100 group-focus/selectable:opacity-100 motion-reduce:transition-none"
               >
                 <button
                   type="button"

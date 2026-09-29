@@ -90,6 +90,26 @@ describe("FileGrid", () => {
     // adentro no pasa a `text-on-selection` (ver `inside-selection`).
     expect(screen.getByRole("listbox").parentElement).not.toHaveClass("group/list")
   })
+
+  it("elegida (una o varias): la misma caja gris más un borde de acento de 2 px por dentro, sin mover el layout", () => {
+    render(<FileGrid aria-label="Archivos" defaultSelected={["a", "c"]} items={ITEMS} selectionMode="multiple" />)
+    for (const name of ["Factura 0012.pdf", "Contratos"]) {
+      const elegida = opcion(name)
+      expect(elegida).toHaveAttribute("data-state", "selected")
+      // Por dentro (`inset-ring`, compuesto con el resto del box-shadow), no un `border`: no corre nada.
+      expect(elegida).toHaveClass("data-[state=selected]:bg-selection-inactive", "data-[state=selected]:inset-ring-2", "data-[state=selected]:inset-ring-selection-border")
+      expect(elegida.className).not.toMatch(/(^|\s)(data-\[state=selected\]:)?border(-|\s|$)/)
+    }
+    // El hover sigue siendo solo la caja gris, sin borde.
+    const libre = opcion("Notas.txt")
+    expect(libre.className).not.toMatch(/hover:inset-ring|hover:border/)
+  })
+
+  it("foco: el anillo de siempre en una no elegida; en la elegida el borde de acento se duplica (2 → 4 px)", () => {
+    render(<FileGrid aria-label="Archivos" defaultSelected="a" items={ITEMS} />)
+    const elegida = opcion("Factura 0012.pdf")
+    expect(elegida).toHaveClass("focus-visible:focus-ring", "data-[state=selected]:focus-visible:inset-ring-4")
+  })
 })
 
 describe("FileGrid · menu", () => {
@@ -116,6 +136,13 @@ describe("FileGrid · menu", () => {
     expect(boton).toHaveClass("size-6", "rounded-full", "bg-fill-3", "text-label")
     // Un click no le deja el foco a lo que el lector no ve.
     expect(fireEvent.mouseDown(boton)).toBe(false)
+  })
+
+  it("el «…» aparece solo en el ítem con el puntero o con el foco, no en cada elegido", () => {
+    render(<FileGrid aria-label="Archivos" defaultSelected={["a", "b"]} items={ITEMS} menu={menu} selectionMode="multiple" />)
+    const slot = opcion("Factura 0012.pdf").querySelector("[data-slot=file-grid-more]")!
+    expect(slot).toHaveClass("opacity-0", "group-hover/selectable:opacity-100", "group-focus/selectable:opacity-100")
+    expect(slot.className).not.toContain("group-data-[state=selected]/selectable:opacity-100")
   })
 
   it("click derecho: elige el ítem y abre su menú", async () => {

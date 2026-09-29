@@ -681,3 +681,76 @@ describe("El «−» de SortableGrid/SortableList en edición (revisión R10)", 
   }
 })
 
+
+/**
+ * El borde de la elegida de FileGrid (como iCloud Drive): la caja gris `selection-inactive` más un
+ * borde de 2 px por dentro en el acento de la selección. Es lo único que distingue «elegida» de
+ * «con el puntero» (las dos son la caja gris), así que cae bajo WCAG 1.4.11: 3:1 contra lo que
+ * tiene al lado, que es la caja gris por dentro y, por fuera, donde esté la grilla: la página, lo
+ * que flota, el sidebar, el cuerpo translúcido de una Card sobre el wallpaper o el wallpaper
+ * directo. El token sale de `file-grid.tsx` y su paso de la marca de theme.css, no de una copia.
+ */
+describe("El borde de la elegida de FileGrid, en las cinco marcas (WCAG 1.4.11)", () => {
+  const css = read("theme.css")
+  const fuente = readFileSync(join(root, "src/components/file-grid.tsx"), "utf8")
+  const token = /data-\[state=selected\]:inset-ring-([a-z-]+?)(?=[\s"])/.exec(fuente.replace(/inset-ring-\d+/g, ""))?.[1]
+  const cuerpo = (theme: "light" | "dark") => {
+    const inicio = css.indexOf(theme === "light" ? ":root {" : ".dark {")
+    return css.slice(inicio, css.indexOf("\n  }", inicio))
+  }
+  const paso = (theme: "light" | "dark") => {
+    const propio = new RegExp(`--sf-${token}: var\\(--sf-brand-(\\d+)\\);`).exec(cuerpo(theme))
+    return Number(propio?.[1])
+  }
+  const tonos = (theme: "light" | "dark") =>
+    [...cuerpo(theme).matchAll(/--sf-wallpaper-\d: oklch\(from var\(--sf-brand-src\) ([\d.]+) calc\(c \* ([\d.]+)\) (?:h|calc\(h ([+-]) (\d+)\))\);/g)].map(
+      ([, l, k, signo, d]) => ({ l: Number(l), k: Number(k), d: d ? (signo === "-" ? -1 : 1) * Number(d) : 0 })
+    )
+  const [, l, c, h] = css.match(/--brand-base: oklch\(([\d.]+) ([\d.]+) ([\d.]+)\);/) ?? []
+  const porDefecto = [l, c, h].map(Number)
+  const marcas: Record<string, Record<"light" | "dark", number[]>> = {
+    "por defecto": { light: porDefecto, dark: porDefecto },
+    ...Object.fromEntries(
+      Object.entries(brands as Record<string, Record<"light" | "dark", { base: number[] }>>).map(([m, t]) => [m, { light: t.light.base, dark: t.dark.base }])
+    ),
+  }
+
+  // En oscuro la marca plena (`brand-700`) no llega: 2,1–2,4:1 contra la caja gris #3c3c3e y 2,0–2,7
+  // contra los tonos oscuros del wallpaper. Ahí va el paso claro, `brand-900`, como el foco.
+  it("el borde es su propio token: la marca plena en claro, el paso claro (brand-900) en oscuro", () => {
+    expect(token).toBe("selection-border")
+    expect(paso("light")).toBe(700)
+    expect(paso("dark")).toBe(900)
+  })
+  const color = (theme: "light" | "dark", base: number[]) => {
+    if (paso(theme) === 700) return hexOfOklch(base as unknown as Oklch)
+    const [, pl, pc] = new RegExp(`--sf-brand-${paso(theme)}: oklch\\(from var\\(--sf-brand-src\\) ([\\d.]+) calc\\(c \\* ([\\d.]+)\\) h\\);`).exec(cuerpo(theme))!
+    return hexOfOklch([Number(pl), base[1]! * Number(pc), base[2]!] as unknown as Oklch)
+  }
+
+  for (const theme of ["light", "dark"] as const) {
+    const p = paleta[theme]
+    for (const [marca, temas] of Object.entries(marcas)) {
+      const base = temas[theme]
+      const borde = color(theme, base)
+      const fondos: Record<string, string> = {
+        "la caja gris (selection-inactive)": p["--sf-selection-inactive"]!,
+        página: p["--sf-background"]!,
+        superficie: p["--sf-surface"]!,
+        sidebar: p["--sf-surface-secondary"]!,
+      }
+      tonos(theme).forEach((t, i) => {
+        const wp = hexOfOklch([t.l, base[1]! * t.k, base[2]! + t.d] as unknown as Oklch)
+        fondos[`el wallpaper, tono ${i + 1}`] = wp
+        fondos[`cuerpo translúcido de Card sobre el tono ${i + 1}`] = flattenAlpha(p["--sf-translucent-body"]!, wp)
+      })
+      it(`${theme} · ${marca}: el borde ${borde} llega a 3:1 contra la caja y contra lo de afuera`, () => {
+        const fallas = Object.entries(fondos).flatMap(([donde, bg]) => {
+          const valor = ratio(borde, bg)
+          return valor < 3 ? [`${donde} ${bg}: ${valor.toFixed(2)}`] : []
+        })
+        expect(fallas).toEqual([])
+      })
+    }
+  }
+})

@@ -250,6 +250,7 @@
   --color-highlight: var(--sf-highlight);
   --color-highlight-active: var(--sf-highlight-active);
   --color-selection: var(--sf-selection);
+  --color-selection-border: var(--sf-selection-border);
   --color-on-selection: var(--sf-on-selection);
 
   --shadow-tooltip: var(--sf-shadow-tooltip);
@@ -469,6 +470,13 @@
     --sf-selection: var(--sf-brand-700);
     --sf-on-selection: var(--sf-brand-fg);
     /**
+     * El borde de la elegida de FileGrid (iCloud Drive): 2 px del acento por dentro de la caja
+     * gris. Cae bajo WCAG 1.4.11 (es lo que separa «elegida» de «con el puntero»): en claro la
+     * marca plena llega a 3:1 contra la caja, la página y el wallpaper; en oscuro no (2,0–2,7:1),
+     * y va el paso claro, como `--sf-focus`. Lo mide `test/contrast.test.ts`.
+     */
+    --sf-selection-border: var(--sf-brand-700);
+    /**
      * El vidrio teñido de un Badge o un Tag: cuánto de su color lleva el fondo y cuánto el
      * borde. Van como porcentaje suelto porque se usan de modificador de opacidad
      * (`bg-red-700/(--sf-tint-fill)`), así las nueve paletas comparten los dos números.
@@ -598,6 +606,7 @@
        el elemento que la declara. */
     --sf-selection: var(--sf-brand-700);
     --sf-on-selection: var(--sf-brand-fg);
+    --sf-selection-border: var(--sf-brand-900);
     --sf-tint-fill: 22%;
     --sf-tint-border: 34%;
 
