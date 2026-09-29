@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest"
 
 import { Badge } from "../../src/components/badge"
 import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardRow, CardTitle } from "../../src/components/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../src/components/table"
+import { Table, TableBody, TableCell, TableGroupHeader, TableHead, TableHeader, TableRow } from "../../src/components/table"
 import { Toggle } from "../../src/components/toggle"
 import { ToggleGroup, ToggleGroupItem } from "../../src/components/toggle-group"
 import { cardVariants } from "../../src/variants/card"
@@ -244,7 +244,7 @@ describe("Card", () => {
 })
 
 describe("Table", () => {
-  it("una sola superficie, header 40px hundido, filas 48px con hover", () => {
+  it("la lista de Drive: sin caja, cabecera 14 secundaria sin fondo, filas de 41 con hover fill-1", () => {
     render(
       <Table>
         <TableHeader>
@@ -262,11 +262,40 @@ describe("Table", () => {
       </Table>
     )
     const container = screen.getByRole("table").parentElement!
-    expect(container).toHaveClass("rounded-surface", "border", "border-separator", "bg-surface", "overflow-x-auto")
-    expect(screen.getByRole("table").querySelector("thead")).toHaveClass("bg-fill-1", "[&_tr]:h-10")
-    expect(screen.getByText("Cliente")).toHaveClass("text-callout", "text-label-secondary")
-    expect(screen.getByText("Ana").closest("tr")).toHaveClass("h-12", "hover:bg-fill-1", "data-[state=selected]:bg-selection-inactive", "data-[state=selected]:group-focus-within/table:bg-selection")
+    expect(container).toHaveClass("overflow-x-auto")
+    expect(container.className).not.toMatch(/(^|\s)(border|rounded-surface|bg-surface)(\s|$)/)
+    expect(screen.getByRole("table")).toHaveClass("border-separate", "border-spacing-0")
+    const head = screen.getByText("Cliente")
+    // El terciario de iCloud no llega a 4,5:1 en 14: va el secundario.
+    expect(head).toHaveClass("h-11", "text-callout", "font-normal", "text-label-secondary", "shadow-[inset_0_-1px_0_var(--color-separator)]")
+    expect(screen.getByRole("table").querySelector("thead")!.className).not.toMatch(/bg-/)
+    const fila = screen.getByText("Ana").closest("tr")!
+    expect(fila).toHaveClass("h-[41px]", "hover:[&>td]:bg-fill-1", "[&>:first-child]:rounded-s-item", "[&>:last-child]:rounded-e-item")
+    // Separador interior: una línea de 1 px arriba de cada celda, que arranca a 10 del borde.
+    expect(fila).toHaveClass("[&>td]:bg-[length:100%_1px]", "[&>td:first-child]:bg-[length:calc(100%-10px)_1px]", "first:[&>td]:bg-none")
+    // La primera celda es el nombre (17, principal); el resto, metadatos en 14 secundario.
+    expect(screen.getByText("Ana")).toHaveClass("first:text-body", "first:text-label", "text-callout", "text-label-secondary", "px-2.5")
     expect(screen.getByText("$1.200")).toHaveClass("text-right", "tabular-nums")
+  })
+
+  it("TableGroupHeader: el título de grupo de Drive, 19/600 con el contador inline", () => {
+    render(
+      <Table>
+        <TableBody>
+          <TableGroupHeader count="6 ítems">Últimos 7 días</TableGroupHeader>
+          <TableRow>
+            <TableCell>Ana</TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
+    )
+    const th = screen.getByRole("columnheader", { name: /Últimos 7 días/ })
+    expect(th).toHaveAttribute("scope", "colgroup")
+    expect(th).toHaveAttribute("colspan", "100")
+    expect(th).toHaveClass("h-[58px]", "text-title-3", "text-label")
+    expect(screen.getByText("6 ítems")).toHaveClass("text-subheadline", "font-normal", "text-label-secondary")
+    // La fila que sigue al título no lleva separador arriba.
+    expect(screen.getByText("Ana").closest("tr")).toHaveClass("[[data-slot=table-group-header]+&]:[&>td]:bg-none")
   })
 
   // Revisión de R1: la fila elegida va en acento mientras la tabla tiene el foco. Un click en una

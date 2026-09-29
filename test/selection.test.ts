@@ -55,8 +55,9 @@ describe("selección de iCloud (2.0)", () => {
 
   it("la fila elegida de una tabla: acento con foco en la tabla, gris sin foco", () => {
     const table = read("../src/components/table.tsx")
-    expect(table).toContain("data-[state=selected]:bg-selection-inactive")
-    expect(table).toContain("data-[state=selected]:group-focus-within/table:bg-selection")
+    // El fondo va en las celdas (R5a): así la fila elegida lleva el radio 10 de Drive en los extremos.
+    expect(table).toContain("data-[state=selected]:[&>td]:bg-selection-inactive")
+    expect(table).toContain("data-[state=selected]:group-focus-within/table:[&>td]:bg-selection")
     expect(table).toContain("data-[state=selected]:group-focus-within/table:text-on-selection")
     expect(table).toContain("group-data-[state=selected]/table-row:group-focus-within/table:text-on-selection")
   })
