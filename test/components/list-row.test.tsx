@@ -128,3 +128,23 @@ describe("ListRow", () => {
     expect(screen.getByTestId("fija")).toHaveAttribute("aria-current", "true")
   })
 })
+
+// El separador no se esconde con el puntero: en una fila que no es interactiva no hay relleno de
+// hover, y las líneas desaparecían sin motivo a la vista. Solo lo tapa la fila elegida, que sí es
+// un relleno sólido.
+describe("ListRow: el separador con el puntero", () => {
+  it("queda visible en hover, sea la fila interactiva o no; la elegida lo sigue tapando", () => {
+    render(
+      <List aria-label="Cuenta">
+        <ListRow title="Usado por la cuenta" trailing="12 GB" />
+        <ListRow onClick={() => {}} title="Facturas" />
+        <ListRow selected title="Clientes" />
+      </List>
+    )
+    for (const fila of screen.getAllByRole("listitem")) {
+      expect(fila).not.toHaveClass("hover:before:hidden")
+      expect(fila).not.toHaveClass("[li:hover+&]:before:hidden")
+      expect(fila).toHaveClass("first:before:hidden", "data-[state=selected]:before:hidden", "[[data-state=selected]+&]:before:hidden")
+    }
+  })
+})

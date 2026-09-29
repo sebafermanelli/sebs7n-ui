@@ -155,9 +155,10 @@ function ListRow({
       className={cn(
         "group/selectable relative rounded-item text-label transition-control [--list-row-inset:10px] data-icon:[--list-row-inset:54px]",
         // El separador interior: arranca donde empieza el texto (a 10, o a 54 con ícono) y no va en la
-        // primera fila ni al lado de la fila con el puntero o la elegida, como en Drive.
+        // primera fila ni al lado de la elegida, que es un relleno sólido. Con el puntero se queda:
+        // en una fila que no es interactiva no hay relleno, y las líneas desaparecían sin motivo.
         "before:pointer-events-none before:absolute before:end-2.5 before:top-0 before:start-(--list-row-inset) before:h-px before:bg-separator",
-        "first:before:hidden hover:before:hidden data-[state=selected]:before:hidden [li:hover+&]:before:hidden [[data-state=selected]+&]:before:hidden",
+        "first:before:hidden data-[state=selected]:before:hidden [[data-state=selected]+&]:before:hidden",
         interactive && !selected && "hover:bg-fill-1",
         "data-[state=selected]:bg-selection-inactive data-[state=selected]:group-focus-within/list:bg-selection data-[state=selected]:group-focus-within/list:text-on-selection",
         "data-[state=selected]:group-focus-within/list:[&_.text-label]:text-on-selection",
