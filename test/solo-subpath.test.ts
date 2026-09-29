@@ -27,6 +27,7 @@ const SOLO_SUBPATH = [
   "timeline",
   "resizable",
   "copy-button",
+  "password-input",
 ]
 
 describe("componentes solo por subpath", () => {

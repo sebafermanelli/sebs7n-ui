@@ -228,6 +228,17 @@ export type Labels = {
     /** Nombre del `<nav>` de las migas del encabezado. */
     breadcrumb: string
   }
+  passwordInput: {
+    /** Nombre del botón del ojo; `aria-pressed` dice si se está mostrando. */
+    show: string
+    /** El título de la barra de seguridad. */
+    strength: string
+    /** Los cuatro niveles, de menos a más. */
+    weak: string
+    fair: string
+    good: string
+    strong: string
+  }
   resizable: {
     /** El nombre de un separador sin `aria-label`. Mejor uno propio: «Ancho de la lista». */
     handle: string
@@ -364,6 +375,14 @@ export const defaultLabels: Labels = {
     roleDescription: "Campo numérico",
   },
   pageHeader: { breadcrumb: "Migas de pan" },
+  passwordInput: {
+    show: "Mostrar contraseña",
+    strength: "Seguridad",
+    weak: "Débil",
+    fair: "Aceptable",
+    good: "Buena",
+    strong: "Fuerte",
+  },
   resizable: { handle: "Cambiar el tamaño" },
   sheet: { close: "Cerrar" },
   sidebar: {

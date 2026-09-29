@@ -202,6 +202,7 @@ describe("LabelsProvider", () => {
       "multiSelect",
       "numberField",
       "pageHeader",
+      "passwordInput",
       "resizable",
       "sheet",
       "sidebar",
