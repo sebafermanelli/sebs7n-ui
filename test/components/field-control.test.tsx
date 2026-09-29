@@ -8,6 +8,7 @@ import { describe, expect, it, vi } from "vitest"
 
 import { Field, FieldError, FieldLabel } from "../../src/components/field"
 import { Form } from "../../src/components/form"
+import { ToggleGroup, ToggleGroupItem } from "../../src/components/toggle-group"
 import { useFieldControl } from "../../src/internal/field-control"
 
 function Counter({ initial = 0, disabled }: { initial?: number; disabled?: boolean }) {
@@ -130,5 +131,59 @@ describe("useFieldControl", () => {
     )
     await user.click(screen.getByRole("button", { name: "Guardar" }))
     expect(onFormSubmit.mock.calls[0]![0]).toEqual({ items: 3 })
+  })
+})
+
+// Recorre `values` de a uno con cada clic: el primero es el inicial del campo.
+function Stepper({ values }: { values: unknown[] }) {
+  const [index, setIndex] = React.useState(0)
+  const button = React.useRef<HTMLButtonElement>(null)
+  const field = useFieldControl({ value: values[index], filled: true, controlRef: button })
+  return (
+    <button ref={button} type="button" id={field.id} onClick={() => setIndex((i) => i + 1)}>
+      Siguiente
+    </button>
+  )
+}
+
+const file = (name: string, lastModified = 1) => new File(["abc"], name, { lastModified })
+
+describe("useFieldControl: sucio compara por estructura, no por referencia", () => {
+  it.each([
+    ["listas", ["a", "b"], ["a", "b"], ["a"]],
+    ["fechas", new Date(2026, 8, 27), new Date(2026, 8, 27), new Date(2026, 8, 28)],
+    ["rangos", { from: "2026-09-10", to: "2026-09-14" }, { from: "2026-09-10", to: "2026-09-14" }, { from: "2026-09-10", to: null }],
+    ["archivos por nombre, tamaño y fecha", [file("factura.pdf")], [file("factura.pdf")], [file("factura.pdf", 2)]],
+  ])("%s: una copia igual no ensucia, una distinta sí", async (_, initial, copy, other) => {
+    const user = userEvent.setup()
+    render(
+      <Field name="value">
+        <Stepper values={[initial, copy, other, copy]} />
+      </Field>
+    )
+    const next = screen.getByRole("button")
+    await user.click(next)
+    expect(root()).not.toHaveAttribute("data-dirty")
+    await user.click(next)
+    expect(root()).toHaveAttribute("data-dirty")
+    await user.click(next)
+    expect(root()).not.toHaveAttribute("data-dirty")
+  })
+
+  it("ToggleGroup: prender y apagar el mismo ítem lo deja limpio", async () => {
+    const user = userEvent.setup()
+    render(
+      <Field name="status">
+        <FieldLabel>Estados</FieldLabel>
+        <ToggleGroup defaultValue={["paid"]} multiple>
+          <ToggleGroupItem value="paid">Pagadas</ToggleGroupItem>
+          <ToggleGroupItem value="due">Vencidas</ToggleGroupItem>
+        </ToggleGroup>
+      </Field>
+    )
+    await user.click(screen.getByRole("button", { name: "Vencidas" }))
+    expect(root()).toHaveAttribute("data-dirty")
+    await user.click(screen.getByRole("button", { name: "Vencidas" }))
+    expect(root()).not.toHaveAttribute("data-dirty")
   })
 })

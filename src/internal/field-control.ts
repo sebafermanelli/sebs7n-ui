@@ -27,6 +27,22 @@ type FieldControlOptions = {
 }
 
 /**
+ * Igualdad por estructura para `data-dirty`: los controles arman una lista, un rango o una fecha nuevos
+ * en cada cambio, y por referencia volver al valor inicial seguía marcando «sucio». Un archivo es el
+ * mismo si coinciden nombre, tamaño y fecha (soltarlo de nuevo crea otro `File`).
+ */
+function isSameValue(a: unknown, b: unknown): boolean {
+  if (Object.is(a, b)) return true
+  if (!a || !b || typeof a !== "object" || typeof b !== "object") return false
+  if (a instanceof Date) return b instanceof Date && a.getTime() === b.getTime()
+  if (typeof File !== "undefined" && a instanceof File) return b instanceof File && a.name === b.name && a.size === b.size && a.lastModified === b.lastModified
+  if (Array.isArray(a)) return Array.isArray(b) && a.length === b.length && a.every((item, index) => isSameValue(item, b[index]))
+  if (Array.isArray(b) || Object.getPrototypeOf(a) !== Object.prototype || Object.getPrototypeOf(b) !== Object.prototype) return false
+  const keys = Object.keys(a)
+  return keys.length === Object.keys(b).length && keys.every((key) => isSameValue((a as Record<string, unknown>)[key], (b as Record<string, unknown>)[key]))
+}
+
+/**
  * Engancha un control propio (no un primitivo de Base UI) con el `Field` que lo envuelve, igual que
  * lo hacen `Switch` o `Select` por dentro: se registra en el `Form` (que lo enfoca si queda inválido
  * y manda su valor con el `name` del campo), marca tocado/lleno/sucio y valida con `validationMode`.
@@ -65,7 +81,7 @@ export function useFieldControl({ id, name, value, filled, disabled = false, con
       return
     }
     form.clearErrors(fieldName)
-    setDirty(value !== validityData.initialValue)
+    setDirty(!isSameValue(value, validityData.initialValue))
     validation.change(value)
     // eslint-disable-next-line react-hooks/exhaustive-deps -- solo cuando cambia el valor
   }, [value])
