@@ -23,7 +23,7 @@ Las `peerDependencies` van así para que haya **una sola copia** de React y de B
 | Peer | Rango |
 |---|---|
 | `react` · `react-dom` | `^19.2.0` |
-| `@base-ui/react` | `^1.8.0` |
+| `@base-ui/react` | `>=1.8.0 <1.9.0` (acotado a la menor probada: el registro en `Field` de DropZone, DatePicker, Toggle… usa `@base-ui/react/internals`) |
 | `next-themes` | `^0.4.6` |
 | `sonner` | `^2.0.7` |
 
@@ -46,7 +46,7 @@ El resto —`clsx`, `tailwind-merge`, `class-variance-authority`, `lucide-react`
 | React | 19.2+ (Server Components y `"use client"`) |
 | Next.js | 15 o 16, App Router (Turbopack o webpack) |
 | Tailwind CSS | **v4** — tokens por `@theme`, sin `tailwind.config.js` |
-| Base UI | `@base-ui/react` 1.8+ |
+| Base UI | `@base-ui/react` 1.8.x |
 | TypeScript | `moduleResolution: "bundler"` (o `node16` / `nodenext`) |
 | Módulos | Solo ESM |
 

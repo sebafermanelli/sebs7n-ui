@@ -5,8 +5,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 import * as React from "react"
 
-import { DropZone, type DropZoneHandle } from "../../src/components/drop-zone"
+import { DropZone, type DropZoneHandle, type DropZoneLabels } from "../../src/components/drop-zone"
 import { Field, FieldDescription, FieldError, FieldLabel } from "../../src/components/field"
+import { Form } from "../../src/components/form"
 import { LabelsProvider } from "../../src/lib/labels"
 import { hidratar } from "../hidratar"
 
@@ -330,17 +331,147 @@ describe("DropZone", () => {
     for (const [type, listener] of added) expect(remove).toHaveBeenCalledWith(type, listener)
   })
 
-  it("ref: open() abre el selector y focus() enfoca el recuadro; deshabilitada, open() no hace nada", () => {
+  it("ref es el div de afuera (como en 2.0) y no pisa el reset del form", async () => {
+    const user = userEvent.setup()
+    const ref = React.createRef<HTMLDivElement>()
+    render(
+      <form>
+        <DropZone aria-label="Adjuntos" multiple name="attachments" ref={ref} />
+        <button type="reset">Limpiar</button>
+      </form>
+    )
+    expect(ref.current).toBeInstanceOf(HTMLDivElement)
+    expect(ref.current).toHaveAttribute("data-slot", "drop-zone")
+    await user.upload(input(), pdf())
+    await user.click(screen.getByRole("button", { name: "Limpiar" }))
+    expect(rows()).toHaveLength(0)
+  })
+
+  it("actionsRef: open() abre el selector y focus() enfoca el recuadro; deshabilitada, open() no hace nada", () => {
     const click = vi.spyOn(HTMLInputElement.prototype, "click").mockImplementation(() => {})
-    const ref = React.createRef<DropZoneHandle>()
-    const { rerender } = render(<DropZone aria-label="Factura" ref={ref} />)
-    act(() => ref.current!.focus())
+    const actions = React.createRef<DropZoneHandle>()
+    const { rerender } = render(<DropZone actionsRef={actions} aria-label="Factura" />)
+    act(() => actions.current!.focus())
     expect(area()).toHaveFocus()
-    act(() => ref.current!.open())
+    act(() => actions.current!.open())
     expect(click).toHaveBeenCalledTimes(1)
-    rerender(<DropZone aria-label="Factura" disabled ref={ref} />)
-    act(() => ref.current!.open())
+    rerender(<DropZone actionsRef={actions} aria-label="Factura" disabled />)
+    act(() => actions.current!.open())
     expect(click).toHaveBeenCalledTimes(1)
+  })
+
+  it("DropZoneLabels acepta un objeto con las claves de 2.0 (replace y addMore son opcionales)", () => {
+    const labels: DropZoneLabels = {
+      prompt: "Drop files",
+      drop: "Drop",
+      remove: "Remove",
+      added: "Added:",
+      removed: "Removed:",
+      invalidType: "is not allowed",
+      tooLarge: "is larger than",
+      tooMany: "does not fit:",
+      locale: "en",
+    }
+    render(<DropZone aria-label="Files" labels={labels} />)
+    expect(area()).toHaveTextContent("Drop files")
+  })
+
+  describe("validate asíncrono y concurrente", () => {
+    const deferred = () => {
+      let resolve!: (value: string | undefined) => void
+      let reject!: (error: unknown) => void
+      const promise = new Promise<string | undefined>((res, rej) => {
+        resolve = res
+        reject = rej
+      })
+      return { promise, resolve, reject }
+    }
+
+    it("con multiple, dos tandas que terminan al revés entran las dos", async () => {
+      const slow = deferred()
+      const validate = (file: File) => (file.name === "a.pdf" ? slow.promise : Promise.resolve(undefined))
+      render(<DropZone aria-label="Facturas" multiple validate={validate} />)
+      drop(area(), [pdf("a.pdf")])
+      drop(area(), [pdf("b.pdf")])
+      await waitFor(() => expect(rows()).toHaveLength(1))
+      await act(async () => slow.resolve(undefined))
+      await waitFor(() => expect(rows()).toHaveLength(2))
+      expect(rows().map((row) => row.querySelector(".text-body")?.textContent)).toEqual(["b.pdf", "a.pdf"])
+    })
+
+    it("sin multiple, una tanda lenta que termina después no pisa a la más nueva", async () => {
+      const slow = deferred()
+      const validate = (file: File) => (file.name === "a.pdf" ? slow.promise : Promise.resolve(undefined))
+      render(<DropZone aria-label="Factura" validate={validate} />)
+      drop(area(), [pdf("a.pdf")])
+      drop(area(), [pdf("b.pdf")])
+      await waitFor(() => expect(rows()).toHaveLength(1))
+      await act(async () => slow.resolve(undefined))
+      expect(rows()).toHaveLength(1)
+      expect(rows()[0]).toHaveTextContent("b.pdf")
+    })
+
+    it("el mismo archivo soltado dos veces mientras se valida entra una sola vez", async () => {
+      const first = deferred()
+      const second = deferred()
+      const validate = vi.fn().mockReturnValueOnce(first.promise).mockReturnValueOnce(second.promise)
+      render(<DropZone aria-label="Facturas" multiple validate={validate} />)
+      drop(area(), [pdf("a.pdf")])
+      drop(area(), [pdf("a.pdf")])
+      await act(async () => second.resolve(undefined))
+      await act(async () => first.resolve(undefined))
+      await waitFor(() => expect(rows()).toHaveLength(1))
+      // La segunda tanda ni se valida: el archivo ya estaba en camino.
+      expect(validate).toHaveBeenCalledTimes(1)
+    })
+
+    it("los errores de dos tandas simultáneas se suman, no se pisan", async () => {
+      const slow = deferred()
+      const validate = (file: File) => (file.name === "a.pdf" ? slow.promise : "no es un PDF de verdad")
+      render(<DropZone aria-label="Facturas" multiple validate={validate} />)
+      drop(area(), [pdf("a.pdf")])
+      drop(area(), [pdf("b.pdf")])
+      await act(async () => slow.resolve("está vacío"))
+      const alert = await screen.findByRole("alert")
+      expect(alert).toHaveTextContent("b.pdf no es un PDF de verdad")
+      expect(alert).toHaveTextContent("a.pdf está vacío")
+    })
+
+    it("si validate rechaza, el archivo queda con su error y no hay rechazo sin atrapar", async () => {
+      const onFilesChange = vi.fn()
+      render(<DropZone aria-label="Facturas" multiple onFilesChange={onFilesChange} validate={() => Promise.reject(new Error("sin red"))} />)
+      drop(area(), [pdf("a.pdf")])
+      expect(await screen.findByRole("alert")).toHaveTextContent("a.pdf")
+      expect(onFilesChange).not.toHaveBeenCalled()
+    })
+
+    it("aria-busy mientras valida", async () => {
+      const slow = deferred()
+      render(<DropZone aria-label="Facturas" validate={() => slow.promise} />)
+      expect(area()).not.toHaveAttribute("aria-busy")
+      drop(area(), [pdf("a.pdf")])
+      expect(area()).toHaveAttribute("aria-busy", "true")
+      await act(async () => slow.resolve(undefined))
+      expect(area()).not.toHaveAttribute("aria-busy")
+    })
+  })
+
+  it("deshabilitada con scope=window no le saca el drop a otra zona que ya lo tomó", () => {
+    render(
+      <>
+        <DropZone aria-label="Factura" disabled scope="window" />
+        <div
+          data-testid="editor"
+          onDragOver={(event) => {
+            event.preventDefault()
+            event.dataTransfer.dropEffect = "copy"
+          }}
+        />
+      </>
+    )
+    const transfer = { types: ["Files"], dropEffect: "copy", files: [pdf()] }
+    fireEvent.dragOver(screen.getByTestId("editor"), { dataTransfer: transfer })
+    expect(transfer.dropEffect).toBe("copy")
   })
 
   it("compact: con archivos, el recuadro pasa a una fila chica «Elegir otro», el mismo botón y con su nombre", async () => {
@@ -355,7 +486,8 @@ describe("DropZone", () => {
     expect(button).toHaveTextContent("Elegir otro")
     expect(button).not.toHaveClass("min-h-32")
     expect(button).toHaveClass("min-h-9", "rounded-field")
-    expect(button).toHaveAccessibleName("Factura")
+    // 2.5.3: el nombre incluye el texto visible.
+    expect(button).toHaveAccessibleName("Elegir otro, Factura")
   })
 
   it("compact con multiple dice «Agregar más», y el texto sale de labels", async () => {
@@ -393,6 +525,56 @@ describe("DropZone", () => {
     await user.upload(input(), png())
     expect(area()).toHaveAccessibleDescription(expect.stringContaining("Solo PDF."))
     expect(area()).toHaveAccessibleDescription(expect.stringContaining("logo.png no es de un tipo permitido"))
+  })
+
+  it("dentro de Field con Form: manda los archivos con el name del campo y lo enfoca si es inválido", async () => {
+    const user = userEvent.setup()
+    const onFormSubmit = vi.fn()
+    render(
+      <Form onFormSubmit={onFormSubmit}>
+        <Field name="receipt" validate={(value) => ((value as File[]).length ? null : "Falta el comprobante.")}>
+          <FieldLabel>Comprobante</FieldLabel>
+          <DropZone />
+          <FieldError />
+        </Field>
+        <button type="submit">Enviar</button>
+      </Form>
+    )
+    expect(input()).toHaveAttribute("name", "receipt")
+    await user.click(screen.getByRole("button", { name: "Enviar" }))
+    expect(onFormSubmit).not.toHaveBeenCalled()
+    expect(area()).toHaveFocus()
+    expect(area()).toHaveAttribute("aria-invalid", "true")
+    const file = pdf()
+    await user.upload(input(), file)
+    await user.click(screen.getByRole("button", { name: "Enviar" }))
+    expect(onFormSubmit).toHaveBeenCalledTimes(1)
+    expect(onFormSubmit.mock.calls[0]![0]).toEqual({ receipt: [file] })
+  })
+
+  it("dentro de Field, al salir del recuadro el campo queda tocado", async () => {
+    const user = userEvent.setup()
+    render(
+      <Field>
+        <FieldLabel>Comprobante</FieldLabel>
+        <DropZone />
+      </Field>
+    )
+    await user.tab()
+    await user.tab()
+    expect(document.querySelector("[data-slot=field]")).toHaveAttribute("data-touched")
+  })
+
+  it("compact dentro de Field: el nombre suma el texto visible y la etiqueta", async () => {
+    const user = userEvent.setup()
+    render(
+      <Field>
+        <FieldLabel>Comprobante</FieldLabel>
+        <DropZone compact />
+      </Field>
+    )
+    await user.upload(input(), pdf())
+    expect(area()).toHaveAccessibleName("Elegir otro Comprobante")
   })
 
   it("Field disabled apaga el recuadro", () => {

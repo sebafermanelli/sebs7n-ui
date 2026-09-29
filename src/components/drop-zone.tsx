@@ -2,25 +2,26 @@
 
 import * as React from "react"
 import { createPortal } from "react-dom"
-import { useFieldRootContext } from "@base-ui/react/internals/field-root-context"
-import { useLabelableContext, useLabelableId } from "@base-ui/react/internals/labelable-provider"
 import { CircleAlertIcon, FileIcon, UploadIcon, XIcon } from "lucide-react"
 
 import { defined } from "../internal/defined.js"
+import { useFieldControl } from "../internal/field-control.js"
 import { useFormReset } from "../internal/form-reset.js"
+import { mergeRefs } from "../internal/merge-refs.js"
 import { useLabels, type Labels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
 import { Button } from "./button.js"
 import { List, ListRow } from "./list-row.js"
 import { Progress } from "./progress.js"
 
-type DropZoneLabels = Required<NonNullable<Labels["dropZone"]>>
+/** Los textos de `DropZone`. `replace` y `addMore` (2.1) son opcionales: un objeto con las claves de 2.0 sigue valiendo. */
+type DropZoneLabels = NonNullable<Labels["dropZone"]>
 
 /**
  * Los textos por defecto. No están en `defaultLabels` porque el barrel no tenía lugar (ver el tipo
  * `Labels`).
  */
-const dropZoneLabels: DropZoneLabels = {
+const dropZoneLabels: Required<DropZoneLabels> = {
   prompt: "Arrastrá archivos acá o hacé clic para elegirlos",
   drop: "Soltá para agregarlos",
   remove: "Quitar",
@@ -42,7 +43,7 @@ const dropZoneLabels: DropZoneLabels = {
  * línea, abajo del recuadro, no en un toast) y con `name` deja los archivos en un
  * `<input type="file">` que viaja con el `<form>`, como uno nativo.
  */
-/** Lo que da el `ref` de `DropZone`: abrir el selector y enfocar el recuadro desde afuera. */
+/** Lo que da `actionsRef` de `DropZone`: abrir el selector y enfocar el recuadro desde afuera. */
 type DropZoneHandle = {
   /** Abre el selector de archivos del sistema, como un clic en el recuadro. Deshabilitada, no hace nada. */
   open: () => void
@@ -50,9 +51,12 @@ type DropZoneHandle = {
   focus: () => void
 }
 
-type DropZoneProps = Omit<React.ComponentProps<"div">, "children" | "onChange" | "ref"> & {
-  /** `open()` y `focus()`, para un botón «Elegir archivo» propio o para volver al recuadro después de un paso. */
-  ref?: React.Ref<DropZoneHandle>
+type DropZoneProps = Omit<React.ComponentProps<"div">, "children" | "onChange"> & {
+  /**
+   * `open()` y `focus()`, para un botón «Elegir archivo» propio o para volver al recuadro después de
+   * un paso. Es `actionsRef` y no `ref`, como en Base UI: el `ref` sigue siendo el `div` de afuera.
+   */
+  actionsRef?: React.Ref<DropZoneHandle>
   /** Los tipos que acepta, como el `accept` de un `<input type="file">`: `".pdf,image/*"`. */
   accept?: string
   /** Más de un archivo. Sin `multiple`, uno nuevo reemplaza al anterior. */
@@ -84,7 +88,9 @@ type DropZoneProps = Omit<React.ComponentProps<"div">, "children" | "onChange" |
   /**
    * Una validación propia por archivo, después de tipo y tamaño y antes del cupo de `maxFiles`: el
    * texto que devuelve es el error de ese archivo («factura.pdf no es un PDF»), en línea como los
-   * otros, y el archivo no entra ni se anuncia. Puede ser asíncrona, para leer los bytes («%PDF-»).
+   * otros, y el archivo no entra ni se anuncia. Puede ser asíncrona, para leer los bytes («%PDF-»):
+   * mientras tanto el recuadro lleva `aria-busy`, y si la promesa se rechaza, el archivo queda afuera
+   * con el mensaje del error. Sin `multiple`, si llega otro archivo antes de que termine, gana el último.
    */
   validate?: (file: File) => string | undefined | Promise<string | undefined>
   /** Un error de la app para un archivo («No se pudo subir»), en rojo en su fila. */
@@ -175,6 +181,7 @@ function DropZone({
   labels: labelsProp,
   className,
   ref,
+  actionsRef,
   ...props
 }: DropZoneProps) {
   const labels = { ...dropZoneLabels, ...useLabels().dropZone, ...defined(labelsProp) }
@@ -182,24 +189,28 @@ function DropZone({
   // campo (el `FieldLabel` lo nombra), suma la ayuda y el error del campo a su descripción y toma su
   // `disabled` e `invalid`. Son los hooks que Base UI exporta como `internals` para eso; afuera de un
   // `Field` devuelven el contexto vacío y todo queda como en 2.0.
-  const field = useFieldRootContext()
-  const labelable = useLabelableContext()
-  const controlId = useLabelableId({ id })
-  const disabled = disabledProp || field.disabled === true
-  const sizeText = (bytes: number) => (formatSize ? formatSize(bytes) : formatBytes(bytes, labels.locale))
+  const button = React.useRef<HTMLButtonElement>(null)
   const [ownFiles, setOwnFiles] = React.useState<File[]>([])
   const files = filesProp ?? ownFiles
-  const [errors, setErrors] = React.useState<string[]>([])
+  const field = useFieldControl({ id, name, value: files, filled: files.length > 0, disabled: disabledProp, controlRef: button })
+  const controlId = field.controlId
+  const disabled = field.disabled
+  const fieldName = field.name
+  const sizeText = (bytes: number) => (formatSize ? formatSize(bytes) : formatBytes(bytes, labels.locale))
+  // Los errores por tanda: dos tandas que se validan a la vez (un `validate` asíncrono) suman los
+  // suyos en vez de pisarse. Una tanda nueva borra los de las que ya terminaron.
+  const [errorBatches, setErrorBatches] = React.useState<{ batch: number; messages: string[] }[]>([])
+  const errors = errorBatches.flatMap((entry) => entry.messages)
+  const [validating, setValidating] = React.useState(0)
   const [status, setStatus] = React.useState("")
   const [over, setOver] = React.useState(false)
   const [windowDrag, setWindowDrag] = React.useState(false)
   const input = React.useRef<HTMLInputElement>(null)
-  const button = React.useRef<HTMLButtonElement>(null)
   const errorsId = React.useId()
   const disabledRef = React.useRef(disabled)
   disabledRef.current = disabled
   React.useImperativeHandle(
-    ref,
+    actionsRef,
     () => ({
       open: () => {
         if (!disabledRef.current) input.current?.click()
@@ -209,68 +220,100 @@ function DropZone({
     []
   )
 
+  // La lista de ahora, para lo que termina después de un `await`: la del render que empezó puede ser
+  // vieja. Se actualiza en cada render y también en `commit`, porque dos tandas pueden terminar en el
+  // mismo tick sin un render en el medio.
+  const latestFiles = React.useRef(files)
+  latestFiles.current = files
   const commit = (next: File[]) => {
+    latestFiles.current = next
     if (filesProp === undefined) setOwnFiles(next)
     onFilesChange?.(next)
   }
 
-  // La lista de ahora, para lo que termina después de un `await` (un `validate` asíncrono): la del render
-  // que empezó puede ser vieja si mientras tanto se agregó o se quitó otro.
-  const latestFiles = React.useRef(files)
-  latestFiles.current = files
-
-  /** El cupo (`maxFiles`, o uno solo), los errores, el anuncio y el aviso: lo que ya pasó las validaciones. */
-  const place = (valid: File[], problems: string[]) => {
-    const current = latestFiles.current
-    let next: File[]
-    if (multiple) {
-      const room = maxFiles === undefined ? valid.length : Math.max(0, maxFiles - current.length)
-      for (const file of valid.slice(room)) problems.push(`${file.name} ${labels.tooMany} ${maxFiles}`)
-      next = [...current, ...valid.slice(0, room)]
-    } else {
-      // Uno solo: entra el primero y los demás se avisan, como con `maxFiles`.
-      for (const file of valid.slice(1)) problems.push(`${file.name} ${labels.tooMany} 1`)
-      next = valid.length ? [valid[0]!] : current
-    }
-    setErrors(problems)
-    const added = next.filter((file) => !current.includes(file))
-    if (added.length) {
-      setStatus(`${labels.added} ${added.map((file) => file.name).join(", ")}`)
-      commit(next)
-    }
-  }
+  // Cada tanda lleva un número. Sin `multiple`, una tanda que termina después de una más nueva se
+  // descarta: el último archivo elegido es el que queda. `pending` son los archivos que se están
+  // validando, para no aceptar dos veces el mismo si se suelta de nuevo mientras tanto.
+  const generation = React.useRef(0)
+  const pending = React.useRef<{ batch: number; files: File[] }[]>([])
 
   const add = (list: FileList | File[] | null | undefined) => {
     const incoming = Array.from(list ?? [])
     if (!incoming.length) return
+    const batch = ++generation.current
     const problems: string[] = []
     const candidates: File[] = []
     const current = latestFiles.current
+    const inFlight = pending.current.flatMap((entry) => entry.files)
+    const seen = (file: File) => [...current, ...inFlight, ...candidates].some((other) => sameFile(other, file))
     for (const file of incoming) {
       if (!accepts(file, accept)) problems.push(`${file.name} ${labels.invalidType}`)
       else if (maxSize !== undefined && file.size > maxSize) problems.push(`${file.name} ${labels.tooLarge} ${sizeText(maxSize)}`)
-      else if (!current.some((existing) => sameFile(existing, file)) && !candidates.some((other) => sameFile(other, file))) candidates.push(file)
+      else if (!seen(file)) candidates.push(file)
     }
-    // `validate` corre antes del cupo: un archivo que no pasa no le quita el lugar a uno que sí.
-    const results = validate ? candidates.map((file) => validate(file)) : []
+    const running = new Set(pending.current.map((entry) => entry.batch))
+    setErrorBatches((previous) => previous.filter((entry) => running.has(entry.batch)))
+
+    /** El cupo (`maxFiles`, o uno solo), los errores, el anuncio: lo que ya pasó las validaciones. */
+    const place = (valid: File[]) => {
+      const now = latestFiles.current
+      let next: File[]
+      if (multiple) {
+        const room = maxFiles === undefined ? valid.length : Math.max(0, maxFiles - now.length)
+        for (const file of valid.slice(room)) problems.push(`${file.name} ${labels.tooMany} ${maxFiles}`)
+        next = [...now, ...valid.slice(0, room)]
+      } else {
+        // Uno solo: entra el primero y los demás se avisan, como con `maxFiles`. Si mientras tanto
+        // empezó otra tanda, esta ya no manda.
+        for (const file of valid.slice(1)) problems.push(`${file.name} ${labels.tooMany} 1`)
+        next = valid.length && batch === generation.current ? [valid[0]!] : now
+      }
+      setErrorBatches((previous) => [...previous.filter((entry) => entry.batch !== batch), { batch, messages: problems }])
+      const added = next.filter((file) => !now.includes(file))
+      if (added.length) {
+        setStatus(`${labels.added} ${added.map((file) => file.name).join(", ")}`)
+        commit(next)
+      }
+    }
+
+    // `validate` corre antes del cupo: un archivo que no pasa no le quita el lugar a uno que sí. Un
+    // `validate` que tira o rechaza deja ese archivo afuera con el mensaje del error.
+    const results = candidates.map((file) => {
+      if (!validate) return undefined
+      try {
+        const result = validate(file)
+        return result instanceof Promise ? result.catch(errorMessage) : result
+      } catch (error) {
+        return errorMessage(error)
+      }
+    })
     const finish = (messages: (string | undefined)[]) => {
       const valid = candidates.filter((file, index) => {
         const message = messages[index]
         if (message) problems.push(`${file.name} ${message}`)
         return !message
       })
-      place(valid, problems)
+      place(valid)
     }
     // Sincrónico si nadie devolvió una promesa: sin `validate` (o con uno sincrónico) todo pasa en el
     // mismo evento, como en 2.0.
-    if (results.some((result) => result instanceof Promise)) void Promise.all(results).then(finish)
-    else finish(results as (string | undefined)[])
+    if (!results.some((result) => result instanceof Promise)) {
+      finish(results as (string | undefined)[])
+      return
+    }
+    pending.current = [...pending.current, { batch, files: candidates }]
+    setValidating((count) => count + 1)
+    void Promise.all(results).then((messages) => {
+      pending.current = pending.current.filter((entry) => entry.batch !== batch)
+      setValidating((count) => count - 1)
+      finish(messages)
+    })
   }
 
   const remove = (file: File) => {
     commit(files.filter((other) => other !== file))
     setStatus(`${labels.removed} ${file.name}`)
-    setErrors([])
+    setErrorBatches([])
     // La fila (y su botón) desaparece: el foco vuelve al recuadro.
     button.current?.focus()
   }
@@ -279,7 +322,7 @@ function DropZone({
   // los que eligió en el diálogo (se sumaron arrastrando, se quitaron, se validaron). `DataTransfer`
   // es la única forma de armar un `FileList`.
   const syncInput = (list: readonly File[]) => {
-    if (!name || !input.current || typeof DataTransfer !== "function") return
+    if (!fieldName || !input.current || typeof DataTransfer !== "function") return
     const transfer = new DataTransfer()
     for (const file of list) transfer.items.add(file)
     input.current.files = transfer.files
@@ -287,11 +330,11 @@ function DropZone({
   React.useEffect(() => {
     syncInput(files)
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `syncInput` solo lee `name` e `input`
-  }, [files, name])
+  }, [files, fieldName])
 
   const resetRef = useFormReset(() => {
     if (filesProp === undefined) setOwnFiles([])
-    setErrors([])
+    setErrorBatches([])
   })
 
   // Los listeners de la ventana se ponen una vez por arrastre y llaman siempre al `add` del último
@@ -310,8 +353,10 @@ function DropZone({
       // Deshabilitada (convirtiendo, subiendo), la ventana sigue siendo la zona para el navegador: sin
       // esto, un archivo soltado se abre en la pestaña y la app se pierde. No agrega nada: solo avisa
       // con el cursor que ahí no se suelta.
+      // Solo si nadie más lo tomó: otra zona o un editor que acepta archivos ya hizo `preventDefault`
+      // (y eligió su `dropEffect`) antes de que el evento suba a la ventana.
       const block = (event: DragEvent) => {
-        if (!hasFiles(event)) return
+        if (event.defaultPrevented || !hasFiles(event)) return
         event.preventDefault()
         if (event.dataTransfer) event.dataTransfer.dropEffect = "none"
       }
@@ -404,26 +449,37 @@ function DropZone({
   // Con archivos, el recuadro grande ya cumplió: queda una fila para cambiar o sumar. Es el mismo botón
   // (el foco no se pierde); sus `children` son para el recuadro grande.
   const small = compact && files.length > 0
-  const describedBy = cn(ariaDescribedby, labelable.messageIds.join(" "), errors.length > 0 && errorsId) || undefined
+  const describedBy = cn(ariaDescribedby, field.messageIds.join(" "), errors.length > 0 && errorsId) || undefined
+  const smallText = dragging ? labels.drop : multiple ? labels.addMore : labels.replace
+  const smallTextId = React.useId()
+  // 2.5.3: en la fila chica, el nombre empieza con el texto visible («Elegir otro») y sigue con el del
+  // campo, así quien usa control por voz puede decir lo que ve.
+  const accessibleName = small
+    ? ariaLabel
+      ? { "aria-label": `${smallText}, ${ariaLabel}`, "aria-labelledby": ariaLabelledby }
+      : { "aria-label": undefined, "aria-labelledby": cn(smallTextId, ariaLabelledby ?? field.labelId) || undefined }
+    : { "aria-label": ariaLabel, "aria-labelledby": ariaLabelledby }
+  const rootRef = React.useMemo(() => mergeRefs(resetRef, ref), [resetRef, ref])
+  const inputRef = React.useMemo(() => mergeRefs(input, field.inputRef), [field.inputRef])
 
   return (
-    <div ref={resetRef} data-slot="drop-zone" className={cn("flex flex-col gap-2", className)} {...props}>
+    <div {...props} ref={rootRef} data-slot="drop-zone" className={cn("flex flex-col gap-2", className)}>
       <input
-        ref={input}
+        ref={inputRef}
         type="file"
         accept={accept}
         aria-hidden="true"
         className="sr-only"
         disabled={disabled}
         multiple={multiple}
-        name={name}
+        name={fieldName}
         tabIndex={-1}
         onChange={(event) => {
           const picked = Array.from(event.currentTarget.files ?? [])
           // Sin `name`, se vacía: elegir el mismo archivo de nuevo vuelve a disparar `change`. Con
           // `name`, se vuelve a llenar con la lista de ahora aunque no entre nada (todo rechazado),
           // así el form no manda lo que eligió el diálogo; si entró algo, el efecto pone la nueva.
-          if (!name) event.currentTarget.value = ""
+          if (!fieldName) event.currentTarget.value = ""
           add(picked)
           syncInput(files)
         }}
@@ -433,14 +489,16 @@ function DropZone({
         type="button"
         id={controlId}
         aria-describedby={describedBy}
-        aria-invalid={errors.length > 0 || field.invalid === true || undefined}
-        aria-label={ariaLabel}
-        aria-labelledby={ariaLabelledby}
+        aria-busy={validating > 0 || undefined}
+        aria-invalid={errors.length > 0 || field.invalid || undefined}
+        {...accessibleName}
         data-compact={small ? "" : undefined}
         data-dragging={dragging ? "" : undefined}
         data-slot="drop-zone-area"
         disabled={disabled}
+        onBlur={field.onBlur}
         onClick={() => input.current?.click()}
+        onFocus={field.onFocus}
         {...areaHandlers}
         className={cn(
           "flex w-full cursor-pointer items-center justify-center border border-separator-strong bg-fill-1 text-center outline-none transition-control",
@@ -454,7 +512,9 @@ function DropZone({
         {small ? (
           <>
             <UploadIcon aria-hidden="true" className="size-4 text-label-secondary in-data-dragging:text-brand-900" />
-            <span className="text-callout text-label">{dragging ? labels.drop : multiple ? labels.addMore : labels.replace}</span>
+            <span className="text-callout text-label" id={smallTextId}>
+              {smallText}
+            </span>
           </>
         ) : (
           (children ?? (
@@ -514,6 +574,11 @@ function DropZone({
         )}
     </div>
   )
+}
+
+/** El texto de un rechazo de `validate`: el `message` del error, o el valor como texto. */
+function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error)
 }
 
 export { DropZone, dropZoneLabels, type DropZoneHandle, type DropZoneLabels, type DropZoneProps }

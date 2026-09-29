@@ -89,7 +89,7 @@ export function Compact() {
   const zone = useRef<DropZoneHandle>(null)
   return (
     <div className="flex w-full max-w-md flex-col gap-3">
-      <DropZone accept=".pdf" aria-label="Factura para convertir" compact ref={zone} />
+      <DropZone accept=".pdf" aria-label="Factura para convertir" actionsRef={zone} compact />
       {/* El `ref` abre el selector desde un botón propio (`open()`) o vuelve al recuadro (`focus()`). */}
       <Button className="self-start" onClick={() => zone.current?.open()} type="button" variant="secondary">
         Elegir PDF…
