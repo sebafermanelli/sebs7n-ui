@@ -94,6 +94,8 @@ type SidebarGroupState = {
   open: boolean
   panelId: string
   toggle: () => void
+  /** El botón del título, para devolverle el foco si la sección se cierra con el foco adentro. */
+  triggerRef: React.RefObject<HTMLButtonElement | null>
 }
 
 const SidebarGroupContext = React.createContext<SidebarGroupState | null>(null)
@@ -131,6 +133,15 @@ function SidebarGroup({ className, children, collapsible = false, defaultOpen = 
   const [openState, setOpenState] = React.useState(defaultOpen)
   const open = openProp ?? openState
   const collapsed = useSidebarContext()?.collapsed ?? false
+  const panelRef = React.useRef<HTMLDivElement>(null)
+  const triggerRef = React.useRef<HTMLButtonElement>(null)
+
+  // Si se cierra con el foco adentro (la cierra la app, o un atajo), el foco quedaría en un ítem
+  // escondido y el navegador lo mandaría al <body>. Va al título. En el layout effect, antes de que
+  // el navegador saque el foco del panel escondido.
+  React.useLayoutEffect(() => {
+    if (!open && panelRef.current?.contains(document.activeElement)) triggerRef.current?.focus()
+  }, [open])
 
   const all = flatChildren(children)
   const label = all.find(isLabel)
@@ -143,7 +154,10 @@ function SidebarGroup({ className, children, collapsible = false, defaultOpen = 
     if (openProp === undefined) setOpenState(next)
     onOpenChange?.(next)
   }, [open, openProp, onOpenChange])
-  const value = React.useMemo(() => ({ id: generatedId, collapsible, open, panelId, toggle }), [generatedId, collapsible, open, panelId, toggle])
+  const value = React.useMemo(
+    () => ({ id: generatedId, collapsible, open, panelId, toggle, triggerRef }),
+    [generatedId, collapsible, open, panelId, toggle]
+  )
 
   return (
     <SidebarGroupContext.Provider value={value}>
@@ -162,6 +176,7 @@ function SidebarGroup({ className, children, collapsible = false, defaultOpen = 
               {actions}
             </div>
             <div
+              ref={panelRef}
               id={panelId}
               data-slot="sidebar-group-panel"
               hidden={collapsible && !open && !collapsed}
@@ -196,6 +211,7 @@ function SidebarGroupLabel({ className, id, children, ...props }: React.Componen
     >
       {group?.collapsible ? (
         <button
+          ref={group.triggerRef}
           type="button"
           aria-expanded={group.open}
           aria-controls={group.panelId}

@@ -395,6 +395,29 @@ describe("Sidebar", () => {
     expect(toggle).toHaveAttribute("aria-expanded", "false")
   })
 
+  // Revisión de R5a: si la sección se cierra con el foco adentro (la cierra la app, o un atajo), el
+  // foco quedaba en un ítem escondido y el navegador lo tiraba al <body>. Va al título de la sección.
+  it("cerrar una sección con el foco adentro lo lleva a su título", () => {
+    const { rerender } = render(
+      <Sidebar>
+        <SidebarGroup collapsible open>
+          <SidebarGroupLabel>Etiquetas</SidebarGroupLabel>
+          <SidebarItem href="/b">B</SidebarItem>
+        </SidebarGroup>
+      </Sidebar>
+    )
+    screen.getByRole("link", { name: "B" }).focus()
+    rerender(
+      <Sidebar>
+        <SidebarGroup collapsible open={false}>
+          <SidebarGroupLabel>Etiquetas</SidebarGroupLabel>
+          <SidebarItem href="/b">B</SidebarItem>
+        </SidebarGroup>
+      </Sidebar>
+    )
+    expect(screen.getByRole("button", { name: "Etiquetas" })).toHaveFocus()
+  })
+
   it("título de sección: 14/600 secundario a 16 px del borde; el «+» es un botón de ícono gris", () => {
     render(
       <Sidebar>
