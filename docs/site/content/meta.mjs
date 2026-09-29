@@ -2047,7 +2047,7 @@ export const COMPONENTS = {
     description: "El botón que pliega y despliega el `Sidebar`, como el de la lista de fuentes de Drive y Mail de iCloud.",
     keyboard: [["Enter · Espacio", "Pliega o despliega el sidebar."]],
     a11y: [
-      "Es el botón de ícono `plain` de 28 con nombre y tooltip de `labels`: «Plegar barra lateral» / «Desplegar barra lateral».",
+      "Es el botón de ícono `plain` de 28. El nombre es fijo («Barra lateral») y `aria-expanded` dice el estado; el tooltip dice la acción: «Plegar barra lateral» / «Desplegar barra lateral». Sin `id` en el `Sidebar` no lleva `aria-controls`.",
       "`aria-expanded` dice si el sidebar está desplegado; `aria-controls` apunta al `id` del `Sidebar` que lo contiene (dale uno) o al que se pase.",
       "Adentro del Sheet del teléfono no se dibuja: ahí no hay nada que plegar.",
     ],
@@ -2059,7 +2059,7 @@ export const COMPONENTS = {
     props: {
       SidebarToggle: {
         "aria-controls": "El `id` del panel que pliega. Sin él, el del `Sidebar` que lo contiene, si tiene `id`.",
-        labels: "Textos: `collapse` y `expand`. Los que vienen por defecto son `sidebarToggleLabels`; también por `LabelsProvider` (`sidebar.collapse`, `sidebar.expand`).",
+        labels: "Textos: `toggle` (el nombre), `collapse` y `expand` (el tooltip). Los que vienen por defecto son `sidebarToggleLabels`; también por `LabelsProvider` (`sidebar.toggle`, `sidebar.collapse`, `sidebar.expand`).",
         className: PROP_DESCRIPTIONS.className,
       },
     },

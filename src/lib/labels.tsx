@@ -367,6 +367,8 @@ export type Labels = {
      */
     collapse?: string
     expand?: string
+    /** Opcional (2.1): el nombre fijo de `SidebarToggle` («Barra lateral»); el estado lo dice `aria-expanded`. */
+    toggle?: string
   }
   /** Opcional: `SortableList` y `SortableGrid`; los textos por defecto son `sortableLabels` (ver `carousel`). */
   sortable?: {
