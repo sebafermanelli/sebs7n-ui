@@ -5,8 +5,12 @@ import { cn } from "../lib/utils.js"
 /**
  * Links de texto (los que NO tienen forma de botón: para esos está `buttonVariants`).
  *
- * Tres usos, porque un link no se ve igual metido en una frase que suelto debajo de una sección:
+ * Cuatro usos, porque un link no se ve igual metido en una frase que suelto debajo de una sección:
  *
+ * - `accent`: el link de iCloud (R4): semibold en el acento, sin subrayado en reposo («Find
+ *   Devices ›», «account.apple.com ↗» en Settings). Va sobre la página: `brand-900` llega a 4,5:1
+ *   ahí con todas las marcas, pero no sobre un relleno, así que nunca pinta fondo. Con el adorno
+ *   (› o ↗) es el componente `TextLink`.
  * - `inline`: dentro de una oración (Términos, "Registrate", una nota legal). Va subrayado
  *   siempre — en medio de un párrafo, el subrayado es lo único que lo distingue del texto — con
  *   la línea tenue y el texto fuerte; en hover se refuerza la línea, no el color.
@@ -23,6 +27,7 @@ const linkVariantsBase = cva(
   {
     variants: {
       variant: {
+        accent: "font-semibold text-brand-900 hover:underline",
         inline: "text-label underline decoration-label-tertiary hover:decoration-label",
         subtle: "text-label-secondary hover:text-label hover:underline",
         row: "text-label hover:underline",
