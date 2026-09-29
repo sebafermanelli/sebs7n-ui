@@ -363,7 +363,9 @@ function Calendar(props: CalendarProps) {
                         }
                         const esDesde = isSameDay(dia, rango.from)
                         const esHasta = isSameDay(dia, hasta)
-                        const marcada = isSameDay(dia, elegida) || esDesde || (esHasta && rango.to != null)
+                        // El fin previsto (el día bajo el puntero mientras se elige) se ve como un fin de
+                        // verdad: sin el círculo del acento, el gris del hover cortaba la banda a la mitad.
+                        const marcada = isSameDay(dia, elegida) || esDesde || esHasta
                         const enRango = isWithin(dia, rango.from, hasta)
                         // Qué mitad de la celda lleva la banda del rango: a un extremo le llega de un
                         // solo lado. Depende de para dónde crece el rango, que mientras se elige puede
@@ -404,11 +406,12 @@ function Calendar(props: CalendarProps) {
                                 "size-7 pointer-coarse:size-10 rounded-full aria-[current=date]:after:bottom-0.5 pointer-coarse:aria-[current=date]:after:bottom-1.5"
                               )}
                               data-date={iso}
+                              data-preview={esHasta && !rango.to ? "" : undefined}
                               data-selected={marcada ? "" : undefined}
                               data-slot="calendar-day"
                               onClick={() => elegir(dia)}
                               onFocus={() => setFoco(dia)}
-                              onPointerEnter={() => eligiendo && setSobre(dia)}
+                              onPointerEnter={() => eligiendo && !off && setSobre(dia)}
                               tabIndex={isSameDay(dia, enfocable) ? 0 : -1}
                               type="button"
                             >

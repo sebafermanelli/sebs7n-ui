@@ -166,8 +166,8 @@ describe("Calendar", () => {
 })
 
 describe("Calendar mode=range", () => {
-  const Rango = ({ onValueChange }: { onValueChange: (r: DateRange) => void }) => (
-    <Calendar defaultMonth={d("2026-09-01")} mode="range" onValueChange={onValueChange} />
+  const Rango = ({ onValueChange, isDateDisabled }: { onValueChange: (r: DateRange) => void; isDateDisabled?: (date: Date) => boolean }) => (
+    <Calendar defaultMonth={d("2026-09-01")} isDateDisabled={isDateDisabled} mode="range" onValueChange={onValueChange} />
   )
 
   it("el primer clic es el desde y el segundo el hasta", async () => {
@@ -200,10 +200,43 @@ describe("Calendar mode=range", () => {
     await userEvent.click(dia("2026-09-10"))
     fireEvent.pointerEnter(dia("2026-09-13"))
     expect(dia("2026-09-11").closest("td")).toHaveAttribute("data-range", "middle")
-    // Todavía no está elegido: se ve la banda, pero el extremo no se pinta como marcado.
-    expect(dia("2026-09-13")).not.toHaveAttribute("data-selected")
+    // El fin previsto se ve como un fin de verdad (2.1): la media banda hasta su centro y el círculo del
+    // acento encima, no el gris del hover cortando la banda. `data-preview` dice que todavía no se eligió.
+    expect(dia("2026-09-13").closest("td")).toHaveAttribute("data-range", "end")
+    expect(dia("2026-09-13")).toHaveAttribute("data-selected")
+    expect(dia("2026-09-13")).toHaveAttribute("data-preview")
+    expect(dia("2026-09-10")).not.toHaveAttribute("data-preview")
     fireEvent.pointerLeave(screen.getByRole("grid"))
+    expect(dia("2026-09-13")).not.toHaveAttribute("data-selected")
+    expect(dia("2026-09-13")).not.toHaveAttribute("data-preview")
     expect(dia("2026-09-11").closest("td")).not.toHaveAttribute("data-range")
+  })
+
+  it("hacia atrás, el día bajo el puntero es el comienzo previsto y el desde pasa a ser el fin", async () => {
+    render(<Rango onValueChange={() => {}} />)
+    await userEvent.click(dia("2026-09-20"))
+    fireEvent.pointerEnter(dia("2026-09-17"))
+    expect(dia("2026-09-17").closest("td")).toHaveAttribute("data-range", "start")
+    expect(dia("2026-09-17")).toHaveAttribute("data-selected")
+    expect(dia("2026-09-17")).toHaveAttribute("data-preview")
+    expect(dia("2026-09-20").closest("td")).toHaveAttribute("data-range", "end")
+    expect(dia("2026-09-18").closest("td")).toHaveAttribute("data-range", "middle")
+  })
+
+  it("un día apagado no se ofrece como fin previsto", async () => {
+    render(<Rango isDateDisabled={(date: Date) => date.getDate() === 13} onValueChange={() => {}} />)
+    await userEvent.click(dia("2026-09-10"))
+    fireEvent.pointerEnter(dia("2026-09-13"))
+    expect(dia("2026-09-13")).not.toHaveAttribute("data-preview")
+    expect(dia("2026-09-11").closest("td")).not.toHaveAttribute("data-range")
+  })
+
+  it("con un rango ya elegido no hay vista previa", async () => {
+    render(<Rango onValueChange={() => {}} />)
+    await userEvent.click(dia("2026-09-10"))
+    await userEvent.click(dia("2026-09-14"))
+    expect(dia("2026-09-14")).toHaveAttribute("data-selected")
+    expect(dia("2026-09-14")).not.toHaveAttribute("data-preview")
   })
 
   it("con un rango completo, un clic más empieza uno nuevo", async () => {
@@ -219,6 +252,16 @@ describe("Calendar mode=range", () => {
 
   describe("varios meses", () => {
     const rango: DateRange = { from: d("2026-10-02"), to: d("2026-10-14") }
+
+    it("la vista previa cruza el borde del mes: el fin previsto en el mes de al lado", async () => {
+      render(<Calendar defaultMonth={d("2026-09-01")} mode="range" numberOfMonths={2} />)
+      await userEvent.click(dia("2026-09-29"))
+      fireEvent.pointerEnter(dia("2026-10-02"))
+      expect(dia("2026-09-30").closest("td")).toHaveAttribute("data-range", "middle")
+      expect(dia("2026-10-01").closest("td")).toHaveAttribute("data-range", "middle")
+      expect(dia("2026-10-02").closest("td")).toHaveAttribute("data-range", "end")
+      expect(dia("2026-10-02")).toHaveAttribute("data-preview")
+    })
 
     it("una grilla por mes, con los botones en las puntas", () => {
       render(<Calendar defaultMonth={d("2026-09-01")} mode="range" numberOfMonths={2} value={rango} />)
