@@ -15,6 +15,9 @@ export type MenuInsetProps = { inset?: boolean }
  * `touch-target`: los ítems están pegados, y un `::after` de 44 taparía la mitad del de al lado
  * (el que va después en el DOM se pinta encima y se queda con el toque).
  *
+ * `rounded-menu-item` (6 px, 2.0) y no `rounded-control` (10): es la curva del resaltado en los
+ * menús de macOS. Con 10 en una fila de 24, el resaltado se leía como una píldora.
+ *
  * El resaltado es la selección de macOS (2.0): acento sólido con texto e íconos de contraste.
  * Base UI pone `data-highlighted` tanto con el puntero como con las flechas, igual que macOS. Un
  * ítem deshabilitado no lo toma aunque quede resaltado: se queda transparente y en `gray-700`.
@@ -23,7 +26,7 @@ export type MenuInsetProps = { inset?: boolean }
  * ítems seleccionables: ver `selectionSecondaryClassName`.
  */
 export const menuItemClassName =
-  "group/menu-item group/selectable relative flex h-6 pointer-coarse:h-11 cursor-pointer items-center gap-2 rounded-control px-2 text-body text-gray-1000 outline-none select-none transition-control data-highlighted:bg-selection data-highlighted:text-on-selection data-highlighted:[&_svg]:text-on-selection active:bg-selection data-disabled:cursor-not-allowed data-disabled:text-gray-700 data-disabled:active:bg-transparent data-disabled:data-highlighted:bg-transparent data-disabled:data-highlighted:text-gray-700 data-disabled:data-highlighted:[&_svg]:text-gray-700 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+  "group/menu-item group/selectable relative flex h-6 pointer-coarse:h-11 cursor-pointer items-center gap-2 rounded-menu-item px-2 text-body text-gray-1000 outline-none select-none transition-control data-highlighted:bg-selection data-highlighted:text-on-selection data-highlighted:[&_svg]:text-on-selection active:bg-selection data-disabled:cursor-not-allowed data-disabled:text-gray-700 data-disabled:active:bg-transparent data-disabled:data-highlighted:bg-transparent data-disabled:data-highlighted:text-gray-700 data-disabled:data-highlighted:[&_svg]:text-gray-700 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
 
 /**
  * El texto secundario de un ítem —el atajo de teclado—. En reposo es `gray-900`; con el ítem
@@ -36,7 +39,8 @@ export const menuItemSecondaryClassName =
   "text-gray-900 group-data-highlighted/menu-item:group-not-data-disabled/menu-item:text-on-selection"
 
 /**
- * El radio del panel es el del ítem más el `p-1.5` que los separa: así las dos curvas son
+ * El radio del panel es el del ítem más el `p-1.5` que los separa: 6 + 6 = 12, el del menú
+ * contextual de Mail (2.0; hasta la fase 3 era `control` + 6 = 16). Así las dos curvas son
  * concéntricas. Con un radio fijo, la esquina del ítem resaltado se ve más cerrada o más
  * abierta que la del panel, según cuál de los dos tokens haya pisado la app.
  *
@@ -45,7 +49,7 @@ export const menuItemSecondaryClassName =
  * y un menú de dos palabras no queda más angosto que su propio atajo.
  */
 export const menuPopupClassName =
-  "max-h-(--available-height) min-w-48 origin-(--transform-origin) overflow-y-auto rounded-[calc(var(--radius-control)+--spacing(1.5))] material-popover p-1.5 text-gray-1000 shadow-menu outline-none transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0"
+  "max-h-(--available-height) min-w-48 origin-(--transform-origin) overflow-y-auto rounded-[calc(var(--radius-menu-item)+--spacing(1.5))] material-popover p-1.5 text-gray-1000 shadow-menu outline-none transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0"
 
 /**
  * La canaleta del tilde (2.0). En macOS el tilde de un ítem marcable va a la **izquierda**, en

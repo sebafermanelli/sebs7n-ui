@@ -93,7 +93,7 @@ describe("DropdownMenu", () => {
     )
     await userEvent.click(screen.getByRole("button", { name: "Acciones" }))
     const edit = await screen.findByRole("menuitem", { name: "Editar" })
-    expect(edit).toHaveClass("h-6", "rounded-control", "data-highlighted:bg-selection", "data-highlighted:text-on-selection", "active:bg-selection", "data-disabled:text-gray-700", "data-disabled:data-highlighted:bg-transparent")
+    expect(edit).toHaveClass("h-6", "rounded-menu-item", "data-highlighted:bg-selection", "data-highlighted:text-on-selection", "active:bg-selection", "data-disabled:text-gray-700", "data-disabled:data-highlighted:bg-transparent")
     expect(screen.getByRole("menuitem", { name: "Eliminar" })).toHaveClass("data-[variant=destructive]:data-highlighted:not-data-disabled:bg-red-800")
     expect(screen.getByRole("menuitem", { name: "Eliminar" })).toHaveAttribute("data-variant", "destructive")
     await userEvent.click(edit)

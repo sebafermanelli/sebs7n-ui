@@ -20,7 +20,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "../../src/components/dropdown-menu"
-import { menuLabelClassName, menuPopupClassName, menuSeparatorClassName } from "../../src/variants/menu"
+import { menuItemClassName, menuLabelClassName, menuPopupClassName, menuSeparatorClassName } from "../../src/variants/menu"
 
 // El menú de acciones de una fila, que es de lo que se usa: ítems con atajo, un
 // submenú, un grupo con su encabezado, casillas y un grupo de radios.
@@ -258,7 +258,14 @@ describe("menú de macOS (2.0)", () => {
 
   it("el panel: p-1.5, radio concéntrico y 192 px de mínimo", () => {
     expect(menuPopupClassName).toMatch(/(^|\s)p-1\.5(\s|$)/)
-    expect(menuPopupClassName).toContain("rounded-[calc(var(--radius-control)+--spacing(1.5))]")
+    // 6 del ítem + 6 del padding = 12, el panel del menú contextual de Mail.
+    expect(menuPopupClassName).toContain("rounded-[calc(var(--radius-menu-item)+--spacing(1.5))]")
+    expect(menuPopupClassName).not.toContain("--radius-control")
     expect(menuPopupClassName).toMatch(/(^|\s)min-w-48(\s|$)/)
+  })
+
+  it("el ítem resaltado usa el radio de ítem de menú (6 px), no el de control", () => {
+    expect(menuItemClassName).toMatch(/(^|\s)rounded-menu-item(\s|$)/)
+    expect(menuItemClassName).not.toMatch(/(^|\s)rounded-control(\s|$)/)
   })
 })

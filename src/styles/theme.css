@@ -111,6 +111,15 @@
    * Con `--radius-field: 10px` vuelven todos al rectángulo.
    */
   --radius-field: 9999px;
+  /**
+   * El resaltado de un ítem de menú (2.0): 6 px, como en el menú contextual de Mail.
+   *
+   * No es `--radius-control` porque en macOS un control suelto (10) y una fila de menú no tienen
+   * la misma curva: con 10 el resaltado de una fila de 24 se veía como una píldora. El panel del
+   * menú sale de este radio más su `p-1.5` (6 + 6 = 12), así que tocándolo se mueven los dos y
+   * siguen siendo concéntricos.
+   */
+  --radius-menu-item: 6px;
 
   /* Progress indeterminada: una franja del 40% que recorre la pista. */
   --animate-progress-indeterminate: progress-indeterminate 1.4s ease-in-out infinite;

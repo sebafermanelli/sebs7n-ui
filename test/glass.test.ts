@@ -139,12 +139,15 @@ describe("radios semánticos", () => {
     expect(css).toMatch(/--radius-panel:\s*26px;/)
     // Los campos son cápsulas, como los botones.
     expect(css).toMatch(/--radius-field:\s*9999px;/)
+    // El resaltado de un ítem de menú (2.0): 6 px, como en macOS; el panel es 6 + 6.
+    expect(css).toMatch(/--radius-menu-item:\s*6px;/)
   })
 
   it("tailwind-merge los conoce: el radio del llamador gana", () => {
     expect(cn("rounded-control", "rounded-full")).toBe("rounded-full")
     expect(cn("rounded-full", "rounded-surface")).toBe("rounded-surface")
     expect(cn("rounded-panel", "rounded-none")).toBe("rounded-none")
+    expect(cn("rounded-menu-item", "rounded-none")).toBe("rounded-none")
     expect(cn("rounded-field", "rounded-[min(var(--radius-field),--spacing(5))]")).toBe("rounded-[min(var(--radius-field),--spacing(5))]")
   })
 })
