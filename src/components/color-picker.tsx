@@ -224,7 +224,7 @@ function Grilla({
               className={cn(
                 // El cuadrado mide lo que mide la columna (~23px); el `::after` lleva el área de
                 // toque a 24 sin mover un pixel de lo que se ve.
-                "relative aspect-square w-full cursor-pointer rounded-[7px] outline-none transition-[scale,box-shadow] duration-150 after:absolute after:-inset-0.5",
+                "relative aspect-square w-full cursor-pointer rounded-[calc(var(--radius-control)-1px)] outline-none transition-[scale,box-shadow] duration-150 after:absolute after:-inset-0.5",
                 "shadow-[inset_0_1px_0_rgb(255_255_255/0.4),0_0_0_0.5px_rgb(0_0_0/0.16)]",
                 "hover:scale-115 focus-visible:focus-ring active:scale-95",
                 "aria-pressed:shadow-[0_0_0_2px_var(--color-surface),0_0_0_4px_var(--color-label)]"

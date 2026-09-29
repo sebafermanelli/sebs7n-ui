@@ -503,7 +503,8 @@ las fases R2–R5 rehacen diálogos, menús, controles y listas con las medidas 
   `CollapsibleTrigger chevron`; `Avatar size="xl"`; `Meter size="lg"`; `Toolbar variant="bar"`;
   tokens `tooltip`/`on-tooltip` (`bg-tooltip`, `text-on-tooltip`) y `--sf-skeleton-shine`.
 - Radios `--radius-tooltip` (6), `--radius-meter` (6) y `--radius-menu-header` (7: el 12 del menú
-  menos su padding), con `rounded-tooltip`, `rounded-meter` y `rounded-menu-header`, que `cn()` fusiona;
+  menos su padding) y `--radius-thumb` (5: el logo de 32 de una fila y la píldora del nombre de
+  `FileGrid`), con `rounded-tooltip`, `rounded-meter`, `rounded-menu-header` y `rounded-thumb`, que `cn()` fusiona;
   y los colores del monograma `monogram-top`/`monogram-bottom`. Reemplazan valores sueltos del
   Tooltip, el Meter `lg`, la cabecera del UserMenu y el Avatar.
 - `Kbd size`: `md` (20 px) y `sm` (18 px).

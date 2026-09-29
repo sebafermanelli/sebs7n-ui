@@ -97,7 +97,7 @@ function ListRow({
         <span
           data-slot="list-row-icon"
           aria-hidden="true"
-          className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-[5px] text-brand-900 inside-selection:text-on-selection [&>img]:size-full [&>svg]:size-5"
+          className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-thumb text-brand-900 inside-selection:text-on-selection [&>img]:size-full [&>svg]:size-5"
         >
           {icon}
         </span>

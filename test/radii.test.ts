@@ -36,6 +36,16 @@ describe("radios de iCloud", () => {
     expect(radio("meter")).toBe(6)
     // La cabecera de cuenta adentro del menú: radio 12 menos el padding de 5.
     expect(radio("menu-header")).toBe(7)
+    // Revisión de R5b: el logo de 32 de una fila (5,3 en iCloud) y la píldora del nombre de FileGrid.
+    expect(radio("thumb")).toBe(5)
+  })
+
+  it("sin radios sueltos en px en los componentes", async () => {
+    const { readdirSync, readFileSync } = await import("node:fs")
+    const { join } = await import("node:path")
+    const dir = join(import.meta.dirname, "../src/components")
+    const sueltos = readdirSync(dir).filter((archivo) => /rounded-\[\d+px\]/.test(readFileSync(join(dir, archivo), "utf8")))
+    expect(sueltos).toEqual([])
   })
 
   // iCloud no los hace concéntricos: radio 12 con 5 de padding e ítem de 8 (menú de fila de Drive).

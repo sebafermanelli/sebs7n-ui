@@ -193,7 +193,7 @@ function FileGrid({
               </div>
               <span
                 className={cn(
-                  "line-clamp-2 max-w-full rounded-[5px] px-1.5 text-center text-callout break-words text-label",
+                  "line-clamp-2 max-w-full rounded-thumb px-1.5 text-center text-callout break-words text-label",
                   "group-data-[state=selected]/selectable:bg-selection-inactive group-data-[state=selected]/selectable:group-focus-within/list:bg-selection group-data-[state=selected]/selectable:group-focus-within/list:text-on-selection"
                 )}
               >

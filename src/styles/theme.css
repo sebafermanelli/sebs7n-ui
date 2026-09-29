@@ -101,6 +101,9 @@
   --radius-tooltip: 6px;
   --radius-meter: 6px;
   --radius-menu-header: 7px;
+  /* Revisión de R5b: lo chico que no es una etiqueta (4). El logo de 32 de una fila de Mail (5,3 en
+     iCloud) y la píldora del nombre elegido en la grilla de archivos. */
+  --radius-thumb: 5px;
 
   /* Progress indeterminada: una franja del 40% que recorre la pista. */
   --animate-progress-indeterminate: progress-indeterminate 1.4s ease-in-out infinite;
