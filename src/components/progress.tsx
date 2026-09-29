@@ -62,7 +62,7 @@ function Progress({ className, size = "md", label, showValue = false, trackClass
             </ProgressPrimitive.Label>
           )}
           {showValue && (
-            <ProgressPrimitive.Value data-slot="progress-value" className="text-mono-body tabular-nums text-label-secondary" />
+            <ProgressPrimitive.Value data-slot="progress-value" className="text-callout tabular-nums text-label-secondary" />
           )}
         </div>
       )}

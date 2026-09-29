@@ -66,3 +66,12 @@ describe("Progress", () => {
     expect(track().className).not.toMatch(/\brounded-full\b/)
   })
 })
+
+describe("Progress · R5a", () => {
+  it("el valor en 14 con cifras tabulares, sin mono", () => {
+    render(<Progress label="Subiendo" showValue value={40} />)
+    const valor = screen.getByRole("progressbar").querySelector("[data-slot=progress-value]")!
+    expect(valor).toHaveClass("text-callout", "tabular-nums")
+    expect(valor.className).not.toMatch(/mono/)
+  })
+})

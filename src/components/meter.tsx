@@ -22,11 +22,11 @@ import { cn } from "../lib/utils.js"
 type MeterBaseProps = Omit<MeterPrimitive.Root.Props, "className" | "aria-label"> & {
   className?: string
   /**
-   * Alto de la pista: `sm` 4px, `md` 6px. Los mismos que `Progress`, y por el
-   * mismo motivo: una barra no se toca ni recibe foco, así que no reserva área
-   * táctil.
+   * Alto de la pista: `sm` 4px, `md` 6px —los mismos que `Progress`: una barra no se toca ni
+   * recibe foco, así que no reserva área táctil— y `lg` 16px con radio 6, la barra de
+   * almacenamiento de Settings de iCloud (catálogo §2.19).
    */
-  size?: "sm" | "md"
+  size?: "sm" | "md" | "lg"
   /** Muestra el valor formateado a la derecha, el mismo texto que lee el lector. */
   showValue?: boolean
   /** Clases de la pista (el riel gris), por si hay que cambiarle el ancho o el radio. */
@@ -62,7 +62,7 @@ function Meter({ className, label, showValue = false, size = "md", trackClassNam
             </MeterPrimitive.Label>
           )}
           {showValue && (
-            <MeterPrimitive.Value data-slot="meter-value" className="text-mono-body tabular-nums text-label-secondary" />
+            <MeterPrimitive.Value data-slot="meter-value" className="text-callout tabular-nums text-label-secondary" />
           )}
         </div>
       )}
@@ -70,7 +70,7 @@ function Meter({ className, label, showValue = false, size = "md", trackClassNam
         data-slot="meter-track"
         className={cn(
           "w-full overflow-hidden rounded-full bg-fill-3",
-          "group-data-[size=sm]/meter:h-1 group-data-[size=md]/meter:h-1.5",
+          "group-data-[size=sm]/meter:h-1 group-data-[size=md]/meter:h-1.5 group-data-[size=lg]/meter:h-4 group-data-[size=lg]/meter:rounded-[6px]",
           trackClassName
         )}
       >
@@ -79,7 +79,7 @@ function Meter({ className, label, showValue = false, size = "md", trackClassNam
             golpe se lee peor que uno que se estira. */}
         <MeterPrimitive.Indicator
           data-slot="meter-indicator"
-          className="rounded-full bg-brand-700 transition-[width] duration-300 ease-out motion-reduce:transition-none"
+          className="rounded-full bg-brand-700 transition-[width] duration-300 ease-out motion-reduce:transition-none group-data-[size=lg]/meter:rounded-none"
         />
       </MeterPrimitive.Track>
     </MeterPrimitive.Root>

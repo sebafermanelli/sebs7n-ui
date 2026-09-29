@@ -109,3 +109,15 @@ describe("Meter", () => {
     expect(track().className).not.toMatch(/\brounded-full\b/)
   })
 })
+
+describe("Meter · R5a", () => {
+  it("lg: la barra de Storage de iCloud, 16 de alto y radio 6; el valor en 14 sin mono", () => {
+    render(<Meter label="Almacenamiento" showValue size="lg" value={40} />)
+    const meter = screen.getByRole("meter")
+    const track = meter.querySelector("[data-slot=meter-track]")!
+    expect(track).toHaveClass("group-data-[size=lg]/meter:h-4", "group-data-[size=lg]/meter:rounded-[6px]")
+    const valor = meter.querySelector("[data-slot=meter-value]")!
+    expect(valor).toHaveClass("text-callout", "tabular-nums")
+    expect(valor.className).not.toMatch(/mono/)
+  })
+})
