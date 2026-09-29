@@ -132,4 +132,14 @@ describe("Resizable", () => {
     // En una línea de 1 px, la manija de 6 no se tiene que achicar (se veía como una raya).
     expect(html).toMatch(/data-slot="resizable-grip"[^>]*class="[^"]*shrink-0/)
   })
+
+  const crecimientos = (html: string) => [...html.matchAll(/flex-grow:([\d.]+)/g)].map((match) => Number(match[1]))
+
+  it("en el servidor, un panel sin defaultSize se lleva el resto", () => {
+    expect(crecimientos(renderToStaticMarkup(<Dos />))).toEqual([30, 70])
+  })
+
+  it("en el servidor, defaultLayout gana desde el primer render", () => {
+    expect(crecimientos(renderToStaticMarkup(<Dos defaultLayout={[45, 55]} />))).toEqual([45, 55])
+  })
 })

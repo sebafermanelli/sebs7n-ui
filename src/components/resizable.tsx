@@ -51,6 +51,18 @@ function bounds(prev: PanelConfig, next: PanelConfig, pair: number) {
   return { min: Math.max(prev.minSize, pair - next.maxSize), max: Math.min(prev.maxSize, pair - next.minSize) }
 }
 
+/** El reparto inicial: `defaultLayout` si trae uno por panel; si no, cada `defaultSize` y el resto en partes iguales. */
+function initialLayout(given: (number | undefined)[], defaultLayout?: number[]) {
+  if (defaultLayout?.length === given.length) return defaultLayout
+  const rest = Math.max(0, 100 - given.reduce<number>((sum, size) => sum + (size ?? 0), 0))
+  const free = given.filter((size) => size === undefined).length
+  return given.map((size) => round(size ?? rest / free))
+}
+
+// El tamaño de un panel antes de medir (en el servidor y en el primer render), calculado por el grupo
+// con los paneles que tiene como hijos directos: así el HTML ya sale repartido.
+const InitialSizeContext = React.createContext<number | undefined>(undefined)
+
 type ResizablePanelGroupProps = React.ComponentProps<"div"> & {
   /** `horizontal` (default): paneles lado a lado. `vertical`: apilados. */
   orientation?: Orientation
@@ -62,7 +74,7 @@ type ResizablePanelGroupProps = React.ComponentProps<"div"> & {
   keyboardStep?: number
 }
 
-function ResizablePanelGroup({ className, orientation = "horizontal", onLayout, defaultLayout, keyboardStep = 5, ...props }: ResizablePanelGroupProps) {
+function ResizablePanelGroup({ className, orientation = "horizontal", onLayout, defaultLayout, keyboardStep = 5, children, ...props }: ResizablePanelGroupProps) {
   const ref = React.useRef<HTMLDivElement>(null)
   const configs = React.useRef(new Map<string, PanelConfig>())
   const [version, bump] = React.useReducer((value: number) => value + 1, 0)
@@ -87,11 +99,11 @@ function ResizablePanelGroup({ className, orientation = "horizontal", onLayout, 
     setOrder((current) => (current.join() === ids.join() ? current : ids))
     setSizes((current) => {
       if (ids.length && ids.every((id) => id in current)) return current
-      if (defaultLayout?.length === ids.length) return Object.fromEntries(ids.map((id, index) => [id, defaultLayout[index]!]))
-      const given = ids.map((id) => configs.current.get(id)?.defaultSize)
-      const rest = Math.max(0, 100 - given.reduce<number>((sum, size) => sum + (size ?? 0), 0))
-      const free = given.filter((size) => size === undefined).length
-      return Object.fromEntries(ids.map((id, index) => [id, round(given[index] ?? rest / free)]))
+      const layout = initialLayout(
+        ids.map((id) => configs.current.get(id)?.defaultSize),
+        defaultLayout
+      )
+      return Object.fromEntries(ids.map((id, index) => [id, layout[index]!]))
     })
     // `defaultLayout` es el valor inicial: cambiarlo después no reparte de nuevo.
   }, [version])
@@ -129,6 +141,23 @@ function ResizablePanelGroup({ className, orientation = "horizontal", onLayout, 
     [orientation, order, sizes, register, resize, commit, limits, sizesNow, groupSize, keyboardStep]
   )
 
+  // Antes de medir: el mismo reparto, con los paneles que son hijos directos (en el servidor no hay DOM).
+  const panels = React.Children.toArray(children).filter(
+    (child): child is React.ReactElement<ResizablePanelProps> => React.isValidElement(child) && child.type === ResizablePanel
+  )
+  const firstLayout = initialLayout(
+    panels.map((panel) => panel.props.defaultSize),
+    defaultLayout
+  )
+  let index = 0
+  const content = React.Children.map(children, (child) =>
+    React.isValidElement(child) && child.type === ResizablePanel ? (
+      <InitialSizeContext.Provider value={firstLayout[index++]}>{child}</InitialSizeContext.Provider>
+    ) : (
+      child
+    )
+  )
+
   return (
     <GroupContext.Provider value={value}>
       <div
@@ -137,7 +166,9 @@ function ResizablePanelGroup({ className, orientation = "horizontal", onLayout, 
         data-orientation={orientation}
         className={cn("flex h-full w-full overflow-hidden", orientation === "vertical" && "flex-col", className)}
         {...props}
-      />
+      >
+        {content}
+      </div>
     </GroupContext.Provider>
   )
 }
@@ -156,8 +187,10 @@ function ResizablePanel({ className, id: idProp, defaultSize, minSize = 0, maxSi
   const autoId = React.useId()
   const id = idProp ?? autoId
   useIsoLayoutEffect(() => group.register(id, { defaultSize, minSize, maxSize }), [group.register, id, defaultSize, minSize, maxSize])
-  // Antes de medir (en el servidor, en el primer render) vale `defaultSize`: el HTML ya sale repartido.
-  const size = group.sizes[id] ?? defaultSize ?? 1
+  // Antes de medir (en el servidor, en el primer render) vale el reparto que calculó el grupo; un
+  // panel envuelto en otro componente no lo recibe y usa su `defaultSize`.
+  const initial = React.useContext(InitialSizeContext)
+  const size = group.sizes[id] ?? initial ?? defaultSize ?? 1
   return (
     <div
       id={id}
