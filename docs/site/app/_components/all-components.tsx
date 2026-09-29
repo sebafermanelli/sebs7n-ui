@@ -27,7 +27,7 @@ export function AllComponents({ groups }: { groups: ComponentGroup[] }) {
           <h3 className="scroll-mt-24 text-heading-24 text-gray-1000" id={`todos-${group.id}`}>
             {group.title}
           </h3>
-          <div className="grid gap-6 lg:grid-cols-2">
+          <div className="flex flex-col gap-10">
             {group.components.map((component) => (
               <article aria-labelledby={`todos-${component.slug}`} className="flex min-w-0 flex-col gap-3" key={component.slug}>
                 <div className="flex flex-col gap-1">
