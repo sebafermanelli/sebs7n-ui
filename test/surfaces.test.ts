@@ -265,6 +265,12 @@ describe("wallpaper (W)", () => {
     const circulos = u.match(/radial-gradient\(circle \d+vmax at /g) ?? []
     // Siete, como en iCloud: con cuatro quedaban grandes zonas lisas.
     expect(circulos.length).toBeGreaterThanOrEqual(7)
+    // Todos con el centro afuera de la pantalla: se ven cuartos y arcos, como en iCloud; un círculo
+    // chico entero adentro se lee como una mancha.
+    for (const [, x, y] of u.matchAll(/radial-gradient\(circle \d+vmax at (-?\d+)% (-?\d+)%/g)) {
+      const afuera = (v: number) => v < 0 || v > 100
+      expect(afuera(Number(x)) || afuera(Number(y)), `centro en ${x}% ${y}%`).toBe(true)
+    }
     // El borde: el color llega al 100 % del radio y medio píxel después ya es transparente.
     expect(u.match(/100%, transparent calc\(100% \+ 0\.5px\)/g)?.length).toBe(circulos.length)
     expect(u).not.toMatch(/ondas|transparent 60%/)
