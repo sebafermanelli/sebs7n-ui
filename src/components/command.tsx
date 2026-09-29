@@ -260,7 +260,8 @@ function CommandInput({ className, wrapperClassName, placeholder, onKeyDown, ...
           className={cn("h-full w-full min-w-0 bg-transparent text-body-large text-gray-1000 outline-none placeholder:text-gray-700", className)}
           onKeyDown={(event) => {
             onKeyDown?.(event)
-            if (event.defaultPrevented || !completion) return
+            // Con un IME (japonés, chino, acentos con tecla muerta) las teclas son de la composición.
+            if (event.defaultPrevented || event.nativeEvent.isComposing || !completion) return
             const input = event.currentTarget
             const atEnd = input.selectionStart === input.value.length && input.selectionEnd === input.value.length
             const acceptKey = (event.key === "Tab" && !event.shiftKey) || event.key === "ArrowRight"

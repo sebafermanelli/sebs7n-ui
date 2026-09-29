@@ -1,4 +1,4 @@
-import { render, screen, waitFor, within } from "@testing-library/react"
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import * as React from "react"
 import { describe, expect, it, vi } from "vitest"
@@ -95,6 +95,20 @@ describe("Command", () => {
     // «digital» encuentra por keyword, pero el título no empieza así: no hay nada que completar.
     await userEvent.type(campo, "digital")
     expect(completion()).toBeNull()
+  })
+
+  it("mientras se compone con un IME, Tab y → no aceptan la sugerencia", async () => {
+    render(
+      <Command>
+        <CommandInput />
+        {items}
+      </Command>
+    )
+    const campo = screen.getByRole("combobox")
+    await userEvent.type(campo, "Fact")
+    fireEvent.keyDown(campo, { key: "ArrowRight", isComposing: true })
+    fireEvent.keyDown(campo, { key: "Tab", isComposing: true })
+    expect(campo).toHaveValue("Fact")
   })
 
   it("con el título entero escrito no hay pista tab y Tab sale del campo", async () => {
