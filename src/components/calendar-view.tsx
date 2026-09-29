@@ -192,7 +192,11 @@ function CalendarView({
   const hourLabel = fmt({ hour: "numeric", hour12 })
   const monthName = capitalize(fmt({ month: "long" }).format(date))
   const year = date.getFullYear()
-  const title = view === "month" ? `${monthName} ${year}` : `${labels.weekOf} ${fmt({ day: "numeric", month: "long", year: "numeric" }).format(startOfWeek(date, weekStartsOn))}`
+  const titleOf = (day: Date) =>
+    view === "month"
+      ? `${capitalize(fmt({ month: "long" }).format(day))} ${day.getFullYear()}`
+      : `${labels.weekOf} ${fmt({ day: "numeric", month: "long", year: "numeric" }).format(startOfWeek(day, weekStartsOn))}`
+  const title = titleOf(date)
   React.useEffect(() => {
     if (!announceNext.current) return
     announceNext.current = false
@@ -264,10 +268,13 @@ function CalendarView({
   // ya dice la fecha de la celda nueva, y el título con `aria-live` la decía dos veces.
   const [announcement, setAnnouncement] = React.useState("")
   const announceNext = React.useRef(false)
-  const shift = (direction: 1 | -1) => {
-    announceNext.current = true
-    setDate(view === "month" ? addMonths(date, direction) : addDays(date, 7 * direction))
+  // Solo si el título cambia: si no, no hay render que lo consuma y el anuncio quedaba pendiente para
+  // la próxima tecla en la grilla.
+  const go = (next: Date) => {
+    announceNext.current = titleOf(next) !== title
+    setDate(next)
   }
+  const shift = (direction: 1 | -1) => go(view === "month" ? addMonths(date, direction) : addDays(date, 7 * direction))
 
   const renderEvent = (item: CalendarEvent & { origin?: Date }, variant: "chip" | "line" | "block", style?: React.CSSProperties) => {
     const color = item.color ?? "brand"
@@ -306,11 +313,13 @@ function CalendarView({
     )
   }
 
-  const cellProps = (day: Date) => {
+  // `withEvents`: la celda tiene eventos que se abren (botones), y F2 entra a ellos.
+  const cellProps = (day: Date, withEvents = false) => {
     const active = isSameDay(day, date)
     return {
       role: "gridcell",
       tabIndex: active ? 0 : -1,
+      "aria-keyshortcuts": withEvents && onEventClick ? "F2" : undefined,
       "aria-selected": active,
       "aria-current": now && isSameDay(day, now) ? ("date" as const) : undefined,
       onClick: () => setDate(day),
@@ -378,7 +387,7 @@ function CalendarView({
               return (
                 <div
                   key={day.getTime()}
-                  {...cellProps(day)}
+                  {...cellProps(day, dayEvents.length > 0)}
                   className={cn("flex min-w-0 flex-col gap-0.5 border-t border-separator pt-1 pb-1.5 aria-selected:bg-fill-1", focusRing)}
                 >
                   <span className="sr-only">{fullDate.format(day)}</span>
@@ -418,7 +427,7 @@ function CalendarView({
               {labels.allDay}
             </span>
             {weekDays.map((day, index) => (
-              <div key={day.getTime()} {...cellProps(day)} className={cn("flex min-h-6 min-w-0 flex-col gap-0.5 border-s border-separator p-0.5 aria-selected:bg-fill-1", focusRing)}>
+              <div key={day.getTime()} {...cellProps(day, allDay[index]!.length > 0)} className={cn("flex min-h-6 min-w-0 flex-col gap-0.5 border-s border-separator p-0.5 aria-selected:bg-fill-1", focusRing)}>
                 <span className="sr-only">{fullDate.format(day)}</span>
                 {allDay[index]!.map((item) => renderEvent(item, "chip"))}
                 {/* Los eventos con hora del día, para el lector: los bloques de abajo están fuera de la celda. */}
@@ -512,10 +521,7 @@ function CalendarView({
           </Button>
           <Button
             className="text-body"
-            onClick={() => {
-              announceNext.current = true
-              setDate(now ?? new Date())
-            }}
+            onClick={() => go(now ?? new Date())}
             size="sm"
             variant="plain"
           >

@@ -173,6 +173,21 @@ describe("CalendarView · revisión de R5b", () => {
     expect(aviso).toHaveTextContent("Octubre 2026")
   })
 
+  it("«Hoy» sin cambiar de mes no deja un anuncio pendiente para el teclado", async () => {
+    render(<CalendarView defaultDate={AHORA} locale="es-AR" now={AHORA} />)
+    const aviso = screen.getByRole("status")
+    await userEvent.click(screen.getByRole("button", { name: "Hoy" }))
+    celda(/29 de septiembre/).focus()
+    await userEvent.keyboard("{PageDown}")
+    expect(aviso).toHaveTextContent("")
+  })
+
+  it("las celdas con eventos anuncian F2 con aria-keyshortcuts", () => {
+    render(<CalendarView defaultDate={AHORA} events={EVENTOS} locale="es-AR" now={AHORA} onEventClick={() => {}} />)
+    expect(celda(/29 de septiembre/)).toHaveAttribute("aria-keyshortcuts", "F2")
+    expect(celda(/28 de septiembre/)).not.toHaveAttribute("aria-keyshortcuts")
+  })
+
   it("en la semana, Shift+PageDown salta un mes", async () => {
     render(<CalendarView defaultDate={new Date(2026, 8, 28)} defaultView="week" locale="es-AR" now={AHORA} />)
     celda(/28 de septiembre/).focus()
