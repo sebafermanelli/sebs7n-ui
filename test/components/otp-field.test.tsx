@@ -157,10 +157,17 @@ describe("OTPField", () => {
     }
   })
 
-  it("comparte el borde, el radio y el foco de Input", () => {
+  // Revisión de R4 (M2): en claro el relleno de un campo (fill-1 sobre blanco) da 1,10:1, y seis
+  // casillas vacías casi no se veían. Llevan el borde entre paneles; la llena, uno más marcado.
+  it("las casillas vacías se ven: borde separator-strong, y la llena label-tertiary", () => {
+    render(<OTPField aria-label="Código" />)
+    expect(casillas()[0]).toHaveClass("border-separator-strong", "data-filled:border-label-tertiary")
+    expect(casillas()[0]).not.toHaveClass("border-transparent")
+  })
+
+  it("comparte el radio, el relleno y el foco de Input", () => {
     render(<OTPField aria-label="Código" />)
     expect(casillas()[0]).toHaveClass(
-      "border-transparent",
       "bg-fill-1",
       "focus:focus-border",
       // Una casilla cuadrada en cápsula sería un círculo.
