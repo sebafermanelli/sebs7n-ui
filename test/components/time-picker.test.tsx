@@ -60,6 +60,19 @@ describe("TimePicker", () => {
     expect(options()).toEqual(["08:00", "08:15", "08:30", "08:45", "09:00"])
   })
 
+  it("mide lo que la hora, no el ancho del contenedor; className=\"w-full\" lo estira", () => {
+    const { rerender } = render(<TimePicker aria-label="Hora de envío" defaultValue="09:15" />)
+    const group = () => field().closest("[data-slot=time-picker]")!
+    // Como NumberField: el grupo abraza al reloj y a la hora. El campo mide su contenido
+    // (`field-sizing: content`) con un mínimo de 5 cifras; sin `field-sizing` (Firefox), 6 fijas.
+    expect(group()).toHaveClass("w-fit", "max-w-full")
+    expect(group()).not.toHaveClass("w-full")
+    expect(field()).toHaveClass("field-sizing-content", "min-w-[calc(5ch+1.25rem)]", "w-[calc(6ch+1.25rem)]", "supports-[field-sizing:content]:w-auto", "flex-1")
+    rerender(<TimePicker aria-label="Hora de envío" className="w-full" defaultValue="09:15" />)
+    expect(group()).toHaveClass("w-full")
+    expect(group()).not.toHaveClass("w-fit")
+  })
+
   it("↓ abre la lista, recorre y Enter elige; la elegida lleva aria-selected", async () => {
     const user = userEvent.setup()
     const onValueChange = vi.fn()

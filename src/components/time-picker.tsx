@@ -152,13 +152,22 @@ function TimePicker({
           data-size={size}
           ref={formReset}
           data-disabled={disabled ? "" : undefined}
-          className={cn(inputShellClassName, className)}
+          // `w-fit` y no el `w-full` de los campos, como NumberField: el grupo abraza al reloj y a la
+          // hora. A todo el ancho, «09:15» quedaba a la izquierda de un campo vacío.
+          className={cn(inputShellClassName, "w-fit max-w-full", className)}
         >
           <ClockIcon aria-hidden="true" className="pointer-events-none ms-3 size-4 shrink-0 text-label-secondary" />
           <AutocompletePrimitive.Input
             data-slot="time-picker-input"
             autoComplete="off"
-            className={cn(inputShellInputClassName, "ps-2 tabular-nums")}
+            // El ancho es el del texto (`field-sizing: content`), la hora o el placeholder, con un
+            // mínimo de 5 cifras para que no salte al tipear. `flex-1`: con `className="w-full"` en el
+            // grupo, el campo lo llena. Sin `field-sizing` (Firefox), 6 cifras fijas: el `w-auto` que
+            // lo libera va detrás de `@supports`, porque un `width` le gana al tamaño por contenido.
+            className={cn(
+              inputShellInputClassName,
+              "ps-2 tabular-nums w-[calc(6ch+1.25rem)] min-w-[calc(5ch+1.25rem)] field-sizing-content supports-[field-sizing:content]:w-auto"
+            )}
             disabled={disabled}
             id={id}
             inputMode="numeric"

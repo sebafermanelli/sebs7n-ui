@@ -971,6 +971,7 @@ export const COMPONENTS = {
       "Para una hora suelta: un envío programado, un horario de débito. Con fecha, `DateTimePicker`.",
       "`step` arma la lista pero no limita lo tipeado: con `step={15}` se puede escribir 09:37. `min`/`max` sí: lo de afuera se lleva al borde.",
       "`value` es «HH:MM» o `null`; con `name`, un `<input type=\"hidden\">` lo manda a la Server Action.",
+      "Mide lo que la hora, como `NumberField`: el reloj, «09:15» y su aire. `className=\"w-full\"` lo estira al ancho del contenedor.",
       "Solo por subpath (`sebs7n-ui/time-picker`): no está en el barrel, por peso.",
     ],
     props: {

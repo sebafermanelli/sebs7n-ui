@@ -24,6 +24,13 @@ describe("DateTimePicker", () => {
     expect(time().closest("[data-slot=time-picker]")).toHaveClass("rounded-s-none", "border-s-hairline")
   })
 
+  it("la hora mide lo que la hora: no se estira con el grupo", () => {
+    render(<DateTimePicker aria-label="Vencimiento" defaultValue={new Date(2026, 8, 29, 9, 30)} />)
+    const part = time().closest("[data-slot=time-picker]")!
+    expect(part).toHaveClass("w-fit", "shrink-0")
+    expect(part).not.toHaveClass("w-28")
+  })
+
   it("elegir el día conserva la hora", async () => {
     const user = userEvent.setup()
     const onValueChange = vi.fn()
