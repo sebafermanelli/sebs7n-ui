@@ -12,11 +12,12 @@ import { Button } from "./button.js"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs.js"
 
 /**
- * El calendario de iCloud (catálogo §2.17), en vista de mes y de semana: cabecera con el mes en 21/600
+ * El calendario de iCloud (catálogo §2.17), en vista de mes, de semana y de día: cabecera con el mes en 21/600
  * y el año en gris, el segmentado de la vista y «‹ Hoy ›»; hoy en el círculo del acento; eventos de
  * todo el día como chips de 18 (el color al 20 % y el texto en su tinta) y eventos con hora como punto
- * de 8 + título + hora en el mes, o bloques con el borde izquierdo de 3 en la semana, con la línea roja
- * de «ahora».
+ * de 8 + título + hora en el mes, o bloques con el borde izquierdo de 3 en la semana y el día, con la
+ * línea roja de «ahora». El día es la semana con una sola columna: la misma fila «Todo el día», las
+ * mismas horas y el mismo teclado.
  *
  * Los días son una grilla (`role="grid"`) con foco itinerante: flechas, Home/End y PageUp/PageDown
  * (Shift: un año), y Enter abre el día (`onDayOpen`).
@@ -33,7 +34,7 @@ type CalendarEvent = {
   color?: BadgeColor
 }
 
-type CalendarViewMode = "month" | "week"
+type CalendarViewMode = "month" | "week" | "day"
 
 type CalendarViewProps = Omit<React.ComponentProps<"div">, "children" | "defaultValue" | "onChange"> & {
   events?: CalendarEvent[]
@@ -65,6 +66,14 @@ const HOUR = 61
 /** El mes que se dibuja (invisible) antes de saber qué día es hoy: igual en el server y el cliente. */
 const PLACEHOLDER = new Date(2000, 0, 1)
 const MAX_IN_DAY = 3
+
+/**
+ * Los textos de la vista Día. No están en `defaultLabels` (el barrel está en su tope): se mezclan acá
+ * debajo de los de `calendarView`, y el provider y la prop `labels` los cambian igual.
+ */
+const calendarViewDayLabels = { day: "Día", previousDay: "Día anterior", nextDay: "Día siguiente" } satisfies Required<
+  Pick<Labels["calendarView"], "day" | "previousDay" | "nextDay">
+>
 
 const capitalize = (text: string) => text.charAt(0).toUpperCase() + text.slice(1)
 const endOf = (event: CalendarEvent) => event.end ?? new Date(event.start.getTime() + 3_600_000)
@@ -153,7 +162,7 @@ function CalendarView({
   labels: labelsProp,
   ...props
 }: CalendarViewProps) {
-  const labels = { ...useLabels().calendarView, ...labelsProp }
+  const labels = { ...calendarViewDayLabels, ...useLabels().calendarView, ...labelsProp } as Required<Labels["calendarView"]>
   const now = useNow(nowProp)
   const [ownView, setOwnView] = React.useState(defaultView)
   const view = viewProp ?? ownView
@@ -186,6 +195,8 @@ function CalendarView({
 
   const weekStart = startOfWeek(date, weekStartsOn)
   const weekDays = Array.from({ length: 7 }, (_, index) => addDays(weekStart, index))
+  // Las columnas de la grilla de horas: la semana, o el día solo.
+  const days = view === "day" ? [date] : weekDays
   const fmt = (options: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat(locale, options)
   const fullDate = fmt({ weekday: "long", day: "numeric", month: "long", year: "numeric" })
   const time = fmt({ hour: "2-digit", minute: "2-digit", hour12 })
@@ -195,7 +206,9 @@ function CalendarView({
   const titleOf = (day: Date) =>
     view === "month"
       ? `${capitalize(fmt({ month: "long" }).format(day))} ${day.getFullYear()}`
-      : `${labels.weekOf} ${fmt({ day: "numeric", month: "long", year: "numeric" }).format(startOfWeek(day, weekStartsOn))}`
+      : view === "day"
+        ? fullDate.format(day)
+        : `${labels.weekOf} ${fmt({ day: "numeric", month: "long", year: "numeric" }).format(startOfWeek(day, weekStartsOn))}`
   const title = titleOf(date)
   React.useEffect(() => {
     if (!announceNext.current) return
@@ -203,14 +216,14 @@ function CalendarView({
     setAnnouncement(title)
   }, [title])
 
-  // La semana abre en la hora de ahora (si hoy está en ella) o en `scrollToHour`.
-  const showsToday = now != null && weekDays.some((day) => isSameDay(day, now))
+  // La semana (o el día) abre en la hora de ahora (si hoy está en ella) o en `scrollToHour`.
+  const showsToday = now != null && days.some((day) => isSameDay(day, now))
   React.useEffect(() => {
-    if (view !== "week" || !scrollRef.current) return
+    if (view === "month" || !scrollRef.current) return
     const hour = showsToday && now ? Math.max(0, now.getHours() - 2) : scrollToHour
     scrollRef.current.scrollTop = hour * HOUR
-    // Al cambiar de vista o de semana (y cuando llega el reloj), no con cada minuto.
-  }, [view, weekStart.getTime(), showsToday])
+    // Al cambiar de vista, de semana o de día (y cuando llega el reloj), no con cada minuto.
+  }, [view, days[0]!.getTime(), showsToday])
 
   const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     // Adentro de un evento (se entra con F2): ↓ ↑ recorren los del día, Escape o F2 vuelven a la
@@ -274,7 +287,7 @@ function CalendarView({
     announceNext.current = titleOf(next) !== title
     setDate(next)
   }
-  const shift = (direction: 1 | -1) => go(view === "month" ? addMonths(date, direction) : addDays(date, 7 * direction))
+  const shift = (direction: 1 | -1) => go(view === "month" ? addMonths(date, direction) : addDays(date, (view === "day" ? 1 : 7) * direction))
 
   const renderEvent = (item: CalendarEvent & { origin?: Date }, variant: "chip" | "line" | "block", style?: React.CSSProperties) => {
     const color = item.color ?? "brand"
@@ -348,7 +361,7 @@ function CalendarView({
       aria-label={fmt({ weekday: "long" }).format(day)}
       className={cn("truncate px-1.5 pb-1.5 text-body", now && day.getDay() === now.getDay() && isSameDay(startOfWeek(day, weekStartsOn), startOfWeek(now, weekStartsOn)) ? "text-brand-ink" : "text-label-secondary")}
     >
-      {view === "week" && (
+      {view !== "month" && (
         <span
           className={cn(
             "me-1 inline-flex h-[30px] min-w-[30px] items-center justify-center rounded-full px-1 font-semibold tabular-nums",
@@ -406,27 +419,29 @@ function CalendarView({
       </div>
     )
   } else {
-    const allDay = weekDays.map((day) => eventsOf(events, day).filter((item) => item.allDay))
+    const allDay = days.map((day) => eventsOf(events, day).filter((item) => item.allDay))
     const nowTop = now ? Math.round((minutes(now) / 60) * HOUR) : 0
-    const todayIndex = now ? weekDays.findIndex((day) => isSameDay(day, now)) : -1
+    const todayIndex = now ? days.findIndex((day) => isSameDay(day, now)) : -1
+    // La semana son siete columnas después de la de las horas; el día, una.
+    const columns = view === "day" ? "grid-cols-[4.5rem_minmax(0,1fr)]" : "grid-cols-[4.5rem_repeat(7,minmax(0,1fr))]"
     body = (
       <div
         ref={gridRef}
         role="grid"
-        aria-label={`${labels.weekOf} ${fmt({ day: "numeric", month: "long", year: "numeric" }).format(weekStart)}`}
+        aria-label={titleOf(date)}
         onKeyDown={onKeyDown}
         className="flex min-h-0 flex-1 flex-col"
       >
         <div className="flex flex-col">
-          <div role="row" className="grid grid-cols-[4.5rem_repeat(7,minmax(0,1fr))]">
+          <div role="row" className={cn("grid", columns)}>
             <span aria-hidden="true" />
-            {weekDays.map(weekdayHeader)}
+            {days.map(weekdayHeader)}
           </div>
-          <div role="row" className="grid grid-cols-[4.5rem_repeat(7,minmax(0,1fr))] border-b border-separator-strong">
+          <div role="row" className={cn("grid border-b border-separator-strong", columns)}>
             <span role="rowheader" className="pe-2 pt-0.5 text-end text-footnote text-label-secondary">
               {labels.allDay}
             </span>
-            {weekDays.map((day, index) => (
+            {days.map((day, index) => (
               <div key={day.getTime()} {...cellProps(day, allDay[index]!.length > 0)} className={cn("flex min-h-6 min-w-0 flex-col gap-0.5 border-s border-separator p-0.5 aria-selected:bg-fill-1", focusRing)}>
                 <span className="sr-only">{fullDate.format(day)}</span>
                 {allDay[index]!.map((item) => renderEvent(item, "chip"))}
@@ -445,7 +460,7 @@ function CalendarView({
           <div
             data-slot="calendar-view-hours"
             aria-hidden="true"
-            className="relative grid grid-cols-[4.5rem_repeat(7,minmax(0,1fr))]"
+            className={cn("relative grid", columns)}
             style={{ height: 24 * HOUR }}
           >
             <div className="relative">
@@ -455,7 +470,7 @@ function CalendarView({
                 </span>
               ))}
             </div>
-            {weekDays.map((day) => (
+            {days.map((day) => (
               <div
                 key={day.getTime()}
                 className="relative border-s border-separator bg-[linear-gradient(to_bottom,var(--color-separator)_1px,transparent_1px)] bg-size-[100%_61px]"
@@ -482,7 +497,7 @@ function CalendarView({
                 >
                   <span
                     className="absolute -top-[3.5px] size-2 -translate-x-1/2 rounded-full bg-red-700 rtl:translate-x-1/2"
-                    style={{ insetInlineStart: `${(todayIndex / 7) * 100}%` }}
+                    style={{ insetInlineStart: `${(todayIndex / days.length) * 100}%` }}
                   />
                 </span>
               </>
@@ -509,14 +524,16 @@ function CalendarView({
     >
       <div className="flex min-h-14 flex-wrap items-center justify-between gap-x-4 gap-y-2 px-5 py-2.5">
         <h2 className="text-title-2 whitespace-nowrap">
-          {monthName} <span className="font-normal text-label-secondary">{year}</span>
+          {/* En el día, el mes corto («29 sept»): con el largo, la cabecera baja a dos líneas a ~680. */}
+          {view === "day" ? fmt({ day: "numeric", month: "short" }).format(date) : monthName} <span className="font-normal text-label-secondary">{year}</span>
         </h2>
-        <TabsList aria-label={labels.view} className="w-56" variant="segmented">
+        <TabsList aria-label={labels.view} className="w-64" variant="segmented">
+          <TabsTrigger value="day">{labels.day}</TabsTrigger>
           <TabsTrigger value="week">{labels.week}</TabsTrigger>
           <TabsTrigger value="month">{labels.month}</TabsTrigger>
         </TabsList>
         <div className="flex items-center gap-1">
-          <Button aria-label={view === "month" ? labels.previousMonth : labels.previousWeek} onClick={() => shift(-1)} size="icon-sm" variant="plain">
+          <Button aria-label={{ month: labels.previousMonth, week: labels.previousWeek, day: labels.previousDay }[view]} onClick={() => shift(-1)} size="icon-sm" variant="plain">
             <ChevronLeftIcon />
           </Button>
           <Button
@@ -527,7 +544,7 @@ function CalendarView({
           >
             {labels.today}
           </Button>
-          <Button aria-label={view === "month" ? labels.nextMonth : labels.nextWeek} onClick={() => shift(1)} size="icon-sm" variant="plain">
+          <Button aria-label={{ month: labels.nextMonth, week: labels.nextWeek, day: labels.nextDay }[view]} onClick={() => shift(1)} size="icon-sm" variant="plain">
             <ChevronRightIcon />
           </Button>
         </div>
@@ -542,4 +559,4 @@ function CalendarView({
   )
 }
 
-export { CalendarView, type CalendarEvent, type CalendarViewMode, type CalendarViewProps }
+export { CalendarView, calendarViewDayLabels, type CalendarEvent, type CalendarViewMode, type CalendarViewProps }

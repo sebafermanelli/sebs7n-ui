@@ -1,8 +1,11 @@
 import { fireEvent, render, screen, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
+import { renderToString } from "react-dom/server"
 import { describe, expect, it, vi } from "vitest"
 
-import { CalendarView, type CalendarEvent } from "../../src/components/calendar-view"
+import { CalendarView, calendarViewDayLabels, type CalendarEvent } from "../../src/components/calendar-view"
+import { defaultLabels, LabelsProvider } from "../../src/lib/labels"
+import { hidratar } from "../hidratar"
 
 // Martes 29 de septiembre de 2026, 22:07. La semana arranca el lunes 28.
 const AHORA = new Date(2026, 8, 29, 22, 7)
@@ -247,5 +250,89 @@ describe("CalendarView · semana", () => {
     await userEvent.keyboard("{ArrowLeft}")
     expect(screen.getByRole("grid", { name: /21 de septiembre/ })).toBeInTheDocument()
     expect(celda(/27 de septiembre/)).toHaveFocus()
+  })
+})
+
+describe("CalendarView · día", () => {
+  it("el segmentado tiene Día, Semana y Mes; Día es una grilla de una columna nombrada con la fecha", () => {
+    render(<CalendarView defaultDate={AHORA} defaultView="day" events={EVENTOS} locale="es-AR" now={AHORA} />)
+    const vista = screen.getByRole("tablist", { name: "Vista" })
+    expect(within(vista).getAllByRole("tab").map((tab) => tab.textContent)).toEqual(["Día", "Semana", "Mes"])
+    expect(within(vista).getByRole("tab", { name: "Día" })).toHaveAttribute("aria-selected", "true")
+    const grilla = screen.getByRole("grid", { name: "martes, 29 de septiembre de 2026" })
+    expect(within(grilla).getAllByRole("gridcell")).toHaveLength(1)
+    expect(within(grilla).getAllByRole("columnheader")).toHaveLength(1)
+    // El título va con el mes corto para que la cabecera siga en una línea a ~600 de ancho; la
+    // fecha larga la dicen la grilla y el anuncio.
+    expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent(/^29 sept 2026$/)
+    expect(screen.getByRole("button", { name: "Día anterior" })).toBeInTheDocument()
+    expect(screen.getByRole("button", { name: "Día siguiente" })).toBeInTheDocument()
+  })
+
+  it("fila «Todo el día», horas de 61, el bloque del evento y la línea de ahora en la única columna", () => {
+    render(<CalendarView defaultDate={AHORA} defaultView="day" events={EVENTOS} hour12={false} locale="es-AR" now={AHORA} />)
+    expect(screen.getByText("Todo el día")).toBeInTheDocument()
+    expect(document.querySelector("[data-slot=calendar-view-hours]")).toHaveClass("grid-cols-[4.5rem_minmax(0,1fr)]")
+    const bloque = screen.getByText("Reunión con Acme").closest("[data-slot=calendar-view-event]") as HTMLElement
+    expect(bloque).toHaveClass("border-s-[3px]", "bg-amber-700/20")
+    expect(bloque.style.top).toBe("1128.5px")
+    expect(bloque.style.width).toBe("calc(100% - 2px)")
+    // Los de otros días no se dibujan.
+    expect(screen.queryByText("Cierre de mes")).not.toBeInTheDocument()
+    expect(screen.queryByText("Cobro Nube Digital")).not.toBeInTheDocument()
+    const punto = document.querySelector("[data-slot=calendar-view-now] > span") as HTMLElement
+    expect(punto.style.insetInlineStart).toBe("0%")
+    expect(screen.getByText("22:07")).toHaveClass("text-red-ink")
+  })
+
+  it("‹ › pasan de a un día y lo anuncian; el evento de todo el día aparece en su fila", async () => {
+    render(<CalendarView defaultDate={AHORA} defaultView="day" events={EVENTOS} locale="es-AR" now={AHORA} />)
+    await userEvent.click(screen.getByRole("button", { name: "Día siguiente" }))
+    expect(screen.getByRole("grid", { name: "miércoles, 30 de septiembre de 2026" })).toBeInTheDocument()
+    expect(screen.getByRole("status")).toHaveTextContent("miércoles, 30 de septiembre de 2026")
+    expect(screen.getByText("Cierre de mes").closest("[data-slot=calendar-view-event]")).toHaveClass("h-[18px]", "rounded-tag")
+    await userEvent.click(screen.getByRole("button", { name: "Día anterior" }))
+    await userEvent.click(screen.getByRole("button", { name: "Día anterior" }))
+    expect(screen.getByRole("grid", { name: /28 de septiembre/ })).toBeInTheDocument()
+  })
+
+  it("el mismo teclado: ← → cambian de día y el foco sigue en la celda; PageDown salta una semana; Enter abre", async () => {
+    const onDayOpen = vi.fn()
+    render(<CalendarView defaultDate={AHORA} defaultView="day" locale="es-AR" now={AHORA} onDayOpen={onDayOpen} />)
+    celda(/29 de septiembre/).focus()
+    await userEvent.keyboard("{ArrowRight}")
+    expect(celda(/30 de septiembre/)).toHaveFocus()
+    await userEvent.keyboard("{PageDown}")
+    expect(celda(/7 de octubre/)).toHaveFocus()
+    await userEvent.keyboard("{Home}")
+    expect(celda(/5 de octubre/)).toHaveFocus()
+    await userEvent.keyboard("{Enter}")
+    expect(onDayOpen).toHaveBeenCalledWith(new Date(2026, 9, 5))
+  })
+
+  it("los textos de Día salen del provider y de la prop, sin estar en defaultLabels", () => {
+    expect(defaultLabels.calendarView).not.toHaveProperty("day")
+    expect(calendarViewDayLabels).toEqual({ day: "Día", previousDay: "Día anterior", nextDay: "Día siguiente" })
+    render(
+      <LabelsProvider value={{ calendarView: { day: "Day", previousDay: "Previous day" } }}>
+        <CalendarView defaultDate={AHORA} defaultView="day" labels={{ nextDay: "Mañana" }} locale="es-AR" now={AHORA} />
+      </LabelsProvider>
+    )
+    expect(screen.getByRole("tab", { name: "Day" })).toBeInTheDocument()
+    expect(screen.getByRole("button", { name: "Previous day" })).toBeInTheDocument()
+    expect(screen.getByRole("button", { name: "Mañana" })).toBeInTheDocument()
+  })
+
+  it("hidrata sin mismatch en la vista Día", async () => {
+    const ui = <CalendarView defaultDate={AHORA} defaultView="day" events={EVENTOS} locale="es-AR" now={AHORA} />
+    const container = document.createElement("div")
+    container.innerHTML = renderToString(ui)
+    document.body.append(container)
+    const errors = vi.spyOn(console, "error").mockImplementation(() => {})
+    const recoverable = vi.fn()
+    await hidratar(container, ui, { onRecoverableError: recoverable })
+    expect(recoverable).not.toHaveBeenCalled()
+    expect(errors.mock.calls.filter(([message]) => /hydrat|did not match/i.test(String(message)))).toEqual([])
+    errors.mockRestore()
   })
 })
