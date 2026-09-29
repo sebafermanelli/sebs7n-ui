@@ -81,7 +81,8 @@ function CopyButton({ value, children, size = "sm", onCopy, labels: labelsProp, 
     <>
       {/* Con texto a la vista el tooltip de «Copiar» repite lo que ya se lee: solo aparece el «Copiado». */}
       <Tooltip open={(hover && !children) || copied} onOpenChange={setHover}>
-        <TooltipTrigger closeOnClick={false} render={button} />
+        {/* `data-slot` del botón: el del trigger lo pisaría, y el botón sigue siendo un botón del sistema. */}
+        <TooltipTrigger closeOnClick={false} data-slot="button" render={button} />
         <TooltipContent>{copied ? labels.copied : labels.copy}</TooltipContent>
       </Tooltip>
       <span className="sr-only" data-slot="copy-button-status" role="status">

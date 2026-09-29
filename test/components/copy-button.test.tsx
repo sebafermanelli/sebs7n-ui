@@ -19,6 +19,8 @@ describe("CopyButton", () => {
     render(<CopyButton value="30-71234567-8" />)
     const button = screen.getByRole("button", { name: "Copiar" })
     expect(button).toHaveAttribute("data-size", "icon-sm")
+    // El tooltip no le cambia la identidad: sigue siendo un botón del sistema.
+    expect(button).toHaveAttribute("data-slot", "button")
     expect(button).toHaveClass("size-7", "rounded-control", "text-brand-ink")
     expect(button).toHaveAttribute("type", "button")
   })
@@ -78,6 +80,7 @@ describe("CopyButton", () => {
     )
     const button = screen.getByRole("button", { name: "a1b2c3d4" })
     expect(button).toHaveAttribute("data-size", "sm")
+    expect(button).toHaveAttribute("data-slot", "button")
     await user.click(button)
     expect(await navigator.clipboard.readText()).toBe("a1b2c3d4-e5f6")
     expect(onRow).not.toHaveBeenCalled()
