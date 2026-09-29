@@ -119,6 +119,20 @@ describe("MultiSelect", () => {
     expect(datos.getAll("medios")).toEqual(["transferencia", "tarjeta", "debito"])
   })
 
+  it("max: «Seleccionar todo» cuenta también los ya elegidos", async () => {
+    const opciones: MultiSelectOption[] = [
+      { value: "a", label: "Alfa" },
+      { value: "b", label: "Beta" },
+      { value: "c", label: "Gama" },
+      { value: "d", label: "Delta" },
+    ]
+    render(<MultiSelect aria-label="Medios de pago" defaultValue={["a"]} max={2} options={opciones} selectAll />)
+    await abrir()
+    // «ta»: Beta y Delta coinciden (2 ≤ max), pero con Alfa ya elegida serían 3.
+    await userEvent.keyboard("ta")
+    expect(within(screen.getByRole("listbox")).queryByRole("option", { name: "Seleccionar todo" })).toBeNull()
+  })
+
   it("limpiar vacía la selección", async () => {
     const onValueChange = vi.fn()
     render(<MultiSelect aria-label="Medios de pago" defaultValue={["tarjeta", "debito"]} onValueChange={onValueChange} options={MEDIOS} />)

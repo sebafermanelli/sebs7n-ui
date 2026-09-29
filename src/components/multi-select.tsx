@@ -107,8 +107,9 @@ function MultiSelect({
   const needle = normalize(query.trim())
   const matches = options.filter((option) => !needle || normalize(option.label).includes(needle))
   const enabledMatches = matches.filter((option) => !option.disabled)
-  // Con un tope menor que las opciones, «todo» no se puede: no se ofrece.
-  const offerAll = selectAll && enabledMatches.length > 1 && (max === undefined || max >= enabledMatches.length)
+  // Si «todo» (lo ya elegido más lo que se ve) pasa el tope, no se ofrece.
+  const offerAll =
+    selectAll && enabledMatches.length > 1 && (max === undefined || new Set([...value, ...enabledMatches.map((option) => option.value)]).size <= max)
   const allChosen = offerAll && enabledMatches.every((option) => selected.has(option.value))
   const items = offerAll ? [ALL, ...matches.map((option) => option.value)] : matches.map((option) => option.value)
 
