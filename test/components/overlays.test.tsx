@@ -220,6 +220,26 @@ describe("Select como pop-up button de macOS (2.0)", () => {
     expect(panel.className).not.toMatch(/overflow-y-auto/)
   })
 
+  it("un px-* de la app no se come la canaleta de las opciones", async () => {
+    render(
+      <Select defaultOpen defaultValue="ars" items={{ ars: "Pesos" }}>
+        <SelectTrigger aria-label="Moneda">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectLabel className="px-3">Monedas</SelectLabel>
+            <SelectItem className="px-3" value="ars">
+              Pesos
+            </SelectItem>
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+    )
+    expect(await screen.findByRole("option", { name: "Pesos" })).toHaveClass("px-3", "pl-7")
+    expect(screen.getByText("Monedas")).toHaveClass("px-3", "pl-7")
+  })
+
   it("con alignItemWithTrigger={false} vuelve a bajar como un menú", async () => {
     render(<Moneda alignItemWithTrigger={false} />)
     await userEvent.click(screen.getByRole("combobox", { name: "Moneda" }))

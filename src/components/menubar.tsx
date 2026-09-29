@@ -139,7 +139,7 @@ type MenubarCheckboxItemProps = WithClassName<MenuPrimitive.CheckboxItem.Props>
 
 function MenubarCheckboxItem({ className, children, ...props }: MenubarCheckboxItemProps) {
   return (
-    <MenuPrimitive.CheckboxItem data-slot="menubar-checkbox-item" className={cn(menuItemClassName, menuGutterClassName, className)} {...props}>
+    <MenuPrimitive.CheckboxItem data-slot="menubar-checkbox-item" className={cn(menuItemClassName, className, menuGutterClassName)} {...props}>
       <MenuPrimitive.CheckboxItemIndicator data-slot="menubar-item-indicator" className={menuIndicatorClassName}>
         <CheckIcon />
       </MenuPrimitive.CheckboxItemIndicator>
@@ -156,7 +156,7 @@ type MenubarRadioItemProps = WithClassName<MenuPrimitive.RadioItem.Props>
 
 function MenubarRadioItem({ className, children, ...props }: MenubarRadioItemProps) {
   return (
-    <MenuPrimitive.RadioItem data-slot="menubar-radio-item" className={cn(menuItemClassName, menuGutterClassName, className)} {...props}>
+    <MenuPrimitive.RadioItem data-slot="menubar-radio-item" className={cn(menuItemClassName, className, menuGutterClassName)} {...props}>
       <MenuPrimitive.RadioItemIndicator data-slot="menubar-item-indicator" className={menuIndicatorClassName}>
         <CheckIcon />
       </MenuPrimitive.RadioItemIndicator>

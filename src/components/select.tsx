@@ -109,7 +109,7 @@ type SelectItemProps = WithClassName<SelectPrimitive.Item.Props>
 // al cambiar de opción y la lista se lee como una columna (el pop-up menu de macOS).
 function SelectItem({ className, children, ...props }: SelectItemProps) {
   return (
-    <SelectPrimitive.Item data-slot="select-item" className={cn(menuItemClassName, menuGutterClassName, "w-full", className)} {...props}>
+    <SelectPrimitive.Item data-slot="select-item" className={cn(menuItemClassName, "w-full", className, menuGutterClassName)} {...props}>
       <SelectPrimitive.ItemIndicator data-slot="select-item-indicator" className={menuIndicatorClassName}>
         <CheckIcon />
       </SelectPrimitive.ItemIndicator>
@@ -128,7 +128,7 @@ type SelectLabelProps = WithClassName<SelectPrimitive.GroupLabel.Props>
 
 function SelectLabel({ className, ...props }: SelectLabelProps) {
   // Alinea con el texto de las opciones, después de la canaleta.
-  return <SelectPrimitive.GroupLabel data-slot="select-label" className={cn(menuLabelClassName, menuGutterClassName, className)} {...props} />
+  return <SelectPrimitive.GroupLabel data-slot="select-label" className={cn(menuLabelClassName, className, menuGutterClassName)} {...props} />
 }
 
 type SelectSeparatorProps = WithClassName<SelectPrimitive.Separator.Props>

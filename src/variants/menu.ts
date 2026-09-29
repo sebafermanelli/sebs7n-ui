@@ -60,6 +60,10 @@ export const menuPopupClassName =
  * Un menú sin nada marcable no reserva canaleta y sus ítems se quedan en `px-2`, como los menús
  * de macOS que no tienen tildes. El `pl-7` le gana al `px-2` del ítem porque Tailwind v4 emite
  * `padding-left` después de `padding-inline` (verificado con el compilador 4.3).
+ *
+ * Los componentes lo ponen **después** del `className` de la app en el `cn()`: un `px-3` de la app
+ * (más aire a la derecha, por un atajo largo) haría que tailwind-merge descarte el `pl-7` si fuera
+ * antes, y el texto se metería en la canaleta del tilde.
  */
 export const menuGutterClassName = "pl-7"
 export const menuInsetClassName = "data-inset:pl-7"

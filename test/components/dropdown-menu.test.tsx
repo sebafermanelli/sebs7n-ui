@@ -187,6 +187,27 @@ describe("DropdownMenu", () => {
 })
 
 describe("menú de macOS (2.0)", () => {
+  it("un px-* de la app no se come la canaleta del tilde", async () => {
+    render(
+      <DropdownMenu defaultOpen>
+        <DropdownMenuTrigger>Ver</DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuCheckboxItem checked className="px-3">
+            Mostrar vencidas
+          </DropdownMenuCheckboxItem>
+          <DropdownMenuRadioGroup value="mes">
+            <DropdownMenuRadioItem className="px-3" value="mes">
+              Por mes
+            </DropdownMenuRadioItem>
+          </DropdownMenuRadioGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    )
+    const tildado = await screen.findByRole("menuitemcheckbox", { name: "Mostrar vencidas" })
+    expect(tildado).toHaveClass("px-3", "pl-7")
+    expect(screen.getByRole("menuitemradio", { name: "Por mes" })).toHaveClass("px-3", "pl-7")
+  })
+
   it("el tilde va a la izquierda y el texto alinea después de la canaleta", async () => {
     render(
       <DropdownMenu defaultOpen>

@@ -81,7 +81,7 @@ type DropdownMenuCheckboxItemProps = WithClassName<MenuPrimitive.CheckboxItem.Pr
 
 function DropdownMenuCheckboxItem({ className, children, ...props }: DropdownMenuCheckboxItemProps) {
   return (
-    <MenuPrimitive.CheckboxItem data-slot="dropdown-menu-checkbox-item" className={cn(menuItemClassName, menuGutterClassName, className)} {...props}>
+    <MenuPrimitive.CheckboxItem data-slot="dropdown-menu-checkbox-item" className={cn(menuItemClassName, className, menuGutterClassName)} {...props}>
       <MenuPrimitive.CheckboxItemIndicator data-slot="dropdown-menu-item-indicator" className={menuIndicatorClassName}>
         <CheckIcon />
       </MenuPrimitive.CheckboxItemIndicator>
@@ -98,7 +98,7 @@ type DropdownMenuRadioItemProps = WithClassName<MenuPrimitive.RadioItem.Props>
 
 function DropdownMenuRadioItem({ className, children, ...props }: DropdownMenuRadioItemProps) {
   return (
-    <MenuPrimitive.RadioItem data-slot="dropdown-menu-radio-item" className={cn(menuItemClassName, menuGutterClassName, className)} {...props}>
+    <MenuPrimitive.RadioItem data-slot="dropdown-menu-radio-item" className={cn(menuItemClassName, className, menuGutterClassName)} {...props}>
       <MenuPrimitive.RadioItemIndicator data-slot="dropdown-menu-item-indicator" className={menuIndicatorClassName}>
         <CheckIcon />
       </MenuPrimitive.RadioItemIndicator>

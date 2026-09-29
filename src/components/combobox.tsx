@@ -109,7 +109,7 @@ type ComboboxItemProps = WithClassName<ComboboxPrimitive.Item.Props>
 // canaleta, como en Select: el texto no salta al elegir.
 function ComboboxItem({ className, children, ...props }: ComboboxItemProps) {
   return (
-    <ComboboxPrimitive.Item data-slot="combobox-item" className={cn(menuItemClassName, menuGutterClassName, "w-full", className)} {...props}>
+    <ComboboxPrimitive.Item data-slot="combobox-item" className={cn(menuItemClassName, "w-full", className, menuGutterClassName)} {...props}>
       <ComboboxPrimitive.ItemIndicator data-slot="combobox-item-indicator" className={menuIndicatorClassName}>
         <CheckIcon />
       </ComboboxPrimitive.ItemIndicator>
@@ -129,7 +129,7 @@ type ComboboxLabelProps = WithClassName<ComboboxPrimitive.GroupLabel.Props>
 function ComboboxLabel({ className, ...props }: ComboboxLabelProps) {
   // Alinea con el texto de las opciones, después de la canaleta. Autocomplete tiene el suyo sin
   // canaleta, porque sus sugerencias no llevan tilde.
-  return <ComboboxPrimitive.GroupLabel data-slot="combobox-label" className={cn(menuLabelClassName, menuGutterClassName, className)} {...props} />
+  return <ComboboxPrimitive.GroupLabel data-slot="combobox-label" className={cn(menuLabelClassName, className, menuGutterClassName)} {...props} />
 }
 
 type ComboboxSeparatorProps = WithClassName<ComboboxPrimitive.Separator.Props>
