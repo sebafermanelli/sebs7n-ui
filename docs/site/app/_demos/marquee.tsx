@@ -12,7 +12,7 @@ const items = CLIENTS.map((name) => ({
 
 /**
  * Clientes
- * Si no entran en el ancho, pasan en bucle; se pausa con el puntero encima o con foco. Con movimiento reducido queda quieta y se scrollea a mano.
+ * Si no entran en el ancho, pasan en bucle; se pausa con el puntero encima o con el botón, y con foco en un link queda quieta. Con movimiento reducido queda quieta y se scrollea a mano.
  */
 export function Clients() {
   return <Marquee aria-label="Clientes que facturan con nosotros" className="w-full" items={items} />

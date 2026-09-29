@@ -305,6 +305,13 @@ export type Labels = {
     /** El nombre del `nav`: «Índice alfabético». */
     label: string
   }
+  /** Opcional (2.1): `Marquee`; los textos por defecto son `marqueeLabels` de `sebs7n-ui/marquee` (ver `carousel`). */
+  marquee?: {
+    /** El botón que detiene el bucle: «Pausar». */
+    pause: string
+    /** El mismo botón con el bucle detenido: «Reanudar». */
+    play: string
+  }
   meter: {
     /** «Libre», en la cabecera de `StackedMeter`. */
     free: string

@@ -1,7 +1,8 @@
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
 
-import { act, render, screen } from "@testing-library/react"
+import { act, fireEvent, render, screen } from "@testing-library/react"
+import userEvent from "@testing-library/user-event"
 import { renderToString } from "react-dom/server"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
@@ -13,6 +14,7 @@ const items = CLIENTS.map((name) => ({ id: name, node: <span>{name}</span>, href
 
 const root = () => document.querySelector<HTMLElement>("[data-slot=marquee]")!
 const track = () => document.querySelector<HTMLElement>("[data-slot=marquee-track]")!
+const viewport = () => document.querySelector<HTMLElement>("[data-slot=marquee-viewport]")!
 
 // jsdom no mide: el ancho de una tanda (la `ul`) y el de la vista se fijan a mano.
 function widths(set: number, viewport: number) {
@@ -20,19 +22,27 @@ function widths(set: number, viewport: number) {
     return this.tagName === "UL" ? set : 0
   })
   vi.spyOn(HTMLElement.prototype, "clientWidth", "get").mockImplementation(function (this: HTMLElement) {
-    return this.dataset.slot === "marquee" ? viewport : 0
+    return this.dataset.slot === "marquee-viewport" ? viewport : 0
   })
 }
 
 const media = (reduce: boolean) => (query: string) => ({ matches: reduce && query.includes("reduce"), media: query, addEventListener() {}, removeEventListener() {} })
 
 let intersect: ((entries: { isIntersecting: boolean }[]) => void) | undefined
+let resize: (() => void) | undefined
+let observed: Element[] = []
 beforeEach(() => {
   vi.stubGlobal("matchMedia", media(false))
+  observed = []
   vi.stubGlobal(
     "ResizeObserver",
     class {
-      observe() {}
+      constructor(callback: () => void) {
+        resize = callback
+      }
+      observe(element: Element) {
+        observed.push(element)
+      }
       disconnect() {}
     }
   )
@@ -97,7 +107,7 @@ describe("Marquee", () => {
     widths(1200, 400)
     render(<Marquee aria-label="Clientes" items={items} />)
     expect(root()).toHaveAttribute("data-mode", "static")
-    expect(root()).toHaveClass("overflow-x-auto")
+    expect(viewport()).toHaveClass("overflow-x-auto")
     expect(track()).not.toHaveClass("animate-marquee")
   })
 
@@ -108,6 +118,54 @@ describe("Marquee", () => {
     expect(root()).toHaveAttribute("data-paused")
     act(() => intersect?.([{ isIntersecting: true }]))
     expect(root()).not.toHaveAttribute("data-paused")
+  })
+
+  it("mide también la tanda: si un logo o la fuente cargan después, la duración se actualiza", () => {
+    widths(1200, 400)
+    render(<Marquee aria-label="Clientes" items={items} />)
+    expect(observed).toContain(document.querySelector("ul"))
+    expect(observed).toContain(viewport())
+    vi.restoreAllMocks()
+    widths(2400, 400)
+    act(() => resize?.())
+    expect(track().style.getPropertyValue("--sf-marquee-duration")).toBe("60s")
+  })
+
+  it("con foco en un link queda quieta con scroll a mano, para que el link enfocado se vea (2.4.7, 2.4.11)", () => {
+    widths(1200, 400)
+    render(<Marquee aria-label="Clientes" items={items} />)
+    const link = screen.getAllByRole("link")[2]!
+    act(() => link.focus())
+    expect(root()).toHaveAttribute("data-mode", "static")
+    expect(track()).not.toHaveClass("animate-marquee")
+    expect(viewport()).toHaveClass("overflow-x-auto")
+    expect(link).toHaveFocus()
+    fireEvent.blur(link, { relatedTarget: document.body })
+    act(() => link.blur())
+    expect(root()).toHaveAttribute("data-mode", "loop")
+  })
+
+  it("en bucle trae un botón visible para pausar y reanudar (2.2.2), con textos de labels", async () => {
+    const user = userEvent.setup()
+    widths(1200, 400)
+    const { rerender } = render(<Marquee aria-label="Clientes" items={items} />)
+    const button = screen.getByRole("button", { name: "Pausar" })
+    await user.click(button)
+    expect(root()).toHaveAttribute("data-paused")
+    expect(button).toHaveAccessibleName("Reanudar")
+    // Pausada a mano, entrar y salir de pantalla no la vuelve a mover.
+    act(() => intersect?.([{ isIntersecting: true }]))
+    expect(root()).toHaveAttribute("data-paused")
+    await user.click(button)
+    expect(root()).not.toHaveAttribute("data-paused")
+    rerender(<Marquee aria-label="Clientes" items={items} labels={{ pause: "Pause", play: "Play" }} />)
+    expect(screen.getByRole("button", { name: "Pause" })).toBeInTheDocument()
+  })
+
+  it("quieta porque entra, no hay botón de pausa", () => {
+    widths(300, 800)
+    render(<Marquee aria-label="Clientes" items={items} />)
+    expect(screen.queryByRole("button")).toBeNull()
   })
 
   it("un ítem sin href no es link", () => {

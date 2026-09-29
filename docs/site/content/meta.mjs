@@ -2939,21 +2939,26 @@ export const COMPONENTS = {
     title: "Marquee",
     group: "contenido",
     description: "Una fila de logos o nombres que se desplaza sola en bucle cuando no entra en el ancho, como la de clientes de una home. Si entra, queda quieta y centrada.",
-    keyboard: [["Tab", "Recorre los links de la fila una sola vez; con foco adentro, la fila se pausa."]],
+    keyboard: [
+      ["Tab", "Recorre los links de la fila una sola vez; con foco en un link, la fila queda quieta y se scrollea hasta él."],
+      ["Enter · Espacio", "En el botón de pausa, detiene o reanuda el bucle."],
+    ],
     a11y: [
       "La fila es una lista con nombre (`aria-label`, obligatorio). La tanda copia del bucle va con `aria-hidden` e `inert`: el lector y Tab no la recorren.",
-      "Se pausa con el puntero encima, con foco adentro y fuera de pantalla. Con `prefers-reduced-motion` no se mueve: si desborda, se scrollea a mano.",
+      "En bucle trae un botón visible «Pausar» / «Reanudar» (WCAG 2.2.2): el hover no existe en un celular. Se pausa también con el puntero encima y fuera de pantalla.",
+      "Con foco en un link deja de moverse y pasa a scroll a mano, así el link enfocado queda a la vista y sin cortar (WCAG 2.4.7 y 2.4.11). Con `prefers-reduced-motion` no se mueve: si desborda, se scrollea a mano.",
       "Sin JS, y en el HTML del servidor, es la fila quieta con todos los ítems.",
     ],
     usage: [
       "Para una prueba social de marketing (clientes, prensa), no para información que haya que leer: lo que se mueve no se lee.",
       "Cada ítem es `{ id, node, href? }`: `node` puede ser un SVG o un `<img>` con `alt`; con `href`, un link que abre en otra pestaña.",
-      "`speed` en píxeles por segundo (40 por defecto): la duración sale del ancho de la tanda, así se siente igual con 4 ítems que con 10.",
+      "`speed` en píxeles por segundo (40 por defecto): la duración sale del ancho de la tanda (que se vuelve a medir si un logo o la fuente cargan después), así se siente igual con 4 ítems que con 10.",
       "La animación es la utilidad `animate-marquee` de `theme.css`. Solo por subpath (`sebs7n-ui/marquee`).",
     ],
     props: {
       Marquee: {
         "aria-label": "El nombre de la lista, que no se ve: «Clientes».",
+        labels: "Textos del botón de pausa: `pause` y `play`. Los que vienen por defecto son `marqueeLabels`.",
       },
     },
     related: ["carousel"],
