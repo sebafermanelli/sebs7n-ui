@@ -530,6 +530,12 @@ las fases R2–R5 rehacen diálogos, menús, controles y listas con las medidas 
   21/600 (libre en gris), chip del total (blanco, radio 10, 28/700) y `legend` opcional. Un `group`
   nombrado con un `meter` por segmento (`aria-valuetext` formateado con `format`/`locale`). Labels
   `meter: { free, used }` («Libre», «Usado»).
+- **`FileGrid`** (`sebs7n-ui/file-grid`, **solo por subpath**), la vista de íconos de Drive (R5b):
+  miniatura en caja de 96 con `shadow-thumbnail` y radio 4, nombre 14 (dos líneas) y tipo 12 gris; la
+  elegida con la caja en `fill-2` y el nombre en la píldora del acento con foco (gris sin foco).
+  `listbox` con flechas en 2D según el layout real, Home/End, Enter/doble click (`onOpen`), selección que
+  sigue al foco; `actions` para el «…» del puntero (el teclado usa un `ContextMenu`). Sin medir en
+  iCloud: derivado de la lista de Drive y de Photos.
 - La tabla de subpaths del README dice qué componentes no están en el barrel (la lee de `src/index.ts`).
 - El variant `inside-selection` también mira las listas de filas (`group/list`: `List`, `Tree`,
   `FileGrid`), no solo la `Table`.

@@ -175,3 +175,4 @@ export * from "./components/widget-card.js"
 // scripts/subpaths.mjs leyendo este archivo).
 //   `tree`            sebs7n-ui/tree (+1,95 kB al barrel)
 //   `split-view`      sebs7n-ui/split-view (+0,70 kB)
+//   `file-grid`       sebs7n-ui/file-grid
