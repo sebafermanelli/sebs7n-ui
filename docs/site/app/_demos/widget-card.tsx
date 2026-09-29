@@ -39,7 +39,7 @@ export function Basico() {
 
 /**
  * Sobre el wallpaper
- * Adentro de `AppShell ambient` (acá, una caja con `bg-ambient` y `data-ambient`) el cuerpo pasa a translúcido con blur y la franja a una capa más clara encima: el widget de Home de iCloud. Grande, con dos columnas. La caja lleva `[contain:paint]` para que el wallpaper, que es fijo a la ventana, quede adentro de ella.
+ * Adentro de `AppShell ambient` (acá, una caja con `bg-ambient` y `data-ambient`) el cuerpo pasa a translúcido con blur y la franja a una capa encima, sin blur propio: el widget de Home de iCloud. Grande, con dos columnas. La caja lleva `[contain:paint]` para que el wallpaper, que es fijo a la ventana, quede adentro de ella.
  */
 export function SobreElWallpaper() {
   return (

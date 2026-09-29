@@ -72,7 +72,7 @@ Con `AppShell`:
 Sin `AppShell` —un sitio con `Navbar`—, en el `<body>`:
 
 ```tsx
-<body className="bg-ambient">
+<body className="bg-ambient" data-ambient="">
 ```
 
 Si algún contenedor de la app pinta `bg-background` a todo el ancho, tapa la luz: sacáselo y dejá que se vea el del `body`.

@@ -1544,13 +1544,13 @@ export const COMPONENTS = {
     keyboard: [["Tab", "Recorre los links y botones de adentro. La barra en sí no recibe foco."]],
     a11y: [
       "Es un `<header>` (landmark `banner` cuando está en el body). La navegación de adentro va en un `<nav>` con `aria-label` propio.",
-      "Es translúcida (`material-translucent`) con un fill propio más denso (`--sf-translucent-bar`, 88 %): el texto y el secundario llegan a 4,5:1 aunque debajo pase blanco o negro puro, en los dos temas. Con `prefers-reduced-transparency` o `prefers-contrast: more` es la barra opaca (`surface-header`).",
+      "Es translúcida (`material-translucent`). Fuera del wallpaper lleva un fill más denso (`--sf-translucent-bar`, 88 %): el texto y el secundario llegan a 4,5:1 aunque debajo pase blanco o negro puro, en los dos temas. Sobre el wallpaper (`data-ambient`) usa el de `material-translucent`, y el texto llega a 4,5:1 sobre cualquier punto del wallpaper. Con `prefers-reduced-transparency` o `prefers-contrast: more` es la barra opaca (`surface-header`).",
     ],
     usage: [
       "**Una sola barra, como iCloud**: a todo el ancho y sin cápsula. La píldora flotante de 1.x se fue en 2.0.",
       "`position=\"fixed\"` cuando el hero tiene que llegar hasta el borde de arriba; `sticky` (el default) en todo lo demás, para que el contenido no quede tapado.",
       "Una sola fila de 44px (`NavbarContent`, `0 6px 0 16px`): la marca a la izquierda, botones de ícono de 36 y un avatar de 28 a la derecha.",
-      "Dentro de un `AppShell` no va: la barra global es su prop `header`, que queda **opaca** (como Mail o Drive, donde el contenido scrollea adentro de los paneles, no debajo de la barra).",
+      "Dentro de un `AppShell` no va: la barra global es su prop `header`, **opaca** adentro de una app (como Mail o Drive, donde el contenido scrollea adentro de los paneles, no debajo de la barra) y translúcida sobre el wallpaper (`AppShell ambient`).",
     ],
     props: {
       Navbar: {
@@ -2407,7 +2407,7 @@ export const COMPONENTS = {
       "Sobre el wallpaper, el texto principal y el secundario llegan a 4,5:1 en cualquier punto (`test/contrast.test.ts`); con menos transparencia o más contraste la card es opaca.",
     ],
     usage: [
-      "**`variant=\"default\"` es el widget** (radio 11, cuerpo opaco con la sombra de widget); **`subtle` es la card hundida** (`bg-fill-1`, sin sombra) para ir adentro de otra superficie. **Sobre el wallpaper** (`AppShell ambient`) el cuerpo pasa solo a translúcido con blur y la franja a una capa más clara encima; no lo fuerces con clases.",
+      "**`variant=\"default\"` es el widget** (radio 11, cuerpo opaco con la sombra de widget); **`subtle` es la card hundida** (`bg-fill-1`, sin sombra) para ir adentro de otra superficie. **Sobre el wallpaper** (`AppShell ambient`) el cuerpo pasa solo a translúcido con blur y la franja a una capa encima, sin blur propio; no lo fuerces con clases.",
       "**La cabecera es una franja**: `CardHeader icon` pone el ícono de la app (40), `CardTitle` 21/600 y `CardDescription` 14 gris. La acción (`CardAction`) va arriba a la derecha como botón de ícono.",
       "**El cuerpo en filas**: `CardRow` (60, radio 8) con `title`, `description` y `trailing`, separadas por una línea interior. `CardContent columns={2}` las reparte en dos columnas con una regla en el medio.",
       "**Sin franja de pie**: `CardFooter` es la fila del «…» (un `Button plain size=\"icon-sm\"`) y, si hace falta, un filtro a la derecha. Nada de botones con borde ni una línea arriba.",

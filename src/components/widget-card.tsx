@@ -11,7 +11,7 @@ import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader,
  * falta otra forma, se arma con ellas.
  *
  * Sobre el wallpaper (`AppShell ambient`) es la `Card` translúcida: el cuerpo con blur
- * (`material-translucent-body`) y la franja más clara encima, como Home. En cualquier otro lado es opaca.
+ * (`material-translucent-body`) y la franja encima, como Home. En cualquier otro lado es opaca.
  */
 type WidgetCardProps = Omit<React.ComponentProps<"div">, "title"> & {
   /** El título (21/600). Es el nombre de la región. */

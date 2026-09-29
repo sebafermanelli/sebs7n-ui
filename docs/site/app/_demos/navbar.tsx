@@ -7,7 +7,7 @@ import { Navbar, NavbarContent } from "sebs7n-ui/navbar"
 
 /**
  * La barra global
- * La barra de una app de iCloud: a todo el ancho, 44 de alto, opaca y con el borde abajo desde el principio. Scrolleá dentro del recuadro: el contenido pasa por debajo y la barra no cambia. Sobre el wallpaper de `AppShell ambient` pasa a `material-translucent`.
+ * La barra global de la home de iCloud: a todo el ancho, 44 de alto, translúcida con desenfoque y con el borde abajo desde el principio. Scrolleá dentro del recuadro: el contenido pasa por debajo, desenfocado, y la barra no cambia. Sobre el wallpaper (`data-ambient`) usa un fill más liviano, para que el wallpaper se vea a través.
  */
 export function Variantes() {
   return (

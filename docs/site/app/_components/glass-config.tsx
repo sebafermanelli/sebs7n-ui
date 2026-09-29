@@ -101,6 +101,9 @@ export function GlassConfigProvider({ children }: { children: ReactNode }) {
 
   // Después de hidratar, no en el estado inicial: el servidor no conoce el `localStorage`, y
   // arrancar con lo guardado haría que el primer render del cliente no coincida con el HTML.
+  // Costo aceptado: quien guardó el wallpaper apagado (`v: 2`, `ambient: false`) lo ve prendido en
+  // el HTML del servidor y se apaga al hidratar, un parpadeo en el Playground. Evitarlo pide una
+  // cookie que el servidor lea, y no vale la pena para una preferencia de la demo.
   useEffect(() => setConfig(leer()), [])
 
   useEffect(() => {

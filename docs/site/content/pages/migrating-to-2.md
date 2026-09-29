@@ -106,6 +106,17 @@ El vidrio se va. Una clase que ya no existe **no falla**: el elemento queda sin 
 | `bg-gray-alpha-100/200/300` | `bg-fill-1/2/3` |
 | `border-gray-alpha-400` | `border-separator` |
 
+**El wallpaper (`bg-ambient`).** De los focos de 1.x a los círculos de la home de iCloud, y lo translúcido ya no sale solo de la clase: cuelga del atributo `data-ambient`. Con `AppShell ambient` no hay nada que hacer. Sin `AppShell`:
+
+```tsx
+// 1.13.1
+<body className="bg-ambient">
+// 2.0
+<body className="bg-ambient" data-ambient="">
+```
+
+Sin el atributo el wallpaper se ve, pero las cards y las barras quedan opacas encima. El elemento pasa a `isolation: isolate` (el dibujo es un `::before` fijo a la ventana): un hijo con `z-index` negativo ya no sale por detrás. `--sf-ambient-gain` y `--sf-ambient-1/2/3` ya no existen: si los pisabas, pisá `--sf-wallpaper-1…4` (1 la base, 2 a 4 los círculos) o regulá con `--ambient`. Una vista previa del wallpaper adentro de una caja lleva `[contain:paint]`.
+
 La paleta de Geist sigue disponible: lo de la derecha es lo que usan los componentes y lo que conviene para que la app no desentone. **La página oscura pasa de `#000` a `#1C1C1E`.** Las variables `--glass`, `--glass-tint` y `--sf-glass-*` ya no existen: si las pisabas en `:root`, borralas.
 
 ### Foco y selección
@@ -408,4 +419,5 @@ Sin codemod: una pasada con el buscador del editor y una recorrida por las panta
 9. `rounded-full` propio en botones o campos → `rounded-control` / `rounded-field`.
 10. `text-copy-*`, `text-label-<n>`, `text-heading-*`, `text-button-*` → roles (no rompe hoy; se va en 3.0).
 11. `useNavbar().floating`, `[data-variant=floating]` → borrar o pasar a `data-slot`.
-12. Recorrer en claro y oscuro: la página, un menú abierto, un diálogo, un formulario, una tabla y el sidebar. Tabular una pantalla: el foco es el anillo interior de 3 px.
+12. `bg-ambient` sin `AppShell` → sumarle `data-ambient=""`; buscar `--sf-ambient-` y pasarlo a `--sf-wallpaper-*` o `--ambient`.
+13. Recorrer en claro y oscuro: la página, un menú abierto, un diálogo, un formulario, una tabla y el sidebar. Tabular una pantalla: el foco es el anillo interior de 3 px.

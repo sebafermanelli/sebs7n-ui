@@ -55,8 +55,8 @@ export default function Home() {
             El design system de una sola dependencia.
           </h1>
           <p className="max-w-2xl text-body text-label-secondary">
-            El lenguaje visual de iCloud web —superficies opacas en capas de gris, Inter, radios chicos y barras
-            fijas— sobre las primitivas de shadcn/ui <code>base-nova</code> (Base UI). {site.components.length}{" "}
+            El lenguaje visual de iCloud web —superficies opacas en las apps y translúcidas sobre el wallpaper, Inter,
+            radios chicos y barras fijas— sobre las primitivas de shadcn/ui <code>base-nova</code> (Base UI). {site.components.length}{" "}
             componentes accesibles, tokens de superficies, tipografía, radios y sombras, y cuatro variables para el
             color de marca.
           </p>

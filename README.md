@@ -5,7 +5,7 @@
 [![licencia MIT](https://img.shields.io/npm/l/sebs7n-ui?color=0a0a0a)](./LICENSE)
 
 Design system para React con el lenguaje visual de **iCloud web** —superficies
-opacas en capas de gris, Inter, radios chicos, barras fijas— sobre las
+opacas en las apps y translúcidas sobre el wallpaper, Inter, radios chicos, barras fijas— sobre las
 primitivas de **shadcn/ui `base-nova`** (Base UI), empaquetado como una sola
 dependencia.
 

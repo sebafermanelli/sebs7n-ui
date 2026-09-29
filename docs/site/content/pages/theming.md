@@ -77,7 +77,7 @@ Para cambiar el tono de una capa en toda la app se pisa su variable `--sf-*` en 
 
 ### El material translúcido y el wallpaper
 
-El wallpaper es la home de iCloud: ondas del color de `--brand-base`, fijas detrás de todo, en claro y en oscuro. Se prende con una prop:
+El wallpaper es la home de iCloud: círculos grandes superpuestos del color de `--brand-base`, de borde nítido, sobre una base del tono más profundo, fijos detrás de todo, en claro y en oscuro. Se prende con una prop:
 
 ```tsx
 <AppShell ambient header={…} sidebar={…}>
@@ -92,7 +92,7 @@ Adentro de `data-ambient` pasan solos a translúcidos con blur:
 | La barra global de `AppShell` (y la del teléfono), `Toolbar` | `material-translucent` |
 | `Card`, `WidgetCard` (el cuerpo) y la columna del `Sidebar` | `material-translucent-body` |
 | La franja de cabecera de una `Card` | `bg-translucent-strip`: una capa encima del cuerpo, sin blur propio |
-| `Navbar` | translúcida siempre, con su fill denso |
+| `Navbar` | translúcida siempre: con su fill denso fuera del wallpaper y con el de `material-translucent` sobre él |
 
 Menús, diálogos, popovers y campos siguen opacos, como en iCloud. Con `prefers-reduced-transparency` o `prefers-contrast: more` cada material vuelve a su superficie opaca; el wallpaper queda.
 

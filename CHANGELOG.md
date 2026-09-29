@@ -113,6 +113,16 @@ colores, defaults). Lo que cambia en el código de la app está marcado **Migrac
   layouts que contaban con el `lg` de 48.** Deshabilitado = **opacidad .4** en botones y campos
   (antes gris con texto terciario).
 
+- **El wallpaper (`bg-ambient`) cambia de contrato.** El dibujo va en un `::before` con
+  `position: fixed` (ya no `background-attachment: fixed`, que iOS ignora) y el elemento pasa a
+  `isolation: isolate`: un `z-index` negativo de un hijo ya no sale detrás de él. Lo translúcido
+  cuelga de `data-ambient`, no de `bg-ambient`: **sin el atributo el wallpaper se ve pero las cards
+  y barras siguen opacas.** **Migración:**
+  `<body className="bg-ambient">` → `<body className="bg-ambient" data-ambient="">` (con
+  `AppShell ambient` no hace falta); una vista previa del wallpaper en una caja lleva
+  `[contain:paint]`; si pisabas `--sf-ambient-*`, pisá `--sf-wallpaper-1…4` (1 la base, 2–4 los
+  círculos).
+
 #### Diálogos
 
 - **Dialog y AlertDialog comparten el contenedor** (`modalPopupClassName`): radio 11, `bg-surface`
@@ -339,13 +349,12 @@ para no pasar el tope de 55 kB gzip del barrel (sus textos de `labels` sí entra
 ### Changed
 
 - **Wallpaper de la home de iCloud (W).** `bg-ambient` deja los tres focos casi invisibles por
-  ondas del color del brand, en claro y en oscuro, en un `::before` fijo a la ventana (ya no
-  `background-attachment: fixed`, que iOS ignora); el elemento pasa a `isolation: isolate`. Se van
-  `--sf-ambient-gain` y `--sf-ambient-1/2/3`; los tonos son `--sf-wallpaper-1…4`. Adentro de
-  `data-ambient` pasan a translúcidos con blur `Card`, `WidgetCard`, `Sidebar`, `Toolbar` y la barra
-  de `AppShell`; menús, diálogos y campos siguen opacos. `label` y `label-secondary` llegan a 4,5:1
-  directo sobre cualquier punto del wallpaper. **Migración:** una vista previa del wallpaper dentro
-  de una caja lleva `[contain:paint]`; sin `AppShell`, `data-ambient` va junto a `bg-ambient`.
+  círculos grandes superpuestos del color del brand, de borde nítido, sobre una base del tono más
+  profundo, en claro y en oscuro. Adentro de `data-ambient` pasan a translúcidos con blur `Card`,
+  `WidgetCard`, `Sidebar`, `Toolbar` y la barra de `AppShell`, y el `Navbar` usa el fill de
+  `material-translucent` en vez del denso; menús, diálogos y campos siguen opacos. `label` y
+  `label-secondary` llegan a 4,5:1 directo sobre cualquier punto del wallpaper. Lo que rompe está
+  en **Breaking › Tokens** y en **Removed**.
 - Los íconos de Button crecen con el tamaño: 16 en `icon-sm`, **18 en `icon-md`**, 20 en `icon-lg`.
 - `Badge variant="subtle"` y `Button variant="accent"` quedan obsoletos (siguen andando; se van en 3.0).
 - `Toolbar variant="glass"` y `variant="bar"` de Sidebar/AppShell/Navbar quedan como alias obsoletos.
@@ -365,6 +374,8 @@ para no pasar el tope de 55 kB gzip del barrel (sus textos de `labels` sí entra
 - `Button variant="outline"`; `variant="floating"` de Sidebar, AppShell y Navbar;
   `useNavbar().floating`; `data-sf-modality`.
 - El peer opcional `geist`.
+- `--sf-ambient-gain` y `--sf-ambient-1`, `-2`, `-3` (los focos de la luz ambiente de 1.x): los
+  tonos del wallpaper son `--sf-wallpaper-1…4`, y cuánto color se regula con `--ambient`.
 
 ### Migración
 
