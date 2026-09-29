@@ -92,3 +92,18 @@ describe("FileGrid", () => {
     expect(within(slot as HTMLElement).getByText(/Acciones de Notas/).closest("button")).toHaveAttribute("tabindex", "-1")
   })
 })
+
+describe("FileGrid · onKeyDown de la app", () => {
+  it("se suma a la navegación y con preventDefault la cancela", async () => {
+    const propio = vi.fn((event: React.KeyboardEvent) => {
+      if (event.key === "End") event.preventDefault()
+    })
+    render(<FileGrid aria-label="Archivos" items={[{ id: "a", name: "Alfa.pdf" }, { id: "b", name: "Beta.pdf" }, { id: "c", name: "Gama.pdf" }]} onKeyDown={propio} />)
+    screen.getByRole("option", { name: /Alfa/ }).focus()
+    await userEvent.keyboard("{ArrowRight}")
+    expect(propio).toHaveBeenCalled()
+    expect(screen.getByRole("option", { name: /Beta/ })).toHaveFocus()
+    await userEvent.keyboard("{End}")
+    expect(screen.getByRole("option", { name: /Beta/ })).toHaveFocus()
+  })
+})

@@ -174,3 +174,18 @@ describe("Tree", () => {
     expect(screen.getByRole("tree").parentElement).toHaveClass("group/list")
   })
 })
+
+describe("Tree · onKeyDown de la app", () => {
+  it("se suma a la navegación y con preventDefault la cancela", async () => {
+    const propio = vi.fn((event: React.KeyboardEvent) => {
+      if (event.key === "End") event.preventDefault()
+    })
+    render(<Tree aria-label="Archivos" items={[{ id: "a", label: "Alfa" }, { id: "b", label: "Beta" }, { id: "c", label: "Gama" }]} onKeyDown={propio} />)
+    screen.getByRole("treeitem", { name: /Alfa/ }).focus()
+    await userEvent.keyboard("{ArrowDown}")
+    expect(propio).toHaveBeenCalled()
+    expect(screen.getByRole("treeitem", { name: /Beta/ })).toHaveFocus()
+    await userEvent.keyboard("{End}")
+    expect(screen.getByRole("treeitem", { name: /Beta/ })).toHaveFocus()
+  })
+})

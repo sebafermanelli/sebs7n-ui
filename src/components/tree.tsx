@@ -94,6 +94,7 @@ function Tree({
   onSelectedChange,
   onOpen,
   onLoadChildren,
+  onKeyDown: onKeyDownProp,
   ...props
 }: TreeProps) {
   const [expandedList, setExpandedList] = useControllable(expandedProp, defaultExpanded, onExpandedChange)
@@ -139,6 +140,10 @@ function Tree({
   }
 
   const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    // El de la app va primero y puede cancelar el nuestro con `preventDefault()`; antes el suyo, que
+    // llegaba por `...props` después, reemplazaba la navegación entera.
+    onKeyDownProp?.(event)
+    if (event.defaultPrevented) return
     const index = visible.findIndex((row) => row.node.id === tabStop)
     const row = visible[index]
     if (!row) return

@@ -53,6 +53,7 @@ function FileGrid({
   onSelectedChange,
   onOpen,
   actions,
+  onKeyDown: onKeyDownProp,
   ...props
 }: FileGridProps) {
   const [own, setOwn] = React.useState(defaultSelected)
@@ -94,6 +95,10 @@ function FileGrid({
   }
 
   const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    // El de la app va primero y puede cancelar el nuestro con `preventDefault()`; antes el suyo, que
+    // llegaba por `...props` después, reemplazaba la navegación entera.
+    onKeyDownProp?.(event)
+    if (event.defaultPrevented) return
     const index = items.findIndex((item) => item.id === tabStop)
     const item = items[index]
     if (!item) return
