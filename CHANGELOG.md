@@ -339,6 +339,11 @@ R5 (Tree, ListRow, SplitView, WidgetCard, CalendarView, FileGrid, el Meter apila
   16). **Nuevo `TableGroupHeader`** (58, 19/600 con el contador inline): un `<th scope="rowgroup">`, así que
   va **un `TableBody` por grupo**, y `colSpan` es obligatorio (las columnas de la tabla: el lector lo
   anuncia como su ancho). `TableFooter` sin fondo.
+  - **Migración:** la tabla es `border-separate` (si no, el radio de las celdas no se dibuja), así
+    que **un borde en el `<tr>` no se ve**: un `border-b` de fila pasa a las celdas
+    (`[&>td]:border-b`) o a una sombra interior (`[&>td]:shadow-[inset_0_-1px_0_var(--color-separator)]`).
+    Y el fondo de hover y selección está en las celdas: un `bg-*` o `hover:bg-*` propio en el `<tr>`
+    queda tapado; va como `[&>td]:bg-*` / `hover:[&>td]:bg-*`.
 - **Accordion y Collapsible, el disclosure de iCloud.** Filas de 44 con separador a todo el ancho, el
   título ya no se apaga con el puntero y el chevron es **› que gira 90° a ⌄** (antes ⌄ que giraba
   180°); el contenido baja a 14. `CollapsibleTrigger chevron` (nuevo) suma el mismo disclosure.
