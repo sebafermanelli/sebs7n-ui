@@ -86,18 +86,53 @@ describe("Tabs: línea de Settings y segmentado de Calendar", () => {
     render(<Ejemplo />)
     const list = screen.getByRole("tablist")
     expect(list).toHaveAttribute("data-variant", "line")
-    expect(list).toHaveClass("w-full", "border-b", "border-fill-3", "gap-7.5")
+    // La línea base es una sombra interior (y no un borde): con `overflow-x-auto` el borde queda
+    // fuera de la caja que recorta y el subrayado de la activa no se vería encima.
+    expect(list).toHaveClass("-mx-2", "w-[calc(100%+1rem)]", "shadow-[inset_0_-1px_0_var(--color-fill-3)]", "gap-7.5")
+    expect(list.className).not.toMatch(/(^|\s)border-b(\s|$)/)
     expect(list.querySelector("[data-slot=tabs-indicator]")).toBeNull()
     const tab = screen.getByRole("tab", { name: "Pagos" })
-    expect(tab).toHaveClass("h-15", "px-2", "text-body", "text-label-secondary", "first:-ml-2")
-    expect(tab).toHaveClass("after:inset-x-2", "after:-bottom-px", "after:h-px", "after:bg-label", "after:opacity-0", "data-active:after:opacity-100")
+    expect(tab).toHaveClass("h-15", "px-2", "shrink-0", "text-body", "text-label-secondary")
+    expect(tab).toHaveClass("after:inset-x-2", "after:bottom-0", "after:h-px", "after:bg-label", "after:opacity-0", "data-active:after:opacity-100")
+  })
+
+  // Revisión de R4 (I1): el subrayado aparece con una transición corta de opacidad, y sin ella con
+  // movimiento reducido. Sigue siendo de 1 px (medido en Settings).
+  it("el subrayado aparece con una transición corta, quieta con movimiento reducido", () => {
+    render(<Ejemplo />)
+    const tab = screen.getByRole("tab", { name: "Pagos" })
+    expect(tab).toHaveClass("after:transition-opacity", "after:duration-200", "motion-reduce:after:transition-none")
+  })
+
+  // Revisión de R4 (M7): muchas pestañas en 360 px no desbordan la página: la tira scrollea de
+  // costado, sin barra visible.
+  it("con muchas pestañas la tira scrollea de costado, sin barra", () => {
+    render(<Ejemplo />)
+    expect(screen.getByRole("tablist")).toHaveClass("overflow-x-auto", "[scrollbar-width:none]", "[&::-webkit-scrollbar]:hidden")
+  })
+
+  // Revisión de R4 (I2): un segmento con texto largo, o en 360 px, no desborda la pista: las
+  // columnas pueden achicarse y el texto se corta con «…».
+  it("segmented: las columnas se achican y el texto largo se corta", () => {
+    render(
+      <Tabs defaultValue="a">
+        <TabsList variant="segmented">
+          <TabsTrigger value="a">Un segmento con un texto larguísimo</TabsTrigger>
+          <TabsTrigger value="b">Otro</TabsTrigger>
+        </TabsList>
+      </Tabs>
+    )
+    expect(screen.getByRole("tablist")).toHaveClass("auto-cols-[minmax(0,1fr)]")
+    const tab = screen.getByRole("tab", { name: /larguísimo/ })
+    expect(tab).toHaveClass("min-w-0")
+    expect(screen.getByText("Un segmento con un texto larguísimo")).toHaveClass("min-w-0", "truncate")
   })
 
   it("segmented es el de Calendar: pista de 28, segmento de 24 que se desliza, activo en semibold", () => {
     render(<Ejemplo variant="segmented" />)
     const list = screen.getByRole("tablist")
     expect(list).toHaveAttribute("data-variant", "segmented")
-    expect(list).toHaveClass("rounded-control", "bg-fill-2", "p-0.5", "w-fit", "auto-cols-fr")
+    expect(list).toHaveClass("rounded-control", "bg-fill-2", "p-0.5", "w-fit")
     expect(list).not.toHaveClass("border-b")
     const pastilla = list.querySelector("[data-slot=tabs-indicator]")!
     expect(pastilla).toHaveClass("bg-segment", "shadow-segment", "rounded-[calc(var(--radius-control)-2px)]", "transition-[left,width,translate]", "motion-reduce:transition-none")

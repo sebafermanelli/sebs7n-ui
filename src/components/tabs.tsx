@@ -41,11 +41,17 @@ function TabsList({ className, variant = "line", children, ...props }: TabsListP
         className={cn(
           variant === "line"
             ? // Medido en Settings: 30 entre pestañas + los 8 de padding de cada lado = 46 de texto a
-              // texto. La línea base es `fill-3`, el `rgba(120,120,128,.36)` de iCloud.
-              "relative flex w-full items-center gap-7.5 border-b border-fill-3"
+              // texto. La línea base es `fill-3`, el `rgba(120,120,128,.36)` de iCloud, como sombra
+              // interior: con muchas pestañas la tira scrollea de costado (sin barra) y un borde
+              // quedaría afuera de la caja que recorta, con el subrayado de la activa escondido.
+              // La tira se sale 8 px de cada lado (`-mx-2`) para que el texto de la primera quede
+              // alineado con el contenido y su anillo de foco no se corte.
+              "relative -mx-2 flex w-[calc(100%+1rem)] items-center gap-7.5 overflow-x-auto shadow-[inset_0_-1px_0_var(--color-fill-3)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             : // Grilla de columnas iguales: los segmentos de iCloud miden todos lo mismo, y así el
               // semibold del activo no corre a los vecinos.
-              cn(segmentedTrackClassName, "inline-grid grid-flow-col auto-cols-fr"),
+              // `minmax(0,1fr)`: una columna puede achicarse por debajo de su texto (el texto largo se
+              // corta con «…»), así en 360 px la pista no desborda.
+              cn(segmentedTrackClassName, "inline-grid grid-flow-col auto-cols-[minmax(0,1fr)]"),
           className
         )}
         {...props}
@@ -80,21 +86,35 @@ const TRIGGER_VARIANT: Record<TabsVariant, string> = {
   // encima de la línea base (`-bottom-px`), así la reemplaza en ese tramo. La primera y la última
   // pierden el padding de afuera: el texto arranca alineado con la línea.
   line:
-    "h-15 px-2 first:-ml-2 last:-mr-2 text-body text-label-secondary hover:text-label data-active:text-label " +
+    "h-15 shrink-0 px-2 text-body text-label-secondary hover:text-label data-active:text-label " +
     "before:inset-y-3 before:rounded-control " +
-    "after:inset-x-2 after:-bottom-px after:h-px after:bg-label after:opacity-0 data-active:after:opacity-100",
+    "after:inset-x-2 after:bottom-0 after:h-px after:bg-label after:opacity-0 data-active:after:opacity-100 " +
+    // Revisión de R4: el subrayado aparece con una transición corta; quieto con movimiento reducido.
+    "after:transition-opacity after:duration-200 motion-reduce:after:transition-none",
   // Calendar: segmento de 24 (28 con la pista), 14 en label y el activo en semibold; con el dedo 40
   // (44 con la pista). El separador (`after`) mide 1 × 16 y se esconde en el activo y en el que le
   // sigue, donde lo taparía el segmento elevado.
   segmented:
-    "h-6 px-3 pointer-coarse:h-10 text-callout text-label data-active:font-semibold " +
+    "h-6 min-w-0 px-3 pointer-coarse:h-10 text-callout text-label data-active:font-semibold " +
     "before:inset-y-0 before:rounded-[calc(var(--radius-control)-2px)] " +
     "after:left-0 after:top-1 after:h-4 after:w-px after:bg-fill-3 pointer-coarse:after:top-3 first:after:hidden data-active:after:hidden [[data-active]+&]:after:hidden",
 }
 
-function TabsTrigger({ className, ...props }: TabsTriggerProps) {
+// En el segmentado, el texto suelto va en un `<span>` que se corta con «…»: el texto directo de un
+// `inline-flex` no puede llevar `text-overflow`.
+function recortable(children: React.ReactNode) {
+  return React.Children.map(children, (child) =>
+    typeof child === "string" || typeof child === "number" ? <span className="min-w-0 truncate">{child}</span> : child
+  )
+}
+
+function TabsTrigger({ className, children, ...props }: TabsTriggerProps) {
   const variant = React.useContext(VarianteContext)
-  return <TabsPrimitive.Tab data-slot="tabs-trigger" className={cn(TRIGGER, TRIGGER_VARIANT[variant], className)} {...props} />
+  return (
+    <TabsPrimitive.Tab data-slot="tabs-trigger" className={cn(TRIGGER, TRIGGER_VARIANT[variant], className)} {...props}>
+      {variant === "segmented" && typeof children !== "function" ? recortable(children) : children}
+    </TabsPrimitive.Tab>
+  )
 }
 
 type TabsContentProps = WithClassName<TabsPrimitive.Panel.Props>
