@@ -897,11 +897,12 @@ export const COMPONENTS = {
   "toggle-group": {
     title: "ToggleGroup",
     group: "formularios",
-    description: "Opciones que se prenden, juntas en el segmentado de iCloud: el ítem prendido es el segmento elevado. En modo «uno» o «varios».",
+    description: "Opciones que se prenden, juntas en el segmentado de iCloud: segmentos del mismo ancho y el prendido en el acento sólido. En modo «uno» o «varios».",
     keyboard: [["← →", "Se mueve entre ítems."], ["Espacio · Enter", "Alterna el ítem."], ["Tab", "Entra y sale del grupo entero."]],
     a11y: [
       "El grupo necesita `aria-label`: «Alineación», «Vista».",
       "En modo único es un `RadioGroup` visualmente distinto; si la lista es larga, usá `RadioGroup` de verdad.",
+      "El prendido va en el acento sólido y llega a 3:1 contra la pista en las marcas de ejemplo (en oscuro, el paso 900 de la marca con texto oscuro): el estado no depende de un gris casi igual al de la pista.",
     ],
     usage: [
       "Hasta 4 o 5 ítems: es una barra, no un menú.",
