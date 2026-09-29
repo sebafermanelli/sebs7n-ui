@@ -49,6 +49,7 @@ import { cssOfOklch, hexOfOklch, oklchOfHex, type Oklch } from "../_lib/color"
 import { CodeBlock } from "./code-block"
 import { Veredicto } from "./color-picker"
 import { variables, useGlassConfig } from "./glass-config"
+import { Showcase } from "./showcase"
 
 /** El brand del sitio, que es el del paquete. Es de donde arranca el selector. */
 const BRAND_DEL_SITIO: Oklch = [0.573, 0.214, 258]
@@ -149,6 +150,7 @@ export function Playground({ children }: { children?: React.ReactNode }) {
         {config.ambient && <CodeBlock code={`<AppShell ambient sidebar={…}>`} label="Copiar la prop del wallpaper" />}
       </section>
 
+      <Showcase />
       <Muestra />
       {children}
     </div>

@@ -15,7 +15,14 @@ export default defineConfig({
     alias: [
       { find: /^sebs7n-ui\/lib\/(.+)$/, replacement: raiz("src/lib/$1") },
       { find: /^sebs7n-ui\/tokens\/(.+)$/, replacement: raiz("tokens/$1") },
+      // Los componentes, para los tests que renderizan las pantallas del Playground (`showcase.test.ts`).
+      { find: /^sebs7n-ui\/labels$/, replacement: raiz("src/lib/labels.tsx") },
+      { find: /^sebs7n-ui\/variants\/(.+)$/, replacement: raiz("src/variants/$1.ts") },
+      { find: /^sebs7n-ui\/([a-z-]+)$/, replacement: raiz("src/components/$1.tsx") },
     ],
+    // El código fuente del paquete resuelve sus dependencias desde la raíz del repo: sin esto React y
+    // Base UI llegarían dos veces (la de la raíz y la del sitio) y los hooks se romperían.
+    dedupe: ["react", "react-dom", "@base-ui/react", "lucide-react"],
   },
   test: {
     environment: "node",
