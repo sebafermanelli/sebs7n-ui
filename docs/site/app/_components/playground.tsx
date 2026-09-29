@@ -79,11 +79,12 @@ export function Playground({ children }: { children?: React.ReactNode }) {
 
   return (
     <div className="flex flex-col gap-10">
-      {/* Se pega debajo de la barra del AppShell (44 en mobile y en escritorio): con un `top` fijo
-          quedaba tapado por la barra de arriba, que está en una capa superior. */}
+      {/* Desde `md` se pega debajo de la barra del AppShell (44): con un `top` fijo quedaba tapado
+          por la barra, que está en una capa superior. En un celular no: el panel ocupa casi toda la
+          pantalla y pegado tapaba las vistas que configura; ahí se va con el scroll. */}
       <section
         aria-label="Configuración"
-        className="sticky top-[calc(var(--app-shell-header,0px)+--spacing(3))] z-30 flex flex-col gap-5 rounded-panel border border-separator bg-surface p-5 shadow-menu"
+        className="md:sticky md:top-[calc(var(--app-shell-header,0px)+--spacing(3))] md:z-30 flex flex-col gap-5 rounded-panel border border-separator bg-surface p-5 shadow-menu"
       >
         <div className="flex flex-wrap items-end gap-x-8 gap-y-4">
           {/* Ancho fijo: el rótulo cambia con el tema («claro», «oscuro») y, midiendo lo que mide su
