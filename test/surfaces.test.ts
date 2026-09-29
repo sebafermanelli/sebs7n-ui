@@ -113,6 +113,15 @@ describe("sin vidrio (2.0)", () => {
     const sonner = read("../src/components/sonner.tsx")
     expect(sonner).toMatch(/\bbg-surface!/)
   })
+
+  it("el toast habla como iCloud: título 600, acción en el acento y cancelar en gris", () => {
+    const sonner = read("../src/components/sonner.tsx")
+    expect(sonner).toContain('title: "text-callout! font-semibold! text-label!"')
+    expect(sonner).toMatch(/actionButton: "[^"]*bg-brand-700![^"]*text-brand-contrast!/)
+    expect(sonner).toMatch(/cancelButton: "[^"]*bg-fill-2!/)
+    // Sin el botón negro de Vercel.
+    expect(sonner).not.toMatch(/bg-label!/)
+  })
 })
 
 describe("material-translucent: el único con blur", () => {

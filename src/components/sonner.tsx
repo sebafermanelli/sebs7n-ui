@@ -28,9 +28,10 @@ function Toaster(props: ToasterProps) {
         classNames: {
           // Opaco, como un popover de iCloud: flota sobre cualquier cosa y se tiene que leer igual.
           toast: "rounded-menu! border-0! bg-surface! text-callout! text-label! shadow-modal!",
-          title: "text-callout! font-medium! text-label!",
+          title: "text-callout! font-semibold! text-label!",
           description: "text-callout! text-label-secondary!",
-          actionButton: "rounded-control! bg-label! text-callout! text-surface!",
+          // La acción es el primario de iCloud (acento sólido) y cancelar el gris, como los botones de R4.
+          actionButton: "rounded-control! bg-brand-700! text-callout! text-brand-contrast!",
           cancelButton: "rounded-control! bg-fill-2! text-callout! text-label!",
         },
       }}
