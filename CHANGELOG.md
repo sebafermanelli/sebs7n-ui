@@ -275,6 +275,8 @@ para no pasar el tope de 55 kB gzip del barrel (sus textos de `labels` sí entra
 
 ### Added
 
+- **`material-translucent-body`** y los tokens `--sf-translucent-body` / `--sf-translucent-strip`
+  (`bg-translucent-strip`): el cuerpo y la franja de un widget sobre el wallpaper.
 - **Componentes nuevos:**
   - **`Command`** (`sebs7n-ui/command`, también en el barrel): la búsqueda de iCloud. `Command`,
     `CommandDialog` (anclado arriba, superficie de popover, sin X ni velo), `CommandInput` (search
@@ -336,6 +338,14 @@ para no pasar el tope de 55 kB gzip del barrel (sus textos de `labels` sí entra
 
 ### Changed
 
+- **Wallpaper de la home de iCloud (W).** `bg-ambient` deja los tres focos casi invisibles por
+  ondas del color del brand, en claro y en oscuro, en un `::before` fijo a la ventana (ya no
+  `background-attachment: fixed`, que iOS ignora); el elemento pasa a `isolation: isolate`. Se van
+  `--sf-ambient-gain` y `--sf-ambient-1/2/3`; los tonos son `--sf-wallpaper-1…4`. Adentro de
+  `data-ambient` pasan a translúcidos con blur `Card`, `WidgetCard`, `Sidebar`, `Toolbar` y la barra
+  de `AppShell`; menús, diálogos y campos siguen opacos. `label` y `label-secondary` llegan a 4,5:1
+  directo sobre cualquier punto del wallpaper. **Migración:** una vista previa del wallpaper dentro
+  de una caja lleva `[contain:paint]`; sin `AppShell`, `data-ambient` va junto a `bg-ambient`.
 - Los íconos de Button crecen con el tamaño: 16 en `icon-sm`, **18 en `icon-md`**, 20 en `icon-lg`.
 - `Badge variant="subtle"` y `Button variant="accent"` quedan obsoletos (siguen andando; se van en 3.0).
 - `Toolbar variant="glass"` y `variant="bar"` de Sidebar/AppShell/Navbar quedan como alias obsoletos.

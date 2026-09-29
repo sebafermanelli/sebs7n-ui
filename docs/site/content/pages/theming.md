@@ -77,17 +77,28 @@ Para cambiar el tono de una capa en toda la app se pisa su variable `--sf-*` en 
 
 ### El material translúcido y el wallpaper
 
-Hay **un solo** material con blur, `material-translucent`, y va solo donde iCloud lo usa: la barra global y el header de un widget **sobre el wallpaper**. Con `prefers-reduced-transparency` o `prefers-contrast: more` vuelve a ser opaco.
-
-El wallpaper son tres focos de color que salen de `--brand-base`, fijos detrás de todo:
+El wallpaper es la home de iCloud: ondas del color de `--brand-base`, fijas detrás de todo, en claro y en oscuro. Se prende con una prop:
 
 ```tsx
 <AppShell ambient header={…} sidebar={…}>
 ```
 
-Sin `AppShell`, la misma utilidad en el `<body>`: `className="bg-ambient"`. Es opt-in porque cambia el fondo de la app entera. Sobre él, la barra global de `AppShell` y el `Navbar` pasan solos a `material-translucent`.
+Sin `AppShell`, en el contenedor de la página van la utilidad y el atributo: `<body className="bg-ambient" data-ambient="">`. Es opt-in porque cambia el fondo de la app entera; adentro de una app, iCloud es liso.
 
-Cuánta luz, con un número:
+Adentro de `data-ambient` pasan solos a translúcidos con blur:
+
+| Qué | Material |
+|---|---|
+| La barra global de `AppShell` (y la del teléfono), `Toolbar` | `material-translucent` |
+| `Card`, `WidgetCard` (el cuerpo) y la columna del `Sidebar` | `material-translucent-body` |
+| La franja de cabecera de una `Card` | `bg-translucent-strip`: una capa encima del cuerpo, sin blur propio |
+| `Navbar` | translúcida siempre, con su fill denso |
+
+Menús, diálogos, popovers y campos siguen opacos, como en iCloud. Con `prefers-reduced-transparency` o `prefers-contrast: more` cada material vuelve a su superficie opaca; el wallpaper queda.
+
+El dibujo va en un `::before` con `position: fixed` (no `background-attachment: fixed`, que Safari en iOS ignora). Adentro de un ancestro con `transform`, `filter` o `contain: paint` se ubica contra ese ancestro: para mostrarlo en una caja, esa caja lleva `[contain:paint]`.
+
+Cuánto color, con un número:
 
 ```css
 :root {
@@ -95,14 +106,15 @@ Cuánta luz, con un número:
 }
 ```
 
-En el tema oscuro la luz ya viene más baja que en el claro —menos croma, menos alfa y los tres focos más cerca del matiz de la marca—, porque sobre negro un color saturado compite con el contenido. `--ambient` baja los dos temas por igual; para tocar uno solo, va adentro de `.dark`.
+La luminosidad de cada tono está fija por tema y calibrada para que `text-label` y `text-label-secondary` lleguen a 4,5:1 **directo sobre cualquier punto** del wallpaper, con cualquier marca (`test/contrast.test.ts`). Los colores de estado (el verde y el rojo de `Stat`, un `Badge`) no: van adentro de una `Card`. `--ambient` baja los dos temas por igual; para tocar uno solo, va adentro de `.dark`.
 
 ### Las utilidades
 
 | Utilidad | Para qué |
 |---|---|
-| `material-translucent` | El único material con blur, para lo que va sobre el wallpaper. |
-| `bg-ambient` | El wallpaper. |
+| `material-translucent` | El material de las barras sobre el wallpaper. |
+| `material-translucent-body` | El cuerpo de una card y la columna del sidebar sobre el wallpaper. |
+| `bg-ambient` | El wallpaper (con `data-ambient` en el mismo contenedor). |
 | `scroll-fade` | El difuminado de un scroll interno, arriba y abajo, solo del lado donde hay contenido escondido. Va en el elemento que scrollea, si no tiene fondo propio. Lo traen `SidebarContent`, `ChatMessages` y `DrawerBody`. |
 | `animate-skeleton` | El brillo lento del `Skeleton`, en la misma fase en todos los bloques. |
 | `focus-ring` | El anillo interior de iCloud (`inset 0 0 0 3px`), del color del foco. |

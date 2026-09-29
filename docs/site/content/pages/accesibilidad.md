@@ -17,6 +17,7 @@ Qué cubre esa tabla:
 | Atajos de menú sobre el popup | 4,5:1 |
 | Texto secundario sobre la selección (resaltado y apretado), en las cuatro marcas de ejemplo | 4,5:1 |
 | Texto principal sobre `material-translucent` (con su respaldo opaco) y sobre la selección sin foco | 4,5:1 |
+| `label` y `label-secondary` directo sobre el wallpaper y sobre cada material translúcido compuesto con sus puntos extremos, en las cinco marcas y los dos temas | 4,5:1 |
 | El texto del tooltip sobre su gris oscuro, en los dos temas | 4,5:1 |
 | El acento como texto (links, `plain`) y como glifo (íconos del sidebar y la toolbar), en las cinco marcas | 4,5:1 y 3:1 |
 | `Button variant="destructive"`, en reposo, hover y active | 4,5:1 |
@@ -42,11 +43,11 @@ Los textos del paquete son los `label` de iCloud, y estos son los números sobre
 
 ### Contraste sobre el material translúcido
 
-Desde 2.0 casi todo es opaco y el contraste es un número fijo. La excepción es `material-translucent`, que va solo sobre el wallpaper (la barra global de `AppShell ambient`, el header de un widget). `test/surfaces.test.ts` verifica el texto principal contra su **respaldo opaco** —lo que se ve con `prefers-reduced-transparency` o `prefers-contrast: more`—, y el material lleva 85 % de fill en claro para que el texto se lea sobre cualquier foto.
+Desde 2.0 casi todo es opaco y el contraste es un número fijo. La excepción es lo que va sobre el wallpaper (`AppShell ambient`): la barra global y la `Toolbar` (`material-translucent`), el cuerpo de `Card`, `WidgetCard` y `Sidebar` (`material-translucent-body`) y la franja de la card. `test/contrast.test.ts` compone cada uno sobre los cuatro tonos del wallpaper y la página lisa, con las cinco marcas y en los dos temas, y exige 4,5:1 para el texto principal y el secundario; el blur promedia, así que no puede dar algo peor que el peor punto. `test/surfaces.test.ts` verifica además el **respaldo opaco**: lo que se ve con `prefers-reduced-transparency` o `prefers-contrast: more`.
 
 Qué hacer:
 
-- **Texto secundario sobre el wallpaper:** usá el principal (`text-label`).
+- **Colores de estado sobre el wallpaper** (el verde y el rojo de `Stat`, un `Badge`): adentro de una `Card`, no sueltos. El texto principal y el secundario sí se leen sueltos.
 - **Nada, para quien lo pidió:** con `prefers-reduced-transparency: reduce` o `prefers-contrast: more` el material se vuelve opaco. No hay que escribir el media query en la app.
 
 

@@ -354,7 +354,7 @@ export const COMPONENTS = {
       "Sin `\"use client\"`: sirve en un Server Component.",
     ],
     usage: [
-      "Dentro de un `Card`, en una grilla de 2 a 4 columnas.",
+      "Dentro de un `Card`, en una grilla de 2 a 4 columnas. **Sobre el wallpaper, siempre adentro de una**: `Stat` no trae superficie, y el verde y el rojo de la variación solo llegan a 4,5:1 sobre el cuerpo de la card.",
       "`trend=\"up\"` no siempre es bueno: en «tickets abiertos», subir es malo. Elegí el color por el significado, no por la flecha.",
     ],
     props: {
@@ -1676,6 +1676,7 @@ export const COMPONENTS = {
       "**Agrupá por intención, como iCloud**: a la izquierda la vista, en el centro lo que actúa sobre la selección (apagado a .4 sin selección, `disabled`), a la derecha buscar y crear.",
       "`ToolbarInput` es el campo chico de una barra —zoom, ancho de línea—, no un campo de formulario: para eso está `Field` + `Input`, con label, error y descripción.",
       "Menos de tres o cuatro controles no justifica la barra: son botones sueltos y se acabó.",
+      "`bar` **sobre el wallpaper** pasa sola a `material-translucent`; `plain` sigue sin material.",
     ],
     props: {
       Toolbar: {
@@ -1782,6 +1783,7 @@ export const COMPONENTS = {
       "Una sección `collapsible` convierte su `SidebarGroupLabel` en un botón con `aria-expanded` y `aria-controls`; el grupo se sigue nombrando por ese título. `SidebarGroupAction` exige `aria-label` en el tipo: el «+» solo no dice qué crea.",
     ],
     usage: [
+      "**Sobre el wallpaper** (`AppShell ambient`) la columna pasa sola al cuerpo translúcido (`material-translucent-body`); adentro del Sheet del teléfono no pinta nada.",
       "**El paquete no guarda el estado de colapsado.** Guardalo en una cookie y pasá `defaultCollapsed` desde el layout: así el server ya renderiza el ancho correcto y no hay salto.",
       "`SidebarItem` es un `<a>`: con Next, `render={<Link href />}`.",
       "**El ítem activo va en gris (`fill-1`) y el texto no cambia de color** (2.0, como el sidebar de iCloud): un contador o un ícono de color adentro se quedan como están, sin `selectionSecondaryClassName`. Esa clase solo cambia algo adentro de una fila elegida de `Table` con el foco adentro.",
@@ -2402,9 +2404,10 @@ export const COMPONENTS = {
       "**Una tarjeta interactiva tiene que ser un `<a>` o un `<button>`.** `interactive` solo agrega los estilos de hover y foco: no la hace clickeable ni enfocable.",
       "Con `selected` hace falta además `aria-pressed` o `aria-checked` según el patrón: el anillo de marca es visual.",
       "`CardTitle` es un `<div>`: si la tarjeta encabeza una sección, poné el heading vos (`render` no aplica acá — usá tu propio `<h3>` adentro).",
+      "Sobre el wallpaper, el texto principal y el secundario llegan a 4,5:1 en cualquier punto (`test/contrast.test.ts`); con menos transparencia o más contraste la card es opaca.",
     ],
     usage: [
-      "**`variant=\"default\"` es el widget** (radio 11, cuerpo opaco con la sombra de widget); **`subtle` es la card hundida** (`bg-fill-1`, sin sombra) para ir adentro de otra superficie.",
+      "**`variant=\"default\"` es el widget** (radio 11, cuerpo opaco con la sombra de widget); **`subtle` es la card hundida** (`bg-fill-1`, sin sombra) para ir adentro de otra superficie. **Sobre el wallpaper** (`AppShell ambient`) el cuerpo pasa solo a translúcido con blur y la franja a una capa más clara encima; no lo fuerces con clases.",
       "**La cabecera es una franja**: `CardHeader icon` pone el ícono de la app (40), `CardTitle` 21/600 y `CardDescription` 14 gris. La acción (`CardAction`) va arriba a la derecha como botón de ícono.",
       "**El cuerpo en filas**: `CardRow` (60, radio 8) con `title`, `description` y `trailing`, separadas por una línea interior. `CardContent columns={2}` las reparte en dos columnas con una regla en el medio.",
       "**Sin franja de pie**: `CardFooter` es la fila del «…» (un `Button plain size=\"icon-sm\"`) y, si hace falta, un filtro a la derecha. Nada de botones con borde ni una línea arriba.",
@@ -2442,7 +2445,7 @@ export const COMPONENTS = {
       "El ícono de la app es decorativo: el título ya nombra el widget.",
       "La acción y el «…» son botones de ícono: **necesitan `aria-label`** («Nueva factura», «Ver todas las facturas»).",
       "`PromoCard` escribe en el color de contraste de la marca (el par del botón `accent`) sobre el acento y un tono un cuarto más oscuro: el 17/600 de los links pasa 4,5:1 con cualquier brand. El chevron es decorativo.",
-      "Con menos transparencia o más contraste pedidos, la franja translúcida es opaca (lo resuelve `material-translucent`).",
+      "Con menos transparencia o más contraste pedidos, el widget es opaco (lo resuelve `material-translucent-body`).",
     ],
     usage: [
       "**`WidgetCard` para un resumen que lleva a una app**: las últimas facturas, lo cobrado en la semana. Si necesitás otra forma, armala con las partes de `Card`.",

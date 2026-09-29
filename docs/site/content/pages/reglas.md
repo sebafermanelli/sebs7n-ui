@@ -23,7 +23,7 @@ Las decisiones que no se ven en una tabla de props. Cada una existe porque rompe
 | Una zona hundida: `Card subtle`, la card inline, el `EmptyState` | `bg-fill-1` / `bg-grouped` |
 | El tooltip | `bg-tooltip` (gris oscuro en los dos temas) |
 
-**Un solo material translúcido**: `material-translucent`, y solo donde iCloud lo usa —la barra global y el header de un widget **sobre el wallpaper** (`AppShell ambient`), el popover de acceso rápido—. Con `prefers-reduced-transparency` o más contraste vuelve a ser opaco. Adentro de una app todo es opaco.
+**Translúcido solo sobre el wallpaper** (`AppShell ambient`), como la home de iCloud: las barras y la `Toolbar` con `material-translucent`, el cuerpo de `Card`, `WidgetCard` y `Sidebar` con `material-translucent-body`, y el popover de acceso rápido. Menús, diálogos y campos siguen opacos. Con `prefers-reduced-transparency` o más contraste vuelve a ser opaco. Adentro de una app todo es opaco.
 
 **Las curvas son concéntricas.** Cuando algo redondeado vive cerca del borde de otra cosa redondeada, su radio es el de afuera menos la distancia que los separa: el menú de 12 con 5 de padding lleva ítems de 8 (la cabecera de cuenta del `UserMenu`, 7). Importa cuando el padding es menor que el radio.
 
@@ -98,7 +98,7 @@ Traen `rounded-sm`, `transition-control`, `focus-visible:focus-ring` y `underlin
 
 | Token | Rol |
 |---|---|
-| `bg-background` | **La página.** `body` y la raíz del `AppShell`. Con wallpaper, `bg-ambient`. |
+| `bg-background` | **La página.** `body` y la raíz del `AppShell`. Con wallpaper, `bg-ambient` y `data-ambient`. |
 | `bg-surface` | **Lo que flota**: menú, popover, diálogo, toast, el cuerpo de un widget. |
 | `bg-fill-1` | **La zona hundida** y el hover: `Card subtle`, la fila con el puntero. |
 

@@ -100,7 +100,7 @@ El vidrio se va. Una clase que ya no existe **no falla**: el elemento queda sin 
 | `glass-control` (campo, chip propio) | `bg-fill-1` |
 | `glass-dense`, un grupo | `bg-grouped` |
 | `glass-rim`, `sheen`, `thumb-lens` | nada: la sombra ya trae el filo |
-| vidrio sobre un wallpaper | `material-translucent` |
+| vidrio sobre un wallpaper | `material-translucent` (barras) · `material-translucent-body` (cards, sidebar) |
 | `shadow-button`, `shadow-button-accent`, `shadow-chip`, `shadow-track` | nada: los controles son planos |
 | `text-gray-1000` · `text-gray-900` · `text-gray-700` | `text-label` · `text-label-secondary` · `text-label-tertiary` |
 | `bg-gray-alpha-100/200/300` | `bg-fill-1/2/3` |

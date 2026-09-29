@@ -282,7 +282,7 @@ La paleta, los radios y las sombras por defecto de Tailwind están **reseteados*
 
 | Grupo | Tokens |
 |---|---|
-| Superficies | `bg-background` (la página), `bg-surface` (lo que flota), `bg-surface-secondary` (sidebar), `bg-surface-bar` y `bg-surface-header` (barras), `bg-grouped`, `bg-fill-{1,2,3}`, `border-separator`, `border-separator-strong`, `text-label`, `text-label-{secondary,tertiary,quaternary}`, `material-translucent` (el único con blur, sobre un wallpaper) |
+| Superficies | `bg-background` (la página), `bg-surface` (lo que flota), `bg-surface-secondary` (sidebar), `bg-surface-bar` y `bg-surface-header` (barras), `bg-grouped`, `bg-fill-{1,2,3}`, `border-separator`, `border-separator-strong`, `text-label`, `text-label-{secondary,tertiary,quaternary}`, `material-translucent` y `material-translucent-body` (los de blur, solo sobre el wallpaper) |
 | Color | `gray`, `gray-alpha`, `brand`, `blue`, `red`, `amber`, `green`, `teal`, `purple`, `pink` en pasos 100–1000 (la paleta de Geist, para la app) y `brand-contrast` |
 | Tipografía | Roles con la escala de iCloud: `text-large-title` (48), `text-title-{1,2,3}` (28, 21, 19), `text-headline` y `text-body` (17), `text-subheadline` (15), `text-callout` (14), `text-footnote` (12), `text-caption` (11), `text-mono-{body,callout}`. Los de Geist (`text-heading-*`, `text-copy-*`, `text-label-<n>`, `text-button-*`) siguen andando pero están obsoletos desde 2.0 |
 | Radios | `rounded-control` (8), `rounded-field` y `rounded-item` (10), `rounded-surface` y `rounded-panel` (11), `rounded-menu` (12), `rounded-menu-item` (8), `rounded-tag` (4) |

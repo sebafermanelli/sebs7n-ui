@@ -8,7 +8,7 @@ Desde 2.0 las superficies son las de iCloud web: **grises opacos en capas**, cad
 
 {{fondos}}
 
-**La regla:** la página es `bg-background`; lo que flota encima (menú, popover, diálogo) es `bg-surface` con `shadow-menu`; la columna del sidebar es `bg-surface-secondary`, las barras `bg-surface-bar` y `bg-surface-header`, un grupo plano `bg-grouped`. Los rellenos neutros son `bg-fill-1/2/3`, las líneas `border-separator` y `border-separator-strong`, y el texto `text-label`, `text-label-secondary`, `text-label-tertiary`. El único material con blur es `material-translucent`, para lo que va sobre un wallpaper (`AppShell ambient`); con menos transparencia o más contraste es opaco.
+**La regla:** la página es `bg-background`; lo que flota encima (menú, popover, diálogo) es `bg-surface` con `shadow-menu`; la columna del sidebar es `bg-surface-secondary`, las barras `bg-surface-bar` y `bg-surface-header`, un grupo plano `bg-grouped`. Los rellenos neutros son `bg-fill-1/2/3`, las líneas `border-separator` y `border-separator-strong`, y el texto `text-label`, `text-label-secondary`, `text-label-tertiary`. Sobre el wallpaper (`AppShell ambient`) hay dos materiales con blur: `material-translucent` para las barras y `material-translucent-body` para el cuerpo de las cards y el sidebar; con menos transparencia o más contraste son opacos.
 
 `bg-background-100` y `bg-background-200` son de la escala de Geist: quedan para la app, pero ningún componente los usa desde 2.0.
 
