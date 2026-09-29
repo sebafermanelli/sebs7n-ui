@@ -102,11 +102,11 @@ describe("sin vidrio (2.0)", () => {
     expect(usos).toEqual([])
   })
 
-  it("diálogos, popovers y menús son opacos, y las cards son grupos", () => {
+  it("diálogos, popovers, menús y cards (widgets) son opacos", () => {
     expect(modalPopupClassName).toMatch(/(^|\s)bg-surface(\s|$)/)
     expect(floatingPopupClassName).toMatch(/(^|\s)bg-surface(\s|$)/)
     expect(menuPopupClassName).toMatch(/(^|\s)bg-surface(\s|$)/)
-    expect(cardVariants()).toMatch(/(^|\s)bg-grouped(\s|$)/)
+    expect(cardVariants()).toMatch(/(^|\s)bg-surface(\s|$)/)
   })
 
   it("los toasts son opacos, como un popover", () => {

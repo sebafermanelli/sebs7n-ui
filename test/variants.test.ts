@@ -24,7 +24,7 @@ describe("variantes exportadas pasan por cn()", () => {
 
   it("cardVariants selected no deja el border-separator-strong del default", () => {
     const out = classes(cardVariants({ selected: true }))
-    expect(out).toContain("border-brand-700")
+    expect(out).toContain("ring-brand-700")
     expect(out).not.toContain("border-separator-strong")
   })
 

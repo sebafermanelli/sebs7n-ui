@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event"
 import { describe, expect, it } from "vitest"
 
 import { Badge } from "../../src/components/badge"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../src/components/card"
+import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardRow, CardTitle } from "../../src/components/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../src/components/table"
 import { Toggle } from "../../src/components/toggle"
 import { ToggleGroup, ToggleGroupItem } from "../../src/components/toggle-group"
@@ -150,7 +150,7 @@ describe("Badge", () => {
 })
 
 describe("Card", () => {
-  it("grupo opaco: radio de superficie, plana, padding 24", () => {
+  it("el widget de iCloud: radio 11, cuerpo opaco con la sombra de widget, franja de cabecera", () => {
     render(
       <Card>
         <CardHeader>
@@ -162,32 +162,84 @@ describe("Card", () => {
       </Card>
     )
     const card = screen.getByText("Ingresos").closest("[data-slot=card]")!
-    expect(card).toHaveClass("bg-grouped", "rounded-surface", "[--card-spacing:--spacing(6)]")
-    // Plana, como las cards de iCloud: sin sombra en reposo.
-    expect(card.className).not.toMatch(/(^|\s)shadow-/)
-    expect(card.className).not.toMatch(/shadow-(menu|modal|tooltip)/)
+    expect(card).toHaveClass("bg-surface", "shadow-widget", "rounded-surface", "overflow-hidden", "[--card-spacing:--spacing(5)]")
+    // La cabecera es una franja de otro tono, no un bloque con padding dentro de la card.
+    const header = card.querySelector("[data-slot=card-header]")!
+    expect(header).toHaveClass("bg-surface-bar", "min-h-20", "px-(--card-spacing)")
     expect(screen.getByText("Ingresos")).toHaveClass("text-title-2")
     expect(screen.getByText("Últimos 30 días")).toHaveClass("text-callout", "text-label-secondary")
-    expect(screen.getByText("pie")).toHaveClass("border-t", "border-separator")
+    // Sin franja de pie: ni línea arriba ni el padding grande de 1.x.
+    const pie = screen.getByText("pie")
+    expect(pie.className).not.toMatch(/(^|\s)border-t(\s|$)|pt-\(--card-spacing\)/)
+  })
+
+  it("subtle: hundida y sin sombra, para ir adentro de otra superficie", () => {
+    const out = cardVariants({ variant: "subtle" })
+    expect(out).toMatch(/(^|\s)bg-fill-1(\s|$)/)
+    expect(out).not.toMatch(/(^|\s)shadow-widget(\s|$)/)
+  })
+
+  it("CardHeader con ícono de app: caja de 40 a la izquierda, título y subtítulo en la segunda columna", () => {
+    render(
+      <Card>
+        <CardHeader icon={<svg data-testid="icono" />}>
+          <CardTitle>Correo</CardTitle>
+          <CardDescription>Entrada</CardDescription>
+        </CardHeader>
+      </Card>
+    )
+    const icono = screen.getByTestId("icono").closest("[data-slot=card-icon]")!
+    expect(icono).toHaveClass("size-10", "row-span-2")
+    expect(icono).toHaveAttribute("aria-hidden", "true")
+    expect(icono.parentElement).toHaveAttribute("data-icon")
+    expect(screen.getByText("Correo")).toHaveClass("group-data-icon/card-header:col-start-2")
+  })
+
+  it("CardContent columns={2}: dos columnas con regla vertical; CardRow con separador interior", () => {
+    render(
+      <Card>
+        <CardContent columns={2}>
+          <CardRow title="Uno" description="detalle" trailing="9:57" />
+          <CardRow title="Dos" />
+          <CardRow title="Tres" />
+        </CardContent>
+      </Card>
+    )
+    const content = screen.getByText("Uno").closest("[data-slot=card-content]")!
+    expect(content).toHaveAttribute("data-columns", "2")
+    expect(content).toHaveClass("data-[columns=2]:grid-cols-2", "data-[columns=2]:before:w-px", "data-[columns=2]:before:bg-fill-3")
+    const fila = screen.getByText("Uno").closest("[data-slot=card-row]")!
+    expect(fila).toHaveClass("min-h-15", "rounded-control", "px-2.5", "before:inset-x-2.5", "before:bg-separator", "first:before:hidden")
+    expect(screen.getByText("Uno")).toHaveClass("text-callout", "text-label")
+    expect(screen.getByText("detalle")).toHaveClass("text-footnote", "text-label-secondary")
+    expect(screen.getByText("9:57")).toHaveClass("text-footnote")
+    // En dos columnas, la primera fila de la segunda columna tampoco lleva separador.
+    expect(content).toHaveClass("data-[columns=2]:[&>[data-slot=card-row]:nth-child(2)]:before:hidden")
+  })
+
+  it("CardAction arriba a la derecha de la franja, aunque haya ícono", () => {
+    render(
+      <Card>
+        <CardHeader icon={<svg />}>
+          <CardTitle>Notas</CardTitle>
+          <CardAction>acción</CardAction>
+        </CardHeader>
+      </Card>
+    )
+    expect(screen.getByText("acción")).toHaveClass("col-end-[-1]", "row-start-1", "self-start")
   })
 
   it("interactiva y seleccionada", () => {
     const interactive = cardVariants({ interactive: true })
-    // Sube un pixel con la sombra grande; al apretar vuelve a su lugar y a la sombra de reposo.
-    expect(interactive).toContain("hover:-translate-y-px hover:border-separator-strong hover:shadow-card-hover")
-    expect(interactive.split(" ")).toEqual(expect.arrayContaining(["active:translate-y-0", "active:shadow-card", "focus-visible:focus-ring"]))
-    // Apretada se oscurece con una capa encima (`background-image`) y no cambiando el fondo: un
-    // `bg-gray-alpha-*` reemplazaba el sólido del grupo por un alfa y la card se volvía
-    // transparente justo al tocarla.
+    expect(interactive.split(" ")).toEqual(expect.arrayContaining(["hover:-translate-y-px", "active:translate-y-0", "focus-visible:focus-ring"]))
+    // Apretada se oscurece con una capa encima (`background-image`) y no cambiando el fondo.
     expect(interactive).toContain("active:bg-[linear-gradient(var(--color-fill-2),var(--color-fill-2))]")
-    expect(interactive).not.toMatch(/active:bg-gray-alpha/)
-    expect(interactive).toMatch(/\bbg-grouped\b/)
     // `translate` no está en `transition-control`: la interactiva usa la transición que sí lo incluye.
     expect(interactive).toContain("transition-surface")
     render(<Card selected>sel</Card>)
     const card = screen.getByText("sel")
     expect(card).toHaveAttribute("data-selected")
-    expect(card).toHaveClass("border-brand-700", "ring-brand-700")
+    expect(card).toHaveClass("ring-2", "ring-brand-700")
   })
 })
 

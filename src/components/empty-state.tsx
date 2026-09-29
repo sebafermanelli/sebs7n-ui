@@ -1,7 +1,6 @@
 import type * as React from "react"
 
 import { cn } from "../lib/utils.js"
-import { cardVariants } from "../variants/card.js"
 
 type EmptyStateProps = Omit<React.ComponentProps<"div">, "title"> & {
   icon?: React.ReactNode
@@ -12,14 +11,14 @@ type EmptyStateProps = Omit<React.ComponentProps<"div">, "title"> & {
   /** Botón o link para salir del vacío. Uno solo. */
   action?: React.ReactNode
   /**
-   * `default`: un grupo, como una Card, para el vacío suelto en la página. `subtle`: la zona
+   * `default`: un grupo plano para el vacío suelto en la página. `subtle`: la zona
    * hundida de `Card variant="subtle"`. `plain`: sin superficie, para adentro de una Card o de
    * una Table, que ya son el grupo.
    */
   variant?: "default" | "subtle" | "plain"
 }
 
-// Un grupo, como una Card (2.0): fondo opaco `bg-grouped`. Antes era la zona
+// Un grupo plano (2.0): fondo opaco `bg-grouped`, sin la sombra de widget de la Card. Antes era la zona
 // hundida de `subtle`, que en oscuro sobre la página negra casi no se veía. Adentro de una Card o
 // de una Table el grupo ya está, y un segundo borde con sombra es una caja adentro de otra: para
 // eso `subtle` (la de `cardVariants`) y `plain`, que no dibuja superficie.
@@ -29,7 +28,10 @@ function EmptyState({ className, icon, title, titleAs: Title = "h2", description
       data-slot="empty-state"
       data-variant={variant}
       className={cn(
-        variant === "plain" ? "flex flex-col text-callout text-label" : cardVariants({ variant: variant === "subtle" ? "subtle" : "default" }),
+        "flex flex-col text-callout text-label",
+        // Desde R5a la Card es un widget con sombra; el vacío sigue siendo un grupo plano.
+        variant === "default" && "rounded-surface bg-grouped",
+        variant === "subtle" && "rounded-surface bg-fill-1",
         "items-center justify-center gap-4 px-6 py-12 text-center",
         className
       )}

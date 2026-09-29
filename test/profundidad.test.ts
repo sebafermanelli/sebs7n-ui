@@ -60,13 +60,15 @@ describe("sombras de iCloud", () => {
 })
 
 describe("plano en reposo, flota lo que se abre", () => {
-  it("botones, campos, chips y cards sin sombra ni hundimiento", () => {
+  it("botones, campos y chips sin sombra ni hundimiento; la card es un widget con su sombra", () => {
     for (const variant of ["default", "secondary", "plain", "ghost", "destructive", "destructive-plain", "link"] as const) {
       expect(buttonVariants({ variant }), variant).not.toMatch(/shadow-|translate-y-px/)
     }
     expect(inputControlClassName).not.toMatch(/shadow-/)
     expect(toggleVariants()).not.toMatch(/shadow-/)
-    expect(cardVariants()).not.toMatch(/(^|\s)shadow-/)
+    // R5a: la Card es el widget de iCloud (catálogo §2.7), con la sombra de widget; la `subtle`, plana.
+    expect(cardVariants()).toMatch(/(^|\s)shadow-widget(\s|$)/)
+    expect(cardVariants({ variant: "subtle" })).not.toMatch(/(^|\s)shadow-/)
   })
 
   it("menús, popovers y diálogos flotan con la sombra de iCloud", () => {
