@@ -198,7 +198,7 @@ function DatePicker(props: DatePickerProps) {
       <PopoverPrimitive.Trigger
         {...rest}
         ref={triggerRef}
-        id={field.controlId}
+        id={field.id}
         // Dentro de un Field, el nombre es la etiqueta y la fecha: con solo el `htmlFor`, el lector
         // decía «Vencimiento» y no qué fecha tiene.
         aria-labelledby={rest["aria-labelledby"] ?? (field.labelId && !rest["aria-label"] ? `${field.labelId} ${textoId}` : undefined)}

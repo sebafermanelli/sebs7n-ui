@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { DEFAULT_FIELD_ROOT_STATE } from "@base-ui/react/internals/field-constants"
 import { useFieldRootContext } from "@base-ui/react/internals/field-root-context"
 import { useRegisterFieldControl } from "@base-ui/react/internals/field-register-control"
 import { useFormContext } from "@base-ui/react/internals/form-context"
@@ -69,7 +70,13 @@ export function useFieldControl({ id, name, value, filled, disabled = false, con
     // eslint-disable-next-line react-hooks/exhaustive-deps -- solo cuando cambia el valor
   }, [value])
 
+  // Afuera de un `Field` el contexto es el de por defecto: sin esto, el control llevaría un `id`
+  // generado que la app no pidió.
+  const inField = field.state !== DEFAULT_FIELD_ROOT_STATE
   return {
+    inField,
+    /** El `id` del control: el del `Field` adentro de uno; afuera, el de la app (o ninguno). */
+    id: inField ? controlId : id,
     controlId,
     disabled: off,
     name: fieldName,

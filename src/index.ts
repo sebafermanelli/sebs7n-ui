@@ -61,6 +61,7 @@ export {
   inputShellClassName,
   inputShellInputClassName,
   inputSizeClassName,
+  inputStartIconClassName,
 } from "./variants/input.js"
 export {
   menuCheckClassName,

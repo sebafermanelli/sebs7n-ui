@@ -193,7 +193,6 @@ function DropZone({
   const [ownFiles, setOwnFiles] = React.useState<File[]>([])
   const files = filesProp ?? ownFiles
   const field = useFieldControl({ id, name, value: files, filled: files.length > 0, disabled: disabledProp, controlRef: button })
-  const controlId = field.controlId
   const disabled = field.disabled
   const fieldName = field.name
   const sizeText = (bytes: number) => (formatSize ? formatSize(bytes) : formatBytes(bytes, labels.locale))
@@ -487,7 +486,7 @@ function DropZone({
       <button
         ref={button}
         type="button"
-        id={controlId}
+        id={field.id}
         aria-describedby={describedBy}
         aria-busy={validating > 0 || undefined}
         aria-invalid={errors.length > 0 || field.invalid || undefined}

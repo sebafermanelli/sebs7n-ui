@@ -523,6 +523,7 @@ export const COMPONENTS = {
       "**Para un dato con unidad o formato fijo** (moneda, dominio, prefijo) o una acción que es del campo (copiar, aplicar un cupón). Una acción de todo el formulario va afuera, en un `Button`.",
       "Los addons van en el orden del DOM: antes del `InputGroupInput` quedan a la izquierda, después a la derecha.",
       "`size` 28/36/40 como los botones; el botón de adentro escala solo (20/28/32).",
+      "`InputGroupButton loading`: como `Button`, el spinner en el lugar del contenido (el ancho no salta), `aria-busy` y el clic no pasa. Para «Aplicar» un cupón mientras se valida.",
       "Para buscar con sugerencias es `Combobox` o `Autocomplete`, que ya usan esta misma superficie.",
       "Solo por subpath (`sebs7n-ui/input-group`): no está en el barrel, por peso.",
     ],
@@ -699,6 +700,7 @@ export const COMPONENTS = {
     usage: [
       "**`Combobox` si el valor tiene que ser uno de la lista; `Autocomplete` si se acepta texto libre.** País y cliente van en Combobox; ciudad y dirección, en Autocomplete.",
       "`disabled` va en el root para bloquear todo; en el input solo apaga la superficie.",
+      "`startIcon` en `ComboboxInput` pone un ícono adelante, adentro del campo (un pin, una lupa): decorativo, gris, y el texto se corre solo. Reemplaza el `pl-10` y el ícono absoluto a mano.",
       "Para búsqueda contra el servidor: `filter={null}`, buscá en `onInputValueChange` (salteando `reason === \"item-press\"`) y mostrá `<ComboboxStatus loading />` mientras tanto.",
       "Objetos `{ value, label }` andan solos; para otra forma, `itemToStringLabel`.",
       "**El filtrado es en memoria y en cada tecla, sin debounce.** Con una lista local es lo correcto: esperar se nota. Para búsqueda contra el servidor el debounce lo pone la app, en su `onInputValueChange`; el componente no lo hace por vos.",
@@ -876,6 +878,7 @@ export const COMPONENTS = {
     usage: [
       "Ciudad, dirección, etiqueta libre. Si el valor tiene que existir en un catálogo, `Combobox`.",
       "`value`/`onValueChange` son strings, no objetos.",
+      "`startIcon` en `AutocompleteInput` pone un ícono adelante, adentro del campo (una lupa): decorativo y gris. Para un buscador simple sin sugerencias, `SearchField`.",
       "**El filtrado es en memoria y en cada tecla, sin debounce**, igual que en `Combobox`. Si las sugerencias vienen del servidor, el debounce lo pone la app.",
     ],
     props: {
@@ -1221,6 +1224,8 @@ export const COMPONENTS = {
       "Si la acción navega o abre algo, es un `Button`.",
       "Varios toggles relacionados van en un `ToggleGroup`.",
       "**El botón de negrita de una barra no es este.** Ahí va un `ToolbarButton render={<ToggleGroupItem />}` adentro de un `ToggleGroup`: el segmentado. `Toggle` es el chip suelto que filtra.",
+      "`size`: 28 (el default, un chip), 36 o 40, los altos de `Button`, para un formulario que ya eligió ese tamaño.",
+      "Como control de un formulario: con `name`, prendido manda `value` (o «on») y apagado nada, como un checkbox. Dentro de un `Field` se registra: `FieldLabel` lo nombra y `Form` manda el booleano con el `name` del campo.",
     ],
     related: ["toggle-group", "switch", "button"],
   },
@@ -1238,6 +1243,8 @@ export const COMPONENTS = {
       "Hasta 4 o 5 ítems: es una barra, no un menú.",
       "Íconos solos únicamente si son universales (alineación, vista); si no, texto.",
       "Los B/I/U de un editor, la alineación, «Lista / Cuadrícula». Para filtros sueltos que envuelven en varias filas, `Toggle` de a uno.",
+      "`size`: la pista de 28 (el default), 36 o 40, como los campos del formulario.",
+      "Como control de un formulario: con `name`, cada valor prendido viaja como un campo, como un grupo de checkboxes. Dentro de un `Field`, `FieldLabel` nombra el grupo, `Form` manda la lista y, si queda inválido, enfoca el primer ítem prendido.",
     ],
     props: {
       ToggleGroup: heredadas("value", "defaultValue", "onValueChange", "multiple", "orientation", "loopFocus", "disabled"),

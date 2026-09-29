@@ -9,11 +9,13 @@ import { cn } from "../lib/utils.js"
  * lee por el relleno, no por un borde. Hasta la fase 3 era un borde lleno gris que se oscurecía;
  * iCloud no tiene controles con borde.
  *
- * 28 px, el alto de un botón `sm`: un chip es un control secundario. Con el dedo, `touch-target`.
+ * 28 px por defecto, el alto de un botón `sm`: un chip es un control secundario. `size` (2.1) lo lleva a
+ * 36 o 40, los de `md` y `lg`, para un formulario que ya eligió ese tamaño. Con el dedo, `touch-target`.
  * Deshabilitado a .4, como los botones.
  */
 const toggleVariantsBase = cva(
-  "touch-target inline-flex h-7 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-control bg-fill-1 px-2.5 text-callout whitespace-nowrap text-label outline-none select-none transition-surface hover:bg-fill-2 focus-visible:focus-ring data-pressed:bg-brand-700 data-pressed:text-brand-contrast data-pressed:hover:bg-brand-800 data-pressed:focus-visible:focus-ring-inverse data-disabled:cursor-not-allowed data-disabled:opacity-40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+  "touch-target inline-flex shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-control bg-fill-1 text-callout whitespace-nowrap text-label outline-none select-none transition-surface hover:bg-fill-2 focus-visible:focus-ring data-pressed:bg-brand-700 data-pressed:text-brand-contrast data-pressed:hover:bg-brand-800 data-pressed:focus-visible:focus-ring-inverse data-disabled:cursor-not-allowed data-disabled:opacity-40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  { variants: { size: { sm: "h-7 px-2.5", md: "h-9 px-3", lg: "h-10 px-3.5" } }, defaultVariants: { size: "sm" } }
 )
 
 // Pasa por cn() (tailwind-merge): usada sobre <a>/<Link>, la clase de la variante tiene que ganarle a la base.
