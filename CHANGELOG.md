@@ -20,7 +20,7 @@ de **iCloud web** (icloud.com), con valores medidos en claro y oscuro. Superfici
 de gris, **Inter** con una escala de base 17, radios de 8–12 sin cápsula, foco interior de 3 px,
 menús de 30 px con el tilde en un círculo de acento, barras fijas a todo el ancho y un sidebar de
 lista de fuentes. Lo que iCloud no tiene (Switch, Tooltip, toasts, Tree, Stepper…) se deriva de
-esos tokens. Suma 14 módulos de componentes nuevos; los grandes van solo por subpath para que el
+esos tokens. Suma 20 módulos de componentes nuevos; los grandes van solo por subpath para que el
 barrel no pase de 55 kB gzip.
 
 La API es la misma en casi todo: lo que se rompe es sobre todo **visual** (alturas, radios,
@@ -319,6 +319,21 @@ para no pasar el tope de 55 kB gzip del barrel (sus textos de `labels` sí entra
   - **`Resizable`** (subpath): `ResizablePanelGroup`/`ResizablePanel`/`ResizableHandle`, separador
     de WAI-ARIA con teclado y puntero, `onLayout`/`defaultLayout`. El HTML del servidor ya sale
     repartido (con los paneles como hijos directos del grupo).
+  - **`CopyButton`** (subpath): copia al portapapeles. Botón de ícono `plain` de 28 o texto + ícono;
+    ✓ durante 1,5 s, tooltip «Copiado» y anuncio por región viva. `onCopy`.
+  - **`PasswordInput`** (subpath): el ojo adentro del campo (botón de alternar con `aria-pressed`) y
+    `strength`, una barra de 4 niveles por reglas sin librería con el nivel en texto; `passwordStrength`.
+  - **`TimePicker`** (subpath): hora de 24 h que se tipea («930») o se elige de una lista cada `step` (15),
+    con `min`/`max` y `name` por un hidden.
+  - **`DateTimePicker`** (subpath): `DatePicker` + `TimePicker` en un solo campo; `Date | null`, `name`
+    como `datetime-local`, `clearable`.
+  - **`CountryPicker`** (subpath): `Combobox` de los 249 países ISO con la bandera emoji y los nombres de
+    `Intl.DisplayNames`, filtro sin tildes; el valor es el código.
+  - **`PhoneInput`** (subpath): selector de país compacto (bandera + código) y el número en dígitos; valor
+    E.164, `defaultCountry` («AR»).
+- **`lib/countries`** y **`lib/phone`** (solo por subpath, sin `"use client"`): `COUNTRY_CODES`,
+  `isCountryCode`, `countryFlag`, `countryName`; `PHONE_COUNTRIES`, `phoneCountry`, `parsePhone`, `toE164`,
+  `onlyDigits` e `isValidPhone`, que valida el largo por país en el servidor. Sin libphonenumber.
 - **Props nuevas:** `AlertDialogIcon` y `AlertDialogDescription align`; `PopoverContent
   translucent`; `external` en los ítems de DropdownMenu, ContextMenu y Menubar;
   `Button variant="plain" | "destructive-plain"`; `Badge variant="count"`; `Checkbox shape="circle"`;
@@ -343,7 +358,8 @@ para no pasar el tope de 55 kB gzip del barrel (sus textos de `labels` sí entra
   `closeButtonClassName`, `dialogCloseClassName`, `tooltipSurfaceClassName`,
   `segmentedItemClassName`, `sliderThumbClassName` y sus estados.
 - **Labels nuevos:** `command`, `tree`, `meter` (`free`, `used`), `calendarView`, `stepper`,
-  `dataTable`, `multiSelect`, `resizable`.
+  `dataTable`, `multiSelect`, `resizable`, `copyButton`, `countryPicker`, `dateTimePicker`,
+  `passwordInput`, `phoneInput`, `timePicker`.
 - La tabla de subpaths del README dice qué componentes no están en el barrel (la lee de
   `src/index.ts`).
 

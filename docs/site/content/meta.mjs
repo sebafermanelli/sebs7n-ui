@@ -137,6 +137,35 @@ export const COMPONENTS = {
     },
     related: ["badge", "dropdown-menu", "alert-dialog"],
   },
+  "copy-button": {
+    title: "CopyButton",
+    group: "fundamentos",
+    description: "Copia un texto al portapapeles: el botón de ícono `plain` de 28, o texto e ícono. Pasa a ✓ durante 1,5 s, el tooltip dice «Copiado» y se anuncia.",
+    keyboard: [
+      ["Enter · Espacio", "Copia."],
+      ["Tab", "Entra y sale, como cualquier botón."],
+    ],
+    a11y: [
+      "Solo ícono se llama «Copiar» (`labels.copy`); mejor uno que diga qué copia: `aria-label=\"Copiar el link de pago\"`. Con `children`, el nombre es el texto.",
+      "Al copiar, una región viva (`role=\"status\"`) dice «Copiado»: el ✓ y el tooltip no se anuncian solos.",
+      "Si el portapapeles no está (contexto inseguro, permiso negado) no anuncia nada: el texto sigue a la vista para copiarlo a mano.",
+    ],
+    usage: [
+      "Al lado de un dato que se copia para pegarlo en otro lado: un CUIT, un número de factura, un link de pago. Para copiar desde adentro de un campo, `InputGroupButton` con el mismo ícono.",
+      "Con `children` reemplaza a un id corto que se copia entero: el texto visible puede ser el comienzo y `value` el id completo.",
+      "Adentro de una fila clickeable o de un link, copiar no abre la fila: el click no sube.",
+      "Solo por subpath (`sebs7n-ui/copy-button`): no está en el barrel, por peso.",
+    ],
+    props: {
+      CopyButton: {
+        className: PROP_DESCRIPTIONS.className,
+        disabled: "Apaga el botón. Un `value` vacío también.",
+        onCopy: "Se llama después de copiar, con el texto copiado (no con el evento del portapapeles).",
+        labels: "Textos: `copy` (nombre y tooltip) y `copied` (tooltip y anuncio).",
+      },
+    },
+    related: ["button", "tooltip", "input-group"],
+  },
   icon: {
     title: "Icon",
     group: "fundamentos",
@@ -510,6 +539,34 @@ export const COMPONENTS = {
     },
     related: ["input", "field", "kbd"],
   },
+  "password-input": {
+    title: "PasswordInput",
+    group: "formularios",
+    description: "Un campo de contraseña con el ojo adentro para mostrarla, y una barra de seguridad de 4 niveles opcional.",
+    keyboard: [
+      ["Tab", "Entra al campo y después al ojo."],
+      ["Enter · Espacio", "En el ojo, muestra u oculta la contraseña."],
+    ],
+    a11y: [
+      "El ojo es un botón de alternar: se llama «Mostrar contraseña» y `aria-pressed` dice si se está mostrando. El nombre no cambia al apretarlo.",
+      "La barra es un `meter` nombrado por «Seguridad», con el nivel en `aria-valuetext` («Buena») y en texto al lado; una región viva lo anuncia cuando cambia de nivel, no en cada tecla.",
+      "El color de la barra (rojo, ámbar, verde) acompaña: el nivel siempre está en texto.",
+    ],
+    usage: [
+      "`strength` para crear o cambiar una contraseña; para entrar, sin barra.",
+      "La barra es una guía por reglas (largo, mayúsculas y minúsculas, números, símbolos), no una política: lo que se acepta lo decide el servidor. `passwordStrength` exporta la misma cuenta.",
+      "Pasale `autoComplete` (`current-password` o `new-password`): es lo que usan los gestores de contraseñas.",
+      "Solo por subpath (`sebs7n-ui/password-input`): no está en el barrel, por peso.",
+    ],
+    props: {
+      PasswordInput: {
+        className: "Clases del contenedor (el campo y la barra).",
+        onChange: "Se llama en cada tecla, como en `Input`. Con `value`, es lo que lo mantiene al día.",
+        labels: "Textos: `show`, `strength` y los niveles `weak`, `fair`, `good`, `strong`.",
+      },
+    },
+    related: ["input", "input-group", "meter", "field"],
+  },
   textarea: {
     title: "Textarea",
     group: "formularios",
@@ -728,6 +785,75 @@ export const COMPONENTS = {
     },
     related: ["combobox", "checkbox-group", "select"],
   },
+  "country-picker": {
+    title: "CountryPicker",
+    group: "formularios",
+    description: "Un país de la lista ISO, con su bandera y el nombre en el idioma de la app. Se escribe para filtrar, sin tildes.",
+    keyboard: [
+      ["a–z", "Filtran por nombre, sin tildes ni mayúsculas; la primera coincidencia queda resaltada."],
+      ["↓ / ↑", "Abren la lista y la recorren."],
+      ["Enter", "Elige el país resaltado."],
+      ["Escape", "Cierra la lista."],
+    ],
+    a11y: [
+      "Es un `combobox` con `listbox` de `Combobox`: **nombre obligatorio** con `aria-label`, `aria-labelledby` o un `FieldLabel`.",
+      "La bandera es decorativa (`aria-hidden`): la opción se lee por el nombre.",
+      "«Sin resultados» sale en la región viva del combobox.",
+    ],
+    usage: [
+      "El valor es el código ISO 3166-1 alfa-2 («AR»), que es lo que se guarda; el nombre sale de `Intl.DisplayNames` en `countryPicker.locale` de `labels` (o la prop `locale`).",
+      "La bandera es un emoji armado con el código: en Windows se ven las dos letras («AR»).",
+      "`countries` limita la lista (los países donde se opera). `sebs7n-ui/lib/countries` trae `COUNTRY_CODES`, `isCountryCode`, `countryFlag` y `countryName`, también para el servidor.",
+      "Solo por subpath (`sebs7n-ui/country-picker`): no está en el barrel, por peso.",
+    ],
+    props: {
+      CountryPicker: {
+        placeholder: "Lo que dice el campo vacío. Por defecto, `labels.placeholder` («Elegí un país»).",
+        disabled: "Apaga el campo.",
+        "aria-label": PROP_DESCRIPTIONS["aria-label"],
+        "aria-labelledby": "El `id` del elemento que nombra el campo, si no es un `<label>`.",
+        "aria-describedby": "El `id` de la ayuda o del error del campo.",
+        "aria-invalid": "Marca el campo inválido (borde rojo).",
+        labels: "Textos: `locale` (el idioma de los nombres) y `placeholder`. «Limpiar» y «Sin resultados» son los de `combobox`.",
+      },
+    },
+    related: ["combobox", "phone-input", "select"],
+  },
+  "phone-input": {
+    title: "PhoneInput",
+    group: "formularios",
+    description: "Un teléfono en E.164: el país con su bandera y código adentro del campo, y el número en dígitos. Sin libphonenumber.",
+    keyboard: [
+      ["Tab", "Entra al selector de país y después al número."],
+      ["Enter · Espacio · ↓", "En el selector, abre la lista de países."],
+      ["a–z", "Con la lista abierta, salta al país que empieza así."],
+      ["0–9", "En el número, escriben; lo que no es un dígito no entra."],
+    ],
+    a11y: [
+      "El selector se llama «Código de país: Argentina (+54)» (`labels.country` más el país): la bandera es decorativa.",
+      "El número es un `<input type=\"tel\">` con `inputMode=\"tel\"` (el teclado numérico en el teléfono): nombralo con un `FieldLabel` o `aria-label`.",
+      "No se valida solo: para el error, `isValidPhone` y el `FieldError` del campo (con `alert` si se valida mientras se escribe).",
+    ],
+    usage: [
+      "El valor es E.164 (`+5491155552002`) y viaja así con `name`: se guarda tal cual y sirve para un link de WhatsApp.",
+      "`isValidPhone` y `parsePhone` están en `sebs7n-ui/lib/phone`, sin `\"use client\"`: validan igual en una Server Action. Miran el **largo** del número de cada país, no el tipo de línea.",
+      "El número se corta en el largo máximo del país. Pegar un número que empieza con «+» cambia el país solo.",
+      "Tiene 45 países (América, Europa y los más comunes); uno que falte se suma a la tabla de `lib/phone` con los largos de libphonenumber.",
+      "No formatea mientras se escribe. Solo por subpath (`sebs7n-ui/phone-input`): no está en el barrel, por peso.",
+    ],
+    props: {
+      PhoneInput: {
+        placeholder: "Lo que dice el número vacío.",
+        disabled: "Apaga el selector y el número.",
+        "aria-label": PROP_DESCRIPTIONS["aria-label"],
+        "aria-labelledby": "El `id` del elemento que nombra el número, si no es un `<label>`.",
+        "aria-describedby": "El `id` de la ayuda o del error del campo.",
+        "aria-invalid": "Marca el campo inválido (borde rojo).",
+        labels: "Textos: `country` (antes del país, en el nombre del selector). El idioma de los nombres es `countryPicker.locale`.",
+      },
+    },
+    related: ["country-picker", "input-group", "field"],
+  },
   autocomplete: {
     title: "Autocomplete",
     group: "formularios",
@@ -823,6 +949,73 @@ export const COMPONENTS = {
       },
     },
     related: ["calendar", "input", "select", "popover"],
+  },
+  "time-picker": {
+    title: "TimePicker",
+    group: "formularios",
+    description: "Una hora en 24 h: se tipea («930») o se elige de una lista cada 15 minutos, con mínimo y máximo.",
+    keyboard: [
+      ["0–9 · :", "Escriben la hora y filtran la lista: «9» muestra las 09:xx."],
+      ["↓ / ↑", "Abren la lista y la recorren."],
+      ["Enter", "Elige la hora resaltada; sin una resaltada, toma lo tipeado."],
+      ["Tab", "Sale y toma lo tipeado como «HH:MM»."],
+      ["Escape", "Cierra la lista."],
+    ],
+    a11y: [
+      "Es un `combobox` (Autocomplete de Base UI) con `listbox`: nombralo con `aria-label`, `aria-labelledby` o un `<Label htmlFor>` al `id`.",
+      "La hora elegida lleva `aria-selected` y el círculo de acento de los menús.",
+      "Si lo tipeado no es una hora, el campo vuelve a la anterior y una región viva dice «Hora no válida».",
+    ],
+    usage: [
+      "Para una hora suelta: un envío programado, un horario de débito. Con fecha, `DateTimePicker`.",
+      "`step` arma la lista pero no limita lo tipeado: con `step={15}` se puede escribir 09:37. `min`/`max` sí: lo de afuera se lleva al borde.",
+      "`value` es «HH:MM» o `null`; con `name`, un `<input type=\"hidden\">` lo manda a la Server Action.",
+      "Solo por subpath (`sebs7n-ui/time-picker`): no está en el barrel, por peso.",
+    ],
+    props: {
+      TimePicker: {
+        defaultValue: "La hora al montar, sin controlar.",
+        disabled: "Apaga el campo.",
+        placeholder: "Lo que dice el campo vacío. Por defecto, `labels.placeholder` («hh:mm»).",
+        "aria-label": PROP_DESCRIPTIONS["aria-label"],
+        "aria-labelledby": "El `id` del elemento que nombra el campo, si no es un `<label>`.",
+        "aria-describedby": "El `id` de la ayuda o del error del campo.",
+        "aria-invalid": "Marca el campo inválido (borde rojo).",
+        labels: "Textos: `placeholder` e `invalid` (lo que se anuncia cuando lo tipeado no es una hora).",
+      },
+    },
+    related: ["date-time-picker", "date-picker", "autocomplete"],
+  },
+  "date-time-picker": {
+    title: "DateTimePicker",
+    group: "formularios",
+    description: "Fecha y hora en un solo campo: un DatePicker y un TimePicker pegados, con el valor en un `Date`.",
+    keyboard: [
+      ["Tab", "Pasa de la fecha a la hora."],
+      ["Enter · Espacio", "En la fecha, abre el calendario. Ver `DatePicker`."],
+      ["0–9 · ↓ / ↑ · Enter", "En la hora, tipean o eligen. Ver `TimePicker`."],
+    ],
+    a11y: [
+      "Es un `role=\"group\"`: el nombre del campo va en el grupo (`aria-label` o `aria-labelledby`). La fecha se lee por su texto y la hora se llama «Hora» (`labels.time`).",
+      "Con `id`, un `<Label htmlFor>` apunta a la fecha.",
+    ],
+    usage: [
+      "Para un momento: un vencimiento con hora, un recordatorio. Para una hora sola, `TimePicker`; para un día, `DatePicker`.",
+      "Elegir el día conserva la hora; sin hora, el día arranca a las 00:00. Una hora elegida antes que el día espera al día.",
+      "Con `name` viaja como `2026-09-29T09:30`, el formato de `<input type=\"datetime-local\">` en hora local: la zona horaria la pone el servidor.",
+      "`clearable` vacía fecha y hora desde el pie del calendario.",
+      "Solo por subpath (`sebs7n-ui/date-time-picker`): no está en el barrel, por peso.",
+    ],
+    props: {
+      DateTimePicker: {
+        defaultValue: "La fecha y hora al montar, sin controlar.",
+        disabled: "Apaga la fecha y la hora.",
+        "aria-label": PROP_DESCRIPTIONS["aria-label"],
+        "aria-labelledby": "El `id` del elemento que nombra el campo.",
+        labels: "Textos: `time` (el nombre de la hora). El resto son los de `datePicker`, `calendar` y `timePicker`.",
+      },
+    },
+    related: ["date-picker", "time-picker", "calendar"],
   },
   "color-picker": {
     title: "ColorPicker",
