@@ -186,10 +186,10 @@ type ContextMenuCheckboxItemProps = WithClassName<ContextMenuPrimitive.CheckboxI
 function ContextMenuCheckboxItem({ className, children, ...props }: ContextMenuCheckboxItemProps) {
   return (
     <ContextMenuPrimitive.CheckboxItem data-slot="context-menu-checkbox-item" className={cn(menuItemClassName, className, menuGutterClassName)} {...props}>
+      {children}
       <ContextMenuPrimitive.CheckboxItemIndicator data-slot="context-menu-item-indicator" className={menuIndicatorClassName}>
         <MenuCheck />
       </ContextMenuPrimitive.CheckboxItemIndicator>
-      {children}
     </ContextMenuPrimitive.CheckboxItem>
   )
 }
@@ -203,10 +203,10 @@ type ContextMenuRadioItemProps = WithClassName<ContextMenuPrimitive.RadioItem.Pr
 function ContextMenuRadioItem({ className, children, ...props }: ContextMenuRadioItemProps) {
   return (
     <ContextMenuPrimitive.RadioItem data-slot="context-menu-radio-item" className={cn(menuItemClassName, className, menuGutterClassName)} {...props}>
+      {children}
       <ContextMenuPrimitive.RadioItemIndicator data-slot="context-menu-item-indicator" className={menuIndicatorClassName}>
         <MenuCheck />
       </ContextMenuPrimitive.RadioItemIndicator>
-      {children}
     </ContextMenuPrimitive.RadioItem>
   )
 }

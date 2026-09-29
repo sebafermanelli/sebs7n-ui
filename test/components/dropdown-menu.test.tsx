@@ -339,3 +339,37 @@ describe("menú de macOS (2.0)", () => {
     expect(menuItemClassName).not.toMatch(/(^|\s)rounded-control(\s|$)/)
   })
 })
+
+// Revisión de R3: el primer ícono de un ítem va en el acento por `[&>svg:first-child]`. El tilde
+// iba antes de `children` y Base UI lo desmonta al desmarcar, así que marcar el ítem cambiaba cuál
+// era el primer hijo y el ícono perdía el acento. El tilde va después: es absoluto a la derecha,
+// el orden del DOM no mueve nada.
+describe("el ícono de un ítem marcable no cambia de color al marcarlo", () => {
+  it("el ícono es el primer hijo marcado y desmarcado", async () => {
+    render(
+      <DropdownMenu defaultOpen>
+        <DropdownMenuTrigger>Vista</DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuCheckboxItem>
+            <svg data-testid="icono" />
+            Barra lateral
+          </DropdownMenuCheckboxItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    )
+    const item = await screen.findByRole("menuitemcheckbox", { name: "Barra lateral" })
+    expect(item.firstElementChild).toBe(screen.getByTestId("icono"))
+    await userEvent.click(item)
+    await waitFor(() => expect(item).toHaveAttribute("data-checked"))
+    expect(item.querySelector("[data-slot=dropdown-menu-item-indicator]")).not.toBeNull()
+    expect(item.firstElementChild).toBe(screen.getByTestId("icono"))
+  })
+
+  it.each(["dropdown-menu.tsx", "context-menu.tsx", "menubar.tsx"])("%s pone el tilde después de children", async (archivo) => {
+    const { readFileSync } = await import("node:fs")
+    const { join } = await import("node:path")
+    const fuente = readFileSync(join(import.meta.dirname, "../../src/components", archivo), "utf8")
+    expect(fuente).not.toMatch(/ItemIndicator>\s*\{children\}/)
+    expect(fuente.match(/\{children\}\s*<\w+\.(Checkbox|Radio)ItemIndicator/g)).toHaveLength(2)
+  })
+})
