@@ -49,6 +49,7 @@ function ListSection({ className, title, total, children, ...props }: ListSectio
   )
 }
 
+/** El resto de las props (`id`, `data-*`, `aria-*`, `className`) va al `<li>`, no al botón o link de adentro. */
 type ListRowProps = Omit<React.ComponentProps<"li">, "title" | "onClick"> & {
   /** La primera línea (17, texto principal). Sin `title`, la fila dibuja sus hijos. */
   title?: React.ReactNode
@@ -65,8 +66,9 @@ type ListRowProps = Omit<React.ComponentProps<"li">, "title" | "onClick"> & {
   /** El chevron › de una fila que navega a otra pantalla. */
   chevron?: boolean
   /**
-   * La fila elegida: acento sólido mientras la lista tiene el foco, gris sin foco. En una fila
-   * interactiva suma `aria-current="true"` (el ítem abierto en el panel de detalle).
+   * La fila elegida: acento sólido mientras la lista tiene el foco, gris sin foco. Suma
+   * `aria-current="true"` (el ítem abierto en el panel de detalle): en el botón o el link de una fila
+   * interactiva, o en el `<li>` de una que no lo es, para que el lector no dependa del color.
    */
   selected?: boolean
   /** Hace la fila un `<button>`. Para navegar, `render={<a href="…" />}`. */
@@ -141,7 +143,7 @@ function ListRow({
     </>
   )
   const inner = cn(
-    "flex min-h-11 w-full min-w-0 items-center gap-3 rounded-item px-2.5 py-2 text-left outline-none",
+    "flex min-h-11 w-full min-w-0 items-center gap-3 rounded-item px-2.5 py-2 text-start outline-none",
     interactive && "cursor-pointer focus-visible:focus-ring group-data-[state=selected]/selectable:focus-visible:focus-ring-inverse"
   )
   return (
@@ -149,6 +151,7 @@ function ListRow({
       data-slot="list-row"
       data-state={selected ? "selected" : undefined}
       data-icon={icon != null ? "" : undefined}
+      aria-current={selected && !interactive ? "true" : undefined}
       className={cn(
         "group/selectable relative rounded-item text-label transition-control [--list-row-inset:10px] data-icon:[--list-row-inset:54px]",
         // El separador interior: arranca donde empieza el texto (a 10, o a 54 con ícono) y no va en la

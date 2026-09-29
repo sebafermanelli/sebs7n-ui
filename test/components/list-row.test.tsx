@@ -116,4 +116,15 @@ describe("ListRow", () => {
     expect(screen.getByText("Usado por vos")).toHaveClass("text-title-3")
     expect(screen.getByText("23,6 GB")).toHaveClass("text-title-3", "tabular-nums")
   })
+
+  it("revisión de R5b: el texto arranca del lado de la lectura y la elegida sin botón también lo dice", () => {
+    render(
+      <List aria-label="Facturas">
+        <ListRow onClick={() => {}} title="Acme S.A." />
+        <ListRow data-testid="fija" selected title="Nube Digital" />
+      </List>
+    )
+    expect(screen.getByRole("button", { name: "Acme S.A." })).toHaveClass("text-start")
+    expect(screen.getByTestId("fija")).toHaveAttribute("aria-current", "true")
+  })
 })
