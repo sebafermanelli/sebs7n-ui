@@ -146,17 +146,17 @@ export function FilesShowcase() {
       <SidebarContent aria-label="Ubicaciones">
         <SidebarGroup>
           <SidebarGroupLabel>Archivos</SidebarGroupLabel>
-          <SidebarItem icon={<ClockIcon />} render={<button className="text-start" type="button" />}>
+          <SidebarItem icon={<ClockIcon />} render={<button type="button" />}>
             Recientes
           </SidebarItem>
-          <SidebarItem active icon={<FolderIcon />} render={<button className="text-start" type="button" />}>
+          <SidebarItem active icon={<FolderIcon />} render={<button type="button" />}>
             Mis archivos
           </SidebarItem>
-          <SidebarItem icon={<UsersIcon />} render={<button className="text-start" type="button" />}>
+          <SidebarItem icon={<UsersIcon />} render={<button type="button" />}>
             Compartidos
             <SidebarItemBadge label="3 nuevos">3</SidebarItemBadge>
           </SidebarItem>
-          <SidebarItem icon={<Trash2Icon />} render={<button className="text-start" type="button" />}>
+          <SidebarItem icon={<Trash2Icon />} render={<button type="button" />}>
             Papelera
             <SidebarItemBadge>12</SidebarItemBadge>
           </SidebarItem>
@@ -164,10 +164,10 @@ export function FilesShowcase() {
         <SidebarGroup collapsible>
           <SidebarGroupLabel>Favoritos</SidebarGroupLabel>
           <SidebarGroupAction aria-label="Agregar a favoritos" />
-          <SidebarItem icon={<FileTextIcon />} render={<button className="text-start" type="button" />}>
+          <SidebarItem icon={<FileTextIcon />} render={<button type="button" />}>
             Facturas
           </SidebarItem>
-          <SidebarItem icon={<FileSpreadsheetIcon />} render={<button className="text-start" type="button" />}>
+          <SidebarItem icon={<FileSpreadsheetIcon />} render={<button type="button" />}>
             Informes
           </SidebarItem>
         </SidebarGroup>
@@ -236,14 +236,14 @@ export function FilesShowcase() {
               <Breadcrumb aria-label="Ruta de la carpeta">
                 <BreadcrumbList>
                   <BreadcrumbItem>
-                    <BreadcrumbLink render={<button className="text-start" type="button" />}>Mis archivos</BreadcrumbLink>
+                    <BreadcrumbLink render={<button type="button" />}>Mis archivos</BreadcrumbLink>
                   </BreadcrumbItem>
                   {ruta.map((nodo, indice) => (
                     <BreadcrumbItem key={nodo.id}>
                       {indice === ruta.length - 1 ? (
                         <BreadcrumbPage>{nodo.label}</BreadcrumbPage>
                       ) : (
-                        <BreadcrumbLink onClick={() => setCarpeta(nodo.id)} render={<button className="text-start" type="button" />}>
+                        <BreadcrumbLink onClick={() => setCarpeta(nodo.id)} render={<button type="button" />}>
                           {nodo.label}
                         </BreadcrumbLink>
                       )}

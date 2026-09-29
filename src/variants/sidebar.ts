@@ -18,7 +18,7 @@ import { cn } from "../lib/utils.js"
 // Con el dedo sube a 44 de verdad, por lo mismo que los ítems de menú: están pegados y un `::after`
 // taparía al vecino.
 const sidebarItemVariantsBase = cva(
-  "group/sidebar-item group/selectable relative flex h-8 pointer-coarse:h-11 w-full min-w-0 cursor-pointer items-center gap-2.5 rounded-item ps-3.5 pe-2.5 text-subheadline text-label outline-none select-none transition-control hover:bg-fill-1 active:bg-fill-2 focus-visible:focus-ring data-active:bg-fill-1 data-active:text-label aria-[current=page]:bg-fill-1 aria-[current=page]:text-label [&_svg]:pointer-events-none [&_svg]:shrink-0 [&>svg]:text-brand-900 [&>svg:not([class*='size-'])]:size-[18px] group-data-collapsed/sidebar:w-8 pointer-coarse:group-data-collapsed/sidebar:w-11 group-data-collapsed/sidebar:justify-center group-data-collapsed/sidebar:px-0"
+  "group/sidebar-item group/selectable relative flex h-8 pointer-coarse:h-11 w-full min-w-0 cursor-pointer items-center gap-2.5 rounded-item ps-3.5 pe-2.5 text-start text-subheadline text-label outline-none select-none transition-control hover:bg-fill-1 active:bg-fill-2 focus-visible:focus-ring data-active:bg-fill-1 data-active:text-label aria-[current=page]:bg-fill-1 aria-[current=page]:text-label [&_svg]:pointer-events-none [&_svg]:shrink-0 [&>svg]:text-brand-900 [&>svg:not([class*='size-'])]:size-[18px] group-data-collapsed/sidebar:w-8 pointer-coarse:group-data-collapsed/sidebar:w-11 group-data-collapsed/sidebar:justify-center group-data-collapsed/sidebar:px-0"
 )
 
 // Pasa por cn() (tailwind-merge): usada sobre <a>/<Link>, la clase de la variante tiene que ganarle a la base.

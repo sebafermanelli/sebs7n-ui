@@ -54,6 +54,11 @@ function Example({
 }
 
 describe("Sidebar", () => {
+  // Un `<button>` centra su texto por defecto: con `render={<button />}` el nombre quedaba al medio.
+  it("el ítem alinea el texto al inicio aunque se renderice como botón", () => {
+    expect(sidebarItemVariants().split(" ")).toContain("text-start")
+  })
+
   it("sobre el wallpaper (W) la columna es el cuerpo translúcido; adentro del Sheet no pinta nada", () => {
     const { unmount } = render(<Sidebar aria-label="Principal" />)
     expect(screen.getByRole("complementary")).toHaveClass("bg-surface-secondary", "in-data-ambient:material-translucent-body")
