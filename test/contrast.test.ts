@@ -5,7 +5,8 @@ import { describe, expect, it } from "vitest"
 
 import brands from "../tokens/brands.json"
 import { badgeVariants } from "../src/variants/badge.js"
-import { composite, contrastRatio, flattenAlpha, hexOfOklch, luminanceOfHex, luminanceOfOklch, type Oklch } from "../src/lib/contrast.js"
+import { buttonVariants } from "../src/variants/button.js"
+import { composite, contrastRatio, flattenAlpha, hexOfOklch, luminanceOfHex, type Oklch } from "../src/lib/contrast.js"
 
 /**
  * La tabla de contraste del sistema.
@@ -96,24 +97,65 @@ const PALETAS = ["gray", "brand", "red", "amber", "green", "blue", "teal", "purp
 // superficie lo mide `surfaces.test.ts`, que sabe componerlos. Acá quedan los colores sólidos.
 
 /**
- * El anillo de foco (`focus-ring`) es `0 0 0 2px background-100, 0 0 0 4px
- * brand-700`: el anillo de marca con un separador del color de la superficie
- * para que se despegue del control. Lo que tiene que llegar a 3:1 (WCAG 2.4.11)
- * es `brand-700` contra ese separador, que es la superficie.
+ * El anillo de foco de iCloud (2.0, catálogo §1.7): `inset 0 0 0 3px` del color de foco, que sale
+ * del brand (`--sf-focus`, con `--sf-focus-alpha`). iCloud lo pinta al 70 %; con las marcas de
+ * ejemplo el 70 % queda en 2,7–2,9:1 en claro, así que el default es la marca plena y el 70 % es
+ * una opción de la app cuya marca lo aguante. Lo que tiene que llegar a 3:1 (WCAG 1.4.11 y
+ * 2.4.11) es el anillo contra la página y contra lo que flota, con el alfa que declare el tema.
  *
- * Las cuatro marcas de `tokens/brands.json` son las de ejemplo; una app define
- * la suya y no toca este archivo, pero el umbral es el mismo. Se calcula en
- * OKLCH porque así se declaran.
+ * Las cuatro marcas de `tokens/brands.json` son las de ejemplo; una app define la suya y no toca
+ * este archivo, pero el umbral es el mismo. Se calcula en OKLCH porque así se declaran.
  */
-describe("Anillo de foco en las cuatro marcas (WCAG 2.4.11)", () => {
+describe("Anillo de foco interior en las cuatro marcas (WCAG 1.4.11)", () => {
+  const css = read("theme.css")
+  const alfa = (theme: "light" | "dark") => {
+    const inicio = css.indexOf(theme === "light" ? ":root {" : ".dark {")
+    const cuerpo = css.slice(inicio, css.indexOf("\n  }", inicio))
+    const valor = /--sf-focus-alpha:\s*(\d+)%;/.exec(cuerpo)?.[1] ?? /--sf-focus-alpha:\s*(\d+)%;/.exec(css)![1]
+    return Number(valor) / 100
+  }
+
+  it("focus-ring es el anillo interior de 3px, sin outline", () => {
+    const util = css.slice(css.indexOf("@utility focus-ring {"), css.indexOf("\n}", css.indexOf("@utility focus-ring {")))
+    expect(util).toContain("outline: none;")
+    expect(util).toContain("box-shadow: inset 0 0 0 3px var(--sf-focus);")
+    expect(css).toContain("--sf-focus: color-mix(in srgb, var(--sf-brand-700) var(--sf-focus-alpha), transparent);")
+  })
+
+  it("los campos llevan el mismo anillo: 1px de borde y 2 de sombra interior, 3 desde el filo", () => {
+    const util = css.slice(css.indexOf("@utility focus-border {"), css.indexOf("\n}", css.indexOf("@utility focus-border {")))
+    expect(util).toContain("border-color: var(--sf-focus);")
+    expect(util).toContain("box-shadow: inset 0 0 0 2px var(--sf-focus);")
+    expect(util).not.toContain("data-sf-modality")
+  })
+
+  // Sobre un fondo de marca (botón `accent`, casilla marcada) el anillo sería del mismo color que
+  // el fondo: ahí va el color de contraste de la marca, el par que `brand-contrast.test.ts` ya
+  // lleva a 4,5:1. Sobre el rojo destructivo, el blanco del botón.
+  it("sobre la marca, el anillo es el color de contraste (focus-ring-inverse)", () => {
+    const util = css.slice(css.indexOf("@utility focus-ring-inverse {"), css.indexOf("\n}", css.indexOf("@utility focus-ring-inverse {")))
+    expect(util).toContain("box-shadow: inset 0 0 0 3px var(--sf-focus-inverse, var(--sf-brand-fg));")
+    for (const variant of ["accent", "destructive"] as const) {
+      expect(buttonVariants({ variant }).split(" "), variant).toContain("focus-visible:focus-ring-inverse")
+      expect(buttonVariants({ variant }).split(" "), variant).not.toContain("focus-visible:focus-ring")
+    }
+    expect(buttonVariants({ variant: "destructive" })).toContain("[--sf-focus-inverse:var(--sf-button-error-fg)]")
+    for (const file of ["checkbox.tsx", "radio-group.tsx", "switch.tsx"]) {
+      expect(readFileSync(join(root, "src/components", file), "utf8"), file).toContain("data-checked:focus-visible:focus-ring-inverse")
+    }
+  })
+
   const marcas = brands as Record<string, Record<string, { base: number[]; contrast: string }>>
   for (const [marca, temas] of Object.entries(marcas)) {
     for (const [theme, { base }] of Object.entries(temas)) {
-      const bg = paleta[theme as "light" | "dark"]["--sf-background-100"]!
-      it(`${marca} (${theme}): el anillo sobre ${bg} llega a 3:1`, () => {
-        const r = contrastRatio(luminanceOfOklch(base as unknown as Oklch), luminanceOfHex(bg))
-        expect(r).toBeGreaterThanOrEqual(3)
-      })
+      const t = theme as "light" | "dark"
+      for (const fondo of ["--sf-background", "--sf-surface"] as const) {
+        const bg = paleta[t][fondo]!
+        const anillo = composite(hexOfOklch(base as unknown as Oklch), alfa(t), bg)
+        it(`${marca} (${theme}): el anillo (${anillo}) sobre ${fondo.replace("--sf-", "")} ${bg} llega a 3:1`, () => {
+          expect(ratio(anillo, bg)).toBeGreaterThanOrEqual(3)
+        })
+      }
     }
   }
 })
@@ -166,22 +208,6 @@ describe("Button variant=\"destructive\" (WCAG 1.4.3, texto normal)", () => {
       })
     }
   }
-})
-
-// El borde del campo enfocado es el indicador de foco de los campos: es lo
-// único que dice dónde estás parado al tabular por un formulario. WCAG 2.4.11
-// (AA en 2.2) le pide 3:1 contra el fondo. Desde 1.0 ese borde es `brand-700`,
-// el mismo color del anillo de foco, así que el número es el de arriba: lo que
-// se verifica acá es que el token siga apuntando ahí en los dos temas, que es
-// lo que hace que ese número valga también para los campos. El halo de 4px no
-// se mide: es énfasis, y con puntero ni siquiera aparece.
-describe("Borde de foco de los campos (WCAG 2.4.11)", () => {
-  const css = read("theme.css")
-  it("es brand-700, el color que ya verifica el anillo de foco", () => {
-    expect(css.match(/--sf-focus-border:\s*var\(--sf-brand-700\);/g)).toHaveLength(1)
-    // Una sola declaración, en `:root`: `.dark` la hereda, y `--sf-brand-700` ya cambia por tema.
-    expect(css).not.toMatch(/--sf-focus-border:\s*var\(--sf-gray/)
-  })
 })
 
 // Los botones `tinted` y `destructive-tinted` (2.0): la tinta sobre el tinte de su color (lo

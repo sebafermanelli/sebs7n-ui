@@ -38,14 +38,15 @@ describe("el halo de foco de un campo es del teclado", () => {
     expect(document.documentElement).toHaveAttribute("data-sf-modality", "pointer")
   })
 
-  it("focus-border deja el borde siempre y el halo solo fuera de pointer", () => {
+  // Desde 2.0 (iCloud) el anillo interior de un campo es el indicador y se ve también con el
+  // puntero: la modalidad ya no lo decide. El atributo se sigue escribiendo (R4 decide si queda).
+  it("focus-border es el anillo interior, con puntero y con teclado", () => {
     for (const name of ["focus-border", "focus-border-error"]) {
       const inicio = theme.indexOf(`@utility ${name} {`)
       const cuerpo = theme.slice(inicio, theme.indexOf("\n}", inicio))
-      const [siempre, teclado] = cuerpo.split(':root:not([data-sf-modality="pointer"]) &')
-      expect(siempre, name).toContain("border-color:")
-      expect(siempre, name).not.toContain("box-shadow")
-      expect(teclado, name).toContain("box-shadow: 0 0 0 4px")
+      expect(cuerpo, name).toContain("border-color:")
+      expect(cuerpo, name).toContain("box-shadow: inset 0 0 0 2px")
+      expect(cuerpo, name).not.toContain("data-sf-modality")
     }
   })
 })

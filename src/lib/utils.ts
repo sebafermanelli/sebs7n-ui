@@ -14,7 +14,7 @@ export const TYPE_SCALE = [
   "subheadline", "footnote", "caption", "mono-body", "mono-callout",
 ] as const
 
-const twMerge = extendTailwindMerge<"touch-target">({
+const twMerge = extendTailwindMerge<"touch-target" | "focus-ring">({
   extend: {
     theme: {
       text: [...TYPE_SCALE],
@@ -26,6 +26,8 @@ const twMerge = extendTailwindMerge<"touch-target">({
       // convive con ellos y gana el que Tailwind haya emitido último, que no se elige.
       // Las dos formas del área táctil pelean por el mismo `::after`: la que se pase después gana.
       "touch-target": ["touch-target", "touch-target-y"],
+      // Los dos anillos pintan el mismo `box-shadow`: el de la variante (sobre la marca) reemplaza al de la base.
+      "focus-ring": ["focus-ring", "focus-ring-inverse"],
       "bg-color": ["material-translucent", "bg-ambient"],
     },
   },

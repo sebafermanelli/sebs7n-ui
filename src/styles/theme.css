@@ -430,23 +430,14 @@
     --sf-ai-solid: oklch(0.5 0.23 293);
     --sf-ai-solid-hover: oklch(0.46 0.23 293);
     /**
-     * El borde del campo enfocado (`focus-border`).
-     *
-     * En claro era `gray-alpha-600` (#0000003d): compuesto sobre la superficie
-     * blanca queda en #c2c2c2, 1,78:1. WCAG 2.4.11 y 1.4.11 piden 3:1 para el
-     * indicador de foco, y con 1,78 tabular por un formulario era adivinar
-     * dónde estaba parado. `gray-alpha-800` (#00000082) compone #7d7d7d y da
-     * 4,12:1.
-     *
-     * En oscuro se queda en `gray-alpha-600` (#ffffff82 → #878787, 5,51:1), que
-     * ya pasaba: subirlo a alpha-800 lo BAJARÍA a 4,81, porque la escala alpha
-     * en oscuro no es monótona.
-     *
-     * El halo de 4px (`--sf-focus-halo`) no se toca: es énfasis, no es el
-     * indicador. Quien tiene que llegar al 3:1 es el borde, y llega.
+     * El color del foco (2.0, catálogo §1.7): el anillo interior de iCloud sale del brand, así que
+     * sigue al acento de la app. iCloud lo pinta al 70 % (`rgba(10,132,255,.7)`); con las marcas de
+     * ejemplo el 70 % no llega a 3:1 contra la página en claro (WCAG 1.4.11), así que el default es
+     * la marca plena. Una app cuya marca lo aguante pone `--sf-focus-alpha: 70%`, y
+     * `test/contrast.test.ts` dice si llega.
      */
-    --sf-focus-border: var(--sf-brand-700);
-    --sf-focus-halo: color-mix(in srgb, var(--sf-brand-700) 22%, transparent);
+    --sf-focus-alpha: 100%;
+    --sf-focus: color-mix(in srgb, var(--sf-brand-700) var(--sf-focus-alpha), transparent);
 
     /**
      * Las sombras de iCloud web (2.0, catálogo §1.6). Planas en reposo: botones, campos y cards
@@ -547,7 +538,8 @@
 
     --sf-ai: oklch(0.68 0.19 293);
     --sf-ai-2: oklch(0.72 0.2 330);
-    --sf-focus-halo: color-mix(in srgb, var(--sf-brand-700) 30%, transparent);
+    /* Se redeclara: `var()` se resuelve donde se declara, y el brand cambia por tema. */
+    --sf-focus: color-mix(in srgb, var(--sf-brand-700) var(--sf-focus-alpha), transparent);
 
     /* En oscuro las de iCloud llegan al 65 %: sobre #1C1C1E una sombra suave no se ve. */
     --sf-shadow-menu: 0 0 0 1px var(--sf-hairline), 0 11px 34px 0 #000000a6;
@@ -882,41 +874,50 @@
   }
 }
 
-/* Anillo de foco de Geist (--ds-focus-ring) con el color de marca. */
+/**
+ * El foco de iCloud (2.0): un anillo INTERIOR de 3 px que sigue el radio del control, en vez del
+ * anillo de Geist por fuera con un separador. Por dentro no lo tapa el vecino ni lo corta un
+ * `overflow-hidden`, y en una lista pegada no se mete en la fila de al lado.
+ *
+ * Va por `box-shadow`, así que mientras dura el foco reemplaza la sombra del elemento (un popover
+ * enfocado pierde su `shadow-menu`): es lo mismo que hacía el anillo de 1.x.
+ */
 @utility focus-ring {
   outline: none;
-  box-shadow: 0 0 0 2px var(--color-background-100), 0 0 0 4px var(--color-brand-700);
+  box-shadow: inset 0 0 0 3px var(--sf-focus);
 }
 
 /**
- * Foco de los campos: el borde toma el brand y, si se llegó con el teclado, suma el halo.
- *
- * El borde es el indicador de foco y está siempre. El halo de 4px es énfasis: se reserva para
- * quien navega con Tab, que es quien necesita encontrar el campo en la pantalla; quien hizo
- * clic ya sabe dónde está. Ver `src/internal/modality.ts` por qué hace falta un atributo y no
- * alcanza con `:focus-visible`.
+ * El anillo sobre un fondo de marca: botón `accent`, casilla marcada, Switch prendido. Ahí el
+ * anillo de foco sería del mismo color que el fondo; va el color de contraste de la marca, el par
+ * que ya pasa 4,5:1. El botón destructivo lo apunta a su blanco con `--sf-focus-inverse`.
+ */
+@utility focus-ring-inverse {
+  outline: none;
+  box-shadow: inset 0 0 0 3px var(--sf-focus-inverse, var(--sf-brand-fg));
+}
+
+/**
+ * Foco de los campos: el mismo anillo, armado con el borde de 1 px más 2 de sombra interior, para
+ * que la banda mida 3 desde el filo como en la búsqueda de iCloud (el borde transparente del
+ * campo dejaría 1 px de relleno por fuera del anillo). Se ve con el puntero y con el teclado: en
+ * un campo el anillo es el indicador de dónde se escribe, no un énfasis para quien tabula.
  */
 @utility focus-border {
   outline: none;
-  border-color: var(--sf-focus-border);
-
-  :root:not([data-sf-modality="pointer"]) & {
-    box-shadow: 0 0 0 4px var(--sf-focus-halo);
-  }
+  border-color: var(--sf-focus);
+  box-shadow: inset 0 0 0 2px var(--sf-focus);
 }
 
 @utility focus-border-error {
   outline: none;
   border-color: var(--color-red-800);
-
-  :root:not([data-sf-modality="pointer"]) & {
-    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-red-800) 24%, transparent);
-  }
+  box-shadow: inset 0 0 0 2px var(--color-red-800);
 }
 
-/* Lo que anima el pulgar: `scale` para crecer, y el fondo y la sombra para volverse lente. */
+/* Lo que anima el pulgar: `scale` para crecer y la sombra. */
 @utility transition-thumb {
-  transition-property: scale, translate, transform, background-color, border-color, box-shadow, backdrop-filter;
+  transition-property: scale, translate, transform, background-color, border-color, box-shadow;
   transition-timing-function: cubic-bezier(0.3, 1.4, 0.4, 1);
   transition-duration: 280ms;
 }

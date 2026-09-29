@@ -199,7 +199,7 @@ describe("registry", () => {
     expect(tema.cssVars.light).toBeUndefined()
     expect(tema.css[":root"]["--brand-base"]).toBeTruthy()
     expect(tema.css[".dark"]["--sf-background"]).toBe("#1c1c1e")
-    expect(tema.css["@utility focus-ring"]["box-shadow"]).toContain("--color-brand-700")
+    expect(tema.css["@utility focus-ring"]["box-shadow"]).toBe("inset 0 0 0 3px var(--sf-focus)")
     expect(tema.css["@utility text-button-14"]["font-size"]).toBe("14px")
     // Y nada de reset.css/base.css, que pisarían el chrome de la app destino:
     // de reset.css entran los radios y nada más.

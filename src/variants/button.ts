@@ -22,9 +22,9 @@ const buttonVariantsBase = cva(
           "bg-fill-2 text-label hover:bg-fill-3 active:bg-fill-3",
         ghost: "text-label hover:bg-fill-2 active:bg-fill-3",
         accent:
-          "bg-brand-700 text-brand-contrast hover:bg-brand-800 active:bg-brand-800",
+          "bg-brand-700 text-brand-contrast hover:bg-brand-800 active:bg-brand-800 focus-visible:focus-ring-inverse",
         destructive:
-          "bg-red-800 text-button-error-fg hover:bg-button-error-hover active:bg-button-error-active",
+          "bg-red-800 text-button-error-fg hover:bg-button-error-hover active:bg-button-error-active focus-visible:focus-ring-inverse [--sf-focus-inverse:var(--sf-button-error-fg)]",
         // Lo que pide la acción peligrosa de una alerta: texto rojo sobre un fondo con
         // tinte rojo. No grita como el rojo sólido: la alerta ya es la advertencia, el botón solo
         // nombra la acción. El texto es la tinta (`-ink`) y no `-900`: sobre el tinte, `-900` no

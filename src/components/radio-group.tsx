@@ -22,7 +22,7 @@ function RadioGroupItem({ className, ...props }: RadioGroupItemProps) {
         // le toca el 3:1 de WCAG 1.4.11. `gray-500` daba 1,66:1 en claro; `gray-700`, 3,23:1.
         "peer relative inline-flex size-4 shrink-0 cursor-pointer items-center justify-center rounded-full border border-label-tertiary bg-surface outline-none transition-control after:absolute after:-inset-2 pointer-coarse:after:-inset-3.5",
         "hover:border-label-secondary focus-visible:focus-ring",
-        "data-checked:border-brand-800 data-checked:bg-brand-700 data-checked:hover:bg-brand-800",
+        "data-checked:border-brand-800 data-checked:bg-brand-700 data-checked:hover:bg-brand-800 data-checked:focus-visible:focus-ring-inverse",
         "aria-invalid:border-red-800 data-invalid:border-red-800",
         "data-disabled:cursor-not-allowed data-disabled:border-separator data-disabled:bg-fill-1",
         className

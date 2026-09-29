@@ -30,7 +30,7 @@ function Switch({ className, size = "md", variant = "default", ...props }: Switc
         // dos temas) es el punto medio que pasa por los dos lados: 3,23:1 contra el blanco en
         // claro, 6,12:1 contra el negro en oscuro, y 3,23:1 contra el pulgar en los dos.
         "bg-gray-700 hover:bg-gray-800 focus-visible:focus-ring",
-        "data-checked:bg-brand-700 data-checked:hover:bg-brand-800",
+        "data-checked:bg-brand-700 data-checked:hover:bg-brand-800 data-checked:focus-visible:focus-ring-inverse",
         "data-[variant=neutral]:data-checked:bg-label data-[variant=neutral]:data-checked:hover:bg-button-primary-hover",
         "aria-invalid:ring-1 aria-invalid:ring-red-800 data-invalid:ring-1 data-invalid:ring-red-800",
         "data-disabled:cursor-not-allowed data-disabled:bg-fill-1 data-disabled:hover:bg-fill-1",
