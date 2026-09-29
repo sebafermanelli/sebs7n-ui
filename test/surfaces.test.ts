@@ -263,8 +263,8 @@ describe("wallpaper (W)", () => {
     const u = utility("bg-ambient")
     for (const n of [1, 2, 3, 4]) expect(u, `tono ${n}`).toContain(`oklch(from var(--sf-wallpaper-${n}) l c h / var(--ambient))`)
     const circulos = u.match(/radial-gradient\(circle \d+vmax at /g) ?? []
-    // Cuatro grandes en las esquinas y dos cuartos adelante, abajo a la izquierda y a la derecha.
-    expect(circulos.length).toBeGreaterThanOrEqual(6)
+    // Cuatro grandes en las esquinas y, adelante, el arco que baja desde arriba a la izquierda.
+    expect(circulos.length).toBeGreaterThanOrEqual(5)
     // Todos con el centro afuera de la pantalla: se ven cuartos y arcos, como en iCloud; un círculo
     // chico entero adentro se lee como una mancha.
     for (const [, x, y] of u.matchAll(/radial-gradient\(circle \d+vmax at (-?\d+)% (-?\d+)%/g)) {
@@ -281,11 +281,14 @@ describe("wallpaper (W)", () => {
     }
   })
 
-  // Los dos cuartos de adelante, abajo en las esquinas: un 15 % más grandes que en 2.0 (26 y 30).
-  it("los cuartos de abajo miden 30 y 35 vmax", () => {
+  // Sebastián marcó sobre una captura el arco que quería: entra casi horizontal arriba a la
+  // izquierda y baja curvándose hasta el centro de abajo. Es el borde de un círculo de 65 vmax con
+  // el centro afuera, abajo a la izquierda; reemplaza a los dos cuartos chicos de las esquinas.
+  it("el arco de adelante es un círculo de 65 vmax y ya no están los cuartos de las esquinas", () => {
     const u = utility("bg-ambient")
-    expect(u).toContain("circle 30vmax at -2% 102%")
-    expect(u).toContain("circle 35vmax at 102% 102%")
+    expect(u).toContain("circle 65vmax at -6% 122%")
+    expect(u).not.toContain("at -2% 102%")
+    expect(u).not.toContain("at 102% 102%")
   })
 
   it("se fueron los focos de la luz ambiente de 1.x", () => {
