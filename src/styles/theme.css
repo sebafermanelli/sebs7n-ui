@@ -348,6 +348,8 @@
      * Sebastián («Trash Message»). iCloud no tiene tooltip propio (usa `title`): se deriva de la
      * escala de grises de iOS. En oscuro va un paso más claro que las superficies para despegarse.
      */
+    /* La franja del Skeleton: apenas más clara que el gris de fondo. */
+    --sf-skeleton-shine: #ffffff99;
     --sf-tooltip: #3a3a3c;
     --sf-on-tooltip: #ffffff;
     /* El segmento activo de un control segmentado: blanco en claro, el gris de Calendar en oscuro. */
@@ -505,6 +507,7 @@
     --sf-label-tertiary: #ffffff80;
     --sf-label-quaternary: #7878805c;
     --sf-selection-inactive: #3c3c3e;
+    --sf-skeleton-shine: #ffffff12;
     --sf-tooltip: #48484a;
     --sf-on-tooltip: #ffffff;
     --sf-segment: #636366;
@@ -756,61 +759,37 @@
 }
 
 /**
- * La luz ambiente: el wallpaper opcional (2.0). En iCloud solo Home tiene wallpaper, y sobre él
- * van la barra global y los widgets con `material-translucent`; adentro de una app la página es
- * lisa. Por eso es opt-in (`AppShell ambient`), no el default.
+ * El Skeleton (R5a): gris parejo con un brillo sutil que cruza de izquierda a derecha, lento y
+ * continuo (pedido de Sebastián: el pulso de 1.x «late» y el cambio de color era brusco).
  *
- * Son tres `radial-gradient` y no tres `div` con `filter: blur()`: el degradé lo resuelve el
- * rasterizador una vez, y un blur de 90px sobre media pantalla se repinta en cada scroll.
- * `fixed` para que la luz quede quieta y sea el contenido el que pasa por delante.
+ * El degradado va con `background-attachment: fixed`: se ubica contra la ventana y no contra cada
+ * bloque, así que todos los bloques de una pantalla muestran la misma franja en el mismo lugar —una
+ * sola luz que pasa por encima de todos— en vez de cada uno con su propio brillo desfasado. La franja
+ * mide media ventana y cruza en 1,5 s; el medio segundo que sigue está quieta, afuera.
  *
- * El alfa se calcula acá, en el elemento, y no en los tokens de `:root`: por lo mismo que en
- * una variable de `:root`, así `--ambient` responde donde la app lo pise.
- */
-@utility bg-ambient {
-  background-color: var(--color-background);
-  background-image:
-    radial-gradient(60vmax 60vmax at 0% 0%, oklch(from var(--sf-ambient-1) l c h / calc(0.55 * var(--ambient) * var(--sf-ambient-gain))), transparent 70%),
-    radial-gradient(50vmax 50vmax at 100% 30%, oklch(from var(--sf-ambient-2) l c h / calc(0.5 * var(--ambient) * var(--sf-ambient-gain))), transparent 70%),
-    radial-gradient(55vmax 55vmax at 40% 110%, oklch(from var(--sf-ambient-3) l c h / calc(0.5 * var(--ambient) * var(--sf-ambient-gain))), transparent 70%);
-  background-attachment: fixed;
-}
-
-/* El pulso del Skeleton.
- *
- * Anima la `opacity` de una capa de gray-200 encima, y no el `background-color` del
- * elemento. El color se interpola en el hilo principal y obliga a repintar cada frame
- * mientras dura la carga —que es justo cuando el hilo está ocupado—; la opacidad la
- * resuelve el compositor y no repinta nada.
- *
- * Se ve exactamente igual: componer gray-200 con alfa t sobre gray-100 da la misma
- * mezcla sRGB que interpolar de un color al otro. El `opacity: 0` declarado en la
- * capa no es redundante: el reset de `prefers-reduced-motion` de base.css corta la
- * animación, y sin él la capa quedaría fija en gray-200 en vez de en gray-100, que es
- * donde quedaba antes. El radio se hereda para que siga la forma que le ponga la app.
+ * Con movimiento reducido no hay brillo: gris parejo, quieto. (Safari en iOS trata `fixed` como
+ * `scroll`: ahí cada bloque tiene su brillo, igual de lento.)
  */
 @keyframes skeleton {
-  0%,
-  100% {
-    opacity: 0;
+  0% {
+    background-position: -50vw 0;
   }
-  50% {
-    opacity: 1;
+  75%,
+  100% {
+    background-position: 100vw 0;
   }
 }
 
 @utility animate-skeleton {
-  position: relative;
+  background-image: linear-gradient(90deg, transparent 0%, var(--sf-skeleton-shine) 50%, transparent 100%);
+  background-size: 50vw 100%;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  animation: skeleton 2s ease-in-out infinite;
 
-  &::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background-color: var(--color-gray-200);
-    opacity: 0;
-    animation: skeleton 1.5s ease-in-out infinite;
-    pointer-events: none;
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    background-image: none;
   }
 }
 

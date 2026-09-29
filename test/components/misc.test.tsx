@@ -89,9 +89,26 @@ describe("Separator / Skeleton", () => {
     expect(vertical).toHaveAttribute("data-orientation", "vertical")
   })
 
-  it("skeleton con el pulso de Geist", () => {
+  it("skeleton: gris con el brillo que cruza", () => {
     render(<Skeleton data-testid="sk" />)
     expect(screen.getByTestId("sk")).toHaveClass("animate-skeleton", "bg-fill-2", "rounded-control")
+  })
+
+  it("el brillo cruza de izquierda a derecha en 1,5–2 s, con la misma fase en todos los bloques, y se queda quieto con movimiento reducido", async () => {
+    const { readFileSync } = await import("node:fs")
+    const { join } = await import("node:path")
+    const theme = readFileSync(join(import.meta.dirname, "../../src/styles/theme.css"), "utf8")
+    const inicio = theme.indexOf("@utility animate-skeleton {")
+    const util = theme.slice(inicio, theme.indexOf("\n}", inicio))
+    // `fixed`: el degradado se ubica contra la ventana, así todos los bloques muestran la misma franja.
+    expect(util).toContain("background-attachment: fixed")
+    expect(util).toMatch(/linear-gradient\(\s*90deg/)
+    const segundos = Number(/animation: skeleton ([\d.]+)s/.exec(util)?.[1])
+    expect(segundos).toBeGreaterThanOrEqual(1.5)
+    expect(segundos).toBeLessThanOrEqual(2)
+    expect(util).toMatch(/prefers-reduced-motion: reduce\)\s*\{[^}]*animation: none;[^}]*background-image: none;/)
+    // Sin el pulso de opacidad de 1.x.
+    expect(theme).not.toMatch(/@keyframes skeleton \{[^}]*opacity/)
   })
 })
 
