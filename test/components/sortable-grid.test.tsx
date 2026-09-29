@@ -454,6 +454,29 @@ describe("SortableGrid", () => {
       expect(status()).toHaveTextContent("Removed Facturas.")
     })
 
+    it("onAdd: en edición la última celda es «+ Agregar», punteada y con el radio de las tarjetas; abrirla no sale de la edición", async () => {
+      const user = userEvent.setup()
+      const onAdd = vi.fn()
+      const onEditingChange = vi.fn()
+      render(<Widgets onAdd={onAdd} onEditingChange={onEditingChange} />)
+      await act(() => new Promise((resolve) => setTimeout(resolve)))
+      const cells = within(screen.getByRole("list", { name: "Widgets" })).getAllByRole("listitem")
+      expect(cells).toHaveLength(5)
+      expect(cells[4]).toHaveAttribute("data-slot", "sortable-add")
+      const add = within(cells[4]!).getByRole("button", { name: "Agregar" })
+      expect(add).toHaveClass("rounded-surface", "border-dashed")
+      await user.click(add)
+      expect(onAdd).toHaveBeenCalledTimes(1)
+      expect(onEditingChange).not.toHaveBeenCalled()
+    })
+
+    it("sin edición no hay «+ Agregar», y labels.add lo traduce", () => {
+      const { rerender } = render(<Widgets editing={false} onAdd={() => {}} />)
+      expect(screen.queryByRole("button", { name: "Agregar" })).toBeNull()
+      rerender(<Widgets editing labels={{ add: "Add widget" }} onAdd={() => {}} />)
+      expect(screen.getByRole("button", { name: "Add widget" })).toBeInTheDocument()
+    })
+
     it("controlado: editing manda y renderItem recibe state.editing", () => {
       const seen: boolean[] = []
       const renderItem = (widget: Widget, state: { editing: boolean }) => {

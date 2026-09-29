@@ -181,6 +181,17 @@ describe("SortableList", () => {
       expect(status()).toHaveTextContent("Se sacó Factura 0013.")
     })
 
+    it("onAdd: en edición la última fila es «Agregar»", async () => {
+      const user = userEvent.setup()
+      const onAdd = vi.fn()
+      render(<Invoices onAdd={onAdd} />)
+      const rows = screen.getAllByRole("listitem")
+      expect(rows).toHaveLength(4)
+      expect(rows[3]).toHaveAttribute("data-slot", "sortable-add")
+      await user.click(within(rows[3]!).getByRole("button", { name: "Agregar" }))
+      expect(onAdd).toHaveBeenCalledTimes(1)
+    })
+
     it("controlado: con editing aparece la manija", () => {
       const { rerender } = render(<Invoices editing={false} />)
       expect(screen.queryByRole("button", { name: /Reordenar/ })).toBeNull()

@@ -26,7 +26,7 @@ import {
   type SortingStrategy,
 } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
-import { GripVerticalIcon, MinusIcon } from "lucide-react"
+import { GripVerticalIcon, MinusIcon, PlusIcon } from "lucide-react"
 
 import { List, ListRow } from "../components/list-row.js"
 import { useLabels, type Labels } from "../lib/labels.js"
@@ -108,6 +108,8 @@ type SortableProps<T> = {
    * «Se sacó <nombre>».
    */
   onRemove?: (key: string) => void
+  /** Con esto, en edición aparece al final una celda «+ Agregar» (una fila en la lista); la app decide qué abre. */
+  onAdd?: () => void
   labels?: Partial<SortableLabels>
 }
 
@@ -136,6 +138,7 @@ function SortableBase<T>({
   defaultEditing = false,
   onEditingChange,
   onRemove,
+  onAdd,
   labels: labelsProp,
   itemClassName,
   className,
@@ -336,6 +339,23 @@ function SortableBase<T>({
                 </SortableItem>
               )
             })}
+            {editing &&
+              onAdd &&
+              (variant === "list" ? (
+                <ListRow data-slot="sortable-add" icon={<PlusIcon />} onClick={onAdd} title={labels.add} />
+              ) : (
+                // El mismo radio que las tarjetas; estira al alto de la fila de la grilla.
+                <li className="min-w-0" data-slot="sortable-add">
+                  <button
+                    type="button"
+                    onClick={onAdd}
+                    className="flex size-full min-h-32 items-center justify-center gap-2 rounded-surface border-2 border-dashed border-label-tertiary text-callout text-label-secondary outline-none transition-control hover:bg-fill-1 hover:text-label focus-visible:focus-ring"
+                  >
+                    <PlusIcon aria-hidden="true" className="size-4" />
+                    {labels.add}
+                  </button>
+                </li>
+              ))}
           </Container>
         </SortableContext>
       </DndContext>
