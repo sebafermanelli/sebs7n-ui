@@ -68,6 +68,8 @@ type SortableItemState = {
   /** `true` mientras este ítem es el que se arrastra. */
   dragging: boolean
   index: number
+  /** `true` en modo edición: la app puede esconder lo que no va mientras se ordena. */
+  editing: boolean
 }
 
 type SortableProps<T> = {
@@ -89,8 +91,17 @@ type SortableProps<T> = {
    *   anuncia una vuelta atrás que no pasó.
    */
   onReorder: (items: T[]) => void | Promise<unknown>
-  /** Apaga el arrastre: la lista se ve igual y no se mueve. */
+  /** Apaga el arrastre: la lista se ve igual y no se mueve, aun en modo edición. */
   disabled?: boolean
+  /**
+   * Modo edición, controlado. Como la pantalla de inicio de iOS: **solo en edición se arrastra**.
+   * La app lo prende con su botón («Editar») y lo apaga con «Listo».
+   */
+  editing?: boolean
+  /** Si arranca en modo edición, sin controlarlo. */
+  defaultEditing?: boolean
+  /** Cuando se entra (mantener apretado un ítem ~0,5 s) o se sale (Esc, clic en un espacio vacío). */
+  onEditingChange?: (editing: boolean) => void
   labels?: Partial<SortableLabels>
 }
 
@@ -115,12 +126,19 @@ function SortableBase<T>({
   renderItem,
   onReorder,
   disabled = false,
+  editing: editingProp,
+  defaultEditing = false,
+  onEditingChange,
   labels: labelsProp,
   itemClassName,
   className,
   ...props
 }: SortableBaseProps<T>) {
   const labels = { ...sortableLabels, ...useLabels().sortable, ...defined(labelsProp) }
+  const [ownEditing, setOwnEditing] = React.useState(defaultEditing)
+  const editing = editingProp ?? ownEditing
+  // Fuera de edición el arrastre no existe: ni manija, ni parada de Tab, ni sensores.
+  const draggable = editing && !disabled
   // El id de dnd-kit sale de `useId`: sin él, su `DndDescribedBy-N` es un contador de módulo y el
   // HTML del servidor no coincide con el del cliente.
   const id = React.useId()
@@ -245,7 +263,7 @@ function SortableBase<T>({
         onDragOver={move}
         sensors={sensors}
       >
-        <SortableContext disabled={disabled} items={keys} strategy={variant === "list" ? verticalListSortingStrategy : inPlace}>
+        <SortableContext disabled={!draggable} items={keys} strategy={variant === "list" ? verticalListSortingStrategy : inPlace}>
           <Container
             data-slot={`sortable-${variant}`}
             role="list"
@@ -256,6 +274,8 @@ function SortableBase<T>({
               const key = keys[index]!
               return (
                 <SortableItem
+                  draggable={draggable}
+                  editing={editing}
                   className={typeof itemClassName === "function" ? itemClassName(item, index) : itemClassName}
                   handle={handle}
                   id={key}
@@ -286,6 +306,8 @@ const animateAlways: AnimateLayoutChanges = (args) => defaultAnimateLayoutChange
 
 type SortableItemProps = {
   id: string
+  editing: boolean
+  draggable: boolean
   index: number
   label: string
   labels: SortableLabels
@@ -295,7 +317,7 @@ type SortableItemProps = {
   children: (state: SortableItemState) => React.ReactNode
 }
 
-function SortableItem({ id, index, label, labels, variant, handle, className, children }: SortableItemProps) {
+function SortableItem({ id, editing, draggable, index, label, labels, variant, handle, className, children }: SortableItemProps) {
   const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } = useSortable({
     id,
     animateLayoutChanges: variant === "grid" ? animateAlways : undefined,
@@ -313,7 +335,7 @@ function SortableItem({ id, index, label, labels, variant, handle, className, ch
   // Con movimiento reducido no se desliza: salta. `!` porque el `transition` de dnd-kit va inline.
   const motion = "motion-reduce:transition-none!"
 
-  const grip = handle ? (
+  const grip = handle && draggable ? (
     <button
       type="button"
       ref={setActivatorNodeRef}
@@ -327,7 +349,8 @@ function SortableItem({ id, index, label, labels, variant, handle, className, ch
       <GripVerticalIcon aria-hidden="true" className="size-4" />
     </button>
   ) : null
-  const content = children({ handle: variant === "list" ? null : grip, dragging: isDragging, index })
+  const content = children({ handle: variant === "list" ? null : grip, dragging: isDragging, index, editing })
+  const wholeItem = !handle && draggable
 
   if (variant === "list") {
     return (
@@ -352,18 +375,16 @@ function SortableItem({ id, index, label, labels, variant, handle, className, ch
       style={style}
       data-dragging={isDragging ? "" : undefined}
       data-slot="sortable-grid-item"
-      {...(handle
-        ? {}
-        : { ...a11y, ...listeners, "aria-describedby": cn(pressed && grabbedId, a11y["aria-describedby"]) || undefined })}
+      {...(wholeItem ? { ...a11y, ...listeners, "aria-describedby": cn(pressed && grabbedId, a11y["aria-describedby"]) || undefined } : {})}
       className={cn(
         "relative min-w-0 rounded-surface data-dragging:z-10 data-dragging:[&>*]:shadow-modal",
-        !handle && "cursor-grab outline-none active:cursor-grabbing focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(color:--sf-focus)",
+        wholeItem && "cursor-grab outline-none active:cursor-grabbing focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(color:--sf-focus)",
         motion,
         className
       )}
     >
       {content}
-      {!handle && pressed && (
+      {wholeItem && pressed && (
         <span hidden id={grabbedId}>
           {labels.grabbed}
         </span>

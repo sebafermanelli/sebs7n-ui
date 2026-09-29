@@ -22,6 +22,7 @@ function Invoices({ onReorder, ...props }: { onReorder?: (items: Invoice[]) => v
   return (
     <SortableList
       aria-label="Facturas"
+      defaultEditing
       getKey={(invoice) => invoice.id}
       getLabel={(invoice) => `Factura ${invoice.id}`}
       items={items}
@@ -108,13 +109,10 @@ describe("SortableList", () => {
     expect(status()).toHaveTextContent("")
   })
 
-  it("disabled: Espacio no toma nada", async () => {
-    const user = userEvent.setup()
-    const onReorder = vi.fn()
-    render(<Invoices disabled onReorder={onReorder} />)
-    screen.getByRole("button", { name: "Reordenar Factura 0012" }).focus()
-    await user.keyboard(" {ArrowDown} ")
-    expect(onReorder).not.toHaveBeenCalled()
+  it("disabled: aun en edición no hay manija, así que no se toma nada", () => {
+    render(<Invoices disabled />)
+    expect(screen.queryByRole("button", { name: /Reordenar/ })).toBeNull()
+    expect(screen.getAllByRole("listitem")).toHaveLength(3)
   })
 
   it("con movimiento reducido no se desliza: la transición inline pierde", () => {
@@ -145,5 +143,20 @@ describe("SortableList", () => {
     await hidratar(container, ui, { onRecoverableError: recoverable })
     expect(recoverable).not.toHaveBeenCalled()
     expect(errors.mock.calls.filter(([message]) => /hydrat|did not match/i.test(String(message)))).toEqual([])
+  })
+
+  describe("modo edición", () => {
+    it("fuera de edición no hay manija: la lista no se reordena", () => {
+      render(<Invoices defaultEditing={false} />)
+      expect(screen.getAllByRole("listitem")).toHaveLength(3)
+      expect(screen.queryByRole("button", { name: /Reordenar/ })).toBeNull()
+    })
+
+    it("controlado: con editing aparece la manija", () => {
+      const { rerender } = render(<Invoices editing={false} />)
+      expect(screen.queryByRole("button", { name: /Reordenar/ })).toBeNull()
+      rerender(<Invoices editing />)
+      expect(screen.getByRole("button", { name: "Reordenar Factura 0012" })).toBeInTheDocument()
+    })
   })
 })

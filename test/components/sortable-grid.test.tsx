@@ -26,6 +26,7 @@ function Widgets({ onReorder, onOpen, ...props }: GridProps) {
     <SortableGrid
       aria-label="Widgets"
       columns={2}
+      defaultEditing
       getKey={(widget) => widget.id}
       getLabel={(widget) => widget.title}
       items={items}
@@ -147,6 +148,7 @@ describe("SortableGrid", () => {
         <SortableGrid
           aria-label="Widgets"
           columns={2}
+          defaultEditing
           getKey={(widget) => widget.id}
           getLabel={(widget) => widget.title}
           items={items}
@@ -224,5 +226,39 @@ describe("SortableGrid", () => {
     await hidratar(container, ui, { onRecoverableError: recoverable })
     expect(recoverable).not.toHaveBeenCalled()
     expect(errors.mock.calls.filter(([message]) => /hydrat|did not match/i.test(String(message)))).toEqual([])
+  })
+
+  describe("modo edición", () => {
+    it("fuera de edición no se arrastra: la tarjeta no es parada de Tab y Espacio no toma nada", async () => {
+      const user = userEvent.setup()
+      const onReorder = vi.fn()
+      render(<Widgets defaultEditing={false} onReorder={onReorder} />)
+      const card = screen.getAllByRole("listitem")[0]!
+      expect(card).not.toHaveAttribute("tabindex")
+      expect(card).not.toHaveAttribute("aria-describedby")
+      card.focus()
+      await user.keyboard(" {ArrowRight} ")
+      expect(onReorder).not.toHaveBeenCalled()
+      expect(live()?.textContent ?? "").toBe("")
+    })
+
+    it("con handle, fuera de edición renderItem no recibe manija", () => {
+      render(<Widgets defaultEditing={false} handle />)
+      expect(screen.queryByRole("button", { name: /Reordenar/ })).toBeNull()
+    })
+
+    it("controlado: editing manda y renderItem recibe state.editing", () => {
+      const seen: boolean[] = []
+      const renderItem = (widget: Widget, state: { editing: boolean }) => {
+        seen.push(state.editing)
+        return <section aria-label={widget.title}>{widget.title}</section>
+      }
+      const { rerender } = render(<Widgets editing={false} renderItem={renderItem} />)
+      expect(seen.at(-1)).toBe(false)
+      expect(screen.getAllByRole("listitem")[0]).not.toHaveAttribute("tabindex")
+      rerender(<Widgets editing renderItem={renderItem} />)
+      expect(seen.at(-1)).toBe(true)
+      expect(screen.getAllByRole("listitem")[0]).toHaveAttribute("tabindex", "0")
+    })
   })
 })
