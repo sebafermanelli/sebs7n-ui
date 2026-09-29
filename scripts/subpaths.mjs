@@ -22,6 +22,19 @@ const nombres = (root, dir, ext) =>
 
 const lista = (items) => items.map((item) => `\`${item}\``).join(" · ")
 
+/**
+ * Los componentes que el barrel re-exporta de verdad: las líneas `export * from "./components/…"`
+ * que no están comentadas. Un `// export * from …` (o el nombre adentro de un comentario) no cuenta.
+ */
+export function barrelComponents(source) {
+  return new Set(
+    source
+      .split("\n")
+      .map((line) => /^\s*export \* from "\.\/components\/([^"]+)\.js"/.exec(line)?.[1])
+      .filter(Boolean)
+  )
+}
+
 /** Filas de la tabla, en el orden en que se leen los `exports`. */
 export function subpaths(root) {
   const exports = JSON.parse(readFileSync(join(root, "package.json"), "utf8")).exports
@@ -39,7 +52,8 @@ export function subpaths(root) {
   // Los que `src/index.ts` no re-exporta: `chart` (su peer opcional) y los que quedaron solo por
   // subpath para que el barrel no pase su tope de peso (ver el comentario en `src/index.ts`).
   const barrel = readFileSync(join(root, "src/index.ts"), "utf8")
-  const fuera = componentes.filter((nombre) => !barrel.includes(`export * from "./components/${nombre}.js"`))
+  const enElBarrel = barrelComponents(barrel)
+  const fuera = componentes.filter((nombre) => !enElBarrel.has(nombre))
   const enBarrel = componentes.length - fuera.length
   agregar(
     ".",
