@@ -55,7 +55,7 @@ describe("UserMenu", () => {
   it("fila de usuario: avatar con iniciales grises, nombre y email truncados", () => {
     render(<Example />)
     const trigger = screen.getByRole("button", { name: /Ana Pérez/ })
-    expect(screen.getByText("AP")).toHaveClass("from-[#6e6e73]", "text-white")
+    expect(screen.getByText("AP")).toHaveClass("from-monogram-top", "text-white")
     expect(screen.getByText("Ana Pérez", { selector: "[data-slot=user-menu-name]" })).toHaveClass("text-callout", "text-label", "truncate")
     expect(screen.getByText("ana@example.com", { selector: "[data-slot=user-menu-email]" })).toHaveClass("text-callout", "text-label-secondary", "truncate")
     expect(trigger).toHaveClass("hover:bg-fill-1", "focus-visible:focus-ring", "data-popup-open:bg-fill-2")
@@ -74,7 +74,7 @@ describe("UserMenu", () => {
     expect(header).not.toHaveAttribute("role", "menuitem")
     // La cabecera de cuenta de iCloud: 72, fondo fill-2 con el radio de arriba del panel, nombre
     // 17/600 y mail 14 secundario.
-    expect(header).toHaveClass("min-h-18", "bg-fill-2", "rounded-t-[7px]")
+    expect(header).toHaveClass("min-h-18", "bg-fill-2", "rounded-t-menu-header")
     expect(header.firstElementChild).toHaveClass("text-headline", "text-label")
     expect(header.lastElementChild).toHaveClass("text-callout", "text-label-secondary")
     expect(screen.getByRole("menuitem", { name: "Ajustes de cuenta" })).toBeInTheDocument()

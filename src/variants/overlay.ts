@@ -124,4 +124,4 @@ export const floatingPopupClassName =
  * trigger de un Popover o un Sheet). Sin posición ni animación: eso lo pone cada uno.
  */
 export const tooltipSurfaceClassName =
-  "rounded-[6px] bg-tooltip px-2 py-1 text-footnote text-on-tooltip shadow-tooltip"
+  "rounded-tooltip bg-tooltip px-2 py-1 text-footnote text-on-tooltip shadow-tooltip"

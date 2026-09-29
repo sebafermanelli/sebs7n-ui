@@ -73,7 +73,7 @@ function Meter({ className, label, showValue = false, size = "md", trackClassNam
         data-slot="meter-track"
         className={cn(
           "w-full overflow-hidden rounded-full bg-fill-3",
-          "group-data-[size=sm]/meter:h-1 group-data-[size=md]/meter:h-1.5 group-data-[size=lg]/meter:h-4 group-data-[size=lg]/meter:rounded-[6px]",
+          "group-data-[size=sm]/meter:h-1 group-data-[size=md]/meter:h-1.5 group-data-[size=lg]/meter:h-4 group-data-[size=lg]/meter:rounded-meter",
           trackClassName
         )}
       >
@@ -140,7 +140,7 @@ function StackedMeter({ className, segments, max, format, locale, total, labels,
           {text.used} {formatter.format(used)}
         </p>
       </div>
-      <div data-slot="stacked-meter-track" className="flex h-4 w-full gap-px overflow-hidden rounded-[6px] bg-fill-3">
+      <div data-slot="stacked-meter-track" className="flex h-4 w-full gap-px overflow-hidden rounded-meter bg-fill-3">
         {segments.map((segment) => (
           <div
             key={segment.label}

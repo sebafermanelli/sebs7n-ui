@@ -127,7 +127,7 @@ function UserMenu({ user, collapsed: collapsedProp, side, align, children, signO
               "header",
               // La cabecera de cuenta de iCloud (catálogo §2.8): 72 de alto, fondo fill-2 con el radio
               // de arriba del panel (12 − 5 de padding), nombre 17/600 y mail 14 secundario.
-              <div data-slot="user-menu-header" className="flex min-h-18 min-w-0 flex-col justify-center rounded-t-[7px] bg-fill-2 px-2.5 py-2">
+              <div data-slot="user-menu-header" className="flex min-h-18 min-w-0 flex-col justify-center rounded-t-menu-header bg-fill-2 px-2.5 py-2">
                 <span className="truncate text-headline text-label">{user.name}</span>
                 {user.email && <span className="truncate text-callout text-label-secondary">{user.email}</span>}
               </div>,

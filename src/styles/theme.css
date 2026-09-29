@@ -95,6 +95,12 @@
   --radius-menu: 12px;
   --radius-menu-item: 8px;
   --radius-tag: 4px;
+  /* Revisión de R5a: lo que iba como valor suelto. El tooltip de iCloud (6), la pista de la barra
+     de almacenamiento (6) y la cabecera de cuenta adentro de un menú: 12 del menú menos sus 5 de
+     padding, para que quede concéntrica con el borde. */
+  --radius-tooltip: 6px;
+  --radius-meter: 6px;
+  --radius-menu-header: 7px;
 
   /* Progress indeterminada: una franja del 40% que recorre la pista. */
   --animate-progress-indeterminate: progress-indeterminate 1.4s ease-in-out infinite;
@@ -155,6 +161,9 @@
   --color-tooltip: var(--sf-tooltip);
   --color-on-tooltip: var(--sf-on-tooltip);
   --color-segment: var(--sf-segment);
+  /* El gradiente del monograma del Avatar: igual en los dos temas (el blanco llega a 5,07:1 arriba). */
+  --color-monogram-top: #6e6e73;
+  --color-monogram-bottom: #48484a;
 
   /**
    * De acá abajo, alias de compatibilidad con shadcn. **Ningún componente del

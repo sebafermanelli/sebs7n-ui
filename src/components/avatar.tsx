@@ -46,14 +46,14 @@ function AvatarImage({ className, ...props }: AvatarImageProps) {
 type AvatarFallbackProps = WithClassName<AvatarPrimitive.Fallback.Props>
 
 // El monograma de iCloud: iniciales blancas sobre un gradiente gris, sin color por persona. iCloud
-// usa un gris más claro; este (#6e6e73 → #48484a) es el más claro en el que el blanco llega a 4,5:1
+// usa un gris más claro; este (`monogram-top` → `monogram-bottom`, #6e6e73 → #48484a) es el más claro en el que el blanco llega a 4,5:1
 // (5,07 arriba), porque las iniciales son texto. El tamaño de las letras sigue al del avatar.
 function AvatarFallback({ className, ...props }: AvatarFallbackProps) {
   return (
     <AvatarPrimitive.Fallback
       data-slot="avatar-fallback"
       className={cn(
-        "flex size-full items-center justify-center bg-linear-to-b from-[#6e6e73] to-[#48484a] font-semibold text-white uppercase",
+        "flex size-full items-center justify-center bg-linear-to-b from-monogram-top to-monogram-bottom font-semibold text-white uppercase",
         "text-callout group-data-[size=sm]/avatar:text-caption group-data-[size=sm]/avatar:font-semibold group-data-[size=lg]/avatar:text-subheadline group-data-[size=lg]/avatar:font-semibold group-data-[size=xl]/avatar:text-title-1",
         className
       )}

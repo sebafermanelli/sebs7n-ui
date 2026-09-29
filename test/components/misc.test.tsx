@@ -18,7 +18,7 @@ describe("Avatar", () => {
     )
     const fallback = screen.getByText("sf")
     // #6e6e73 → #48484a: el blanco llega a 5,07:1 en el tono más claro del gradiente.
-    expect(fallback).toHaveClass("bg-linear-to-b", "from-[#6e6e73]", "to-[#48484a]", "text-white", "font-semibold", "uppercase")
+    expect(fallback).toHaveClass("bg-linear-to-b", "from-monogram-top", "to-monogram-bottom", "text-white", "font-semibold", "uppercase")
     expect(fallback.closest("[data-slot=avatar]")).toHaveAttribute("data-size", "lg")
   })
 

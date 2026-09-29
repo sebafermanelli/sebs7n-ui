@@ -211,7 +211,7 @@ describe("tooltip (R5a): gris oscuro en los dos temas", () => {
 
   it("la superficie: 12 px, radio 6, sin flecha, sombra suave", () => {
     expect(tooltipSurfaceClassName.split(" ")).toEqual(
-      expect.arrayContaining(["rounded-[6px]", "bg-tooltip", "text-on-tooltip", "text-footnote", "shadow-tooltip", "px-2", "py-1"])
+      expect.arrayContaining(["rounded-tooltip", "bg-tooltip", "text-on-tooltip", "text-footnote", "shadow-tooltip", "px-2", "py-1"])
     )
     expect(theme).toContain("--color-tooltip: var(--sf-tooltip);")
     expect(theme).toContain("--color-on-tooltip: var(--sf-on-tooltip);")

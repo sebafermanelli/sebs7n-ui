@@ -31,6 +31,11 @@ describe("radios de iCloud", () => {
     expect(radio("menu")).toBe(12)
     expect(radio("menu-item")).toBe(8)
     expect(radio("tag")).toBe(4)
+    // Revisión de R5a: lo que estaba como valor suelto pasa a token.
+    expect(radio("tooltip")).toBe(6)
+    expect(radio("meter")).toBe(6)
+    // La cabecera de cuenta adentro del menú: radio 12 menos el padding de 5.
+    expect(radio("menu-header")).toBe(7)
   })
 
   // iCloud no los hace concéntricos: radio 12 con 5 de padding e ítem de 8 (menú de fila de Drive).

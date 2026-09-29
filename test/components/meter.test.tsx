@@ -115,7 +115,7 @@ describe("Meter · R5a", () => {
     render(<Meter label="Almacenamiento" showValue size="lg" value={40} />)
     const meter = screen.getByRole("meter")
     const track = meter.querySelector("[data-slot=meter-track]")!
-    expect(track).toHaveClass("group-data-[size=lg]/meter:h-4", "group-data-[size=lg]/meter:rounded-[6px]")
+    expect(track).toHaveClass("group-data-[size=lg]/meter:h-4", "group-data-[size=lg]/meter:rounded-meter")
     const valor = meter.querySelector("[data-slot=meter-value]")!
     expect(valor).toHaveClass("text-callout", "tabular-nums")
     expect(valor.className).not.toMatch(/mono/)
@@ -146,7 +146,7 @@ describe("StackedMeter (R5b): la barra de almacenamiento de iCloud", () => {
   it("pista de 16 con radio 6, segmentos a 1 px, y el resto queda gris", () => {
     render(<StackedMeter aria-label="Espacio" max={50} segments={SEGMENTOS} />)
     const pista = document.querySelector("[data-slot=stacked-meter-track]")!
-    expect(pista).toHaveClass("h-4", "rounded-[6px]", "gap-px", "bg-fill-3", "overflow-hidden")
+    expect(pista).toHaveClass("h-4", "rounded-meter", "gap-px", "bg-fill-3", "overflow-hidden")
   })
 
   it("la cabecera: Libre · Usado (21/600, libre en gris) y el chip del total", () => {

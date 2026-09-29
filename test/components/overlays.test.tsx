@@ -44,7 +44,7 @@ describe("Tooltip", () => {
     )
     await userEvent.tab()
     const tip = await screen.findByText("Copiar al portapapeles")
-    expect(tip.closest("[data-slot=tooltip-content]")).toHaveClass("bg-tooltip", "text-on-tooltip", "shadow-tooltip", "rounded-[6px]")
+    expect(tip.closest("[data-slot=tooltip-content]")).toHaveClass("bg-tooltip", "text-on-tooltip", "shadow-tooltip", "rounded-tooltip")
     // Sin flecha.
     expect(document.querySelector("[data-slot=tooltip-arrow]")).toBeNull()
     for (const clase of tooltipSurfaceClassName.split(" ")) expect(tip.closest("[data-slot=tooltip-content]")).toHaveClass(clase)
