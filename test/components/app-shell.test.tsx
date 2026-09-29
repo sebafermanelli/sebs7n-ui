@@ -93,7 +93,7 @@ describe("AppShell", () => {
     const header = document.querySelector("[data-slot=app-shell-header]")!
     expect(header.tagName).toBe("HEADER")
     expect(header).toHaveTextContent("Marca")
-    expect(header).toHaveClass("hidden", "lg:flex", "lg:col-span-2", "sticky", "top-0", "h-11", "bg-surface-header", "border-b", "border-separator-strong", "ps-4", "pe-1.5")
+    expect(header).toHaveClass("hidden", "lg:flex", "lg:col-span-2", "sticky", "top-0", "h-11", "bg-surface-header", "border-b", "border-separator-strong", "ps-4", "pe-(--sf-bar-end)", "bar-end")
     // Sobre el wallpaper, el material translúcido de la barra de Home.
     expect(header).toHaveClass("in-data-ambient:material-translucent")
     expect(document.querySelector("[data-slot=app-shell]")).toHaveClass("[--app-shell-header:2.75rem]")

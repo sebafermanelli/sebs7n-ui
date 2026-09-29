@@ -55,9 +55,7 @@ export function SiteHeader({ version }: { version: string }) {
           >
             GitHub
           </a>
-          {/* La barra deja 6 a la derecha, pensados para un botón de ícono con aire propio; el
-              segmentado llega hasta su borde, así que suma 10 para quedar a 16, como el logo. */}
-          <ThemeSwitcher className="me-2.5" />
+          <ThemeSwitcher />
         </div>
       </NavbarContent>
     </Navbar>

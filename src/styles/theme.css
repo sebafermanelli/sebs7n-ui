@@ -1078,6 +1078,30 @@
  * de R1 el anillo reemplazaba la sombra. Los `0 0 #0000` de respaldo son para una hoja donde
  * Tailwind no registró esas variables (ningún `shadow-*` en la app).
  */
+/**
+ * El fin de una barra (`NavbarContent`, las dos barras de `AppShell`): 16, lo mismo que el comienzo, así
+ * un avatar, un segmentado o un botón de texto al final no quedan pegados al borde. Si lo último es un
+ * botón de ícono (directo, o el último de lo último), 10: su aire de 6 completa los 16 hasta el glifo,
+ * como en iCloud. Solo pone la variable: el padding es `pe-(--sf-bar-end)` en el componente, que
+ * tailwind-merge reconoce, así el `px-*` de una app lo reemplaza entero.
+ */
+@utility bar-end {
+  --sf-bar-end: 16px;
+
+  &:has(> [data-size^="icon"]:last-child, > :last-child > [data-size^="icon"]:last-child) {
+    --sf-bar-end: 10px;
+  }
+}
+
+/* Un `Toolbar plain` como segunda fila del `Navbar` (afuera de `NavbarContent`): 4 de cada lado, así el
+   texto de sus botones (12 de aire propio) queda a 16 del borde, alineado con la fila de arriba. En
+   `@layer base` para que una clase de la app le gane. */
+@layer base {
+  [data-slot="navbar-surface"] [data-slot="toolbar"][data-variant="plain"]:not([data-slot="navbar-content"] *) {
+    padding-inline: 4px;
+  }
+}
+
 @utility focus-ring {
   outline: none;
   --tw-inset-ring-shadow: inset 0 0 0 3px var(--sf-focus);

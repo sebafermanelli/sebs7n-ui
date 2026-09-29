@@ -206,7 +206,7 @@ function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido
         {header != null && (
           <header
             data-slot="app-shell-header"
-            className="sticky top-0 z-40 hidden h-11 min-w-0 items-center gap-2 border-b border-separator-strong bg-surface-header ps-4 pe-1.5 text-label in-data-ambient:material-translucent lg:col-span-2 lg:flex"
+            className="sticky top-0 z-40 hidden h-11 min-w-0 items-center gap-2 border-b border-separator-strong bg-surface-header ps-4 pe-(--sf-bar-end) bar-end text-label in-data-ambient:material-translucent lg:col-span-2 lg:flex"
           >
             {header}
           </header>
@@ -222,7 +222,7 @@ function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido
               sobre el wallpaper. */}
           <header
             data-slot="app-shell-mobile-bar"
-            className="sticky top-0 z-40 flex h-11 shrink-0 items-center gap-2 border-b border-separator-strong bg-surface-header ps-4 pe-1.5 in-data-ambient:material-translucent lg:hidden"
+            className="sticky top-0 z-40 flex h-11 shrink-0 items-center gap-2 border-b border-separator-strong bg-surface-header ps-4 pe-(--sf-bar-end) bar-end in-data-ambient:material-translucent lg:hidden"
           >
             {barContent}
           </header>

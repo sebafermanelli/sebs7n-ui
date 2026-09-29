@@ -101,12 +101,15 @@ type NavbarContentProps = React.ComponentProps<"div"> & {
   maxWidth?: number | string
 }
 
-/** La fila de la barra: 44 de alto, `0 6px 0 16px` como la de iCloud y los extremos separados. */
+/**
+ * La fila de la barra: 44 de alto, 16 de cada lado y los extremos separados; si termina en un botón de
+ * ícono, 10 a la derecha (su aire completa los 16), como la de iCloud. Ver `bar-end` en `theme.css`.
+ */
 function NavbarContent({ className, maxWidth, style, ...props }: NavbarContentProps) {
   return (
     <div
       data-slot="navbar-content"
-      className={cn("flex h-11 w-full items-center justify-between gap-4 ps-4 pe-1.5", maxWidth && "mx-auto", className)}
+      className={cn("flex h-11 w-full items-center justify-between gap-4 ps-4 pe-(--sf-bar-end) bar-end", maxWidth && "mx-auto", className)}
       style={{ maxWidth, ...style }}
       {...props}
     />

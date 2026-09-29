@@ -1791,6 +1791,7 @@ export const COMPONENTS = {
       "Es translúcida (`material-translucent`). Fuera del wallpaper lleva un fill más denso (`--sf-translucent-bar`, 88 %): el texto y el secundario llegan a 4,5:1 aunque debajo pase blanco o negro puro, en los dos temas. Sobre el wallpaper (`data-ambient`) usa el de `material-translucent`, y el texto llega a 4,5:1 sobre cualquier punto del wallpaper. Con `prefers-reduced-transparency` o `prefers-contrast: more` es la barra opaca (`surface-header`).",
     ],
     usage: [
+      "`NavbarContent` termina a 16 del borde, como empieza: un avatar, un segmentado o un botón de texto al final no quedan pegados. Si lo último es un botón de ícono (`size=\"icon-*\"`), a 10, y su aire completa los 16 hasta el glifo. Lo mismo las barras de `AppShell`. Una segunda fila con `Toolbar variant=\"plain\"` adentro del `Navbar` lleva 4 de cada lado, así el texto de sus botones queda alineado. `maxWidth` centra el contenido en la columna del sitio.",
       "**Una sola barra, como iCloud**: a todo el ancho y sin cápsula. La píldora flotante de 1.x se fue en 2.0.",
       "`position=\"fixed\"` cuando el hero tiene que llegar hasta el borde de arriba; `sticky` (el default) en todo lo demás, para que el contenido no quede tapado.",
       "Una sola fila de 44px (`NavbarContent`, `0 6px 0 16px`): la marca a la izquierda, botones de ícono de 36 y un avatar de 28 a la derecha.",

@@ -35,7 +35,7 @@ describe("Navbar", () => {
   it("NavbarContent: 44 de alto, 0 6px 0 16px y a todo el ancho", () => {
     const { container } = render(<Navbar><NavbarContent>x</NavbarContent></Navbar>)
     const content = container.querySelector("[data-slot=navbar-content]")!
-    expect(content).toHaveClass("h-11", "w-full", "ps-4", "pe-1.5")
+    expect(content).toHaveClass("h-11", "w-full", "ps-4", "pe-(--sf-bar-end)", "bar-end")
     expect(content.className).not.toMatch(/max-w-6xl|h-14/)
   })
 
