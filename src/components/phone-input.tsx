@@ -7,14 +7,18 @@ import { ChevronsUpDownIcon } from "lucide-react"
 import { defined } from "../internal/defined.js"
 import { countryFlag } from "../lib/countries.js"
 import { useLabels, type Labels } from "../lib/labels.js"
-import { nationalNumber, onlyDigits, parsePhone, PHONE_COUNTRIES, phoneCountry, type PhoneCountry } from "../lib/phone.js"
+import { isValidPhone, nationalNumber, onlyDigits, parsePhone, PHONE_COUNTRIES, phoneCountry, toE164, type PhoneCountry } from "../lib/phone.js"
 import { useFormReset } from "../internal/form-reset.js"
 import { cn } from "../lib/utils.js"
 import { InputGroup, InputGroupAddon, InputGroupInput } from "./input-group.js"
 import { SelectContent, SelectItem } from "./select.js"
 
 type PhoneInputProps = {
-  /** El teléfono en E.164 («+5491155552002»); vacío sin número. Pasarlo lo vuelve controlado. */
+  /**
+   * El teléfono en E.164 («+5491155552002»); vacío sin número. Pasarlo lo vuelve controlado. Un valor
+   * sin «+» (un dato viejo) se toma como número nacional del país de `defaultCountry`; si no es un
+   * número posible, se muestra tal cual y el campo queda inválido.
+   */
   value?: string
   defaultValue?: string
   /** Avisa el teléfono en E.164, o vacío si se borró el número. */
@@ -82,7 +86,15 @@ function PhoneInput({
   // El país sale del valor; con un código compartido (+1) o sin número, el que se eligió.
   const parsed = parsePhone(value, chosen.code)
   const country = parsed?.country ?? chosen
-  const national = parsed?.national ?? ""
+  // Un valor sin «+» es un dato viejo, de antes del E.164 («011 5555-2002»): se toma como número
+  // nacional del país del selector en vez de vaciar el campo. Si da un número posible, se muestra así y
+  // el formulario ya lleva el E.164; si no, queda el texto como estaba, marcado inválido, para que se
+  // corrija a mano. No se avisa nada hasta que se edite: migrar los datos es de la app.
+  const raw = value.trim()
+  const legacy = !parsed && raw !== "" && !raw.startsWith("+")
+  const legacyE164 = legacy ? toE164(country, raw) : ""
+  const legacyOk = legacy && isValidPhone(legacyE164, country.code)
+  const national = parsed?.national ?? (legacyOk ? nationalNumber(country, raw) : legacy ? value : "")
 
   // El reset del form vuelve a `defaultValue` (sin controlar) y a su país.
   const formReset = useFormReset(() => {
@@ -171,8 +183,9 @@ function PhoneInput({
         type="tel"
         value={national}
         {...aria}
+        aria-invalid={aria["aria-invalid"] ?? ((legacy && !legacyOk) || undefined)}
       />
-      {name && <input name={name} type="hidden" value={value} />}
+      {name && <input name={name} type="hidden" value={legacyOk ? legacyE164 : value} />}
       <span className="sr-only" data-slot="phone-input-status" role="status">
         {status}
       </span>

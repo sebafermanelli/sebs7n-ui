@@ -243,3 +243,35 @@ describe("PhoneInput", () => {
     expect(errors.mock.calls.filter(([message]) => /hydrat|did not match/i.test(String(message)))).toEqual([])
   })
 })
+
+describe("PhoneInput con un valor viejo sin «+»", () => {
+  it("es un número nacional del defaultCountry: no se vacía y el form lleva el E.164", () => {
+    const { container } = render(<PhoneInput aria-label="Teléfono" defaultValue="011 5555-2002" name="tel" />)
+    const field = screen.getByRole("textbox", { name: "Teléfono" })
+    expect(field).toHaveValue("1155552002")
+    expect(field).not.toHaveAttribute("aria-invalid")
+    expect(container.querySelector<HTMLInputElement>("input[name=tel]")!.value).toBe("+541155552002")
+  })
+
+  it("con otro defaultCountry, de ese país", () => {
+    render(<PhoneInput aria-label="Teléfono" defaultCountry="UY" value="099 123 456" />)
+    expect(screen.getByRole("textbox", { name: "Teléfono" })).toHaveValue("99123456")
+    expect(screen.getByRole("combobox", { name: /Código de país/ })).toHaveTextContent("+598")
+  })
+
+  it("si no es un número posible, queda el texto como estaba y el campo inválido", () => {
+    render(<PhoneInput aria-label="Teléfono" value="llamar a la tarde" />)
+    const field = screen.getByRole("textbox", { name: "Teléfono" })
+    expect(field).toHaveValue("llamar a la tarde")
+    expect(field).toHaveAttribute("aria-invalid", "true")
+  })
+
+  it("no avisa nada al montar; al editar, avisa el E.164", async () => {
+    const user = userEvent.setup()
+    const onValueChange = vi.fn()
+    render(<PhoneInput aria-label="Teléfono" defaultValue="11 5555 2002" onValueChange={onValueChange} />)
+    expect(onValueChange).not.toHaveBeenCalled()
+    await user.type(screen.getByRole("textbox", { name: "Teléfono" }), "1")
+    expect(onValueChange).toHaveBeenLastCalledWith("+5411555520021")
+  })
+})

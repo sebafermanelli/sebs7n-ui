@@ -838,6 +838,7 @@ export const COMPONENTS = {
     usage: [
       "El valor es E.164 (`+5491155552002`) y viaja así con `name`: se guarda tal cual y sirve para un link de WhatsApp.",
       "`isValidPhone` y `parsePhone` están en `sebs7n-ui/lib/phone`, sin `\"use client\"`: validan igual en una Server Action. Miran el **largo** del número de cada país, no el tipo de línea.",
+      "Datos viejos: un `value`/`defaultValue` sin «+» («011 5555-2002») se toma como número nacional del país de `defaultCountry` y el form ya lleva el E.164; si no es un número posible, queda el texto como estaba y el campo inválido. No avisa `onValueChange` hasta que se edite: migrar los datos es de la app.",
       "Para mostrar un teléfono guardado, `formatPhone(e164, { country })` de `sebs7n-ui/lib/phone`: «+54 9 11 5555-2002», o nacional («011 15-5555-2002») si es del país de `country`. No es el formato oficial de cada país (Argentina va con sus códigos de área; el resto, en grupos de tres). Lo que no es E.164 vuelve tal cual.",
       "El número se corta en el largo máximo del país. Pegar un número que empieza con «+» o «00» cambia el país solo; si el código no está en la tabla, el número no cambia y se anuncia «Código de país desconocido».",
       "El prefijo nacional no entra al E.164: «011 5555 2002» es `+541155552002` (Italia no tiene: su 0 se queda). En Argentina, el celular con 15 («11 15 5555 2002») pasa a la forma con 9, `+5491155552002`. `isValidPhone` rechaza un número que empieza con el prefijo nacional.",
