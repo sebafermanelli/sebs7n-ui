@@ -2,7 +2,7 @@
 
 Una línea por versión, la más nueva arriba. Versionado [SemVer 2.0.0](https://semver.org/lang/es/).
 
-- **2.4.1** (2026-09-30) — El separador entre segmentos de `ToggleGroup` y `Tabs` se centra en el alto del ítem (en `md` quedaba corrido hacia arriba).
+- **2.4.1** (2026-09-30) — El separador entre segmentos de `ToggleGroup` se centra en el alto del ítem (en `md` quedaba corrido hacia arriba).
 - **2.4.0** (2026-09-30) — Filtros y montos, sin romper la API. `ToggleGroup`: `size` por defecto `md` (36, como la búsqueda y los `Select`; en una `Toolbar` sigue en 28), `required` (siempre uno prendido y validación en `Form`), «Todas» con `value=""` e ítems link (`href` o `render={<Link href />}`, con `aria-current`). `NumberField`: `currency` (formato de moneda, `step="any"` y respaldo a 2 decimales con un código inválido), locale por defecto desde `labels.numberField.locale`, `autoFocus` e `inputRef` al input visible. Los avisos de desarrollo ya no viajan en el bundle de producción.
 - **2.3.1** (2026-09-30) — `DataTable`: «Cargar más» pasa a `md`, el tamaño de los botones de contenido (la paginación sigue en `sm`).
 - **2.3.0** (2026-09-30) — La pantalla de acceso compartida, sin romper nada. Nuevo: `AuthLayout` con `AuthHeader`, `AuthTitle`, `AuthDescription`, `AuthContent` (card o `plain`, `autoFocus`), `AuthProviders`, `AuthDivider` («o», `labels.auth`), `AuthError` (el error que no es de un campo), `AuthStatus` («Revisá tu email», cuenta pendiente) y `AuthFooter`; `ambient` para el wallpaper y `bar` para la barra de arriba. Solo por subpath (`sebs7n-ui/auth-layout`).
