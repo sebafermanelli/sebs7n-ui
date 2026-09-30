@@ -339,6 +339,12 @@ export type Labels = {
     increment: string
     /** `aria-roledescription` del campo: lo que el lector dice en vez de «campo de texto». */
     roleDescription: string
+    /**
+     * Opcional (2.4): el idioma de los números de todos los `NumberField` («es-AR»: miles con punto,
+     * decimales con coma), como lo entiende `Intl`. La prop `locale` del componente gana. Sin valor, el
+     * del navegador, como hasta ahora.
+     */
+    locale?: string
   }
   pageHeader: {
     /** Nombre del `<nav>` de las migas del encabezado. */

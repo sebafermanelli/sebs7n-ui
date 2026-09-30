@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react"
+import * as React from "react"
 import userEvent from "@testing-library/user-event"
 import { describe, expect, it, vi } from "vitest"
 
@@ -6,6 +7,7 @@ import { Button } from "../../src/components/button"
 import { Field, FieldError, FieldLabel } from "../../src/components/field"
 import { Form } from "../../src/components/form"
 import { NumberField } from "../../src/components/number-field"
+import { LabelsProvider } from "../../src/lib/labels"
 
 const group = () => document.querySelector("[data-slot=number-field-group]")!
 const input = () => screen.getByRole("textbox") as HTMLInputElement
@@ -186,7 +188,7 @@ describe("NumberField", () => {
     expect(input()).not.toHaveFocus()
   })
 
-  it("tamaños: 24, 32 y 40px, los mismos de Input", () => {
+  it("tamaños: 28, 36 y 40px, los mismos de Input", () => {
     const { rerender } = render(<NumberField aria-label="x" defaultValue={1} />)
     expect(group()).toHaveAttribute("data-size", "md")
     expect(group()).toHaveClass("data-[size=sm]:h-7", "data-[size=md]:h-9", "data-[size=lg]:h-10")
@@ -217,5 +219,102 @@ describe("NumberField", () => {
     expect(group().className).not.toMatch(/(^|\s)w-full(\s|$)/)
     expect(input()).toHaveClass("text-left")
     expect(input().className).not.toMatch(/\btext-center\b/)
+  })
+
+  describe("locale", () => {
+    it("sin prop, el de LabelsProvider (numberField.locale)", () => {
+      render(
+        <LabelsProvider value={{ numberField: { locale: "de-DE" } }}>
+          <NumberField aria-label="Importe" defaultValue={1234.5} />
+        </LabelsProvider>
+      )
+      expect(input()).toHaveValue("1.234,5")
+    })
+
+    it("la prop locale le gana al provider", () => {
+      render(
+        <LabelsProvider value={{ numberField: { locale: "de-DE" } }}>
+          <NumberField aria-label="Importe" defaultValue={1234.5} locale="en-US" />
+        </LabelsProvider>
+      )
+      expect(input()).toHaveValue("1,234.5")
+    })
+  })
+
+  describe("currency", () => {
+    it("arma el formato de moneda con el código ISO y el submit sigue siendo el número", async () => {
+      const onFormSubmit = vi.fn()
+      render(
+        <Form onFormSubmit={onFormSubmit}>
+          <Field name="total">
+            <FieldLabel>Total</FieldLabel>
+            <NumberField currency="USD" defaultValue={1240.5} locale="en-US" />
+          </Field>
+          <Button type="submit">Guardar</Button>
+        </Form>
+      )
+      expect(input()).toHaveValue("$1,240.50")
+      await userEvent.click(screen.getByRole("button", { name: "Guardar" }))
+      expect(onFormSubmit.mock.calls[0]?.[0]).toEqual({ total: 1240.5 })
+    })
+
+    it("acepta el código en minúsculas y con espacios", () => {
+      render(<NumberField aria-label="Total" currency=" eur " defaultValue={10} locale="de-DE" />)
+      expect(input().value).toMatch(/^10,00\s€$/)
+    })
+
+    it("un código mal formado no tira: cae a número con 2 decimales", () => {
+      render(<NumberField aria-label="Total" currency="dólar" defaultValue={10} locale="en-US" />)
+      expect(input()).toHaveValue("10.00")
+    })
+
+    it("format se mezcla encima del de moneda", () => {
+      render(<NumberField aria-label="Total" currency="USD" defaultValue={1240} format={{ maximumFractionDigits: 0 }} locale="en-US" />)
+      expect(input()).toHaveValue("$1,240")
+    })
+
+    it("pone step=\"any\" (el submit no rechaza centavos) salvo que se pase step", async () => {
+      const onFormSubmit = vi.fn()
+      const { unmount } = render(
+        <Form onFormSubmit={onFormSubmit}>
+          <Field name="total">
+            <FieldLabel>Total</FieldLabel>
+            <NumberField currency="USD" defaultValue={10.25} locale="en-US" min={0} />
+          </Field>
+          <Button type="submit">Guardar</Button>
+        </Form>
+      )
+      const oculto = document.querySelector<HTMLInputElement>("input[name=total]")!
+      expect(oculto).toHaveAttribute("step", "any")
+      await userEvent.click(screen.getByRole("button", { name: "Guardar" }))
+      expect(onFormSubmit).toHaveBeenCalledOnce()
+      unmount()
+      render(<NumberField aria-label="Total" currency="USD" name="total" step={5} />)
+      expect(document.querySelector("input[name=total]")).toHaveAttribute("step", "5")
+    })
+  })
+
+  describe("props del input visible", () => {
+    it("autoFocus enfoca el input que se ve", () => {
+      render(<NumberField aria-label="Cantidad" autoFocus defaultValue={1} />)
+      expect(input()).toHaveFocus()
+    })
+
+    it("inputRef apunta al input visible, no al oculto del submit", () => {
+      const ref = React.createRef<HTMLInputElement>()
+      render(<NumberField aria-label="Cantidad" defaultValue={1} inputRef={ref} name="cantidad" />)
+      expect(ref.current).toBe(input())
+    })
+
+    it("id va al input visible (para un <label htmlFor>)", () => {
+      render(
+        <>
+          <label htmlFor="qty">Cantidad</label>
+          <NumberField defaultValue={1} id="qty" />
+        </>
+      )
+      expect(input()).toHaveAttribute("id", "qty")
+      expect(screen.getByLabelText("Cantidad")).toBe(input())
+    })
   })
 })

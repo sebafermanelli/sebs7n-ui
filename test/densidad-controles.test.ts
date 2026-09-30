@@ -124,6 +124,7 @@ describe("una sola escala de alto para campos y botones", () => {
     "components/combobox.tsx",
     "components/autocomplete.tsx",
     "components/otp-field.tsx",
+    "components/number-field.tsx",
   ])("%s usa el alto compartido", (archivo) => {
     expect(fuente(archivo)).toMatch(/inputSizeClassName|inputShellClassName/)
   })
@@ -146,6 +147,23 @@ describe("una sola escala de alto para campos y botones", () => {
 
   it("un chip (Toggle) mide lo que un botón sm", () => {
     expect(toggleVariants().split(" ")).toContain("h-7")
+  })
+
+  // 2.4: en una barra de filtros el segmentado va al lado de la búsqueda y de los Select (md, 36), así
+  // que su default pasó de sm a md. La pista suma 2 + 2 de padding: el ítem mide 24 · 32 · 36 para que
+  // la pista dé 28 · 36 · 40. Adentro de una Toolbar se queda en 28, el escalón de la barra.
+  it("el ToggleGroup es md (36) por defecto y su pista mide 28 · 36 · 40", () => {
+    const grupo = fuente("components/toggle-group.tsx")
+    expect(grupo).toMatch(/size = "md"/)
+    expect(fuente("variants/segmented.ts")).toMatch(/\bp-0\.5\b[\s\S]*\bh-6\b/)
+    expect(grupo).toContain("group-data-[size=md]/toggle-group:not-in-data-[slot=toolbar]:h-8")
+    expect(grupo).toContain("group-data-[size=lg]/toggle-group:not-in-data-[slot=toolbar]:h-9")
+  })
+
+  it("el NumberField mide lo que un Input: md 36 por defecto", () => {
+    const campo = fuente("components/number-field.tsx")
+    expect(campo).toMatch(/size = "md"/)
+    expect(campo).toContain("`sm` 28, `md` 36, `lg` 40")
   })
 
   it("el campo del chat mide lo que el botón de enviar (md, 36)", () => {

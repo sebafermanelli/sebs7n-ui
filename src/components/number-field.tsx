@@ -1,5 +1,6 @@
 "use client"
 
+import type * as React from "react"
 import { NumberField as NumberFieldPrimitive } from "@base-ui/react/number-field"
 import { MinusIcon, PlusIcon } from "lucide-react"
 
@@ -17,10 +18,12 @@ import { inputShellButtonClassName, inputShellClassName, inputShellInputClassNam
  * lo arma `Intl.NumberFormat` y lo que viaja en el submit es el número crudo.
  *
  * ```tsx
- * <Field name="pasajeros">
- *   <FieldLabel>Pasajeros</FieldLabel>
+ * <Field name="seats">
+ *   <FieldLabel>Usuarios</FieldLabel>
  *   <NumberField defaultValue={1} min={1} max={9} />
  * </Field>
+ *
+ * <NumberField currency="USD" locale="es-AR" defaultValue={1240.5} />  // «US$ 1.240,50»; viaja 1240.5
  * ```
  *
  * Adentro de un `Field` se engancha solo —etiqueta, descripción, error y
@@ -34,9 +37,20 @@ type NumberFieldProps = WithClassName<NumberFieldPrimitive.Root.Props> & {
   className?: string
   /** Clases del `<input>`, por si hay que cambiarle la alineación del número. */
   inputClassName?: string
-  /** Alto del control: `sm` 24px, `md` 32px, `lg` 40px. Los mismos que `Input`. */
+  /** Alto del control: `sm` 28, `md` 36, `lg` 40. Los mismos que `Input`. */
   size?: "sm" | "md" | "lg"
   placeholder?: string
+  /**
+   * Un monto: el código ISO 4217 de la moneda («USD», «ars») arma el `format` de moneda de `Intl`, y el
+   * `step` pasa a `"any"` (salvo que se pase uno) para que el submit no rechace los centavos. `format`
+   * se mezcla encima («sin decimales», `currencyDisplay`). Un código mal formado (vacío, «dólar») no
+   * tira como en `Intl`: cae a número con 2 decimales. Lo que viaja sigue siendo el número crudo.
+   */
+  currency?: string
+  /** Enfoca el input visible al montar (en el Root, que es un `div`, no hacía nada). */
+  autoFocus?: boolean
+  /** Ref del input visible (el que se enfoca y se selecciona); en Base UI apuntaba al oculto del submit. */
+  inputRef?: React.Ref<HTMLInputElement>
   /**
    * Textos de la interfaz, para traducir o ajustar el tono. `roleDescription` es
    * cómo se presenta el control al lector de pantalla, antes de cantar el valor.
@@ -51,15 +65,29 @@ function NumberField({
   labels,
   placeholder,
   size = "md",
+  currency,
+  autoFocus,
+  inputRef,
+  format,
+  locale,
+  step,
   ...props
 }: NumberFieldProps) {
   // El provider gana sobre el español; la prop `labels` gana sobre el provider, porque es la
   // excepción de una pantalla y no una traducción.
   const l = useLabels().numberField
+  if (currency != null) {
+    // `Intl` tira RangeError con un código que no son tres letras; cualquier código bien formado lo
+    // acepta. Un código que viene de la base o de una IA puede ser cualquier cosa: mejor un número
+    // con centavos que la pantalla rota.
+    const code = currency.trim()
+    format = { ...(/^[a-z]{3}$/i.test(code) ? { style: "currency", currency: code } : { minimumFractionDigits: 2, maximumFractionDigits: 2 }), ...format }
+    step ??= "any"
+  }
   return (
     // El Root no dibuja nada: es el que guarda el valor numérico y el input oculto
     // que se lleva el submit. Lo que se ve —borde, foco, estados— vive en el Group.
-    <NumberFieldPrimitive.Root data-slot="number-field" data-size={size} {...props}>
+    <NumberFieldPrimitive.Root data-slot="number-field" data-size={size} format={format} locale={locale ?? l.locale} step={step} {...props}>
       <NumberFieldPrimitive.Group
         data-slot="number-field-group"
         data-size={size}
@@ -97,6 +125,8 @@ function NumberField({
           )}
           data-slot="number-field-input"
           placeholder={placeholder}
+          autoFocus={autoFocus}
+          ref={inputRef}
         />
 
         <NumberFieldPrimitive.Increment
