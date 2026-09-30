@@ -397,6 +397,29 @@ export const COMPONENTS = {
   },
 
   // ─────────────────────────────── Formularios ───────────────────────────────
+  "count-badge": {
+    title: "CountBadge",
+    group: "fundamentos",
+    description: "El contador de un botón de ícono de barra —la campana con los no leídos—: un `Badge variant=\"count\"` arriba a la derecha del ícono, con «99+».",
+    keyboard: [["—", "No es interactivo: el botón que lo lleva es el que recibe el foco."]],
+    a11y: [
+      "Es decorativo (`aria-hidden`): el número va en el nombre del botón, con `countLabel(\"Notificaciones\", 3, \"sin leer\")` → «Notificaciones, 3 sin leer». Con 0 el nombre es solo «Notificaciones».",
+      "El nombre dice el número real aunque el contador diga «99+».",
+      "Rojo por defecto (`red-800` con blanco, 4,5:1). El color no es el único dato: el número se lee.",
+    ],
+    usage: [
+      "Va **adentro** del `Button` de ícono (que ya es `relative`), después del ícono; también dentro de un `ToolbarButton` o del trigger de un menú.",
+      "Con 0 (o menos) no se dibuja. `max` cambia el tope (99 por defecto: «99+»).",
+      "El anillo del color de la barra (`surface-bar`) lo separa del ícono; sobre otra superficie, `className=\"ring-surface-header\"`.",
+      "Sin estado: sirve en un Server Component. Solo por subpath (`sebs7n-ui/count-badge`).",
+    ],
+    props: {
+      CountBadge: {
+        className: "Clases del contador (el anillo de otra superficie: `ring-surface-header`).",
+      },
+    },
+    related: ["badge", "toolbar", "button"],
+  },
   field: {
     title: "Field",
     group: "formularios",
@@ -408,6 +431,7 @@ export const COMPONENTS = {
     a11y: [
       "**Esto es lo que resuelve el componente.** La etiqueta nombra al control, la ayuda y el error lo describen, y el error pone `aria-invalid`: todo por anidar las partes, sin `useId`, sin `htmlFor` y sin armar un `aria-describedby` condicional que es justo lo que se olvida.",
       "El asterisco de `required` es `aria-hidden`: nadie escucha \"Razón social asterisco\". Que el campo sea obligatorio lo anuncia el `required` del control.",
+      "Si lo valida el servidor y el control no lleva `required`, `FieldLabel indicator`: el mismo asterisco, y el nombre del control pasa a ser «Razón social, obligatorio» (el texto es `labels.field.required`).",
       "`FieldError` no ocupa lugar mientras el campo está bien, y cuando aparece ya está referenciado: no hace falta mover el foco para que se lea.",
       "**Escribí siempre el mensaje, con `match` o con `validate`.** El del navegador sale en el idioma del navegador y no en el de la página: con Chrome en inglés, abajo de «Razón social» aparece «Please fill out this field». `match=\"valueMissing\"` y compañía además hablan del dato —«Falta la razón social»— en vez del input.",
       "El mensaje se lee al enfocar el campo, porque el campo lo referencia con `aria-describedby`. Con `validationMode=\"onChange\"` eso no alcanza: el error aparece con el foco ya adentro y nada lo anuncia. Para ese caso está `alert`, que le pone `role=\"alert\"`. Es opt-in porque `role=\"alert\"` interrumpe: en el camino de enviar duplicaría el anuncio y cortaría el del nombre del campo, que es la mitad que da contexto.",
@@ -429,7 +453,10 @@ export const COMPONENTS = {
         validate: "Devolvé el mensaje si el valor está mal, o `null` si está bien. Puede ser asíncrona.",
         validationMode: "`onSubmit` (default), `onBlur` u `onChange`. Tiene precedencia sobre el del `Form`.",
       },
-      FieldLabel: { required: "Dibuja el asterisco. No hace obligatorio al campo: eso es el `required` del control." },
+      FieldLabel: {
+        required: "Dibuja el asterisco. No hace obligatorio al campo: eso es el `required` del control.",
+        indicator: "El asterisco más «, obligatorio» para el lector (`labels.field.required`), sin la restricción nativa: para un campo que valida el servidor. No va con un control `required` o `aria-required`, que lo diría dos veces.",
+      },
     },
     related: ["form", "fieldset", "input", "select"],
   },
@@ -1078,6 +1105,30 @@ export const COMPONENTS = {
       },
     },
     related: ["progress", "list-row", "field"],
+  },
+  "drop-target": {
+    title: "DropTarget",
+    group: "formularios",
+    description: "Soltar archivos sobre cualquier contenido —una sección, una card— para abrir su formulario con el archivo, sin volverlo un recuadro de subida.",
+    keyboard: [["—", "No agrega paradas de Tab: el contenido de adentro sigue con las suyas. El camino con teclado es el botón de la sección («Agregar factura»)."]],
+    a11y: [
+      "No tiene rol ni foco: envuelve el contenido, que sigue siendo interactivo. Arrastrar es un atajo; **el contenido tiene que traer su botón** para el mismo resultado sin arrastrar (WCAG 2.5.7).",
+      "El anillo y el tinte mientras se arrastra son decorativos (`aria-hidden`) y no reciben el puntero.",
+      "Lo que entra se anuncia en una región viva («Archivos agregados: factura.pdf»); los rechazos aparecen abajo del contenido con `role=\"alert\"`. Mientras corre un `validate` asíncrono lleva `aria-busy`.",
+    ],
+    usage: [
+      "Para una sección que ya tiene su «Agregar»: soltar un archivo encima abre el mismo formulario con el archivo puesto (`onDrop={([file]) => openForm(file)}`), y ahí el `DropZone` del formulario lo muestra. Para elegir y listar archivos en un formulario, `DropZone`.",
+      "Valida como `DropZone`: `accept`, `maxSize` (base 1024, `formatSize` para escribirlo de otra forma) y `validate` (puede ser asíncrona). Sin `multiple` llega uno solo, el resto se avisa, y si se suelta otro mientras valida gana el último.",
+      "El soltar no sube: una `DropTarget` adentro de otra (o dentro de un `DropZone scope=\"window\"`) recibe sola. No guarda archivos ni tiene `name`.",
+      "Los textos son los de `DropZone` (`labels.dropZone`: `drop`, `added`, `invalidType`, `tooLarge`, `tooMany`, `locale`). Solo por subpath (`sebs7n-ui/drop-target`).",
+    ],
+    props: {
+      DropTarget: {
+        className: "Clases del `div` que envuelve (es `relative`).",
+        labels: "Textos: `drop`, `added`, `invalidType`, `tooLarge`, `tooMany` y `locale`, los de `labels.dropZone`.",
+      },
+    },
+    related: ["drop-zone", "card"],
   },
   "color-picker": {
     title: "ColorPicker",
@@ -2691,11 +2742,14 @@ export const COMPONENTS = {
       "**Solo se ordena en modo edición**, como en iOS: `editing` + `onEditingChange` con un botón «Editar»/«Listo» de la app (o `defaultEditing`). **El botón es obligatorio para el teclado:** mantener apretado es solo de puntero, así que sin él quien usa teclado nunca entra en edición. También entra manteniendo apretada una fila ~0,5 s (mouse o dedo; un clic normal no), y sale con Esc o un clic afuera. En edición cada fila lleva el «−» adelante (con `onRemove`) y la manija al final.",
       "El «+» para agregar es `SortableAddButton` (del mismo subpath): va al lado del «Listo» de la app y abre un menú con lo que se puede agregar (`items: { id, label, icon? }[]`, `onSelect(id)`); vacío, queda deshabilitado y dice «No hay más para agregar». Si el id es la clave del ítem, al aparecer el foco va a su «−» y se anuncia «Se agregó …».",
       "`renderItem` devuelve **el contenido** de la fila, no un `<li>` (un `<li>` adentro de otro rompe la hidratación). Recibe `state.editing`.",
+      "`itemClassName` pone clases en el `<li>` de cada fila: un texto, o una función del ítem y su estado (`index`, `dragging`, `editing`). `plain` saca el separador y el padding de la fila, para un `renderItem` que dibuja su propia card (el espacio entre cards, `className=\"gap-3\"`). Nunca `[&>li]` desde la app: la estructura de adentro puede cambiar.",
       "`onReorder` recibe los ítems en el orden nuevo, que se ve al soltar. **Optimista:** devolvé una promesa sin tocar `items`; si falla, vuelve el anterior y se anuncia «No se pudo guardar el orden». **Si la app aplica el orden ella** (cambia `items`), revertirlo y avisar si falla también es suyo: el componente no anuncia una vuelta atrás que no hizo.",
       "**`@dnd-kit/core`, `@dnd-kit/sortable` y `@dnd-kit/utilities` son peers opcionales:** `npm install @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities` en la app que lo usa. Solo por subpath (`sebs7n-ui/sortable-list`).",
     ],
     props: {
       SortableList: {
+        itemClassName: "Las clases del `<li>` de cada fila: un texto o `(item, { index, dragging, editing }) => string`.",
+        plain: "Filas sin separador ni padding, para un `renderItem` que dibuja su card.",
         labels: "Textos: `handle`, `instructions`, `picked`, `dropped`, `canceled`, `position`, `of`, `failed`, `grabbed` (solo `SortableGrid` sin manija), `remove`, `removed`, `add` y `added` (el «+» de `SortableAddButton` y su anuncio), `nothingToAdd`, `editing` y `done`. Los que vienen por defecto son `sortableLabels`.",
         "aria-label": PROP_DESCRIPTIONS["aria-label"],
       },

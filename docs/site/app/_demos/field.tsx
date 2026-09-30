@@ -85,3 +85,17 @@ export function ErroresDelServidor() {
     </Form>
   )
 }
+
+/**
+ * Obligatorio que valida el servidor
+ * `FieldLabel indicator` dibuja el asterisco y el lector dice «Razón social, obligatorio», sin `required` en el control: el formulario no corta el envío y el error llega del servidor por `Form`.
+ */
+export function IndicadorSinValidar() {
+  return (
+    <Field className="w-full max-w-sm" name="businessName">
+      <FieldLabel indicator>Razón social</FieldLabel>
+      <Input placeholder="Estudio Ruiz S.R.L." />
+      <FieldError />
+    </Field>
+  )
+}

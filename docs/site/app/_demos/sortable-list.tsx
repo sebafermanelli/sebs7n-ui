@@ -96,3 +96,43 @@ export function Rollback() {
     </div>
   )
 }
+
+type Client = { id: string; name: string; pending: string }
+
+const CLIENTS: Client[] = [
+  { id: "acme", name: "Acme S.A.", pending: "3 facturas pendientes" },
+  { id: "nube", name: "Nube Digital", pending: "Al día" },
+  { id: "ruiz", name: "Estudio Ruiz", pending: "1 factura vencida" },
+]
+
+/**
+ * Cada ítem es una card
+ * `plain` saca el separador y el padding de la fila, así `renderItem` dibuja su card; `itemClassName` recibe el ítem y su estado (`dragging`, `editing`) para las clases del `<li>`, sin apuntar a la estructura de adentro.
+ */
+export function Cards() {
+  const [clients, setClients] = useState(CLIENTS)
+  const [editing, setEditing] = useState(false)
+  return (
+    <div className="flex w-full max-w-md flex-col gap-3">
+      <EditButton editing={editing} onEditingChange={setEditing} />
+      <SortableList
+        aria-label="Clientes"
+        className="gap-3"
+        editing={editing}
+        getKey={(client) => client.id}
+        getLabel={(client) => client.name}
+        itemClassName={(_client, state) => (state.dragging ? "rounded-surface" : undefined)}
+        items={clients}
+        onEditingChange={setEditing}
+        onReorder={setClients}
+        plain
+        renderItem={(client) => (
+          <div className="flex min-w-0 flex-1 flex-col gap-0.5 rounded-surface bg-surface px-4 py-3 shadow-widget">
+            <span className="truncate text-body text-label">{client.name}</span>
+            <span className="text-callout text-label-secondary">{client.pending}</span>
+          </div>
+        )}
+      />
+    </div>
+  )
+}
