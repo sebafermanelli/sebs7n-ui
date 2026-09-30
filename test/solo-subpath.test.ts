@@ -46,6 +46,7 @@ const SOLO_SUBPATH = [
   "rating",
   "count-badge",
   "drop-target",
+  "auth-layout",
 ]
 
 describe("componentes solo por subpath", () => {

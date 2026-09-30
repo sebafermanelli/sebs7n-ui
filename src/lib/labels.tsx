@@ -75,6 +75,11 @@ export type Labels = {
     /** Texto del skip link, la primera parada de tabulación de la app. */
     skipToContent: string
   }
+  /** Opcional (2.3): `AuthDivider`; el texto por defecto es `authLabels` de `sebs7n-ui/auth-layout` (ver `carousel`). */
+  auth?: {
+    /** El separador entre los proveedores y el formulario: «o». */
+    or: string
+  }
   autocomplete: {
     /** Nombre del botón que borra lo tipeado. */
     clear: string
