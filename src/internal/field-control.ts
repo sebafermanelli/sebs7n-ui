@@ -106,11 +106,12 @@ export function useFieldControl({ id, name, value, filled, disabled = false, con
     onFocus: () => {
       if (!off) field.setFocused(true)
     },
-    onBlur: () => {
+    /** `next`: el valor si el blur mismo lo cambió (todavía no llegó al render). */
+    onBlur: (next: unknown = value) => {
       if (off) return
       field.setTouched(true)
       field.setFocused(false)
-      if (field.validationMode === "onBlur") validation.commit(value)
+      if (field.validationMode === "onBlur") validation.commit(next)
     },
   }
 }

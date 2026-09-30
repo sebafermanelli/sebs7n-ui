@@ -36,3 +36,19 @@ export function Emails() {
     </div>
   )
 }
+
+/**
+ * Alícuotas con coma decimal
+ * `delimiters={["Enter"]}` deja la coma dentro del valor; `addOnBlur` agrega lo escrito al salir o al enviar, sin Enter.
+ */
+export function Decimals() {
+  return (
+    <div className="w-full max-w-md">
+      <Field name="rates">
+        <FieldLabel>Alícuotas de IVA (%)</FieldLabel>
+        <TagsInput addOnBlur defaultValue={["10,5", "21"]} delimiters={["Enter"]} placeholder="27" />
+        <FieldDescription>Enter para agregar; lo escrito entra al salir del campo.</FieldDescription>
+      </Field>
+    </div>
+  )
+}

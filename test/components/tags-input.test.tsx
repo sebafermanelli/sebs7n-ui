@@ -201,4 +201,177 @@ describe("TagsInput", () => {
     await waitFor(() => expect(texts.filter((text) => text === "Agregada: a")).toHaveLength(2))
     observer.disconnect()
   })
+  describe("addOnBlur", () => {
+    it("al salir del campo, lo escrito se agrega", async () => {
+      const user = userEvent.setup()
+      const onValueChange = vi.fn()
+      render(
+        <>
+          <TagsInput addOnBlur aria-label="Etiquetas" onValueChange={onValueChange} />
+          <button type="button">Otro</button>
+        </>
+      )
+      await user.type(input(), "urgente")
+      await user.tab()
+      expect(tags()).toEqual(["urgente"])
+      expect(onValueChange).toHaveBeenLastCalledWith(["urgente"])
+      expect(input()).toHaveValue("")
+    })
+
+    it("sin addOnBlur (default), salir del campo deja el texto como está", async () => {
+      const user = userEvent.setup()
+      render(<TagsInput aria-label="Etiquetas" />)
+      await user.type(input(), "urgente")
+      await user.tab()
+      expect(tags()).toEqual([])
+      expect(input()).toHaveValue("urgente")
+    })
+
+    it("si no es válida, el texto queda con el error en línea", async () => {
+      const user = userEvent.setup()
+      const validate = (tag: string) => (tag.includes("@") ? undefined : "no es un correo")
+      render(<TagsInput addOnBlur aria-label="Correos" validate={validate} />)
+      await user.type(input(), "ana")
+      await user.tab()
+      expect(tags()).toEqual([])
+      expect(input()).toHaveValue("ana")
+      expect(screen.getByRole("alert")).toHaveTextContent("ana no es un correo")
+    })
+
+    it("el submit del form la agrega antes de que el handler lea los campos (sin blur)", () => {
+      const read = vi.fn()
+      const { container } = render(
+        <form
+          onSubmit={(event) => {
+            event.preventDefault()
+            read(new FormData(event.currentTarget).getAll("tags"))
+          }}
+        >
+          <TagsInput addOnBlur aria-label="Etiquetas" defaultValue={["mayorista"]} name="tags" />
+        </form>
+      )
+      fireEvent.change(input(), { target: { value: "urgente" } })
+      fireEvent.submit(container.querySelector("form")!)
+      expect(read).toHaveBeenCalledWith(["mayorista", "urgente"])
+      expect(tags()).toEqual(["mayorista", "urgente"])
+      expect(input()).toHaveValue("")
+    })
+
+    it("leer el FormData del form sin submit también la incluye (evento formdata)", async () => {
+      const { container } = render(
+        <form>
+          <TagsInput addOnBlur aria-label="Etiquetas" name="tags" />
+        </form>
+      )
+      const form = container.querySelector("form")!
+      fireEvent.change(input(), { target: { value: "urgente" } })
+      // jsdom no dispara `formdata` al construir un FormData: se simula lo que hace el navegador.
+      const formData = new FormData(form)
+      form.dispatchEvent(Object.assign(new Event("formdata"), { formData }))
+      expect(formData.getAll("tags")).toEqual(["urgente"])
+      await waitFor(() => expect(tags()).toEqual(["urgente"]))
+    })
+
+    it("en Field con validationMode onBlur, la validación ve la agregada al salir", async () => {
+      const user = userEvent.setup()
+      render(
+        <Form>
+          <Field name="tags" validationMode="onBlur" validate={(value) => ((value as string[]).length ? null : "Poné al menos una.")}>
+            <FieldLabel>Etiquetas</FieldLabel>
+            <TagsInput addOnBlur />
+            <FieldError />
+          </Field>
+          <button type="button">Otro</button>
+        </Form>
+      )
+      await user.type(input(), "urgente")
+      await user.tab()
+      expect(tags()).toEqual(["urgente"])
+      expect(screen.queryByText("Poné al menos una.")).toBeNull()
+    })
+
+    it("en Form: onFormSubmit recibe lo escrito sin Enter", async () => {
+      const onFormSubmit = vi.fn()
+      render(
+        <Form onFormSubmit={onFormSubmit}>
+          <Field name="tags">
+            <FieldLabel>Etiquetas</FieldLabel>
+            <TagsInput addOnBlur />
+          </Field>
+          <button type="submit">Guardar</button>
+        </Form>
+      )
+      fireEvent.change(input(), { target: { value: "urgente" } })
+      fireEvent.submit(document.querySelector("form")!)
+      await waitFor(() => expect(onFormSubmit).toHaveBeenCalled())
+      expect(onFormSubmit.mock.calls[0]![0]).toEqual({ tags: ["urgente"] })
+    })
+
+    it("en Form: escribir y hacer clic en Guardar la envía", async () => {
+      const user = userEvent.setup()
+      const onFormSubmit = vi.fn()
+      render(
+        <Form onFormSubmit={onFormSubmit}>
+          <Field name="tags">
+            <FieldLabel>Etiquetas</FieldLabel>
+            <TagsInput addOnBlur required />
+          </Field>
+          <button type="submit">Guardar</button>
+        </Form>
+      )
+      await user.type(input(), "urgente")
+      await user.click(screen.getByRole("button", { name: "Guardar" }))
+      await waitFor(() => expect(onFormSubmit).toHaveBeenCalled())
+      expect(onFormSubmit.mock.calls[0]![0]).toEqual({ tags: ["urgente"] })
+    })
+
+    it("en el submit, si no es válida, no se envía y queda el error", () => {
+      const onSubmit = vi.fn((event: React.FormEvent) => event.preventDefault())
+      const validate = (tag: string) => (tag.includes("@") ? undefined : "no es un correo")
+      const { container } = render(
+        <form onSubmit={onSubmit}>
+          <TagsInput addOnBlur aria-label="Correos" name="cc" validate={validate} />
+        </form>
+      )
+      fireEvent.change(input(), { target: { value: "ana" } })
+      fireEvent.submit(container.querySelector("form")!)
+      expect(onSubmit).not.toHaveBeenCalled()
+      expect(input()).toHaveValue("ana")
+      expect(screen.getByRole("alert")).toHaveTextContent("ana no es un correo")
+    })
+  })
+
+  describe("delimiters", () => {
+    it('["Enter"]: la coma es parte del valor («38,5») y Enter agrega', async () => {
+      const user = userEvent.setup()
+      render(<TagsInput aria-label="Talles" delimiters={["Enter"]} />)
+      await user.type(input(), "38,5{Enter}")
+      expect(tags()).toEqual(["38,5"])
+    })
+
+    it("sin Enter entre los delimitadores, Enter no agrega", async () => {
+      const user = userEvent.setup()
+      render(<TagsInput aria-label="Etiquetas" delimiters={[" "]} />)
+      await user.type(input(), "a{Enter}")
+      expect(tags()).toEqual([])
+      await user.type(input(), " b ")
+      expect(tags()).toEqual(["a", "b"])
+    })
+
+    it('pegar con ["Enter"] separa solo por renglones', async () => {
+      const user = userEvent.setup()
+      render(<TagsInput aria-label="Talles" delimiters={["Enter"]} />)
+      input().focus()
+      await user.paste("38,5\n40;5\r\n42")
+      expect(tags()).toEqual(["38,5", "40;5", "42"])
+    })
+
+    it("pegar con delimitadores propios usa esos mismos", async () => {
+      const user = userEvent.setup()
+      render(<TagsInput aria-label="Etiquetas" delimiters={["|"]} />)
+      input().focus()
+      await user.paste("a,b|c; d")
+      expect(tags()).toEqual(["a,b", "c; d"])
+    })
+  })
 })

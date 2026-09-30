@@ -1297,7 +1297,7 @@ export const COMPONENTS = {
     group: "formularios",
     description: "Un campo de etiquetas libres: se escribe, Enter o coma la agrega como un `Tag`, y Backspace quita la última.",
     keyboard: [
-      ["Enter · ,", "Agregan lo escrito como etiqueta (Enter vacío sigue enviando el formulario)."],
+      ["Enter · ,", "Agregan lo escrito como etiqueta (Enter vacío sigue enviando el formulario). Se cambian con `delimiters`."],
       ["Backspace", "Con el campo vacío, quita la última etiqueta."],
       ["Tab", "Del campo a los × de cada etiqueta."],
     ],
@@ -1310,11 +1310,15 @@ export const COMPONENTS = {
       "Pegar inserta en el cursor, como en cualquier campo, y después separa por comas, punto y coma, tabs y renglones.",
       "`validate(tag, tags)` valida cada una antes de agregarla; `max` pone el tope. Las repetidas no entran, sin importar mayúsculas («Urgente» si ya está «urgente»); una lista controlada con repetidas se muestra igual.",
       "Con `name` (o el del `Field`) cada etiqueta viaja como un campo del form, como un grupo de checkboxes; en `onFormSubmit` de `Form` llega la lista. `required` no deja enviar sin etiquetas.",
+      "**En un formulario con «Guardar», usá `addOnBlur`.** Sin eso, lo escrito sin Enter se pierde al enviar. Con `addOnBlur`, entra al salir del campo y antes de que el form se envíe o se lea (`onFormSubmit`, `onSubmit`, `new FormData(form)`), validado como con Enter: si no entra, queda con su error y el form no se envía. Es `false` por defecto solo para no cambiar el comportamiento en una patch.",
+      "`delimiters` elige qué separa: `\"Enter\"` es la tecla, el resto son caracteres. `[\"Enter\"]` deja pasar comas decimales («38,5»); pegar separa por los mismos y por renglones. Sin `delimiters`: Enter y coma, y al pegar también punto y coma y tabs.",
       "Solo por subpath (`sebs7n-ui/tags-input`).",
     ],
     props: {
       TagsInput: {
         placeholder: "Lo que dice el campo vacío.",
+        addOnBlur: "Lo escrito sin Enter entra al salir del campo y antes de enviar o leer el form (validado; si no entra, no se envía). Default `false`; en un formulario, **usalo en `true`**.",
+        delimiters: "Qué separa etiquetas: `\"Enter\"` (la tecla) y caracteres. Default: Enter y coma. `[\"Enter\"]` para valores con coma decimal.",
         disabled: "Apaga el campo y los × de las etiquetas.",
         id: "El `id` del campo de texto, para un `<Label htmlFor>`.",
         "aria-label": "Nombra el campo y la lista de etiquetas.",
