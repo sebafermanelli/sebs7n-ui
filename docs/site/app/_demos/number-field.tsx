@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { Field, FieldDescription, FieldLabel } from "sebs7n-ui/field"
+import { Input } from "sebs7n-ui/input"
 import { NumberField } from "sebs7n-ui/number-field"
 
 /**
@@ -56,8 +57,31 @@ export function Precio() {
 }
 
 /**
+ * Importe con moneda
+ * `currency` con el código ISO arma el formato de moneda y pone `step="any"` para que los centavos pasen la validación. Si el código viene mal (vacío, «dólar»), cae a número con 2 decimales en vez de romper la pantalla. El locale sale de `LabelsProvider` (`numberField.locale`) si no se pasa.
+ */
+export function Importe() {
+  const [importe, setImporte] = useState<number | null>(1_240.5)
+  const [moneda, setMoneda] = useState("USD")
+  return (
+    <div className="flex w-full max-w-sm flex-col gap-3">
+      <Field name="importe">
+        <FieldLabel>Importe de la factura</FieldLabel>
+        <NumberField currency={moneda} locale="es-AR" min={0} onValueChange={setImporte} value={importe} />
+      </Field>
+      <Field name="moneda">
+        <FieldLabel>Código de moneda</FieldLabel>
+        <Input className="w-32" onChange={(event) => setMoneda(event.target.value)} value={moneda} />
+        <FieldDescription>Probá «EUR», «ars» o algo inválido.</FieldDescription>
+      </Field>
+      <p className="text-mono-callout text-label-secondary">value: {JSON.stringify(importe)}</p>
+    </div>
+  )
+}
+
+/**
  * Stock: tamaños y solo lectura
- * `sm` (32px) para una fila de tabla o un panel denso, `md` (40px) suelto, `lg` (48px) para un formulario de alta. `readOnly` deja copiar el número y apaga los steppers; `disabled` lo saca del formulario.
+ * `sm` (28px) para una fila de tabla o un panel denso, `md` (36px, el default) como el resto de un formulario, `lg` (40px) para un formulario de alta. `readOnly` deja copiar el número y apaga los steppers; `disabled` lo saca del formulario.
  */
 export function Stock() {
   return (
