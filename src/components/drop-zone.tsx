@@ -6,6 +6,7 @@ import { CircleAlertIcon, FileIcon, UploadIcon, XIcon } from "lucide-react"
 
 import { defined } from "../internal/defined.js"
 import { useFieldControl } from "../internal/field-control.js"
+import { accepts, formatBytes, hasFiles, sameFile } from "../internal/files.js"
 import { useFormReset } from "../internal/form-reset.js"
 import { mergeRefs } from "../internal/merge-refs.js"
 import { useLabels, type Labels } from "../lib/labels.js"
@@ -114,41 +115,6 @@ type DropZoneProps = Omit<React.ComponentProps<"div">, "children" | "onChange"> 
   "aria-describedby"?: string
   labels?: Partial<DropZoneLabels>
 }
-
-/** `accept` como el del input: extensiones, `tipo/*` o el tipo exacto. */
-function accepts(file: File, accept: string | undefined): boolean {
-  if (!accept) return true
-  const name = file.name.toLowerCase()
-  const type = file.type.toLowerCase()
-  return accept.split(",").some((raw) => {
-    const rule = raw.trim().toLowerCase()
-    if (!rule) return false
-    if (rule === "*/*" || rule === "*") return true
-    if (rule.startsWith(".")) return name.endsWith(rule)
-    if (rule.endsWith("/*")) return type.startsWith(rule.slice(0, -1))
-    return type === rule
-  })
-}
-
-const UNITS = ["kilobyte", "megabyte", "gigabyte"] as const
-
-/**
- * En base 1024: los límites se escriben en MiB (`20 * 1024 * 1024`), y en base 1000 ese límite decía
- * «21 MB». La unidad es la que escribe `Intl` («kB», «MB»), aunque el número sea binario.
- */
-function formatBytes(bytes: number, locale: string): string {
-  if (bytes < 1024) return `${bytes} B`
-  let value = bytes / 1024
-  let unit = 0
-  while (value >= 1024 && unit < UNITS.length - 1) {
-    value /= 1024
-    unit++
-  }
-  return new Intl.NumberFormat(locale, { style: "unit", unit: UNITS[unit], unitDisplay: "short", maximumFractionDigits: 1 }).format(value)
-}
-
-const sameFile = (a: File, b: File) => a.name === b.name && a.size === b.size && a.lastModified === b.lastModified
-const hasFiles = (event: DragEvent | React.DragEvent) => Array.from(event.dataTransfer?.types ?? []).includes("Files")
 
 /** La miniatura de una imagen. El object URL se revoca al quitar el archivo o desmontar. */
 function Thumbnail({ file }: { file: File }) {
