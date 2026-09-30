@@ -190,6 +190,23 @@ describe("ToggleGroupItem con href: opciones que navegan", () => {
     expect(pagadas).toHaveFocus()
   })
 
+  it("render={<Link href>}: con el href en el Link alcanza para que sea un link", () => {
+    const Link = (props: React.ComponentProps<"a">) => <a {...props} />
+    render(
+      <ToggleGroup aria-label="Estado" value={["due"]}>
+        <ToggleGroupItem render={<Link href="?status=due" />} value="due">
+          Vencidas
+        </ToggleGroupItem>
+        <ToggleGroupItem render={<Link href="?status=paid" />} value="paid">
+          Pagadas
+        </ToggleGroupItem>
+      </ToggleGroup>
+    )
+    expect(screen.getByRole("link", { name: "Vencidas" })).toHaveAttribute("aria-current", "page")
+    expect(screen.getByRole("link", { name: "Pagadas" })).toHaveAttribute("href", "?status=paid")
+    expect(screen.queryAllByRole("button")).toEqual([])
+  })
+
   it("render: el Link del router recibe href, clases y aria-current (conserva su prefetch)", () => {
     const Link = ({ prefetch, ...props }: React.ComponentProps<"a"> & { prefetch?: boolean }) => (
       <a data-prefetch={String(prefetch)} {...props} />

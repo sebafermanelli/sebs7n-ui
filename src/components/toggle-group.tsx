@@ -117,7 +117,8 @@ function ToggleGroup({ className, size = "md", name, value, defaultValue, onValu
 type ToggleGroupItemProps = ToggleProps & {
   /**
    * La opción navega: se dibuja un `<a href>` real con el mismo segmento, que se abre en una pestaña
-   * nueva y que el router puede precargar (`render={<Link />}` para el de Next). La elegida (la que
+   * nueva y que el router puede precargar. Con Next, `render={<Link href="?status=paid" />}` (con el
+   * `href` en el `Link`, alcanza). La elegida (la que
    * está en el `value` del grupo) lleva `aria-current="page"` en vez de `aria-pressed`: un link no se
    * «presiona», lleva a la página que ya se está viendo. Cada link es una parada de Tab.
    */
@@ -135,7 +136,8 @@ function ToggleGroupItem({ className, size: _size, name: _name, href, value, ren
       className
     ),
   }
-  if (href !== undefined)
+  // Es link si trae `href`, suelto o en el elemento de `render` (`<Link href>`, que lo exige en su tipo).
+  if ((href ?? (React.isValidElement<{ href?: string }>(render) ? render.props.href : undefined)) != null)
     return renderElement(render as RenderElement, "a", {
       ...props,
       ...itemProps,
