@@ -2373,6 +2373,53 @@ export const COMPONENTS = {
     },
     related: ["split-view", "app-shell"],
   },
+  "auth-layout": {
+    title: "AuthLayout",
+    group: "formularios",
+    description: "La pantalla de entrar, registrarse, recuperar la clave o esperar una aprobación, como la de iCloud: columna de 400, marca, título grande, el formulario en una card y los links abajo.",
+    keyboard: [
+      ["Tab", "Recorre la barra (si hay), los proveedores, el formulario y los links del pie, en ese orden."],
+      ["—", "Con `autoFocus` en `AuthContent`, el foco arranca en el primer campo y no en «Continuar con Google»."],
+    ],
+    a11y: [
+      "**Un solo `<h1>`**: `AuthTitle`, o el título de `AuthStatus` cuando reemplaza al formulario (h1 por defecto; `titleAs=\"h2\"` si queda un `AuthTitle` arriba).",
+      "`AuthLayout` pone el `<main>` (`mainId` para el «Ir al contenido» de la app); la `bar` queda afuera. Si el layout de la app ya tiene su `<main>`, `as=\"div\"`.",
+      "**Errores**: los de un campo, en su `FieldError` con el `errors` de `Form`, que enfoca el primero. El que no es de ningún campo («Email o contraseña incorrectos») va en `AuthError`, arriba de los campos: `role=\"alert\"`, ícono además del color y `tabIndex=-1` para poder llevarle el foco. Con un `id`, el botón de enviar puede nombrarlo en `aria-describedby`.",
+      "`AuthStatus` es `role=\"status\"`: si aparece en lugar del formulario sin cambiar de página («Revisá tu email»), se anuncia sin cortar. El ícono es decorativo; el tono no es el único dato, lo dice el título.",
+      "`AuthDivider`: las dos líneas son `aria-hidden` y el «o» se lee, para que se entienda que lo que sigue es otra forma de entrar. Traducible con `labels.auth.or`.",
+      "`autoFocus` es opt-in: en la pantalla que es solo entrar ayuda; en un panel dentro de otra página (entrar en medio de una compra) le saca el lugar al lector.",
+      "Sin `\"use client\"`: toda la pantalla sirve en un Server Component (el texto del separador y el foco inicial son dos piezas de cliente adentro).",
+    ],
+    usage: [
+      "**El título va afuera de la card** (`AuthHeader`): es el de la página y se lee igual con `AuthContent variant=\"plain\"`.",
+      "Proveedores arriba del formulario, con `AuthDivider` en el medio, y `variant=\"secondary\"`: el acento sólido es del envío. Sin logos de marca de terceros en el paquete: el ícono lo pone la app si quiere.",
+      "Un aviso que sigue siendo verdad («Un administrador aprueba las cuentas nuevas») es un `Alert` al principio de `AuthContent`, antes de los proveedores.",
+      "Los términos: una casilla obligatoria de verdad (`Checkbox required` en un `Field`), no un botón apagado; al enviar sin tildar, `Form` lleva el foco ahí. El texto legal pasivo va en `AuthFooter`, en `text-footnote`.",
+      "`AuthFooter`: «¿No tenés cuenta? Registrate» con `linkVariants({ variant: \"inline\" })`; «Volver a iniciar sesión» o «Cerrar sesión» con `subtle`. Varios links legales, en un `<nav aria-label=\"Legales\">`.",
+      "Arriba en el teléfono, centrada en alto desde `sm`. `ambient` pinta el wallpaper de iCloud y pasa la card al material translúcido; los campos siguen opacos.",
+      "Solo por subpath (`sebs7n-ui/auth-layout`).",
+    ],
+    props: {
+      AuthLayout: {
+        className: "Clases de la raíz (la que pinta la página). En una caja, `min-h-0`.",
+      },
+      AuthContent: {
+        autoFocus: "Enfoca el primer campo al montar (no el botón del proveedor). Para la pantalla que es solo entrar; en un panel adentro de otra página, no.",
+      },
+      AuthDivider: {
+        labels: "Textos: `or` («o»). Le gana al `LabelsProvider` (`auth.or`).",
+      },
+      AuthStatus: {
+        icon: "El ícono de arriba, en un círculo gris. Decorativo (`aria-hidden`); su color sale de `tone`.",
+        title: "Qué pasó, en una línea: «Revisá tu email». Sale como el heading que diga `titleAs`.",
+        description: "Qué hacer ahora y cuánto tarda.",
+      },
+      AuthError: {
+        title: "Una línea en negrita arriba del mensaje. Casi siempre alcanza con el mensaje solo.",
+      },
+    },
+    related: ["form", "field", "password-input", "app-shell", "alert"],
+  },
   "app-shell": {
     title: "AppShell",
     group: "navegacion",
