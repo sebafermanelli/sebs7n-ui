@@ -8,6 +8,7 @@ import { Field, FieldDescription, FieldError, FieldLabel } from "../../src/compo
 import { Fieldset, FieldsetLegend } from "../../src/components/fieldset"
 import { Form } from "../../src/components/form"
 import { Input } from "../../src/components/input"
+import { LabelsProvider } from "../../src/lib/labels"
 
 describe("Field", () => {
   it("nombra al control con la etiqueta sin que nadie escriba un id", () => {
@@ -47,6 +48,34 @@ describe("Field", () => {
     const input = screen.getByRole("textbox")
     expect(input).toHaveAccessibleName("Razón social")
     expect(input).toBeRequired()
+  })
+
+  describe("FieldLabel indicator (2.2)", () => {
+    it("dibuja el asterisco y dice «obligatorio», sin la restricción nativa", () => {
+      render(
+        <Field name="razon">
+          <FieldLabel indicator>Razón social</FieldLabel>
+          <Input />
+        </Field>
+      )
+      // Para lo que valida el servidor: el lector se entera por el nombre, y el form no corta el envío.
+      const input = screen.getByRole("textbox")
+      expect(input).toHaveAccessibleName("Razón social, obligatorio")
+      expect(input).not.toBeRequired()
+      expect(screen.getByText("*")).toHaveAttribute("aria-hidden", "true")
+    })
+
+    it("el texto sale de LabelsProvider", () => {
+      render(
+        <LabelsProvider value={{ field: { required: "required" } }}>
+          <Field name="razon">
+            <FieldLabel indicator>Business name</FieldLabel>
+            <Input />
+          </Field>
+        </LabelsProvider>
+      )
+      expect(screen.getByRole("textbox")).toHaveAccessibleName("Business name, required")
+    })
   })
 
   it("no muestra el error mientras el campo está bien", () => {

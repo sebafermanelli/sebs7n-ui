@@ -2,6 +2,7 @@
 
 import { Field as FieldPrimitive } from "@base-ui/react/field"
 
+import { useLabels } from "../lib/labels.js"
 import { cn, type WithClassName } from "../lib/utils.js"
 
 /**
@@ -46,10 +47,18 @@ function Field({ className, ...props }: FieldProps) {
  * lo decide el `required` del control, que es lo que valida el navegador.
  */
 type FieldLabelProps = WithClassName<FieldPrimitive.Label.Props> & {
+  /** El asterisco, decorativo: el lector se entera por el `required` del control. */
   required?: boolean
+  /**
+   * El asterisco más «obligatorio» para el lector (`labels.field.required`), sin la restricción
+   * nativa: para un campo que valida el servidor, donde un `required` en el control cortaría el envío
+   * antes. No va con un control `required` o `aria-required`: se diría dos veces.
+   */
+  indicator?: boolean
 }
 
-function FieldLabel({ className, required = false, children, ...props }: FieldLabelProps) {
+function FieldLabel({ className, required = false, indicator = false, children, ...props }: FieldLabelProps) {
+  const text = useLabels().field?.required ?? "obligatorio"
   return (
     <FieldPrimitive.Label
       data-slot="field-label"
@@ -61,11 +70,13 @@ function FieldLabel({ className, required = false, children, ...props }: FieldLa
       {...props}
     >
       {children}
-      {required && (
+      {(required || indicator) && (
         <span aria-hidden="true" className="text-red-900">
           *
         </span>
       )}
+      {/* La coma y no un espacio: el cálculo del nombre recorta el espacio de adelante y quedaba «socialobligatorio». */}
+      {indicator && <span className="sr-only">, {text}</span>}
     </FieldPrimitive.Label>
   )
 }

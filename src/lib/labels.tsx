@@ -275,6 +275,11 @@ export type Labels = {
     close: string
   }
   drawer: { close: string }
+  /**
+   * Opcional (2.2), con el default en `FieldLabel` («obligatorio»), porque el barrel está en su tope.
+   * `required`: lo que el lector dice después de la etiqueta de un `FieldLabel indicator`.
+   */
+  field?: { required?: string }
   /** Opcional: los textos por defecto son `dropZoneLabels` de `sebs7n-ui/drop-zone` (ver `carousel`). */
   dropZone?: {
     /** El texto del recuadro. */
