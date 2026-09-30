@@ -41,13 +41,13 @@ export const segmentedThumbClassName =
  *
  * 24 de alto (28 con la pista), 14 en `label` y semibold prendido; con el dedo se ve igual y el área
  * crece a 44 (`segmentedHitAreaClassName`). Lleva el
- * separador de 1 × 16 del segmentado, escondido en el prendido y en el que le sigue. El anillo de
+ * separador de 1 × 16 del segmentado, centrado en el alto del ítem, escondido en el prendido y en el que le sigue. El anillo de
  * foco sobre el acento va en el color del texto (`[--sf-focus-inverse:currentColor]`).
  */
 export const segmentedItemClassName =
   "relative inline-flex h-6 min-w-8 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-[calc(var(--radius-control)-2px)] px-3 text-callout whitespace-nowrap text-label outline-none select-none transition-surface " +
   "focus-visible:focus-ring data-pressed:bg-brand-700 data-pressed:text-brand-contrast dark:data-pressed:bg-brand-900 dark:data-pressed:text-background data-pressed:font-semibold data-pressed:focus-visible:focus-ring-inverse [--sf-focus-inverse:currentColor] data-disabled:cursor-not-allowed data-disabled:opacity-40 " +
-  "after:absolute after:left-0 after:top-1 after:h-4 after:w-px after:bg-fill-3 first:after:hidden data-pressed:after:hidden [[data-pressed]+&]:after:hidden " +
+  "after:absolute after:left-0 after:top-1/2 after:-translate-y-1/2 after:h-4 after:w-px after:bg-fill-3 first:after:hidden data-pressed:after:hidden [[data-pressed]+&]:after:hidden " +
   "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 " +
   segmentedHitAreaClassName
 

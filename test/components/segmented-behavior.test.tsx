@@ -154,3 +154,15 @@ describe("Tabs: línea de Settings y segmentado de Calendar", () => {
 it("el ColorPicker pide el segmentado", () => {
   expect(readFileSync(join(import.meta.dirname, "../../src/components/color-picker.tsx"), "utf8")).toMatch(/<TabsList[^>]*variant="segmented"/)
 })
+
+// El separador entre segmentos iba fijo en `top-1 h-4`: centrado en el ítem de 24 (sm), corrido
+// hacia arriba en el de 32 que lleva el `md` por defecto del ToggleGroup desde 2.4.0.
+describe("el separador del segmentado", () => {
+  it("se centra en el alto del ítem, sea cual sea el tamaño", async () => {
+    const { segmentedItemClassName } = await import("../../src/variants/segmented")
+    const classes = segmentedItemClassName.split(" ")
+    expect(classes).toContain("after:top-1/2")
+    expect(classes).toContain("after:-translate-y-1/2")
+    expect(classes).not.toContain("after:top-1")
+  })
+})
