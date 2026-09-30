@@ -65,6 +65,19 @@ describe("Field", () => {
       expect(screen.getByText("*")).toHaveAttribute("aria-hidden", "true")
     })
 
+    it("con required también, «obligatorio» no se dice dos veces: lo anuncia el required del control", () => {
+      render(
+        <Field name="razon">
+          <FieldLabel indicator required>
+            Razón social
+          </FieldLabel>
+          <Input required />
+        </Field>
+      )
+      expect(screen.getByRole("textbox")).toHaveAccessibleName("Razón social")
+      expect(screen.getAllByText("*")).toHaveLength(1)
+    })
+
     it("el texto sale de LabelsProvider", () => {
       render(
         <LabelsProvider value={{ field: { required: "required" } }}>

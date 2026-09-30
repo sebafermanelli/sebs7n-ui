@@ -52,7 +52,9 @@ type FieldLabelProps = WithClassName<FieldPrimitive.Label.Props> & {
   /**
    * El asterisco más «obligatorio» para el lector (`labels.field.required`), sin la restricción
    * nativa: para un campo que valida el servidor, donde un `required` en el control cortaría el envío
-   * antes. No va con un control `required` o `aria-required`: se diría dos veces.
+   * antes. Con `required` al lado (el control lo lleva) el texto se calla y queda el asterisco. El
+   * `required` o `aria-required` del control no se detecta: sin el `required` de la etiqueta, se diría
+   * dos veces.
    */
   indicator?: boolean
 }
@@ -76,7 +78,7 @@ function FieldLabel({ className, required = false, indicator = false, children, 
         </span>
       )}
       {/* La coma y no un espacio: el cálculo del nombre recorta el espacio de adelante y quedaba «socialobligatorio». */}
-      {indicator && <span className="sr-only">, {text}</span>}
+      {indicator && !required && <span className="sr-only">, {text}</span>}
     </FieldPrimitive.Label>
   )
 }
