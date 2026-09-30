@@ -104,6 +104,10 @@ export const overlayCloseClassName = "absolute top-[calc(var(--sf-safe-top,0px)+
  * los títulos de los popovers de iCloud («Show», «Apps»). Quien necesita más ancho lo pide con
  * `className` (ColorPicker, DatePicker y el chat ya lo hacen).
  *
+ * **Nunca más grande que el lugar que queda** (2.5): `max-w`/`max-h` con `--available-width` y
+ * `--available-height`, que Base UI mide contra el viewport menos el `collisionPadding`. Un `w-80`
+ * en un teléfono de 320 px se salía 5 px; ahora se achica y el contenido scrollea adentro.
+ *
  * `NavigationMenu` comparte la superficie —`bg-surface shadow-menu
  * outline-none focus-visible:focus-ring`— pero no el resto: su panel mide lo que mide su
  * contenido (`--popup-width`/`--popup-height`), lleva `p-1` en vez de `p-4` y anima también
@@ -111,7 +115,7 @@ export const overlayCloseClassName = "absolute top-[calc(var(--sf-safe-top,0px)+
  * mitad con overrides, que es peor que repetir.
  */
 export const floatingPopupClassName =
-  "flex w-64 origin-(--transform-origin) flex-col gap-2 rounded-menu bg-surface p-4 text-callout text-label shadow-menu outline-none " +
+  "flex max-h-(--available-height) w-64 max-w-(--available-width) origin-(--transform-origin) flex-col overflow-y-auto gap-2 rounded-menu bg-surface p-4 text-callout text-label shadow-menu outline-none " +
   "focus-visible:focus-ring transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0"
 
 /**

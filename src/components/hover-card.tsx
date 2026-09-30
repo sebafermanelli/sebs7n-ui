@@ -57,6 +57,7 @@ function HoverCardContent({
         align={align}
         alignOffset={alignOffset}
         className="isolate z-50"
+        collisionPadding={8}
         side={side}
         sideOffset={sideOffset}
       >

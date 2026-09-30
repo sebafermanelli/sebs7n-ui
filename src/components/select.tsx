@@ -79,6 +79,7 @@ function SelectContent({
         alignOffset={alignOffset}
         alignItemWithTrigger={alignItemWithTrigger}
         className="isolate z-50"
+        collisionPadding={8}
       >
         {/* El scroll va en la lista y no en el panel (como en los ejemplos de Base UI): para
             alinear la opción elegida con el disparador, Base UI desplaza `listElement ?? popupElement`,

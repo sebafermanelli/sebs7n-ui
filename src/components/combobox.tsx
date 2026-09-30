@@ -93,10 +93,10 @@ type ComboboxContentProps = WithClassName<ComboboxPrimitive.Popup.Props> &
 function ComboboxContent({ className, side = "bottom", sideOffset = 6, align = "start", alignOffset = 0, anchor, ...props }: ComboboxContentProps) {
   return (
     <ComboboxPrimitive.Portal>
-      <ComboboxPrimitive.Positioner side={side} sideOffset={sideOffset} align={align} alignOffset={alignOffset} anchor={anchor} className="isolate z-50">
+      <ComboboxPrimitive.Positioner side={side} sideOffset={sideOffset} align={align} alignOffset={alignOffset} anchor={anchor} className="isolate z-50" collisionPadding={8}>
         <ComboboxPrimitive.Popup
           data-slot="combobox-content"
-          className={cn(menuPopupClassName, "min-w-(--anchor-width) max-w-(--available-width)", className)}
+          className={cn(menuPopupClassName, "min-w-(--anchor-width)", className)}
           {...props}
         />
       </ComboboxPrimitive.Positioner>

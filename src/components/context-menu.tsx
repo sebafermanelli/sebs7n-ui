@@ -5,6 +5,7 @@ import { ContextMenu as ContextMenuPrimitive } from "@base-ui/react/context-menu
 import { ArrowUpRightIcon, ChevronRightIcon } from "lucide-react"
 
 import { MenuCheck } from "../internal/menu-check.js"
+import { lateralCollision } from "../internal/collision.js"
 import { cn, type WithClassName } from "../lib/utils.js"
 import {
   menuGutterClassName,
@@ -119,6 +120,8 @@ function ContextMenuContent({ className, align, alignOffset, side, sideOffset, .
         side={side}
         sideOffset={sideOffset}
         className="isolate z-50 outline-none"
+        collisionAvoidance={lateralCollision(side)}
+        collisionPadding={8}
       >
         <ContextMenuPrimitive.Popup data-slot="context-menu-content" className={cn(menuPopupClassName, className)} {...props} />
       </ContextMenuPrimitive.Positioner>

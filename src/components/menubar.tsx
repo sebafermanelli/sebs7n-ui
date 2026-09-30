@@ -6,6 +6,7 @@ import { Menubar as MenubarPrimitive } from "@base-ui/react/menubar"
 import { ArrowUpRightIcon, ChevronRightIcon } from "lucide-react"
 
 import { MenuCheck } from "../internal/menu-check.js"
+import { lateralCollision } from "../internal/collision.js"
 import { cn, type WithClassName } from "../lib/utils.js"
 import {
   menuGutterClassName,
@@ -83,7 +84,7 @@ type MenubarContentProps = WithClassName<MenuPrimitive.Popup.Props> &
 function MenubarContent({ className, align = "start", alignOffset = 0, side = "bottom", sideOffset = 6, ...props }: MenubarContentProps) {
   return (
     <MenuPrimitive.Portal>
-      <MenuPrimitive.Positioner align={align} alignOffset={alignOffset} side={side} sideOffset={sideOffset} className="isolate z-50 outline-none">
+      <MenuPrimitive.Positioner align={align} alignOffset={alignOffset} side={side} sideOffset={sideOffset} className="isolate z-50 outline-none" collisionAvoidance={lateralCollision(side)} collisionPadding={8}>
         <MenuPrimitive.Popup data-slot="menubar-content" className={cn(menuPopupClassName, className)} {...props} />
       </MenuPrimitive.Positioner>
     </MenuPrimitive.Portal>

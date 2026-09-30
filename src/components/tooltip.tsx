@@ -28,11 +28,11 @@ type TooltipContentProps = WithClassName<TooltipPrimitive.Popup.Props> &
 function TooltipContent({ className, side = "top", sideOffset = 6, align = "center", alignOffset = 0, children, ...props }: TooltipContentProps) {
   return (
     <TooltipPrimitive.Portal>
-      <TooltipPrimitive.Positioner side={side} sideOffset={sideOffset} align={align} alignOffset={alignOffset} className="isolate z-50">
+      <TooltipPrimitive.Positioner side={side} sideOffset={sideOffset} align={align} alignOffset={alignOffset} className="isolate z-50" collisionPadding={8}>
         <TooltipPrimitive.Popup
           data-slot="tooltip-content"
           className={cn(
-            "relative w-fit max-w-xs origin-(--transform-origin)",
+            "relative w-fit max-w-[min(20rem,var(--available-width))] origin-(--transform-origin)",
             tooltipSurfaceClassName,
             "transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0",
             className
