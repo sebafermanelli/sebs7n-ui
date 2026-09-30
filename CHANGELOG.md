@@ -2,6 +2,7 @@
 
 Una línea por versión, la más nueva arriba. Versionado [SemVer 2.0.0](https://semver.org/lang/es/).
 
+- **2.3.1** (2026-09-30) — `DataTable`: «Cargar más» pasa a `md`, el tamaño de los botones de contenido (la paginación sigue en `sm`).
 - **2.3.0** (2026-09-30) — La pantalla de acceso compartida, sin romper nada. Nuevo: `AuthLayout` con `AuthHeader`, `AuthTitle`, `AuthDescription`, `AuthContent` (card o `plain`, `autoFocus`), `AuthProviders`, `AuthDivider` («o», `labels.auth`), `AuthError` (el error que no es de un campo), `AuthStatus` («Revisá tu email», cuenta pendiente) y `AuthFooter`; `ambient` para el wallpaper y `bar` para la barra de arriba. Solo por subpath (`sebs7n-ui/auth-layout`).
 - **2.2.0** (2026-09-29) — Lo que faltaba al migrar las apps, sin romper nada. Nuevo: `DropTarget` (soltar archivos sobre cualquier contenido para abrir su formulario) y `CountBadge` + `countLabel` (el contador de un botón de ícono, con «99+»), solo por subpath; `SortableList itemClassName` y `plain`; `FieldLabel indicator` (asterisco anunciado sin `required` nativo). Arregla: `formatPhone` toma el área argentina de los formatos de libphonenumber («+54 9 385 638-6236», no «3856 38-6236»).
 - **2.1.2** (2026-09-29) — `TagsInput`: `addOnBlur` y `delimiters` (lo escrito sin Enter ya no se pierde al guardar).

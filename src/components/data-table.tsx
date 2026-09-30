@@ -401,7 +401,7 @@ function DataTable<T>({
       )}
       {pageSize && !loading && paging === "more" && visible.length < total && (
         <div className="flex justify-center pt-2">
-          <Button onClick={() => setLoaded(loaded + 1)} size="sm" variant="plain">
+          <Button onClick={() => setLoaded(loaded + 1)} variant="plain">
             {labels.loadMore}
           </Button>
         </div>
