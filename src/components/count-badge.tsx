@@ -41,9 +41,10 @@ function CountBadge({ count, max = 99, color = "red", className, ...props }: Cou
       size="sm"
       color={color}
       className={cn(
-        // La esquina de abajo a la izquierda cerca del centro del ícono: así queda sobre su esquina de
-        // arriba a la derecha en los tres tamaños de botón de ícono, y un «99+» crece hacia afuera.
-        "pointer-events-none absolute start-1/2 top-0 -translate-y-1/4 ring-2 ring-surface-bar",
+        // Anclado a la esquina de arriba a la derecha del botón, 4 px afuera: con un dígito queda sobre
+        // la esquina del ícono, y un «99+» crece hacia adentro (sobre su propio ícono) y no tapa al
+        // botón de al lado en una barra.
+        "pointer-events-none absolute -end-1 -top-1 ring-2 ring-surface-bar",
         className
       )}
       {...props}
