@@ -10,11 +10,11 @@ import { Toggle } from "../../src/components/toggle"
 import { ToggleGroup, ToggleGroupItem } from "../../src/components/toggle-group"
 
 describe("Toggle size", () => {
-  it("sm 28 por defecto (lo de 2.0), md 36 y lg 40 como Button", () => {
+  it("md 36 por defecto (2.5), sm 28 y lg 40 como Button", () => {
     render(
       <>
-        <Toggle aria-label="Negrita" />
-        <Toggle aria-label="Cursiva" size="md" />
+        <Toggle aria-label="Negrita" size="sm" />
+        <Toggle aria-label="Cursiva" />
         <Toggle aria-label="Subrayado" size="lg" />
       </>
     )

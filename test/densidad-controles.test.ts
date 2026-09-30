@@ -145,8 +145,13 @@ describe("una sola escala de alto para campos y botones", () => {
     expect(toolbar).not.toMatch(/\bh-6\b/)
   })
 
-  it("un chip (Toggle) mide lo que un botón sm", () => {
-    expect(toggleVariants().split(" ")).toContain("h-7")
+  // 2.5: el Toggle suelto también va en una barra de filtros al lado de la búsqueda y los Select, así
+  // que pasó a md (36) como el ToggleGroup. Adentro de una Toolbar se queda en 28, el escalón de la barra.
+  it("un chip (Toggle) es md (36) por defecto y en una Toolbar mide 28", () => {
+    const clases = toggleVariants().split(" ")
+    expect(clases).toContain("h-9")
+    expect(clases).toContain("in-data-[slot=toolbar]:h-7")
+    expect(toggleVariants({ size: "sm" }).split(" ")).toContain("h-7")
   })
 
   // 2.4: en una barra de filtros el segmentado va al lado de la búsqueda y de los Select (md, 36), así

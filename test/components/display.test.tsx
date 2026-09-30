@@ -16,7 +16,7 @@ describe("Toggle (chip)", () => {
   it("gris en reposo; prendido, el acento sólido con su color de contraste; sin borde", async () => {
     render(<Toggle>Activos</Toggle>)
     const chip = screen.getByRole("button", { name: "Activos" })
-    expect(chip).toHaveClass("h-7", "rounded-control", "bg-fill-1", "text-label", "hover:bg-fill-2")
+    expect(chip).toHaveClass("h-9", "rounded-control", "bg-fill-1", "text-label", "hover:bg-fill-2")
     expect(chip).toHaveClass("data-pressed:bg-brand-700", "data-pressed:text-brand-contrast", "data-pressed:focus-visible:focus-ring-inverse")
     expect(chip.className).not.toMatch(/(^|\s)border-(label|separator|gray)/)
     expect(chip).toHaveClass("data-disabled:opacity-40")
