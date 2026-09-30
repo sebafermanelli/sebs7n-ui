@@ -4,8 +4,8 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Badge } from "sebs7n-ui/badge"
 import { Navbar, NavbarContent } from "sebs7n-ui/navbar"
+import { NavbarLink } from "sebs7n-ui/navbar-link"
 import { ThemeSwitcher } from "sebs7n-ui/theme-switcher"
-import { cn } from "sebs7n-ui/lib/utils"
 
 import { SearchButton } from "./search"
 
@@ -32,29 +32,21 @@ export function SiteHeader({ version }: { version: string }) {
 
         <nav aria-label="Secciones" className="hidden items-center gap-1 lg:flex">
           {LINKS.map((link) => (
-            <Link
-              className={cn(
-                "rounded-control px-2 py-1 text-callout outline-none transition-control hover:bg-fill-2 hover:text-label focus-visible:focus-ring",
-                pathname.startsWith(link.href.split("/").slice(0, 3).join("/")) ? "text-label" : "text-label-secondary"
-              )}
-              href={link.href}
+            <NavbarLink
+              active={pathname.startsWith(link.href.split("/").slice(0, 3).join("/"))}
               key={link.href}
+              render={<Link href={link.href} />}
             >
               {link.label}
-            </Link>
+            </NavbarLink>
           ))}
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
           <SearchButton />
-          <a
-            className="hidden h-8 items-center rounded-control px-2 text-callout text-label-secondary outline-none transition-control hover:text-label focus-visible:focus-ring sm:inline-flex"
-            href="https://github.com/sebafermanelli/sebs7n-ui"
-            rel="noreferrer"
-            target="_blank"
-          >
+          <NavbarLink className="hidden sm:inline-flex" href="https://github.com/sebafermanelli/sebs7n-ui" rel="noreferrer" target="_blank">
             GitHub
-          </a>
+          </NavbarLink>
           <ThemeSwitcher />
         </div>
       </NavbarContent>

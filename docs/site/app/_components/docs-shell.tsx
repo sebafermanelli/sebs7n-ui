@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation"
 import type { ReactNode } from "react"
 import { AppShell } from "sebs7n-ui/app-shell"
 import { Badge } from "sebs7n-ui/badge"
+import { NavbarLink } from "sebs7n-ui/navbar-link"
 import {
   Sidebar,
   SidebarContent,
@@ -38,14 +39,9 @@ function Marca({ version }: { version: string }) {
 
 function GitHub() {
   return (
-    <a
-      className="inline-flex h-8 items-center rounded-control px-2 text-callout text-label-secondary outline-none transition-control hover:bg-fill-2 hover:text-label focus-visible:focus-ring"
-      href={REPO}
-      rel="noreferrer"
-      target="_blank"
-    >
+    <NavbarLink href={REPO} rel="noreferrer" target="_blank">
       GitHub
-    </a>
+    </NavbarLink>
   )
 }
 
