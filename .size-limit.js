@@ -65,6 +65,11 @@ export default [
     // de DatePicker y Toggle/ToggleGroup (`internal/field-control`), `size` de Toggle, el ícono de
     // Combobox/Autocomplete y `loading` de InputGroupButton. Lo nuevo y grande (SearchField, TagsInput,
     // Rating) va solo por subpath.
+    //
+    // 2.4: 57,84 KB (desde 57,97). Entraron `required`, «todos» con `""` e ítems link en ToggleGroup y
+    // `currency`, `locale` del provider, `autoFocus` e `inputRef` en NumberField (≈ +0,34 KB), y se
+    // fueron los mensajes de los avisos de desarrollo, que viajaban a producción (≈ −0,49 KB): el
+    // chequeo de `NODE_ENV` pasó a ser literal y el bundler lo poda (`test/avisos-dev.test.ts`).
     limit: "58 kB",
   },
 ]
