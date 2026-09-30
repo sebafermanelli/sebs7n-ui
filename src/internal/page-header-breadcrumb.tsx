@@ -20,13 +20,12 @@ import { cn } from "../lib/utils.js"
  */
 
 /**
- * `process.env.NODE_ENV` escrito literal es lo que los bundlers reemplazan por una constante, y por
- * eso en producción el bloque entero se cae del bundle. La declaración local es porque el tsconfig
- * del build no trae los tipos de Node.
+ * `process.env.NODE_ENV` escrito literal en el `if` es lo que los bundlers reemplazan por una
+ * constante, y así en producción el bloque entero se cae del bundle (el porqué de no usar
+ * `typeof process`, en `dialog-name-warning.ts`). La declaración local es porque el tsconfig del
+ * build no trae los tipos de Node.
  */
-declare const process: { env: { NODE_ENV?: string } } | undefined
-
-const esDesarrollo = () => typeof process !== "undefined" && process.env.NODE_ENV !== "production"
+declare const process: { env: { NODE_ENV?: string } }
 
 let yaAviso = false
 
@@ -40,7 +39,7 @@ let yaAviso = false
  * que el aviso de los diálogos sin nombre.
  */
 function avisarSiHayNavAnidado(el: HTMLElement | null) {
-  if (!el || yaAviso || !esDesarrollo()) return
+  if (process.env.NODE_ENV === "production" || !el || yaAviso) return
   if (!el.querySelector("nav")) return
   yaAviso = true
   console.warn(

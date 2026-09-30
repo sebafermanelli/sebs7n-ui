@@ -22,16 +22,16 @@ import * as React from "react"
 const yaAvisados = new Set<string>()
 
 /**
- * `process.env.NODE_ENV` escrito literal es lo que los bundlers reemplazan por una constante, y por
- * eso en producción el bloque entero se cae del bundle. Escrito por `globalThis` no lo reemplazarían
- * y el aviso viajaría a producción.
+ * `process.env.NODE_ENV` escrito literal en el `if` es lo que los bundlers reemplazan por una
+ * constante, y así en producción el bloque entero —mensaje incluido— se cae del bundle. Hasta 2.3 el
+ * chequeo iba en una función con una guarda de `typeof`: el minificador no la plegaba y el
+ * aviso viajaba a producción (≈ 0,3 kB del barrel). Sin la guarda de `typeof` se asume que el bundler
+ * define `process.env.NODE_ENV`, lo mismo que ya exige Base UI, que lo usa suelto.
  *
  * La declaración local es porque el tsconfig del build no trae los tipos de Node —es una librería de
  * navegador, no tiene por qué conocerlos— y sin ella `tsc` no compila esta línea.
  */
-declare const process: { env: { NODE_ENV?: string } } | undefined
-
-const esDesarrollo = () => typeof process !== "undefined" && process.env.NODE_ENV !== "production"
+declare const process: { env: { NODE_ENV?: string } }
 
 /**
  * La verificación va adentro del `ref` y no en un `useEffect`: el componente que lo usa se monta
@@ -48,7 +48,7 @@ export function useAvisoDeNombre<T extends HTMLElement>(
       if (typeof refDelLlamador === "function") refDelLlamador(el)
       else if (refDelLlamador) (refDelLlamador as React.RefObject<T | null>).current = el
 
-      if (!el || !esDesarrollo() || yaAvisados.has(componente)) return
+      if (process.env.NODE_ENV === "production" || !el || yaAvisados.has(componente)) return
       // Un frame de espera: Base UI escribe el `aria-labelledby` en un efecto, y sin esperar el
       // aviso saldría siempre, incluso con el título puesto.
       requestAnimationFrame(() => {
