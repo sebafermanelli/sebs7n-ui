@@ -405,6 +405,7 @@ export const COMPONENTS = {
     a11y: [
       "Es decorativo (`aria-hidden`): el número va en el nombre del botón, con `countLabel(\"Notificaciones\", 3, \"sin leer\")` → «Notificaciones, 3 sin leer». Con 0 el nombre es solo «Notificaciones».",
       "El nombre dice el número real aunque el contador diga «99+».",
+      "**Un cambio del número no se anuncia**: el nombre del botón se lee recién al enfocarlo. Si importa enterarse en el momento (llegó una notificación), la app lo avisa en una región viva, fuera del botón: `<span role=\"status\" className=\"sr-only\">{aviso}</span>`, montado desde el principio, con `aviso` = «2 notificaciones nuevas» cuando llegan. Solo lo nuevo, no cada cambio del total.",
       "Rojo por defecto (`red-800` con blanco, 4,5:1). El color no es el único dato: el número se lee.",
     ],
     usage: [
