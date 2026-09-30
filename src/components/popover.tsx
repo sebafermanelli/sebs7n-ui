@@ -3,15 +3,19 @@
 import type * as React from "react"
 import { Popover as PopoverPrimitive } from "@base-ui/react/popover"
 
+import { AdaptivePopoverRoot, type AdaptivePopoverRootProps, AdaptivePopup, AdaptiveTrigger, useInDrawer } from "../internal/adaptive-popover.js"
 import { cn, type WithClassName } from "../lib/utils.js"
-import { floatingPopupClassName } from "../variants/overlay.js"
 
-function Popover(props: PopoverPrimitive.Root.Props) {
-  return <PopoverPrimitive.Root {...props} />
+// En una pantalla angosta el contenido se presenta como la hoja de abajo: el porqué está en
+// `internal/adaptive-popover.tsx`.
+type PopoverProps = AdaptivePopoverRootProps
+
+function Popover(props: PopoverProps) {
+  return <AdaptivePopoverRoot {...props} />
 }
 
 function PopoverTrigger(props: PopoverPrimitive.Trigger.Props) {
-  return <PopoverPrimitive.Trigger data-slot="popover-trigger" {...props} />
+  return <AdaptiveTrigger data-slot="popover-trigger" {...props} />
 }
 
 type PopoverContentProps = WithClassName<PopoverPrimitive.Popup.Props> &
@@ -26,15 +30,15 @@ type PopoverContentProps = WithClassName<PopoverPrimitive.Popup.Props> &
 
 function PopoverContent({ className, align = "center", alignOffset = 0, side = "bottom", sideOffset = 6, translucent = false, ...props }: PopoverContentProps) {
   return (
-    <PopoverPrimitive.Portal>
-      <PopoverPrimitive.Positioner align={align} alignOffset={alignOffset} side={side} sideOffset={sideOffset} className="isolate z-50">
-        <PopoverPrimitive.Popup
-          data-slot="popover-content"
-          className={cn(floatingPopupClassName, translucent && "material-translucent", className)}
-          {...props}
-        />
-      </PopoverPrimitive.Positioner>
-    </PopoverPrimitive.Portal>
+    <AdaptivePopup
+      align={align}
+      alignOffset={alignOffset}
+      className={cn(translucent && "material-translucent", className)}
+      data-slot="popover-content"
+      side={side}
+      sideOffset={sideOffset}
+      {...props}
+    />
   )
 }
 
@@ -45,13 +49,16 @@ function PopoverHeader({ className, ...props }: React.ComponentProps<"div">) {
 type PopoverTitleProps = WithClassName<PopoverPrimitive.Title.Props>
 
 function PopoverTitle({ className, ...props }: PopoverTitleProps) {
-  return <PopoverPrimitive.Title data-slot="popover-title" className={cn("text-headline text-label", className)} {...props} />
+  // En la hoja, el título es el del Drawer: Base UI lo conecta al `aria-labelledby` de la hoja.
+  const Title = useInDrawer()?.Title ?? PopoverPrimitive.Title
+  return <Title data-slot="popover-title" className={cn("text-headline text-label", className)} {...props} />
 }
 
 type PopoverDescriptionProps = WithClassName<PopoverPrimitive.Description.Props>
 
 function PopoverDescription({ className, ...props }: PopoverDescriptionProps) {
-  return <PopoverPrimitive.Description data-slot="popover-description" className={cn("text-callout text-label-secondary", className)} {...props} />
+  const Description = useInDrawer()?.Description ?? PopoverPrimitive.Description
+  return <Description data-slot="popover-description" className={cn("text-callout text-label-secondary", className)} {...props} />
 }
 
 export {
@@ -62,6 +69,7 @@ export {
   PopoverTitle,
   PopoverTrigger,
   type PopoverContentProps,
+  type PopoverProps,
   type PopoverDescriptionProps,
   type PopoverTitleProps,
 }

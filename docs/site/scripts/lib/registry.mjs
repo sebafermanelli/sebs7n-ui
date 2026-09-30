@@ -59,6 +59,8 @@ export function rewriteImports(source) {
     // pide el Tooltip desde `internal/`, con `../components/`.
     .replace(/import\("\.\/([a-z0-9-]+)\.js"\)/g, 'import("@/components/ui/$1")')
     .replace(/import\("\.\.\/components\/([a-z0-9-]+)\.js"\)/g, 'import("@/components/ui/$1")')
+    // Y desde `internal/` a `internal/` (2.5): el popover pide su hoja mobile recién en un teléfono.
+    .replace(/import\("\.\.\/internal\/([a-z0-9-]+)\.js"\)/g, (_, name) => `import("@/lib/sebs7n-ui/${libFile(name)}")`)
     // Estático desde `internal/` (R8): la base de SortableList y SortableGrid usa `ListRow`.
     .replace(/from "\.\.\/components\/([a-z0-9-]+)\.js"/g, 'from "@/components/ui/$1"')
 }
@@ -82,7 +84,7 @@ export function npmDependencies(source) {
 function registryDependencies(source, site) {
   const deps = new Set([`${site}/r/theme.json`])
   if (/from "\.\.\/lib\/utils\.js"/.test(source)) deps.add(`${site}/r/utils.json`)
-  for (const [, name] of source.matchAll(/from "\.\.\/(?:lib|internal)\/([a-z0-9-]+)\.js"/g)) {
+  for (const [, name] of source.matchAll(/(?:from "|import\(")\.\.\/(?:lib|internal)\/([a-z0-9-]+)\.js"/g)) {
     if (name !== "utils") deps.add(`${site}/r/lib-${name}.json`)
   }
   for (const [, name] of source.matchAll(/from "\.\.\/variants\/([a-z0-9-]+)\.js"/g)) deps.add(`${site}/r/variants-${name}.json`)

@@ -47,6 +47,14 @@ que iCloud no tiene (Switch, Tooltip, toasts, Tree, Stepper…) se deriva de sus
   (irreversible) · Sheet (panel lateral) · Popover (interactivo anclado) · Tooltip (una línea) ·
   `toast()` (confirmación) · `Alert` (sigue siendo verdad). Select ≤ ~8 fijas · Combobox (valor de
   la lista) · Autocomplete (texto libre) · RadioGroup 2–5 visibles.
+- **Popups en pantalla angosta (< 640 px, 2.5):** como iOS, que iCloud web hereda: el popover de
+  **contenido** se adapta a la hoja de abajo y el **menú** no. `Popover`, `DatePicker` y
+  `ColorPicker` pasan solos a `Drawer` (`internal/adaptive-popover.tsx`; `mobile="popover"` en
+  `Popover` los deja anclados); `DropdownMenu`, `ContextMenu`, `Menubar`, `Select`, `Combobox`,
+  `NavigationMenu`, `HoverCard` y `Tooltip` siguen anclados. **Ningún popup se sale del viewport:**
+  `collisionPadding={8}`, `max-w-(--available-width)` y `max-h-(--available-height)` en la superficie,
+  y al costado (`side="right"`) sin lugar cae arriba o abajo (`internal/collision.ts`). Un popup nuevo
+  con Positioner hace lo mismo; lo cubre `test/components/popups-mobile.test.tsx`.
 - **Trampas de Base UI:** triggers con `render={<Button … />}`, no `asChild`. `DropdownMenuLabel`
   dentro de `DropdownMenuGroup`. `NavigationMenuViewport` una sola vez. `AlertDialogAction` no
   cierra sola (para poder mostrar `loading`).

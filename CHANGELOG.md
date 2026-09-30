@@ -2,6 +2,7 @@
 
 Una línea por versión, la más nueva arriba. Versionado [SemVer 2.0.0](https://semver.org/lang/es/).
 
+- **2.5.0** (sin publicar) — `Popover`, `DatePicker` y `ColorPicker` se abren como la hoja de abajo (`Drawer`) en pantallas de menos de 640 px (`mobile="popover"` en `Popover` los deja anclados); ningún popup se sale del viewport (`collisionPadding` 8, `--available-width`/`--available-height`, y al costado sin lugar cae arriba o abajo); `Toggle` es `md` (36) por defecto y 28 dentro de una `Toolbar`.
 - **2.4.1** (2026-09-30) — El separador entre segmentos de `ToggleGroup` se centra en el alto del ítem (en `md` quedaba corrido hacia arriba).
 - **2.4.0** (2026-09-30) — Filtros y montos, sin romper la API. `ToggleGroup`: `size` por defecto `md` (36, como la búsqueda y los `Select`; en una `Toolbar` sigue en 28), `required` (siempre uno prendido y validación en `Form`), «Todas» con `value=""` e ítems link (`href` o `render={<Link href />}`, con `aria-current`). `NumberField`: `currency` (formato de moneda, `step="any"` y respaldo a 2 decimales con un código inválido), locale por defecto desde `labels.numberField.locale`, `autoFocus` e `inputRef` al input visible. Los avisos de desarrollo ya no viajan en el bundle de producción.
 - **2.3.1** (2026-09-30) — `DataTable`: «Cargar más» pasa a `md`, el tamaño de los botones de contenido (la paginación sigue en `sm`).

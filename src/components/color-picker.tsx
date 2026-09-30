@@ -1,8 +1,8 @@
 "use client"
 
 import * as React from "react"
-import { Popover as PopoverPrimitive } from "@base-ui/react/popover"
 
+import { AdaptivePopoverRoot, AdaptivePopup, AdaptiveTrigger } from "../internal/adaptive-popover.js"
 import { defined } from "../internal/defined.js"
 import { isSameColor, oklchOfHex } from "../lib/color.js"
 import { hexOfOklch, type Oklch } from "../lib/contrast.js"
@@ -15,7 +15,6 @@ import {
   inputPaddingClassName,
   inputSizeClassName,
 } from "../variants/input.js"
-import { floatingPopupClassName } from "../variants/overlay.js"
 import { sliderThumbClassName, sliderThumbPeerActiveClassName } from "../variants/slider.js"
 import { Input } from "./input.js"
 import { Label } from "./label.js"
@@ -116,8 +115,8 @@ function ColorPicker({
   }
 
   return (
-    <PopoverPrimitive.Root onOpenChange={onOpenChange} open={open}>
-      <PopoverPrimitive.Trigger
+    <AdaptivePopoverRoot onOpenChange={onOpenChange} open={open}>
+      <AdaptiveTrigger
         data-slot="color-picker"
         data-size={size}
         disabled={disabled}
@@ -138,16 +137,14 @@ function ColorPicker({
       >
         <Muestra className="size-6" color={color} />
         <span className="min-w-0 flex-1 truncate text-mono-body uppercase">{hex}</span>
-      </PopoverPrimitive.Trigger>
+      </AdaptiveTrigger>
       {name && <input name={name} type="hidden" value={hex} />}
-      <PopoverPrimitive.Portal>
-        <PopoverPrimitive.Positioner align="start" className="isolate z-50" side="bottom" sideOffset={6}>
-          <PopoverPrimitive.Popup
+      <AdaptivePopup align="start" drawerClassName="px-5 pt-4 pb-5 [&>:first-child]:pe-0" side="bottom" sideOffset={6}
             aria-label={labels.popup}
             data-slot="color-picker-popup"
             // `p-4` y no el `p-3` del popover común (2.0): con 12 de borde y 16 entre bloques, el
             // panel quedaba más apretado por fuera que por dentro.
-            className={cn(floatingPopupClassName, "w-80 gap-4 p-4", popupClassName)}
+            className={cn("w-80 gap-4 p-4", popupClassName)}
           >
             <Tabs defaultValue="palette">
               <TabsList aria-label={labels.tabs} className="w-full" variant="segmented">
@@ -173,10 +170,8 @@ function ColorPicker({
                 {typeof footer === "function" ? footer(color) : footer}
               </div>
             )}
-          </PopoverPrimitive.Popup>
-        </PopoverPrimitive.Positioner>
-      </PopoverPrimitive.Portal>
-    </PopoverPrimitive.Root>
+          </AdaptivePopup>
+    </AdaptivePopoverRoot>
   )
 }
 

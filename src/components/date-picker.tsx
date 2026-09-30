@@ -1,9 +1,9 @@
 "use client"
 
 import * as React from "react"
-import { Popover as PopoverPrimitive } from "@base-ui/react/popover"
 import { CalendarIcon } from "lucide-react"
 
+import { AdaptivePopoverRoot, AdaptivePopup, AdaptiveTrigger } from "../internal/adaptive-popover.js"
 import { defined } from "../internal/defined.js"
 import { useFieldControl } from "../internal/field-control.js"
 import { useFormReset } from "../internal/form-reset.js"
@@ -18,7 +18,6 @@ import {
   inputPaddingClassName,
   inputSizeClassName,
 } from "../variants/input.js"
-import { floatingPopupClassName } from "../variants/overlay.js"
 import { Button } from "./button.js"
 import { Calendar } from "./calendar.js"
 
@@ -197,8 +196,8 @@ function DatePicker(props: DatePickerProps) {
   const completo = mode === "single" ? iso : desde && hasta ? `${desde}/${hasta}` : ""
 
   return (
-    <PopoverPrimitive.Root onOpenChange={abrir} open={abierto}>
-      <PopoverPrimitive.Trigger
+    <AdaptivePopoverRoot onOpenChange={abrir} open={abierto}>
+      <AdaptiveTrigger
         {...rest}
         ref={triggerRef}
         id={field.id}
@@ -233,7 +232,7 @@ function DatePicker(props: DatePickerProps) {
       >
         <CalendarIcon aria-hidden="true" />
         <span className="min-w-0 flex-1 truncate tabular-nums" id={textoId}>{texto || (mode === "range" ? labels.rangePlaceholder : labels.placeholder)}</span>
-      </PopoverPrimitive.Trigger>
+      </AdaptiveTrigger>
       {nombre && mode === "single" && <input name={nombre} type="hidden" value={iso} />}
       {nombre && mode === "range" && (
         <>
@@ -256,12 +255,10 @@ function DatePicker(props: DatePickerProps) {
           value={completo}
         />
       )}
-      <PopoverPrimitive.Portal>
-        <PopoverPrimitive.Positioner align="start" className="isolate z-50" side="bottom" sideOffset={6}>
-          <PopoverPrimitive.Popup
+      <AdaptivePopup align="start" drawerClassName="px-5 pt-4 pb-5 [&>:first-child]:pe-0" side="bottom" sideOffset={6}
             aria-label={labels.calendar}
             data-slot="date-picker-popup"
-            className={cn(floatingPopupClassName, "w-auto p-3", popupClassName)}
+            className={cn("w-auto p-3", popupClassName)}
           >
             {mode === "range" ? (
               <Calendar {...calendario} mode="range" onValueChange={cambiar} value={rango} />
@@ -277,10 +274,8 @@ function DatePicker(props: DatePickerProps) {
                 </Button>
               </div>
             )}
-          </PopoverPrimitive.Popup>
-        </PopoverPrimitive.Positioner>
-      </PopoverPrimitive.Portal>
-    </PopoverPrimitive.Root>
+          </AdaptivePopup>
+    </AdaptivePopoverRoot>
   )
 }
 

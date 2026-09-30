@@ -688,6 +688,7 @@ export const COMPONENTS = {
       "El popup vive en un portal con `z-50` y devuelve el foco al trigger al cerrar.",
     ],
     usage: [
+      "En el teléfono la lista sigue anclada, como el pop-up button de iOS, y nunca pasa del ancho ni del alto que queda en la pantalla.",
       "**Hasta ~8 opciones fijas.** Más que eso, o si el usuario sabe lo que busca, `Combobox`.",
       "Para 2 o 3 opciones excluyentes que entran en pantalla, `RadioGroup` o `ToggleGroup`: se ven todas sin abrir nada.",
       "**La lista se abre encima** (2.0): el ⌃⌄ del trigger lo avisa, con la opción elegida sobre el valor. Las opciones son las de un menú de iCloud (30 px) y la elegida lleva el círculo de acento a la derecha, como el «View as» de Drive. Si el Select vive pegado al borde de la ventana o se abre con el dedo, Base UI la hace bajar como un menú. Para que baje siempre, `alignItemWithTrigger={false}` en `SelectContent`.",
@@ -980,6 +981,7 @@ export const COMPONENTS = {
       "Dentro de un `Field` se registra como su control: `FieldLabel` lo nombra junto con la fecha («Vencimiento 27 sept 2026»), `FieldDescription` y `FieldError` lo describen y `Form` lo enfoca si queda inválido al enviar.",
     ],
     usage: [
+      "En una pantalla angosta (< 640 px) el calendario se abre en la hoja de abajo, como el `Popover`: a todo el ancho, arrastrable y con la X. Con `numberOfMonths={2}` los meses se apilan.",
       "Idioma y semana para toda la app: `<LabelsProvider value={{ dates: { locale: \"en-US\", weekStartsOn: 0 } }}>` (también `format` para el campo de `DatePicker`). Lo leen `Calendar`, `DatePicker`, `DateTimePicker` y `CalendarView`; la prop de cada uno gana.",
       "Para fechas que se eligen mirando un calendario: un turno, un vencimiento cercano, un período.",
       "Una fecha lejana no se recorre mes por mes: el título del calendario abre la grilla de meses, y su año la de años. Si lo normal es tipearla —un vencimiento que se copia de un papel—, va un `Input`.",
@@ -1149,6 +1151,7 @@ export const COMPONENTS = {
       "**El componente no opina sobre el contraste del color elegido.** Si el color va a llevar texto encima, medilo con `sebs7n-ui/lib/contrast` y mostralo en `footer`.",
     ],
     usage: [
+      "En una pantalla angosta (< 640 px) el panel se abre en la hoja de abajo, como el `Popover`.",
       "Para elegir un color libre: una etiqueta, una categoría, el color de marca. Si las opciones son cinco y fijas, es un `RadioGroup` o un `ToggleGroup`.",
       "`recent` muestra los últimos colores usados. El componente no los guarda: la app decide qué cuenta como «usado» y dónde vive la lista. Lo más común es sumar el color al cerrar, con `onOpenChange`.",
       "El valor es OKLCH (`[0.573, 0.214, 258]`). Para guardar o mostrar un hexadecimal están `hexOfOklch` y `oklchOfHex`; con `name`, el formulario lo recibe ya como `#0070f3`.",
@@ -1672,18 +1675,22 @@ export const COMPONENTS = {
     description: "Una tarjeta anclada a un control, con contenido interactivo.",
     keyboard: [["Enter · Espacio", "Abre."], ["Escape", "Cierra y devuelve el foco al trigger."], ["Tab", "Recorre el contenido y sale."]],
     a11y: [
-      "El trigger lleva `aria-expanded` y `aria-controls`, puestos por Base UI.",
+      "El trigger lleva `aria-expanded` y `aria-controls`, puestos por Base UI. En la hoja mobile, `aria-expanded` sigue a la hoja.",
       "A diferencia del `Tooltip`, el contenido es alcanzable con el teclado: puede tener inputs y botones.",
+      "En la hoja mobile el foco queda adentro, Escape y la X cierran (arrastrar es un atajo, no el único camino) y el foco vuelve al trigger. El nombre de la hoja es el `PopoverTitle`; sin título, el `aria-label` del `PopoverContent` o, si tampoco, el nombre del trigger.",
     ],
     usage: [
       "Si el contenido es una lista de acciones, es un `DropdownMenu`. Si es solo texto de ayuda, un `Tooltip`.",
-      "En mobile un popover ancho se sale de la pantalla: usá `Sheet`.",
+      "**En una pantalla angosta (< 640 px) se presenta solo como la hoja de abajo** (`Drawer`): arrastrable, a todo el ancho, con la X. Es lo que hace el popover de iOS en un iPhone y lo que hereda iCloud web. No hay que cambiar nada en la app: ni un `Sheet` aparte para mobile ni un `md:hidden`. El ancho (`w-80`) no viaja a la hoja.",
+      "`mobile=\"popover\"` en `Popover` lo deja anclado también en el teléfono, para un popover chico que entra en cualquier pantalla. Anclado, nunca pasa del lugar que queda (`--available-width` y `--available-height`, 8 px contra el borde): se achica y el contenido scrollea adentro.",
+      "Un panel de avisos, una lista, un filtro con campos: `Popover`, no `DropdownMenu`. El menú es para acciones y en el teléfono sigue anclado.",
       "Es el popover de iCloud: radio 12, opaco, con el filo de 1 px y la sombra de `shadow-menu`. Mide 256 px (`w-64`) con 16 de aire. Si el contenido pide más —un formulario con fechas—, `className=\"w-72\"` o lo que haga falta; no más de 320.",
       "`translucent` solo sobre un wallpaper (`AppShell ambient`), como el acceso rápido de iCloud: adentro de una app el popover es opaco.",
     ],
     props: {
       Popover: {
         ...heredadas("open", "defaultOpen", "onOpenChange", "modal", "actionsRef"),
+        mobile: "Cómo se presenta en una pantalla angosta (< 640 px). `\"drawer\"` (por defecto): la hoja de abajo, arrastrable, con la X y el foco adentro. `\"popover\"`: anclado igual que en desktop.",
         modal: "Con `true`, mientras está abierto el resto de la página no recibe clicks ni foco. Con `\"trap-focus\"` atrapa el foco pero deja pasar los clicks de afuera.",
       },
       PopoverContent: {
@@ -1768,6 +1775,7 @@ export const COMPONENTS = {
     ],
     usage: [
       "**`NavigationMenu` si los ítems navegan, `DropdownMenu` si ejecutan algo.** No es cosmético: el modo de navegación por links de un lector no ve los `menuitem`.",
+      "**En el teléfono sigue anclado, no pasa a hoja** (como el menú de iOS, que no se adapta): es corto y son acciones. Nunca se sale de la pantalla: no pasa del lugar que queda (`--available-width` / `--available-height`, 8 px contra el borde) y, pedido al costado (`side=\"right\"`) sin lugar, cae arriba o abajo. Si lo que va adentro es contenido —avisos, una lista para leer—, es un `Popover`, que en el teléfono sí pasa a hoja.",
       "**`DropdownMenuLabel` va dentro de `DropdownMenuGroup`.** Suelto, Base UI tira la página abajo.",
       "**Medidas de iCloud** (R3): panel de radio 12 con 5 de aire y 208 px de mínimo; ítem de 30 px, 14/400, íconos de 16 y el primero en el acento; títulos de grupo como filas de 14/600; separadores con 11 de margen; deshabilitado al 30 %.",
       "Un `Badge` adentro de un ítem va en `size=\"sm\"` (20 px).",
