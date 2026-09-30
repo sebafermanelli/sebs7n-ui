@@ -1,6 +1,6 @@
 {
   "name": "sebs7n-ui",
-  "version": "2.1.2",
+  "version": "2.2.0",
   "description": "Design system para React con el lenguaje visual de iCloud web sobre las primitivas de shadcn/ui base-nova (Base UI).",
   "keywords": [
     "design-system",
