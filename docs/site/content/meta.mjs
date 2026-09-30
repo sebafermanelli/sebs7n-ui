@@ -1114,12 +1114,13 @@ export const COMPONENTS = {
     a11y: [
       "No tiene rol ni foco: envuelve el contenido, que sigue siendo interactivo. Arrastrar es un atajo; **el contenido tiene que traer su botón** para el mismo resultado sin arrastrar (WCAG 2.5.7).",
       "El anillo y el tinte mientras se arrastra son decorativos (`aria-hidden`) y no reciben el puntero.",
-      "Lo que entra se anuncia en una región viva («Archivos agregados: factura.pdf»); los rechazos aparecen abajo del contenido con `role=\"alert\"`. Mientras corre un `validate` asíncrono lleva `aria-busy`.",
+      "Lo que entra se anuncia en una región viva («Archivos agregados: factura.pdf»), que se vacía antes de cada anuncio para que soltar el mismo archivo dos veces se lea dos veces; los rechazos aparecen abajo del contenido con `role=\"alert\"`. Mientras corre un `validate` asíncrono lleva `aria-busy`.",
     ],
     usage: [
       "Para una sección que ya tiene su «Agregar»: soltar un archivo encima abre el mismo formulario con el archivo puesto (`onDrop={([file]) => openForm(file)}`), y ahí el `DropZone` del formulario lo muestra. Para elegir y listar archivos en un formulario, `DropZone`.",
       "Valida como `DropZone`: `accept`, `maxSize` (base 1024, `formatSize` para escribirlo de otra forma) y `validate` (puede ser asíncrona). Sin `multiple` llega uno solo, el resto se avisa, y si se suelta otro mientras valida gana el último.",
-      "El soltar no sube: una `DropTarget` adentro de otra (o dentro de un `DropZone scope=\"window\"`) recibe sola. No guarda archivos ni tiene `name`.",
+      "Lo que toma algo de adentro es de eso: una `DropTarget` anidada, un `DropZone` o un `<input type=\"file\">` nativo reciben su archivo y la de afuera solo se apaga. Con un `DropZone scope=\"window\"` en la página, un soltar sobre la `DropTarget` es de ella. La marca es el `preventDefault` del soltar, no `stopPropagation`: un soltar propio que haga `preventDefault` también la deja afuera. No guarda archivos ni tiene `name`.",
+      "Los rechazos quedan abajo hasta el próximo arrastre o soltar: no hay botón para cerrarlos ni se van solos con el tiempo.",
       "Los textos son los de `DropZone` (`labels.dropZone`: `drop`, `added`, `invalidType`, `tooLarge`, `tooMany`, `locale`). Solo por subpath (`sebs7n-ui/drop-target`).",
     ],
     props: {

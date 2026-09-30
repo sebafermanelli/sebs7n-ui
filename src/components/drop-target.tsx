@@ -50,7 +50,9 @@ type DropTargetProps = Omit<React.ComponentProps<"div">, "onDrop"> & {
  *
  * **Arrastrar es un atajo, no el único camino** (WCAG 2.5.7): el contenido tiene que traer su botón
  * para elegir el archivo (el formulario con su `DropZone`). No guarda archivos ni tiene `name`: para
- * eso está `DropZone`. Un soltar no sube a una `DropTarget` de afuera.
+ * eso está `DropZone`. Lo que toma algo de adentro (otra `DropTarget`, un `DropZone`, un
+ * `<input type="file">`) es de eso: la de afuera solo se apaga. Los rechazos quedan hasta el próximo
+ * arrastre o soltar.
  */
 function DropTarget({
   onDrop,
@@ -76,12 +78,39 @@ function DropTarget({
   // Cada soltar lleva un número: sin `multiple`, uno que termina de validar después de otro más nuevo
   // se descarta.
   const generation = React.useRef(0)
-
+  // Una `validate` asíncrona que termina después de desmontar no llama a `onDrop` ni toca el estado.
+  const mounted = React.useRef(true)
+  const announceTimer = React.useRef<ReturnType<typeof setTimeout>>(undefined)
   React.useEffect(() => {
-    if (!disabled) return
+    mounted.current = true
+    return () => {
+      mounted.current = false
+      clearTimeout(announceTimer.current)
+    }
+  }, [])
+
+  const reset = () => {
     depth.current = 0
     setOver(false)
+  }
+
+  React.useEffect(() => {
+    if (disabled) reset()
   }, [disabled])
+
+  // Mientras está prendida, cualquier fin del arrastre la apaga: un soltar que tomó otro (una zona de
+  // adentro, otra de la página) o que cayó afuera, y el `dragend` de un arrastre cancelado. Sin esto el
+  // contador se desbalancea —el `dragenter` subió, el `dragleave` no llega— y el anillo queda pegado.
+  // En captura, para enterarse aunque alguien corte la propagación.
+  React.useEffect(() => {
+    if (!over) return
+    window.addEventListener("drop", reset, true)
+    window.addEventListener("dragend", reset, true)
+    return () => {
+      window.removeEventListener("drop", reset, true)
+      window.removeEventListener("dragend", reset, true)
+    }
+  }, [over])
 
   const receive = (list: FileList | null | undefined) => {
     const incoming = Array.from(list ?? [])
@@ -102,10 +131,15 @@ function DropTarget({
       })
       if (!multiple) for (const file of valid.slice(1)) errors.push(`${file.name} ${labels.tooMany} 1`)
       const accepted = multiple ? valid : valid.slice(0, 1)
-      if (!multiple && batch !== generation.current) return
+      if (!mounted.current || (!multiple && batch !== generation.current)) return
       setProblems(errors)
       if (!accepted.length) return
-      setStatus(`${labels.added} ${accepted.map((file) => file.name).join(", ")}`)
+      // Vaciar y recién después escribir: soltar el mismo archivo dos veces deja el mismo texto, el DOM
+      // no cambia y el lector no lo repite.
+      const message = `${labels.added} ${accepted.map((file) => file.name).join(", ")}`
+      setStatus("")
+      clearTimeout(announceTimer.current)
+      announceTimer.current = setTimeout(() => setStatus(message), 100)
       onDrop(accepted)
     }
     const results = candidates.map((file) => {
@@ -120,6 +154,7 @@ function DropTarget({
     if (!results.some((result) => result instanceof Promise)) return finish(results as (string | undefined)[])
     setValidating((count) => count + 1)
     void Promise.all(results).then((messages) => {
+      if (!mounted.current) return
       setValidating((count) => count - 1)
       finish(messages)
     })
@@ -133,9 +168,13 @@ function DropTarget({
           event.preventDefault()
           depth.current++
           setOver(true)
+          // Los rechazos del soltar anterior se van con el próximo intento.
+          setProblems([])
         },
         onDragOver: (event: React.DragEvent) => {
-          if (!hasFiles(event)) return
+          // Si ya lo tomó algo de adentro (un `DropZone`, otra `DropTarget`, un `<input type="file">`),
+          // es suyo: ni el `preventDefault` ni el `dropEffect` son de esta.
+          if (!hasFiles(event) || event.defaultPrevented || isFileInput(event.target)) return
           event.preventDefault()
           event.dataTransfer.dropEffect = "copy"
         },
@@ -146,11 +185,12 @@ function DropTarget({
         },
         onDrop: (event: React.DragEvent) => {
           if (!hasFiles(event)) return
+          reset()
+          // Sin `stopPropagation`: el soltar sube para que las de afuera se apaguen. El `preventDefault`
+          // es la marca de «ya lo tomó alguien» que miran una `DropTarget` de afuera y la ventana de un
+          // `DropZone scope="window"`. Un `<input type="file">` nativo recibe su archivo solo.
+          if (event.defaultPrevented || isFileInput(event.target)) return
           event.preventDefault()
-          // Una `DropTarget` de afuera (o la ventana de un `DropZone scope="window"`) no lo recibe también.
-          event.stopPropagation()
-          depth.current = 0
-          setOver(false)
           receive(event.dataTransfer.files)
         },
       }
@@ -191,6 +231,11 @@ function DropTarget({
       </span>
     </div>
   )
+}
+
+/** Un `<input type="file">` habilitado, que recibe el archivo soltado por su cuenta. */
+function isFileInput(target: EventTarget): boolean {
+  return target instanceof HTMLInputElement && target.type === "file" && !target.disabled
 }
 
 /** El texto de un rechazo de `validate`: el `message` del error, o el valor como texto. */

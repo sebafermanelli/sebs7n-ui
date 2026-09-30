@@ -333,9 +333,11 @@ function DropZone({
     }
     const drop = (event: DragEvent) => {
       if (!hasFiles(event)) return
-      event.preventDefault()
       depth = 0
       setWindowDrag(false)
+      // Un soltar que ya tomó otra zona de la página (una `DropTarget`, un editor) no se agrega también.
+      if (event.defaultPrevented) return
+      event.preventDefault()
       latestAdd.current(event.dataTransfer?.files)
     }
     window.addEventListener("dragenter", enter)

@@ -4,6 +4,7 @@ import { renderToString } from "react-dom/server"
 import { describe, expect, it, vi } from "vitest"
 
 import { DropTarget } from "../../src/components/drop-target"
+import { DropZone } from "../../src/components/drop-zone"
 import { LabelsProvider } from "../../src/lib/labels"
 
 const pdf = (name = "factura-0012.pdf", size = 96_000) => new File([new Uint8Array(size)], name, { type: "application/pdf", lastModified: 1 })
@@ -77,8 +78,38 @@ describe("DropTarget", () => {
     drop(root(), [pdf()])
     expect(onDrop).toHaveBeenCalledWith([expect.objectContaining({ name: "factura-0012.pdf" })])
     expect(status()).toHaveAttribute("role", "status")
-    expect(status()).toHaveTextContent("Archivos agregados: factura-0012.pdf")
-    expect(overlay()).toBeNull()
+    return waitFor(() => expect(status()).toHaveTextContent("Archivos agregados: factura-0012.pdf")).then(() =>
+      expect(overlay()).toBeNull()
+    )
+  })
+
+  it("soltar el mismo archivo dos veces lo vuelve a anunciar: vacía la región y la vuelve a llenar", async () => {
+    render(<Invoices />)
+    drop(root(), [pdf()])
+    await waitFor(() => expect(status()).toHaveTextContent("Archivos agregados: factura-0012.pdf"))
+    drop(root(), [pdf()])
+    // El mismo texto no cambia el DOM y el lector no lo repite: primero se vacía.
+    expect(status()).toHaveTextContent("")
+    expect(status()!.textContent).toBe("")
+    await waitFor(() => expect(status()).toHaveTextContent("Archivos agregados: factura-0012.pdf"))
+  })
+
+  it("los errores se van con el próximo arrastre", () => {
+    render(<Invoices accept=".pdf" />)
+    drop(root(), [png()])
+    expect(errors()).not.toBeNull()
+    enter(root())
+    expect(errors()).toBeNull()
+  })
+
+  it("una validate asíncrona que termina después de desmontar no llama a onDrop", async () => {
+    const onDrop = vi.fn()
+    let resolve!: (message: string | undefined) => void
+    const { unmount } = render(<Invoices onDrop={onDrop} validate={() => new Promise((done) => (resolve = done))} />)
+    drop(root(), [pdf()])
+    unmount()
+    await act(async () => resolve(undefined))
+    expect(onDrop).not.toHaveBeenCalled()
   })
 
   it("accept y maxSize: lo que no pasa no llega a onDrop y el error va en línea", () => {
@@ -141,19 +172,83 @@ describe("DropTarget", () => {
     expect(onDrop).not.toHaveBeenCalled()
   })
 
-  it("el soltar no sube a otra zona de afuera", () => {
+  it("anidadas: recibe solo la de adentro y la de afuera no queda prendida", () => {
     const outer = vi.fn()
     const inner = vi.fn()
     render(
-      <DropTarget onDrop={outer}>
+      <DropTarget data-testid="outer" onDrop={outer}>
         <DropTarget data-testid="inner" onDrop={inner}>
           <p>Factura</p>
         </DropTarget>
       </DropTarget>
     )
+    enter(screen.getByTestId("inner"))
+    expect(screen.getByTestId("outer")).toHaveAttribute("data-dragging")
     drop(screen.getByTestId("inner"), [pdf()])
     expect(inner).toHaveBeenCalledTimes(1)
     expect(outer).not.toHaveBeenCalled()
+    expect(screen.getByTestId("inner")).not.toHaveAttribute("data-dragging")
+    expect(screen.getByTestId("outer")).not.toHaveAttribute("data-dragging")
+    expect(overlay()).toBeNull()
+  })
+
+  it("con un DropZone scope=window en la página: el soltar es de la DropTarget y la ventana se apaga", () => {
+    const onDrop = vi.fn()
+    const onFilesChange = vi.fn()
+    render(
+      <>
+        <DropZone aria-label="Adjuntos" scope="window" onFilesChange={onFilesChange} />
+        <Invoices onDrop={onDrop} />
+      </>
+    )
+    enter(root())
+    expect(document.querySelector("[data-slot=drop-zone-overlay]")).not.toBeNull()
+    drop(root(), [pdf()])
+    expect(onDrop).toHaveBeenCalledTimes(1)
+    expect(onFilesChange).not.toHaveBeenCalled()
+    expect(document.querySelector("[data-slot=drop-zone-overlay]")).toBeNull()
+  })
+
+  it("un DropZone adentro: el soltar es del DropZone, no de la DropTarget", () => {
+    const onDrop = vi.fn()
+    const onFilesChange = vi.fn()
+    render(
+      <DropTarget onDrop={onDrop}>
+        <DropZone aria-label="Adjuntos" onFilesChange={onFilesChange} />
+      </DropTarget>
+    )
+    const area = document.querySelector("[data-slot=drop-zone-area]")!
+    enter(area)
+    drop(area, [pdf()])
+    expect(onFilesChange).toHaveBeenCalledTimes(1)
+    expect(onDrop).not.toHaveBeenCalled()
+    expect(root()).not.toHaveAttribute("data-dragging")
+  })
+
+  it("un <input type=file> nativo adentro recibe su archivo: la DropTarget no le cancela el soltar", () => {
+    const onDrop = vi.fn()
+    render(
+      <DropTarget onDrop={onDrop}>
+        <input aria-label="Comprobante" type="file" />
+      </DropTarget>
+    )
+    const input = screen.getByLabelText("Comprobante")
+    enter(input)
+    // `fireEvent` devuelve `false` si alguien hizo `preventDefault`.
+    expect(fireEvent.dragOver(input, { dataTransfer: { types: ["Files"] } })).toBe(true)
+    expect(drop(input, [pdf()])).toBe(true)
+    expect(onDrop).not.toHaveBeenCalled()
+    expect(root()).not.toHaveAttribute("data-dragging")
+  })
+
+  it("un arrastre que termina afuera (dragend) o se suelta en otro lado apaga el anillo", () => {
+    render(<Invoices />)
+    enter(root())
+    fireEvent.dragEnd(document, { dataTransfer: { types: ["Files"] } })
+    expect(root()).not.toHaveAttribute("data-dragging")
+    enter(root())
+    drop(document.body, [pdf()])
+    expect(root()).not.toHaveAttribute("data-dragging")
   })
 
   it("los textos salen de los de DropZone (LabelsProvider) y la prop labels le gana", () => {
@@ -165,7 +260,7 @@ describe("DropTarget", () => {
     enter(root())
     expect(overlay()).toHaveTextContent("Drop to attach")
     drop(root(), [pdf()])
-    expect(status()).toHaveTextContent("Attached: factura-0012.pdf")
+    return waitFor(() => expect(status()).toHaveTextContent("Attached: factura-0012.pdf"))
   })
 
   it("renderiza en el servidor", () => {
