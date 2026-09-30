@@ -123,7 +123,13 @@ type SortableBaseProps<T> = SortableProps<T> &
     variant: "list" | "grid"
     /** Con manija o el ítem entero. */
     handle: boolean
-    itemClassName?: string | ((item: T, index: number) => string | undefined)
+    /**
+     * Las clases del `<li>` de cada ítem. La grilla llama a la función con `(item, index)` (2.0) y la
+     * lista con `(item, { index, dragging, editing })` (2.2): cada uno la tipa en su componente.
+     */
+    itemClassName?: string | ((item: T, state: never) => string | undefined)
+    /** Solo la lista: filas sin separador ni padding, para un `renderItem` que dibuja su card. */
+    plain?: boolean
   }
 
 type Optimistic<T> = { base: readonly T[]; next: T[] }
@@ -145,6 +151,7 @@ function SortableBase<T>({
   onRemove,
   labels: labelsProp,
   itemClassName,
+  plain = false,
   className,
   ref,
   ...props
@@ -365,7 +372,13 @@ function SortableBase<T>({
                   press={press}
                   draggable={draggable}
                   editing={editing}
-                  className={typeof itemClassName === "function" ? itemClassName(item, index) : itemClassName}
+                  className={
+                    typeof itemClassName === "function"
+                      ? (dragging: boolean) =>
+                          (itemClassName as (item: T, state: unknown) => string | undefined)(item, variant === "list" ? { index, dragging, editing } : index)
+                      : itemClassName
+                  }
+                  plain={plain}
                   handle={handle}
                   id={key}
                   index={index}
@@ -673,11 +686,13 @@ type SortableItemProps = {
   labels: SortableLabels
   variant: "list" | "grid"
   handle: boolean
-  className?: string
+  /** Una función si depende de si se está arrastrando (el `itemClassName` de la lista). */
+  className?: string | ((dragging: boolean) => string | undefined)
+  plain: boolean
   children: (state: SortableItemState) => React.ReactNode
 }
 
-function SortableItem({ id, onRemove, press, editing, draggable, index, label, labels, variant, handle, className, children }: SortableItemProps) {
+function SortableItem({ id, onRemove, press, editing, draggable, index, label, labels, variant, handle, className: classNameProp, plain, children }: SortableItemProps) {
   const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } = useSortable({
     id,
     animateLayoutChanges: variant === "grid" ? animateAlways : undefined,
@@ -689,6 +704,7 @@ function SortableItem({ id, onRemove, press, editing, draggable, index, label, l
   // Sin manija, el `<li>` no puede llevar `aria-pressed` (un `listitem` no es un botón): que está
   // tomada se dice en su descripción, antes de las instrucciones.
   const grabbedId = React.useId()
+  const className = typeof classNameProp === "function" ? classNameProp(isDragging) : classNameProp
   // `Translate` y no `Transform`: en una grilla con tarjetas de distinto ancho, dnd-kit escala la que
   // pasa por encima y el contenido se deforma.
   const style: React.CSSProperties = { transform: CSS.Translate.toString(transform), transition }
@@ -744,9 +760,16 @@ function SortableItem({ id, onRemove, press, editing, draggable, index, label, l
         style={style}
         data-dragging={isDragging ? "" : undefined}
         data-slot="sortable-list-item"
+        data-plain={plain ? "" : undefined}
         {...press}
-        // Mantenerla apretada entra en edición: sin seleccionar texto ni el globo de iOS.
-        className={cn("select-none [-webkit-touch-callout:none] data-dragging:z-10 data-dragging:bg-surface data-dragging:shadow-menu", motion, className)}
+        // Mantenerla apretada entra en edición: sin seleccionar texto ni el globo de iOS. `plain`: la
+        // fila de `ListRow` sin su separador ni su padding (el `div` de adentro es el de `ListRow`).
+        className={cn(
+          "select-none [-webkit-touch-callout:none] data-dragging:z-10 data-dragging:bg-surface data-dragging:shadow-menu",
+          plain && "before:hidden [&>div]:min-h-0 [&>div]:p-0",
+          motion,
+          className
+        )}
       >
         {remove}
         <div className="flex min-w-0 flex-1 items-center gap-3">{content}</div>

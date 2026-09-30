@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 import { SortableList } from "../../src/components/sortable-list"
 import { LabelsProvider } from "../../src/lib/labels"
+import { cn } from "../../src/lib/utils"
 import { hidratar } from "../hidratar"
 import { mockSortableRects } from "../sortable-rects"
 
@@ -188,6 +189,43 @@ describe("SortableList", () => {
       expect(screen.queryByRole("button", { name: /Reordenar/ })).toBeNull()
       rerender(<Invoices editing />)
       expect(screen.getByRole("button", { name: "Reordenar Factura 0012" })).toBeInTheDocument()
+    })
+  })
+
+  describe("itemClassName y plain (2.2)", () => {
+    it("itemClassName va al <li> de cada fila, como texto o según el ítem y su estado", async () => {
+      const user = userEvent.setup()
+      const seen: { index: number; dragging: boolean; editing: boolean }[] = []
+      render(
+        <Invoices
+          itemClassName={(invoice, state) => {
+            seen.push(state)
+            return cn(invoice.id === "0013" && "mt-4", state.dragging && "opacity-90")
+          }}
+        />
+      )
+      const rows = screen.getAllByRole("listitem")
+      expect(rows[1]).toHaveClass("mt-4")
+      expect(rows[0]).not.toHaveClass("mt-4")
+      expect(seen).toContainEqual({ index: 2, dragging: false, editing: true })
+      screen.getByRole("button", { name: "Reordenar Factura 0012" }).focus()
+      await user.keyboard(" ")
+      expect(screen.getAllByRole("listitem")[0]).toHaveClass("opacity-90")
+      await user.keyboard("{Escape}")
+    })
+
+    it("itemClassName como texto", () => {
+      render(<Invoices itemClassName="bg-fill-1" />)
+      for (const row of screen.getAllByRole("listitem")) expect(row).toHaveClass("bg-fill-1")
+    })
+
+    it("plain: sin separador ni padding de fila, para cuando renderItem dibuja su card", () => {
+      render(<Invoices plain />)
+      const row = screen.getAllByRole("listitem")[1]!
+      expect(row).toHaveAttribute("data-plain")
+      // El `div` de adentro es el de `ListRow`: la regla la lleva el paquete, no la app.
+      expect(row).toHaveClass("before:hidden", "[&>div]:p-0", "[&>div]:min-h-0")
+      expect(row.firstElementChild?.tagName).toBe("DIV")
     })
   })
 })

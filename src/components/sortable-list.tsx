@@ -30,10 +30,31 @@ import {
  * un `<li>` (un `<li>` adentro de otro rompe la hidratación). Usa `@dnd-kit/core`,
  * `@dnd-kit/sortable` y `@dnd-kit/utilities`, peers opcionales: los instala la app que lo usa.
  */
-type SortableListProps<T> = SortableProps<T> & Omit<React.ComponentProps<"ul">, "children">
+/** Lo que recibe `itemClassName` de `SortableList` como segundo argumento. */
+type SortableListItemState = {
+  index: number
+  /** `true` mientras esta fila es la que se arrastra. */
+  dragging: boolean
+  /** `true` en modo edición. */
+  editing: boolean
+}
+
+type SortableListProps<T> = SortableProps<T> &
+  Omit<React.ComponentProps<"ul">, "children"> & {
+    /**
+     * Las clases del `<li>` de cada fila, fijas o según el ítem y su estado (`dragging`, `editing`,
+     * `index`): así la app no apunta a la estructura de adentro con `[&>li]`.
+     */
+    itemClassName?: string | ((item: T, state: SortableListItemState) => string | undefined)
+    /**
+     * Filas sin el separador ni el padding de `ListRow`, para un `renderItem` que dibuja su propia
+     * card. El espacio entre filas va en `className` (`gap-4`).
+     */
+    plain?: boolean
+  }
 
 function SortableList<T>(props: SortableListProps<T>) {
   return <SortableBase handle variant="list" {...props} />
 }
 
-export { SortableAddButton, SortableList, sortableLabels, type SortableAddButtonProps, type SortableAddItem, type SortableItemState, type SortableLabels, type SortableListProps }
+export { SortableAddButton, SortableList, sortableLabels, type SortableAddButtonProps, type SortableAddItem, type SortableItemState, type SortableLabels, type SortableListItemState, type SortableListProps }
