@@ -96,7 +96,7 @@ zoom 200 % y 320 px sin scroll horizontal.
   `internal/field-control.ts`, que usa `@base-ui/react/internals/*` (no documentados). Por eso el peer
   está acotado a la menor probada (`>=1.8.0 <1.9.0`) y `test/base-ui-internals.test.tsx` lo
   verifica: al subir Base UI, correr los tests y recién ahí abrir el rango a la nueva menor.
-- **Barrel ≤ 58 kB gzip** (`.size-limit.js`, `npm run size`), ya en su tope; `button` por subpath
+- **Barrel ≤ 60 kB gzip** (`.size-limit.js`, `npm run size`), ya en su tope; `button` por subpath
   ≤ 12,5 kB. Todo salto se explica en el PR, y subir el umbral lo aprueba Sebastián.
 - **Server Components:** sin `"use client"` donde no hay estado; `variants/*` nunca lo lleva.
 - **Labels:** todo texto interno pasa por `Labels` / `LabelsProvider` (español por defecto); la prop

@@ -70,6 +70,11 @@ export default [
     // `currency`, `locale` del provider, `autoFocus` e `inputRef` en NumberField (≈ +0,34 KB), y se
     // fueron los mensajes de los avisos de desarrollo, que viajaban a producción (≈ −0,49 KB): el
     // chequeo de `NODE_ENV` pasó a ser literal y el bundler lo poda (`test/avisos-dev.test.ts`).
-    limit: "58 kB",
+    //
+    // 2.5: 59,4 KB. Los popups se contienen en el viewport (`internal/collision`) y Popover, DatePicker
+    // y ColorPicker pasan a hoja de abajo en pantallas angostas. La hoja se carga con `import()` solo
+    // por debajo de 640 px —el desktop no la paga—, pero size-limit suma el chunk diferido. Sebastián
+    // aprobó subir a 60 el 2026-09-30.
+    limit: "60 kB",
   },
 ]
