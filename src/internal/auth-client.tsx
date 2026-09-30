@@ -2,7 +2,7 @@
 
 import * as React from "react"
 
-import { defined } from "./defined.js"
+import { defined } from "../internal/defined.js"
 import { useLabels, type Labels } from "../lib/labels.js"
 
 /**
