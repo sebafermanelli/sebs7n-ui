@@ -6,35 +6,14 @@ import { CircleAlertIcon, FileIcon, UploadIcon, XIcon } from "lucide-react"
 
 import { defined } from "../internal/defined.js"
 import { useFieldControl } from "../internal/field-control.js"
-import { accepts, formatBytes, hasFiles, sameFile } from "../internal/files.js"
+import { accepts, dropZoneLabels, formatBytes, hasFiles, sameFile, type DropZoneLabels } from "../internal/files.js"
 import { useFormReset } from "../internal/form-reset.js"
 import { mergeRefs } from "../internal/merge-refs.js"
-import { useLabels, type Labels } from "../lib/labels.js"
+import { useLabels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
 import { Button } from "./button.js"
 import { List, ListRow } from "./list-row.js"
 import { Progress } from "./progress.js"
-
-/** Los textos de `DropZone`. `replace` y `addMore` (2.1) son opcionales: un objeto con las claves de 2.0 sigue valiendo. */
-type DropZoneLabels = NonNullable<Labels["dropZone"]>
-
-/**
- * Los textos por defecto. No están en `defaultLabels` porque el barrel no tenía lugar (ver el tipo
- * `Labels`).
- */
-const dropZoneLabels: Required<DropZoneLabels> = {
-  prompt: "Arrastrá archivos acá o hacé clic para elegirlos",
-  drop: "Soltá para agregarlos",
-  remove: "Quitar",
-  added: "Archivos agregados:",
-  removed: "Archivo quitado:",
-  invalidType: "no es de un tipo permitido",
-  tooLarge: "pesa más de",
-  tooMany: "no entra: el máximo es",
-  locale: "es-AR",
-  replace: "Elegir otro",
-  addMore: "Agregar más",
-}
 
 /**
  * Un recuadro para soltar archivos o elegirlos (clic, Enter o Espacio), con la lista de los que

@@ -1,6 +1,30 @@
 // Lo que comparten `DropZone` y `DropTarget`: el `accept`, los tamaños y los arrastres de archivos.
 import type * as React from "react"
 
+import type { Labels } from "../lib/labels.js"
+
+/** Los textos de `DropZone`. `replace` y `addMore` (2.1) son opcionales: un objeto con las claves de 2.0 sigue valiendo. */
+export type DropZoneLabels = NonNullable<Labels["dropZone"]>
+
+/**
+ * Los textos por defecto de `DropZone` y `DropTarget`. No están en `defaultLabels` porque el barrel no tenía lugar (ver el tipo
+ * `Labels`).
+ */
+export const dropZoneLabels: Required<DropZoneLabels> = {
+  prompt: "Arrastrá archivos acá o hacé clic para elegirlos",
+  drop: "Soltá para agregarlos",
+  remove: "Quitar",
+  added: "Archivos agregados:",
+  removed: "Archivo quitado:",
+  invalidType: "no es de un tipo permitido",
+  tooLarge: "pesa más de",
+  tooMany: "no entra: el máximo es",
+  locale: "es-AR",
+  replace: "Elegir otro",
+  addMore: "Agregar más",
+}
+
+
 /** `accept` como el del input: extensiones, `tipo/*` o el tipo exacto. */
 export function accepts(file: File, accept: string | undefined): boolean {
   if (!accept) return true
