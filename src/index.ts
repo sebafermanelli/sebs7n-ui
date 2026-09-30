@@ -49,6 +49,7 @@ export {
   commandItemIconClassName,
 } from "./variants/command.js"
 export { linkVariants } from "./variants/link.js"
+export { navbarLinkClassName } from "./variants/navbar-link.js"
 export { segmentedGroupClassName, segmentedItemClassName, segmentedThumbClassName, segmentedTrackClassName } from "./variants/segmented.js"
 export { sliderThumbClassName, sliderThumbDraggingClassName, sliderThumbPeerActiveClassName } from "./variants/slider.js"
 export {
@@ -202,5 +203,7 @@ export * from "./components/widget-card.js"
 //   `carousel`          sebs7n-ui/carousel
 // Y el de R9, `ListIndex`, con su texto fuera del barrel como los de R8.
 //   `list-index`        sebs7n-ui/list-index
+// Y los links de la barra (2.6), para no sumarle al barrel:
+//   `navbar-link`       sebs7n-ui/navbar-link
 // `lib/countries` y `lib/phone` tampoco entran: son los únicos de `lib/` solo por subpath (ver
 // `test/api-publica.test.ts`).

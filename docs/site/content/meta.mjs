@@ -2023,6 +2023,7 @@ export const COMPONENTS = {
     usage: [
       "`NavbarContent` termina a 16 del borde, como empieza: un avatar, un segmentado o un botón de texto al final no quedan pegados. Si lo último es un botón de ícono (`size=\"icon-*\"`), a 10, y su aire completa los 16 hasta el glifo. Lo mismo las barras de `AppShell`. Una segunda fila con `Toolbar variant=\"plain\"` adentro del `Navbar` lleva 4 de cada lado, así el texto de sus botones queda alineado. `maxWidth` centra el contenido en la columna del sitio.",
       "**Una sola barra, como iCloud**: a todo el ancho y sin cápsula. La píldora flotante de 1.x se fue en 2.0.",
+      "Los links de la barra son `NavbarLink` (`sebs7n-ui/navbar-link`), no botones `ghost`: texto `label-secondary` que pasa a `label` —más blanco en oscuro— con el puntero y en la página actual (`active`, que pone `aria-current`). El CTA («Ingresar», «Crear cuenta») sí es un `Button`, con el acento. Para un control de ícono con el mismo color, `navbarLinkClassName({ icon: true })`.",
       "`position=\"fixed\"` cuando el hero tiene que llegar hasta el borde de arriba; `sticky` (el default) en todo lo demás, para que el contenido no quede tapado.",
       "Una sola fila de 44px (`NavbarContent`, `0 6px 0 16px`): la marca a la izquierda, botones de ícono de 36 y un avatar de 28 a la derecha.",
       "Dentro de un `AppShell` no va: la barra global es su prop `header`, **opaca** adentro de una app (como Mail o Drive, donde el contenido scrollea adentro de los paneles, no debajo de la barra) y translúcida sobre el wallpaper (`AppShell ambient`).",
@@ -2040,7 +2041,31 @@ export const COMPONENTS = {
         style: "Se suma al `maxWidth` de la columna; lo que pongas gana.",
       },
     },
-    related: ["navigation-menu", "user-menu", "theme-switcher", "footer"],
+    related: ["navbar-link", "navigation-menu", "user-menu", "theme-switcher", "footer"],
+  },
+  "navbar-link": {
+    title: "NavbarLink",
+    group: "navegacion",
+    description: "El link de texto de la barra: secundario en reposo y más fuerte con el puntero y en la página actual, como los de icloud.com.",
+    keyboard: [["Enter", "Sigue el link."], ["Tab", "Entra y sale."]],
+    a11y: [
+      "Es un `<a>` real, sin `\"use client\"`: sirve en un Server Component y se puede abrir en otra pestaña.",
+      "`active` pone `aria-current=\"page\"`: el lector anuncia la página actual, no solo el color.",
+      "En reposo va en `label-secondary` (≥ 4,5:1 sobre la barra) y el activo en `label`. Con `icon`, el ícono solo pide `aria-label`.",
+    ],
+    usage: [
+      "Los links de un `Navbar` van con `NavbarLink`, no con botones `ghost`: se leen como texto, y el activo se marca por el color, sin relleno ni subrayado.",
+      "El CTA de la barra («Ingresar», «Crear cuenta») sí es un `Button`, con el acento: es la acción, no un destino más.",
+      "Con `next/link`: `render={<Link href=\"/ayuda\" />}`. Para un control de ícono de la barra con el mismo color (campana, carrito), `navbarLinkClassName({ icon: true })` de `sebs7n-ui/variants/navbar-link`.",
+    ],
+    props: {
+      NavbarLink: {
+        active: "La página actual: la pinta en `label` y pone `aria-current=\"page\"`.",
+        icon: "Un ícono solo, en el cuadrado de 28. Pide `aria-label`.",
+        render: "El link del router: `render={<Link href=\"/ayuda\" />}`. Sus props ganan.",
+      },
+    },
+    related: ["navbar", "text-link", "navigation-menu"],
   },
   "navigation-menu": {
     title: "NavigationMenu",

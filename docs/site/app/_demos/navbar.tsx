@@ -2,8 +2,8 @@
 
 import { UserIcon } from "lucide-react"
 import { Button } from "sebs7n-ui/button"
-import { buttonVariants } from "sebs7n-ui/variants/button"
 import { Navbar, NavbarContent } from "sebs7n-ui/navbar"
+import { NavbarLink } from "sebs7n-ui/navbar-link"
 
 /**
  * La barra global
@@ -18,9 +18,10 @@ export function Variantes() {
             Marca <span className="text-brand-900">Docs</span>
           </span>
           <nav aria-label="Demo de la barra" className="flex items-center gap-1">
-            <a className={buttonVariants({ variant: "ghost", size: "sm" })} href="#ejemplos">
-              Ayuda
-            </a>
+            <NavbarLink active href="#ejemplos">
+              Facturas
+            </NavbarLink>
+            <NavbarLink href="#ejemplos">Ayuda</NavbarLink>
             <Button aria-label="Cuenta" size="icon-md" variant="ghost">
               <UserIcon />
             </Button>
@@ -46,9 +47,7 @@ export function Column() {
       <Navbar>
         <NavbarContent maxWidth={480}>
           <span className="text-title-3 text-label">Facturación</span>
-          <a className={buttonVariants({ variant: "ghost", size: "sm" })} href="#ejemplos">
-            Precios
-          </a>
+          <NavbarLink href="#ejemplos">Precios</NavbarLink>
         </NavbarContent>
       </Navbar>
       <div className="mx-auto flex max-w-[480px] flex-col gap-3 px-4 py-6">
