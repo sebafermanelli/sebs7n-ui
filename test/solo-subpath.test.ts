@@ -44,6 +44,7 @@ const SOLO_SUBPATH = [
   "search-field",
   "tags-input",
   "rating",
+  "count-badge",
 ]
 
 describe("componentes solo por subpath", () => {
