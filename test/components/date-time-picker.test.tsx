@@ -50,8 +50,11 @@ describe("DateTimePicker", () => {
     await user.tab()
     expect(onValueChange).not.toHaveBeenCalled()
     await user.click(date())
-    await user.click(day("2026-09-15"))
-    expect(onValueChange).toHaveBeenLastCalledWith(new Date(2026, 8, 15, 18, 30))
+    // Sin valor, el calendario abre en el mes de hoy: un día fijo dejó de estar a la vista el 1/10/2026.
+    const hoy = new Date()
+    const mes = String(hoy.getMonth() + 1).padStart(2, "0")
+    await user.click(day(`${hoy.getFullYear()}-${mes}-15`))
+    expect(onValueChange).toHaveBeenLastCalledWith(new Date(hoy.getFullYear(), hoy.getMonth(), 15, 18, 30))
   })
 
   it("cambiar la hora con el teclado cambia el valor", async () => {
