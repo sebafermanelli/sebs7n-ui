@@ -90,7 +90,8 @@ describe("links de lo generado", () => {
   for (const fuente of fuentes) {
     const links = new Set<string>()
     for (const [, href] of fuente.texto.matchAll(/\]\((\/[^)\s]*)\)/g)) links.add(href!)
-    for (const [, href] of fuente.texto.matchAll(new RegExp(`${SITIO}(/[^)\\s"]*)`, "g"))) links.add(href!)
+    // Sin el backtick: una URL dentro de código (`shadcn add https://…/r/x.json`) termina ahí.
+    for (const [, href] of fuente.texto.matchAll(new RegExp(`${SITIO}(/[^)\\s"\`]*)`, "g"))) links.add(href!)
     if (!links.size) continue
     it(`${fuente.nombre}: todos resuelven`, () => {
       expect([...links].filter((href) => !existe(href))).toEqual([])

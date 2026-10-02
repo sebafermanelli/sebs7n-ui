@@ -2,7 +2,7 @@
 
 > Una app de facturación entera con sebs7n-ui: Inicio, Facturas, Clientes y Configuración con el estado compartido. Para copiar la estructura y cambiar los datos.
 
-Vivo en https://ui.sebastianfermanelli.com/templates/dashboard. Las reglas que sigue están en la [Guía para agentes](https://ui.sebastianfermanelli.com/docs/guia-agentes.md).
+En vivo: [ui.sebastianfermanelli.com/templates/dashboard](https://ui.sebastianfermanelli.com/templates/dashboard). Las reglas que sigue están en la [Guía para agentes](https://ui.sebastianfermanelli.com/docs/guia-agentes.md).
 
 ## Usarlo en una app
 

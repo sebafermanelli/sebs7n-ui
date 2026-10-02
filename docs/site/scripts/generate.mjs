@@ -17,6 +17,7 @@ import { extractExamples } from "./lib/examples.mjs"
 import { componentMarkdown, llmsTxt, pageMarkdown, table } from "./lib/markdown.mjs"
 import { componentSlugs, extractProps } from "./lib/props.mjs"
 import { buildRegistry } from "./lib/registry.mjs"
+import { buildDashboardBlock, readTemplate, templateMarkdown } from "./lib/template-block.mjs"
 import { readBackgrounds, readColors, readRadii, readShadows, readTypography } from "./lib/tokens.mjs"
 
 // La tabla de subpaths la genera el paquete desde su propio `exports`: el sitio
@@ -163,6 +164,12 @@ function loadPage(slug) {
 
 const pages = [
   {
+    slug: "guia-agentes",
+    title: "Guía para agentes",
+    description: "Las reglas de sistema y la anatomía de una app: lo que hay que leer antes de armar una pantalla con sebs7n-ui.",
+    body: loadPage("guia-agentes"),
+  },
+  {
     slug: "instalacion",
     title: "Instalación",
     description: "Una dependencia, un `@import` y cuatro variables de marca.",
@@ -301,6 +308,19 @@ for (const component of components) {
   writeFileSync(join(publicDir, `docs/components/${component.slug}.md`), text)
 }
 
+// El template de dashboard, leído del disco: su `.md` y su bloque salen de los mismos archivos.
+const templateFiles = readTemplate(join(here, "app/templates/dashboard"))
+const templateIntro = readFileSync(join(here, "content/templates/dashboard.md"), "utf8")
+const templateText = templateMarkdown({ intro: templateIntro, files: templateFiles })
+mkdirSync(join(publicDir, "templates"), { recursive: true })
+writeFileSync(join(publicDir, "templates/dashboard.md"), templateText)
+const TEMPLATE = {
+  title: "Template: dashboard operativo",
+  href: "/templates/dashboard",
+  description: "Una app entera (Inicio, Facturas, Clientes, Configuración) para copiar la estructura y cambiar los datos; con el código de cada archivo.",
+}
+const GUIDE = pages.find((page) => page.slug === "guia-agentes")
+
 // llms.txt + llms-full.txt
 writeFileSync(
   join(publicDir, "llms.txt"),
@@ -308,7 +328,11 @@ writeFileSync(
     site: SITE,
     blurb: BLURB,
     sections: [
-      { title: "Sistema", items: pages.map((page) => ({ ...page, href: `/docs/${page.slug}` })) },
+      {
+        title: "Empezá acá",
+        items: [{ title: GUIDE.title, description: GUIDE.description, href: `/docs/${GUIDE.slug}` }, TEMPLATE],
+      },
+      { title: "Sistema", items: pages.filter((page) => page !== GUIDE).map((page) => ({ ...page, href: `/docs/${page.slug}` })) },
       ...GROUPS.map((group) => ({
         title: group.title,
         items: components
@@ -344,7 +368,11 @@ writeFileSync(
     "",
     `Generado de ${SITE}. Cada sección es una página del sitio; la misma URL + ".md" devuelve solo esa sección.`,
     "",
-    ...markdowns.map((entry) => ["---", "", `Fuente: ${SITE}${entry.href}`, "", entry.text].join("\n")),
+    ...[
+      markdowns.find((entry) => entry.href === `/docs/${GUIDE.slug}`),
+      { href: TEMPLATE.href, text: templateText },
+      ...markdowns.filter((entry) => entry.href !== `/docs/${GUIDE.slug}`),
+    ].map((entry) => ["---", "", `Fuente: ${SITE}${entry.href}`, "", entry.text].join("\n")),
   ].join("\n")
 )
 
@@ -359,6 +387,7 @@ const registry = buildRegistry({
     description: component.description,
   })),
 })
+registry.items.push(buildDashboardBlock({ files: templateFiles, site: SITE, author: AUTHOR }))
 writeFileSync(join(here, "registry.json"), JSON.stringify(registry, null, 2))
 writeFileSync(
   join(publicDir, "r/registry.json"),

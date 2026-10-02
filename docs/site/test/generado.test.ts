@@ -178,7 +178,7 @@ describe("registry", () => {
   // terminaba importándose a sí mismo (TS2303).
   it("ningún archivo del registry repite basename con otro", () => {
     const porBasename = new Map<string, string[]>()
-    for (const item of registry.items) {
+    for (const item of registry.items.filter((entry: { type: string }) => entry.type !== "registry:block")) {
       for (const file of item.files ?? []) {
         const nombre = (file.path as string).split("/").pop()!.replace(/\.(tsx?|jsx?)$/, "")
         porBasename.set(nombre, [...(porBasename.get(nombre) ?? []), item.name])
@@ -215,7 +215,9 @@ describe("registry", () => {
   })
 
   it("el contenido no tiene imports relativos del paquete: todos pasan por un alias", () => {
-    for (const item of registry.items) {
+    // Los bloques sí: copian una carpeta entera con `target` fijo, así que sus imports relativos
+    // siguen apuntando bien, y los del paquete van por `sebs7n-ui/*` (lo cubre `template-block.test.ts`).
+    for (const item of registry.items.filter((entry: { type: string }) => entry.type !== "registry:block")) {
       for (const file of item.files ?? []) {
         expect(file.content, `${item.name}/${file.path}`).not.toMatch(/from "\.\.?\//)
         expect(file.content, `${item.name}/${file.path}`).not.toMatch(/\.js"/)
@@ -296,5 +298,40 @@ describe("despersonalización del sitio", () => {
       const hits = archivos.filter((archivo) => read(archivo).toLowerCase().includes(nombre))
       expect(hits).toEqual([])
     })
+  })
+})
+describe("para agentes", () => {
+  it("llms.txt arranca con «Empezá acá»: la guía y el template", () => {
+    const llms = read("public/llms.txt")
+    const primera = llms.indexOf("## ")
+    expect(llms.slice(primera)).toMatch(/^## Empezá acá\n\n- \[Guía para agentes\]\(.*\/docs\/guia-agentes\.md\)/)
+    expect(llms).toContain("/templates/dashboard.md)")
+  })
+
+  it("llms-full.txt empieza por la guía y el template", () => {
+    const full = read("public/llms-full.txt")
+    const guia = full.indexOf("Fuente: https://ui.sebastianfermanelli.com/docs/guia-agentes")
+    const template = full.indexOf("Fuente: https://ui.sebastianfermanelli.com/templates/dashboard")
+    const instalacion = full.indexOf("Fuente: https://ui.sebastianfermanelli.com/docs/instalacion")
+    expect(guia).toBeGreaterThan(-1)
+    expect(guia).toBeLessThan(template)
+    expect(template).toBeLessThan(instalacion)
+  })
+
+  it("la guía es una página de sistema con su .md", () => {
+    expect(site.pages.map((page: { slug: string }) => page.slug)).toContain("guia-agentes")
+    expect(existsSync(join(here, "public/docs/guia-agentes.md"))).toBe(true)
+  })
+
+  it("el template tiene su .md con el código de cada archivo", () => {
+    const md = read("public/templates/dashboard.md")
+    expect(md).toContain("### `layout.tsx`")
+    expect(md).toContain("### `_state/invoices-reducer.ts`")
+  })
+
+  it("el bloque dashboard está en el índice y en su json", () => {
+    expect(registry.items.map((item: { name: string }) => item.name)).toContain("dashboard")
+    const block = JSON.parse(read("public/r/dashboard.json"))
+    expect(block.type).toBe("registry:block")
   })
 })
