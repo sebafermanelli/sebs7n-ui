@@ -5,7 +5,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarItem, SidebarItemBadge } from "sebs7n-ui/sidebar"
 
-import { CUSTOMERS_PATH, DASHBOARD_PATH, INVOICES_PATH, SETTINGS_PATH } from "../_lib/routes"
+import { CUSTOMERS_PATH, DASHBOARD_PATH, GALLERY_PATH, INVOICES_PATH, SETTINGS_PATH } from "../_lib/routes"
 import { useInvoicesStore } from "../_state/invoices-context"
 
 const SECTIONS = [
@@ -47,9 +47,11 @@ export function DashboardSidebar() {
           </SidebarItem>
           {/* La barra del teléfono solo tiene lugar para el nombre y el avatar: la vuelta a la galería
               va acá, y solo se ve dentro del Sheet (en escritorio ya está en la barra). */}
-          <SidebarItem className="lg:hidden" icon={<ArrowLeftIcon />} render={<Link href="/templates" />}>
-            Templates
-          </SidebarItem>
+          {GALLERY_PATH && (
+            <SidebarItem className="lg:hidden" icon={<ArrowLeftIcon />} render={<Link href={GALLERY_PATH} />}>
+              Templates
+            </SidebarItem>
+          )}
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>

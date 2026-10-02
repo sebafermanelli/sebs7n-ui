@@ -28,3 +28,17 @@ describe("layout del dashboard", () => {
     expect(render()).toContain('href="/templates"')
   })
 })
+describe("sin galería", () => {
+  it("con GALLERY_PATH en null no hay vuelta a Templates", async () => {
+    vi.resetModules()
+    vi.doMock("../app/templates/dashboard/_lib/routes", async (importOriginal) => ({
+      ...(await importOriginal<typeof import("../app/templates/dashboard/_lib/routes")>()),
+      GALLERY_PATH: null,
+    }))
+    const { default: Layout } = await import("../app/templates/dashboard/layout")
+    const html = renderToString(createElement(Layout, null, createElement("p", null, "contenido")))
+    expect(html).not.toContain('href="/templates"')
+    expect(html).toContain("Acme Facturación")
+    vi.doUnmock("../app/templates/dashboard/_lib/routes")
+  })
+})

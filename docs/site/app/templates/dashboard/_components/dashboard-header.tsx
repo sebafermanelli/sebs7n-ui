@@ -6,6 +6,8 @@ import { DropdownMenuItem } from "sebs7n-ui/dropdown-menu"
 import { UserMenu } from "sebs7n-ui/user-menu"
 import { buttonVariants } from "sebs7n-ui/variants/button"
 
+import { GALLERY_PATH } from "../_lib/routes"
+
 // El contenido de la barra global: el alto, el fondo y el borde los pone `AppShell` (prop `header`).
 // `compact` es la del teléfono (`mobileBar`): al lado de la hamburguesa entran el nombre y el avatar.
 // El tema no va aparte: `UserMenu` ya trae su fila.
@@ -13,11 +15,11 @@ export function DashboardHeader({ compact = false }: { compact?: boolean }) {
   return (
     <>
       <div className="flex min-w-0 items-center gap-2">
-        {!compact && (
+        {!compact && GALLERY_PATH && (
           <>
             <Link
               className={buttonVariants({ variant: "plain", size: "sm" })}
-              href="/templates"
+              href={GALLERY_PATH}
             >
               <ArrowLeftIcon />
               Templates
