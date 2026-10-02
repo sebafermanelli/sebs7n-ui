@@ -7,22 +7,23 @@ import { UserMenu } from "sebs7n-ui/user-menu"
 import { DropdownMenuItem } from "sebs7n-ui/dropdown-menu"
 import { buttonVariants } from "sebs7n-ui/variants/button"
 
+// El contenido de la barra global: el alto, el fondo y el borde los pone `AppShell` (prop `header`).
 export function DashboardHeader() {
   return (
-    <header className="flex h-11 shrink-0 items-center justify-between border-b border-separator-strong bg-surface-header px-4">
-      <div className="flex items-center gap-2">
+    <>
+      <div className="flex min-w-0 items-center gap-2">
         <Link
           href="/templates"
           className={buttonVariants({ variant: "plain", size: "sm" })}
         >
-          <ArrowLeftIcon className="size-4 mr-1" />
+          <ArrowLeftIcon />
           Templates
         </Link>
         <span className="text-label-tertiary">/</span>
-        <span className="text-callout font-medium text-label">Acme Facturación</span>
+        <span className="truncate text-callout font-medium text-label">Acme Facturación</span>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="ml-auto flex items-center gap-3">
         <ThemeSwitcher />
         <UserMenu
           user={{ name: "Administración", email: "admin@acme.com" }}
@@ -33,6 +34,6 @@ export function DashboardHeader() {
           <DropdownMenuItem>Preferencias de facturación</DropdownMenuItem>
         </UserMenu>
       </div>
-    </header>
+    </>
   )
 }

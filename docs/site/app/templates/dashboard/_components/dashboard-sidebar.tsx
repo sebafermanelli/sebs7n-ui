@@ -16,7 +16,7 @@ interface DashboardSidebarProps {
 
 export function DashboardSidebar({ pendingCount }: DashboardSidebarProps) {
   return (
-    <Sidebar className="w-56 shrink-0 border-r border-separator-strong bg-surface-secondary">
+    <Sidebar>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Navegación</SidebarGroupLabel>

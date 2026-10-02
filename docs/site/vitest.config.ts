@@ -23,8 +23,8 @@ export default defineConfig({
     // El código fuente del paquete resuelve sus dependencias desde la raíz del repo: sin esto React y
     // Base UI llegarían dos veces (la de la raíz y la del sitio) y los hooks se romperían.
     // Lo mismo con los peers opcionales que usa una pantalla (`SortableGrid` en Inicio): dnd-kit desde la
-    // raíz traería el React de la raíz.
-    dedupe: ["react", "react-dom", "@base-ui/react", "lucide-react", "@dnd-kit/core", "@dnd-kit/sortable", "@dnd-kit/utilities"],
+    // raíz traería el React de la raíz. Igual `next-themes`, que lee su contexto en el `ThemeSwitcher`.
+    dedupe: ["react", "react-dom", "@base-ui/react", "lucide-react", "@dnd-kit/core", "@dnd-kit/sortable", "@dnd-kit/utilities", "next-themes"],
   },
   test: {
     environment: "node",
