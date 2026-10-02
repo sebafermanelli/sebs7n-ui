@@ -42,7 +42,7 @@ Por roles, como iCloud: `text-large-title` 48 (el título de la página), `title
 
 ### Color del texto
 
-Texto con `label` / `label-secondary` (≥ 4,5:1). `label-tertiary` no es para texto chico: solo glifos, deshabilitados y texto grande. Un solo vocabulario: los tokens del paquete, no los alias de shadcn (`--color-card`, `--color-muted`…).
+Texto con `label` / `label-secondary` (≥ 4,5:1). `label-tertiary` no es para texto chico: solo glifos, deshabilitados y texto grande. `gray-800` no va como texto. Un solo vocabulario: los tokens del paquete, no los alias de shadcn (`--color-card`, `--color-muted`…).
 
 ### Links
 

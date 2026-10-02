@@ -7,59 +7,30 @@ props y probar el registry: [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ## Diseño
 
-**Referencia: iCloud web (icloud.com), no el macOS nativo.** Valores medidos en claro y oscuro. Lo
-que iCloud no tiene (Switch, Tooltip, toasts, Tree, Stepper…) se deriva de sus tokens.
+Las reglas de diseño son **las mismas para quien mantiene el paquete y para quien lo usa**, así que
+viven en un solo lugar: [`docs/site/content/pages/guia-agentes.md`](docs/site/content/pages/guia-agentes.md).
+De ahí salen la página `/docs/guia-agentes`, la primera entrada de `llms.txt` y `agents/guia.md` del
+tarball. Una regla de diseño nueva o cambiada se escribe ahí.
 
-- **Un solo acento sólido por pantalla.** `Button` por defecto = primario (acento); el resto
-  `secondary` (gris) o `plain` (texto de acento). Los estados prendidos (Checkbox, Switch, Toggle)
-  llevan brand y no cuentan. `destructive` solo si borra, siempre detrás de un `AlertDialog`.
-- **Radios, sin cápsulas:** `rounded-control` 8 (botones, controles, ítem de menú), `rounded-field`
-  / `rounded-item` 10 (campos, filas), `rounded-surface` / `rounded-panel` 11 (cards, diálogos),
-  `rounded-menu` 12 (menús, popovers), `rounded-tag` 4. **Curvas concéntricas:** radio interior =
-  exterior − distancia (menú 12 con padding 5 → ítems 8).
-- **Superficies opacas en capas.** Si **es** la página, `bg-background`; si flota sobre ella,
-  `bg-surface` + `shadow-menu` / `shadow-modal`. Sidebar `bg-surface-secondary` + borde
-  `separator-strong`; barra global `bg-surface-header`; toolbar `bg-surface-bar`; card = cuerpo
-  `bg-surface` + `shadow-widget`, cabecera `bg-surface-bar`; zona hundida `bg-fill-1` / `bg-grouped`;
-  tooltip `bg-tooltip`. Hover y selección neutra: `fill-1/2/3`. Oscuro: página `#1C1C1E`, no negro.
-- **Translucidez solo sobre el wallpaper** (`AppShell ambient`): barras y `Toolbar` con
-  `material-translucent`; cuerpo de `Card`, `WidgetCard` y `Sidebar` con `material-translucent-body`.
-  Menús, diálogos y campos siguen opacos. `prefers-reduced-transparency` / `prefers-contrast: more`
-  vuelven a opaco solos. Dentro de una app, todo opaco.
-- **Selección:** resaltado de menús y activo del sidebar en **gris** (`fill-2`, `fill-1`); el acento
-  sólido solo para la fila elegida de una lista con foco (`text-on-selection`,
-  `selectionSecondaryClassName`). Lo cubre `test/selection.test.ts`.
-- **Alturas:** una escala para campos y botones, `sm` 28 · `md` 36 · `lg` 40 (íconos 28 · 36 · 40),
-  texto 14. El tamaño se elige una vez por formulario; `md` es el de una app. Sin variable global
-  de densidad (rompe el target táctil). Lo cubre `test/densidad-controles.test.ts`.
-- **Tipografía:** roles de iCloud (`text-large-title` 48, `title-1/2/3` 28/21/19, `headline` y
-  `body` 17, `subheadline` 15, `callout` 14 para el cromo, `footnote` 12, `caption` 11). La escala
-  de Geist sigue en el CSS hasta 3.0 y ningún componente la usa.
-- **Tokens de contraste:** texto con `label` / `label-secondary` (≥ 4,5:1). `label-tertiary` no es
-  texto chico (3,69:1 en claro): solo glifos, deshabilitados y texto grande. `gray-800` no va como
-  texto. **Un solo vocabulario:** en código nuevo, los tokens del paquete, no los alias de shadcn
-  (`--color-card`, `--color-muted`…) ni `bg-background-100/200`.
-- **Links:** con forma de botón/card, `buttonVariants()` / `cardVariants()` sobre `<a>`/`<Link>`;
-  nunca `render` para links (Base UI pone `role="button"`). Texto: `linkVariants` `inline` /
-  `subtle` / `row`. Un link que solo aparece en hover no existe en un celular.
-- **Elegir componente:** Badge informa (lo calculó el sistema), Tag es un dato (tiene ×).
-  `NavigationMenu` si navega, `DropdownMenu` si ejecuta. Dialog (tarea corta) · AlertDialog
-  (irreversible) · Sheet (panel lateral) · Popover (interactivo anclado) · Tooltip (una línea) ·
-  `toast()` (confirmación) · `Alert` (sigue siendo verdad). Select ≤ ~8 fijas · Combobox (valor de
-  la lista) · Autocomplete (texto libre) · RadioGroup 2–5 visibles.
-- **Popups en pantalla angosta (< 640 px, 2.5):** como iOS, que iCloud web hereda: el popover de
-  **contenido** se adapta a la hoja de abajo y el **menú** no. `Popover`, `DatePicker` y
-  `ColorPicker` pasan solos a `Drawer` (`internal/adaptive-popover.tsx`; `mobile="popover"` en
-  `Popover` los deja anclados); `DropdownMenu`, `ContextMenu`, `Menubar`, `Select`, `Combobox`,
-  `NavigationMenu`, `HoverCard` y `Tooltip` siguen anclados. **Ningún popup se sale del viewport:**
-  `collisionPadding={8}`, `max-w-(--available-width)` y `max-h-(--available-height)` en la superficie,
-  y al costado (`side="right"`) sin lugar cae arriba o abajo (`internal/collision.ts`). Un popup nuevo
-  con Positioner hace lo mismo; lo cubre `test/components/popups-mobile.test.tsx`.
-- **Trampas de Base UI:** triggers con `render={<Button … />}`, no `asChild`. `DropdownMenuLabel`
-  dentro de `DropdownMenuGroup`. `NavigationMenuViewport` una sola vez. `AlertDialogAction` no
-  cierra sola (para poder mostrar `loading`).
-- **Lo que el paquete no hace, a propósito:** guardar el colapsado del sidebar, registrar atajos,
-  crecer el `Textarea`, validar formularios. Es de la app.
+@docs/site/content/pages/guia-agentes.md
+
+Qué test cubre cada regla:
+
+| Regla | Test |
+|---|---|
+| Selección en gris; acento solo con foco | `test/selection.test.ts` |
+| Escala de alturas `sm`/`md`/`lg` | `test/densidad-controles.test.ts` |
+| Popups contenidos y hoja en el teléfono | `test/components/popups-mobile.test.tsx` |
+| Contraste de los tokens de texto | `test/contrast.test.ts` |
+
+Solo para quien construye componentes:
+
+- **Un popup nuevo con Positioner** hace lo mismo que los demás: `collisionPadding={8}`,
+  `max-w-(--available-width)` y `max-h-(--available-height)` en la superficie, y al costado
+  (`side="right"`) sin lugar cae arriba o abajo (`internal/collision.ts`). Si es de contenido, se
+  adapta a la hoja de abajo en el teléfono con `internal/adaptive-popover.tsx`.
+- **La escala tipográfica de Geist** sigue en el CSS hasta 3.0 y ningún componente la usa: lo
+  nuevo va con los roles de iCloud.
 
 ## Accesibilidad: lo que el paquete garantiza y cómo se prueba
 
