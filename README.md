@@ -22,6 +22,8 @@ Peers: `react` y `react-dom` `^19.2.0`, `@base-ui/react` `>=1.8.0 <1.9.0` (acota
 `^6.3.1`, `@dnd-kit/sortable` `^10.0.0` y `@dnd-kit/utilities` `^3.2.2` (`sortable-list`,
 `sortable-grid`) y `embla-carousel-react` `^8.6.0` (`carousel`). Tailwind CSS v4, solo ESM.
 
+**Para agentes de IA:** las reglas de sistema y la anatomía de una app están en `node_modules/sebs7n-ui/agents/guia.md` (la versión instalada) y en [/docs/guia-agentes](https://ui.sebastianfermanelli.com/docs/guia-agentes). El índice completo es [llms.txt](https://ui.sebastianfermanelli.com/llms.txt), y un dashboard entero para copiar, `npx shadcn@latest add https://ui.sebastianfermanelli.com/r/dashboard.json`.
+
 ## CSS y fuentes
 
 En `globals.css`, en este orden, con las **cuatro variables de marca**:
