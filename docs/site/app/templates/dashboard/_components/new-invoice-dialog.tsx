@@ -17,6 +17,7 @@ import { Input } from "sebs7n-ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "sebs7n-ui/select"
 import { toast } from "sonner"
 import type { Invoice } from "../_data/invoices-mock"
+import { today } from "../_lib/format"
 
 const CUSTOMERS = [
   "Acme Corporation",
@@ -25,12 +26,6 @@ const CUSTOMERS = [
   "Soylent Logistics",
   "Wayne Enterprises",
 ]
-
-// La fecha local: `toISOString()` da la de UTC, que en Argentina después de las 21 ya es mañana.
-function today() {
-  const d = new Date()
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`
-}
 
 interface NewInvoiceDialogProps {
   onAddInvoice: (inv: Omit<Invoice, "id" | "status">) => Invoice
