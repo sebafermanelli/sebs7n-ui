@@ -3,6 +3,8 @@ import { describe, expect, it } from "vitest"
 
 import DashboardHomePage from "../app/templates/dashboard/page"
 import InvoicesPage from "../app/templates/dashboard/invoices/page"
+import CustomersPage from "../app/templates/dashboard/customers/page"
+import SettingsPage from "../app/templates/dashboard/settings/page"
 import { renderWithInvoices } from "./dashboard-render"
 
 describe("páginas del dashboard", () => {
@@ -29,5 +31,19 @@ describe("páginas del dashboard", () => {
   it("mientras carga, Inicio muestra esqueletos en vez de cifras", () => {
     const html = renderWithInvoices(createElement(DashboardHomePage), true)
     expect(html).not.toContain("US$")
+  })
+
+  it("Clientes lista los clientes derivados con lo facturado", () => {
+    const html = renderWithInvoices(createElement(CustomersPage))
+    expect(html).toContain("Clientes")
+    expect(html).toContain("Acme Corporation")
+    expect(html).toMatch(/\d+ facturas?/)
+  })
+
+  it("Configuración arma las tres pestañas y guarda solo donde hay formulario", () => {
+    const html = renderWithInvoices(createElement(SettingsPage))
+    for (const tab of ["General", "Facturación", "Notificaciones"]) expect(html).toContain(tab)
+    expect(html).toContain("Nombre de la empresa")
+    expect(html).toContain("Guardar cambios")
   })
 })
