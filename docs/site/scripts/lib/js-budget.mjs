@@ -19,6 +19,9 @@ export const LIMITS = {
   // 295 KB. Todo lo que pide está a la vista y prerenderizado: los controles y la muestra con
   // Select, DropdownMenu, Dialog, Tabs, Slider… Diferirlo sería dejar la pantalla sin hidratar.
   "/docs/playground": 310,
+  // 277 KB el 2026-10-02. Una app entera a propósito: AppShell, tabla con DropdownMenu por fila,
+  // Dialog con Form y Select, AlertDialog. Es el ejemplo de cómo se ve una pantalla real.
+  "/templates/dashboard": 295,
 }
 
 /** El límite de una ruta: el suyo si lo tiene, si no `BUDGET_KB`. */
@@ -33,6 +36,8 @@ export const ROUTES = [
   "/docs/components/chart",
   "/docs/playground",
   "/docs/iconos",
+  "/templates",
+  "/templates/dashboard",
 ]
 
 /**
