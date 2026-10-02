@@ -4,19 +4,22 @@ import { useState } from "react"
 import { AppShellContent } from "sebs7n-ui/app-shell-content"
 import { PageHeader, PageHeaderActions, PageHeaderDescription, PageHeaderTitle } from "sebs7n-ui/page-header"
 
-import { InvoiceFilters } from "../_components/invoice-filters"
-import { InvoiceTable } from "../_components/invoice-table"
+import { InvoicesDataTable } from "../_components/invoices-data-table"
 import { NewInvoiceDialog } from "../_components/new-invoice-dialog"
+import { notifyPaid } from "../_components/notify-paid"
 import { VoidInvoiceDialog } from "../_components/void-invoice-dialog"
-import { filterInvoices, type Invoice, type InvoiceStatus } from "../_data/invoices-mock"
+import type { Invoice } from "../_data/invoices-mock"
 import { useInvoicesStore } from "../_state/invoices-context"
 
 export default function InvoicesPage() {
-  const { invoices, addInvoice, markPaid, voidInvoice } = useInvoicesStore()
-  const [search, setSearch] = useState("")
-  const [statusFilter, setStatusFilter] = useState<InvoiceStatus | "all">("all")
+  const { invoices, loading, addInvoice, markPaid, voidInvoice, restore } = useInvoicesStore()
+  const [selected, setSelected] = useState<string[]>([])
   const [voidTarget, setVoidTarget] = useState<Invoice | null>(null)
-  const shown = filterInvoices(invoices, search, statusFilter)
+
+  const handleMarkPaid = (ids: string[]) => {
+    notifyPaid(markPaid(ids), restore)
+    setSelected((current) => current.filter((id) => !ids.includes(id)))
+  }
 
   return (
     <AppShellContent>
@@ -27,16 +30,15 @@ export default function InvoicesPage() {
           <NewInvoiceDialog onAddInvoice={addInvoice} />
         </PageHeaderActions>
       </PageHeader>
-      <div className="flex flex-col gap-4">
-        <InvoiceFilters
-          onSearchChange={setSearch}
-          onStatusFilterChange={setStatusFilter}
-          search={search}
-          statusFilter={statusFilter}
-          totalCount={shown.length}
-        />
-        <InvoiceTable invoices={shown} onMarkAsPaid={(id) => markPaid([id])} onOpenVoidDialog={setVoidTarget} />
-      </div>
+      <InvoicesDataTable
+        invoices={invoices}
+        loading={loading}
+        onMarkPaid={handleMarkPaid}
+        onOpenDetail={() => {}}
+        onSelectedChange={setSelected}
+        onVoid={setVoidTarget}
+        selected={selected}
+      />
       <VoidInvoiceDialog invoice={voidTarget} onClose={() => setVoidTarget(null)} onConfirmVoid={voidInvoice} />
     </AppShellContent>
   )

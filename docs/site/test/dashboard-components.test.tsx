@@ -6,7 +6,6 @@ import { renderToString } from "react-dom/server"
 import { describe, expect, it } from "vitest"
 
 import { MetricsGrid } from "../app/templates/dashboard/_components/metrics-grid"
-import { InvoiceFilters } from "../app/templates/dashboard/_components/invoice-filters"
 import { calculateMetrics, INVOICES_MOCK } from "../app/templates/dashboard/_data/invoices-mock"
 
 describe("dashboard subcomponents", () => {
@@ -23,19 +22,5 @@ describe("dashboard subcomponents", () => {
     expect(html).toContain("Facturación total")
     expect(html).toContain('data-slot="skeleton"')
     expect(html).not.toContain("US$")
-  })
-
-  it("InvoiceFilters muestra el campo de búsqueda", () => {
-    const html = renderToString(
-      createElement(InvoiceFilters, {
-        search: "",
-        onSearchChange: () => {},
-        statusFilter: "all",
-        onStatusFilterChange: () => {},
-        totalCount: 8,
-      })
-    )
-    expect(html).toContain("Buscar factura o cliente")
-    expect(html).toContain("Mostrando")
   })
 })

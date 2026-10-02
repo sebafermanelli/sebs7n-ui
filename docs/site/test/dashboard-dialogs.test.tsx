@@ -1,46 +1,43 @@
-// El sitio corre en entorno `node` sin jsdom. Usamos `renderToString` igual que showcase.test.ts.
 import { createElement } from "react"
 import { renderToString } from "react-dom/server"
 import { describe, expect, it } from "vitest"
 
-import { InvoiceTable } from "../app/templates/dashboard/_components/invoice-table"
+import { InvoicesDataTable } from "../app/templates/dashboard/_components/invoices-data-table"
 import { INVOICES_MOCK } from "../app/templates/dashboard/_data/invoices-mock"
 
-describe("invoice table & dialogs", () => {
-  it("renderiza las columnas de tabla para las facturas", () => {
-    const html = renderToString(
-      createElement(InvoiceTable, {
-        invoices: INVOICES_MOCK,
-        onMarkAsPaid: () => {},
-        onOpenVoidDialog: () => {},
-      })
-    )
-    expect(html).toContain("FAC-1001")
-    expect(html).toContain("Acme Corporation")
+const noop = () => {}
+const render = (over: Record<string, unknown> = {}) =>
+  renderToString(
+    createElement(InvoicesDataTable, {
+      invoices: INVOICES_MOCK,
+      loading: false,
+      selected: [],
+      onSelectedChange: noop,
+      onMarkPaid: noop,
+      onOpenDetail: noop,
+      onVoid: noop,
+      ...over,
+    })
+  )
+
+describe("tabla de facturas", () => {
+  it("pagina de a 10 y trae la paginación", () => {
+    const html = render()
+    expect((html.match(/data-slot="table-row"/g) ?? []).length).toBeGreaterThanOrEqual(10)
+    expect(html).toContain('data-slot="pagination"')
   })
 
-  it("renderiza mensaje vacío cuando no hay facturas", () => {
-    const html = renderToString(
-      createElement(InvoiceTable, {
-        invoices: [],
-        onMarkAsPaid: () => {},
-        onOpenVoidDialog: () => {},
-      })
-    )
-    expect(html).toContain("No se encontraron facturas")
+  it("el número abre el detalle: es un botón, no un link", () => {
+    expect(render()).toMatch(/<button[^>]*>FAC-\d{4}<\/button>/)
   })
 
-  it("muestra todas las columnas en la cabecera de la tabla", () => {
-    const html = renderToString(
-      createElement(InvoiceTable, {
-        invoices: INVOICES_MOCK,
-        onMarkAsPaid: () => {},
-        onOpenVoidDialog: () => {},
-      })
-    )
-    expect(html).toContain("Número")
-    expect(html).toContain("Cliente")
-    expect(html).toContain("Monto")
-    expect(html).toContain("Estado")
+  it("con selección aparecen las acciones masivas", () => {
+    const html = render({ selected: ["FAC-1001", "FAC-1004"] })
+    expect(html).toContain("2 seleccionadas")
+    expect(html).toContain("Marcar cobradas")
+  })
+
+  it("cargando, filas de esqueleto", () => {
+    expect(render({ loading: true })).toContain('aria-busy="true"')
   })
 })
