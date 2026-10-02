@@ -11,5 +11,6 @@ public/r/
 public/llms.txt
 public/search-index.json
 public/llms-full.txt
+public/templates/
 registry.json
 tsconfig.tsbuildinfo
