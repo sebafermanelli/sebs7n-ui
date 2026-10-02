@@ -28,6 +28,17 @@ describe("CardGrid", () => {
     expect(grid.className).toContain("[&>[data-slot=card]]:gap-0")
   })
 
+  // El gap vertical de la grilla también separaría las filas internas de cada card: una card sin
+  // pie (o sin cabecera) quedaba con ese aire vacío abajo. La separación entre filas de cards va
+  // como margen de cada card, compensado al final de la grilla.
+  it("sin gap vertical: la separación entre filas es margen de la card", () => {
+    const grid = fila()
+    expect(grid.className).toContain("gap-x-4")
+    expect(grid.className).toContain("gap-y-0")
+    expect(grid.className).toContain("[&>[data-slot=card]]:mb-4")
+    expect(grid.className).toContain("-mb-4")
+  })
+
   it("el texto de la cabecera arranca arriba aunque la franja crezca", () => {
     expect(fila().className).toContain("content-start")
   })
