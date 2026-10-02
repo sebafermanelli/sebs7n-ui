@@ -53,10 +53,17 @@ describe("measure", () => {
 })
 
 describe("configuración", () => {
-  it("mide las once rutas acordadas; 200 KB salvo Chart, Playground y Facturas, que tienen el suyo", () => {
+  it("mide las once rutas acordadas; 200 KB salvo Chart, Playground y las del dashboard, que tienen el suyo", () => {
     expect(BUDGET_KB).toBe(200)
-    expect(LIMITS).toEqual({ "/docs/components/chart": 325, "/docs/playground": 310, "/templates/dashboard/invoices": 295 })
-    expect(limitOf("/docs/components/chart")).toBe(325)
+    expect(LIMITS).toEqual({
+      "/docs/components/chart": 345,
+      "/docs/playground": 310,
+      "/templates/dashboard": 290,
+      "/templates/dashboard/invoices": 295,
+      "/templates/dashboard/customers": 260,
+      "/templates/dashboard/settings": 290,
+    })
+    expect(limitOf("/docs/components/chart")).toBe(345)
     expect(limitOf("/docs/playground")).toBe(310)
     expect(limitOf("/")).toBe(200)
     expect(limitOf("/docs/iconos")).toBe(200)

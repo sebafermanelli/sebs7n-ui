@@ -15,13 +15,23 @@ export const BUDGET_KB = 200
 export const LIMITS = {
   // 305 KB. Recharts entra por la primera demo, que se carga al abrir (`DemoSlot` eager): es lo
   // que se ve arriba de todo, y diferirla dejaría un hueco del alto de un gráfico.
-  "/docs/components/chart": 325,
+  // 328 KB el 2026-10-02: el Inicio del template de dashboard usa solo las barras de Recharts y
+  // Turbopack partió la librería en dos chunks; esta página paga ~15 KB por la división.
+  "/docs/components/chart": 345,
   // 295 KB. Todo lo que pide está a la vista y prerenderizado: los controles y la muestra con
   // Select, DropdownMenu, Dialog, Tabs, Slider… Diferirlo sería dejar la pantalla sin hidratar.
   "/docs/playground": 310,
   // 277 KB el 2026-10-02 (cuando era la raíz del template). Una pantalla entera a propósito:
   // DataTable con DropdownMenu por fila, Dialog con Form y Select, Sheet de detalle, AlertDialog.
   "/templates/dashboard/invoices": 295,
+  // Las otras secciones del template, medidas el 2026-10-02. La base es el layout (~244 KB): AppShell,
+  // Sidebar, UserMenu con su menú y el store; el gráfico de Inicio no cuenta (es `lazy`, post-hidratación).
+  // 274 KB: el layout + el diálogo de alta (Dialog, Form, Select).
+  "/templates/dashboard": 290,
+  // 244 KB: el layout + List, SearchField y EmptyState.
+  "/templates/dashboard/customers": 260,
+  // 276 KB: el layout + Tabs, Form, RadioGroup, Select y Switch.
+  "/templates/dashboard/settings": 290,
 }
 
 /** El límite de una ruta: el suyo si lo tiene, si no `BUDGET_KB`. */
