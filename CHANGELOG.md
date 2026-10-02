@@ -2,6 +2,7 @@
 
 Una línea por versión, la más nueva arriba. Versionado [SemVer 2.0.0](https://semver.org/lang/es/).
 
+- **2.7.1** (2026-10-02) — La guía para agentes (`agents/guia.md`) suma la anatomía de una landing y la regla de elección: landing o marketing, template de landing; app de trabajo, template de dashboard. Sin cambios de API.
 - **2.7.0** (2026-10-02) — Guía para agentes de IA dentro del paquete (`agents/guia.md`, la misma que [/docs/guia-agentes](https://ui.sebastianfermanelli.com/docs/guia-agentes)): las reglas de sistema y la anatomía de una app. Sin cambios de API.
 - **2.6.0** (2026-09-30) — `NavbarLink` (solo por subpath, `sebs7n-ui/navbar-link`): el link de texto de la barra, `label-secondary` en reposo y `label` con el puntero y en la página actual (`active` → `aria-current`), con `navbarLinkClassName({ icon })` para los controles de ícono.
 - **2.5.0** (2026-09-30) — `Popover`, `DatePicker` y `ColorPicker` se abren como la hoja de abajo (`Drawer`) en pantallas de menos de 640 px (`mobile="popover"` en `Popover` los deja anclados); ningún popup se sale del viewport (`collisionPadding` 8, `--available-width`/`--available-height`, y al costado sin lugar cae arriba o abajo); `Toggle` es `md` (36) por defecto y 28 dentro de una `Toolbar`.
