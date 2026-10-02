@@ -38,7 +38,7 @@ export function Pricing({ defaultPeriod = "monthly" }: { defaultPeriod?: Period 
         {PLANS.map((plan) => {
           const price = period === "annual" ? annualMonthly(plan.monthly) : plan.monthly
           return (
-            <Card key={plan.name} selected={plan.featured}>
+            <Card className="flex flex-col" key={plan.name} selected={plan.featured}>
               <CardHeader>
                 <div className="flex items-center gap-2">
                   <CardTitle>{plan.name}</CardTitle>
@@ -46,7 +46,7 @@ export function Pricing({ defaultPeriod = "monthly" }: { defaultPeriod?: Period 
                 </div>
                 <CardDescription>{plan.description}</CardDescription>
               </CardHeader>
-              <CardContent className="flex flex-col gap-4">
+              <CardContent className="flex flex-1 flex-col gap-4">
                 <p className="text-label">
                   <span className="text-title-1 tabular-nums">{`US$ ${price}`}</span>
                   <span className="text-callout text-label-secondary"> por mes</span>
