@@ -15,7 +15,7 @@ export function MetricsGrid({ metrics }: { metrics: ReturnType<typeof calculateM
             value={
               <div className="flex items-baseline justify-between gap-2">
                 <span className="text-title-2 font-semibold text-label">{formatter.format(metrics.totalBilled)}</span>
-                <Badge color="success" size="sm">+14%</Badge>
+                <Badge color="green" size="sm">+14%</Badge>
               </div>
             }
             hint="Comparado al mes anterior"
@@ -61,9 +61,9 @@ export function MetricsGrid({ metrics }: { metrics: ReturnType<typeof calculateM
               <div className="flex items-baseline justify-between gap-2">
                 <span className="text-title-2 font-semibold text-label">{metrics.overdueCount} facturas</span>
                 {metrics.overdueCount > 0 ? (
-                  <Badge color="error" size="sm">{formatter.format(metrics.overdueAmount)}</Badge>
+                  <Badge color="red" size="sm">{formatter.format(metrics.overdueAmount)}</Badge>
                 ) : (
-                  <Badge color="success" size="sm">0</Badge>
+                  <Badge color="green" size="sm">0</Badge>
                 )}
               </div>
             }

@@ -25,9 +25,9 @@ export function DashboardHeader() {
       <div className="flex items-center gap-3">
         <ThemeSwitcher />
         <UserMenu
-          user={{ name: "Sebastián Fermanelli", email: "admin@acme.com" }}
+          user={{ name: "Administración", email: "admin@acme.com" }}
           align="end"
-          signOut={<DropdownMenuItem destructive>Cerrar sesión</DropdownMenuItem>}
+          signOut={<DropdownMenuItem variant="destructive">Cerrar sesión</DropdownMenuItem>}
         >
           <DropdownMenuItem>Perfil y equipo</DropdownMenuItem>
           <DropdownMenuItem>Preferencias de facturación</DropdownMenuItem>
