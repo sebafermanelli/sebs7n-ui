@@ -1,4 +1,5 @@
 // @vitest-environment node
+import { execFileSync } from "node:child_process"
 import { readFileSync } from "node:fs"
 import { describe, expect, it } from "vitest"
 
@@ -27,5 +28,12 @@ describe("la guía para agentes dentro del paquete", () => {
   it("viaja en el tarball y se genera antes de empacar", () => {
     expect(pkg.files).toContain("agents")
     expect(pkg.scripts.prepack).toMatch(/gen-agent-guide/)
+  })
+
+  // `docs/site/scripts/sync-ui.mjs` parsea la salida de `npm pack --json`, y el `prepack` corre
+  // adentro: una línea de log en stdout rompe ese JSON y con él el build del sitio (y el deploy).
+  it("el script no escribe nada en stdout", () => {
+    const stdout = execFileSync("node", ["scripts/gen-agent-guide.mjs"], { encoding: "utf8" })
+    expect(stdout).toBe("")
   })
 })

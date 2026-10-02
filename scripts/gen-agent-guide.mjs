@@ -25,5 +25,6 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const source = readFileSync(new URL("docs/site/content/pages/guia-agentes.md", root), "utf8")
   mkdirSync(new URL("agents/", root), { recursive: true })
   writeFileSync(new URL("agents/guia.md", root), buildAgentGuide({ source, version: pkg.version }))
-  console.log(`[agent-guide] agents/guia.md (${pkg.version})`)
+  // A stderr: corre en `prepack`, y `sync-ui` del sitio parsea el stdout de `npm pack --json`.
+  console.error(`[agent-guide] agents/guia.md (${pkg.version})`)
 }
