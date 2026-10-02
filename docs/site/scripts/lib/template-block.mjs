@@ -60,7 +60,9 @@ export function buildDashboardBlock({ files, site, author }) {
       "El template SaaS de sebs7n-ui: Inicio, Facturas, Clientes y Configuración con el estado compartido. Importa del paquete; la app cambia los datos de `_data/`.",
     author,
     docs: `Guía: ${site}/docs/guia-agentes.md · Template: ${site}/templates/dashboard.md. Necesita el Toaster de sonner y el ThemeProvider de next-themes montados (ver ${site}/docs/instalacion).`,
-    dependencies: ["sebs7n-ui", "sonner", "lucide-react", "recharts", "next-themes"],
+    // Los peers del paquete van explícitos: `@base-ui/react` llega por su cuenta solo si la app hizo
+    // `shadcn init` con el estilo base-nova (lo comprobó la prueba real del bloque).
+    dependencies: ["sebs7n-ui", "@base-ui/react", "sonner", "lucide-react", "recharts", "next-themes"],
     files: files.map((file) => ({
       path: `registry/sebs7n-ui/blocks/dashboard/${file.path}`,
       type: "registry:file",

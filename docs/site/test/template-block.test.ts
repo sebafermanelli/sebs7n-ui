@@ -50,7 +50,7 @@ describe("buildDashboardBlock", () => {
   it("es un registry:block que instala el paquete y no copia componentes", () => {
     expect(block.name).toBe("dashboard")
     expect(block.type).toBe("registry:block")
-    expect(block.dependencies).toEqual(["sebs7n-ui", "sonner", "lucide-react", "recharts", "next-themes"])
+    expect(block.dependencies).toEqual(["sebs7n-ui", "@base-ui/react", "sonner", "lucide-react", "recharts", "next-themes"])
     expect(block.registryDependencies).toBeUndefined()
   })
 

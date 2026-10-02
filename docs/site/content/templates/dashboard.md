@@ -10,7 +10,7 @@ En vivo: [ui.sebastianfermanelli.com/templates/dashboard](https://ui.sebastianfe
 npx shadcn@latest add https://ui.sebastianfermanelli.com/r/dashboard.json
 ```
 
-Copia la carpeta a `app/dashboard/` e instala `sebs7n-ui`, `sonner`, `lucide-react`, `recharts` y `next-themes`. Necesita lo de [Instalación](https://ui.sebastianfermanelli.com/docs/instalacion.md): el `@import` del tema, la fuente, el `ThemeProvider` y el `Toaster` montados en el layout raíz.
+Copia la carpeta a `app/dashboard/` e instala `sebs7n-ui`, `@base-ui/react`, `sonner`, `lucide-react`, `recharts` y `next-themes`. Necesita lo de [Instalación](https://ui.sebastianfermanelli.com/docs/instalacion.md): el `@import` del tema, la fuente, el `ThemeProvider` y el `Toaster` montados en el layout raíz.
 
 ## Anatomía
 
