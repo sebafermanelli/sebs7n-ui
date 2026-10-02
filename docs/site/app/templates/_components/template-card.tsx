@@ -15,7 +15,7 @@ interface TemplateCardProps {
 
 export function TemplateCard({ title, description, category, href, features }: TemplateCardProps) {
   return (
-    <Card className="justify-between">
+    <Card>
       <CardHeader>
         <div className="flex items-center gap-2">
           <Badge size="sm">{category}</Badge>

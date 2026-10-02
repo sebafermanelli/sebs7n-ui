@@ -24,7 +24,7 @@ export default function DashboardPage() {
   return (
     <AppShell
       header={<DashboardHeader />}
-      mobileBar={<DashboardHeader />}
+      mobileBar={<DashboardHeader compact />}
       pathname={pathname}
       sidebar={<DashboardSidebar pendingCount={metrics.pendingCount} />}
     >

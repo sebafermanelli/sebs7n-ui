@@ -17,7 +17,7 @@ describe("dashboard page", () => {
   it("muestra el encabezado, la acción principal, las métricas y la tabla", () => {
     expect(html).toContain("Facturación y comprobantes")
     expect(html).toContain("Nueva factura")
-    expect(html).toContain("Facturación Total")
+    expect(html).toContain("Facturación total")
     expect(html).toContain("FAC-1001")
   })
 

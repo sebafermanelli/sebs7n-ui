@@ -26,9 +26,15 @@ interface InvoiceTableProps {
   onOpenVoidDialog: (invoice: Invoice) => void
 }
 
-export function InvoiceTable({ invoices, onMarkAsPaid, onOpenVoidDialog }: InvoiceTableProps) {
-  const formatter = new Intl.NumberFormat("es-AR", { style: "currency", currency: "USD" })
+const money = new Intl.NumberFormat("es-AR", { style: "currency", currency: "USD" })
+// Las fechas del mock son `YYYY-MM-DD` locales: con `new Date(iso)` serían UTC y en Argentina darían el día anterior.
+const shortDate = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", year: "numeric" })
+const formatDate = (iso: string) => {
+  const [y, m, d] = iso.split("-").map(Number)
+  return shortDate.format(new Date(y!, m! - 1, d))
+}
 
+export function InvoiceTable({ invoices, onMarkAsPaid, onOpenVoidDialog }: InvoiceTableProps) {
   if (invoices.length === 0) {
     return (
       <div className="flex h-48 flex-col items-center justify-center rounded-surface border border-separator bg-surface text-center">
@@ -43,30 +49,38 @@ export function InvoiceTable({ invoices, onMarkAsPaid, onOpenVoidDialog }: Invoi
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-28 font-semibold">Número</TableHead>
-            <TableHead className="font-semibold">Cliente</TableHead>
-            <TableHead className="font-semibold">Concepto</TableHead>
-            <TableHead className="w-32 text-right font-semibold">Monto</TableHead>
-            <TableHead className="w-28 text-center font-semibold">Estado</TableHead>
-            <TableHead className="w-28 text-right font-semibold">Vencimiento</TableHead>
-            <TableHead className="w-12 text-center" aria-label="Acciones" />
+            <TableHead className="w-28">Número</TableHead>
+            <TableHead>Cliente</TableHead>
+            <TableHead>Concepto</TableHead>
+            <TableHead className="w-32" numeric>
+              Monto
+            </TableHead>
+            <TableHead className="w-28">Estado</TableHead>
+            <TableHead className="w-32" numeric>
+              Vencimiento
+            </TableHead>
+            <TableHead className="w-12">
+              <span className="sr-only">Acciones</span>
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {invoices.map((inv) => {
             const badgeInfo = STATUS_BADGE[inv.status]
             return (
-              <TableRow key={inv.id} className="hover:bg-fill-1">
-                <TableCell className="font-mono text-footnote font-medium text-label">{inv.id}</TableCell>
-                <TableCell className="font-medium text-label">{inv.customer}</TableCell>
+              <TableRow key={inv.id}>
+                <TableCell className="tabular-nums">{inv.id}</TableCell>
+                <TableCell>{inv.customer}</TableCell>
                 <TableCell className="text-label-secondary">{inv.concept}</TableCell>
-                <TableCell className="text-right font-medium text-label">{formatter.format(inv.amount)}</TableCell>
-                <TableCell className="text-center">
+                <TableCell numeric>{money.format(inv.amount)}</TableCell>
+                <TableCell>
                   <Badge color={badgeInfo.color} size="sm">
                     {badgeInfo.label}
                   </Badge>
                 </TableCell>
-                <TableCell className="text-right text-footnote text-label-secondary">{inv.dueDate}</TableCell>
+                <TableCell className="text-label-secondary" numeric>
+                  {formatDate(inv.dueDate)}
+                </TableCell>
                 <TableCell className="text-center">
                   {/* Una anulada ya no tiene acciones: sin trigger, en vez de un menú vacío. */}
                   {inv.status !== "void" && (

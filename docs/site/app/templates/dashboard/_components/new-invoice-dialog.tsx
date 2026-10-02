@@ -48,7 +48,8 @@ export function NewInvoiceDialog({ onAddInvoice }: NewInvoiceDialogProps) {
           <DialogDescription>Completá los datos para emitir un nuevo comprobante de cobro.</DialogDescription>
         </DialogHeader>
 
-        {/* `Form` valida los `Field` registrados y enfoca el primero inválido: el error queda en su campo. */}
+        {/* `Form` valida los `Field` registrados y enfoca el primero inválido. Los `FieldError` con `match`
+            fijan el texto: sin eso sale el mensaje nativo, en el idioma del navegador. */}
         <Form
           onFormSubmit={(values) => {
             const created = onAddInvoice({
@@ -76,25 +77,27 @@ export function NewInvoiceDialog({ onAddInvoice }: NewInvoiceDialogProps) {
                 ))}
               </SelectContent>
             </Select>
-            <FieldError />
+            <FieldError match="valueMissing">Elegí un cliente</FieldError>
           </Field>
 
           <Field name="concept">
             <FieldLabel required>Concepto</FieldLabel>
             <Input placeholder="Ej. Suscripción mensual o consultoría" required />
-            <FieldError />
+            <FieldError match="valueMissing">Falta el concepto</FieldError>
           </Field>
 
           <Field name="amount">
             <FieldLabel required>Monto (USD)</FieldLabel>
             <Input type="number" min={1} step="0.01" placeholder="Ej. 5000" required />
-            <FieldError />
+            <FieldError match="valueMissing">Falta el monto</FieldError>
+            <FieldError match="rangeUnderflow">El monto mínimo es 1</FieldError>
+            <FieldError match="stepMismatch">Hasta dos decimales</FieldError>
           </Field>
 
           <Field name="dueDate">
             <FieldLabel required>Fecha de vencimiento</FieldLabel>
             <Input type="date" defaultValue="2026-10-31" required />
-            <FieldError />
+            <FieldError match="valueMissing">Falta la fecha de vencimiento</FieldError>
           </Field>
 
           <DialogFooter>

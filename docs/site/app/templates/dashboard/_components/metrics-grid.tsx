@@ -11,7 +11,7 @@ export function MetricsGrid({ metrics }: { metrics: ReturnType<typeof calculateM
       <Card className="shadow-widget">
         <CardContent className="p-4">
           <Stat
-            label="Facturación Total"
+            label="Facturación total"
             value={
               <div className="flex items-baseline justify-between gap-2">
                 <span className="text-title-2 font-semibold text-label">{formatter.format(metrics.totalBilled)}</span>
@@ -26,7 +26,7 @@ export function MetricsGrid({ metrics }: { metrics: ReturnType<typeof calculateM
       <Card className="shadow-widget">
         <CardContent className="p-4">
           <Stat
-            label="Pendientes de Cobro"
+            label="Pendientes de cobro"
             value={
               <div className="flex items-baseline justify-between gap-2">
                 <span className="text-title-2 font-semibold text-label">{metrics.pendingCount} facturas</span>
@@ -41,7 +41,7 @@ export function MetricsGrid({ metrics }: { metrics: ReturnType<typeof calculateM
       <Card className="shadow-widget">
         <CardContent className="p-4">
           <Stat
-            label="Cobrado este Período"
+            label="Cobrado este período"
             value={
               <div className="flex items-baseline justify-between gap-2">
                 <span className="text-title-2 font-semibold text-label">{formatter.format(metrics.paidAmount)}</span>
@@ -56,7 +56,7 @@ export function MetricsGrid({ metrics }: { metrics: ReturnType<typeof calculateM
       <Card className="shadow-widget">
         <CardContent className="p-4">
           <Stat
-            label="Facturas Vencidas"
+            label="Facturas vencidas"
             value={
               <div className="flex items-baseline justify-between gap-2">
                 <span className="text-title-2 font-semibold text-label">{metrics.overdueCount} facturas</span>
