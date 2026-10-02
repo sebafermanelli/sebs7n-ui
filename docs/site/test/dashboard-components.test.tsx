@@ -13,10 +13,16 @@ describe("dashboard subcomponents", () => {
   it("MetricsGrid renderiza las tarjetas con valores calculados", () => {
     const metrics = calculateMetrics(INVOICES_MOCK)
     const html = renderToString(createElement(MetricsGrid, { metrics }))
+    for (const label of ["Facturación total", "Pendientes de cobro", "Cobrado", "Facturas vencidas"]) {
+      expect(html).toContain(label)
+    }
+  })
+
+  it("MetricsGrid cargando: los rótulos quedan, las cifras no", () => {
+    const html = renderToString(createElement(MetricsGrid, { metrics: calculateMetrics(INVOICES_MOCK), loading: true }))
     expect(html).toContain("Facturación total")
-    expect(html).toContain("Pendientes de cobro")
-    expect(html).toContain("Cobrado este período")
-    expect(html).toContain("Facturas vencidas")
+    expect(html).toContain('data-slot="skeleton"')
+    expect(html).not.toContain("US$")
   })
 
   it("InvoiceFilters muestra el campo de búsqueda", () => {

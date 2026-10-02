@@ -18,4 +18,16 @@ describe("páginas del dashboard", () => {
     expect(html).toContain("Facturas")
     expect(html).toContain("FAC-1001")
   })
+  it("Inicio trae el gráfico (en esqueleto hasta hidratar) y lo que vence pronto", () => {
+    const html = renderWithInvoices(createElement(DashboardHomePage))
+    expect(html).toContain("Facturado y cobrado")
+    expect(html).toContain('data-slot="skeleton"')
+    expect(html).toContain("Vencen pronto")
+    expect(html).toContain('href="/templates/dashboard/invoices"')
+  })
+
+  it("mientras carga, Inicio muestra esqueletos en vez de cifras", () => {
+    const html = renderWithInvoices(createElement(DashboardHomePage), true)
+    expect(html).not.toContain("US$")
+  })
 })
