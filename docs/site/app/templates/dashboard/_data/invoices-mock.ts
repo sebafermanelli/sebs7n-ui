@@ -8,6 +8,10 @@ export interface Invoice {
   date: string
   dueDate: string
   status: InvoiceStatus
+  /** Cuándo se cobró (`YYYY-MM-DD`). Solo en las cobradas: el historial del detalle y el gráfico lo usan. */
+  paidAt?: string
+  /** Cuándo se anuló (`YYYY-MM-DD`). Solo en las anuladas. */
+  voidedAt?: string
 }
 
 export const INVOICES_MOCK: Invoice[] = [
@@ -28,6 +32,7 @@ export const INVOICES_MOCK: Invoice[] = [
     date: "2026-09-01",
     dueDate: "2026-10-01",
     status: "paid",
+    paidAt: "2026-09-29",
   },
   {
     id: "FAC-1003",
@@ -55,6 +60,7 @@ export const INVOICES_MOCK: Invoice[] = [
     date: "2026-09-10",
     dueDate: "2026-10-10",
     status: "paid",
+    paidAt: "2026-09-30",
   },
   {
     id: "FAC-1006",
@@ -73,6 +79,7 @@ export const INVOICES_MOCK: Invoice[] = [
     date: "2026-09-22",
     dueDate: "2026-10-22",
     status: "paid",
+    paidAt: "2026-09-30",
   },
   {
     id: "FAC-1008",
@@ -83,6 +90,22 @@ export const INVOICES_MOCK: Invoice[] = [
     dueDate: "2026-10-25",
     status: "pending",
   },
+  { id: "FAC-1009", customer: "Acme Corporation", concept: "Suscripción Enterprise mensual", amount: 4200, date: "2026-04-05", dueDate: "2026-05-05", status: "paid", paidAt: "2026-04-28" },
+  { id: "FAC-1010", customer: "Globex Industries", concept: "Horas de consultoría (abril)", amount: 3100, date: "2026-04-18", dueDate: "2026-05-18", status: "paid", paidAt: "2026-05-10" },
+  { id: "FAC-1011", customer: "Initech Soluciones", concept: "Licencias anuales", amount: 7800, date: "2026-05-02", dueDate: "2026-06-02", status: "paid", paidAt: "2026-05-30" },
+  { id: "FAC-1012", customer: "Soylent Logistics", concept: "Infraestructura cloud (mayo)", amount: 9100, date: "2026-05-20", dueDate: "2026-06-20", status: "paid", paidAt: "2026-06-15" },
+  { id: "FAC-1013", customer: "Umbrella Health", concept: "Soporte prioritario", amount: 2600, date: "2026-06-03", dueDate: "2026-07-03", status: "paid", paidAt: "2026-06-30" },
+  { id: "FAC-1014", customer: "Hooli Systems", concept: "Migración de datos", amount: 12400, date: "2026-06-14", dueDate: "2026-07-14", status: "paid", paidAt: "2026-07-10" },
+  { id: "FAC-1015", customer: "Massive Dynamic", concept: "Capacitación del equipo", amount: 1900, date: "2026-06-25", dueDate: "2026-07-25", status: "void", voidedAt: "2026-06-27" },
+  { id: "FAC-1016", customer: "Wayne Enterprises", concept: "Plataforma PaaS (junio)", amount: 18000, date: "2026-07-01", dueDate: "2026-08-01", status: "paid", paidAt: "2026-07-29" },
+  { id: "FAC-1017", customer: "Acme Corporation", concept: "Suscripción Enterprise mensual", amount: 4200, date: "2026-07-05", dueDate: "2026-08-05", status: "paid", paidAt: "2026-08-02" },
+  { id: "FAC-1018", customer: "Globex Industries", concept: "Horas de consultoría (julio)", amount: 4700, date: "2026-07-19", dueDate: "2026-08-19", status: "paid", paidAt: "2026-08-18" },
+  { id: "FAC-1019", customer: "Initech Soluciones", concept: "Puestos adicionales", amount: 2400, date: "2026-08-04", dueDate: "2026-09-04", status: "paid", paidAt: "2026-09-01" },
+  { id: "FAC-1020", customer: "Soylent Logistics", concept: "Infraestructura cloud (agosto)", amount: 9300, date: "2026-08-20", dueDate: "2026-09-20", status: "overdue" },
+  { id: "FAC-1021", customer: "Umbrella Health", concept: "Integración de pagos", amount: 5200, date: "2026-08-28", dueDate: "2026-09-28", status: "paid", paidAt: "2026-09-25" },
+  { id: "FAC-1022", customer: "Hooli Systems", concept: "Auditoría de accesos", amount: 3900, date: "2026-09-08", dueDate: "2026-10-08", status: "pending" },
+  { id: "FAC-1023", customer: "Massive Dynamic", concept: "Soporte trimestral", amount: 6100, date: "2026-09-18", dueDate: "2026-10-18", status: "pending" },
+  { id: "FAC-1024", customer: "Wayne Enterprises", concept: "Plataforma PaaS (septiembre)", amount: 18000, date: "2026-09-30", dueDate: "2026-10-30", status: "pending" },
 ]
 
 export function filterInvoices(
