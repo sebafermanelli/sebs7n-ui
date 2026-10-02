@@ -49,25 +49,56 @@ export function templateMarkdown({ intro, files }) {
   return [intro.trim(), "", "## El código", "", "Cada archivo con su ruta dentro de la carpeta del dashboard.", "", ...code].join("\n")
 }
 
-/** El ítem `dashboard` del registry: copia las páginas e instala el paquete; no copia componentes. */
-export function buildDashboardBlock({ files, site, author }) {
-  return {
-    $schema: ITEM_SCHEMA,
-    name: "dashboard",
-    type: "registry:block",
-    title: "Dashboard operativo",
+/**
+ * Los templates de la galería que viajan como `.md` y como bloque. Uno nuevo es una entrada acá, su
+ * carpeta en `app/templates/<slug>` y su texto en `content/templates/<slug>.md`.
+ */
+export const TEMPLATES = [
+  {
+    slug: "dashboard",
+    title: "Template: dashboard operativo",
+    blockTitle: "Dashboard operativo",
     description:
+      "Una app entera (Inicio, Facturas, Clientes, Configuración) para copiar la estructura y cambiar los datos; con el código de cada archivo.",
+    blockDescription:
       "El template SaaS de sebs7n-ui: Inicio, Facturas, Clientes y Configuración con el estado compartido. Importa del paquete; la app cambia los datos de `_data/`.",
-    author,
-    docs: `Guía: ${site}/docs/guia-agentes.md · Template: ${site}/templates/dashboard.md. Necesita el Toaster de sonner y el ThemeProvider de next-themes montados (ver ${site}/docs/instalacion).`,
     // Los peers del paquete van explícitos: `@base-ui/react` llega por su cuenta solo si la app hizo
     // `shadcn init` con el estilo base-nova (lo comprobó la prueba real del bloque).
     dependencies: ["sebs7n-ui", "@base-ui/react", "sonner", "lucide-react", "recharts", "next-themes"],
+    transform: (file) => (file.path === "_lib/routes.ts" ? blockRoutes(file.content) : file.content),
+  },
+  {
+    slug: "landing",
+    title: "Template: landing page",
+    blockTitle: "Landing page",
+    description:
+      "El default para landings y páginas de marketing: hero, logos, beneficios, precios, testimonios, preguntas y cierre sobre el wallpaper; con el código de cada archivo.",
+    blockDescription:
+      "La landing de sebs7n-ui: hero, logos, beneficios, precios, testimonios, preguntas y cierre. Importa del paquete; la app cambia el texto de `_data/content.ts`.",
+    dependencies: ["sebs7n-ui", "@base-ui/react", "lucide-react", "next-themes"],
+    transform: (file) => file.content,
+  },
+]
+
+/** El ítem del registry de un template: copia su carpeta e instala el paquete; no copia componentes. */
+export function buildTemplateBlock({ template, files, site, author }) {
+  return {
+    $schema: ITEM_SCHEMA,
+    name: template.slug,
+    type: "registry:block",
+    title: template.blockTitle,
+    description: template.blockDescription,
+    author,
+    docs: `Guía: ${site}/docs/guia-agentes.md · Template: ${site}/templates/${template.slug}.md. Necesita lo de ${site}/docs/instalacion (el tema, la fuente, el ThemeProvider y el Toaster).`,
+    dependencies: template.dependencies,
     files: files.map((file) => ({
-      path: `registry/sebs7n-ui/blocks/dashboard/${file.path}`,
+      path: `registry/sebs7n-ui/blocks/${template.slug}/${file.path}`,
       type: "registry:file",
-      target: `app/dashboard/${file.path}`,
-      content: file.path === "_lib/routes.ts" ? blockRoutes(file.content) : file.content,
+      target: `app/${template.slug}/${file.path}`,
+      content: template.transform(file),
     })),
   }
 }
+
+/** El del dashboard, que es el que usan los tests y el que vino primero. */
+export const buildDashboardBlock = ({ files, site, author }) => buildTemplateBlock({ template: TEMPLATES[0], files, site, author })

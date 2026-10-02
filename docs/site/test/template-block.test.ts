@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { fileURLToPath } from "node:url"
 
-import { blockRoutes, buildDashboardBlock, readTemplate, templateMarkdown } from "../scripts/lib/template-block.mjs"
+import { blockRoutes, buildDashboardBlock, buildTemplateBlock, readTemplate, templateMarkdown, TEMPLATES } from "../scripts/lib/template-block.mjs"
 
 const dir = fileURLToPath(new URL("../app/templates/dashboard", import.meta.url))
 const files = readTemplate(dir)
@@ -66,5 +66,20 @@ describe("buildDashboardBlock", () => {
     for (const f of block.files) {
       expect(f.content, f.target).not.toMatch(/(href=|from )"\/?[^"]*\/templates|@\/components\/ui|@\/\.generated/)
     }
+  })
+})
+
+describe("TEMPLATES", () => {
+  it("dashboard y landing, en ese orden", () => {
+    expect(TEMPLATES.map((t) => t.slug)).toEqual(["dashboard", "landing"])
+  })
+
+  it("el bloque de la landing va a app/landing e instala el paquete", () => {
+    const landing = TEMPLATES.find((t) => t.slug === "landing")!
+    const block = buildTemplateBlock({ template: landing, files: [{ path: "page.tsx", content: "x" }], site: "https://s", author: "a" })
+    expect(block.name).toBe("landing")
+    expect(block.files[0]!.target).toBe("app/landing/page.tsx")
+    expect(block.dependencies).toContain("sebs7n-ui")
+    expect(block.docs).toContain("https://s/templates/landing.md")
   })
 })
