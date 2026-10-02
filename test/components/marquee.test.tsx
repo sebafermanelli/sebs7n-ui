@@ -212,3 +212,46 @@ describe("Marquee", () => {
     expect(utility).toMatch(/prefers-reduced-motion: reduce\)\s*\{\s*animation: none;/)
   })
 })
+
+describe("Marquee pauseControl=press", () => {
+  const sinLinks = CLIENTS.map((name) => ({ id: name, node: <span>{name}</span> }))
+
+  it("tocar la franja la pausa y tocarla de nuevo la reanuda", async () => {
+    const user = userEvent.setup()
+    widths(1200, 400)
+    render(<Marquee aria-label="Testimonios" items={sinLinks} pauseControl="press" />)
+    await user.click(viewport())
+    expect(root()).toHaveAttribute("data-paused")
+    await user.click(viewport())
+    expect(root()).not.toHaveAttribute("data-paused")
+  })
+
+  // 2.2.2 sigue cumpliéndose para teclado y lector: el botón existe, solo no se ve hasta tener foco.
+  it("el botón no se ve, pero está para teclado y lector y aparece con el foco", () => {
+    widths(1200, 400)
+    render(<Marquee aria-label="Testimonios" items={sinLinks} pauseControl="press" />)
+    const button = screen.getByRole("button", { name: "Pausar" })
+    // Con `!`: el `size-7` del botón de ícono le ganaba al `sr-only` y el botón seguía viéndose.
+    expect(button).toHaveClass("sr-only!")
+    expect(button.className).toContain("focus-visible:not-sr-only!")
+  })
+
+  it("un click en un link no la pausa: el link hace lo suyo", async () => {
+    const user = userEvent.setup()
+    widths(1200, 400)
+    render(<Marquee aria-label="Clientes" items={items} pauseControl="press" />)
+    await user.click(screen.getAllByRole("link", { name: "Acme" })[0]!)
+    expect(root()).not.toHaveAttribute("data-paused")
+  })
+})
+
+describe("Marquee variant=cards", () => {
+  it("los ítems se estiran a la altura del más alto y no llevan el alto fijo de un logo", () => {
+    widths(1200, 400)
+    render(<Marquee aria-label="Testimonios" items={[{ id: "a", node: <div>Cita</div> }]} variant="cards" />)
+    const set = document.querySelector<HTMLElement>("[data-slot=marquee-set]")!
+    expect(set).toHaveClass("items-stretch")
+    expect(set.querySelector("li > span")).not.toHaveClass("h-11")
+  })
+})
+

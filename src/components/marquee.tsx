@@ -31,6 +31,14 @@ type MarqueeProps = Omit<React.ComponentProps<"div">, "children" | "aria-label">
   speed?: number
   /** Textos del botón de pausa: `pause` y `play`. Por defecto, `marqueeLabels`. */
   labels?: Partial<MarqueeLabels>
+  /**
+   * Cómo se pausa. `button` (por defecto): el botón de pausa al costado. `press`: tocar la franja la
+   * pausa y tocarla de nuevo la reanuda; el botón sigue estando para teclado y lector de pantalla,
+   * pero no se ve hasta tener el foco (2.2.2 pide un control, no que se vea siempre).
+   */
+  pauseControl?: "button" | "press"
+  /** `logos` (por defecto): ítems de 44 de alto, centrados. `cards`: ítems que son cards, estirados a la altura del más alto. */
+  variant?: "logos" | "cards"
 }
 
 type Mode = "static" | "loop"
@@ -51,7 +59,7 @@ const reducedMotion = () => typeof window !== "undefined" && window.matchMedia?.
  * frena. Con `prefers-reduced-motion` no se mueve: si desborda, se scrollea a
  * mano. Sin JS (y en el HTML del servidor) es la fila quieta, con todos los links.
  */
-function Marquee({ items, "aria-label": label, speed = 40, labels: labelsProp, className, ...props }: MarqueeProps) {
+function Marquee({ items, "aria-label": label, speed = 40, labels: labelsProp, className, pauseControl = "button", variant = "logos", ...props }: MarqueeProps) {
   const labels = { ...marqueeLabels, ...useLabels().marquee, ...defined(labelsProp) }
   const viewport = React.useRef<HTMLDivElement>(null)
   const set = React.useRef<HTMLUListElement>(null)
@@ -112,7 +120,7 @@ function Marquee({ items, "aria-label": label, speed = 40, labels: labelsProp, c
       data-slot="marquee-set"
       // El aire de los costados de cada tanda suma lo mismo que el `gap`: entre la última de una tanda y
       // la primera de la siguiente queda la misma distancia que entre dos ítems.
-      className="flex shrink-0 items-center gap-x-12 px-6"
+      className={cn("flex shrink-0", variant === "cards" ? "items-stretch gap-x-4 px-2" : "items-center gap-x-12 px-6")}
     >
       {items.map((item) => (
         <li key={item.id} className="shrink-0">
@@ -126,7 +134,7 @@ function Marquee({ items, "aria-label": label, speed = 40, labels: labelsProp, c
               {item.node}
             </a>
           ) : (
-            <span className="flex h-11 items-center text-label-secondary">{item.node}</span>
+            <span className={cn("flex", variant === "cards" ? "h-full" : "h-11 items-center text-label-secondary")}>{item.node}</span>
           )}
         </li>
       ))}
@@ -145,6 +153,14 @@ function Marquee({ items, "aria-label": label, speed = 40, labels: labelsProp, c
         ref={viewport}
         data-slot="marquee-viewport"
         onFocus={() => setFocused(true)}
+        // Con `press`, tocar la franja pausa o reanuda; un click en un link hace lo suyo.
+        onClick={
+          pauseControl === "press" && mode === "loop"
+            ? (event) => {
+                if (!(event.target as HTMLElement).closest("a")) setStopped((value) => !value)
+              }
+            : undefined
+        }
         onBlur={(event) => {
           if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setFocused(false)
         }}
@@ -152,6 +168,7 @@ function Marquee({ items, "aria-label": label, speed = 40, labels: labelsProp, c
           "flex min-w-0 flex-1",
           // Quieta: centrada si entra y con scroll a mano si no (movimiento reducido, foco o sin JS). En
           // bucle, los bordes se funden: los ítems entran y salen, no aparecen cortados.
+          pauseControl === "press" && mode === "loop" && "cursor-pointer",
           loop
             ? "overflow-hidden [mask-image:linear-gradient(to_right,transparent,#000_4rem,#000_calc(100%-4rem),transparent)]"
             : "justify-center-safe overflow-x-auto"
@@ -171,7 +188,8 @@ function Marquee({ items, "aria-label": label, speed = 40, labels: labelsProp, c
       {mode === "loop" && (
         <Button
           aria-label={stopped ? labels.play : labels.pause}
-          className="shrink-0"
+          // Con `!`: el `size-7` del botón de ícono le gana al `sr-only` y el botón seguía viéndose.
+          className={cn("shrink-0", pauseControl === "press" && "sr-only! focus-visible:not-sr-only!")}
           data-slot="marquee-pause"
           onClick={() => setStopped((value) => !value)}
           size="icon-sm"

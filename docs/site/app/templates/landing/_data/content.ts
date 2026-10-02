@@ -71,6 +71,9 @@ export const TESTIMONIALS = [
   { quote: "Pasamos de una planilla a cobrar todo en fecha. Los recordatorios solos ya pagan el plan.", name: "Laura Gómez", role: "Administración, Nube Digital" },
   { quote: "Lo configuramos en una tarde. El contador recibe el libro de ventas sin que se lo mandemos.", name: "Martín Ruiz", role: "Socio, Estudio Ruiz" },
   { quote: "Por fin veo lo que me deben sin abrir cinco archivos.", name: "Carla Sosa", role: "Dueña, Óptica Sur" },
+  { quote: "Los clientes pagan antes desde que les llega el aviso solo. Recuperamos semanas de caja.", name: "Diego Herrera", role: "Gerente, Taller Norte" },
+  { quote: "Cambiamos de plan dos veces sin hablar con nadie. Todo se ajustó solo.", name: "Paula Ríos", role: "Socia, Librería Central" },
+  { quote: "El equipo de cobranzas dejó de usar tres herramientas distintas.", name: "Sergio Paz", role: "Finanzas, Acme S.A." },
 ]
 
 export const FAQ = [

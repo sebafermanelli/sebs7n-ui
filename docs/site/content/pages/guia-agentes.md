@@ -163,10 +163,10 @@ div.bg-ambient[data-ambient]         el wallpaper: barra y cards pasan solas a t
 ├── Navbar                           marca, links a anclas, una CTA en gris
 ├── main  max-w-[1080px] gap-24      una columna centrada, mucho aire entre secciones
 │   ├── Hero                         el único <h1> (text-large-title) y la acción primaria
-│   ├── Logos                        fila fija; Marquee (con su pausa) solo si no entran
+│   ├── Logos                        Marquee pauseControl="press" (tocar pausa y reanuda)
 │   ├── Beneficios #beneficios       Card en grilla 1/2/3
 │   ├── Precios #precios             ToggleGroup mensual/anual, 3 planes; el recomendado con el acento
-│   ├── Testimonios                  Card con <blockquote>
+│   ├── Testimonios                  Marquee variant="cards": cards con <blockquote>, alineadas
 │   ├── Preguntas #preguntas         Accordion
 │   └── Cierre #registro             la acción del hero, otra vez
 └── Footer
@@ -176,6 +176,7 @@ div.bg-ambient[data-ambient]         el wallpaper: barra y cards pasan solas a t
 - Cada sección abre con un `<h2>` en `text-title-1` y una bajada en `text-body text-label-secondary`, centrados.
 - Las secciones con ancla llevan `scroll-mt-20`: si no, el título queda debajo de la barra.
 - Server Components: cliente solo lo que cambia con un click (el toggle de precios). Una landing tiene que ser liviana.
+- Lo que se mueve solo (`Marquee`) tiene que poder pausarse: en una landing, `pauseControl="press"` (tocar la franja pausa y reanuda; el botón queda para teclado). Nunca sin pausa.
 - Todo el texto en un solo archivo de datos: adaptar la landing es cambiar ese archivo.
 - A 390 px: el grupo de CTA pasa a columna (`flex-col sm:flex-row`), las grillas a una columna.
 
