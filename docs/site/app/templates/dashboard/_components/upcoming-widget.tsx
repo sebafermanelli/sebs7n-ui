@@ -7,7 +7,7 @@ import { linkVariants } from "sebs7n-ui/variants/link"
 import { WidgetCard } from "sebs7n-ui/widget-card"
 
 import { upcomingDue } from "../_data/derive"
-import { formatDate, money } from "../_lib/format"
+import { formatDayMonth, wholeMoney } from "../_lib/format"
 import { INVOICES_PATH } from "../_lib/routes"
 import { useInvoicesStore } from "../_state/invoices-context"
 
@@ -30,11 +30,11 @@ export function UpcomingWidget() {
           {rows.map((inv) => (
             <ListRow
               // El punto es decorativo: el estado también está escrito en la descripción.
-              description={inv.status === "overdue" ? `${inv.id} · vencida` : `${inv.id} · vence el ${formatDate(inv.dueDate)}`}
+              description={inv.status === "overdue" ? `${inv.id} · vencida` : `${inv.id} · vence el ${formatDayMonth(inv.dueDate)}`}
               dot={inv.status === "overdue" ? "red" : "amber"}
               key={inv.id}
               title={inv.customer}
-              trailing={money.format(inv.amount)}
+              trailing={wholeMoney.format(inv.amount)}
             />
           ))}
         </List>

@@ -43,7 +43,7 @@ export function MetricsGrid({ metrics, loading = false }: { metrics: Metrics; lo
               label={card.label}
               value={
                 loading ? (
-                  <Skeleton className="h-8 w-32" />
+                  <Skeleton className="h-7 w-32" />
                 ) : (
                   <div className="flex items-baseline justify-between gap-2">
                     <span className="text-title-2 font-semibold text-label">{card.value}</span>

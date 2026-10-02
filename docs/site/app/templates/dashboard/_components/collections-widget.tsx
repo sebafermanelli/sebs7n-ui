@@ -11,8 +11,8 @@ import { useInvoicesStore } from "../_state/invoices-context"
 // en el HTML y el chunk contaría igual) y montado recién después de hidratar. Ver `DemoSlot`.
 const CollectionsChart = lazy(() => import("./collections-chart"))
 
-/** El último mes del mock: el gráfico no depende de la fecha de hoy y no se vacía con el tiempo. */
-const LAST_MONTH = "2026-10"
+/** El último mes con facturas emitidas en el mock: el gráfico no depende de la fecha de hoy y no se vacía con el tiempo. */
+const LAST_MONTH = "2026-09"
 
 export function CollectionsWidget() {
   const { invoices, loading } = useInvoicesStore()
