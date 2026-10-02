@@ -20,7 +20,7 @@ Copia la carpeta a `app/landing/` e instala `sebs7n-ui`, `@base-ui/react`, `luci
 | `_data/content.ts` | **lo que se cambia**: todo el texto, los planes, los clientes, las preguntas y adónde van las CTA |
 | `_components/landing-navbar.tsx` | `Navbar` translúcida con links a las anclas y una CTA gris |
 | `_components/hero.tsx` | el `<h1>` y la única acción primaria de la primera pantalla |
-| `_components/clients.tsx` | `Marquee` de clientes |
+| `_components/clients.tsx` | los clientes en una fila fija (sin animación: no necesita pausa) |
 | `_components/features.tsx` | beneficios en grilla 1/2/3 de `Card` |
 | `_components/pricing.tsx` | el único componente de cliente: `ToggleGroup` mensual/anual y los planes |
 | `_components/testimonials.tsx` | citas en `Card` |

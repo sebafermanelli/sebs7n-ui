@@ -38,3 +38,28 @@ describe("CardGrid", () => {
     expect(fila().className).toContain("grid-cols-1")
   })
 })
+
+describe("CardGrid sin huérfanas", () => {
+  const conCards = (n: number, columns?: 2 | 3 | 4) =>
+    render(
+      <CardGrid columns={columns}>
+        {Array.from({ length: n }, (_, i) => (
+          <Card key={i}>
+            <CardContent>{i}</CardContent>
+          </Card>
+        ))}
+      </CardGrid>
+    ).container.firstElementChild as HTMLElement
+
+  // Tres planes en dos columnas dejan uno solo abajo: o todas en paralelo o todas apiladas.
+  it("con un número impar de cards no pasa por dos columnas", () => {
+    expect(conCards(3).className).not.toContain("sm:grid-cols-2")
+    expect(conCards(3).className).toContain("lg:grid-cols-3")
+  })
+
+  it("con un número par sí", () => {
+    expect(conCards(6).className).toContain("sm:grid-cols-2")
+    expect(conCards(4, 4).className).toContain("sm:grid-cols-2")
+  })
+})
+

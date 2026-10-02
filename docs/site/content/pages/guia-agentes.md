@@ -50,7 +50,7 @@ Un link con forma de botón o de card: `buttonVariants()` / `cardVariants()` sob
 
 ### Cards en fila: alineadas, siempre
 
-Cards que se leen juntas van en `CardGrid`: comparten filas (subgrid), así que **la cabecera más alta fija la de todas, y lo mismo el cuerpo y el pie**. Una cabecera más baja que la de al lado, o un pie que no cae a la misma altura que el vecino, es un error. Si una card de la fila no tiene cabecera, ninguna la lleva.
+Cards que se leen juntas van en `CardGrid`: comparten filas (subgrid), así que **la cabecera más alta fija la de todas, y lo mismo el cuerpo y el pie**. Una cabecera más baja que la de al lado, o un pie que no cae a la misma altura que el vecino, es un error. Si una card de la fila no tiene cabecera, ninguna la lleva; y una card sin cuerpo no lleva cabecera (quedaría la franja del cuerpo vacía): título y texto van en `CardContent`. Y sin huérfanas: una fila va toda en paralelo o toda apilada, nunca «2 arriba y 1 abajo» (`CardGrid` saltea las dos columnas cuando la cantidad es impar).
 
 ## Elegir componente
 
@@ -163,7 +163,7 @@ div.bg-ambient[data-ambient]         el wallpaper: barra y cards pasan solas a t
 ├── Navbar                           marca, links a anclas, una CTA en gris
 ├── main  max-w-[1080px] gap-24      una columna centrada, mucho aire entre secciones
 │   ├── Hero                         el único <h1> (text-large-title) y la acción primaria
-│   ├── Logos                        Marquee
+│   ├── Logos                        fila fija; Marquee (con su pausa) solo si no entran
 │   ├── Beneficios #beneficios       Card en grilla 1/2/3
 │   ├── Precios #precios             ToggleGroup mensual/anual, 3 planes; el recomendado con el acento
 │   ├── Testimonios                  Card con <blockquote>

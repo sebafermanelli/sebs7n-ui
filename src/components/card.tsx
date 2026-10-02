@@ -1,4 +1,4 @@
-import type * as React from "react"
+import * as React from "react"
 import type { VariantProps } from "class-variance-authority"
 
 import { cn } from "../lib/utils.js"
@@ -186,6 +186,8 @@ type CardGridProps = React.ComponentProps<"div"> & {
 }
 
 const cardGridColumns = { 2: "sm:grid-cols-2", 3: "sm:grid-cols-2 lg:grid-cols-3", 4: "sm:grid-cols-2 lg:grid-cols-4" } as const
+// Las clases escritas enteras: Tailwind no ve una armada con `${}`.
+const cardGridColumnsOdd = { 2: "sm:grid-cols-2", 3: "lg:grid-cols-3", 4: "lg:grid-cols-4" } as const
 
 /**
  * Una fila de cards que se leen juntas (planes, beneficios, testimonios). Cada `Card` comparte las
@@ -193,20 +195,25 @@ const cardGridColumns = { 2: "sm:grid-cols-2", 3: "sm:grid-cols-2 lg:grid-cols-3
  * pie. Una cabecera más baja que la de al lado, o un pie que no cae a la misma altura, es el error
  * que esto evita. Las cards van como hijas directas, con `CardHeader`, `CardContent` y `CardFooter`.
  */
-function CardGrid({ className, columns = 3, ...props }: CardGridProps) {
+function CardGrid({ className, columns = 3, children, ...props }: CardGridProps) {
+  // Sin huérfanas: con un número impar de cards, dos columnas dejan una sola abajo (2 + 1). Ahí se
+  // pasa directo de apiladas a todas en paralelo.
+  const odd = React.Children.count(children) % 2 === 1
   return (
     <div
       data-slot="card-grid"
       className={cn(
         "grid grid-cols-1 gap-4",
-        cardGridColumns[columns],
+        odd ? cardGridColumnsOdd[columns] : cardGridColumns[columns],
         "[&>[data-slot=card]]:row-span-3 [&>[data-slot=card]]:grid [&>[data-slot=card]]:grid-rows-subgrid [&>[data-slot=card]]:gap-0",
         // La franja crece hasta la más alta de la fila: el texto arranca arriba, no centrado.
         "[&>[data-slot=card]>[data-slot=card-header]]:content-start",
         className
       )}
       {...props}
-    />
+    >
+      {children}
+    </div>
   )
 }
 
