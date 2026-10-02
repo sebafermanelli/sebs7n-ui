@@ -1,11 +1,10 @@
+// @vitest-environment node
 import { readFileSync } from "node:fs"
-import { join } from "node:path"
 import { describe, expect, it } from "vitest"
 
 import { buildAgentGuide } from "../scripts/gen-agent-guide.mjs"
 
-// Con `process.cwd()` (vitest corre desde la raíz): `readFileSync(new URL(…, import.meta.url))` falla en jsdom.
-const pkg = JSON.parse(readFileSync(join(process.cwd(), "package.json"), "utf8"))
+const pkg = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"))
 
 describe("la guía para agentes dentro del paquete", () => {
   const guide = buildAgentGuide({
