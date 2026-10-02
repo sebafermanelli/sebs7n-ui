@@ -1,15 +1,29 @@
+import { ArrowLeftIcon } from "lucide-react"
+import Link from "next/link"
 import { Navbar, NavbarContent } from "sebs7n-ui/navbar"
 import { NavbarLink } from "sebs7n-ui/navbar-link"
 import { buttonVariants } from "sebs7n-ui/variants/button"
 
 import { CTA_HREF, NAV_LINKS, PRODUCT } from "../_data/content"
+import { GALLERY_PATH } from "../_lib/routes"
 
 // La barra translúcida de iCloud. Su CTA va en gris: el acento de la primera pantalla es el del hero.
 export function LandingNavbar() {
   return (
     <Navbar>
       <NavbarContent maxWidth={1080}>
-        <span className="text-headline text-label">{PRODUCT.name}</span>
+        {GALLERY_PATH && (
+          <>
+            <Link className={buttonVariants({ variant: "plain", size: "sm" })} href={GALLERY_PATH}>
+              <ArrowLeftIcon />
+              Templates
+            </Link>
+            <span aria-hidden="true" className="text-label-tertiary">
+              /
+            </span>
+          </>
+        )}
+        <span className="truncate text-headline text-label">{PRODUCT.name}</span>
         <nav aria-label="Secciones" className="ml-auto hidden items-center gap-1 sm:flex">
           {NAV_LINKS.map((link) => (
             <NavbarLink href={link.href} key={link.href}>

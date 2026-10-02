@@ -41,6 +41,13 @@ export function blockRoutes(source) {
   return out
 }
 
+/** `_lib/routes.ts` de un template sin más rutas que la galería: fuera del sitio no hay galería. */
+export function withoutGallery(source) {
+  const out = source.replace('export const GALLERY_PATH: string | null = "/templates"', "export const GALLERY_PATH: string | null = null")
+  if (out === source) throw new Error("template-block: routes.ts cambió y el bloque quedaría con /templates")
+  return out
+}
+
 const fence = (path) => (path.endsWith(".tsx") ? "tsx" : path.endsWith(".ts") ? "ts" : "js")
 
 /** El `.md` del template: el texto a mano y, después, el código de cada archivo. */
@@ -76,7 +83,7 @@ export const TEMPLATES = [
     blockDescription:
       "La landing de sebs7n-ui: hero, logos, beneficios, precios, testimonios, preguntas y cierre. Importa del paquete; la app cambia el texto de `_data/content.ts`.",
     dependencies: ["sebs7n-ui", "@base-ui/react", "lucide-react", "next-themes"],
-    transform: (file) => file.content,
+    transform: (file) => (file.path === "_lib/routes.ts" ? withoutGallery(file.content) : file.content),
   },
 ]
 

@@ -4,6 +4,7 @@ export interface TemplateFile {
 }
 export declare function readTemplate(dir: string): TemplateFile[]
 export declare function blockRoutes(source: string): string
+export declare function withoutGallery(source: string): string
 export declare function templateMarkdown(options: { intro: string; files: TemplateFile[] }): string
 export interface TemplateConfig {
   slug: string

@@ -1,5 +1,7 @@
 import type { Metadata } from "next"
 
+import { CardGrid } from "sebs7n-ui/card"
+
 import site from "@/.generated/site.json"
 import { SiteHeader } from "../_components/site-header"
 import { TemplateCard } from "./_components/template-card"
@@ -22,7 +24,7 @@ export default function TemplatesPage() {
           </p>
         </header>
 
-        <section className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <CardGrid columns={2}>
           <TemplateCard
             category="SaaS y backoffice"
             description="Una app chica de facturación: inicio con gráfico, facturas, clientes y configuración, con el estado compartido entre secciones."
@@ -60,7 +62,7 @@ export default function TemplatesPage() {
             features={["Jerarquía tipográfica editorial", "Índice de la página", "Contraste AA en todo el texto", "Filtro por etiquetas"]}
             title="Blog / Editorial"
           />
-        </section>
+        </CardGrid>
       </main>
     </div>
   )

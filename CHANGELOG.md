@@ -2,6 +2,7 @@
 
 Una línea por versión, la más nueva arriba. Versionado [SemVer 2.0.0](https://semver.org/lang/es/).
 
+- **2.8.0** (2026-10-02) — `CardGrid` (en `sebs7n-ui/card`): una fila de cards que comparten filas con subgrid, así la cabecera, el cuerpo y el pie quedan alineados con los de al lado. La guía para agentes lo hace regla.
 - **2.7.1** (2026-10-02) — La guía para agentes (`agents/guia.md`) suma la anatomía de una landing y la regla de elección: landing o marketing, template de landing; app de trabajo, template de dashboard. Sin cambios de API.
 - **2.7.0** (2026-10-02) — Guía para agentes de IA dentro del paquete (`agents/guia.md`, la misma que [/docs/guia-agentes](https://ui.sebastianfermanelli.com/docs/guia-agentes)): las reglas de sistema y la anatomía de una app. Sin cambios de API.
 - **2.6.0** (2026-09-30) — `NavbarLink` (solo por subpath, `sebs7n-ui/navbar-link`): el link de texto de la barra, `label-secondary` en reposo y `label` con el puntero y en la página actual (`active` → `aria-current`), con `navbarLinkClassName({ icon })` para los controles de ícono.

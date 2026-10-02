@@ -180,16 +180,48 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+type CardGridProps = React.ComponentProps<"div"> & {
+  /** Columnas desde `lg` (en `sm`, dos; en el teléfono, una). */
+  columns?: 2 | 3 | 4
+}
+
+const cardGridColumns = { 2: "sm:grid-cols-2", 3: "sm:grid-cols-2 lg:grid-cols-3", 4: "sm:grid-cols-2 lg:grid-cols-4" } as const
+
+/**
+ * Una fila de cards que se leen juntas (planes, beneficios, testimonios). Cada `Card` comparte las
+ * filas de la grilla (subgrid): la cabecera más alta fija la de todas, y lo mismo el cuerpo y el
+ * pie. Una cabecera más baja que la de al lado, o un pie que no cae a la misma altura, es el error
+ * que esto evita. Las cards van como hijas directas, con `CardHeader`, `CardContent` y `CardFooter`.
+ */
+function CardGrid({ className, columns = 3, ...props }: CardGridProps) {
+  return (
+    <div
+      data-slot="card-grid"
+      className={cn(
+        "grid grid-cols-1 gap-4",
+        cardGridColumns[columns],
+        "[&>[data-slot=card]]:row-span-3 [&>[data-slot=card]]:grid [&>[data-slot=card]]:grid-rows-subgrid [&>[data-slot=card]]:gap-0",
+        // La franja crece hasta la más alta de la fila: el texto arranca arriba, no centrado.
+        "[&>[data-slot=card]>[data-slot=card-header]]:content-start",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
 export {
   Card,
   CardAction,
   CardContent,
   CardDescription,
   CardFooter,
+  CardGrid,
   CardHeader,
   CardRow,
   CardTitle,
   type CardContentProps,
+  type CardGridProps,
   type CardHeaderProps,
   type CardProps,
   type CardRowProps,

@@ -9,6 +9,7 @@ import {
   CardContent,
   CardDescription,
   CardFooter,
+  CardGrid,
   CardHeader,
   CardRow,
   CardTitle,
@@ -134,3 +135,42 @@ export function Interactiva() {
     </div>
   )
 }
+
+/**
+ * En fila
+ * `CardGrid` alinea las cards que se leen juntas: la cabecera más alta fija la de todas, y el pie cae a la misma altura aunque el cuerpo sea más corto. Sin él, la del medio (con badge y dos líneas) desalinea a las de los costados.
+ */
+export function EnFila() {
+  const planes = [
+    { nombre: "Inicial", detalle: "Para empezar a facturar.", items: ["20 facturas por mes", "1 usuario"] },
+    { nombre: "Profesional", detalle: "Para un negocio que cobra todos los meses.", items: ["Facturas ilimitadas", "5 usuarios", "Reportes"], destacado: true },
+    { nombre: "Empresa", detalle: "Para equipos.", items: ["Usuarios ilimitados", "Permisos por rol"] },
+  ]
+  return (
+    <CardGrid className="w-full">
+      {planes.map((plan) => (
+        <Card key={plan.nombre} selected={plan.destacado}>
+          <CardHeader>
+            <CardTitle>
+              {plan.nombre} {plan.destacado && <Badge size="sm">Recomendado</Badge>}
+            </CardTitle>
+            <CardDescription>{plan.detalle}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ul className="flex flex-col gap-1 text-callout text-label-secondary">
+              {plan.items.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </CardContent>
+          <CardFooter>
+            <Button className="w-full" variant={plan.destacado ? "default" : "secondary"}>
+              Elegir
+            </Button>
+          </CardFooter>
+        </Card>
+      ))}
+    </CardGrid>
+  )
+}
+

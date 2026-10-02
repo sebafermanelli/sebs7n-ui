@@ -343,6 +343,8 @@ describe("template de landing", () => {
     const block = JSON.parse(read("public/r/landing.json"))
     expect(block.type).toBe("registry:block")
     expect(block.files.some((f: { target: string }) => f.target === "app/landing/page.tsx")).toBe(true)
+    const routes = block.files.find((f: { target: string }) => f.target === "app/landing/_lib/routes.ts")
+    expect(routes.content).toContain("GALLERY_PATH: string | null = null")
   })
 })
 

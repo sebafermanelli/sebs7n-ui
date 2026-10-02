@@ -48,6 +48,10 @@ Texto con `label` / `label-secondary` (≥ 4,5:1). `label-tertiary` no es para t
 
 Un link con forma de botón o de card: `buttonVariants()` / `cardVariants()` sobre `<a>` o `<Link>`. **Nunca** `render` de un `Button` para un link (Base UI le pone `role="button"`). Un link de texto: `linkVariants` (`inline`, `subtle`, `row`, `accent`). Una acción que abre un panel no es un link: es un `<button>`, aunque se vea como link. Un link que solo aparece en hover no existe en un celular.
 
+### Cards en fila: alineadas, siempre
+
+Cards que se leen juntas van en `CardGrid`: comparten filas (subgrid), así que **la cabecera más alta fija la de todas, y lo mismo el cuerpo y el pie**. Una cabecera más baja que la de al lado, o un pie que no cae a la misma altura que el vecino, es un error. Si una card de la fila no tiene cabecera, ninguna la lleva.
+
 ## Elegir componente
 
 | Si necesitás | Usá |
@@ -75,6 +79,7 @@ Un link con forma de botón o de card: `buttonVariants()` / `cardVariants()` sob
 | Una lista de filas con título, detalle y valor | `List` + `ListRow` |
 | Un número clave | `Stat` dentro de una `Card` |
 | Un bloque con título en un tablero | `WidgetCard` |
+| Varias cards en fila (planes, beneficios, testimonios, una galería) | `Card` dentro de `CardGrid` |
 | Nada que mostrar | `EmptyState`, con una sola acción para salir del vacío |
 | Esperando datos | `Skeleton` del alto final, o `loading` del componente |
 

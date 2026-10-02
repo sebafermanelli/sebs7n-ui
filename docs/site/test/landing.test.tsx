@@ -44,3 +44,10 @@ describe("página", () => {
     for (const item of FAQ) expect(html).toContain(item.question)
   })
 })
+
+describe("vuelta a la galería", () => {
+  it("en el sitio la barra vuelve a Templates", () => {
+    expect(renderToString(createElement(LandingPage))).toContain('href="/templates"')
+  })
+})
+

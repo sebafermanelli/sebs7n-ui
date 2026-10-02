@@ -1,4 +1,4 @@
-import { Card, CardContent } from "sebs7n-ui/card"
+import { Card, CardContent, CardFooter, CardGrid } from "sebs7n-ui/card"
 
 import { TESTIMONIALS } from "../_data/content"
 import { SectionHeader } from "./section-header"
@@ -7,21 +7,20 @@ export function Testimonials() {
   return (
     <section className="flex flex-col gap-10">
       <SectionHeader title="Lo que dicen quienes lo usan" />
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+      {/* `CardGrid`: el pie (nombre y cargo) cae a la misma altura aunque la cita sea más corta. */}
+      <CardGrid>
         {TESTIMONIALS.map((item) => (
           <Card key={item.name}>
-            <CardContent>
-              <figure className="flex flex-col gap-4">
-                <blockquote className="text-body text-label">«{item.quote}»</blockquote>
-                <figcaption className="text-callout">
-                  <span className="text-label">{item.name}</span>
-                  <span className="block text-label-secondary">{item.role}</span>
-                </figcaption>
-              </figure>
+            <CardContent className="pt-(--card-spacing)">
+              <blockquote className="text-body text-label">«{item.quote}»</blockquote>
             </CardContent>
+            <CardFooter className="flex-col items-start gap-0 pb-(--card-spacing) text-callout">
+              <span className="text-label">{item.name}</span>
+              <span className="text-label-secondary">{item.role}</span>
+            </CardFooter>
           </Card>
         ))}
-      </div>
+      </CardGrid>
     </section>
   )
 }
