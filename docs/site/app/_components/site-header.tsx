@@ -13,6 +13,7 @@ const LINKS = [
   { href: "/docs/instalacion", label: "Docs" },
   { href: "/docs/components/button", label: "Componentes" },
   { href: "/docs/tokens", label: "Tokens" },
+  { href: "/templates", label: "Templates" },
 ]
 
 export function SiteHeader({ version }: { version: string }) {

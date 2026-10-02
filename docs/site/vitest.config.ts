@@ -19,6 +19,8 @@ export default defineConfig({
       { find: /^sebs7n-ui\/labels$/, replacement: raiz("src/lib/labels.tsx") },
       { find: /^sebs7n-ui\/variants\/(.+)$/, replacement: raiz("src/variants/$1.ts") },
       { find: /^sebs7n-ui\/([a-z-]+)$/, replacement: raiz("src/components/$1.tsx") },
+      // El `@/*` del tsconfig, para las páginas que leen `@/.generated/site.json`.
+      { find: /^@\/(.+)$/, replacement: fileURLToPath(new URL("./$1", import.meta.url)) },
     ],
     // El código fuente del paquete resuelve sus dependencias desde la raíz del repo: sin esto React y
     // Base UI llegarían dos veces (la de la raíz y la del sitio) y los hooks se romperían.
