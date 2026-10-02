@@ -25,13 +25,13 @@ export default function TemplatesPage() {
         <section className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <TemplateCard
             category="SaaS y backoffice"
-            description="AppShell con sidebar, métricas, tabla de facturas con filtros en vivo y diálogos de alta y anulación."
+            description="Una app chica de facturación: inicio con gráfico, facturas, clientes y configuración, con el estado compartido entre secciones."
             features={[
-              "Sidebar fijo en desktop y en un Sheet en el teléfono",
-              "Métricas de facturación, pendientes y vencidas",
-              "Búsqueda y filtro por estado",
-              "Alta validada con Form y Field, confirmación con toast",
-              "AlertDialog para anular",
+              "Sidebar navegable; en el teléfono, dentro de un Sheet",
+              "DataTable con búsqueda, orden, páginas y selección múltiple",
+              "Detalle en Sheet con historial (Timeline)",
+              "Alta con Form y Field; cobrar con «Deshacer»; anular con AlertDialog",
+              "Esqueletos mientras carga y EmptyState cuando no hay resultados",
             ]}
             href="/templates/dashboard"
             title="SaaS / Dashboard operativo"

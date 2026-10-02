@@ -53,14 +53,13 @@ describe("measure", () => {
 })
 
 describe("configuración", () => {
-  it("mide las ocho rutas acordadas; 200 KB salvo Chart, Playground y el dashboard, que tienen el suyo", () => {
+  it("mide las once rutas acordadas; 200 KB salvo Chart, Playground y Facturas, que tienen el suyo", () => {
     expect(BUDGET_KB).toBe(200)
-    expect(LIMITS).toEqual({ "/docs/components/chart": 325, "/docs/playground": 310, "/templates/dashboard": 295 })
+    expect(LIMITS).toEqual({ "/docs/components/chart": 325, "/docs/playground": 310, "/templates/dashboard/invoices": 295 })
     expect(limitOf("/docs/components/chart")).toBe(325)
     expect(limitOf("/docs/playground")).toBe(310)
     expect(limitOf("/")).toBe(200)
     expect(limitOf("/docs/iconos")).toBe(200)
-    // Un límite propio solo tiene sentido para una ruta que se mide.
     for (const ruta of Object.keys(LIMITS)) expect(ROUTES).toContain(ruta)
     expect(ROUTES).toEqual([
       "/",
@@ -71,6 +70,9 @@ describe("configuración", () => {
       "/docs/iconos",
       "/templates",
       "/templates/dashboard",
+      "/templates/dashboard/invoices",
+      "/templates/dashboard/customers",
+      "/templates/dashboard/settings",
     ])
   })
 })

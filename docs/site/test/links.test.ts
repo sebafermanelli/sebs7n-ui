@@ -31,6 +31,9 @@ const validas = new Set<string>([
   "/docs/playground",
   "/templates",
   "/templates/dashboard",
+  "/templates/dashboard/invoices",
+  "/templates/dashboard/customers",
+  "/templates/dashboard/settings",
 ])
 for (const page of site.pages) validas.add(`/docs/${page.slug}`)
 for (const component of site.components) validas.add(`/docs/components/${component.slug}`)
