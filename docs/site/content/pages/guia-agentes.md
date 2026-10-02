@@ -1,6 +1,6 @@
-Esta guía es para quien arma una app con sebs7n-ui, persona o agente. Son las reglas **del sistema**: valen para cualquier pantalla. Las de cada componente (props, teclado, cuándo sí y cuándo no) están en su página, y el ejemplo completo de una app es el [template de dashboard](/templates/dashboard).
+Esta guía es para quien arma una app con sebs7n-ui, persona o agente. Son las reglas **del sistema**: valen para cualquier pantalla. Las de cada componente (props, teclado, cuándo sí y cuándo no) están en su página, y hay dos ejemplos completos para copiar: el [template de dashboard](/templates/dashboard) para una app y el [template de landing](/templates/landing) para una landing.
 
-Si sos un agente: leé esta guía antes de escribir la primera pantalla, armá la estructura como el template y cambiá solo los datos y los textos. Ante una duda entre dos componentes, la sección [Elegir componente](#elegir-componente) decide.
+Si sos un agente: leé esta guía antes de escribir la primera pantalla y elegí el template: **una landing o una página de marketing se arma como el de landing; una app de trabajo (sidebar, tablas, formularios), como el de dashboard**. Copiá la estructura y cambiá solo los datos y los textos. Ante una duda entre dos componentes, la sección [Elegir componente](#elegir-componente) decide.
 
 ## La referencia
 
@@ -149,7 +149,34 @@ AppShellContent                      ancho máximo, márgenes y gap-6
 
 **A 390 px:** nada de scroll horizontal; las barras de filtros pasan a columna (`flex-col sm:flex-row`), los campos a ancho completo (`w-full sm:w-48`), y las fechas y montos de una lista angosta en formato corto.
 
-## El template
+## Anatomía de una landing
 
-- [Template de dashboard](/templates/dashboard): Inicio, Facturas, Clientes y Configuración funcionando. Su versión para agentes, con el código de cada archivo, está en `/templates/dashboard.md`.
-- Para copiarlo a una app Next: `npx shadcn@latest add https://ui.sebastianfermanelli.com/r/dashboard.json`. Deja la carpeta `app/dashboard/`; cambiá los datos en `_data/` y los textos, no la estructura.
+Así está armado el [template de landing](/templates/landing): es el default para landings y páginas de marketing.
+
+```
+div.bg-ambient[data-ambient]         el wallpaper: barra y cards pasan solas a translúcidas
+├── Navbar                           marca, links a anclas, una CTA en gris
+├── main  max-w-[1080px] gap-24      una columna centrada, mucho aire entre secciones
+│   ├── Hero                         el único <h1> (text-large-title) y la acción primaria
+│   ├── Logos                        Marquee
+│   ├── Beneficios #beneficios       Card en grilla 1/2/3
+│   ├── Precios #precios             ToggleGroup mensual/anual, 3 planes; el recomendado con el acento
+│   ├── Testimonios                  Card con <blockquote>
+│   ├── Preguntas #preguntas         Accordion
+│   └── Cierre #registro             la acción del hero, otra vez
+└── Footer
+```
+
+- **Un acento por pantalla:** en una página que se recorre con scroll, la regla es por lo que se ve a la vez. La CTA del hero, el plan recomendado y el cierre van en el acento porque nunca comparten pantalla; la CTA de la barra y las secundarias, en gris.
+- Cada sección abre con un `<h2>` en `text-title-1` y una bajada en `text-body text-label-secondary`, centrados.
+- Las secciones con ancla llevan `scroll-mt-20`: si no, el título queda debajo de la barra.
+- Server Components: cliente solo lo que cambia con un click (el toggle de precios). Una landing tiene que ser liviana.
+- Todo el texto en un solo archivo de datos: adaptar la landing es cambiar ese archivo.
+- A 390 px: el grupo de CTA pasa a columna (`flex-col sm:flex-row`), las grillas a una columna.
+
+## Los templates
+
+- [Template de dashboard](/templates/dashboard): una app de trabajo (Inicio, Facturas, Clientes, Configuración). Para agentes, con el código: `/templates/dashboard.md`. Para copiarlo: `npx shadcn@latest add https://ui.sebastianfermanelli.com/r/dashboard.json`.
+- [Template de landing](/templates/landing): el default para landings. Para agentes: `/templates/landing.md`. Para copiarlo: `npx shadcn@latest add https://ui.sebastianfermanelli.com/r/landing.json`.
+
+En los dos: cambiá los datos (`_data/`) y los textos, no la estructura.

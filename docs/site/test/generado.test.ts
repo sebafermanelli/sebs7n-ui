@@ -335,3 +335,14 @@ describe("para agentes", () => {
     expect(block.type).toBe("registry:block")
   })
 })
+
+describe("template de landing", () => {
+  it("está en «Empezá acá», con su .md y su bloque", () => {
+    expect(read("public/llms.txt")).toContain("/templates/landing.md)")
+    expect(read("public/templates/landing.md")).toContain("### `_data/content.ts`")
+    const block = JSON.parse(read("public/r/landing.json"))
+    expect(block.type).toBe("registry:block")
+    expect(block.files.some((f: { target: string }) => f.target === "app/landing/page.tsx")).toBe(true)
+  })
+})
+

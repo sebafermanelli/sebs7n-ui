@@ -20,8 +20,10 @@ describe("templates gallery page", () => {
     }
   })
 
-  it("solo el disponible tiene link, y es el único acento sólido", () => {
+  // Con dos templates disponibles en la misma pantalla, ninguno es «la» acción: los dos en gris.
+  it("los disponibles tienen link y ninguno se lleva el acento", () => {
     expect(html).toContain('href="/templates/dashboard"')
-    expect(html.match(/bg-brand-700/g)).toHaveLength(1)
+    expect(html).toContain('href="/templates/landing"')
+    expect(html).not.toContain("bg-brand-700")
   })
 })

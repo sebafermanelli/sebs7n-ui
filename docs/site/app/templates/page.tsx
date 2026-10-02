@@ -38,8 +38,14 @@ export default function TemplatesPage() {
           />
           <TemplateCard
             category="Marketing"
-            description="Página de aterrizaje sobre el wallpaper, con barra translúcida, hero, beneficios y precios."
-            features={["Material translúcido sobre el wallpaper", "Hero con una sola llamada a la acción", "WidgetCards en grilla", "Comparativa de planes"]}
+            description="El default para landings: barra translúcida sobre el wallpaper, hero, logos, beneficios, precios, testimonios, preguntas y cierre."
+            features={[
+              "Material translúcido sobre el wallpaper",
+              "Un acento por pantalla: hero, plan recomendado y cierre",
+              "Precios con ToggleGroup mensual/anual",
+              "Server Components: el único JS propio es el toggle",
+            ]}
+            href="/templates/landing"
             title="Landing page"
           />
           <TemplateCard

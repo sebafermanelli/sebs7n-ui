@@ -51,6 +51,7 @@ export const ROUTES = [
   "/templates/dashboard/invoices",
   "/templates/dashboard/customers",
   "/templates/dashboard/settings",
+  "/templates/landing",
 ]
 
 /**

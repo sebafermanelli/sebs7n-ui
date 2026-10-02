@@ -31,6 +31,7 @@ const validas = new Set<string>([
   "/docs/playground",
   "/templates",
   "/templates/dashboard",
+  "/templates/landing",
   "/templates/dashboard/invoices",
   "/templates/dashboard/customers",
   "/templates/dashboard/settings",

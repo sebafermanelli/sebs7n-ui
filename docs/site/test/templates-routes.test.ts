@@ -10,6 +10,7 @@ describe("rutas de templates", () => {
     const fuente = readFileSync(join(here, "test/links.test.ts"), "utf8")
     expect(fuente).toContain('"/templates"')
     expect(fuente).toContain('"/templates/dashboard"')
+    expect(fuente).toContain('"/templates/landing"')
     for (const ruta of ["/templates/dashboard/invoices", "/templates/dashboard/customers", "/templates/dashboard/settings"]) {
       expect(fuente).toContain(`"${ruta}"`)
     }

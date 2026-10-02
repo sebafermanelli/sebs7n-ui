@@ -41,7 +41,7 @@ export function TemplateCard({ title, description, category, href, features }: T
 
       {href && (
         <CardFooter>
-          <Link className={buttonVariants({ size: "sm" })} href={href}>
+          <Link className={buttonVariants({ variant: "secondary", size: "sm" })} href={href}>
             Ver template
             <ArrowRightIcon />
           </Link>

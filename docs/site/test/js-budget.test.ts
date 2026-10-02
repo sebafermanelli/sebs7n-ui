@@ -53,7 +53,7 @@ describe("measure", () => {
 })
 
 describe("configuración", () => {
-  it("mide las once rutas acordadas; 200 KB salvo Chart, Playground y las del dashboard, que tienen el suyo", () => {
+  it("mide las doce rutas acordadas; 200 KB salvo Chart, Playground y las del dashboard, que tienen el suyo", () => {
     expect(BUDGET_KB).toBe(200)
     expect(LIMITS).toEqual({
       "/docs/components/chart": 345,
@@ -80,6 +80,7 @@ describe("configuración", () => {
       "/templates/dashboard/invoices",
       "/templates/dashboard/customers",
       "/templates/dashboard/settings",
+      "/templates/landing",
     ])
   })
 })
