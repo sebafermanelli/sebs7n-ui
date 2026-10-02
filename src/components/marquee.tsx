@@ -166,6 +166,9 @@ function Marquee({ items, "aria-label": label, speed = 40, labels: labelsProp, c
         }}
         className={cn(
           "flex min-w-0 flex-1",
+          // La vista recorta, y con eso cortaba en seco la sombra de las cards: aire arriba y abajo
+          // para que entre (`shadow-widget`: 17 + 40 abajo, 23 arriba), compensado con margen negativo.
+          variant === "cards" && "-mt-6 -mb-16 pt-6 pb-16",
           // Quieta: centrada si entra y con scroll a mano si no (movimiento reducido, foco o sin JS). En
           // bucle, los bordes se funden: los ítems entran y salen, no aparecen cortados.
           pauseControl === "press" && mode === "loop" && "cursor-pointer",

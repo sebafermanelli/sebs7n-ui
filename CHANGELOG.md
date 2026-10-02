@@ -2,6 +2,7 @@
 
 Una línea por versión, la más nueva arriba. Versionado [SemVer 2.0.0](https://semver.org/lang/es/).
 
+- **2.9.1** (2026-10-02) — `Marquee variant="cards"` deja lugar para la sombra de las cards: la vista la recortaba en seco.
 - **2.9.0** (2026-10-02) — `Marquee`: `pauseControl="press"` (tocar la franja pausa y reanuda; el botón queda solo para teclado y lector) y `variant="cards"` (ítems que son cards, a la altura del más alto). `CardGrid` sin huérfanas (con un número impar pasa directo de apiladas a todas en paralelo) y sin aire vacío abajo en cards de una sola sección.
 - **2.8.0** (2026-10-02) — `CardGrid` (en `sebs7n-ui/card`): una fila de cards que comparten filas con subgrid, así la cabecera, el cuerpo y el pie quedan alineados con los de al lado. La guía para agentes lo hace regla.
 - **2.7.1** (2026-10-02) — La guía para agentes (`agents/guia.md`) suma la anatomía de una landing y la regla de elección: landing o marketing, template de landing; app de trabajo, template de dashboard. Sin cambios de API.

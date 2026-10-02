@@ -253,5 +253,13 @@ describe("Marquee variant=cards", () => {
     expect(set).toHaveClass("items-stretch")
     expect(set.querySelector("li > span")).not.toHaveClass("h-11")
   })
+
+  // La vista recorta (los ítems entran y salen por los costados) y cortaba en seco la sombra de las
+  // cards: aire arriba y abajo para que la sombra entre, compensado para no mover el layout.
+  it("deja lugar para la sombra de las cards sin cambiar el alto que ocupa", () => {
+    widths(1200, 400)
+    render(<Marquee aria-label="Testimonios" items={[{ id: "a", node: <div>Cita</div> }]} variant="cards" />)
+    expect(viewport()).toHaveClass("pt-6", "-mt-6", "pb-16", "-mb-16")
+  })
 })
 
