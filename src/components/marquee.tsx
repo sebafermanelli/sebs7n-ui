@@ -109,7 +109,11 @@ function Marquee({ items, "aria-label": label, speed = 40, labels: labelsProp, c
   React.useEffect(() => {
     if (!focused) return
     const active = document.activeElement
-    if (active instanceof HTMLElement && viewport.current?.contains(active)) active.scrollIntoView?.({ block: "nearest", inline: "nearest" })
+    if (active instanceof HTMLElement && viewport.current?.contains(active)) {
+      active.scrollIntoView?.({ block: "nearest", inline: "nearest" })
+      // `scrollIntoView` también movía el eje vertical y la franja quedaba corrida, con los logos cortados.
+      if (viewport.current) viewport.current.scrollTop = 0
+    }
   }, [focused])
   const list = (copy: boolean) => (
     <ul
@@ -174,7 +178,7 @@ function Marquee({ items, "aria-label": label, speed = 40, labels: labelsProp, c
           pauseControl === "press" && mode === "loop" && "cursor-pointer",
           loop
             ? "overflow-hidden [mask-image:linear-gradient(to_right,transparent,#000_4rem,#000_calc(100%-4rem),transparent)]"
-            : "justify-center-safe overflow-x-auto"
+            : "justify-center-safe overflow-x-auto overflow-y-hidden"
         )}
       >
         <div
