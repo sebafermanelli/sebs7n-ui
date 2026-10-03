@@ -110,6 +110,8 @@ describe("chartLayout", () => {
 
 describe("StatGrid: acciones y gráfico", () => {
   it("actions dibuja el botón «…» con nombre «Opciones de {label}» y abre el menú", async () => {
+    // El menú llega con `import()`: se precarga antes de medir, así en CI lento no vence el plazo del `findBy`.
+    await import("../../src/internal/stat-actions-menu")
     const user = userEvent.setup()
     render(
       <StatGrid
@@ -125,7 +127,7 @@ describe("StatGrid: acciones y gráfico", () => {
     )
     expect(screen.getAllByRole("button")).toHaveLength(1)
     await user.click(screen.getByRole("button", { name: "Opciones de Cobrado" }))
-    expect(await screen.findByRole("menuitem", { name: "Ver detalle" })).toBeInTheDocument()
+    expect(await screen.findByRole("menuitem", { name: "Ver detalle" }, { timeout: 5000 })).toBeInTheDocument()
   })
 
   it("labels.actions cambia el nombre del botón", () => {

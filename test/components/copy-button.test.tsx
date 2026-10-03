@@ -1,4 +1,4 @@
-import { act, render, screen } from "@testing-library/react"
+import { act, render, screen, waitFor } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { renderToString } from "react-dom/server"
 import { afterEach, describe, expect, it, vi } from "vitest"
@@ -66,7 +66,7 @@ describe("CopyButton", () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<CopyButton value="F-0012" />)
     await user.click(screen.getByRole("button", { name: "Copiar" }))
-    expect(status()).toHaveTextContent("Copiado")
+    await waitFor(() => expect(status()).toHaveTextContent("Copiado"))
     await act(async () => {
       vi.advanceTimersByTime(1500)
     })
