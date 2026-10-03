@@ -59,6 +59,9 @@ describe("CopyButton", () => {
   })
 
   it("a los 1,5 s vuelve al ícono de copiar y la región viva se vacía", async () => {
+    // El tooltip se carga con `import()` al copiar: se precarga ANTES de empezar a medir tiempo. Con el reloj
+    // avanzando solo, en CI lento esa carga podía pasar los 1,5 s y el aviso ya estaba vacío al comprobarlo.
+    await import("../../src/internal/copy-tip")
     vi.useFakeTimers({ shouldAdvanceTime: true })
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<CopyButton value="F-0012" />)
