@@ -77,6 +77,14 @@ export default [
     // aprobó subir a 60 el 2026-09-30.
     // 61,32 kB en la 2.10.0: el panel lateral acoplado del `AppShell` (`aside`, +1,36 kB) y el desborde
     // de las pestañas con desvanecido (+0,3 kB). Sebastián aprobó subir a 62 el 2026-10-03.
+    // 2.11.0 (sin publicar): 62,47 kB, 473 B POR ENCIMA del tope de 62. El sidebar y el panel lateral del
+    // `AppShell` se redimensionan y se pliegan por defecto (+1,15 kB: `internal/resize-handle`, el estado
+    // en vivo/controlado/guardado de los dos paneles, `useStoredState` que entra al barrel y la medida contra el
+    // shell). El tope NO se subió: lo decide Sebastián. Medido sacando piezas: la medida del shell
+    // (`ResizeObserver`, el panel pasa a hoja si no entra) ≈ 0,10 kB; `useStoredState` y las claves de
+    // almacenamiento ≈ 0,17 kB. Qué se recortaría para entrar en 62 kB: las dos juntas dejan 62,2 kB, así que
+    // además `sidebarCollapsible` y el atajo de `SidebarToggle` hacia el shell, o mover `AppShell` al subpath
+    // solamente (hoy está en el barrel).
     limit: "62 kB",
   },
 ]

@@ -21,6 +21,9 @@ export type AppShellContextValue = {
   /** El panel lateral acoplado (`aside`): abierto o no, y cómo cambiarlo. Sin `aside` queda en `false`. */
   asideOpen: boolean
   setAsideOpen: (open: boolean) => void
+  /** El sidebar plegado al riel de íconos (≥ lg). En el teléfono el sidebar es una hoja y no se pliega. */
+  sidebarCollapsed: boolean
+  setSidebarCollapsed: (collapsed: boolean) => void
 }
 export const AppShellContext = createContext<AppShellContextValue | null>(null)
 

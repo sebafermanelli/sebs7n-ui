@@ -78,7 +78,7 @@ describe("AppShell aside", () => {
     const trigger = screen.getByRole("button", { name: "Preguntar" })
     await user.click(trigger)
     const close = await screen.findByRole("button", { name: "Cerrar panel" })
-    await waitFor(() => expect(screen.getByRole("separator")).toBeInTheDocument())
+    await waitFor(() => expect(screen.getByRole("separator", { name: "Cambiar el ancho del panel" })).toBeInTheDocument())
     await waitFor(() => expect(screen.getByRole("complementary").contains(document.activeElement)).toBe(true))
     await user.click(close)
     await waitFor(() => expect(trigger).toHaveFocus())
@@ -133,7 +133,7 @@ describe("AppShell aside", () => {
     render(<Example defaultAsideOpen asideWidth={420} onAsideWidthChange={onWidth} />)
     const column = document.querySelector<HTMLElement>("[data-slot=app-shell-aside-column]")!
     expect(column.style.width).toBe("420px")
-    const handle = await screen.findByRole("separator")
+    const handle = await screen.findByRole("separator", { name: "Cambiar el ancho del panel" })
     expect(handle).toHaveAttribute("aria-valuenow", "420")
     fireEvent.keyDown(handle, { key: "ArrowLeft" })
     expect(handle).toHaveAttribute("aria-valuenow", "436")

@@ -73,16 +73,17 @@ describe("Sidebar", () => {
     expect(enSheet.className).not.toContain("material-translucent-body")
   })
 
-  it("lista de fuentes de iCloud: a ras, w-60, fondo de sidebar y borde derecho; colapsado w-16 sin animar el ancho", () => {
+  it("lista de fuentes de iCloud: a ras, w-60 (o el ancho del shell), fondo de sidebar y borde derecho; colapsado w-16 sin animar el ancho", () => {
     const { rerender } = render(<Example />)
     const aside = screen.getByRole("complementary")
     expect(aside).toHaveAttribute("data-slot", "sidebar")
-    expect(aside).toHaveClass("w-60", "data-collapsed:w-16", "bg-surface-secondary", "border-r", "border-separator-strong", "flex-col", "h-full")
+    expect(aside).toHaveClass("w-(--sidebar-width,15rem)", "data-collapsed:w-16", "bg-surface-secondary", "border-r", "border-separator-strong", "flex-col", "h-full")
     // 2.0: sin la píldora flotante de 1.x: ni margen, ni radio, ni sombra.
     expect(aside.className).not.toMatch(/(^|\s)(m-3|mr-0|rounded-panel|shadow-menu)(\s|$)/)
     expect(aside).not.toHaveAttribute("data-variant")
     expect(aside).not.toHaveAttribute("data-collapsed")
-    expect(aside.className).not.toMatch(/transition(-all|-\[width)|duration/)
+    // La transición del ancho solo existe dentro de un AppShell que ya fue tocado (`in-data-animate`).
+    expect(aside.className).not.toMatch(/(^|\s)(transition|duration)/)
     rerender(<Example collapsed />)
     expect(aside).toHaveAttribute("data-collapsed")
     expect(screen.getByText("pie").closest("[data-slot=sidebar-footer]")).toHaveClass("border-t", "border-separator")

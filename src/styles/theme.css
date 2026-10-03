@@ -1010,6 +1010,22 @@
   transition-duration: 150ms;
 }
 
+/* El ancho de un panel del AppShell (sidebar, panel lateral) al plegar, abrir o soltar el separador.
+   Sin transición con `prefers-reduced-motion` y mientras el separador se arrastra (`data-resizing`). */
+@utility transition-panel {
+  transition: width 200ms ease-out;
+
+  /* Mientras se arrastra el separador, el ancho sigue al puntero sin atraso. */
+  &[data-resizing],
+  [data-resizing] & {
+    transition: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
 /* Lo mismo, más `translate`: para lo que sube al pasar el puntero (Card interactiva)
    o se hunde al apretar (Button). `transform` no: Tailwind v4 escribe `translate`. */
 @utility transition-surface {

@@ -4,8 +4,10 @@ import * as React from "react"
 import { MenuIcon, XIcon } from "lucide-react"
 
 import { defined } from "../internal/defined.js"
+import { ResizeHandle } from "../internal/resize-handle.js"
 import { AppShellContext, SidebarInSheetContext, type AppShellContextValue } from "../internal/shell-context.js"
 import { useLabels, type Labels } from "../lib/labels.js"
+import { useStoredState } from "../lib/use-stored-state.js"
 import { cn } from "../lib/utils.js"
 import { Button } from "./button.js"
 
@@ -18,6 +20,36 @@ type AppShellLabels = Labels["appShell"]
 type AppShellProps = Omit<React.ComponentProps<"div">, "children"> & {
   /** Un <Sidebar>. Se renderiza fijo en desktop y dentro de un Sheet en mobile. */
   sidebar: React.ReactNode
+  /**
+   * El borde derecho del sidebar se arrastra (≥ lg) entre `sidebarMinWidth` y `sidebarMaxWidth`; por debajo de 140 px
+   * pliega al riel de íconos y desde el riel se despliega arrastrando. Doble clic o Enter en el separador alternan.
+   * Por defecto, sí: es el usuario quien acomoda su espacio. En el teléfono no existe (el sidebar es una hoja).
+   */
+  sidebarResizable?: boolean
+  /**
+   * Si arrastrar por debajo del umbral, Enter y el doble clic pliegan al riel. Por defecto, sí. Apagalo cuando los
+   * ítems no tienen ícono: un riel sin íconos queda vacío (el ancho sigue siendo redimensionable).
+   */
+  sidebarCollapsible?: boolean
+  /** Controlado: el ancho del sidebar desplegado, en px. Sin esto, el shell lo maneja (`defaultSidebarWidth`). */
+  sidebarWidth?: number
+  /** Ancho inicial en px. Por defecto, 256. */
+  defaultSidebarWidth?: number
+  /** Mínimo y máximo del ancho desplegado. Por defecto, 200 y 360. */
+  sidebarMinWidth?: number
+  sidebarMaxWidth?: number
+  /** Se llama al soltar el separador o con cada tecla: para que la app guarde el ancho. */
+  onSidebarWidthChange?: (width: number) => void
+  /** Controlado: si el sidebar está plegado al riel de íconos. Sin esto, el shell lo maneja (`defaultSidebarCollapsed`). */
+  sidebarCollapsed?: boolean
+  defaultSidebarCollapsed?: boolean
+  onSidebarCollapsedChange?: (collapsed: boolean) => void
+  /**
+   * Si se pasa, el shell recuerda el ancho y el plegado del sidebar en `localStorage` con esta clave (por ejemplo
+   * `"mi-app:sidebar"`). Se adopta después de montar: el HTML del servidor siempre sale con el ancho por defecto y
+   * desplegado. Sin clave, vale hasta recargar.
+   */
+  sidebarStorageKey?: string
   /** Contenido de la barra superior mobile (logo, campana, avatar), a la derecha de la hamburguesa. */
   mobileBar?: React.ReactNode
   /** Ruta actual (usePathname() en Next): cuando cambia, el Sheet mobile se cierra y el foco va al main. */
@@ -60,12 +92,14 @@ type AppShellProps = Omit<React.ComponentProps<"div">, "children"> & {
   asideTitle?: React.ReactNode
   /** Botones de la cabecera del panel, entre el título y la «X». */
   asideActions?: React.ReactNode
-  /** Ancho inicial en px (≥ lg). Por defecto, 400. */
+  /** Ancho inicial en px (≥ lg), y al que vuelve el doble clic en el separador. Por defecto, 400. */
   asideWidth?: number
   asideMinWidth?: number
   asideMaxWidth?: number
   /** Se llama al soltar el separador o con cada tecla: para que la app guarde el ancho. */
   onAsideWidthChange?: (width: number) => void
+  /** Si se pasa, el shell recuerda el ancho del panel en `localStorage` (igual que `sidebarStorageKey`). */
+  asideStorageKey?: string
   labels?: Partial<AppShellLabels>
   children?: React.ReactNode
 }
@@ -77,7 +111,12 @@ type AppShellProps = Omit<React.ComponentProps<"div">, "children"> & {
 // Mismo corte que lg de Tailwind (64rem): desde ahí el sidebar está fijo y el Sheet sobra.
 const DESKTOP_QUERY = "(min-width: 64rem)"
 
-const asideLabels = { aside: "Panel lateral", closeAside: "Cerrar panel", resizeAside: "Cambiar el ancho del panel" }
+const asideLabels = { aside: "Panel lateral", closeAside: "Cerrar panel", resizeAside: "Cambiar el ancho del panel", resizeSidebar: "Cambiar el ancho de la barra lateral" }
+// Un panel no baja de esto: arrastrando por debajo del umbral el sidebar pliega al riel (64); el contenido principal
+// nunca queda más angosto que MAIN_MIN, y si el panel lateral no entra pasa a ser una hoja.
+const RAIL = 64
+const COLLAPSE_AT = 140
+const MAIN_MIN = 480
 const ASIDE_MS = 200
 const TABBABLE = 'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
 
@@ -95,6 +134,24 @@ function useIsDesktop() {
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
 
+type Panel = { w: number; c: boolean }
+const isPanel = (value: unknown): value is Panel => typeof (value as Panel | null)?.w === "number" && typeof (value as Panel).c === "boolean"
+
+// El ancho y el plegado de un panel del shell: controlados o no, con recuerdo opcional (clave) y con un estado
+// «en vivo» mientras se arrastra (no se guarda ni se avisa hasta soltar). El valor guardado se adopta tras montar.
+function usePanel(key: string | undefined, initial: Panel, width?: number, collapsed?: boolean, onWidth?: (w: number) => void, onCollapsed?: (c: boolean) => void) {
+  const [stored, setStored] = useStoredState(key ?? "", initial, isPanel)
+  const [live, setLive] = React.useState<Panel | null>(null)
+  const set = (next: Panel, done: boolean) => {
+    if (!done) return setLive(next)
+    setLive(null)
+    setStored(next)
+    if (next.w !== (width ?? stored.w)) onWidth?.(next.w)
+    if (next.c !== (collapsed ?? stored.c)) onCollapsed?.(next.c)
+  }
+  return [{ w: live?.w ?? width ?? stored.w, c: live?.c ?? collapsed ?? stored.c }, set, live !== null] as const
+}
+
 type SheetModule = typeof import("./sheet.js")
 
 // Una sola carga del Sheet para todos los AppShell de la página: la promesa y el módulo quedan acá.
@@ -105,6 +162,17 @@ const cargarSheet = () => (sheetPromesa ??= import("./sheet.js").then((mod) => (
 function AppShell({
   className,
   sidebar,
+  sidebarResizable = true,
+  sidebarCollapsible = true,
+  sidebarWidth,
+  defaultSidebarWidth = 256,
+  sidebarMinWidth = 200,
+  sidebarMaxWidth = 360,
+  onSidebarWidthChange,
+  sidebarCollapsed,
+  defaultSidebarCollapsed = false,
+  onSidebarCollapsedChange,
+  sidebarStorageKey,
   mobileBar,
   pathname,
   mainId = "contenido",
@@ -122,6 +190,7 @@ function AppShell({
   asideMinWidth = 320,
   asideMaxWidth = 640,
   onAsideWidthChange,
+  asideStorageKey,
   labels: labelsProp,
   children,
   ...props
@@ -168,8 +237,52 @@ function AppShell({
     [asideOpenProp, onAsideOpenChange]
   )
   const isDesktop = useIsDesktop()
-  const [width, setWidth] = React.useState(() => clamp(asideWidth, asideMinWidth, asideMaxWidth))
-  const [dragging, setDragging] = React.useState(false)
+  const rootRef = React.useRef<HTMLDivElement>(null)
+  const sidebarId = React.useId()
+  const asideId = React.useId()
+  const [resizing, setResizing] = React.useState<"sidebar" | "aside" | null>(null)
+  const [animated, setAnimated] = React.useState(false)
+
+  // El sidebar: ancho y plegado. Rail de 64 plegado; desplegado entre el mínimo y el máximo.
+  const [sidebarState, setSidebar, sidebarLive] = usePanel(
+    sidebarStorageKey,
+    { w: defaultSidebarWidth, c: defaultSidebarCollapsed },
+    sidebarWidth,
+    sidebarCollapsed,
+    onSidebarWidthChange,
+    onSidebarCollapsedChange
+  )
+  const sidebarW = clamp(sidebarState.w, sidebarMinWidth, sidebarMaxWidth)
+  const sidebarIsCollapsed = sidebarState.c
+  const commitSidebar = (next: Panel, done: boolean) => {
+    if (done) setAnimated(true)
+    setSidebar(next, done)
+  }
+  const resizeSidebar = (size: number, done: boolean) => {
+    // Con el teclado desde el riel (suelta sin arrastre previo), cualquier avance lo despliega.
+    const collapse = sidebarCollapsible && size < (done && !sidebarLive && sidebarIsCollapsed ? RAIL + 1 : COLLAPSE_AT)
+    commitSidebar({ w: collapse ? sidebarW : clamp(size, sidebarMinWidth, sidebarMaxWidth), c: collapse }, done)
+  }
+  const setSidebarCollapsed = (collapsed: boolean) => commitSidebar({ w: sidebarW, c: collapsed }, true)
+
+  // El ancho del shell mismo (no el de la ventana: el shell puede vivir en un marco): el panel lateral deja
+  // siempre al contenido al menos MAIN_MIN, y si no entra pasa a ser una hoja. 0 = sin medir (servidor, jsdom).
+  const [shellWidth, setShellWidth] = React.useState(0)
+  React.useEffect(() => {
+    const root = rootRef.current
+    if (!root || typeof ResizeObserver === "undefined") return
+    const observer = new ResizeObserver(([entry]) => entry && setShellWidth(Math.round(entry.contentRect.width)))
+    observer.observe(root)
+    return () => observer.disconnect()
+  }, [])
+  const room = shellWidth ? shellWidth - (sidebarIsCollapsed ? RAIL : sidebarW) - MAIN_MIN : Infinity
+  const docked = isDesktop && room >= asideMinWidth
+
+  const [asideState, setAside] = usePanel(asideStorageKey, { w: asideWidth, c: false }, undefined, undefined, onAsideWidthChange)
+  const asideMax = Math.min(asideMaxWidth, room)
+  const width = clamp(asideState.w, asideMinWidth, asideMax)
+  const asideDefault = clamp(asideWidth, asideMinWidth, asideMax)
+  const dragging = resizing === "aside"
   const asideRef = React.useRef<HTMLElement>(null)
   const opener = React.useRef<HTMLElement | null>(null)
 
@@ -191,7 +304,7 @@ function AppShell({
     if (asideOpen && !wasOpen.current) {
       const active = document.activeElement
       opener.current = active instanceof HTMLElement && active !== document.body ? active : null
-      if (isDesktop) {
+      if (docked) {
         const frame = requestAnimationFrame(() => {
           const panel = asideRef.current
           if (!panel || panel.contains(document.activeElement)) return
@@ -208,18 +321,13 @@ function AppShell({
         target.focus({ preventScroll: true })
       }
     }
-    wasOpen.current = asideOpen && isDesktop
-  }, [asideOpen, isDesktop])
-
-  const commitWidth = (next: number) => {
-    const value = clamp(next, asideMinWidth, asideMaxWidth)
-    setWidth(value)
-    return value
-  }
+    wasOpen.current = asideOpen && docked
+  }, [asideOpen, docked])
 
   const value = React.useMemo<AppShellContextValue>(
-    () => ({ mobileOpen, setMobileOpen, closeMobile, asideOpen, setAsideOpen }),
-    [mobileOpen, closeMobile, asideOpen, setAsideOpen]
+    () => ({ mobileOpen, setMobileOpen, closeMobile, asideOpen, setAsideOpen, sidebarCollapsed: sidebarIsCollapsed, setSidebarCollapsed }),
+    // `setSidebarCollapsed` se rehace en cada render; lo que lee (el ancho y el plegado) está en estas dependencias.
+    [mobileOpen, closeMobile, asideOpen, setAsideOpen, sidebarIsCollapsed, sidebarW]
   )
 
   // Lo de la barra del teléfono: la hamburguesa con su Sheet y lo que pase la app.
@@ -243,8 +351,8 @@ function AppShell({
     if (!sheet && sheetCargado) setSheet(sheetCargado)
   }, [sheet])
   React.useEffect(() => {
-    if ((mobileOpen || (asideOpen && !isDesktop)) && !sheet) void cargarSheet().then(setSheet)
-  }, [mobileOpen, asideOpen, isDesktop, sheet])
+    if ((mobileOpen || (asideOpen && !docked)) && !sheet) void cargarSheet().then(setSheet)
+  }, [mobileOpen, asideOpen, docked, sheet])
   // El Sheet se monta cerrado y se abre en el frame siguiente. Si naciera con `open`, Base UI no
   // pasa por el estado inicial de la transición (`data-starting-style`) y la primera apertura
   // aparecía de golpe, sin deslizarse desde el costado como las siguientes.
@@ -315,6 +423,7 @@ function AppShell({
   return (
     <AppShellContext.Provider value={value}>
       <div
+        ref={rootRef}
         data-slot="app-shell"
         data-ambient={ambient ? "" : undefined}
         className={cn(
@@ -346,10 +455,28 @@ function AppShell({
           </header>
         )}
         <div
+          id={sidebarId}
           data-slot="app-shell-sidebar"
+          data-animate={animated ? "" : undefined}
+          data-resizing={resizing === "sidebar" ? "" : undefined}
+          style={{ "--sidebar-width": `${sidebarW}px` } as React.CSSProperties}
           className="sticky top-(--app-shell-header) hidden h-[calc(var(--app-shell-height)-var(--app-shell-header))] lg:flex"
         >
           {sidebar}
+          {isDesktop && sidebarResizable && (
+            <ResizeHandle
+              edge="end"
+              aria-controls={sidebarId}
+              aria-label={labels.resizeSidebar}
+              data-slot="app-shell-sidebar-handle"
+              value={sidebarIsCollapsed ? RAIL : sidebarW}
+              min={sidebarIsCollapsed ? RAIL : sidebarMinWidth}
+              max={sidebarMaxWidth}
+              onResize={resizeSidebar}
+              onResizing={(on) => setResizing(on ? "sidebar" : null)}
+              onToggle={sidebarCollapsible ? () => setSidebarCollapsed(!sidebarIsCollapsed) : undefined}
+            />
+          )}
         </div>
         <div data-slot="app-shell-column" className="flex min-w-0 flex-col">
           {/* La barra de una app de iCloud en el teléfono: 44 y con el borde abajo; opaca, y translúcida
@@ -370,16 +497,15 @@ function AppShell({
           <div
             data-slot="app-shell-aside-column"
             data-state={asideOpen ? "open" : "closed"}
-            style={{ width: asideOpen ? width : 0 }}
-            className={cn(
-              // Columna ≥ lg que mide 0 cerrada y el ancho del panel abierta: el contenido se corre.
-              "sticky top-0 hidden h-(--app-shell-height) shrink-0 overflow-hidden transition-[width] duration-200 ease-out motion-reduce:transition-none lg:col-start-3 lg:row-span-full lg:row-start-1 lg:block",
-              dragging && "transition-none"
-            )}
+            data-resizing={dragging ? "" : undefined}
+            style={{ width: asideOpen && docked ? width : 0 }}
+            // Columna ≥ lg que mide 0 cerrada y el ancho del panel abierta: el contenido se corre.
+            className="sticky top-0 hidden h-(--app-shell-height) shrink-0 overflow-hidden transition-panel lg:col-start-3 lg:row-span-full lg:row-start-1 lg:block"
           >
-            {present && isDesktop && (
+            {present && docked && (
               <aside
                 ref={asideRef}
+                id={asideId}
                 data-slot="app-shell-aside"
                 aria-label={asideLabel ?? labels.aside}
                 tabIndex={-1}
@@ -404,44 +530,23 @@ function AppShell({
                 <div data-slot="app-shell-aside-body" className="flex min-h-0 flex-1 flex-col">
                   {aside}
                 </div>
-                <div
-                  role="separator"
-                  aria-orientation="vertical"
+                <ResizeHandle
+                  edge="start"
+                  aria-controls={asideId}
                   aria-label={labels.resizeAside}
-                  aria-valuenow={width}
-                  aria-valuemin={asideMinWidth}
-                  aria-valuemax={asideMaxWidth}
-                  tabIndex={0}
                   data-slot="app-shell-aside-handle"
-                  data-dragging={dragging ? "" : undefined}
-                  className="absolute inset-y-0 -start-1 z-10 w-2 cursor-col-resize touch-none outline-none after:absolute after:inset-y-0 after:start-1/2 after:w-0.5 after:-translate-x-1/2 after:transition-colors hover:after:bg-separator-strong focus-visible:after:bg-brand-500 data-dragging:after:bg-brand-500"
-                  onPointerDown={(event) => {
-                    event.currentTarget.setPointerCapture(event.pointerId)
-                    setDragging(true)
-                  }}
-                  onPointerMove={(event) => {
-                    if (!dragging) return
-                    // El borde derecho del panel es el de la ventana: el ancho es lo que queda a la derecha del cursor.
-                    commitWidth(window.innerWidth - event.clientX)
-                  }}
-                  onPointerUp={() => {
-                    setDragging(false)
-                    onAsideWidthChange?.(width)
-                  }}
-                  onKeyDown={(event) => {
-                    const step = event.shiftKey ? 48 : 16
-                    const next = { ArrowLeft: width + step, ArrowRight: width - step, Home: asideMaxWidth, End: asideMinWidth }[event.key]
-                    if (next === undefined) return
-                    event.preventDefault()
-                    event.stopPropagation()
-                    onAsideWidthChange?.(commitWidth(next))
-                  }}
+                  value={width}
+                  min={asideMinWidth}
+                  max={asideMax}
+                  onResize={(size, done) => setAside({ w: clamp(size, asideMinWidth, asideMax), c: false }, done)}
+                  onResizing={(on) => setResizing(on ? "aside" : null)}
+                  onToggle={() => setAside({ w: asideDefault, c: false }, true)}
                 />
               </aside>
             )}
           </div>
         )}
-        {aside != null && present && !isDesktop && sheet && (
+        {aside != null && present && !docked && sheet && (
           <sheet.Sheet open={asideOpen && listo} onOpenChange={setAsideOpen}>
             <sheet.SheetContent
               side="right"
@@ -461,10 +566,11 @@ function AppShell({
   )
 }
 
-const fallback: AppShellContextValue = { mobileOpen: false, setMobileOpen: () => {}, closeMobile: () => {}, asideOpen: false, setAsideOpen: () => {} }
+const fallback: AppShellContextValue = { mobileOpen: false, setMobileOpen: () => {}, closeMobile: () => {}, asideOpen: false, setAsideOpen: () => {}, sidebarCollapsed: false, setSidebarCollapsed: () => {} }
 
 /**
- * Estado del Sheet mobile y del panel lateral (`asideOpen` / `setAsideOpen`). closeMobile({ focusMain: true }) para cerrarlo al navegar desde un link propio
+ * Estado del Sheet mobile, del panel lateral (`asideOpen` / `setAsideOpen`) y del sidebar plegado al riel
+ * (`sidebarCollapsed` / `setSidebarCollapsed`, para el atajo ⌘B). closeMobile({ focusMain: true }) para cerrarlo al navegar desde un link propio
  * (o pasale `pathname` a AppShell). Fuera de AppShell es un no-op.
  */
 function useAppShell(): AppShellContextValue {

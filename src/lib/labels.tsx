@@ -81,6 +81,8 @@ export type Labels = {
     closeAside?: string
     /** Nombre del separador que cambia el ancho del panel. */
     resizeAside?: string
+    /** Nombre del separador que cambia el ancho del sidebar. */
+    resizeSidebar?: string
   }
   /** Opcional (2.3): `AuthDivider`; el texto por defecto es `authLabels` de `sebs7n-ui/auth-layout` (ver `carousel`). */
   auth?: {

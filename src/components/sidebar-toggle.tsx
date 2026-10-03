@@ -5,7 +5,7 @@ import { PanelLeftIcon } from "lucide-react"
 
 import { defined } from "../internal/defined.js"
 import { mergeRefs } from "../internal/merge-refs.js"
-import { SidebarInSheetContext, useSidebarContext } from "../internal/shell-context.js"
+import { AppShellContext, SidebarInSheetContext, useSidebarContext } from "../internal/shell-context.js"
 import { useLabels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
 import { Button } from "./button.js"
@@ -33,7 +33,7 @@ const sidebarToggleLabels: SidebarToggleLabels = {
 type SidebarToggleProps = Omit<React.ComponentProps<typeof Button>, "size" | "variant" | "loading" | "children" | "onClick"> & {
   /** Plegado o no. Sin esta prop, lo que diga el `Sidebar` de afuera (`collapsed`). */
   collapsed?: boolean
-  /** Avisa el estado nuevo al hacer clic. Guardarlo (cookie, `localStorage`) es de la app. */
+  /** Avisa el estado nuevo al hacer clic (sin esta prop, dentro de un `AppShell` pliega el sidebar del shell). Guardarlo (cookie, `localStorage`) es de la app. */
   onCollapsedChange?: (collapsed: boolean) => void
   labels?: Partial<SidebarToggleLabels>
 }
@@ -60,6 +60,7 @@ function SidebarToggle({
   const labels = { ...sidebarToggleLabels, ...defined(useLabels().sidebar), ...defined(labelsProp) }
   const sidebar = useSidebarContext()
   const inSheet = React.useContext(SidebarInSheetContext)
+  const shell = React.useContext(AppShellContext)
   const collapsed = collapsedProp ?? sidebar?.collapsed ?? false
   const ref = React.useRef<HTMLButtonElement>(null)
   const buttonRef = React.useMemo(() => mergeRefs(ref, refProp), [refProp])
@@ -83,7 +84,7 @@ function SidebarToggle({
             aria-expanded={!collapsed}
             aria-label={props["aria-label"] ?? labels.toggle}
             className={cn("ms-auto shrink-0 group-data-collapsed/sidebar:order-first group-data-collapsed/sidebar:ms-0", className)}
-            onClick={() => onCollapsedChange?.(!collapsed)}
+            onClick={() => (onCollapsedChange ?? shell?.setSidebarCollapsed)?.(!collapsed)}
             size="icon-sm"
             type="button"
             variant="plain"

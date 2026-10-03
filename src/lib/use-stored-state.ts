@@ -8,6 +8,9 @@ import * as React from "react"
  * después de montar, así que hay un render con el valor inicial antes del guardado. Sin
  * almacenamiento (modo privado, bloqueado) anda igual, sin recordar.
  *
+ * Con la `key` vacía no guarda ni lee nada: se comporta como un `useState` (así un componente puede ofrecer
+ * el recuerdo como opcional sin condicionar el hook).
+ *
  * Si la `key` cambia, adopta lo guardado en la nueva (o `initial` si no hay nada).
  *
  * `valid` descarta lo guardado que ya no sirve (un valor de una versión vieja, JSON roto): sin él,
@@ -24,6 +27,7 @@ function useStoredState<T>(key: string, initial: T, valid: (value: unknown) => v
   const initialRef = React.useRef(initial)
 
   React.useEffect(() => {
+    if (!key) return
     try {
       const raw = localStorage.getItem(key)
       // Sin nada guardado en esta clave: el valor inicial. Importa al cambiar de clave (un panel por
@@ -40,6 +44,7 @@ function useStoredState<T>(key: string, initial: T, valid: (value: unknown) => v
   const update = React.useCallback(
     (next: T) => {
       setValue(next)
+      if (!key) return
       try {
         localStorage.setItem(key, JSON.stringify(next))
       } catch {

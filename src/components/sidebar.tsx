@@ -13,7 +13,10 @@ import { sidebarItemVariants } from "../variants/sidebar.js"
 import { Kbd } from "./kbd.js"
 
 type SidebarProps = React.ComponentProps<"aside"> & {
-  /** Solo íconos (64px). El ancho cambia sin animación: el spec prohíbe animar width. */
+  /**
+   * Solo íconos (64px). Sin esta prop, dentro de un `AppShell` manda el estado del shell (`sidebarCollapsed`, que
+   * el usuario cambia arrastrando el borde); fuera de un shell, desplegado.
+   */
   collapsed?: boolean
   /**
    * @deprecated Desde 2.0 el Sidebar es siempre la lista de fuentes de iCloud, a ras de la ventana.
@@ -26,9 +29,10 @@ type SidebarProps = React.ComponentProps<"aside"> & {
 // —sin margen, radio ni sombra—, en `surface-secondary` y con el borde entre paneles
 // (`separator-strong`) a la derecha. Adentro del Sheet mobile va transparente y sin borde: el fondo
 // ya lo pone la hoja.
-function Sidebar({ className, collapsed: collapsedProp = false, variant: _variant, ...props }: SidebarProps) {
+function Sidebar({ className, collapsed: collapsedProp, variant: _variant, ...props }: SidebarProps) {
   const inSheet = React.useContext(SidebarInSheetContext)
-  const collapsed = inSheet ? false : collapsedProp
+  const shell = React.useContext(AppShellContext)
+  const collapsed = inSheet ? false : (collapsedProp ?? shell?.sidebarCollapsed ?? false)
   const value = React.useMemo(() => ({ collapsed }), [collapsed])
   return (
     <SidebarContext.Provider value={value}>
@@ -36,7 +40,9 @@ function Sidebar({ className, collapsed: collapsedProp = false, variant: _varian
         data-slot="sidebar"
         data-collapsed={collapsed ? "" : undefined}
         className={cn(
-          "group/sidebar relative flex h-full w-60 shrink-0 flex-col border-r border-separator-strong bg-surface-secondary text-label data-collapsed:w-16",
+          "group/sidebar relative flex h-full w-(--sidebar-width,15rem) shrink-0 flex-col overflow-x-clip border-r border-separator-strong bg-surface-secondary text-label data-collapsed:w-16",
+          // El ancho lo pone el AppShell (`--sidebar-width`) y cambia con transición (`transition-panel`, quieta mientras se arrastra).
+          "in-data-animate:transition-panel",
           // Sobre el wallpaper (W) la columna es el cuerpo translúcido de los widgets: el sidebar es
           // texto denso, y el cuerpo es el material que más contraste deja. Sin transparencia vuelve
           // a su gris de columna y no al blanco de la card.
