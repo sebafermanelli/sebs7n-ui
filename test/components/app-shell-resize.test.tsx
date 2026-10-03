@@ -25,7 +25,10 @@ beforeEach(() => {
   })) as unknown as typeof window.matchMedia
   Element.prototype.setPointerCapture = () => {}
 })
-afterEach(() => {
+afterEach(async () => {
+  // La hoja (`Sheet`) se carga con `import()` al usarse: esperarla evita que en CI (más lento) termine
+  // después de cerrar el entorno y rompa la corrida con un `EnvironmentTeardownError`.
+  await vi.dynamicImportSettled()
   window.matchMedia = originalMatchMedia
   globalThis.ResizeObserver = originalRO
 })
