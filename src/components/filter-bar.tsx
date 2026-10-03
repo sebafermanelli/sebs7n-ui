@@ -1,5 +1,6 @@
 import type * as React from "react"
 
+import { ControlSizeProvider, type ControlSize } from "../internal/control-size.js"
 import { cn } from "../lib/utils.js"
 
 type FilterBarProps = Omit<React.ComponentProps<"div">, "children"> & {
@@ -9,6 +10,12 @@ type FilterBarProps = Omit<React.ComponentProps<"div">, "children"> & {
   filters?: React.ReactNode
   /** Lo que actúa sobre la lista (vista, exportar, `BulkActionsBar`): queda al final, a la derecha. */
   actions?: React.ReactNode
+  /**
+   * El tamaño de todos los controles de la barra (búsqueda, selectores, `ToggleGroup`, botones, fechas):
+   * `sm` por defecto, que es el de una barra sobre una lista. Un control que declara su propio `size` gana.
+   * Los popups, diálogos y hojas que abre lo reinician: lo de adentro no es de la barra.
+   */
+  size?: ControlSize
 }
 
 /**
@@ -20,7 +27,7 @@ type FilterBarProps = Omit<React.ComponentProps<"div">, "children"> & {
  * pasa a una **columna** donde la búsqueda y los selectores ocupan el ancho entero (un `ToggleGroup` o un grupo de botones mantiene su tamaño natural), y las acciones se reparten la
  * última fila: nada queda huérfano a medias. Los tamaños los elige quien la usa (`sm` en barras de
  * una tabla; `md`, el default, sobre una lista suelta); todos los controles de una barra van del
- * mismo tamaño.
+ * mismo tamaño: la barra lo pone sola (`size`, `sm` por defecto) y no hace falta repetirlo en cada control.
  *
  * «Desktop» y «teléfono» son anchos de la **barra**, no de la ventana (container queries): va dentro
  * de una caja `@container`, así que con un panel lateral abierto pasa a columna igual que en un teléfono, y
@@ -29,8 +36,9 @@ type FilterBarProps = Omit<React.ComponentProps<"div">, "children"> & {
  * Para nombrarla como búsqueda de la página, `role="search"` y `aria-label`. Sin estado: va en un
  * Server Component.
  */
-function FilterBar({ search, filters, actions, className, ...props }: FilterBarProps) {
+function FilterBar({ search, filters, actions, size = "sm", className, ...props }: FilterBarProps) {
   return (
+    <ControlSizeProvider size={size}>
     <div data-slot="filter-bar-container" className="@container w-full">
     <div data-slot="filter-bar" className={cn("flex flex-col gap-2 @xl:flex-row @xl:flex-wrap @xl:items-center", className)} {...props}>
       {search != null && (
@@ -53,6 +61,7 @@ function FilterBar({ search, filters, actions, className, ...props }: FilterBarP
       )}
     </div>
     </div>
+    </ControlSizeProvider>
   )
 }
 

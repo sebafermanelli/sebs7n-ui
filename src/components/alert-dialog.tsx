@@ -5,6 +5,7 @@ import { AlertDialog as AlertDialogPrimitive } from "@base-ui/react/alert-dialog
 
 import { cn, type WithClassName } from "../lib/utils.js"
 import { alertFooterClassName, alertWidthClassName, backdropClassName, modalPopupClassName } from "../variants/overlay.js"
+import { ControlSizeProvider } from "../internal/control-size.js"
 import type { ButtonTextSize } from "../variants/button.js"
 import { Button, type ButtonBaseProps } from "./button.js"
 
@@ -105,6 +106,7 @@ function AlertDialogContent({ className, ref, initialFocus, ...props }: AlertDia
   return (
     <DestructiveContext.Provider value={contexto}>
       <AlertDialogPrimitive.Portal>
+      <ControlSizeProvider size={undefined}>
         <AlertDialogOverlay />
         <AlertDialogPrimitive.Popup
           data-slot="alert-dialog-content"
@@ -114,6 +116,7 @@ function AlertDialogContent({ className, ref, initialFocus, ...props }: AlertDia
           initialFocus={initialFocus ?? foco.initialFocus}
           {...props}
         />
+      </ControlSizeProvider>
       </AlertDialogPrimitive.Portal>
     </DestructiveContext.Provider>
   )

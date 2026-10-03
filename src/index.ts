@@ -210,6 +210,6 @@ export * from "./components/widget-card.js"
 //   `notifications-popover` · `shortcuts-dialog` · `command-palette` · `filter-bar` · `sparkline` ·
 //   `log-viewer` · `stat-grid` · `metric-chart` · `bulk-actions-bar` ·
 //   `settings-section` · `widget-board` (con `lib/widget-layout`) · `list-view` (con `lib/list-view`) ·
-//   `filter-disclosure` · `calendar-agenda`
+//   `filter-disclosure` · `calendar-agenda` · `save-bar` · `entity-overlay` · `empty-filters-action`
 // `lib/countries` y `lib/phone` tampoco entran: son los únicos de `lib/` solo por subpath (ver
 // `test/api-publica.test.ts`).

@@ -20,6 +20,7 @@ import {
 } from "../variants/input.js"
 import { Button } from "./button.js"
 import { Calendar } from "./calendar.js"
+import { useControlSize } from "../internal/control-size.js"
 
 type DatePickerLabels = Labels["datePicker"]
 
@@ -109,7 +110,7 @@ function DatePicker(props: DatePickerProps) {
     popupClassName,
     clearable = false,
     mode = "single",
-    size = "md",
+    size: sizeProp,
     name,
     value: valueProp,
     defaultValue,
@@ -135,6 +136,7 @@ function DatePicker(props: DatePickerProps) {
     defaultValue?: Date | null | DateRange
     onValueChange?: (value: never) => void
   }
+  const size = useControlSize(sizeProp, "md")
   const todos = useLabels()
   const labels = { ...todos.calendar, ...todos.datePicker, ...defined(labelsProp) }
   // El idioma y el formato globales (`LabelsProvider` `dates`); la prop gana. La semana la resuelve el

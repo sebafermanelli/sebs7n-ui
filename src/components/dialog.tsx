@@ -3,6 +3,7 @@
 import type * as React from "react"
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
 import { XIcon } from "lucide-react"
+import { ControlSizeProvider } from "../internal/control-size.js"
 
 import { useAvisoDeNombre } from "../internal/dialog-name-warning.js"
 import { useLabels } from "../lib/labels.js"
@@ -49,6 +50,7 @@ function DialogContent({ className, children, showCloseButton = true, labels, ..
   const l = useLabels().dialog
   return (
     <DialogPrimitive.Portal>
+      <ControlSizeProvider size={undefined}>
       <DialogOverlay />
       <DialogPrimitive.Popup
         data-slot="dialog-content"
@@ -69,6 +71,7 @@ function DialogContent({ className, children, showCloseButton = true, labels, ..
           </DialogPrimitive.Close>
         )}
       </DialogPrimitive.Popup>
+      </ControlSizeProvider>
     </DialogPrimitive.Portal>
   )
 }

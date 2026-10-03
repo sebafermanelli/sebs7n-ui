@@ -59,4 +59,78 @@
       --mobile-offset-bottom: 7rem !important;
     }
   }
+
+  /* Table stacked: apilada en el teléfono (< 640 px). Sin cabecera, cada fila es un bloque con sus celdas en línea,
+     y el fondo de hover y de selección va en la fila entera (apiladas, las celdas son bloques sueltos con aire en
+     el medio). Con los mismos tokens que `Table`. Vive acá y no en clases de Tailwind para no pesar en el JS. */
+  @media (max-width: 39.99rem) {
+    [data-slot="table-container"][data-stacked] > table,
+    [data-slot="table-container"][data-stacked] > table > tbody {
+      display: block;
+    }
+    [data-slot="table-container"][data-stacked] > table > thead {
+      display: none;
+    }
+    [data-slot="table-container"][data-stacked] tr[data-slot="table-row"] {
+      position: relative;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      height: auto !important;
+      gap: 4px 12px;
+      padding: 12px 48px 12px 16px;
+      border-top: 1px solid var(--color-separator);
+      border-radius: var(--radius-item);
+    }
+    [data-slot="table-container"][data-stacked] tr[data-slot="table-row"] > td {
+      padding: 0;
+      border-radius: 0;
+      background: transparent !important;
+      box-shadow: none;
+    }
+    [data-slot="table-container"][data-stacked] tr[data-slot="table-row"]:hover {
+      background-color: var(--color-fill-1);
+    }
+    [data-slot="table-container"][data-stacked] tr[data-slot="table-row"][data-state="selected"] {
+      background-color: var(--color-selection-inactive);
+    }
+    [data-slot="table-container"][data-stacked]:focus-within tr[data-slot="table-row"][data-state="selected"] {
+      background-color: var(--color-selection);
+    }
+    [data-slot="table-container"][data-stacked] td[data-stacked="full"] {
+      width: 100%;
+      white-space: normal;
+    }
+    [data-slot="table-container"][data-stacked] td[data-stacked="corner"] {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+    }
+  }
+
+  /* La fila elegida de una tabla con el foco adentro es acento sólido: lo que adentro trae color propio (un link, un
+     `text-label*`) pasa al color de contraste. Las etiquetas de estado (`Badge`) conservan el suyo. */
+  [data-slot="table-container"]:focus-within tr[data-slot="table-row"][data-state="selected"] a,
+  [data-slot="table-container"]:focus-within tr[data-slot="table-row"][data-state="selected"] [class*="text-label"] {
+    color: var(--color-on-selection);
+  }
+
+  /* Card `span` dentro de una `CardGrid`: ocupa N columnas, sin pasar de las que la grilla tiene en cada ancho
+     (2 desde 32 rem, 3 desde 48 rem y 4 desde 56 rem del contenedor). */
+  @container (min-width: 32rem) {
+    [data-slot="card-grid"] > [data-slot="card"][data-span] {
+      grid-column: span 2;
+    }
+  }
+  @container (min-width: 48rem) {
+    [data-slot="card-grid"] > [data-slot="card"][data-span="3"],
+    [data-slot="card-grid"] > [data-slot="card"][data-span="4"] {
+      grid-column: span 3;
+    }
+  }
+  @container (min-width: 56rem) {
+    [data-slot="card-grid"] > [data-slot="card"][data-span="4"] {
+      grid-column: span 4;
+    }
+  }
 }

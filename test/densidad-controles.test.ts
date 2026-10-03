@@ -159,7 +159,7 @@ describe("una sola escala de alto para campos y botones", () => {
   // la pista dé 28 · 36 · 40. Adentro de una Toolbar se queda en 28, el escalón de la barra.
   it("el ToggleGroup es md (36) por defecto y su pista mide 28 · 36 · 40", () => {
     const grupo = fuente("components/toggle-group.tsx")
-    expect(grupo).toMatch(/size = "md"/)
+    expect(grupo).toMatch(/useControlSize\(sizeProp, "md"\)/)
     expect(fuente("variants/segmented.ts")).toMatch(/\bp-0\.5\b[\s\S]*\bh-6\b/)
     expect(grupo).toContain("group-data-[size=md]/toggle-group:not-in-data-[slot=toolbar]:h-8")
     expect(grupo).toContain("group-data-[size=lg]/toggle-group:not-in-data-[slot=toolbar]:h-9")
@@ -167,7 +167,7 @@ describe("una sola escala de alto para campos y botones", () => {
 
   it("el NumberField mide lo que un Input: md 36 por defecto", () => {
     const campo = fuente("components/number-field.tsx")
-    expect(campo).toMatch(/size = "md"/)
+    expect(campo).toMatch(/useControlSize\(sizeProp, "md"\)/)
     expect(campo).toContain("`sm` 28, `md` 36, `lg` 40")
   })
 

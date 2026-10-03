@@ -7,6 +7,7 @@ import { MinusIcon, PlusIcon } from "lucide-react"
 import { useLabels } from "../lib/labels.js"
 import { cn, type WithClassName } from "../lib/utils.js"
 import { inputShellButtonClassName, inputShellClassName, inputShellInputClassName } from "../variants/input.js"
+import { useControlSize } from "../internal/control-size.js"
 
 /**
  * Un número, con botones de −/+ y formato por locale.
@@ -39,6 +40,8 @@ type NumberFieldProps = WithClassName<NumberFieldPrimitive.Root.Props> & {
   inputClassName?: string
   /** Alto del control: `sm` 28, `md` 36, `lg` 40. Los mismos que `Input`. */
   size?: "sm" | "md" | "lg"
+  /** El grupo ocupa todo el ancho de su caja (el `Input` lo hace por defecto; este abraza al número). Equivale a `className="w-full"`. */
+  fullWidth?: boolean
   placeholder?: string
   /**
    * Un monto: el código ISO 4217 de la moneda («USD», «ars») arma el `format` de moneda de `Intl`, y el
@@ -64,7 +67,8 @@ function NumberField({
   inputClassName,
   labels,
   placeholder,
-  size = "md",
+  size: sizeProp,
+  fullWidth = false,
   currency,
   autoFocus,
   inputRef,
@@ -73,6 +77,7 @@ function NumberField({
   step,
   ...props
 }: NumberFieldProps) {
+  const size = useControlSize(sizeProp, "md")
   // El provider gana sobre el español; la prop `labels` gana sobre el provider, porque es la
   // excepción de una pantalla y no una traducción.
   const l = useLabels().numberField
@@ -94,7 +99,7 @@ function NumberField({
         // px-1 en vez del px-3 del Input: el aire de los costados lo ponen los botones.
         // `w-fit` y no el `w-full` del Input: el grupo abraza al número y a los botones. A todo
         // el ancho, un «1» quedaba con − y + en las puntas y un hueco en el medio.
-        className={cn(inputShellClassName, "w-fit max-w-full px-1", className)}
+        className={cn(inputShellClassName, "max-w-full px-1", fullWidth ? "w-full" : "w-fit", className)}
       >
         {/* Base UI nombra los steppers "Increase"/"Decrease" en inglés. */}
         <NumberFieldPrimitive.Decrement

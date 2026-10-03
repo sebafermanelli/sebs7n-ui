@@ -11,6 +11,7 @@ import { renderElement, type RenderElement } from "../lib/render.js"
 import { cn, type WithClassName } from "../lib/utils.js"
 import { segmentedGroupClassName, segmentedItemClassName, segmentedTrackClassName } from "../variants/segmented.js"
 import type { ToggleProps } from "./toggle.js"
+import { useControlSize } from "../internal/control-size.js"
 
 type ToggleGroupProps = WithClassName<ToggleGroupPrimitive.Props> & {
   /**
@@ -52,7 +53,8 @@ const Pressed = React.createContext<readonly string[]>([])
  * Filtro de selección única (2.4): `required` para que siempre haya uno prendido, «Todas» con
  * `value=""` y, si el filtro vive en la URL, ítems con `href` que son links de verdad.
  */
-function ToggleGroup({ className, size = "md", name, value, defaultValue, onValueChange, disabled, required, ref, ...props }: ToggleGroupProps) {
+function ToggleGroup({ className, size: sizeProp, name, value, defaultValue, onValueChange, disabled, required, ref, ...props }: ToggleGroupProps) {
+  const size = useControlSize(sizeProp, "md")
   const [own, setOwn] = React.useState<NonNullable<ToggleGroupProps["value"]>>(defaultValue ?? [])
   const current = value ?? own
   const group = React.useRef<HTMLDivElement>(null)

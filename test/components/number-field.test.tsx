@@ -317,4 +317,12 @@ describe("NumberField", () => {
       expect(screen.getByLabelText("Cantidad")).toBe(input())
     })
   })
+
+  it("fullWidth: el grupo ocupa todo el ancho; sin él abraza al número", () => {
+    const { container, rerender } = render(<NumberField defaultValue={1} />)
+    expect(container.querySelector("[data-slot=number-field-group]")).toHaveClass("w-fit")
+    rerender(<NumberField defaultValue={1} fullWidth />)
+    expect(container.querySelector("[data-slot=number-field-group]")).toHaveClass("w-full")
+    expect(container.querySelector("[data-slot=number-field-group]")).not.toHaveClass("w-fit")
+  })
 })

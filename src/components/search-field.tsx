@@ -8,6 +8,7 @@ import { mergeRefs } from "../internal/merge-refs.js"
 import { useLabels, type Labels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput, type InputGroupInputProps } from "./input-group.js"
+import { useControlSize } from "../internal/control-size.js"
 
 type SearchFieldLabels = NonNullable<Labels["searchField"]>
 
@@ -51,7 +52,7 @@ function SearchField({
   onValueChange,
   onSearch,
   debounceMs = 300,
-  size = "md",
+  size: sizeProp,
   disabled,
   groupClassName,
   labels: labelsProp,
@@ -61,6 +62,7 @@ function SearchField({
   ref,
   ...props
 }: SearchFieldProps) {
+  const size = useControlSize(sizeProp, "md")
   const labels = { ...searchFieldLabels, ...useLabels().searchField, ...defined(labelsProp) }
   const [own, setOwn] = React.useState(defaultValue)
   const value = valueProp ?? own

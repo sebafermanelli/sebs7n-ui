@@ -7,6 +7,7 @@ import { MenuCheck } from "../internal/menu-check.js"
 import { cn, type WithClassName } from "../lib/utils.js"
 import { inputControlClassName, inputDisabledClassName, inputPaddingClassName, inputSizeClassName } from "../variants/input.js"
 import { menuGutterClassName, menuIndicatorClassName, menuItemClassName, menuItemContentClassName, menuLabelClassName, menuPopupClassName, menuSeparatorClassName } from "../variants/menu.js"
+import { useControlSize } from "../internal/control-size.js"
 
 const Select = SelectPrimitive.Root
 
@@ -15,7 +16,8 @@ type SelectTriggerProps = WithClassName<SelectPrimitive.Trigger.Props> & {
 }
 
 // Mismo cuerpo y estados que Input.
-function SelectTrigger({ className, size = "md", children, ...props }: SelectTriggerProps) {
+function SelectTrigger({ className, size: sizeProp, children, ...props }: SelectTriggerProps) {
+  const size = useControlSize(sizeProp, "md")
   return (
     <SelectPrimitive.Trigger
       data-slot="select-trigger"

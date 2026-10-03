@@ -10,13 +10,15 @@ import {
   inputPaddingClassName,
   inputSizeClassName,
 } from "../variants/input.js"
+import { useControlSize } from "../internal/control-size.js"
 
 type InputProps = Omit<InputPrimitive.Props, "className" | "size"> & {
   className?: string
   size?: "sm" | "md" | "lg"
 }
 
-function Input({ className, size = "md", ...props }: InputProps) {
+function Input({ className, size: sizeProp, ...props }: InputProps) {
+  const size = useControlSize(sizeProp, "md")
   return (
     <InputPrimitive
       data-slot="input"

@@ -11,6 +11,7 @@ import { useFormReset } from "../internal/form-reset.js"
 import { cn } from "../lib/utils.js"
 import { DatePicker } from "./date-picker.js"
 import { TimePicker } from "./time-picker.js"
+import { useControlSize } from "../internal/control-size.js"
 
 type DateTimePickerProps = {
   /** La fecha y hora elegidas. `null` es ninguna. Pasarlo lo vuelve controlado. */
@@ -85,7 +86,7 @@ function DateTimePicker({
   min,
   max,
   locale,
-  size = "md",
+  size: sizeProp,
   disabled: disabledProp,
   required = false,
   id,
@@ -93,6 +94,7 @@ function DateTimePicker({
   labels: labelsProp,
   ...aria
 }: DateTimePickerProps) {
+  const size = useControlSize(sizeProp, "md")
   const labels = { ...useLabels().dateTimePicker, ...defined(labelsProp) }
   const [own, setOwn] = React.useState(defaultValue)
   const value = valueProp !== undefined ? valueProp : own

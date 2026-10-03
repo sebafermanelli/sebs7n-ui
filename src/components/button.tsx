@@ -2,6 +2,7 @@
 
 import { Button as ButtonPrimitive } from "@base-ui/react/button"
 
+import { useContextControlSize } from "../internal/control-size.js"
 import { cn, type WithClassName } from "../lib/utils.js"
 import {
   buttonVariants,
@@ -59,12 +60,14 @@ type ButtonProps<S extends ButtonSize = ButtonSize> = ButtonBaseProps & {
 function Button<S extends ButtonSize = ButtonSize>({
   className,
   variant,
-  size,
+  size: sizeProp,
   loading = false,
   onClick,
   children,
   ...props
 }: ButtonProps<S>) {
+  // Dentro de una `FilterBar`, el tamaño de la barra; lo que el botón declara gana.
+  const size = (sizeProp ?? useContextControlSize()) as S | null | undefined
   return (
     <ButtonPrimitive
       data-slot="button"

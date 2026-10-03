@@ -4,6 +4,7 @@ import * as React from "react"
 import { Popover as PopoverPrimitive } from "@base-ui/react/popover"
 
 import { cn } from "../lib/utils.js"
+import { ControlSizeProvider } from "../internal/control-size.js"
 import { floatingPopupClassName } from "../variants/overlay.js"
 
 /**
@@ -136,7 +137,7 @@ export function AdaptivePopup({ className, drawerClassName, side, align, alignOf
     const Drawer = ctx.drawerModule?.AdaptiveDrawer
     return Drawer && (
       <Drawer {...(props as object)} className={className} drawerClassName={drawerClassName} inDrawer={InDrawerContext.Provider} onOpenChange={ctx.setOpen as never} open={ctx.open} trigger={ctx.trigger}>
-        {children}
+        <ControlSizeProvider size={undefined}>{children}</ControlSizeProvider>
       </Drawer>
     )
   }
@@ -151,7 +152,7 @@ export function AdaptivePopup({ className, drawerClassName, side, align, alignOf
         sideOffset={sideOffset}
       >
         <PopoverPrimitive.Popup className={cn(floatingPopupClassName, className)} {...props}>
-          {children}
+          <ControlSizeProvider size={undefined}>{children}</ControlSizeProvider>
         </PopoverPrimitive.Popup>
       </PopoverPrimitive.Positioner>
     </PopoverPrimitive.Portal>

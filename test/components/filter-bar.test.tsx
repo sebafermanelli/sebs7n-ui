@@ -2,6 +2,10 @@ import { render, screen } from "@testing-library/react"
 import { renderToString } from "react-dom/server"
 import { describe, expect, it } from "vitest"
 
+import userEvent from "@testing-library/user-event"
+import { Button } from "../../src/components/button"
+import { Input } from "../../src/components/input"
+import { Popover, PopoverContent, PopoverTrigger } from "../../src/components/popover"
 import { FilterBar } from "../../src/components/filter-bar"
 import { SearchField } from "../../src/components/search-field"
 
@@ -50,4 +54,33 @@ describe("FilterBar", () => {
     const { readFileSync } = await import("node:fs")
     expect(readFileSync(`${import.meta.dirname}/../../src/components/filter-bar.tsx`, "utf8")).not.toMatch(/^"use client"/)
   })
+
+  it("size: sm por defecto para todos los controles; el que declara el suyo gana; md se pide", () => {
+    const { rerender } = render(
+      <FilterBar actions={<Button>Exportar</Button>} filters={<Input aria-label="Cliente" />} search={<SearchField aria-label="Buscar" size="lg" />} />
+    )
+    expect(screen.getByRole("button", { name: "Exportar" })).toHaveAttribute("data-size", "sm")
+    expect(screen.getByLabelText("Cliente")).toHaveAttribute("data-size", "sm")
+    expect(screen.getByRole("searchbox").closest("[data-slot=input-group]")).toHaveAttribute("data-size", "lg")
+    rerender(<FilterBar actions={<Button>Exportar</Button>} size="md" />)
+    expect(screen.getByRole("button", { name: "Exportar" })).toHaveAttribute("data-size", "md")
+  })
+
+  it("un popover abierto desde la barra reinicia el tamaño: lo de adentro no es de la barra", async () => {
+    const user = userEvent.setup()
+    render(
+      <FilterBar
+        actions={
+          <Popover>
+            <PopoverTrigger>Más</PopoverTrigger>
+            <PopoverContent>
+              <Button>Aplicar</Button>
+            </PopoverContent>
+          </Popover>
+        }
+      />
+    )
+    await user.click(screen.getByRole("button", { name: "Más" }))
+    expect(await screen.findByRole("button", { name: "Aplicar" })).toHaveAttribute("data-size", "md")
+  }, 30000)
 })

@@ -162,3 +162,43 @@ export function Compacta() {
     </Table>
   )
 }
+
+/**
+ * Apilada en el teléfono
+ * Por debajo de 640 px no hay cabecera: cada fila es un bloque con el nombre arriba y las acciones en la esquina. El fondo de hover y de selección va en la fila entera.
+ */
+export function Apilada() {
+  const [elegida, setElegida] = useState<string | null>("0013")
+  return (
+    <Table stacked>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Cliente</TableHead>
+          <TableHead>Estado</TableHead>
+          <TableHead numeric>Importe</TableHead>
+          <TableHead className="w-10">
+            <span className="sr-only">Acciones</span>
+          </TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {FACTURAS.map((factura) => (
+          <TableRow data-state={elegida === factura.id ? "selected" : undefined} key={factura.id} onClick={() => setElegida(factura.id)}>
+            <TableCell stacked="full">{factura.cliente}</TableCell>
+            <TableCell>
+              <Badge color={factura.color} size="sm">
+                {factura.estado}
+              </Badge>
+            </TableCell>
+            <TableCell numeric>{factura.importe}</TableCell>
+            <TableCell stacked="corner">
+              <Button aria-label={`Acciones de ${factura.cliente}`} size="icon-sm" variant="plain">
+                <MoreHorizontalIcon />
+              </Button>
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  )
+}

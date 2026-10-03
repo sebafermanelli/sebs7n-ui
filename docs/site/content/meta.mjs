@@ -1503,6 +1503,7 @@ export const COMPONENTS = {
     ],
     props: {
       NumberField: {
+        fullWidth: "El grupo ocupa todo el ancho de su caja, como un `Input`. Por defecto abraza al número y a los botones.",
         size: "`sm` 28 px · `md` 36 px (default) · `lg` 40 px. Los mismos altos que `Input`.",
         locale: "El de `Intl.NumberFormat`: decide los separadores. Sin él, `numberField.locale` del `LabelsProvider`, y si tampoco, el del navegador.",
         format: "Opciones de `Intl.NumberFormat`. Cambian lo que se ve, nunca el valor. Con `currency`, se mezclan encima del formato de moneda.",
@@ -2702,7 +2703,8 @@ export const COMPONENTS = {
       "**Números a la derecha con `numeric`, texto a la izquierda.** Nunca centrado.",
       "`density=\"compact\"` para más de ~20 filas visibles.",
       "**Color propio adentro de una fila elegida → `selectionSecondaryClassName`.** La fila elegida es acento sólido mientras la tabla tiene el foco adentro (gris sin foco): una fecha en `text-label-secondary` o un ícono en `text-green-900` desaparecen sobre el azul. `cn(\"text-label-secondary\", selectionSecondaryClassName)` pasa a `text-on-selection` cuando la fila está elegida (`data-state=\"selected\"`) y la tabla tiene el foco; para bordes o fondos, el variant `inside-selection:` directo. Un `Badge` adentro se adapta solo.",
-      "En mobile una tabla de más de 3 columnas no entra: o hacés scroll horizontal con la primera columna fija, o cambiás a tarjetas.",
+      "En mobile una tabla de más de 3 columnas no entra: `stacked` la apila (cada fila un bloque, con el fondo de selección en la fila entera), o hacés scroll horizontal con la primera columna fija, o cambiás a tarjetas.",
+      "En la fila elegida con el foco adentro, un link (`a`) o un hijo con `text-label*` pasa solo al color de contraste (`on-selection`); una etiqueta de estado (`Badge`) conserva el suyo.",
       "Las acciones de fila van en la última columna, en un `DropdownMenu`, no como tres botones sueltos.",
       "**La primera celda es el nombre** (17, texto principal) y el resto son metadatos en 14 gris, como las columnas de Drive. Una columna de casillas primero se ajusta con `className`.",
       "Los grupos («Últimos 7 días · 6 ítems») van con `TableGroupHeader`, un `<th scope=\"rowgroup\">` de 19/600 con el contador al lado: **un `TableBody` por grupo**, y `colSpan` con las columnas que tiene la tabla (el lector lo anuncia).",
@@ -2710,13 +2712,19 @@ export const COMPONENTS = {
       "**No virtualiza.** Renderiza las filas que le pasás, todas. Hasta ~500 anda bien; más que eso, paginá con `Pagination` o virtualizá vos y pasale la ventana.",
     ],
     props: {
-      Table: { density: "`default` 41px (Drive) · `compact` 32px, para listas largas." },
+      Table: {
+        density: "`default` 41px (Drive) · `compact` 32px, para listas largas.",
+        stacked: "Apilada en el teléfono (< 640 px): sin cabecera, cada fila es un bloque con sus celdas en línea y el fondo de hover y selección va en la fila. Desde 640 px es la tabla de siempre.",
+      },
       TableGroupHeader: {
         count: "El contador que va pegado al título («6 ítems»), en 15 gris.",
         colSpan: "Obligatorio: cuántas columnas tiene la tabla. El lector lo anuncia como el ancho de la tabla.",
       },
       TableHead: { numeric: "Alinea a la derecha con cifras tabulares." },
-      TableCell: { numeric: "Alinea a la derecha con cifras tabulares. Tiene que coincidir con el `TableHead`." },
+      TableCell: {
+        numeric: "Alinea a la derecha con cifras tabulares. Tiene que coincidir con el `TableHead`.",
+        stacked: "En una `Table stacked`, en el teléfono: `full` ocupa todo el renglón (la celda principal) y `corner` va arriba a la derecha (las acciones).",
+      },
     },
     related: ["card", "badge", "empty-state", "skeleton"],
   },
@@ -3446,6 +3454,88 @@ export const COMPONENTS = {
     },
     related: ["calendar-view", "empty-state", "list-view"],
   },
+  "save-bar": {
+    title: "SaveBar",
+    group: "contenido",
+    description: "La barra de guardado de una pantalla de Configuración: fija abajo, a todo el ancho del contenido, con el estado («Cambios sin guardar» / «Todo guardado») a la izquierda y «Descartar» y «Guardar» a la derecha.",
+    keyboard: [["Tab · Enter", "Descartar y Guardar son botones; Guardar envía el formulario (type submit)."]],
+    a11y: [
+      "El estado es un `role=\"status\"` con `aria-live=\"polite\"`: el lector anuncia «Cambios sin guardar» cuando aparecen. Lleva ícono y texto (nunca solo color; el ámbar y el verde llegan a 3:1).",
+      "«Descartar» queda deshabilitado sin cambios o guardando; «Guardar» con `pending` muestra el spinner y queda `aria-busy`.",
+      "`sticky` abajo: no tapa el contenido (ocupa su lugar en el flujo) y con 390 px los botones se reparten el ancho (container query).",
+    ],
+    usage: [
+      "Último hijo de la `Form` (o del contenedor de las secciones de `SettingsSection`): **una sola** barra por pantalla, a todo el ancho del contenido.",
+      "No calcula el «sucio»: la app o `Form` lo sabe y pasa `dirty`. Sin `onSave`, «Guardar» es un `submit` y la barra va adentro del `<form>`.",
+      "`labels` traduce los cuatro textos; `saveDisabled` apaga «Guardar» con el formulario inválido.",
+    ],
+    props: {
+      SaveBar: {
+        dirty: "Hay cambios sin guardar: cambia el estado y habilita «Descartar».",
+        pending: "Guardando: «Guardar» muestra el spinner y «Descartar» se apaga.",
+        onDiscard: "«Descartar»: volver al estado guardado.",
+        onSave: "«Guardar» como botón de la barra. Sin esto es un `submit` del formulario que la contiene.",
+        saveDisabled: "«Guardar» apagado (formulario inválido).",
+        labels: "Los textos: `unsaved`, `saved`, `discard` y `save`.",
+      },
+    },
+    related: ["settings-section", "form", "button", "alert-dialog"],
+  },
+  "entity-overlay": {
+    title: "EntityOverlay",
+    group: "contenido",
+    description: "El alta o la edición de algo desde su lista, sin salir de ella: un `Dialog` para crear y un `Sheet` lateral para ver o editar, con confirmación al cerrar con cambios sin guardar. No sabe de ningún router: recibe `open` y `onClose`.",
+    keyboard: [
+      ["Escape", "Cierra; con cambios sin guardar pide confirmación antes."],
+      ["Tab", "El foco queda adentro del panel y vuelve al disparador al cerrar."],
+    ],
+    a11y: [
+      "Es un `Dialog` o un `Sheet` de siempre: `role=\"dialog\"` nombrado por su título, foco atrapado y devuelto, Escape y clic afuera cierran.",
+      "La confirmación es un `AlertDialog` (`role=\"alertdialog\"`) con «Seguir editando» y «Descartar» (destructivo); el foco inicial cae en la opción segura.",
+      "El contenido es un `@container`: el formulario se acomoda al ancho del panel, no al de la ventana. En el teléfono el `Sheet` ocupa todo el ancho.",
+    ],
+    usage: [
+      "**Alta en `dialog`, ver o editar en `sheet`.** Se monta el formulario recién al abrir (`open`), así no pesa en la lista.",
+      "Con la URL como estado (`?new=1`, `?edit=<id>`: se comparte y «atrás» cierra) con el router de Next: `open={searchParams.has(\"new\")}` y `onClose={() => { const p = new URLSearchParams(searchParams); p.delete(\"new\"); router.replace(p.size ? `${pathname}?${p}` : pathname, { scroll: false }) }}`.",
+      "Cualquier campo tocado (evento `input`) marca cambios. El formulario cierra sin preguntar con `useEntityOverlay().close()` y `markSaved()` al guardar; `markDirty()` si sus cambios no disparan `input`.",
+      "`confirmDiscard={false}` apaga la confirmación; `labels` traduce los textos.",
+    ],
+    props: {
+      EntityOverlay: {
+        variant: "`dialog` para un alta (modal, centrado); `sheet` para ver o editar algo que ya existe (lateral).",
+        open: "Está abierto. Con la URL como estado, `searchParams.has(\"new\")`.",
+        onClose: "Ya está confirmado (o no había cambios): sacá el parámetro de la URL o apagá el estado.",
+        title: "El título; nombra el panel.",
+        description: "Una línea debajo del título.",
+        confirmDiscard: "Pedir confirmación al cerrar con cambios. Default `true`.",
+        labels: "Los textos: `unsavedTitle`, `unsavedDescription`, `cancel` y `discard`.",
+      },
+    },
+    related: ["dialog", "sheet", "alert-dialog", "save-bar", "form"],
+  },
+  "empty-filters-action": {
+    title: "EmptyFiltersAction",
+    group: "contenido",
+    description: "«Limpiar filtros» para el estado vacío de una lista filtrada: un botón con `onClear` o, con los filtros en la URL, un link a la misma ruta sin ellos. Sin filtros puestos no dibuja nada.",
+    keyboard: [["Enter · Espacio", "Lo activa, como cualquier botón o link."]],
+    a11y: [
+      "Con `href` o `render` emite un `<a>` real (se abre en otra pestaña, lo ve un crawler); con `onClear`, un `<button type=\"button\">`.",
+      "El nombre es el texto visible. Va como `action` de un `EmptyState`, que ya explica por qué está vacía la lista.",
+    ],
+    usage: [
+      "`<EmptyState action={<EmptyFiltersAction active={hasFilters} onClear={clear} />} … />`. `active={false}` cuando la lista está vacía de verdad: no hay nada que sacar.",
+      "Con `next/link`: `render={<Link href={pathname} />}`. No lleva `\"use client\"` propio: sirve en un Server Component con `href`.",
+    ],
+    props: {
+      EmptyFiltersAction: {
+        active: "Hay filtros puestos. Sin filtros no dibuja nada. Default `true`.",
+        onClear: "Con filtros en estado: saca los filtros.",
+        href: "Con filtros en la URL: la ruta sin ellos.",
+        render: "El elemento que se renderiza (`next/link`).",
+      },
+    },
+    related: ["empty-state", "filter-bar", "button"],
+  },
   "filter-bar": {
     title: "FilterBar",
     group: "contenido",
@@ -3458,11 +3548,12 @@ export const COMPONENTS = {
     usage: [
       "Tres slots: `search` (un `SearchField`, 18 rem desde 36 rem de ancho de la barra y todo el ancho por debajo), `filters` (`Select`, `ToggleGroup`: pocas opciones, `ToggleGroup`; muchas, `Select`) y `actions` (vista, exportar, `BulkActionsBar`), que queda a la derecha.",
       "Responde al ancho de **su caja** (`@xl`, 36 rem), no al de la ventana: en un teléfono (390 px) o con un panel lateral abierto es una columna donde cada control ocupa el ancho; las acciones se reparten la última fila, así no hay controles sueltos a medias.",
-      "Todos los controles de la barra del mismo tamaño: `sm` en la barra de una tabla, `md` (el default) sobre una lista suelta.",
+      "Todos los controles de la barra del mismo tamaño: `size` (`sm` por defecto) se lo pone a todos; no hace falta repetirlo en cada `Select`, `SearchField` o `Button`. `size=\"md\"` sobre una lista suelta.",
       "Dentro de `DataTable` los filtros van en su slot `filters`; `FilterBar` es para las listas y grillas que no son una tabla.",
     ],
     props: {
       FilterBar: {
+        size: "El tamaño de todos los controles de la barra (`sm`, default; `md`, `lg`). Un control con su propio `size` gana; los popups, diálogos y hojas que abre lo reinician.",
         search: "El buscador. En escritorio ocupa 18 rem; en el teléfono, todo el ancho.",
         filters: "Los filtros: en fila en escritorio y en columna en el teléfono.",
         actions: "Lo que actúa sobre la lista, al final y a la derecha.",
@@ -3595,7 +3686,7 @@ export const COMPONENTS = {
       "Sin estado ni `\"use client\"` propio: sirve en un Server Component (el menú es un cliente aparte).",
     ],
     usage: [
-      "Responde al ancho de la grilla (container queries), no al de la ventana: 1 columna por debajo de 32 rem, 2 desde ahí y hasta 4 desde 56 rem (3 ítems → 1 columna y 3 desde 48 rem, sin pasar por 2 + 1). Por defecto la cantidad sale de los ítems y evita huérfanos; `columns` fija el máximo. Con un panel lateral abierto se ve como en una pantalla chica.",
+      "Responde al ancho de la grilla (container queries), no al de la ventana: 1 columna por debajo de 32 rem, 2 desde ahí y hasta 4 desde 56 rem (3 ítems → 1 columna y 3 desde 48 rem, sin pasar por 2 + 1). Por defecto la cantidad sale de los ítems y evita huérfanos (con 5: 1 columna, 3 + 2 que llenan el ancho desde 48 rem y una sola fila desde 72 rem); `columns` fija el máximo. Con un panel lateral abierto se ve como en una pantalla chica.",
       "Con `loading`, los rótulos quedan y las cifras pasan a esqueleto del alto final: la card no cambia de alto al llegar el dato.",
       "Cada ítem: `{ id?, label, value, aside?, badge?, delta?, trend?, hint?, chart?, actions? }`. Para una sola cifra suelta, `Stat`.",
       "Estilo consola de analítica: `chart={<MetricChart … />}` ocupa el ancho y el alto que sobran de la card (con `chartLayout=\"bleed\"`, hasta los bordes), y la variación pasa junto a la cifra. `actions` son los ítems de un `DropdownMenu` (Ver detalle, Actualizar, `DropdownMenuSub` de Período, Quitar): la grilla pone el botón «…» arriba a la derecha.",

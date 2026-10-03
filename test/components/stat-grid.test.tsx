@@ -40,6 +40,13 @@ describe("StatGrid", () => {
     expect(grid()).not.toHaveClass("@4xl:grid-cols-4")
   })
 
+  it("5 indicadores: sin huérfana, 3 + 2 llenando el ancho desde 48 rem y una sola fila desde 72 rem", () => {
+    render(<StatGrid items={items(5)} />)
+    expect(grid()).toHaveClass("grid-cols-1", "@3xl:grid-cols-6", "@6xl:grid-cols-5")
+    expect(grid()).toHaveClass("@3xl:[&>*]:col-span-2", "@3xl:[&>*:nth-child(n+4)]:col-span-3")
+    expect(grid()).not.toHaveClass("@lg:grid-cols-2")
+  })
+
   it("responde al ancho de su caja: la grilla va dentro de un @container y sin breakpoints de ventana", () => {
     render(<StatGrid items={items(4)} />)
     expect(grid().parentElement).toHaveAttribute("data-slot", "stat-grid-container")

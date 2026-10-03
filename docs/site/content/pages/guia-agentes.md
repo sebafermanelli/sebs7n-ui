@@ -60,6 +60,14 @@ Dentro de un `AppShell`, el layout responde al ancho del contenido (container qu
 
 Cards que se leen juntas van en `CardGrid`: comparten filas (subgrid), así que **la cabecera más alta fija la de todas, y lo mismo el cuerpo y el pie**. Una cabecera más baja que la de al lado, o un pie que no cae a la misma altura que el vecino, es un error. Si una card de la fila no tiene cabecera, ninguna la lleva; y una card sin cuerpo no lleva cabecera (quedaría la franja del cuerpo vacía): título y texto van en `CardContent`. Y sin huérfanas: una fila va toda en paralelo o toda apilada, nunca «2 arriba y 1 abajo» (`CardGrid` elige las columnas por la cantidad de hijos —`columns` es el máximo—: 2 cards en una grilla de 3 van en 2 columnas, 4 en una de 3 van 2 + 2, 5 con máximo 4 van 3 + 2—).
 
+### Una barra de filtros, un solo tamaño
+
+`FilterBar` pone su `size` (`sm` por defecto) a todos sus controles —búsqueda, `Select`, `ToggleGroup`, fechas, botones—: no se repite `size="sm"` en cada uno. Un control con su `size` propio gana, y lo que se abre desde la barra (popover, diálogo, hoja) vuelve a su tamaño de siempre.
+
+### Tablas apiladas, cards link y 5 métricas
+
+`Table stacked` apila las filas en el teléfono con el fondo de selección en la **fila** (no en cada celda), `TableCell stacked="full"|"corner"` ubica la celda principal y las acciones; en la fila elegida con foco, un link o un `text-label*` pasa solo a `on-selection`. `Card render={<Link … />}` hace una card que es un link entero y `Card span={2}` una card ancha en una `CardGrid` (la grilla cuenta por columnas ocupadas). `StatGrid` con 5 métricas va 1 columna, 3 + 2 llenando el ancho desde 48 rem y una sola fila desde 72 rem. `NumberField fullWidth` ocupa todo el ancho de su caja.
+
 ### Aparecer sin perder contraste
 
 Una animación de aparición (al entrar en pantalla, en una landing) **no baja la opacidad del texto**: un fade deja el texto por debajo de contraste AA mientras aparece. Se anima solo el desplazamiento (`translate`) o el texto aparece ya a opacidad 1 y se anima su contenedor sin texto; con `prefers-reduced-motion: reduce`, sin movimiento. El paquete no trae un `Reveal`: si la app lo arma, que sea así.
@@ -107,6 +115,9 @@ Un asistente o panel de ayuda que acompaña el trabajo va acoplado al costado (`
 | Elegir entre tabla, tarjetas o calendario y qué columnas se ven | `ListViewProvider` + `ListViewControls` (`sebs7n-ui/list-view`) en las `actions` de la `FilterBar`, `ListViewContent` para el cuerpo |
 | Filtros que no entran en una fila en el teléfono | `FilterDisclosure` (`sebs7n-ui/filter-disclosure`) en el slot `filters` de la `FilterBar` |
 | Buscar contra el servidor sin una consulta por tecla | `SearchField` con `onSearch` (retraso `debounceMs`, 300 ms) |
+| La barra «Cambios sin guardar» / «Descartar» / «Guardar» de una pantalla de Configuración | `SaveBar` (`sebs7n-ui/save-bar`), fija abajo y a todo el ancho |
+| Alta o edición de algo desde su lista (`?new` / `?edit=<id>`) | `EntityOverlay` (`sebs7n-ui/entity-overlay`): `dialog` para el alta, `sheet` para la edición, con confirmación de cambios sin guardar |
+| «Limpiar filtros» en el vacío de una lista filtrada | `EmptyFiltersAction` (`sebs7n-ui/empty-filters-action`) como `action` del `EmptyState` |
 | Eventos con fecha en un teléfono, donde un mes no entra | `CalendarAgenda` (`sebs7n-ui/calendar-agenda`) por debajo de `@2xl` y `CalendarView` desde ahí |
 | Nada que mostrar | `EmptyState`, con una sola acción para salir del vacío |
 | Esperando datos | `Skeleton` del alto final, o `loading` del componente |

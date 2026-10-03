@@ -3,6 +3,7 @@
 import * as React from "react"
 import { Dialog as SheetPrimitive } from "@base-ui/react/dialog"
 import { XIcon } from "lucide-react"
+import { ControlSizeProvider } from "../internal/control-size.js"
 
 import { useAvisoDeNombre } from "../internal/dialog-name-warning.js"
 import { useLabels } from "../lib/labels.js"
@@ -60,6 +61,7 @@ function SheetContent({ className, children, side = "right", showCloseButton = t
   const l = useLabels().sheet
   return (
     <SheetPrimitive.Portal>
+      <ControlSizeProvider size={undefined}>
       <SheetPrimitive.Backdrop
         data-slot="sheet-overlay"
         className={backdropClassName}
@@ -94,6 +96,7 @@ function SheetContent({ className, children, side = "right", showCloseButton = t
           </SheetPrimitive.Close>
         )}
       </SheetPrimitive.Popup>
+      </ControlSizeProvider>
     </SheetPrimitive.Portal>
   )
 }

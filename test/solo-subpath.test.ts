@@ -61,6 +61,9 @@ const SOLO_SUBPATH = [
   "list-view",
   "filter-disclosure",
   "calendar-agenda",
+  "save-bar",
+  "entity-overlay",
+  "empty-filters-action",
 ]
 
 describe("componentes solo por subpath", () => {

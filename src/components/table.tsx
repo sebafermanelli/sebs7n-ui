@@ -11,13 +11,23 @@ import { cn } from "../lib/utils.js"
  * La primera celda de cada fila es el nombre —17, texto principal—; el resto son metadatos en 14
  * secundario, como las columnas de Drive. Una columna de casillas primero se ajusta con `className`.
  */
-type TableProps = React.ComponentProps<"table"> & { density?: "default" | "compact" }
+type TableProps = React.ComponentProps<"table"> & {
+  density?: "default" | "compact"
+  /**
+   * Apilada en el teléfono (< 640 px): sin cabecera, cada fila es un bloque con sus celdas en línea y el
+   * fondo de hover y de selección va en la **fila** entera (no celda por celda, que apiladas quedarían
+   * como bloques sueltos; los estilos viven en `base.css`). `TableCell stacked="full"` ocupa todo el renglón (la principal) y
+   * `stacked="corner"` va arriba a la derecha (las acciones). Desde 640 px es la tabla de siempre.
+   */
+  stacked?: boolean
+}
 
-function Table({ className, density = "default", ...props }: TableProps) {
+function Table({ className, density = "default", stacked = false, ...props }: TableProps) {
   return (
     <div
       data-slot="table-container"
       data-density={density}
+      data-stacked={stacked ? "" : undefined}
       // La fila elegida va en acento solo con el foco adentro (`group-focus-within/table`). Un
       // click en una celda común no enfocaba nada —y en Safari un click no enfoca botones—, así
       // que la fila parpadeaba a gris. Con `tabIndex={-1}` el contenedor toma el foco del click:
@@ -82,6 +92,7 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
         // Una fila de una sola celda: las dos seudoclases le ganan a `:first-child` y a `:last-child`.
         "focus-visible:[&>td:first-child:last-child]:shadow-[inset_0_0_0_3px_var(--sf-focus)]",
         "data-[state=selected]:focus-visible:[--sf-focus:var(--sf-focus-inverse,var(--sf-brand-fg))]",
+
         className
       )}
       {...props}
@@ -108,12 +119,17 @@ function TableHead({ className, numeric = false, ...props }: TableHeadProps) {
   )
 }
 
-type TableCellProps = React.ComponentProps<"td"> & { numeric?: boolean }
+type TableCellProps = React.ComponentProps<"td"> & {
+  numeric?: boolean
+  /** En una `Table stacked`, en el teléfono: `full` ocupa todo el renglón (la celda principal); `corner` va arriba a la derecha (las acciones). */
+  stacked?: "full" | "corner"
+}
 
-function TableCell({ className, numeric = false, ...props }: TableCellProps) {
+function TableCell({ className, numeric = false, stacked, ...props }: TableCellProps) {
   return (
     <td
       data-slot="table-cell"
+      data-stacked={stacked}
       className={cn(
         "px-2.5 align-middle whitespace-nowrap text-callout text-label-secondary first:text-body first:text-label group-data-[state=selected]/table-row:group-focus-within/table:text-on-selection",
         numeric && "text-right tabular-nums",

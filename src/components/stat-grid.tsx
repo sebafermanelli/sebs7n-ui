@@ -54,7 +54,7 @@ type StatGridProps = Omit<React.ComponentProps<"div">, "children"> & {
   items: readonly StatGridItem[]
   /**
    * Cuántos a lo ancho como máximo en escritorio. Por defecto sale de la cantidad, para no dejar
-   * huérfanos: 1 → 1, 2 → 2, 3 → 3, 4 → 4 (2 en tablet), 5 y 6 → 3 (2 en tablet), más → 4.
+   * huérfanos: 1 → 1, 2 → 2, 3 → 3, 4 → 4 (2 en tablet), 5 → 1 columna, 3 + 2 llenando el ancho desde 48 rem y una sola fila desde 72 rem; 6 → 3 (2 en tablet); más → 4.
    */
   columns?: 1 | 2 | 3 | 4
   /**
@@ -77,10 +77,16 @@ const COLUMNS = {
   4: "grid-cols-1 @lg:grid-cols-2 @4xl:grid-cols-4",
 } as const
 
-// Con 5 o 6 en tablet, 2 de ancho; en escritorio, 3. Un 3 en tablet dejaría las cards del medio angostas.
+// Con 6 en tablet, 2 de ancho; en escritorio, 3. Un 3 en tablet dejaría las cards del medio angostas.
 const COLUMNS_3_LARGE = "grid-cols-1 @lg:grid-cols-2 @4xl:grid-cols-3"
 
+// Con 5 no hay columnas que dividan parejo (2 + 2 + 1, 3 + 2 con un hueco): se usa una grilla de 6 donde las
+// tres primeras ocupan 2 y las dos últimas 3 (3 + 2 que llenan el ancho), y en una grilla muy ancha, una sola fila.
+const COLUMNS_5 =
+  "grid-cols-1 @3xl:grid-cols-6 @3xl:[&>*]:col-span-2 @3xl:[&>*:nth-child(n+4)]:col-span-3 @6xl:grid-cols-5 @6xl:[&>*]:col-span-1 @6xl:[&>*:nth-child(n+4)]:col-span-1"
+
 function autoColumns(count: number) {
+  if (count === 5) return COLUMNS_5
   if (count <= 1) return COLUMNS[1]
   if (count === 2) return COLUMNS[2]
   if (count === 3) return COLUMNS[3]

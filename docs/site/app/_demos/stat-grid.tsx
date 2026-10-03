@@ -20,6 +20,14 @@ export function Four() {
 }
 
 /**
+ * Cinco indicadores
+ * Sin huérfana: 1 columna en el teléfono, 3 + 2 que llenan el ancho desde 48 rem y una sola fila desde 72 rem.
+ */
+export function Five() {
+  return <StatGrid className="w-full" items={[...ITEMS, { label: "Clientes activos", value: "28", hint: "Con una factura este mes" }]} />
+}
+
+/**
  * Cargando
  * Los rótulos quedan y las cifras pasan a esqueleto del alto final: la card no cambia de alto al llegar el dato.
  */

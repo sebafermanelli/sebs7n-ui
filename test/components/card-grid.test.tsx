@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs"
 import { render } from "@testing-library/react"
 import { describe, expect, it } from "vitest"
 
@@ -102,5 +103,40 @@ describe("CardGrid elige las columnas por la cantidad de hijos", () => {
     expect(conCards(1).className).not.toMatch(/@\w+:grid-cols-/)
     expect(conCards(12, 2).className).not.toContain("grid-cols-3")
     expect(cols(8, 4)).toBeTruthy()
+  })
+})
+
+describe("Card como link y cards asimétricas", () => {
+  it("render: la card es un <a> real con data-slot=card, así comparte las filas de la grilla", () => {
+    const { container } = render(
+      <CardGrid>
+        <Card interactive render={<a href="/planes" />}>
+          <CardContent>Planes</CardContent>
+        </Card>
+        <Card>
+          <CardContent>Otra</CardContent>
+        </Card>
+      </CardGrid>
+    )
+    const link = container.querySelector("a[data-slot=card]")
+    expect(link).toHaveAttribute("href", "/planes")
+    expect(link).toHaveClass("cursor-pointer")
+  })
+
+  it("span: la card ancha ocupa sus columnas y la grilla cuenta por columnas ocupadas", () => {
+    const { container } = render(
+      <CardGrid>
+        <Card span={2}>
+          <CardContent>Ancha</CardContent>
+        </Card>
+        <Card>
+          <CardContent>Angosta</CardContent>
+        </Card>
+      </CardGrid>
+    )
+    expect(container.querySelector("[data-span='2']")).toBeInTheDocument()
+    expect(readFileSync("src/styles/base.css", "utf8")).toContain('[data-slot="card"][data-span="3"]')
+    // 2 + 1 = 3 columnas ocupadas: una grilla de 3 sin hueco
+    expect(container.querySelector("[data-slot=card-grid]")).toHaveClass("@3xl:grid-cols-3")
   })
 })

@@ -1,6 +1,7 @@
 import * as React from "react"
 import type { VariantProps } from "class-variance-authority"
 
+import { renderElement, type RenderElement } from "../lib/render.js"
 import { cn } from "../lib/utils.js"
 import { cardVariants } from "../variants/card.js"
 
@@ -13,19 +14,31 @@ import { cardVariants } from "../variants/card.js"
  * El uso simple de 1.x sigue andando: `Card` > `CardHeader` (`CardTitle`, `CardDescription`,
  * `CardAction`) > `CardContent` > `CardFooter`.
  */
-type CardProps = React.ComponentProps<"div"> & VariantProps<typeof cardVariants>
+type CardProps = React.ComponentProps<"div"> &
+  VariantProps<typeof cardVariants> & {
+    /**
+     * El elemento que se renderiza en lugar del `<div>`: una card que es un link entero,
+     * `<Card interactive render={<Link href="/planes" />}>`. Sin estado: sigue sirviendo en un Server Component.
+     */
+    render?: RenderElement
+    /**
+     * Cuántas columnas ocupa dentro de un `CardGrid` (cards asimétricas: una ancha y dos angostas). Solo
+     * cuenta si la grilla tiene esas columnas; por debajo, la card ocupa las que haya. `CardGrid` suma
+     * los `span` para elegir sus columnas. Default 1.
+     */
+    span?: 1 | 2 | 3 | 4
+  }
 
-function Card({ className, variant, size = "md", interactive, selected, ...props }: CardProps) {
-  return (
-    <div
-      data-slot="card"
-      data-variant={variant ?? "default"}
-      data-size={size}
-      data-selected={selected ? "" : undefined}
-      className={cn(cardVariants({ variant, size, interactive, selected }), className)}
-      {...props}
-    />
-  )
+function Card({ className, variant, size = "md", interactive, selected, render, span = 1, ...props }: CardProps) {
+  return renderElement(render, "div", {
+    "data-slot": "card",
+    "data-variant": variant ?? "default",
+    "data-size": size,
+    "data-selected": selected ? "" : undefined,
+    "data-span": span > 1 ? span : undefined,
+    className: cn(cardVariants({ variant, size, interactive, selected }), className),
+    ...props,
+  })
 }
 
 type CardHeaderProps = React.ComponentProps<"div"> & {
@@ -231,7 +244,8 @@ function cardGridColumnCount(count: number, max: 2 | 3 | 4): 1 | 2 | 3 | 4 {
  */
 function CardGrid({ className, columns = 3, children, ...props }: CardGridProps) {
   // Las columnas salen de la cantidad de hijos, sin huérfanas ni huecos; `columns` es el máximo.
-  const count = React.Children.toArray(children).length
+  // Una card con `span` cuenta por las columnas que ocupa (cards asimétricas).
+  const count = React.Children.toArray(children).reduce<number>((sum, child) => sum + (React.isValidElement<{ span?: number }>(child) ? (child.props.span ?? 1) : 1), 0)
   const cols = cardGridColumnCount(count, columns)
   const entry = cardGridClasses[cols]
   const colClass = typeof entry === "string" ? entry : count % 2 === 0 ? entry.even : entry.odd

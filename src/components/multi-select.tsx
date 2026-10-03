@@ -17,6 +17,7 @@ import {
   ComboboxList,
   ComboboxStatus,
 } from "./combobox.js"
+import { useControlSize } from "../internal/control-size.js"
 
 /**
  * Elegir varias opciones de una lista: los elegidos como chips (el `Tag` del sistema) en la
@@ -78,7 +79,7 @@ function MultiSelect({
   placeholder,
   selectAll = false,
   max,
-  size = "md",
+  size: sizeProp,
   showClear = true,
   disabled,
   name,
@@ -87,6 +88,7 @@ function MultiSelect({
   labels: labelsProp,
   ...aria
 }: MultiSelectProps) {
+  const size = useControlSize(sizeProp, "md")
   const labels = { ...useLabels().multiSelect, ...defined(labelsProp) }
   const [own, setOwn] = React.useState(defaultValue)
   const [query, setQuery] = React.useState("")

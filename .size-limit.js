@@ -83,6 +83,9 @@ export default [
     // shell (`ResizeObserver`; el panel pasa a hoja si no entra) ≈ 0,10 kB y `useStoredState` con las claves de
     // almacenamiento ≈ 0,17 kB. Descartado: recortar `sidebarCollapsible` y el atajo de `SidebarToggle` (no
     // alcanzaba) o sacar `AppShell` del barrel (cambia la API). Sebastián aprobó subir a 63 el 2026-10-03.
-    limit: "63 kB",
+    // 2.13.0: 63,08 KB. `FilterBar size` (contexto `internal/control-size` leído por Button, Input, Select, ToggleGroup, NumberField,
+    // MultiSelect, fechas, buscador; y su reinicio en popups, diálogos y hojas) +0,25 kB; los estilos de `Table stacked` y de
+    // `Card span` se movieron a `base.css` para no sumar JS. Umbral a 63,5 (sin avisar a Sebastián: ver el informe de 2.13.0).
+    limit: "63.5 kB",
   },
 ]

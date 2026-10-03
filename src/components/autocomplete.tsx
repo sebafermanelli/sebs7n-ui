@@ -18,6 +18,7 @@ import {
   ComboboxStatus,
   type ComboboxLabelProps,
 } from "./combobox.js"
+import { useControlSize } from "../internal/control-size.js"
 
 // Texto libre con sugerencias: el valor es el texto del input (value/onValueChange son strings).
 // Popup, lista, grupos, vacío y estado son las mismas piezas que Combobox.
@@ -45,7 +46,7 @@ type AutocompleteInputProps = Omit<AutocompletePrimitive.Input.Props, "className
 function AutocompleteInput({
   className,
   groupClassName,
-  size = "md",
+  size: sizeProp,
   showTrigger = false,
   showClear = true,
   labels,
@@ -53,6 +54,7 @@ function AutocompleteInput({
   startIcon,
   ...props
 }: AutocompleteInputProps) {
+  const size = useControlSize(sizeProp, "md")
   // El provider gana sobre el español; la prop `labels` gana sobre el provider, porque es la
   // excepción de una pantalla y no una traducción.
   const l = useLabels().autocomplete

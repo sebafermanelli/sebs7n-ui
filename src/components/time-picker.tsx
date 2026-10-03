@@ -15,6 +15,7 @@ import { cn } from "../lib/utils.js"
 import { inputShellClassName, inputShellInputClassName } from "../variants/input.js"
 import { menuGutterClassName, menuIndicatorClassName } from "../variants/menu.js"
 import { AutocompleteContent, AutocompleteItem, AutocompleteList } from "./autocomplete.js"
+import { useControlSize } from "../internal/control-size.js"
 
 type TimePickerProps = {
   /** La hora elegida, «HH:MM» en 24 h. `null` es ninguna. Pasarlo lo vuelve controlado. */
@@ -73,7 +74,7 @@ function TimePicker({
   max,
   name,
   required = false,
-  size = "md",
+  size: sizeProp,
   disabled,
   id,
   placeholder,
@@ -81,6 +82,7 @@ function TimePicker({
   labels: labelsProp,
   ...aria
 }: TimePickerProps) {
+  const size = useControlSize(sizeProp, "md")
   const labels = { ...useLabels().timePicker, ...defined(labelsProp) }
   // Con el `name` del Field, el input de Base UI ya lleva la hora con ese nombre.
   const fieldName = useFieldRootContext().name
