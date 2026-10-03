@@ -39,4 +39,13 @@ describe("CalendarAgenda", () => {
     render(<CalendarAgenda empty={<p>Nada con fecha</p>} events={[]} />)
     expect(screen.getByText("Nada con fecha")).toBeInTheDocument()
   })
+
+  it("las fechas no se cortan en dos líneas y el título envuelve en vez de truncarse", () => {
+    render(<CalendarAgenda events={[{ id: "x", title: "Mendoza de vinos · Confirmación de pasajeros", start: new Date(2026, 9, 25), end: new Date(2026, 9, 31), allDay: true }]} />)
+    const fecha = screen.getByText(/25 oct\.? – 30 oct\.?/).parentElement!
+    expect(fecha).toHaveClass("whitespace-nowrap", "shrink-0")
+    const titulo = screen.getByText(/Mendoza de vinos/)
+    expect(titulo).toHaveClass("break-words")
+    expect(titulo).not.toHaveClass("truncate")
+  })
 })

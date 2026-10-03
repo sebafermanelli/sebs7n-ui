@@ -58,7 +58,15 @@ Dentro de un `AppShell`, el layout responde al ancho del contenido (container qu
 
 ### Cards en fila: alineadas, siempre
 
-Cards que se leen juntas van en `CardGrid`: comparten filas (subgrid), así que **la cabecera más alta fija la de todas, y lo mismo el cuerpo y el pie**. Una cabecera más baja que la de al lado, o un pie que no cae a la misma altura que el vecino, es un error. Si una card de la fila no tiene cabecera, ninguna la lleva; y una card sin cuerpo no lleva cabecera (quedaría la franja del cuerpo vacía): título y texto van en `CardContent`. Y sin huérfanas: una fila va toda en paralelo o toda apilada, nunca «2 arriba y 1 abajo» (`CardGrid` saltea las dos columnas cuando la cantidad es impar).
+Cards que se leen juntas van en `CardGrid`: comparten filas (subgrid), así que **la cabecera más alta fija la de todas, y lo mismo el cuerpo y el pie**. Una cabecera más baja que la de al lado, o un pie que no cae a la misma altura que el vecino, es un error. Si una card de la fila no tiene cabecera, ninguna la lleva; y una card sin cuerpo no lleva cabecera (quedaría la franja del cuerpo vacía): título y texto van en `CardContent`. Y sin huérfanas: una fila va toda en paralelo o toda apilada, nunca «2 arriba y 1 abajo» (`CardGrid` elige las columnas por la cantidad de hijos —`columns` es el máximo—: 2 cards en una grilla de 3 van en 2 columnas, 4 en una de 3 van 2 + 2, 5 con máximo 4 van 3 + 2—).
+
+### Aparecer sin perder contraste
+
+Una animación de aparición (al entrar en pantalla, en una landing) **no baja la opacidad del texto**: un fade deja el texto por debajo de contraste AA mientras aparece. Se anima solo el desplazamiento (`translate`) o el texto aparece ya a opacidad 1 y se anima su contenedor sin texto; con `prefers-reduced-motion: reduce`, sin movimiento. El paquete no trae un `Reveal`: si la app lo arma, que sea así.
+
+### Un link con margen
+
+`TextLink` respeta los márgenes verticales de la app (`mt-4`, `my-2`): con uno pasa a `inline-block`; en texto corrido, sin margen, sigue en línea.
 
 ### El usuario acomoda su espacio
 

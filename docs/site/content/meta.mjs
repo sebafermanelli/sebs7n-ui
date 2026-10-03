@@ -310,6 +310,7 @@ export const COMPONENTS = {
       "El adorno va pegado a la última palabra con un espacio duro: la flecha nunca queda sola en el renglón de abajo.",
       "Con `next/link`: `render={<Link href=\"/planes\" />}`. No se llama `Link` para no chocar con ese.",
       "Adentro de un párrafo, `variant=\"inline\"` (subrayado siempre). El acento es para el link suelto debajo de una sección.",
+      "Respeta los márgenes verticales de la app (`mt-4`, `my-2`): con uno pasa a `inline-block`; sin margen vertical sigue en línea y el texto corrido no cambia.",
     ],
     props: {
       TextLink: {

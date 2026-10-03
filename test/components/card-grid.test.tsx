@@ -18,6 +18,17 @@ const fila = (columns?: 2 | 3 | 4) =>
     </CardGrid>
   ).container.querySelector("[data-slot=card-grid]") as HTMLElement
 
+const conCards = (n: number, columns?: 2 | 3 | 4) =>
+  render(
+    <CardGrid columns={columns}>
+      {Array.from({ length: n }, (_, i) => (
+        <Card key={i}>
+          <CardContent>{i}</CardContent>
+        </Card>
+      ))}
+    </CardGrid>
+  ).container.querySelector("[data-slot=card-grid]") as HTMLElement
+
 describe("CardGrid", () => {
   // La regla: en una fila, la cabecera más alta fija la de todas, y lo mismo el cuerpo y el pie.
   it("las cards comparten las filas de la grilla (subgrid): cabecera, cuerpo y pie alineados", () => {
@@ -51,24 +62,13 @@ describe("CardGrid", () => {
   })
 
   it("columnas: una en una caja angosta, las pedidas según el ancho del contenedor", () => {
-    expect(fila(4).className).toContain("@4xl:grid-cols-4")
-    expect(fila().className).toContain("@3xl:grid-cols-3")
+    expect(conCards(4, 4).className).toContain("@4xl:grid-cols-4")
+    expect(conCards(3).className).toContain("@3xl:grid-cols-3")
     expect(fila().className).toContain("grid-cols-1")
   })
 })
 
 describe("CardGrid sin huérfanas", () => {
-  const conCards = (n: number, columns?: 2 | 3 | 4) =>
-    render(
-      <CardGrid columns={columns}>
-        {Array.from({ length: n }, (_, i) => (
-          <Card key={i}>
-            <CardContent>{i}</CardContent>
-          </Card>
-        ))}
-      </CardGrid>
-    ).container.querySelector("[data-slot=card-grid]") as HTMLElement
-
   // Tres planes en dos columnas dejan uno solo abajo: o todas en paralelo o todas apiladas.
   it("con un número impar de cards no pasa por dos columnas", () => {
     expect(conCards(3).className).not.toContain("@lg:grid-cols-2")
@@ -81,3 +81,26 @@ describe("CardGrid sin huérfanas", () => {
   })
 })
 
+
+describe("CardGrid elige las columnas por la cantidad de hijos", () => {
+  const cols = (n: number, columns?: 2 | 3 | 4) => conCards(n, columns).className.match(/@(?:3xl|4xl):grid-cols-(\d)|@lg:grid-cols-(\d)/g)
+  it("2 cards en una grilla de 3: dos columnas, sin hueco", () => {
+    const c = conCards(2).className
+    expect(c).toContain("@lg:grid-cols-2")
+    expect(c).not.toContain("grid-cols-3")
+  })
+  it("4 cards en una grilla de 3: 2 + 2, no 3 + 1", () => {
+    expect(conCards(4, 3).className).not.toContain("grid-cols-3")
+  })
+  it("5 cards con máximo 4: 3 columnas (3 + 2), no 4 + 1", () => {
+    expect(conCards(5, 4).className).not.toContain("grid-cols-4")
+  })
+  it("6 cards con máximo 4: 3 columnas (3 + 3)", () => {
+    expect(conCards(6, 4).className).toContain("@3xl:grid-cols-3")
+  })
+  it("una sola card: una columna; el máximo explícito nunca se pasa", () => {
+    expect(conCards(1).className).not.toMatch(/@\w+:grid-cols-/)
+    expect(conCards(12, 2).className).not.toContain("grid-cols-3")
+    expect(cols(8, 4)).toBeTruthy()
+  })
+})

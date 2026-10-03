@@ -183,13 +183,41 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 type CardGridProps = React.ComponentProps<"div"> & {
-  /** Columnas según el ancho de la grilla, no el de la ventana: 2 desde 32 rem, y `columns` desde 48 rem (3) o 56 rem (4). Por debajo de 32 rem, una. */
+  /**
+   * El máximo de columnas, según el ancho de la grilla y no el de la ventana: 2 desde 32 rem, 3 desde 48 rem y 4 desde 56 rem; por debajo de 32 rem, una.
+   * La cantidad real sale de los hijos: con menos cards que `columns`, o si sobraría una huérfana, usa menos columnas.
+   */
   columns?: 2 | 3 | 4
 }
 
-const cardGridColumns = { 2: "@lg:grid-cols-2", 3: "@lg:grid-cols-2 @3xl:grid-cols-3", 4: "@lg:grid-cols-2 @4xl:grid-cols-4" } as const
-// Las clases escritas enteras: Tailwind no ve una armada con `${}`.
-const cardGridColumnsOdd = { 2: "@lg:grid-cols-2", 3: "@3xl:grid-cols-3", 4: "@4xl:grid-cols-4" } as const
+// Las clases escritas enteras: Tailwind no ve una armada con `${}`. Con 3 o 4 columnas, el paso
+// intermedio de 2 solo existe si la cantidad es par (con una impar dejaría una huérfana).
+const cardGridClasses = {
+  1: "",
+  2: "@lg:grid-cols-2",
+  3: { even: "@lg:grid-cols-2 @3xl:grid-cols-3", odd: "@3xl:grid-cols-3" },
+  4: { even: "@lg:grid-cols-2 @4xl:grid-cols-4", odd: "@4xl:grid-cols-4" },
+} as const
+
+/**
+ * Cuántas columnas usa una grilla de `count` cards con un máximo de `max`: la que deja la última
+ * fila más llena (completa si se puede), y a igualdad la mayor. 2 cards en una grilla de 3 → 2, no
+ * 3 con un hueco; 4 cards en una de 3 → 2 + 2 y no 3 + 1.
+ */
+function cardGridColumnCount(count: number, max: 2 | 3 | 4): 1 | 2 | 3 | 4 {
+  if (count < 2) return 1
+  let best: 2 | 3 | 4 = 2
+  let bestFill = -1
+  for (const c of [2, 3, 4] as const) {
+    if (c > max || c > count) break
+    const fill = count % c === 0 ? c : count % c
+    if (fill >= bestFill) {
+      best = c
+      bestFill = fill
+    }
+  }
+  return best
+}
 
 /**
  * Una fila de cards que se leen juntas (planes, beneficios, testimonios). Cada `Card` comparte las
@@ -202,9 +230,11 @@ const cardGridColumnsOdd = { 2: "@lg:grid-cols-2", 3: "@3xl:grid-cols-3", 4: "@4
  * funciona igual fuera de un `AppShell`. `data-slot="card-grid"` y `className` van a la grilla interna.
  */
 function CardGrid({ className, columns = 3, children, ...props }: CardGridProps) {
-  // Sin huérfanas: con un número impar de cards, dos columnas dejan una sola abajo (2 + 1). Ahí se
-  // pasa directo de apiladas a todas en paralelo.
-  const odd = React.Children.count(children) % 2 === 1
+  // Las columnas salen de la cantidad de hijos, sin huérfanas ni huecos; `columns` es el máximo.
+  const count = React.Children.toArray(children).length
+  const cols = cardGridColumnCount(count, columns)
+  const entry = cardGridClasses[cols]
+  const colClass = typeof entry === "string" ? entry : count % 2 === 0 ? entry.even : entry.odd
   return (
     <div data-slot="card-grid-container" className="@container w-full">
     <div
@@ -213,7 +243,7 @@ function CardGrid({ className, columns = 3, children, ...props }: CardGridProps)
         // Sin gap vertical: separaría también las filas internas de cada card (una card sin pie
         // quedaba con aire vacío abajo). Entre filas de cards, el margen de cada una, compensado al final.
         "-mb-4 grid grid-cols-1 gap-x-4 gap-y-0 [&>[data-slot=card]]:mb-4",
-        odd ? cardGridColumnsOdd[columns] : cardGridColumns[columns],
+        colClass,
         "[&>[data-slot=card]]:row-span-3 [&>[data-slot=card]]:grid [&>[data-slot=card]]:grid-rows-subgrid [&>[data-slot=card]]:gap-0",
         // La franja crece hasta la más alta de la fila: el texto arranca arriba, no centrado.
         "[&>[data-slot=card]>[data-slot=card-header]]:content-start",

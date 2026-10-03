@@ -32,8 +32,14 @@ type TextLinkProps = Omit<React.ComponentProps<"a">, "className"> & {
  * flecha nunca queda sola en el renglón de abajo. El glifo es decorativo (`aria-hidden`): lo que
  * dice «se abre en otra pestaña» es el texto `sr-only`, que forma parte del nombre del link.
  *
+ * Los márgenes verticales de la app (`mt-4`, `my-2`) se respetan: con uno, el link pasa a `inline-block`.
+ *
  * No se llama `Link` para no chocar con el de `next/link`, que es justo el que va en `render`.
  */
+// Un `<a>` en línea ignora los márgenes verticales (`mt-4`, `my-2`, `m-3`): si la app pone uno, el link
+// pasa a `inline-block` para que cuente. Sin margen vertical sigue en línea, así que el texto corrido no cambia.
+const verticalMargin = /(^|\s)(?:[\w-]+:)*-?m[tby]?-/
+
 function TextLink({
   className,
   variant = "accent",
@@ -52,7 +58,7 @@ function TextLink({
     "data-slot": "text-link",
     ...(external ? { target: "_blank", rel: "noopener noreferrer" } : {}),
     ...props,
-    className: cn(linkVariants({ variant }), className),
+    className: cn(linkVariants({ variant }), className && verticalMargin.test(className) && "inline-block", className),
     children: (
       <>
         {children}

@@ -77,4 +77,25 @@ describe("TextLink", () => {
     expect(link).toHaveClass("text-label-secondary")
     expect(link.querySelector("[data-slot=text-link-trailing]")).not.toBeNull()
   })
+
+  it("con un margen vertical de la app pasa a inline-block; sin él sigue en línea", () => {
+    render(
+      <>
+        <TextLink className="mt-4" href="/a">
+          Con margen
+        </TextLink>
+        <TextLink className="md:my-2" href="/b">
+          Con margen responsive
+        </TextLink>
+        <TextLink className="ml-2 text-sm" href="/c">
+          Sin vertical
+        </TextLink>
+        <TextLink href="/d">Suelto</TextLink>
+      </>
+    )
+    expect(screen.getByRole("link", { name: "Con margen" })).toHaveClass("inline-block")
+    expect(screen.getByRole("link", { name: "Con margen responsive" })).toHaveClass("inline-block")
+    expect(screen.getByRole("link", { name: "Sin vertical" })).not.toHaveClass("inline-block")
+    expect(screen.getByRole("link", { name: "Suelto" })).not.toHaveClass("inline-block")
+  })
 })

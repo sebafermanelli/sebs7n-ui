@@ -40,6 +40,7 @@ function lastDay(event: CalendarEvent) {
  * La agenda de `CalendarView` para un contenedor angosto (un teléfono), donde un mes no entra: los
  * eventos por mes, uno por renglón, con el día y la hora a la izquierda. Es la misma lista de
  * `events`; se elige con una container query (la agenda en `@max-2xl`, `CalendarView` desde `@2xl`).
+ * La columna de fechas se ajusta a su contenido (sin cortar «25 oct – 30 oct») y el título envuelve en vez de truncarse.
  * De lectura: con `onEventClick` cada renglón es un botón de 44 px de alto.
  */
 function CalendarAgenda({ events, onEventClick, locale = "es-AR", hour12, empty, labels: labelsProp, className, ...props }: CalendarAgendaProps) {
@@ -75,12 +76,12 @@ function CalendarAgenda({ events, onEventClick, locale = "es-AR", hour12, empty,
               const hour = e.allDay ? labels.allDay : time.format(e.start)
               const row = (
                 <>
-                  <span className="w-24 shrink-0 text-label-secondary tabular-nums">
+                  <span className="min-w-20 shrink-0 whitespace-nowrap text-label-secondary tabular-nums">
                     <span className="block">{when}</span>
                     <span className="block text-footnote">{hour}</span>
                   </span>
-                  <span aria-hidden="true" className={cn("size-2 shrink-0 rounded-full", categoryFill[e.color ?? "brand"])} />
-                  <span className="min-w-0 flex-1 truncate">{e.title}</span>
+                  <span aria-hidden="true" className={cn("size-2 shrink-0 self-start mt-2 rounded-full", categoryFill[e.color ?? "brand"])} />
+                  <span className="min-w-0 flex-1 break-words">{e.title}</span>
                 </>
               )
               const rowClass = "flex min-h-11 w-full items-center gap-3 px-4 py-2 text-left text-callout"
