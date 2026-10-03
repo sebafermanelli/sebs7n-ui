@@ -96,6 +96,10 @@ Un asistente o panel de ayuda que acompaña el trabajo va acoplado al costado (`
 | Un bloque con título en un tablero | `WidgetCard` |
 | Varias cards en fila (planes, beneficios, testimonios, una galería) | `Card` dentro de `CardGrid` |
 | Pantalla de Configuración (grupos de campos) | `SettingsSection` dentro de `SettingsGrid` |
+| Elegir entre tabla, tarjetas o calendario y qué columnas se ven | `ListViewProvider` + `ListViewControls` (`sebs7n-ui/list-view`) en las `actions` de la `FilterBar`, `ListViewContent` para el cuerpo |
+| Filtros que no entran en una fila en el teléfono | `FilterDisclosure` (`sebs7n-ui/filter-disclosure`) en el slot `filters` de la `FilterBar` |
+| Buscar contra el servidor sin una consulta por tecla | `SearchField` con `onSearch` (retraso `debounceMs`, 300 ms) |
+| Eventos con fecha en un teléfono, donde un mes no entra | `CalendarAgenda` (`sebs7n-ui/calendar-agenda`) por debajo de `@2xl` y `CalendarView` desde ahí |
 | Nada que mostrar | `EmptyState`, con una sola acción para salir del vacío |
 | Esperando datos | `Skeleton` del alto final, o `loading` del componente |
 
@@ -111,7 +115,11 @@ Un filtro de selección única nunca se arma con botones sueltos.
 
 ## Popups en pantalla angosta
 
-Debajo de 640 px, como iOS: el popover de **contenido** (`Popover`, `DatePicker`, `ColorPicker`) pasa solo a una hoja de abajo; los **menús** (`DropdownMenu`, `Select`, `Combobox`…) siguen anclados. Ningún popup se sale de la pantalla.
+Debajo de 640 px, como iOS: el popover de **contenido** (`Popover`, `DatePicker`, `ColorPicker`) pasa solo a una hoja de abajo; los **menús** (`DropdownMenu`, `Select`, `Combobox`…) siguen anclados. Ningún popup se sale de la pantalla. Para adaptar el contenido de un `Popover` a la hoja (sin margen propio, alto completo) se usa `usePopoverSheet()` (`sebs7n-ui/popover`), que dice si está en modo hoja; `PopoverContent` acepta `collisionPadding` (8 px por defecto) para el margen contra los bordes del viewport.
+
+Un `Sheet` lateral abierto avisa en `<html data-sheet-open="right|left">` y el `Toaster` se corre solo para no tapar su pie: junto al panel en pantalla ancha y por encima del pie en el teléfono. En el teléfono el `Sheet` derecho ocupa todo el ancho (`w-full`) y desde 640 px, 3/4 con tope de 24 rem. No hace falta ningún ajuste en la app.
+
+En la barra compacta del teléfono (la que solo muestra el nombre y el avatar) un template lleva la vuelta como un botón de ícono con nombre accesible («Volver a Templates»); no se esconde la salida.
 
 ## Trampas de Base UI
 

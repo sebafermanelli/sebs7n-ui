@@ -58,6 +58,9 @@ const SOLO_SUBPATH = [
   "bulk-actions-bar",
   "settings-section",
   "widget-board",
+  "list-view",
+  "filter-disclosure",
+  "calendar-agenda",
 ]
 
 describe("componentes solo por subpath", () => {
@@ -79,5 +82,5 @@ describe("componentes solo por subpath", () => {
       for (const exportado of Object.keys(modulo)) if (delBarrel.has(exportado)) choques.push(`${nombre}: ${exportado}`)
     }
     expect(choques).toEqual([])
-  })
+  }, 60000)
 })

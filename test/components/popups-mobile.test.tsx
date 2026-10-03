@@ -169,7 +169,8 @@ describe("Ningún popup se sale de la pantalla", () => {
     const archivos = ["internal/adaptive-popover", ...["dropdown-menu", "context-menu", "menubar", "select", "combobox", "hover-card", "tooltip"].map((c) => `components/${c}`)]
     for (const archivo of archivos) {
       const fuente = readFileSync(`src/${archivo}.tsx`, "utf8")
-      expect(fuente, archivo).toContain("collisionPadding={8}")
+      // El popover adaptable lo deja configurable (`collisionPadding`), con 8 de default.
+      expect(fuente, archivo).toMatch(archivo === "internal/adaptive-popover" ? /collisionPadding = 8/ : /collisionPadding=\{8\}/)
     }
   })
 })

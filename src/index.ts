@@ -209,6 +209,7 @@ export * from "./components/widget-card.js"
 // (`lib/use-stored-state`, `lib/use-key-sequence`) tampoco.
 //   `notifications-popover` · `shortcuts-dialog` · `command-palette` · `filter-bar` · `sparkline` ·
 //   `log-viewer` · `stat-grid` · `metric-chart` · `bulk-actions-bar` ·
-//   `settings-section` · `widget-board` (con `lib/widget-layout`)
+//   `settings-section` · `widget-board` (con `lib/widget-layout`) · `list-view` (con `lib/list-view`) ·
+//   `filter-disclosure` · `calendar-agenda`
 // `lib/countries` y `lib/phone` tampoco entran: son los únicos de `lib/` solo por subpath (ver
 // `test/api-publica.test.ts`).

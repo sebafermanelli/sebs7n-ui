@@ -106,4 +106,18 @@ describe("SearchField", () => {
     await hidratar(container, ui, { onRecoverableError: recoverable })
     expect(recoverable).not.toHaveBeenCalled()
   })
+
+  it("onSearch espera el retraso, junta las teclas y avisa al instante al vaciar o con Enter", async () => {
+    const user = userEvent.setup()
+    const onSearch = vi.fn()
+    render(<SearchField aria-label="Buscar" debounceMs={150} onSearch={onSearch} />)
+    await user.type(box(), "acme")
+    expect(onSearch).not.toHaveBeenCalled()
+    await vi.waitFor(() => expect(onSearch).toHaveBeenCalledTimes(1), { timeout: 20000 })
+    expect(onSearch).toHaveBeenLastCalledWith("acme")
+    await user.type(box(), "x{Enter}")
+    expect(onSearch).toHaveBeenLastCalledWith("acmex")
+    await user.click(screen.getByRole("button", { name: "Borrar búsqueda" }))
+    expect(onSearch).toHaveBeenLastCalledWith("")
+  }, 30000)
 })

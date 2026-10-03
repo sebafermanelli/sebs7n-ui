@@ -40,4 +40,23 @@
       scroll-behavior: auto !important;
     }
   }
+
+  /* Un Sheet abierto avisa su lado en <html data-sheet-open> y el Toaster se corre para no tapar
+     su pie: junto al panel derecho en pantalla ancha (el panel mide 24 rem como máximo), y por
+     encima del pie —que ocupa ~7 rem— cuando el panel es a pantalla completa. */
+  @media (min-width: 40rem) {
+    html[data-sheet-open~="right"] [data-sonner-toaster][data-x-position="right"] {
+      --offset-right: calc(24rem + 16px) !important;
+    }
+    html[data-sheet-open~="left"] [data-sonner-toaster][data-x-position="left"] {
+      --offset-left: calc(24rem + 16px) !important;
+    }
+  }
+  @media (max-width: 39.99rem) {
+    html[data-sheet-open~="right"] [data-sonner-toaster],
+    html[data-sheet-open~="left"] [data-sonner-toaster] {
+      --offset-bottom: 7rem !important;
+      --mobile-offset-bottom: 7rem !important;
+    }
+  }
 }

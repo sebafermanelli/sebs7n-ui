@@ -105,6 +105,15 @@ export function AdaptivePopoverRoot({ open: openProp, defaultOpen = false, onOpe
   )
 }
 
+/**
+ * `true` cuando el popover de arriba se presenta como hoja (pantalla angosta y sin `mobile="popover"`).
+ * Se usa adentro de `Popover` (en el contenido o en el disparador) para adaptar el contenido: sin
+ * margen propio, alto completo, etc. Fuera de un `Popover` devuelve `false`.
+ */
+export function usePopoverSheet(): boolean {
+  return React.useContext(AdaptiveContext)?.drawer ?? false
+}
+
 /** El disparador. En angosto le corrige el estado de la hoja, que Base UI no ve. */
 export function AdaptiveTrigger(props: PopoverPrimitive.Trigger.Props) {
   const ctx = React.useContext(AdaptiveContext)
@@ -113,14 +122,14 @@ export function AdaptiveTrigger(props: PopoverPrimitive.Trigger.Props) {
 }
 
 export type AdaptivePopupProps = PopoverPrimitive.Popup.Props &
-  Pick<PopoverPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset"> & {
+  Pick<PopoverPrimitive.Positioner.Props, "align" | "alignOffset" | "collisionPadding" | "side" | "sideOffset"> & {
     className?: string
     /** Clases extra de la hoja. Los selectores bajan su contenido debajo de la X en vez de correrlo. */
     drawerClassName?: string
     "data-slot"?: string
   }
 
-export function AdaptivePopup({ className, drawerClassName, side, align, alignOffset, sideOffset, children, ...props }: AdaptivePopupProps) {
+export function AdaptivePopup({ className, drawerClassName, side, align, alignOffset, collisionPadding = 8, sideOffset, children, ...props }: AdaptivePopupProps) {
   const ctx = React.useContext(AdaptiveContext)
   // Sin el módulo todavía (unos ms después de montar en un teléfono), nada: la hoja aparece apenas llega.
   if (ctx?.drawer) {
@@ -137,7 +146,7 @@ export function AdaptivePopup({ className, drawerClassName, side, align, alignOf
         align={align}
         alignOffset={alignOffset}
         className="isolate z-50"
-        collisionPadding={8}
+        collisionPadding={collisionPadding}
         side={side}
         sideOffset={sideOffset}
       >

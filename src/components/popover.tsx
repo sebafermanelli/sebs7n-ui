@@ -3,7 +3,7 @@
 import type * as React from "react"
 import { Popover as PopoverPrimitive } from "@base-ui/react/popover"
 
-import { AdaptivePopoverRoot, type AdaptivePopoverRootProps, AdaptivePopup, AdaptiveTrigger, useInDrawer } from "../internal/adaptive-popover.js"
+import { AdaptivePopoverRoot, type AdaptivePopoverRootProps, AdaptivePopup, AdaptiveTrigger, useInDrawer, usePopoverSheet } from "../internal/adaptive-popover.js"
 import { cn, type WithClassName } from "../lib/utils.js"
 
 // En una pantalla angosta el contenido se presenta como la hoja de abajo: el porqué está en
@@ -19,7 +19,7 @@ function PopoverTrigger(props: PopoverPrimitive.Trigger.Props) {
 }
 
 type PopoverContentProps = WithClassName<PopoverPrimitive.Popup.Props> &
-  Pick<PopoverPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset"> & {
+  Pick<PopoverPrimitive.Positioner.Props, "align" | "alignOffset" | "collisionPadding" | "side" | "sideOffset"> & {
     /**
      * El material translúcido (`material-translucent`) en vez de la superficie opaca. Es el caso
      * del popover de acceso rápido de iCloud (la grilla de apps sobre el wallpaper): el único
@@ -63,6 +63,7 @@ function PopoverDescription({ className, ...props }: PopoverDescriptionProps) {
 
 export {
   Popover,
+  usePopoverSheet,
   PopoverContent,
   PopoverDescription,
   PopoverHeader,

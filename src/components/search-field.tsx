@@ -21,6 +21,14 @@ type SearchFieldProps = Omit<InputGroupInputProps, "value" | "defaultValue" | "o
   defaultValue?: string
   /** Avisa el texto en cada tecla y al borrar (con `""`). El debounce, si hace falta, es de la app. */
   onValueChange?: (value: string) => void
+  /**
+   * Avisa el texto con retraso (`debounceMs`): para buscar contra el servidor sin una consulta por
+   * tecla. Vaciar el campo (borrar, Escape) y Enter avisan al instante; un cambio pendiente se
+   * descarta al desmontar. Convive con `onValueChange`, que sigue avisando en cada tecla.
+   */
+  onSearch?: (value: string) => void
+  /** El retraso de `onSearch`, en ms. Default 300. */
+  debounceMs?: number
   /** 28, 36 (default) o 40, como los campos. */
   size?: "sm" | "md" | "lg"
   /** Clases de la superficie. El `className` va al `<input>`. */
@@ -41,6 +49,8 @@ function SearchField({
   value: valueProp,
   defaultValue = "",
   onValueChange,
+  onSearch,
+  debounceMs = 300,
   size = "md",
   disabled,
   groupClassName,
@@ -56,9 +66,20 @@ function SearchField({
   const value = valueProp ?? own
   const input = React.useRef<HTMLInputElement>(null)
   const inputRef = React.useMemo(() => mergeRefs(input, ref), [ref])
+  const timer = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  const onSearchRef = React.useRef(onSearch)
+  onSearchRef.current = onSearch
+  React.useEffect(() => () => clearTimeout(timer.current), [])
+  const search = (next: string, now: boolean) => {
+    clearTimeout(timer.current)
+    if (!onSearchRef.current) return
+    if (now) onSearchRef.current(next)
+    else timer.current = setTimeout(() => onSearchRef.current?.(next), debounceMs)
+  }
   const change = (next: string) => {
     if (valueProp === undefined) setOwn(next)
     onValueChange?.(next)
+    search(next, next === "")
   }
   const clear = () => {
     change("")
@@ -84,6 +105,7 @@ function SearchField({
         onValueChange={(next) => change(next)}
         onKeyDown={(event) => {
           onKeyDown?.(event)
+          if (event.key === "Enter" && !event.defaultPrevented) search(event.currentTarget.value, true)
           // Con texto, Escape lo vacía y no sigue (no cierra el diálogo de afuera); vacío, sigue de largo.
           if (event.key === "Escape" && value !== "" && !event.defaultPrevented) {
             event.preventDefault()

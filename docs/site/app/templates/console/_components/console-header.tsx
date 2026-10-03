@@ -31,17 +31,23 @@ export function ConsoleHeader({ compact = false }: { compact?: boolean }) {
   return (
     <>
       <div className="flex min-w-0 items-center gap-2">
-        {!compact && GALLERY_PATH && (
-          <>
-            <Link className={buttonVariants({ variant: "plain", size: "sm" })} href={GALLERY_PATH}>
+        {GALLERY_PATH &&
+          (compact ? (
+            // En el teléfono la barra no tiene lugar para el texto: queda la flecha, con su nombre accesible.
+            <Link aria-label="Volver a Templates" className={buttonVariants({ variant: "plain", size: "icon-sm" })} href={GALLERY_PATH}>
               <ArrowLeftIcon />
-              Templates
             </Link>
-            <span aria-hidden="true" className="text-label-tertiary">
-              /
-            </span>
-          </>
-        )}
+          ) : (
+            <>
+              <Link className={buttonVariants({ variant: "plain", size: "sm" })} href={GALLERY_PATH}>
+                <ArrowLeftIcon />
+                Templates
+              </Link>
+              <span aria-hidden="true" className="text-label-tertiary">
+                /
+              </span>
+            </>
+          ))}
         <Select items={items} onValueChange={(value) => value && setProjectId(value as string)} value={project.id}>
           <SelectTrigger aria-label="Proyecto" className="w-48" size="sm">
             <SelectValue />

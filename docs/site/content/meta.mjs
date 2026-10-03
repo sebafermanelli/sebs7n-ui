@@ -1351,6 +1351,8 @@ export const COMPONENTS = {
     props: {
       SearchField: {
         placeholder: "Lo que dice el campo vacío. Por defecto, `labels.placeholder` («Buscar»).",
+        onSearch: "Avisa el texto con retraso (`debounceMs`, 300 por defecto): para buscar contra el servidor sin una consulta por tecla. Vaciar y Enter avisan al instante.",
+        debounceMs: "El retraso de `onSearch`, en milisegundos.",
         onKeyDown: "Corre antes que el Escape propio. Con `preventDefault()`, Escape no vacía el campo.",
         className: "Clases del `<input>`. Las de la superficie van en `groupClassName`.",
         disabled: "Apaga el campo y el botón de borrar.",
@@ -3359,6 +3361,89 @@ export const COMPONENTS = {
       },
     },
     related: ["command", "shortcuts-dialog", "kbd"],
+  },
+  "list-view": {
+    title: "ListView",
+    group: "contenido",
+    description: "La vista de una lista que el usuario elige: `ViewToggle` (tabla, tarjetas o calendario) y `ColumnPicker` (qué columnas se ven), con un provider que lo recuerda por lista en `localStorage`. Es solo presentación: filtro, orden y paginación son de la app.",
+    keyboard: [
+      ["Tab", "Llega al grupo de vistas (flechas para cambiar) y al botón de columnas."],
+      ["Enter · Espacio · ↓", "Abren el menú de columnas; Espacio tilda o destilda y Escape lo cierra."],
+    ],
+    a11y: [
+      "`ViewToggle` es un grupo con nombre («Vista») de botones con `aria-pressed`; cada ícono lleva su nombre accesible y un tooltip.",
+      "`ColumnPicker` es un botón con nombre («Columnas visibles») que abre un menú de casillas; la columna obligatoria queda deshabilitada y siempre hay una visible.",
+      "Con `auto` el servidor renderiza tabla y tarjetas y el CSS elige según el ancho del contenedor: sin salto de hidratación ni contenido duplicado en el lector (la que no se ve queda en `display: none`).",
+    ],
+    usage: [
+      "`ListViewProvider` alrededor de la barra y del contenido (puede tener Server Components adentro), con `listKey` único por lista y `columns` (`{ id, label, required? }`).",
+      "`ListViewControls` (los dos controles) o `ViewToggle` y `ColumnPicker` sueltos van en `actions` de una `FilterBar` en `sm`. `ListViewContent` recibe `table`, `cards` y, si hace falta, `calendar`.",
+      "Cada celda y cabecera de la tabla lleva `data-col=\"<id>\"`: así se ocultan por CSS sin volver a renderizar.",
+      "`labels` cambia los textos («Lista» en vez de «Tabla»). `views` limita las vistas que ofrece la lista.",
+    ],
+    props: {
+      ListViewProvider: {
+        listKey: "Identifica la lista; la elección se guarda en `localStorage` bajo esta clave.",
+        columns: "Las columnas: `{ id, label, required? }`. Una `required` no se puede ocultar.",
+        defaultMode: "La vista sin elección guardada: `auto` (default), `table`, `cards` o `calendar`.",
+        views: "Las vistas que ofrece. Default `[\"table\", \"cards\"]`.",
+        labels: "Los textos: `view`, `table`, `cards`, `calendar`, `columns`, `reset`.",
+      },
+      ListViewContent: {
+        table: "La tabla. Cada celda con `data-col`.",
+        cards: "Las tarjetas, para el teléfono o cuando se elige.",
+        calendar: "La vista de calendario, si la lista la ofrece.",
+      },
+    },
+    related: ["filter-bar", "toggle-group", "dropdown-menu", "data-table", "calendar-view"],
+  },
+  "filter-disclosure": {
+    title: "FilterDisclosure",
+    group: "contenido",
+    description: "Los filtros de una `FilterBar` plegados detrás de un botón «Filtros (n)» cuando la barra mide menos de 36 rem; desde ahí están siempre a la vista.",
+    keyboard: [["Enter · Espacio", "Abren o cierran el panel de filtros (solo en un contenedor angosto)."]],
+    a11y: [
+      "El botón lleva `aria-expanded` y `aria-controls` hacia el panel; el contador forma parte de su nombre («Filtros (2)»).",
+      "Los campos quedan en el DOM cerrados u abiertos (ocultos por CSS): un `<form>` los envía igual. La flecha gira con `transition` que respeta `prefers-reduced-motion`.",
+    ],
+    usage: [
+      "Va en el slot `filters` de una `FilterBar`, con los `Select` y `ToggleGroup` adentro, todos en `sm`.",
+      "`activeCount` es cuántos filtros hay aplicados; `label` cambia el texto del botón.",
+      "Responde al ancho de la barra (`@xl`), no al de la ventana: con un panel lateral abierto se pliega como en un teléfono.",
+    ],
+    props: {
+      FilterDisclosure: {
+        activeCount: "Cuántos filtros hay aplicados; se muestra en el botón.",
+        label: "El texto del botón. Default «Filtros».",
+      },
+    },
+    related: ["filter-bar", "search-field", "select", "toggle-group"],
+  },
+  "calendar-agenda": {
+    title: "CalendarAgenda",
+    group: "contenido",
+    description: "La agenda de `CalendarView` para un contenedor angosto (un teléfono), donde un mes no entra: los mismos eventos agrupados por mes, uno por renglón, con el día y la hora a la izquierda.",
+    keyboard: [["Tab · Enter · Espacio", "Con `onEventClick`, cada renglón es un botón: Tab entre eventos y Enter o Espacio lo abre."]],
+    a11y: [
+      "Cada mes es una región nombrada por su título; los eventos son una lista. El punto de color es decorativo (`aria-hidden`): el dato está en el título y en el día y la hora escritos.",
+      "Los renglones miden 44 px de alto como mínimo y el foco es el de siempre (`focus-ring`). Sin `onEventClick` no hay paradas de teclado.",
+      "Un evento de todo el día de varios días muestra el rango con el último día inclusive («28 oct – 31 oct»).",
+    ],
+    usage: [
+      "Se elige por ancho del contenedor, no de la ventana: `@container` con `CalendarView` desde `@2xl` y `CalendarAgenda` por debajo (`@max-2xl`). Los dos reciben los mismos `events`.",
+      "`empty` es lo que se ve sin eventos (un `EmptyState`). `labels` cambia «Agenda» y «Todo el día»; `locale` y `hour12` van como en `CalendarView`.",
+    ],
+    props: {
+      CalendarAgenda: {
+        events: "Los eventos, los mismos de `CalendarView`.",
+        onEventClick: "Click o Enter sobre un evento. Sin esto, los renglones son de solo lectura.",
+        locale: "El locale de los meses, los días y las horas. Default `es-AR`.",
+        hour12: "`false` fuerza las 24 horas; `true`, las 12.",
+        empty: "Lo que se ve sin eventos.",
+        labels: "Los textos: `agenda` y `allDay`.",
+      },
+    },
+    related: ["calendar-view", "empty-state", "list-view"],
   },
   "filter-bar": {
     title: "FilterBar",
