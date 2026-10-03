@@ -2,8 +2,9 @@
 
 import {
   ArchiveIcon,
+  CheckCircle2Icon,
+  CircleIcon,
   FileTextIcon,
-  FilterIcon,
   FlagIcon,
   FolderIcon,
   ForwardIcon,
@@ -12,14 +13,20 @@ import {
   ReplyIcon,
   SendIcon,
   SquarePenIcon,
+  SquareCheckIcon,
   StarIcon,
   Trash2Icon,
 } from "lucide-react"
 import { useState } from "react"
 import { Avatar, AvatarFallback } from "sebs7n-ui/avatar"
+import { BulkActionsBar } from "sebs7n-ui/bulk-actions-bar"
+import { Button } from "sebs7n-ui/button"
+import { FilterBar } from "sebs7n-ui/filter-bar"
 import { List, ListRow } from "sebs7n-ui/list-row"
+import { SearchField } from "sebs7n-ui/search-field"
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarHeader, SidebarItem, SidebarItemBadge, SidebarSearch } from "sebs7n-ui/sidebar"
 import { SplitView, SplitViewBack, SplitViewDetail, SplitViewList, SplitViewSidebar, useSplitView, type SplitViewPane } from "sebs7n-ui/split-view"
+import { ToggleGroup, ToggleGroupItem } from "sebs7n-ui/toggle-group"
 import { Toolbar, ToolbarGroup } from "sebs7n-ui/toolbar"
 
 import { ToolButton } from "./parts"
@@ -91,24 +98,37 @@ const MENSAJES = [
 // El contador de no leídos, como los de Archivos: texto gris al final de la fila, leído con contexto.
 const contador = (n: number) => (n > 0 ? <SidebarItemBadge label={`${n} sin leer`}>{n}</SidebarItemBadge> : null)
 
-function Mensajes({ elegido, onElegir }: { elegido: string; onElegir: (id: string) => void }) {
+type Seleccion = { activa: boolean; marcados: string[]; alternar: (id: string) => void }
+
+function Mensajes({ mensajes, elegido, onElegir, seleccion }: { mensajes: typeof MENSAJES; elegido: string; onElegir: (id: string) => void; seleccion: Seleccion }) {
   const { setPane } = useSplitView()
+  if (mensajes.length === 0) return <p className="px-5 py-3 text-callout text-label-secondary">Ningún mensaje coincide.</p>
   return (
     <List aria-label="Mensajes" className="px-2.5 pb-2.5">
-      {MENSAJES.map((mensaje) => (
-        <ListRow
-          description={mensaje.asunto}
-          dot={mensaje.sinLeer ? "brand" : undefined}
-          key={mensaje.id}
-          onClick={() => {
-            onElegir(mensaje.id)
-            setPane("detail")
-          }}
-          selected={elegido === mensaje.id}
-          title={mensaje.de}
-          trailing={<span className="text-footnote text-label-secondary">{mensaje.hora}</span>}
-        />
-      ))}
+      {mensajes.map((mensaje) => {
+        const marcado = seleccion.marcados.includes(mensaje.id)
+        return (
+          <ListRow
+            description={mensaje.asunto}
+            dot={mensaje.sinLeer && !seleccion.activa ? "brand" : undefined}
+            icon={seleccion.activa ? marcado ? <CheckCircle2Icon className="text-brand-900" /> : <CircleIcon className="text-label-tertiary" /> : undefined}
+            key={mensaje.id}
+            onClick={() => {
+              if (seleccion.activa) return seleccion.alternar(mensaje.id)
+              onElegir(mensaje.id)
+              setPane("detail")
+            }}
+            selected={seleccion.activa ? marcado : elegido === mensaje.id}
+            title={
+              <>
+                {mensaje.de}
+                {marcado && <span className="sr-only"> (elegido)</span>}
+              </>
+            }
+            trailing={<span className="text-footnote text-label-secondary">{mensaje.hora}</span>}
+          />
+        )
+      })}
     </List>
   )
 }
@@ -120,6 +140,15 @@ export function MailShowcase() {
   // El panel lo lleva la pantalla: tocar un buzón (aunque ya sea el elegido) avanza a la lista, como
   // Mail en el teléfono. En ancho se ven los tres y el panel activo no cambia nada a la vista.
   const [pane, setPane] = useState<SplitViewPane>("list")
+  const [consulta, setConsulta] = useState("")
+  const [filtro, setFiltro] = useState<"todos" | "sin-leer">("todos")
+  // Seleccionar, como «Editar» de Mail en iOS: las filas pasan a marcarse y aparece la `BulkActionsBar`.
+  const [seleccionando, setSeleccionando] = useState(false)
+  const [marcados, setMarcados] = useState<string[]>([])
+  const alternar = (id: string) => setMarcados((todos) => (todos.includes(id) ? todos.filter((otro) => otro !== id) : [...todos, id]))
+  const visibles = MENSAJES.filter(
+    (item) => (filtro === "todos" || item.sinLeer) && `${item.de} ${item.asunto}`.toLowerCase().includes(consulta.trim().toLowerCase())
+  )
   const abrirBuzon = (id: string) => {
     setBuzon(id)
     setPane("list")
@@ -128,7 +157,7 @@ export function MailShowcase() {
   const nombreBuzon = [...BUZONES, ...CARPETAS].find((item) => item.id === buzon)?.nombre
 
   return (
-    <SplitView onPaneChange={setPane} pane={pane}>
+    <SplitView className="h-[var(--showcase-split,100%)]" onPaneChange={setPane} pane={pane}>
       <SplitViewSidebar aria-label="Buzones">
         {/* El mismo `Sidebar` que Archivos: filas de 32, rótulos chicos en gris y el activo en gris.
             El panel del SplitView ya pone el ancho, el fondo y el borde. */}
@@ -163,14 +192,44 @@ export function MailShowcase() {
         <Toolbar aria-label="Acciones de la lista" className="sticky top-0 z-10">
           <SplitViewBack>Buzones</SplitViewBack>
           <span className="ms-auto" />
-          <ToolButton icon={FilterIcon} label="Filtrar" />
+          <ToolButton
+            icon={SquareCheckIcon}
+            label={seleccionando ? "Terminar de seleccionar" : "Seleccionar"}
+            onClick={() => {
+              setSeleccionando(!seleccionando)
+              setMarcados([])
+            }}
+          />
           <ToolButton icon={SquarePenIcon} label="Redactar" />
         </Toolbar>
         <header className="flex flex-col gap-0.5 px-5 pt-3 pb-2">
           <h3 className="text-title-1 text-label">{nombreBuzon}</h3>
           <p className="text-callout text-label-secondary">3 sin leer</p>
         </header>
-        <Mensajes elegido={elegido} onElegir={setElegido} />
+        {/* La barra de la lista, en `sm`: búsqueda, filtro y, con mensajes marcados, sus acciones. */}
+        <div className="px-5 pb-3">
+          <FilterBar
+            actions={
+              marcados.length > 0 ? (
+              <BulkActionsBar count={marcados.length} labels={{ selectedOne: "{count} elegido", selectedOther: "{count} elegidos" }} onClear={() => setMarcados([])}>
+                <Button onClick={() => setMarcados([])} size="sm" variant="secondary">
+                  <ArchiveIcon />
+                  Archivar
+                </Button>
+              </BulkActionsBar>
+              ) : undefined
+            }
+            filters={
+              <ToggleGroup aria-label="Mostrar" onValueChange={(valor) => valor[0] && setFiltro(valor[0] as "todos" | "sin-leer")} size="sm" value={[filtro]}>
+                <ToggleGroupItem value="todos">Todos</ToggleGroupItem>
+                <ToggleGroupItem value="sin-leer">Sin leer</ToggleGroupItem>
+              </ToggleGroup>
+            }
+            role="search"
+            search={<SearchField aria-label="Buscar en los mensajes" onValueChange={setConsulta} placeholder="Buscar" size="sm" value={consulta} />}
+          />
+        </div>
+        <Mensajes elegido={elegido} mensajes={visibles} onElegir={setElegido} seleccion={{ activa: seleccionando, marcados, alternar }} />
       </SplitViewList>
 
       <SplitViewDetail aria-label="Mensaje">

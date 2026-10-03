@@ -86,6 +86,8 @@ describe("DataTable", () => {
 
   it("filtro: la búsqueda de iCloud, sin tildes ni mayúsculas, y el total en una región viva", async () => {
     render(<Tabla filter />)
+    // La búsqueda de la barra es `sm` (28), como los botones y selectores de la barra.
+    expect(screen.getByRole("searchbox")).toHaveAttribute("data-size", "sm")
     const buscar = screen.getByRole("searchbox", { name: "Buscar" })
     await userEvent.type(buscar, "optica")
     expect(clientes()).toEqual(["Óptica Sur"])

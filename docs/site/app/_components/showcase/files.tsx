@@ -6,10 +6,8 @@ import {
   FileSpreadsheetIcon,
   FileTextIcon,
   FolderIcon,
-  FolderPlusIcon,
   LayoutGridIcon,
   ListIcon,
-  SearchIcon,
   ShareIcon,
   Trash2Icon,
   UploadIcon,
@@ -27,7 +25,11 @@ import {
   ContextMenuTrigger,
 } from "sebs7n-ui/context-menu"
 import { FileGrid, type FileGridItem } from "sebs7n-ui/file-grid"
-import { Kbd } from "sebs7n-ui/kbd"
+import { BulkActionsBar } from "sebs7n-ui/bulk-actions-bar"
+import { Button } from "sebs7n-ui/button"
+import { FilterBar } from "sebs7n-ui/filter-bar"
+import { SearchField } from "sebs7n-ui/search-field"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "sebs7n-ui/select"
 import {
   Sidebar,
   SidebarContent,
@@ -41,10 +43,9 @@ import {
 } from "sebs7n-ui/sidebar"
 import { SplitView, SplitViewBack, SplitViewDetail, SplitViewList, SplitViewSidebar, type SplitViewPane } from "sebs7n-ui/split-view"
 import { ToggleGroup, ToggleGroupItem } from "sebs7n-ui/toggle-group"
-import { Toolbar, ToolbarButton, ToolbarGroup, ToolbarSeparator } from "sebs7n-ui/toolbar"
 import { Tree, type TreeNode } from "sebs7n-ui/tree"
 
-import { AppIcon, ToolButton } from "./parts"
+import { AppIcon } from "./parts"
 
 // Miniaturas generadas acá (sin imágenes externas): una hoja con una franja de color y renglones.
 const hoja = (color: string) =>
@@ -117,6 +118,8 @@ function contenidoDe(id: string): FileGridItem[] {
   return [...carpetas, ...(ARCHIVOS[id] ?? [])]
 }
 
+const TIPOS = { todos: "Todos los tipos", pdf: "PDF", xlsx: "Planillas", txt: "Texto" }
+
 const LISTA_COLUMNAS = [
   { header: "Tipo", width: 120 },
   { header: "Tamaño", width: 90, numeric: true },
@@ -165,11 +168,18 @@ export function FilesShowcase() {
   // y el activo no cambia nada a la vista.
   const [pane, setPane] = useState<SplitViewPane>("sidebar")
   // Varios elegidos, como en Drive: ⌘/Ctrl+click, ⇧+click y ⌘A, en la grilla y en la lista.
-  const [selected, setSelected] = useState<string[]>(["f-0013"])
+  const [selected, setSelected] = useState<string[]>([])
   const [vista, setVista] = useState<"grid" | "list">("grid")
+  const [consulta, setConsulta] = useState("")
+  const [tipo, setTipo] = useState("todos")
   const ruta = rutaDe(carpeta) ?? []
   const padre = ruta.at(-2)
-  const items = useMemo(() => contenidoDe(carpeta), [carpeta])
+  const todos = useMemo(() => contenidoDe(carpeta), [carpeta])
+  // La búsqueda y el tipo filtran lo que se ve; las carpetas se quedan siempre.
+  const items = useMemo(
+    () => todos.filter((item) => item.folder || ((tipo === "todos" || item.name.toLowerCase().endsWith(`.${tipo}`)) && item.name.toLowerCase().includes(consulta.trim().toLowerCase()))),
+    [todos, tipo, consulta]
+  )
   const irA = (id: string) => {
     setCarpeta(id)
     setSelected([])
@@ -185,16 +195,10 @@ export function FilesShowcase() {
   const nombreFuente = [...FUENTES, { id: "informes", label: "Informes" }].find((item) => item.id === fuente)?.label
 
   return (
-    <div className="flex h-full min-h-0 flex-col">
-      {/* La barra de la app, a todo el ancho y también en el teléfono (sin hamburguesa: las
-          ubicaciones son el primer panel). */}
-      <header className="flex h-11 shrink-0 items-center gap-2 border-b border-separator-strong bg-surface-header ps-4 pe-1.5 text-headline text-label">
-        <AppIcon fill="blue" icon={FolderIcon} size="sm" />
-        Archivos
-      </header>
-      {/* Tres paneles desde 896 (el marco del Playground mide ~990 en escritorio), no desde 1024 como
-          Mail: las carpetas son una columna angosta de 240 y no la lista de 380. */}
-      <SplitView className="h-auto min-h-0 flex-1" onPaneChange={setPane} pane={pane}>
+    <>
+      {/* Tres paneles desde 896 de ancho del contenido, no desde 1024 como Mail: las carpetas son una
+          columna angosta de 240 y no la lista de 380. */}
+      <SplitView className="h-[var(--showcase-split,100%)]" onPaneChange={setPane} pane={pane}>
         <SplitViewSidebar aria-label="Ubicaciones" className="@4xl/split:flex">
           <Sidebar className="w-full border-r-0">
             <SidebarHeader>
@@ -268,34 +272,6 @@ export function FilesShowcase() {
         </SplitViewList>
 
         <SplitViewDetail aria-label="Contenido de la carpeta" className="@4xl/split:group-data-[pane=sidebar]/split:flex">
-          <Toolbar aria-label="Acciones de archivos" className="sticky top-0 z-10">
-            <ToggleGroup
-              aria-label="Vista"
-              className="shrink-0 gap-0.5"
-              onValueChange={(valor) => valor[0] && setVista(valor[0] as "grid" | "list")}
-              value={[vista]}
-            >
-              <ToolbarButton aria-label="Íconos" render={<ToggleGroupItem value="grid" />}>
-                <LayoutGridIcon />
-              </ToolbarButton>
-              <ToolbarButton aria-label="Lista" render={<ToggleGroupItem value="list" />}>
-                <ListIcon />
-              </ToolbarButton>
-            </ToggleGroup>
-            <ToolbarSeparator />
-            <ToolbarGroup aria-label="Selección" className="mx-auto flex items-center gap-1.5">
-              <ToolButton disabled={!hasSelection} icon={ShareIcon} label="Compartir" />
-              <ToolButton disabled={!hasSelection} icon={DownloadIcon} label="Descargar" />
-              <ToolButton disabled={!hasSelection} icon={Trash2Icon} label="Eliminar" />
-            </ToolbarGroup>
-            {/* En el teléfono no entran todas: Buscar y Nueva carpeta quedan para cuando hay lugar. */}
-            <span className="hidden @2xl/split:contents">
-              <ToolButton icon={SearchIcon} label="Buscar" shortcut={<Kbd>⌘F</Kbd>} />
-              <ToolButton icon={FolderPlusIcon} label="Nueva carpeta" />
-            </span>
-            <ToolButton icon={UploadIcon} label="Subir archivos" />
-          </Toolbar>
-
           <div className="flex min-w-0 flex-col gap-4 p-5">
             <div className="flex flex-col gap-1">
               {/* «‹ 2026»: sube a la carpeta de arriba; desde una de primer nivel, vuelve a las carpetas. */}
@@ -326,11 +302,65 @@ export function FilesShowcase() {
                   ))}
                 </BreadcrumbList>
               </Breadcrumb>
-              <h3 className="text-title-1 text-label">{ruta.at(-1)?.label}</h3>
-              <p className="text-callout text-label-secondary" role="status">
-                {hasSelection ? `${selected.length} de ${items.length} elegidos` : `${items.length} ítems`} · 1,2 GB disponibles
+              <div className="flex items-center justify-between gap-3">
+                <h3 className="min-w-0 truncate text-title-1 text-label">{ruta.at(-1)?.label}</h3>
+                {/* El único botón primario de la pantalla. */}
+                <Button className="shrink-0">
+                  <UploadIcon />
+                  Subir
+                </Button>
+              </div>
+              <p className="text-callout text-label-secondary">
+                {items.length} ítems · 1,2 GB disponibles
               </p>
             </div>
+
+            {/* La barra de la lista, en `sm`: búsqueda, tipo y vista; con una selección, sus acciones. */}
+            <FilterBar
+              actions={
+                hasSelection ? (
+                  <BulkActionsBar count={selected.length} onClear={() => setSelected([])}>
+                    <Button size="sm" variant="secondary">
+                      <ShareIcon />
+                      Compartir
+                    </Button>
+                    <Button size="sm" variant="secondary">
+                      <DownloadIcon />
+                      Descargar
+                    </Button>
+                    <Button size="sm" variant="secondary">
+                      <Trash2Icon />
+                      Eliminar
+                    </Button>
+                  </BulkActionsBar>
+                ) : (
+                  <ToggleGroup aria-label="Vista" onValueChange={(valor) => valor[0] && setVista(valor[0] as "grid" | "list")} size="sm" value={[vista]}>
+                    <ToggleGroupItem aria-label="Íconos" value="grid">
+                      <LayoutGridIcon />
+                    </ToggleGroupItem>
+                    <ToggleGroupItem aria-label="Lista" value="list">
+                      <ListIcon />
+                    </ToggleGroupItem>
+                  </ToggleGroup>
+                )
+              }
+              filters={
+                <Select items={TIPOS} onValueChange={(valor) => valor && setTipo(valor)} value={tipo}>
+                  <SelectTrigger aria-label="Tipo de archivo" className="@xl:w-40" size="sm">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(TIPOS).map(([value, label]) => (
+                      <SelectItem key={value} value={value}>
+                        {label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              }
+              role="search"
+              search={<SearchField aria-label="Buscar en la carpeta" onValueChange={setConsulta} placeholder="Buscar" size="sm" value={consulta} />}
+            />
 
             {vista === "grid" ? (
               <FileGrid
@@ -380,6 +410,6 @@ export function FilesShowcase() {
           </div>
         </SplitViewDetail>
       </SplitView>
-    </div>
+    </>
   )
 }

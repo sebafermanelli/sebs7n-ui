@@ -1,8 +1,10 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { ViewTransition } from "react"
+import { PageHeader, PageHeaderActions, PageHeaderDescription, PageHeaderTitle } from "sebs7n-ui/page-header"
 
 import site from "@/.generated/site.json"
+import { Inline } from "../../_components/inline"
 import { MdLink } from "../../_components/md-link"
 import { PageNav } from "../../_components/page-nav"
 import { headings, Prose } from "../../_components/prose"
@@ -31,13 +33,15 @@ export default async function SystemPage({ params }: Params) {
     <ViewTransition default="none" enter="page-in" exit="page-out">
       <div className="flex gap-10">
         <article className="min-w-0 flex-1 pb-24">
-        <header className="flex flex-col gap-3 pb-8">
-          <h1 className="text-large-title text-label">{page.title}</h1>
-          <p className="text-body text-label-secondary">{page.description}</p>
-          <div className="flex gap-2">
+        <PageHeader className="pb-8">
+          <PageHeaderTitle>{page.title}</PageHeaderTitle>
+          <PageHeaderDescription>
+            <Inline text={page.description} />
+          </PageHeaderDescription>
+          <PageHeaderActions>
             <MdLink href={`/docs/${page.slug}`} />
-          </div>
-        </header>
+          </PageHeaderActions>
+        </PageHeader>
         <Prose markdown={page.body} />
       </article>
       <PageNav items={headings(page.body)} />

@@ -119,7 +119,9 @@ function CardContent({ className, columns = 1, ...props }: CardContentProps) {
       data-slot="card-content"
       data-columns={columns}
       className={cn(
-        "relative p-(--card-spacing) has-data-[slot=card-row]:p-2.5",
+        // El pie lleva 4 px más que los otros lados: con el interlineado del texto la última línea parece pegada al borde
+        // aunque los cuatro paddings midan lo mismo.
+        "relative p-(--card-spacing) pb-[calc(var(--card-spacing)+0.25rem)] has-data-[slot=card-row]:p-2.5",
         "data-[columns=2]:grid data-[columns=2]:grid-cols-2 data-[columns=2]:gap-x-10",
         "data-[columns=2]:before:absolute data-[columns=2]:before:inset-y-(--card-spacing) data-[columns=2]:before:left-1/2 data-[columns=2]:before:w-px data-[columns=2]:before:bg-fill-3",
         "data-[columns=2]:[&>[data-slot=card-row]:nth-child(2)]:before:hidden",
@@ -181,25 +183,30 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 type CardGridProps = React.ComponentProps<"div"> & {
-  /** Columnas desde `lg` (en `sm`, dos; en el teléfono, una). */
+  /** Columnas según el ancho de la grilla, no el de la ventana: 2 desde 32 rem, y `columns` desde 48 rem (3) o 56 rem (4). Por debajo de 32 rem, una. */
   columns?: 2 | 3 | 4
 }
 
-const cardGridColumns = { 2: "sm:grid-cols-2", 3: "sm:grid-cols-2 lg:grid-cols-3", 4: "sm:grid-cols-2 lg:grid-cols-4" } as const
+const cardGridColumns = { 2: "@lg:grid-cols-2", 3: "@lg:grid-cols-2 @3xl:grid-cols-3", 4: "@lg:grid-cols-2 @4xl:grid-cols-4" } as const
 // Las clases escritas enteras: Tailwind no ve una armada con `${}`.
-const cardGridColumnsOdd = { 2: "sm:grid-cols-2", 3: "lg:grid-cols-3", 4: "lg:grid-cols-4" } as const
+const cardGridColumnsOdd = { 2: "@lg:grid-cols-2", 3: "@3xl:grid-cols-3", 4: "@4xl:grid-cols-4" } as const
 
 /**
  * Una fila de cards que se leen juntas (planes, beneficios, testimonios). Cada `Card` comparte las
  * filas de la grilla (subgrid): la cabecera más alta fija la de todas, y lo mismo el cuerpo y el
  * pie. Una cabecera más baja que la de al lado, o un pie que no cae a la misma altura, es el error
  * que esto evita. Las cards van como hijas directas, con `CardHeader`, `CardContent` y `CardFooter`.
+ *
+ * Responde al ancho de **su contenedor** (container queries), no al de la ventana: se declara
+ * `@container` en una caja propia, así un panel lateral abierto la achica igual que un teléfono, y
+ * funciona igual fuera de un `AppShell`. `data-slot="card-grid"` y `className` van a la grilla interna.
  */
 function CardGrid({ className, columns = 3, children, ...props }: CardGridProps) {
   // Sin huérfanas: con un número impar de cards, dos columnas dejan una sola abajo (2 + 1). Ahí se
   // pasa directo de apiladas a todas en paralelo.
   const odd = React.Children.count(children) % 2 === 1
   return (
+    <div data-slot="card-grid-container" className="@container w-full">
     <div
       data-slot="card-grid"
       className={cn(
@@ -215,6 +222,7 @@ function CardGrid({ className, columns = 3, children, ...props }: CardGridProps)
       {...props}
     >
       {children}
+    </div>
     </div>
   )
 }

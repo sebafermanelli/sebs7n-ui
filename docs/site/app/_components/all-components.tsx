@@ -1,4 +1,7 @@
 import Link from "next/link"
+import { Separator } from "sebs7n-ui/separator"
+import { Card, CardContent } from "sebs7n-ui/card"
+import { TextLink } from "sebs7n-ui/text-link"
 
 import type { ComponentGroup } from "../_lib/all-components"
 import { DemoSlot } from "./demo-slot"
@@ -15,7 +18,8 @@ import { Inline } from "./inline"
  */
 export function AllComponents({ groups }: { groups: ComponentGroup[] }) {
   return (
-    <section aria-labelledby="todos-los-componentes" className="flex flex-col gap-10 border-t border-separator pt-8">
+    <section aria-labelledby="todos-los-componentes" className="flex flex-col gap-10">
+      <Separator />
       <header className="flex flex-col gap-2">
         <h2 className="scroll-mt-24 text-title-1 text-label" id="todos-los-componentes">
           Todos los componentes
@@ -32,17 +36,19 @@ export function AllComponents({ groups }: { groups: ComponentGroup[] }) {
               <article aria-labelledby={`todos-${component.slug}`} className="flex min-w-0 flex-col gap-3" key={component.slug}>
                 <div className="flex flex-col gap-1">
                   <h4 className="text-title-3" id={`todos-${component.slug}`}>
-                    <Link className="text-label underline-offset-4 hover:underline focus-visible:focus-ring rounded-sm" href={component.href}>
+                    <TextLink render={<Link href={component.href} />} variant="row">
                       {component.title}
-                    </Link>
+                    </TextLink>
                   </h4>
                   <p className="text-callout text-label-secondary">
                     <Inline text={component.description} />
                   </p>
                 </div>
-                <div className="flex min-h-32 min-w-0 flex-1 items-center justify-center overflow-x-auto rounded-surface border border-separator bg-surface p-6 shadow-card">
-                  {component.demoId ? <DemoSlot id={component.demoId} /> : <p className="text-callout text-label-secondary">Sin demo.</p>}
-                </div>
+                <Card className="min-w-0">
+                  <CardContent className="flex min-h-32 min-w-0 items-center justify-center overflow-x-auto">
+                    {component.demoId ? <DemoSlot id={component.demoId} /> : <p className="text-callout text-label-secondary">Sin demo.</p>}
+                  </CardContent>
+                </Card>
               </article>
             ))}
           </div>

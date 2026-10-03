@@ -1,6 +1,7 @@
 "use client"
 
 import { FileTextIcon, LogOutIcon, UsersIcon } from "lucide-react"
+import { AiButton, AiIcon } from "sebs7n-ui/ai-button"
 import { useState } from "react"
 import { AppShell } from "sebs7n-ui/app-shell"
 import { AppShellContent } from "sebs7n-ui/app-shell-content"
@@ -30,7 +31,7 @@ export function Completo() {
   const usuario = { name: "Ana Pérez", email: "ana@acme.com" }
   const [collapsed, setCollapsed] = useState(false)
   return (
-    <div className="overflow-hidden rounded-surface border border-separator">
+    <div className="w-full min-w-0 overflow-hidden rounded-surface border border-separator">
       <AppShell
         className="[--app-shell-height:560px]"
         header={
@@ -88,7 +89,7 @@ export function Completo() {
               <Button>Nueva factura</Button>
             </PageHeaderActions>
           </PageHeader>
-          <div className="grid gap-4 2xl:grid-cols-2">
+          <div className="grid gap-4 @3xl:grid-cols-2">
             <Card size="sm">
               <CardContent>
                 <Stat delta="+12,4 %" hint="vs. agosto" label="Facturado" trend="up" value="$ 1.284.000" />
@@ -100,6 +101,70 @@ export function Completo() {
               </CardContent>
             </Card>
           </div>
+        </AppShellContent>
+      </AppShell>
+    </div>
+  )
+}
+
+/**
+ * Con panel lateral acoplado
+ * El asistente o la ayuda van en `aside`: se acoplan a la derecha y empujan el contenido, sin tapar nada. El botón que lo abre vive en la barra global; el panel tiene su cabecera con la «X». Por debajo de 1024px pasa a un Sheet.
+ */
+export function ConPanelLateral() {
+  const [open, setOpen] = useState(false)
+  const boton = (
+    <AiButton aria-label="Preguntar a la IA" onClick={() => setOpen((previous) => !previous)} size="icon-sm">
+      <AiIcon />
+    </AiButton>
+  )
+  return (
+    <div className="w-full min-w-0 overflow-hidden rounded-surface border border-separator">
+      <AppShell
+        aside={
+          <div className="flex flex-col gap-3 p-4">
+            <p className="text-callout text-label-secondary">Preguntame por tus facturas.</p>
+            <input aria-label="Mensaje" className="h-9 rounded-control border border-separator-strong bg-surface px-3 text-callout" placeholder="Escribí tu pregunta" />
+          </div>
+        }
+        asideLabel="Asistente"
+        asideOpen={open}
+        className="[--app-shell-height:420px]"
+        header={
+          <>
+            <span className="text-title-3 text-label">
+              Acme <span className="text-brand-900">Facturas</span>
+            </span>
+            <span className="ml-auto" />
+            {boton}
+          </>
+        }
+        mobileBar={
+          <>
+            <span className="ml-auto" />
+            {boton}
+          </>
+        }
+        onAsideOpenChange={setOpen}
+        sidebar={
+          <Sidebar>
+            <SidebarContent>
+              <SidebarGroup>
+                <SidebarItem active icon={<FileTextIcon />}>
+                  Facturas
+                </SidebarItem>
+                <SidebarItem icon={<UsersIcon />}>Clientes</SidebarItem>
+              </SidebarGroup>
+            </SidebarContent>
+          </Sidebar>
+        }
+      >
+        <AppShellContent>
+          <PageHeader>
+            <PageHeaderTitle>Facturas</PageHeaderTitle>
+            <PageHeaderDescription>Con el panel abierto, la página se achica y sigue operable.</PageHeaderDescription>
+          </PageHeader>
+          <Button>Nueva factura</Button>
         </AppShellContent>
       </AppShell>
     </div>

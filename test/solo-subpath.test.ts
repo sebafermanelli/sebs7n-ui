@@ -47,6 +47,17 @@ const SOLO_SUBPATH = [
   "count-badge",
   "drop-target",
   "auth-layout",
+  "notifications-popover",
+  "shortcuts-dialog",
+  "command-palette",
+  "filter-bar",
+  "sparkline",
+  "log-viewer",
+  "stat-grid",
+  "metric-chart",
+  "bulk-actions-bar",
+  "settings-section",
+  "widget-board",
 ]
 
 describe("componentes solo por subpath", () => {

@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { MenuIcon } from "lucide-react"
+import { MenuIcon, XIcon } from "lucide-react"
 
 import { defined } from "../internal/defined.js"
 import { AppShellContext, SidebarInSheetContext, type AppShellContextValue } from "../internal/shell-context.js"
@@ -44,6 +44,28 @@ type AppShellProps = Omit<React.ComponentProps<"div">, "children"> & {
    * acepta y no hace nada; la barra flotante (`"floating"`) se fue. Se borra en 3.0.
    */
   variant?: "bar"
+  /**
+   * Un panel lateral acoplado a la derecha (asistente, ayuda, detalle) que EMPUJA el contenido, sin
+   * overlay ni bloqueo: la app de la izquierda sigue operable. El contenido solo se monta mientras está
+   * abierto, así que puede ser pesado y diferido (`next/dynamic`). < lg pasa a ser un Sheet modal.
+   */
+  aside?: React.ReactNode
+  /** Controlado: si el panel está abierto. Sin esto, el shell lo maneja (`defaultAsideOpen`). */
+  asideOpen?: boolean
+  defaultAsideOpen?: boolean
+  onAsideOpenChange?: (open: boolean) => void
+  /** Nombre accesible del `<aside>` y título por defecto de su cabecera. Por defecto, `labels.aside`. */
+  asideLabel?: string
+  /** Lo que va en la cabecera del panel, a la izquierda de la «X». Por defecto, `asideLabel`. */
+  asideTitle?: React.ReactNode
+  /** Botones de la cabecera del panel, entre el título y la «X». */
+  asideActions?: React.ReactNode
+  /** Ancho inicial en px (≥ lg). Por defecto, 400. */
+  asideWidth?: number
+  asideMinWidth?: number
+  asideMaxWidth?: number
+  /** Se llama al soltar el separador o con cada tecla: para que la app guarde el ancho. */
+  onAsideWidthChange?: (width: number) => void
   labels?: Partial<AppShellLabels>
   children?: React.ReactNode
 }
@@ -55,6 +77,24 @@ type AppShellProps = Omit<React.ComponentProps<"div">, "children"> & {
 // Mismo corte que lg de Tailwind (64rem): desde ahí el sidebar está fijo y el Sheet sobra.
 const DESKTOP_QUERY = "(min-width: 64rem)"
 
+const asideLabels = { aside: "Panel lateral", closeAside: "Cerrar panel", resizeAside: "Cambiar el ancho del panel" }
+const ASIDE_MS = 200
+const TABBABLE = 'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+
+// ≥ lg, por matchMedia. Sin matchMedia (jsdom) se toma desktop; en el servidor, no: ahí el panel nunca está montado.
+function subscribeDesktop(onChange: () => void) {
+  if (typeof window === "undefined" || typeof window.matchMedia !== "function") return () => {}
+  const query = window.matchMedia(DESKTOP_QUERY)
+  query.addEventListener("change", onChange)
+  return () => query.removeEventListener("change", onChange)
+}
+const desktopSnapshot = () => (typeof window.matchMedia === "function" ? window.matchMedia(DESKTOP_QUERY).matches : true)
+function useIsDesktop() {
+  return React.useSyncExternalStore(subscribeDesktop, desktopSnapshot, () => false)
+}
+
+const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
+
 type SheetModule = typeof import("./sheet.js")
 
 // Una sola carga del Sheet para todos los AppShell de la página: la promesa y el módulo quedan acá.
@@ -62,10 +102,33 @@ let sheetCargado: SheetModule | null = null
 let sheetPromesa: Promise<SheetModule> | null = null
 const cargarSheet = () => (sheetPromesa ??= import("./sheet.js").then((mod) => (sheetCargado = mod)))
 
-function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido", ambient = false, header, variant: _variant, labels: labelsProp, children, ...props }: AppShellProps) {
+function AppShell({
+  className,
+  sidebar,
+  mobileBar,
+  pathname,
+  mainId = "contenido",
+  ambient = false,
+  header,
+  variant: _variant,
+  aside,
+  asideOpen: asideOpenProp,
+  defaultAsideOpen = false,
+  onAsideOpenChange,
+  asideLabel,
+  asideTitle,
+  asideActions,
+  asideWidth = 400,
+  asideMinWidth = 320,
+  asideMaxWidth = 640,
+  onAsideWidthChange,
+  labels: labelsProp,
+  children,
+  ...props
+}: AppShellProps) {
   // El provider gana sobre el español; la prop `labels` gana sobre el provider, porque es la
   // excepción puntual de una pantalla y no una traducción.
-  const labels = { ...useLabels().appShell, ...defined(labelsProp) }
+  const labels = { ...asideLabels, ...useLabels().appShell, ...defined(labelsProp) }
   const [mobileOpen, setMobileOpen] = React.useState(false)
   const mainRef = React.useRef<HTMLElement>(null)
   const focusMainOnClose = React.useRef(false)
@@ -94,7 +157,70 @@ function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido
     return () => query.removeEventListener("change", onChange)
   }, [])
 
-  const value = React.useMemo<AppShellContextValue>(() => ({ mobileOpen, setMobileOpen, closeMobile }), [mobileOpen, closeMobile])
+  // El panel lateral: abierto controlado o no; ≥ lg una columna, < lg un Sheet modal.
+  const [asideOpenState, setAsideOpenState] = React.useState(defaultAsideOpen)
+  const asideOpen = aside != null && (asideOpenProp ?? asideOpenState)
+  const setAsideOpen = React.useCallback(
+    (open: boolean) => {
+      if (asideOpenProp === undefined) setAsideOpenState(open)
+      onAsideOpenChange?.(open)
+    },
+    [asideOpenProp, onAsideOpenChange]
+  )
+  const isDesktop = useIsDesktop()
+  const [width, setWidth] = React.useState(() => clamp(asideWidth, asideMinWidth, asideMaxWidth))
+  const [dragging, setDragging] = React.useState(false)
+  const asideRef = React.useRef<HTMLElement>(null)
+  const opener = React.useRef<HTMLElement | null>(null)
+
+  // Mientras se cierra, el contenido sigue montado lo que dura la transición; después se desmonta.
+  const [present, setPresent] = React.useState(asideOpen)
+  React.useEffect(() => {
+    if (asideOpen) {
+      setPresent(true)
+      return
+    }
+    const timer = setTimeout(() => setPresent(false), ASIDE_MS)
+    return () => clearTimeout(timer)
+  }, [asideOpen])
+
+  // Foco: al abrir va al primer control del panel (si la app no lo llevó ya adentro); al cerrar, al
+  // botón que lo abrió. No se atrapa: Tab sale del panel como de cualquier columna.
+  const wasOpen = React.useRef(false)
+  React.useEffect(() => {
+    if (asideOpen && !wasOpen.current) {
+      const active = document.activeElement
+      opener.current = active instanceof HTMLElement && active !== document.body ? active : null
+      if (isDesktop) {
+        const frame = requestAnimationFrame(() => {
+          const panel = asideRef.current
+          if (!panel || panel.contains(document.activeElement)) return
+          ;(panel.querySelector<HTMLElement>(TABBABLE) ?? panel).focus({ preventScroll: true })
+        })
+        wasOpen.current = true
+        return () => cancelAnimationFrame(frame)
+      }
+    }
+    if (!asideOpen && wasOpen.current) {
+      const target = opener.current
+      const panel = asideRef.current
+      if (target?.isConnected && (!panel || panel.contains(document.activeElement) || document.activeElement === document.body)) {
+        target.focus({ preventScroll: true })
+      }
+    }
+    wasOpen.current = asideOpen && isDesktop
+  }, [asideOpen, isDesktop])
+
+  const commitWidth = (next: number) => {
+    const value = clamp(next, asideMinWidth, asideMaxWidth)
+    setWidth(value)
+    return value
+  }
+
+  const value = React.useMemo<AppShellContextValue>(
+    () => ({ mobileOpen, setMobileOpen, closeMobile, asideOpen, setAsideOpen }),
+    [mobileOpen, closeMobile, asideOpen, setAsideOpen]
+  )
 
   // Lo de la barra del teléfono: la hamburguesa con su Sheet y lo que pase la app.
   // El Sheet (el Dialog de Base UI, con su focus trap y el bloqueo de scroll) se pide recién
@@ -117,8 +243,8 @@ function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido
     if (!sheet && sheetCargado) setSheet(sheetCargado)
   }, [sheet])
   React.useEffect(() => {
-    if (mobileOpen && !sheet) void cargarSheet().then(setSheet)
-  }, [mobileOpen, sheet])
+    if ((mobileOpen || (asideOpen && !isDesktop)) && !sheet) void cargarSheet().then(setSheet)
+  }, [mobileOpen, asideOpen, isDesktop, sheet])
   // El Sheet se monta cerrado y se abre en el frame siguiente. Si naciera con `open`, Base UI no
   // pasa por el estado inicial de la transición (`data-starting-style`) y la primera apertura
   // aparecía de golpe, sin deslizarse desde el costado como las siguientes.
@@ -130,6 +256,13 @@ function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido
   }, [sheet, listo])
 
   const triggerProps = { variant: "plain", size: "icon-sm", "aria-label": labels.openMenu, className: "-ml-1" } as const
+
+  const asideHeader = (
+    <>
+      <h2 className="min-w-0 flex-1 truncate text-callout font-semibold text-label">{asideTitle ?? asideLabel ?? labels.aside}</h2>
+      {asideActions}
+    </>
+  )
 
   const barContent = (
     <>
@@ -187,7 +320,8 @@ function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido
         className={cn(
           // La raíz pinta el fondo de página (el shell suele ocupar todo el viewport),
           // así que va con `bg-background`, no con la superficie `bg-surface`.
-          "grid min-h-(--app-shell-height) grid-cols-1 bg-background [--app-shell-height:100dvh] lg:grid-cols-[auto_minmax(0,1fr)]",
+          "grid min-h-(--app-shell-height) grid-cols-1 bg-background [--app-shell-height:100dvh]",
+          aside == null ? "lg:grid-cols-[auto_minmax(0,1fr)]" : "lg:grid-cols-[auto_minmax(0,1fr)_auto]",
           // Lo que mide la barra global: el sidebar se pega debajo de ella y descuenta su alto.
           // Con barra, la fila de arriba mide lo suyo y la de abajo se estira hasta el alto del shell.
           header == null ? "[--app-shell-header:0px]" : "[--app-shell-header:2.75rem] lg:grid-rows-[auto_minmax(0,1fr)]",
@@ -226,19 +360,111 @@ function AppShell({ className, sidebar, mobileBar, pathname, mainId = "contenido
           >
             {barContent}
           </header>
-          <main ref={mainRef} id={mainId} data-slot="app-shell-main" tabIndex={-1} className="min-w-0 flex-1 outline-none">
+          {/* El main es un contenedor de consulta (`container-type: inline-size`, sin layout ni paint: no rompe sticky ni
+              fixed): el contenido responde al ancho que le deja el sidebar y el panel lateral, no al de la ventana. */}
+          <main ref={mainRef} id={mainId} data-slot="app-shell-main" tabIndex={-1} className="@container/main min-w-0 flex-1 outline-none">
             {children}
           </main>
         </div>
+        {aside != null && (
+          <div
+            data-slot="app-shell-aside-column"
+            data-state={asideOpen ? "open" : "closed"}
+            style={{ width: asideOpen ? width : 0 }}
+            className={cn(
+              // Columna ≥ lg que mide 0 cerrada y el ancho del panel abierta: el contenido se corre.
+              "sticky top-0 hidden h-(--app-shell-height) shrink-0 overflow-hidden transition-[width] duration-200 ease-out motion-reduce:transition-none lg:col-start-3 lg:row-span-full lg:row-start-1 lg:block",
+              dragging && "transition-none"
+            )}
+          >
+            {present && isDesktop && (
+              <aside
+                ref={asideRef}
+                data-slot="app-shell-aside"
+                aria-label={asideLabel ?? labels.aside}
+                tabIndex={-1}
+                onKeyDown={(event) => {
+                  if (event.key === "Escape" && !event.defaultPrevented) {
+                    event.stopPropagation()
+                    setAsideOpen(false)
+                  }
+                }}
+                style={{ width }}
+                className="relative flex h-full flex-col border-s border-separator-strong bg-surface text-callout text-label outline-none in-data-ambient:material-translucent-body"
+              >
+                <div
+                  data-slot="app-shell-aside-header"
+                  className="flex h-11 shrink-0 items-center gap-2 border-b border-separator-strong bg-surface-header ps-4 pe-(--sf-bar-end) bar-end in-data-ambient:material-translucent"
+                >
+                  {asideHeader}
+                  <Button variant="plain" size="icon-sm" aria-label={labels.closeAside} onClick={() => setAsideOpen(false)}>
+                    <XIcon aria-hidden="true" />
+                  </Button>
+                </div>
+                <div data-slot="app-shell-aside-body" className="flex min-h-0 flex-1 flex-col">
+                  {aside}
+                </div>
+                <div
+                  role="separator"
+                  aria-orientation="vertical"
+                  aria-label={labels.resizeAside}
+                  aria-valuenow={width}
+                  aria-valuemin={asideMinWidth}
+                  aria-valuemax={asideMaxWidth}
+                  tabIndex={0}
+                  data-slot="app-shell-aside-handle"
+                  data-dragging={dragging ? "" : undefined}
+                  className="absolute inset-y-0 -start-1 z-10 w-2 cursor-col-resize touch-none outline-none after:absolute after:inset-y-0 after:start-1/2 after:w-0.5 after:-translate-x-1/2 after:transition-colors hover:after:bg-separator-strong focus-visible:after:bg-brand-500 data-dragging:after:bg-brand-500"
+                  onPointerDown={(event) => {
+                    event.currentTarget.setPointerCapture(event.pointerId)
+                    setDragging(true)
+                  }}
+                  onPointerMove={(event) => {
+                    if (!dragging) return
+                    // El borde derecho del panel es el de la ventana: el ancho es lo que queda a la derecha del cursor.
+                    commitWidth(window.innerWidth - event.clientX)
+                  }}
+                  onPointerUp={() => {
+                    setDragging(false)
+                    onAsideWidthChange?.(width)
+                  }}
+                  onKeyDown={(event) => {
+                    const step = event.shiftKey ? 48 : 16
+                    const next = { ArrowLeft: width + step, ArrowRight: width - step, Home: asideMaxWidth, End: asideMinWidth }[event.key]
+                    if (next === undefined) return
+                    event.preventDefault()
+                    event.stopPropagation()
+                    onAsideWidthChange?.(commitWidth(next))
+                  }}
+                />
+              </aside>
+            )}
+          </div>
+        )}
+        {aside != null && present && !isDesktop && sheet && (
+          <sheet.Sheet open={asideOpen && listo} onOpenChange={setAsideOpen}>
+            <sheet.SheetContent
+              side="right"
+              labels={{ close: labels.closeAside }}
+              className="w-full gap-0 overflow-hidden p-0 [&_[data-slot=sheet-close-button]]:top-1.5 data-[side=right]:w-full data-[side=right]:sm:max-w-none"
+            >
+              <sheet.SheetTitle className="sr-only">{asideLabel ?? labels.aside}</sheet.SheetTitle>
+              <div className="flex h-11 shrink-0 items-center gap-2 border-b border-separator-strong ps-4 pe-14">{asideHeader}</div>
+              <div data-slot="app-shell-aside-body" className="flex min-h-0 flex-1 flex-col">
+                {aside}
+              </div>
+            </sheet.SheetContent>
+          </sheet.Sheet>
+        )}
       </div>
     </AppShellContext.Provider>
   )
 }
 
-const fallback: AppShellContextValue = { mobileOpen: false, setMobileOpen: () => {}, closeMobile: () => {} }
+const fallback: AppShellContextValue = { mobileOpen: false, setMobileOpen: () => {}, closeMobile: () => {}, asideOpen: false, setAsideOpen: () => {} }
 
 /**
- * Estado del Sheet mobile. closeMobile({ focusMain: true }) para cerrarlo al navegar desde un link propio
+ * Estado del Sheet mobile y del panel lateral (`asideOpen` / `setAsideOpen`). closeMobile({ focusMain: true }) para cerrarlo al navegar desde un link propio
  * (o pasale `pathname` a AppShell). Fuera de AppShell es un no-op.
  */
 function useAppShell(): AppShellContextValue {

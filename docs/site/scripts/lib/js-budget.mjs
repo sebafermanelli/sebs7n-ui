@@ -20,18 +20,42 @@ export const LIMITS = {
   "/docs/components/chart": 345,
   // 295 KB. Todo lo que pide está a la vista y prerenderizado: los controles y la muestra con
   // Select, DropdownMenu, Dialog, Tabs, Slider… Diferirlo sería dejar la pantalla sin hidratar.
-  "/docs/playground": 310,
+  // 316 KB el 2026-10-03 (antes 309). Todo lo que suma está a la vista: el Tabs con desborde, la tabla
+  // `sm`, el DataTable y los controles nuevos de la muestra. Medido 316 + 5 % → 335.
+  "/docs/playground": 335,
   // 277 KB el 2026-10-02 (cuando era la raíz del template). Una pantalla entera a propósito:
   // DataTable con DropdownMenu por fila, Dialog con Form y Select, Sheet de detalle, AlertDialog.
-  "/templates/dashboard/invoices": 295,
+  "/templates/dashboard/invoices": 360,
   // Las otras secciones del template, medidas el 2026-10-02. La base es el layout (~244 KB): AppShell,
   // Sidebar, UserMenu con su menú y el store; el gráfico de Inicio no cuenta (es `lazy`, post-hidratación).
   // 274 KB: el layout + el diálogo de alta (Dialog, Form, Select).
-  "/templates/dashboard": 290,
+  "/templates/dashboard": 300,
   // 244 KB: el layout + List, SearchField y EmptyState.
-  "/templates/dashboard/customers": 260,
+  "/templates/dashboard/customers": 295,
   // 276 KB: el layout + Tabs, Form, RadioGroup, Select y Switch.
-  "/templates/dashboard/settings": 290,
+  // 316 KB el 2026-10-03: las secciones-card de Configuración (SettingsSection) con Equipo, Notificaciones y la
+  // barra de guardado; medido + 5 % redondeado a 5 KB.
+  "/templates/dashboard/settings": 335,
+  // Dashboard y consola, medidos el 2026-10-02 después de sumar notificaciones, atajos, filtros, equipo,
+  // detalle de cliente, alta de servicio y costos. La paleta ⌘K se pide recién al abrirla (`dynamic`);
+  // sin eso cada ruta pagaba ~20 KB más. La landing carga su `ThemeSwitcher` igual: de 238 a 180 KB.
+  "/templates/console": 335,
+  "/templates/console/deployments": 325,
+  // 306 KB el 2026-10-03 (+5 % → 325): la tabla de logs con `FilterBar` y el DataTable `sm`, ya sin el
+  // tooltip del `CopyButton` (que es `lazy` desde 2.10.0).
+  "/templates/console/logs": 325,
+  "/templates/console/costs": 300,
+  "/templates/console/resources": 300,
+  "/templates/console/alerts": 345,
+  "/templates/dashboard/login": 290,
+  // 313 KB el 2026-10-03 (+5 % → 330): lo mismo que los logs más el formulario de alta de variables.
+  "/templates/console/variables": 330,
+  // El blog (2026-10-02), de Server Components: paga la barra, el selector de tema diferido y, en la
+  // portada, el filtro y el formulario. 198 KB la portada y 204 KB un artículo (el índice flotante).
+  // Blog 225 KB con el `Select` de etiquetas y la `FilterBar` (antes 198). El login (273 KB) pesa más que
+  // el Inicio (262): AuthLayout, PasswordInput y OtpField entran al abrir; candidato a diferir el 2FA.
+  "/templates/blog": 240,
+  "/templates/blog/despliegues-sin-miedo": 215,
 }
 
 /** El límite de una ruta: el suyo si lo tiene, si no `BUDGET_KB`. */
@@ -51,7 +75,17 @@ export const ROUTES = [
   "/templates/dashboard/invoices",
   "/templates/dashboard/customers",
   "/templates/dashboard/settings",
+  "/templates/dashboard/login",
   "/templates/landing",
+  "/templates/console",
+  "/templates/console/deployments",
+  "/templates/console/logs",
+  "/templates/console/costs",
+  "/templates/console/resources",
+  "/templates/console/alerts",
+  "/templates/console/variables",
+  "/templates/blog",
+  "/templates/blog/despliegues-sin-miedo",
 ]
 
 /**

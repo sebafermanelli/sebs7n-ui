@@ -60,6 +60,10 @@
   .prose pre {
     @apply overflow-x-auto rounded-surface border border-separator bg-fill-1 p-4;
   }
+  /* Un comando largo en un párrafo o una lista (`npx shadcn@latest add https://…`) parte la línea en un teléfono. */
+  .prose :not(pre) > code {
+    overflow-wrap: anywhere;
+  }
   .prose pre code {
     @apply bg-transparent p-0 text-mono-body text-label;
   }

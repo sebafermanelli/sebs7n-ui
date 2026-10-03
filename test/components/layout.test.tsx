@@ -47,7 +47,7 @@ describe("PageHeader", () => {
     expect(screen.getByText("12 activos · 3 salen esta semana")).toHaveClass("text-body", "text-label-secondary")
     const actions = screen.getByRole("button", { name: "Nuevo viaje" }).parentElement!
     expect(actions).toHaveAttribute("data-slot", "page-header-actions")
-    expect(actions).toHaveClass("flex-wrap", "sm:col-start-2", "sm:row-start-1")
+    expect(actions).toHaveClass("flex-wrap", "@lg:col-start-2", "@lg:row-start-1")
     const crumbs = screen.getByRole("navigation", { name: "Migas de pan" })
     expect(crumbs).toHaveAttribute("data-slot", "page-header-breadcrumb")
     expect(crumbs).toContainElement(screen.getByRole("link", { name: "Viajes" }))
@@ -68,8 +68,8 @@ describe("PageHeader", () => {
       </PageHeader>
     )
     // Sin col-start-1 explícito, sin acciones la descripción caía en la columna 2 al lado del título.
-    expect(screen.getByRole("heading", { level: 1, name: "Clientes" })).toHaveClass("sm:col-start-1")
-    expect(screen.getByText("Todos los inquilinos")).toHaveClass("sm:col-start-1")
+    expect(screen.getByRole("heading", { level: 1, name: "Clientes" })).toHaveClass("@lg:col-start-1")
+    expect(screen.getByText("Todos los inquilinos")).toHaveClass("@lg:col-start-1")
   })
 
   // La garantía es que `PageHeader` se pueda renderizar en un Server Component, y lo que la
@@ -206,6 +206,8 @@ describe("AppShellContent", () => {
     expect(el).toHaveAttribute("data-slot", "app-shell-content")
     expect(el).toHaveAttribute("data-size", "default")
     expect(el).toHaveTextContent("hola")
+    // Contenedor de consulta propio: sus hijos responden a su caja de contenido.
+    expect(el).toHaveClass("@container")
   })
 
   it.each([

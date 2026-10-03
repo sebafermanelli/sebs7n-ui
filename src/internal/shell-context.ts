@@ -18,6 +18,9 @@ export type AppShellContextValue = {
   setMobileOpen: (open: boolean) => void
   /** Cierra el Sheet mobile. Con focusMain, el foco va al <main> (cierre por navegación). */
   closeMobile: (options?: { focusMain?: boolean }) => void
+  /** El panel lateral acoplado (`aside`): abierto o no, y cómo cambiarlo. Sin `aside` queda en `false`. */
+  asideOpen: boolean
+  setAsideOpen: (open: boolean) => void
 }
 export const AppShellContext = createContext<AppShellContextValue | null>(null)
 

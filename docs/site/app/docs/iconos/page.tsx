@@ -1,7 +1,10 @@
 import { icons } from "lucide-react"
 import type { Metadata } from "next"
+import Link from "next/link"
 import { ViewTransition } from "react"
 import { Icon } from "sebs7n-ui/icon"
+import { PageHeader, PageHeaderDescription, PageHeaderTitle } from "sebs7n-ui/page-header"
+import { TextLink } from "sebs7n-ui/text-link"
 
 import { IconCatalog } from "../../_components/icon-catalog"
 import { PAGINA } from "../../_lib/iconos"
@@ -25,17 +28,20 @@ export default function IconosPage() {
   return (
     <ViewTransition default="none" enter="page-in" exit="page-out">
       <div className="flex max-w-4xl flex-col gap-8 pb-24">
-        <header className="flex flex-col gap-3">
-          <h1 className="text-large-title text-label">Iconos</h1>
-          <p className="text-body text-label-secondary">
-            El paquete usa <a className="text-brand-900 underline underline-offset-4 hover:text-brand-1000" href="https://lucide.dev" rel="noreferrer" target="_blank">lucide</a>, y no hace falta instalar
-            nada más: ya es dependencia. Buscá, hacé clic y pegá el import. Para tamaños, tonos y el nombre accesible, ver{" "}
-            <a className="text-brand-900 underline underline-offset-4 hover:text-brand-1000" href="/docs/components/icon">
+        <PageHeader>
+          <PageHeaderTitle>Iconos</PageHeaderTitle>
+          <PageHeaderDescription>
+            El paquete usa{" "}
+            <TextLink href="https://lucide.dev" trailing="external" variant="inline">
+              lucide
+            </TextLink>
+            , y no hace falta instalar nada más: ya es dependencia. Buscá, hacé clic y pegá el import. Para tamaños, tonos y el nombre accesible, ver{" "}
+            <TextLink render={<Link href="/docs/components/icon" />} variant="inline">
               Icon
-            </a>
+            </TextLink>
             .
-          </p>
-        </header>
+          </PageHeaderDescription>
+        </PageHeader>
         <IconCatalog iniciales={INICIALES} nombres={NOMBRES} />
       </div>
     </ViewTransition>

@@ -1272,11 +1272,11 @@ export const COMPONENTS = {
   toggle: {
     title: "Toggle",
     group: "formularios",
-    description: "Un chip de filtro que queda apretado: el token de la búsqueda de iCloud, gris en reposo y el acento sólido prendido.",
+    description: "Un chip de filtro que queda apretado: el token de la búsqueda de iCloud, gris en reposo y gris más fuerte, en semibold, prendido.",
     keyboard: [["Espacio · Enter", "Alterna."]],
     a11y: [
       "Emite `aria-pressed`. Sin texto (solo ícono) necesita `aria-label`.",
-      "El estado se ve por el relleno —gris apagado, acento sólido prendido—, además de `aria-pressed`. El texto prendido es `brand-contrast` sobre `brand-700`, el par que se verifica a 4,5:1 con todas las marcas.",
+      "El estado se ve por el relleno (`fill-1` apagado, `fill-3` prendido) y por el peso del texto (semibold), además de `aria-pressed`: la selección es neutra, el acento no interviene. El texto es `label` en los dos estados.",
     ],
     usage: [
       "Si la acción navega o abre algo, es un `Button`.",
@@ -1300,13 +1300,13 @@ export const COMPONENTS = {
   "toggle-group": {
     title: "ToggleGroup",
     group: "formularios",
-    description: "Opciones que se prenden, juntas en el segmentado de iCloud: segmentos del mismo ancho y el prendido en el acento sólido. En modo «uno» o «varios», y el filtro de selección única de una barra.",
+    description: "Opciones que se prenden, juntas en el segmentado de iCloud: segmentos del mismo ancho y el prendido en la pastilla neutra del segmentado. En modo «uno» o «varios», y el filtro de selección única de una barra.",
     keyboard: [["← →", "Se mueve entre ítems."], ["Espacio · Enter", "Alterna el ítem."], ["Tab", "Entra y sale del grupo entero. Con ítems link, cada link es una parada."]],
     a11y: [
       "El grupo necesita `aria-label`: «Alineación», «Vista», «Estado».",
       "En modo único es un `RadioGroup` visualmente distinto; si la lista es larga, usá `RadioGroup` de verdad.",
       "Los ítems con `href` son `<a>` reales: el elegido lleva `aria-current=\"page\"` y no `aria-pressed`, porque un link no se presiona, lleva a la página que ya se está viendo. No entran en las flechas: cada uno es una parada de Tab, como cualquier link.",
-      "El prendido va en el acento sólido y llega a 3:1 contra la pista en las marcas de ejemplo (en oscuro, el paso 900 de la marca con texto oscuro): el estado no depende de un gris casi igual al de la pista.",
+      "La selección es neutra: el prendido es la pastilla del segmentado (blanca en claro, gris en oscuro, con su sombra) y el texto en semibold, así que el estado no depende solo del color. El acento no interviene: queda para el anillo de foco.",
     ],
     usage: [
       "Hasta 4 o 5 ítems: es una barra, no un menú.",
@@ -2225,6 +2225,7 @@ export const COMPONENTS = {
       TabsList: {
         variant: "`line` (el default desde 2.0: 17 px, subrayado de 1 px del ancho del texto sobre una línea base, 60 de alto) · `segmented` (pista de 28, segmentos de 24).",
         loopFocus: "Si al pasar de la última tab las flechas vuelven a la primera.",
+        // `line`: ocupa el ancho de su caja; si las pestañas no entran, scrollea de costado y se desvanece del lado que tiene más (ya no se sale 8 px con `-mx-2`).
       },
       TabsContent: {
         ...heredadas("value", "keepMounted"),
@@ -2477,9 +2478,11 @@ export const COMPONENTS = {
     description: "El layout de una app de iCloud: barra global de 44 a todo el ancho, sidebar a ras debajo desde `lg` y, en el teléfono, una barra de 44 con hamburguesa.",
     keyboard: [
       ["Tab (primera parada)", "«Ir al contenido», el skip link que salta al `<main>`."],
-      ["Escape", "Cierra el Sheet mobile."],
+      ["Escape", "Cierra el Sheet mobile y, con el foco adentro, el panel lateral (`aside`)."],
     ],
     a11y: [
+      "El panel lateral es un `<aside>` (`complementary`) con `aria-label`; no atrapa el foco, no bloquea el scroll y deja operable todo lo de su izquierda. Al abrir, el foco va a su primer control; al cerrar vuelve al botón que lo abrió.",
+      "El separador del panel es un `separator` enfocable: flechas ±16 px (Shift ±48), Inicio y Fin para el máximo y el mínimo.",
       "Trae el skip link «Ir al contenido» apuntando al `<main>`: es la primera parada de tabulación de toda la app.",
       "El `<main>` tiene `id` (`mainId`, por defecto `contenido`) y es enfocable por programa.",
       "Al elegir un ítem en el Sheet mobile, se cierra y el foco va al `<main>`.",
@@ -2490,6 +2493,9 @@ export const COMPONENTS = {
       "**Usá `AppShellContent` como hijo directo**: es el contenedor de página, así todas las pantallas tienen el mismo ancho.",
       "El alto sale de `--app-shell-height` (100dvh). Para embeberlo en una caja: `className=\"[--app-shell-height:720px]\"`.",
       "Para cerrar el Sheet desde un caso propio: `useAppShell().closeMobile({ focusMain: true })`.",
+      "**Un asistente o un panel de ayuda va en `aside`, no en un Sheet**: se acopla a la derecha y empuja el contenido, así se sigue usando toda la app mientras se conversa. El botón que lo abre va en la barra global (`header`), a la derecha; `useAppShell()` da `asideOpen` y `setAsideOpen`. El Sheet o el Dialog modal quedan para cuando hay que decidir algo antes de seguir.",
+      "**El contenido de `aside` solo se monta abierto**: pasale un componente cargado con `next/dynamic` y no suma JS al arranque. Cerrado, no existe en el DOM.",
+      "< lg el panel pasa a un Sheet a pantalla completa (modal); ≥ lg es una columna de `asideWidth` (400 por defecto, entre `asideMinWidth` 320 y `asideMaxWidth` 640). Guardar el ancho es de la app (`onAsideWidthChange`).",
     ],
     props: {
       AppShell: {
@@ -2497,6 +2503,17 @@ export const COMPONENTS = {
         header: "La barra global a todo el ancho (≥ lg): 44, `surface-header`, borde abajo. Marca a la izquierda, botones de ícono de 36 y avatar de 28 a la derecha.",
         mobileBar: "Contenido de la barra de 44px del teléfono, a la derecha de la hamburguesa.",
         mainId: "`id` del `<main>`; es a donde apunta el skip link.",
+        aside: "El contenido del panel lateral acoplado (≥ lg una columna que empuja el contenido; < lg un Sheet). Solo se monta mientras está abierto.",
+        asideOpen: "Controlado: si el panel está abierto. Sin esto lo maneja el shell (`defaultAsideOpen`); `useAppShell()` lo expone como `asideOpen` / `setAsideOpen`.",
+        onAsideOpenChange: "Se llama al abrir o cerrar (la «X», Escape, o `setAsideOpen`).",
+        asideLabel: "Nombre accesible del `<aside>` y título de su cabecera. Por defecto, `labels.aside` («Panel lateral»).",
+        defaultAsideOpen: "El estado inicial del panel cuando no es controlado. Por defecto, cerrado.",
+        asideMinWidth: "Ancho mínimo del panel en px al redimensionarlo. Por defecto, 320.",
+        asideMaxWidth: "Ancho máximo del panel en px al redimensionarlo. Por defecto, 640.",
+        asideTitle: "Lo que va en la cabecera del panel, en lugar del texto de `asideLabel`.",
+        asideActions: "Botones de la cabecera del panel, entre el título y la «X».",
+        asideWidth: "Ancho inicial en px (≥ lg). Por defecto, 400; se acota con `asideMinWidth` (320) y `asideMaxWidth` (640).",
+        onAsideWidthChange: "Con el ancho nuevo al soltar el separador o con cada tecla: para que la app lo guarde.",
         variant: "**Obsoleta**: `bar` se acepta y no hace nada (se borra en 3.0). `floating` se fue.",
       },
     },
@@ -2512,6 +2529,7 @@ export const COMPONENTS = {
       "Hijo directo de `AppShell`, uno por página.",
       "`size=\"wide\"` (1600px) para tablas anchas; `size=\"full\"` sin máximo, para un mapa o un canvas.",
       "No le pongas padding extra: el que trae es el del sistema.",
+      "Es un contenedor de consulta (`@container`): adentro usá `@lg:`, `@3xl:`… y no `lg:`, así un panel lateral abierto se ve como una pantalla chica. Su padding sube a 24 desde 28 rem de ancho del `main`.",
     ],
     related: ["app-shell", "page-header"],
   },
@@ -3239,6 +3257,308 @@ export const COMPONENTS = {
     },
     related: ["carousel"],
   },
+  "notifications-popover": {
+    title: "NotificationsPopover",
+    group: "superposiciones",
+    description: "La campana de la barra con el contador de lo no leído y un popover con la lista de avisos y «Marcar todas como leídas».",
+    keyboard: [
+      ["Enter · Espacio", "En la campana, abre el popover; en «Marcar todas como leídas», marca los avisos."],
+      ["Tab", "Recorre lo de adentro: el botón de marcar todas."],
+      ["Escape", "Cierra el popover y devuelve el foco a la campana."],
+    ],
+    a11y: [
+      "El nombre de la campana dice el número con todas las letras: «Avisos, 3 sin leer» (`countLabel`). El contador de adentro es decorativo.",
+      "Un aviso sin leer se distingue por el punto de color, el texto en negrita **y** la etiqueta «Nueva»: el color nunca es el único dato.",
+      "El popover se nombra con su título, y la lista (`<ul>`) con el mismo nombre. En pantallas angostas se abre como la hoja de abajo, como cualquier `Popover`.",
+      "**Un aviso nuevo no se anuncia**: el nombre de la campana se lee al enfocarla. Si importa enterarse en el momento, la app lo avisa en una región viva (`role=\"status\"`).",
+    ],
+    usage: [
+      "La app pasa los avisos en `items` (`{ id, title, description?, time?, tone? }`, del más nuevo al más viejo) y el componente no sabe de dónde salen.",
+      "Leer es una acción: abrir el popover **no** marca nada. «Marcar todas como leídas» queda a la vista y se apaga cuando no queda ninguna.",
+      "Los leídos son del componente (`defaultRead`) o de la app (`read` + `onReadChange`, que recibe el total de ids leídos): lo segundo para guardarlos en el servidor o en `useStoredState`.",
+      "`time` va ya formateado, en el idioma de la app. Solo por subpath (`sebs7n-ui/notifications-popover`).",
+    ],
+    props: {
+      NotificationsPopover: {
+        items: "Los avisos, del más nuevo al más viejo: `{ id, title, description?, time?, tone? }`. El `id` es lo que se guarda como leído.",
+      },
+    },
+    related: ["count-badge", "popover", "list-row"],
+  },
+  "shortcuts-dialog": {
+    title: "ShortcutsDialog",
+    group: "superposiciones",
+    description: "La hoja de atajos de teclado: un diálogo con lo que hace cada tecla, con `Kbd`. Solo la hoja: el atajo que la abre lo registra la app.",
+    keyboard: [
+      ["Escape", "Cierra el diálogo y devuelve el foco."],
+      ["Tab", "Queda adentro del diálogo."],
+    ],
+    a11y: [
+      "Es un `Dialog`: título, descripción y foco atrapado vienen resueltos. La lista es una `<ul>` con nombre (`labels.list`).",
+      "Las teclas de una secuencia (`sequence`: «g» y enseguida «i») se leen con «luego» en el medio; las que van juntas («⌘» y «K») se leen seguidas.",
+    ],
+    usage: [
+      "**El componente no escucha el teclado.** `?`, ⌘K y `g` + letra los registra la app, en el layout, con `useKeySequence` de `sebs7n-ui/lib/use-key-sequence`: `useKeySequence({ \"?\": () => setOpen(true), \"g i\": () => router.push(\"/inicio\") })`. Ahí mismo se pasa `open`.",
+      "Una sola lista, `shortcuts: [{ keys, label, sequence? }]`, alimenta la hoja, el mapa del hook y los ítems de `CommandPalette` (con la descripción «g luego f»): así nunca se desfasan.",
+      "`useKeySequence` no dispara con ⌘, Ctrl o Alt apretados, ni mientras el foco está en un campo, un diálogo, una lista o un menú; un atajo dura 1,2 s entre tecla y tecla (`timeout`). Para ⌘K, un `keydown` propio: el hook es para teclas sueltas y secuencias.",
+      "Solo por subpath (`sebs7n-ui/shortcuts-dialog`).",
+    ],
+    props: {
+      ShortcutsDialog: {
+        shortcuts: "Los atajos, en el orden en que se muestran: `{ keys, label, sequence? }`.",
+      },
+    },
+    related: ["kbd", "dialog", "command-palette"],
+  },
+  "command-palette": {
+    title: "CommandPalette",
+    group: "superposiciones",
+    description: "La paleta ⌘K declarativa: grupos de ítems (`{ heading, items }`) sobre `CommandDialog`, con carga diferida opcional de los datos.",
+    keyboard: [
+      ["Escribir", "Filtra por título y `keywords`, sin distinguir mayúsculas ni tildes."],
+      ["↑ ↓", "Mueven el elegido."],
+      ["Enter", "Ejecuta el `onSelect` del elegido y cierra la paleta."],
+      ["Escape", "Cierra."],
+    ],
+    a11y: [
+      "Es `Command` en un diálogo: campo `combobox` y lista `listbox`, con el foco en el campo. Se nombra con `labels.dialog`.",
+      "Mientras `loadGroups` trae los datos hay un `status` «Cargando…»; si falla, un `alert` con `labels.loadError`.",
+    ],
+    usage: [
+      "**No escucha el teclado**: ⌘K lo registra la app (un `keydown` en el layout) y le pasa `open` y `onOpenChange`.",
+      "Cada ítem es `{ value, label, icon?, description?, keywords?, onSelect }`; el `value` es único en toda la paleta. Elegir cierra la paleta salvo con `closeOnSelect={false}`.",
+      "`loadGroups` trae los grupos la primera vez que se abre (los de `groups` están desde el principio); si falla, se reintenta al abrir de nuevo.",
+      "Para que el JS de la paleta no entre en el primer bundle, importala con `next/dynamic` o `React.lazy` y montala recién cuando se pidió por primera vez.",
+      "Para filtros (`CommandFilters`), ítems propios o una paleta incrustada en la página, `Command`. Solo por subpath (`sebs7n-ui/command-palette`).",
+    ],
+    props: {
+      CommandPalette: {
+        groups: "Los grupos, en orden: `{ heading?, items }`. Un grupo sin ítems no se dibuja.",
+        loadGroups: "Trae más grupos la primera vez que se abre la paleta. Se suman a `groups`.",
+      },
+    },
+    related: ["command", "shortcuts-dialog", "kbd"],
+  },
+  "filter-bar": {
+    title: "FilterBar",
+    group: "contenido",
+    description: "La barra sobre una lista o una tabla: búsqueda, filtros y acciones al final. Una fila si la barra mide 36 rem o más, una columna por debajo (container query).",
+    keyboard: [["—", "No es interactivo: el teclado es el de los controles que lleva."]],
+    a11y: [
+      "Es solo disposición: cada control trae su nombre (`aria-label` del `SearchField`, del `Select` y del `ToggleGroup`). Para marcarla como la búsqueda de la página, `role=\"search\"` y `aria-label`.",
+      "Sin estado ni `\"use client\"`: sirve en un Server Component.",
+    ],
+    usage: [
+      "Tres slots: `search` (un `SearchField`, 18 rem desde 36 rem de ancho de la barra y todo el ancho por debajo), `filters` (`Select`, `ToggleGroup`: pocas opciones, `ToggleGroup`; muchas, `Select`) y `actions` (vista, exportar, `BulkActionsBar`), que queda a la derecha.",
+      "Responde al ancho de **su caja** (`@xl`, 36 rem), no al de la ventana: en un teléfono (390 px) o con un panel lateral abierto es una columna donde cada control ocupa el ancho; las acciones se reparten la última fila, así no hay controles sueltos a medias.",
+      "Todos los controles de la barra del mismo tamaño: `sm` en la barra de una tabla, `md` (el default) sobre una lista suelta.",
+      "Dentro de `DataTable` los filtros van en su slot `filters`; `FilterBar` es para las listas y grillas que no son una tabla.",
+    ],
+    props: {
+      FilterBar: {
+        search: "El buscador. En escritorio ocupa 18 rem; en el teléfono, todo el ancho.",
+        filters: "Los filtros: en fila en escritorio y en columna en el teléfono.",
+        actions: "Lo que actúa sobre la lista, al final y a la derecha.",
+      },
+    },
+    related: ["search-field", "toggle-group", "select", "bulk-actions-bar", "data-table"],
+  },
+  sparkline: {
+    title: "Sparkline",
+    group: "contenido",
+    description: "Una curva de un vistazo en SVG a mano, sin librería de gráficos: decorativa, para la fila de una lista o una card.",
+    keyboard: [["—", "No es interactivo."]],
+    a11y: [
+      "Es decorativa (`aria-hidden`): da la forma, no el dato. El valor actual va escrito al lado; si el dato importa, un `chart` con ejes y lectura.",
+      "Con menos de dos valores no dibuja nada.",
+      "Sin estado ni `\"use client\"`: sirve en un Server Component.",
+    ],
+    usage: [
+      "Para ver la tendencia de una serie en una fila o una card (CPU, cobros por semana), junto a la cifra actual.",
+      "Toma el color de `currentColor` (`text-brand-900` por defecto) y se estira al ancho de su caja con el trazo siempre de 1,5 px. `area={false}` saca el relleno.",
+      "No paga el peso de Recharts: para una lista de cien filas, esto; para un gráfico real, `chart`.",
+    ],
+    props: {
+      Sparkline: {
+        values: "La serie, de izquierda a derecha. Los valores no finitos se ignoran.",
+      },
+    },
+    related: ["chart", "stat", "card"],
+  },
+  "metric-chart": {
+    title: "MetricChart",
+    group: "contenido",
+    description: "El gráfico de una métrica en SVG a mano: área o línea con guías, eje Y a la derecha y tooltip con línea punteada al pasar el puntero o con el teclado.",
+    keyboard: [
+      ["Tab", "Entra al gráfico y muestra el último punto."],
+      ["← →", "Mueven el punto activo (y su tooltip) de a uno."],
+      ["Inicio · Fin", "Saltan al primer y al último punto."],
+      ["Escape", "Suelta el punto: desaparecen la línea y el tooltip."],
+    ],
+    a11y: [
+      "Es una imagen con nombre (`role=\"img\"`, `aria-label` obligatorio: «Facturación de los últimos 6 meses») y un resumen en `aria-describedby` (cantidad de puntos, mínimo, máximo y último). Aparte lleva una tabla `sr-only` con todos los datos, que es lo que lee el lector.",
+      "El punto activo se anuncia en una región `aria-live=\"polite\"` («Mar: 1.800»). El foco se ve con el anillo del sistema.",
+      "La línea usa los tokens `-900` (brand, green, red, amber): 3:1 como mínimo sobre la card en claro y en oscuro. El valor nunca depende solo del color: el tooltip lo escribe.",
+      "No anima nada propio: el reset de movimiento reducido de `base.css` alcanza.",
+    ],
+    usage: [
+      "`data` para una serie, `series` para varias (mismos rótulos; la primera manda). `height` fija el alto en px; sin él llena a su contenedor (mínimo 8 rem), que es lo que hace dentro de una `StatGrid`.",
+      "`format` (opciones de `Intl.NumberFormat` o una función) escribe el valor del tooltip, de la tabla y, compacto («3K»), del eje; `axisFormat` lo separa del eje. `yTicks` es la cantidad aproximada de etiquetas: la escala se redondea a pasos 1, 2 o 5.",
+      "Es un Server Component: el dibujo sale del servidor y solo el marco interactivo es cliente. Con `interactive={false}` no hay tooltip ni foco y no se carga ese JS.",
+      "Para una curva decorativa en una fila, `Sparkline`; para barras, escalas múltiples o leyendas, `chart` (Recharts). Solo por subpath (`sebs7n-ui/metric-chart`).",
+    ],
+    props: {
+      MetricChart: {
+        data: "Una serie: `{ label, value }[]`, de izquierda a derecha. Con menos de dos puntos válidos no dibuja nada.",
+        series: "Varias series: `{ name?, data, color? }[]`. Le gana a `data`.",
+        "aria-label": "Qué mide el gráfico. Es su nombre accesible.",
+        style: "Estilos en línea de la caja del gráfico; con `height` se mezclan con el alto.",
+      },
+    },
+    related: ["sparkline", "stat-grid", "chart"],
+  },
+  "log-viewer": {
+    title: "LogViewer",
+    group: "contenido",
+    description: "El visor de logs: monoespaciado, una línea por renglón, con el nivel en color y en texto, que sigue la última línea.",
+    keyboard: [
+      ["Tab", "Entra al visor, que es enfocable para recorrerlo."],
+      ["↑ ↓ · Re Pág · Av Pág · Inicio · Fin", "Se desplazan por las líneas (el scroll nativo del navegador)."],
+    ],
+    a11y: [
+      "Es una región `role=\"log\"` con nombre (`aria-label`: «Log del despliegue»): el lector anuncia las líneas nuevas sin robar el foco. `tabIndex={0}` permite recorrerlo con el teclado.",
+      "El nivel va en color **y** en texto: `warn` y `error` llevan «Aviso:» / «Error:» a la vista, e `info` lo dice solo para el lector (`sr-only`). Nunca solo color.",
+      "`aria-busy` mientras carga; sin líneas dice por qué (`emptyMessage`).",
+    ],
+    usage: [
+      "`lines`: `{ id?, time?, level?, source?, message }`, de la más vieja a la más nueva, ya filtradas y acotadas por la app (los últimos 500, por ejemplo). Pausar, buscar y descargar son botones de la app, en una `FilterBar`.",
+      "`follow` (por defecto) baja solo cuando llegan líneas, pero **solo si el scroll estaba al final**: quien subió a leer no pierde el lugar.",
+      "`variant=\"terminal\"` lo pone oscuro en los dos temas, como una terminal. La altura se fija con `className` (`h-[60dvh]`).",
+      "Solo por subpath (`sebs7n-ui/log-viewer`).",
+    ],
+    props: {
+      LogViewer: {
+        lines: "Las líneas, de la más vieja a la más nueva: `{ id?, time?, level?, source?, message }`.",
+        "aria-label": "Qué se está mirando: «Log del despliegue». Por defecto, `labels.label`.",
+        onScroll: "Corre en cada scroll del visor, después de que el componente anota si quedó al final.",
+      },
+    },
+    related: ["filter-bar", "scroll-area", "empty-state"],
+  },
+  "settings-section": {
+    title: "SettingsSection",
+    group: "contenido",
+    description: "Una sección de una pantalla de Configuración: una `Card` con título y descripción en la cabecera y los campos a lo ancho, en una `SettingsGrid` de 1 columna y 2 desde 48 rem de ancho de la grilla (container query: un panel lateral abierto la deja en 1, como un teléfono).",
+    keyboard: [["Tab", "La sección no es una parada: recorre los campos de adentro."]],
+    a11y: [
+      "Cada sección es una región (`role=\"region\"`) nombrada por su título con `aria-labelledby`: el lector las lista y se salta de una a otra.",
+      "El orden del DOM es el de lectura: de izquierda a derecha y fila por fila. Con `wide`, la sección ocupa las dos columnas sin cambiar el orden.",
+      "Sin estado ni `\"use client\"`: sirve en un Server Component (los campos de adentro pueden ser clientes).",
+    ],
+    usage: [
+      "**Configuración = secciones en cards, 2 columnas desde 48 rem de ancho de la grilla (`@3xl`) y 1 por debajo**; nunca una columna angosta de campos pegada a un costado.",
+      "Una sección por tema («Empresa», «Marca», «Moneda e impuestos»): título corto y una descripción de una línea. Los campos llenan el ancho de la card.",
+      "`SettingsGrid` pone las secciones de una fila a la misma altura (subgrid). `wide` es para lo que necesita el ancho: una zona de arrastre, una tabla.",
+      "`footer` es el pie de la card (un botón propio de la sección). El «Guardar» de toda la pantalla va aparte, en una barra a todo el ancho.",
+    ],
+    props: {
+      SettingsSection: {
+        id: "El `id` de la card; el título cuelga de él para nombrar la región. Sin `id`, se genera uno.",
+        title: "El título de la sección. Nombra la región.",
+        description: "Una línea debajo del título.",
+        footer: "El pie de la card.",
+        wide: "Ocupa las dos columnas cuando la grilla las tiene (desde 48 rem de ancho, `@3xl`).",
+      },
+      SettingsGrid: {},
+    },
+    related: ["card", "field", "switch", "form"],
+  },
+  "stat-grid": {
+    title: "StatGrid",
+    group: "contenido",
+    description: "Una grilla responsive de indicadores: un `Stat` dentro de una `Card` cada uno, con esqueleto de carga del alto final.",
+    keyboard: [
+      ["Tab", "Con `actions`, llega al botón «…» de cada card; el gráfico (`MetricChart`) es otra parada."],
+      ["Enter · Espacio · ↓", "Abren el menú de la card; las flechas lo recorren y Escape lo cierra."],
+    ],
+    a11y: [
+      "Cada indicador es un `Stat` en una `Card`: la variación se lee junto al número y el verde y el rojo llegan a contraste sobre el cuerpo de la card. Una etiqueta de estado lleva texto («Al día»).",
+      "Con `loading` la región queda `aria-busy`, los rótulos siguen a la vista y el botón «…» se deshabilita.",
+      "El botón «…» se llama «Opciones de {rótulo}» (`labels.actions`). Un `Sparkline` en `chart` se oculta solo; un `MetricChart` es una imagen con nombre y tabla.",
+      "Sin estado ni `\"use client\"` propio: sirve en un Server Component (el menú es un cliente aparte).",
+    ],
+    usage: [
+      "Responde al ancho de la grilla (container queries), no al de la ventana: 1 columna por debajo de 32 rem, 2 desde ahí y hasta 4 desde 56 rem (3 ítems → 1 columna y 3 desde 48 rem, sin pasar por 2 + 1). Por defecto la cantidad sale de los ítems y evita huérfanos; `columns` fija el máximo. Con un panel lateral abierto se ve como en una pantalla chica.",
+      "Con `loading`, los rótulos quedan y las cifras pasan a esqueleto del alto final: la card no cambia de alto al llegar el dato.",
+      "Cada ítem: `{ id?, label, value, aside?, badge?, delta?, trend?, hint?, chart?, actions? }`. Para una sola cifra suelta, `Stat`.",
+      "Estilo consola de analítica: `chart={<MetricChart … />}` ocupa el ancho y el alto que sobran de la card (con `chartLayout=\"bleed\"`, hasta los bordes), y la variación pasa junto a la cifra. `actions` son los ítems de un `DropdownMenu` (Ver detalle, Actualizar, `DropdownMenuSub` de Período, Quitar): la grilla pone el botón «…» arriba a la derecha.",
+    ],
+    props: {
+      StatGrid: {
+        items: "Los indicadores, en orden: `{ id?, label, value, aside?, badge?, delta?, trend?, hint?, chart?, actions? }`.",
+      },
+    },
+    related: ["stat", "card", "skeleton", "metric-chart", "sparkline", "dropdown-menu"],
+  },
+  "widget-board": {
+    title: "WidgetBoard",
+    group: "contenido",
+    description: "Un panel de widgets que el usuario edita, como la pantalla de inicio de iCloud: una grilla estática de cards que, con «Editar», se reordena arrastrando o con el teclado, saca widgets con su «−», los vuelve a agregar desde un catálogo y se restablece. Se guarda en `localStorage`.",
+    keyboard: [
+      ["Tab", "Recorre los botones de la barra de edición, los «−» y, en cada card, lo interactivo de adentro."],
+      ["Espacio", "En un widget en edición lo toma; con otro Espacio lo suelta en su nuevo lugar."],
+      ["← → ↑ ↓", "Con un widget tomado, lo mueven por la grilla."],
+      ["Escape", "Cancela el movimiento; sin un widget tomado, sale de la edición."],
+      ["Enter · Espacio", "En un «−» saca el widget; en una fila del catálogo lo agrega."],
+    ],
+    a11y: [
+      "La grilla es una lista con nombre («Widgets»). Entrar en edición, sacar, agregar, mover y restablecer se anuncian en español en regiones `role=\"status\"`.",
+      "Cada «−» y cada fila del catálogo se llaman con el widget («Sacar Clientes», «Agregar Clientes»). Al sacar uno el foco pasa al «−» que queda (o a «Agregar widget» si no queda ninguno); al agregar, al «−» del nuevo.",
+      "Con movimiento reducido el temblor se apaga y un contorno punteado dice que está en edición. La vista previa del catálogo es decorativa (`aria-hidden`).",
+      "Sin widgets en pantalla hay un `EmptyState` con «Agregar widget» y «Restablecer»: el panel nunca queda mudo.",
+    ],
+    usage: [
+      "Tres piezas: `useWidgetLayout({ storageKey, widgets })` (el estado), `<WidgetBoard layout />` (la grilla) y `<WidgetBoardEditButton layout />` (el «Editar»/«Listo» de la cabecera, secundario: la acción primaria sigue siendo la de la pantalla).",
+      "Cada widget es `{ id, title, size?, description?, preview?, icon?, render }`. `size`: `sm` (1 columna de 4), `md` (2) o `lg` (4); por debajo de 36 rem de ancho del contenedor son 2 columnas y por debajo de 56 rem, 1. Las cards de una fila quedan alineadas: la card llena el alto de su celda.",
+      "**Carga diferida:** sin editar es una grilla estática (sin `@dnd-kit`); el arrastre, la barra y el catálogo se piden la primera vez que se aprieta «Editar» (`React.lazy`), con la misma grilla de fondo mientras llegan. Los peers opcionales `@dnd-kit/*` hacen falta solo si se usa.",
+      "El HTML del servidor muestra el orden original; lo guardado se adopta después de montar. Si el panel depende de un proyecto o una cuenta, una clave por cada uno y `key` en la pantalla para que el estado no se arrastre.",
+      "Solo por subpath (`sebs7n-ui/widget-board`); el modelo puro (`moveWidget`, `removeWidget`, `addWidget`, `reorderWidgets`, `serializeLayout`) sale de `sebs7n-ui/lib/widget-layout`.",
+    ],
+    props: {
+      WidgetBoard: {
+        layout: "El estado: lo que devuelve `useWidgetLayout`.",
+        gridClassName: "Clases de la grilla, por ejemplo otro `gap`.",
+      },
+      WidgetBoardEditButton: {
+        layout: "El estado: lo que devuelve `useWidgetLayout`.",
+        size: "El tamaño del botón, como en `Button`. En la cabecera de una pantalla, `md` (por defecto).",
+        loading: "Como en `Button`: deshabilita y marca el botón como ocupado.",
+      },
+    },
+    related: ["sortable-grid", "widget-card", "stat-grid", "empty-state", "popover"],
+  },
+  "bulk-actions-bar": {
+    title: "BulkActionsBar",
+    group: "contenido",
+    description: "La barra de una selección múltiple: «3 seleccionados», las acciones para todos y «Limpiar selección».",
+    keyboard: [
+      ["Tab", "Recorre las acciones y «Limpiar selección»."],
+      ["Enter · Espacio", "Activan el botón enfocado."],
+    ],
+    a11y: [
+      "Es un `group` con nombre («Acciones sobre la selección»). El contador es una región `status`: el lector anuncia el número nuevo cuando cambia la selección.",
+    ],
+    usage: [
+      "Se dibuja con `count` mayor que 0 y se va al limpiar. Va en el lugar de los filtros mientras hay selección (`filters` de `DataTable`, `actions` de `FilterBar`).",
+      "Las acciones son `Button size=\"sm\" variant=\"secondary\"`; `destructive` solo si borra, siempre detrás de un `AlertDialog`.",
+      "El género del contador («seleccionadas» para facturas) se cambia con `labels` (`selectedOne` y `selectedOther`, con `{count}`).",
+      "No lleva la selección: la tiene la tabla o la grilla, y la app le pasa `count` y `onClear`.",
+    ],
+    props: {
+      BulkActionsBar: {},
+    },
+    related: ["data-table", "filter-bar", "alert-dialog"],
+  },
   carousel: {
     title: "Carousel",
     group: "contenido",
@@ -3498,6 +3818,7 @@ export const COMPONENTS = {
     ],
     usage: [
       "Primer hijo de `AppShellContent`.",
+      "Las acciones pasan al costado del título desde 32 rem de ancho del encabezado (container query `@lg`), no de la ventana.",
       "Hasta dos acciones: la principal y una secundaria. El resto, en un `DropdownMenu`.",
       "La bajada es una línea que explica la pantalla, no una descripción de marketing.",
       "**No pases `breadcrumbLabel` en cada página.** Es el override del caso raro; el idioma lo resuelve el `LabelsProvider` una vez, en el layout raíz.",

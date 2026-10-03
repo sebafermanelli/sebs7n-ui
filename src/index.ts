@@ -205,5 +205,10 @@ export * from "./components/widget-card.js"
 //   `list-index`        sebs7n-ui/list-index
 // Y los links de la barra (2.6), para no sumarle al barrel:
 //   `navbar-link`       sebs7n-ui/navbar-link
+// Y los patrones de app que salieron de los templates (2.10): ninguno entra al barrel, y los dos hooks
+// (`lib/use-stored-state`, `lib/use-key-sequence`) tampoco.
+//   `notifications-popover` · `shortcuts-dialog` · `command-palette` · `filter-bar` · `sparkline` ·
+//   `log-viewer` · `stat-grid` · `metric-chart` · `bulk-actions-bar` ·
+//   `settings-section` · `widget-board` (con `lib/widget-layout`)
 // `lib/countries` y `lib/phone` tampoco entran: son los únicos de `lib/` solo por subpath (ver
 // `test/api-publica.test.ts`).

@@ -21,3 +21,13 @@ export const CONFIG_VERSION = 2
 export function ambientGuardado(guardado: { v?: unknown; ambient?: unknown }): boolean {
   return guardado.v === CONFIG_VERSION && typeof guardado.ambient === "boolean" ? guardado.ambient : true
 }
+
+/**
+ * La luz (`--ambient`) guardada, solo si es de esta versión. Lo de la 1.x no tiene `v` y guardaba
+ * `luz: 0` (el vidrio apagado): leerlo así dejaba la home sin wallpaper en esa visita.
+ */
+export function luzGuardada(guardado: { v?: unknown; luz?: unknown }): number {
+  return guardado.v === CONFIG_VERSION && typeof guardado.luz === "number" && guardado.luz >= 0 && guardado.luz <= 1
+    ? guardado.luz
+    : 1
+}

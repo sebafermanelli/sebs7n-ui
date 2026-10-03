@@ -78,6 +78,9 @@ describe("AppShell", () => {
     expect(desktop.querySelector("[data-slot=sidebar]")).not.toBeNull()
     const main = screen.getByRole("main")
     expect(main).toHaveClass("min-w-0")
+    // El main es el contenedor de consulta: lo de adentro (`@lg:`, `@3xl:`…) responde al ancho que dejan el
+    // sidebar y el panel lateral, no al de la ventana.
+    expect(main).toHaveClass("@container/main")
     expect(main).toHaveTextContent("contenido")
     const shell = document.querySelector("[data-slot=app-shell]")!
     expect(shell).toHaveClass("lg:grid-cols-[auto_minmax(0,1fr)]")

@@ -11,12 +11,14 @@ const sizeClassName = { default: "max-w-7xl", wide: "max-w-[1600px]", full: "" }
 
 // Contenedor estándar de una página de dashboard: hijo directo de AppShell, así todas las apps
 // tienen el mismo ancho y los mismos márgenes. Sin estado: sirve en Server Components.
+// Es contenedor de consulta (`@container`): lo de adentro (`@lg:`, `@3xl:`…) responde al ancho de la caja
+// de contenido, sin el padding. Su propio padding consulta al `main` del AppShell (`@container/main`).
 function AppShellContent({ className, size = "default", ...props }: AppShellContentProps) {
   return (
     <div
       data-slot="app-shell-content"
       data-size={size}
-      className={cn("mx-auto flex w-full flex-col gap-6 px-4 py-6 md:px-6 md:py-8", sizeClassName[size], className)}
+      className={cn("@container mx-auto flex w-full flex-col gap-6 px-4 py-6 @md/main:px-6 @md/main:py-8", sizeClassName[size], className)}
       {...props}
     />
   )

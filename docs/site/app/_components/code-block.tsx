@@ -1,43 +1,17 @@
-"use client"
-
-import { CheckIcon, CopyIcon } from "lucide-react"
-import { useState } from "react"
-import { Button } from "sebs7n-ui/button"
+import { CopyButton } from "sebs7n-ui/copy-button"
 
 /**
- * Un bloque de código con su botón de copiar.
- *
- * El botón vive **al lado** del `<pre>`, no encima: antes era `absolute` sobre
- * un `<pre>` con scroll horizontal, y un comando largo pasaba por debajo —el
- * fondo translúcido del hover dejaba ver el texto a través del botón—. Además
- * el `top-2` fijo no lo centraba con la única línea de texto. Con flex, el
- * `<pre>` es el que scrollea, el botón queda centrado a su altura y el texto
- * nunca lo alcanza.
+ * Un bloque de código con su botón de copiar: el `CopyButton` del paquete (✓, «Copiado» y aviso al
+ * lector de pantalla incluidos) al lado del `<pre>`, no encima: el `<pre>` es el que scrollea y el
+ * texto nunca pasa por debajo del botón.
  */
 export function CodeBlock({ code, label = "Copiar el código" }: { code: string; label?: string }) {
-  const [copiado, setCopiado] = useState(false)
   return (
     <div className="flex items-center gap-2 rounded-surface border border-separator bg-fill-1 pr-2">
       <pre className="min-w-0 flex-1 overflow-x-auto p-4">
         <code className="text-mono-body text-label">{code}</code>
       </pre>
-      <Button
-        aria-label={copiado ? "Copiado" : label}
-        className="shrink-0"
-        onClick={async () => {
-          try {
-            await navigator.clipboard.writeText(code)
-            setCopiado(true)
-            setTimeout(() => setCopiado(false), 1600)
-          } catch {
-            setCopiado(false)
-          }
-        }}
-        size="icon-sm"
-        variant="secondary"
-      >
-        {copiado ? <CheckIcon className="text-green-900" /> : <CopyIcon />}
-      </Button>
+      <CopyButton aria-label={label} className="shrink-0" value={code} />
     </div>
   )
 }

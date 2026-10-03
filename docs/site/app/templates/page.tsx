@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 
 import { CardGrid } from "sebs7n-ui/card"
+import { PageHeader, PageHeaderDescription, PageHeaderTitle } from "sebs7n-ui/page-header"
 
 import site from "@/.generated/site.json"
 import { SiteHeader } from "../_components/site-header"
@@ -15,14 +16,14 @@ export default function TemplatesPage() {
   return (
     <div className="min-h-dvh bg-ambient" data-ambient="">
       <SiteHeader version={site.version} />
-      <main className="mx-auto flex w-full max-w-5xl flex-col gap-12 px-4 py-16 md:px-6 md:py-20">
-        <header className="flex flex-col items-start gap-4">
-          <h1 className="text-large-title text-label">Arquetipos de aplicación</h1>
-          <p className="max-w-2xl text-body text-label-secondary">
+      <main className="mx-auto flex w-full max-w-[1080px] flex-col gap-12 px-4 py-16 md:px-6 md:py-20">
+        <PageHeader>
+          <PageHeaderTitle>Arquetipos de aplicación</PageHeaderTitle>
+          <PageHeaderDescription>
             Pantallas completas armadas con las reglas por defecto de sebs7n-ui: superficies opacas en capas, un solo
             acento sólido, selección neutra y una sola escala de alturas.
-          </p>
-        </header>
+          </PageHeaderDescription>
+        </PageHeader>
 
         <CardGrid columns={2}>
           <TemplateCard
@@ -54,12 +55,14 @@ export default function TemplatesPage() {
             category="Infraestructura"
             description="Panel de despliegues, variables de entorno y logs en vivo con SplitView."
             features={["Selector de proyecto en la barra", "SplitView maestro y detalle", "Visor de logs", "Command para atajos globales"]}
+            href="/templates/console"
             title="Consola PaaS / Cloud"
           />
           <TemplateCard
             category="Contenido"
             description="Lectura primero: roles tipográficos de iCloud, índice flotante y tarjetas de artículos."
             features={["Jerarquía tipográfica editorial", "Índice de la página", "Contraste AA en todo el texto", "Filtro por etiquetas"]}
+            href="/templates/blog"
             title="Blog / Editorial"
           />
         </CardGrid>

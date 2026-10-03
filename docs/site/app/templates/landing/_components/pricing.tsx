@@ -8,11 +8,12 @@ import { ToggleGroup, ToggleGroupItem } from "sebs7n-ui/toggle-group"
 import { buttonVariants } from "sebs7n-ui/variants/button"
 
 import { annualMonthly, CTA_HREF, PLANS } from "../_data/content"
+import { SalesButton } from "./sales-lazy"
 import { SectionHeader } from "./section-header"
 
 type Period = "monthly" | "annual"
 
-// El único componente de cliente propio de la landing: el resto es server y no suma JS.
+// El único componente de cliente propio de la landing al abrir (más los diferidos: menú, carrusel, tema, ventas).
 export function Pricing({ defaultPeriod = "monthly" }: { defaultPeriod?: Period }) {
   const [period, setPeriod] = useState<Period>(defaultPeriod)
 
@@ -63,12 +64,16 @@ export function Pricing({ defaultPeriod = "monthly" }: { defaultPeriod?: Period 
               </CardContent>
               <CardFooter>
                 {/* El acento solo en el recomendado: es el de esta pantalla. */}
-                <a
-                  className={buttonVariants({ variant: plan.featured ? "default" : "secondary", className: "w-full" })}
-                  href={CTA_HREF}
-                >
-                  {plan.monthly === 0 ? "Empezar gratis" : `Elegir ${plan.name}`}
-                </a>
+                {plan.contact ? (
+                  <SalesButton className="w-full" />
+                ) : (
+                  <a
+                    className={buttonVariants({ variant: plan.featured ? "default" : "secondary", className: "w-full" })}
+                    href={CTA_HREF}
+                  >
+                    {plan.monthly === 0 ? "Empezar gratis" : `Elegir ${plan.name}`}
+                  </a>
+                )}
               </CardFooter>
             </Card>
           )

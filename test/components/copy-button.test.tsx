@@ -40,6 +40,16 @@ describe("CopyButton", () => {
     expect(document.querySelector("svg.lucide-check")).not.toBeNull()
   })
 
+  it("el tooltip se pide recién al apuntar o enfocar: antes no hay ninguno montado", async () => {
+    const user = userEvent.setup()
+    render(<CopyButton value="F-0012" />)
+    expect(document.querySelector("[data-slot=tooltip-content]")).toBeNull()
+    await user.hover(screen.getByRole("button", { name: "Copiar" }))
+    expect(await screen.findByText("Copiar", { selector: "[data-slot=tooltip-content]" })).toBeInTheDocument()
+    await user.unhover(screen.getByRole("button", { name: "Copiar" }))
+    await vi.waitFor(() => expect(document.querySelector("[data-slot=tooltip-content]")).toBeNull())
+  })
+
   it("con Espacio también copia", async () => {
     const user = userEvent.setup()
     render(<CopyButton value="F-0012" />)

@@ -26,3 +26,45 @@ export function today() {
   const d = new Date()
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`
 }
+
+/** Un `Date` local en `YYYY-MM-DD`: lo que usan las facturas y los filtros por fecha. */
+export function toIsoDate(date: Date) {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`
+}
+
+/** El inverso de `toIsoDate`: `YYYY-MM-DD` a un `Date` local (medianoche de ese día, no la UTC). */
+export function fromIsoDate(iso: string) {
+  const [y, m, d] = iso.split("-").map(Number)
+  return new Date(y!, m! - 1, d)
+}
+
+/** Un `Date` local como `YYYY-MM-DDTHH:mm`: el recordatorio programado, sin zona (es la hora de quien lo programa). */
+export function toIsoDateTime(date: Date) {
+  return `${toIsoDate(date)}T${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`
+}
+
+/** El inverso de `toIsoDateTime`. */
+export function fromIsoDateTime(iso: string) {
+  const [day = "", time = "00:00"] = iso.split("T")
+  const [h, min] = time.split(":").map(Number)
+  const date = fromIsoDate(day)
+  date.setHours(h ?? 0, min ?? 0, 0, 0)
+  return date
+}
+
+const dateTime = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", hour12: false })
+
+/** «8 oct, 09:30» para el recordatorio programado. */
+export function formatDateTime(iso: string) {
+  return dateTime.format(fromIsoDateTime(iso))
+}
+
+/** «1 factura», «3 facturas». */
+export const plural = (count: number, one: string, other: string) => `${count} ${count === 1 ? one : other}`
+
+/** `iso` (`YYYY-MM-DD`) más `days` días, en el calendario local. */
+export function addDays(iso: string, days: number) {
+  const date = fromIsoDate(iso)
+  date.setDate(date.getDate() + days)
+  return toIsoDate(date)
+}

@@ -32,9 +32,20 @@ const validas = new Set<string>([
   "/templates",
   "/templates/dashboard",
   "/templates/landing",
+  "/templates/console",
+  "/templates/console/deployments",
+  "/templates/console/logs",
+  "/templates/console/costs",
+  "/templates/console/resources",
+  "/templates/console/alerts",
+  "/templates/console/variables",
+  "/templates/blog",
+  "/templates/blog/despliegues-sin-miedo",
   "/templates/dashboard/invoices",
   "/templates/dashboard/customers",
+  "/templates/dashboard/customers/acme-corporation",
   "/templates/dashboard/settings",
+  "/templates/dashboard/login",
 ])
 for (const page of site.pages) validas.add(`/docs/${page.slug}`)
 for (const component of site.components) validas.add(`/docs/components/${component.slug}`)
@@ -98,4 +109,20 @@ describe("links de lo generado", () => {
       expect([...links].filter((href) => !existe(href))).toEqual([])
     })
   }
+})
+
+describe("links de la home y de la barra", () => {
+  // La barra, el pie y la home se arman con rutas escritas en código: ninguna puede ser un 404.
+  const fuentes = ["app/_components/site-nav-data.ts", "app/page.tsx"].map((ruta) => ({ ruta, texto: read(ruta) }))
+  for (const { ruta, texto } of fuentes) {
+    it(`${ruta}: todos los hrefs internos existen`, () => {
+      const hrefs = [...texto.matchAll(/(?:href|HREF)[=:]\s*[{"]*"(\/[^"]*)"/g)].map(([, href]) => href!)
+      expect(hrefs.length).toBeGreaterThan(0)
+      expect(hrefs.filter((href) => !existe(href))).toEqual([])
+    })
+  }
+  it("los slugs de componentes de la barra existen en el catálogo", () => {
+    const texto = read("app/_components/site-nav-data.ts")
+    for (const [, slug] of texto.matchAll(/\/docs\/components\/([\w-]+)/g)) expect(validas.has(`/docs/components/${slug}`), slug).toBe(true)
+  })
 })

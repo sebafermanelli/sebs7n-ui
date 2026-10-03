@@ -22,6 +22,10 @@ Copia la carpeta a `app/landing/` e instala `sebs7n-ui`, `@base-ui/react`, `luci
 | `_components/hero.tsx` | el `<h1>` y la única acción primaria de la primera pantalla |
 | `_components/clients.tsx` | `Marquee` de clientes; tocar pausa y reanuda |
 | `_components/features.tsx` | beneficios en grilla 1/2/3 de `Card` |
+| `_components/site-nav.tsx`, `mobile-menu.tsx` | `NavigationMenu` en escritorio y `Drawer` en el teléfono, pedidos después de hidratar |
+| `_components/product-demo.tsx`, `stats.tsx` | la sección de producto armada con componentes del paquete y las cifras con `StatGrid` |
+| `_components/sales-dialog.tsx` | «Hablar con ventas»: `Dialog` con `Form`, `Fieldset`, `PhoneInput`, `CountryPicker` y `Combobox`, que se baja al primer clic |
+| `_components/testimonials-carousel.tsx` | los testimonios en `Carousel` con `Rating` |
 | `_components/pricing.tsx` | el único componente de cliente: `ToggleGroup` mensual/anual y los planes |
 | `_components/testimonials.tsx` | citas en `Card` dentro de `Marquee variant="cards"` |
 | `_components/faq.tsx` | `Accordion` |

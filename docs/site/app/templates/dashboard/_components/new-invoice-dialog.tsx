@@ -1,107 +1,68 @@
 "use client"
 
-import { useState } from "react"
+import { lazy, Suspense, useState } from "react"
 import { Button } from "sebs7n-ui/button"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "sebs7n-ui/dialog"
-import { Field, FieldError, FieldLabel } from "sebs7n-ui/field"
-import { Form } from "sebs7n-ui/form"
-import { Input } from "sebs7n-ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "sebs7n-ui/select"
-import { toast } from "sonner"
-import type { Invoice } from "../_data/invoices-mock"
-import { today } from "../_lib/format"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "sebs7n-ui/dialog"
+import { Skeleton } from "sebs7n-ui/skeleton"
 
-const CUSTOMERS = [
-  "Acme Corporation",
-  "Globex Industries",
-  "Initech Soluciones",
-  "Soylent Logistics",
-  "Wayne Enterprises",
-]
+import { CUSTOMERS_MOCK } from "../_data/customers-mock"
+import type { Invoice } from "../_data/invoices-mock"
+
+// El formulario trae Combobox, InputGroup y TagsInput: se pide recién al abrir el diálogo (`lazy`, no
+// `next/dynamic`, que mete un preload en el HTML). Quien no emite una factura no paga ese peso.
+const NewInvoiceForm = lazy(() => import("./new-invoice-form"))
 
 interface NewInvoiceDialogProps {
   onAddInvoice: (inv: Omit<Invoice, "id" | "status">) => Invoice
+  /** Los clientes a elegir: los del store. Sin ellos, los del ejemplo. */
+  customers?: string[]
+  /** El cliente ya elegido, cuando se abre desde su ficha. */
+  defaultCustomer?: string
+  /** Para abrirlo desde afuera (soltar un PDF sobre Facturas). Sin `open`, lo abre su botón. */
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+  /** El nombre del archivo que se soltó: queda como comprobante de la factura. */
+  attachment?: string
+  /** Sin el botón «Nueva factura»: cuando se abre solo desde afuera. */
+  hideTrigger?: boolean
 }
 
-export function NewInvoiceDialog({ onAddInvoice }: NewInvoiceDialogProps) {
-  const [open, setOpen] = useState(false)
+export function NewInvoiceDialog({
+  onAddInvoice,
+  customers = CUSTOMERS_MOCK.map((customer) => customer.name),
+  defaultCustomer,
+  open: openProp,
+  onOpenChange,
+  attachment,
+  hideTrigger = false,
+}: NewInvoiceDialogProps) {
+  const [ownOpen, setOwnOpen] = useState(false)
+  const open = openProp ?? ownOpen
+  const setOpen = (next: boolean) => {
+    setOwnOpen(next)
+    onOpenChange?.(next)
+  }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button>Nueva factura</Button>} />
+    <Dialog onOpenChange={setOpen} open={open}>
+      {/* En el teléfono, a ancho completo: es la acción principal y la que se busca con el pulgar. */}
+      {!hideTrigger && <DialogTrigger render={<Button className="w-full sm:w-auto">Nueva factura</Button>} />}
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Nueva factura</DialogTitle>
           <DialogDescription>Completá los datos para emitir un nuevo comprobante de cobro.</DialogDescription>
         </DialogHeader>
-
-        {/* `Form` valida los `Field` registrados y enfoca el primero inválido. Los `FieldError` con `match`
-            fijan el texto: sin eso sale el mensaje nativo, en el idioma del navegador. */}
-        <Form
-          onFormSubmit={(values) => {
-            const created = onAddInvoice({
-              customer: String(values.customer),
-              concept: String(values.concept),
-              amount: Number(values.amount),
-              date: today(),
-              dueDate: String(values.dueDate),
-            })
-            toast.success(`Factura ${created.id} creada.`)
-            setOpen(false)
-          }}
+        <Suspense
+          fallback={
+            <div aria-busy="true" className="flex flex-col gap-4">
+              {Array.from({ length: 4 }, (_, i) => (
+                <Skeleton className="h-9 w-full" key={i} />
+              ))}
+            </div>
+          }
         >
-          <Field name="customer">
-            <FieldLabel required>Cliente</FieldLabel>
-            <Select required>
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccioná un cliente" />
-              </SelectTrigger>
-              <SelectContent>
-                {CUSTOMERS.map((customer) => (
-                  <SelectItem key={customer} value={customer}>
-                    {customer}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <FieldError match="valueMissing">Elegí un cliente</FieldError>
-          </Field>
-
-          <Field name="concept">
-            <FieldLabel required>Concepto</FieldLabel>
-            <Input placeholder="Ej. Suscripción mensual o consultoría" required />
-            <FieldError match="valueMissing">Falta el concepto</FieldError>
-          </Field>
-
-          <Field name="amount">
-            <FieldLabel required>Monto (USD)</FieldLabel>
-            <Input type="number" min={1} step="0.01" placeholder="Ej. 5000" required />
-            <FieldError match="valueMissing">Falta el monto</FieldError>
-            <FieldError match="rangeUnderflow">El monto mínimo es 1</FieldError>
-            <FieldError match="stepMismatch">Hasta dos decimales</FieldError>
-          </Field>
-
-          <Field name="dueDate">
-            <FieldLabel required>Fecha de vencimiento</FieldLabel>
-            <Input type="date" defaultValue="2026-10-31" required />
-            <FieldError match="valueMissing">Falta la fecha de vencimiento</FieldError>
-          </Field>
-
-          <DialogFooter>
-            <Button variant="secondary" type="button" onClick={() => setOpen(false)}>
-              Cancelar
-            </Button>
-            <Button type="submit">Emitir factura</Button>
-          </DialogFooter>
-        </Form>
+          <NewInvoiceForm attachment={attachment} customers={customers} defaultCustomer={defaultCustomer} onAddInvoice={onAddInvoice} onClose={() => setOpen(false)} />
+        </Suspense>
       </DialogContent>
     </Dialog>
   )

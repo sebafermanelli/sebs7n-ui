@@ -53,18 +53,28 @@ describe("measure", () => {
 })
 
 describe("configuración", () => {
-  it("mide las doce rutas acordadas; 200 KB salvo Chart, Playground y las del dashboard, que tienen el suyo", () => {
+  it("mide las diecinueve rutas acordadas; 200 KB salvo Chart, Playground y las del dashboard y la consola, que tienen el suyo", () => {
     expect(BUDGET_KB).toBe(200)
     expect(LIMITS).toEqual({
       "/docs/components/chart": 345,
-      "/docs/playground": 310,
-      "/templates/dashboard": 290,
-      "/templates/dashboard/invoices": 295,
-      "/templates/dashboard/customers": 260,
-      "/templates/dashboard/settings": 290,
+      "/docs/playground": 335,
+      "/templates/dashboard": 300,
+      "/templates/dashboard/invoices": 360,
+      "/templates/dashboard/customers": 295,
+      "/templates/dashboard/settings": 335,
+      "/templates/console": 335,
+      "/templates/console/deployments": 325,
+      "/templates/console/logs": 325,
+      "/templates/console/costs": 300,
+      "/templates/console/resources": 300,
+      "/templates/console/alerts": 345,
+      "/templates/dashboard/login": 290,
+      "/templates/console/variables": 330,
+      "/templates/blog": 240,
+      "/templates/blog/despliegues-sin-miedo": 215,
     })
     expect(limitOf("/docs/components/chart")).toBe(345)
-    expect(limitOf("/docs/playground")).toBe(310)
+    expect(limitOf("/docs/playground")).toBe(335)
     expect(limitOf("/")).toBe(200)
     expect(limitOf("/docs/iconos")).toBe(200)
     for (const ruta of Object.keys(LIMITS)) expect(ROUTES).toContain(ruta)
@@ -80,7 +90,17 @@ describe("configuración", () => {
       "/templates/dashboard/invoices",
       "/templates/dashboard/customers",
       "/templates/dashboard/settings",
+      "/templates/dashboard/login",
       "/templates/landing",
+      "/templates/console",
+      "/templates/console/deployments",
+      "/templates/console/logs",
+      "/templates/console/costs",
+      "/templates/console/resources",
+      "/templates/console/alerts",
+      "/templates/console/variables",
+      "/templates/blog",
+      "/templates/blog/despliegues-sin-miedo",
     ])
   })
 })

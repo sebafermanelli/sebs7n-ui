@@ -810,4 +810,4 @@ function SortableItem({ id, onRemove, press, editing, draggable, index, label, l
   )
 }
 
-export { jiggleAngle, SortableAddButton, SortableBase, sortableLabels, type SortableAddButtonProps, type SortableAddItem, type SortableItemState, type SortableLabels, type SortableProps }
+export { ADDED_TTL, addedKey, jiggleAngle, SortableAddButton, SortableBase, sortableLabels, type SortableAddButtonProps, type SortableAddItem, type SortableItemState, type SortableLabels, type SortableProps }

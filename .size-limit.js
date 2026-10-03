@@ -75,6 +75,8 @@ export default [
     // y ColorPicker pasan a hoja de abajo en pantallas angostas. La hoja se carga con `import()` solo
     // por debajo de 640 px —el desktop no la paga—, pero size-limit suma el chunk diferido. Sebastián
     // aprobó subir a 60 el 2026-09-30.
-    limit: "60 kB",
+    // 61,32 kB en la 2.10.0: el panel lateral acoplado del `AppShell` (`aside`, +1,36 kB) y el desborde
+    // de las pestañas con desvanecido (+0,3 kB). Sebastián aprobó subir a 62 el 2026-10-03.
+    limit: "62 kB",
   },
 ]

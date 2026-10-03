@@ -7,7 +7,7 @@ import { join, relative } from "node:path"
 const ITEM_SCHEMA = "https://ui.shadcn.com/schema/registry-item.json"
 
 // El orden en que conviene leerlo: la estructura primero, los detalles al final.
-const GROUPS = ["layout.tsx", "page.tsx", "invoices/", "customers/", "settings/", "_lib/", "_state/", "_data/", "_components/"]
+const GROUPS = ["layout.tsx", "page.tsx", "invoices/", "customers/page.tsx", "customers/", "settings/", "services/", "deployments/", "logs/", "costs/", "variables/", "[slug]/", "login/", "resources/", "alerts/", "_lib/", "_state/", "_data/", "_components/"]
 const rank = (path) => {
   const index = GROUPS.findIndex((group) => (group.endsWith("/") ? path.startsWith(group) : path === group))
   return index === -1 ? GROUPS.length : index
@@ -41,6 +41,20 @@ export function blockRoutes(source) {
   return out
 }
 
+/** `_lib/routes.ts` de la consola: rutas en `/console` y sin vuelta a la galería. */
+export function consoleRoutes(source) {
+  const out = withoutGallery(source).replace('export const CONSOLE_PATH = "/templates/console"', 'export const CONSOLE_PATH = "/console"')
+  if (!out.includes('CONSOLE_PATH = "/console"') || /^export .*\/templates/m.test(out)) throw new Error("template-block: routes.ts cambió y el bloque quedaría con /templates")
+  return out
+}
+
+/** `_lib/routes.ts` del blog: rutas en `/blog` y sin vuelta a la galería. */
+export function blogRoutes(source) {
+  const out = withoutGallery(source).replace('export const BLOG_PATH = "/templates/blog"', 'export const BLOG_PATH = "/blog"')
+  if (!out.includes('BLOG_PATH = "/blog"') || /^export .*\/templates/m.test(out)) throw new Error("template-block: routes.ts cambió y el bloque quedaría con /templates")
+  return out
+}
+
 /** `_lib/routes.ts` de un template sin más rutas que la galería: fuera del sitio no hay galería. */
 export function withoutGallery(source) {
   const out = source.replace('export const GALLERY_PATH: string | null = "/templates"', "export const GALLERY_PATH: string | null = null")
@@ -71,7 +85,7 @@ export const TEMPLATES = [
       "El template SaaS de sebs7n-ui: Inicio, Facturas, Clientes y Configuración con el estado compartido. Importa del paquete; la app cambia los datos de `_data/`.",
     // Los peers del paquete van explícitos: `@base-ui/react` llega por su cuenta solo si la app hizo
     // `shadcn init` con el estilo base-nova (lo comprobó la prueba real del bloque).
-    dependencies: ["sebs7n-ui", "@base-ui/react", "sonner", "lucide-react", "recharts", "next-themes"],
+    dependencies: ["sebs7n-ui", "@base-ui/react", "@dnd-kit/core", "sonner", "lucide-react", "recharts", "next-themes"],
     transform: (file) => (file.path === "_lib/routes.ts" ? blockRoutes(file.content) : file.content),
   },
   {
@@ -84,6 +98,28 @@ export const TEMPLATES = [
       "La landing de sebs7n-ui: hero, logos, beneficios, precios, testimonios, preguntas y cierre. Importa del paquete; la app cambia el texto de `_data/content.ts`.",
     dependencies: ["sebs7n-ui", "@base-ui/react", "lucide-react", "next-themes"],
     transform: (file) => (file.path === "_lib/routes.ts" ? withoutGallery(file.content) : file.content),
+  },
+  {
+    slug: "console",
+    title: "Template: consola PaaS / cloud",
+    blockTitle: "Consola PaaS / cloud",
+    description:
+      "Una consola de infraestructura (Servicios, Despliegues con visor de logs, Variables de entorno) con selector de proyecto y ⌘K; con el código de cada archivo.",
+    blockDescription:
+      "La consola cloud de sebs7n-ui: selector de proyecto, Servicios, Despliegues en SplitView con visor de logs y Variables de entorno. Importa del paquete; la app cambia los datos de `_data/`.",
+    dependencies: ["sebs7n-ui", "@base-ui/react", "sonner", "lucide-react", "next-themes"],
+    transform: (file) => (file.path === "_lib/routes.ts" ? consoleRoutes(file.content) : file.content),
+  },
+  {
+    slug: "blog",
+    title: "Template: blog / editorial",
+    blockTitle: "Blog / editorial",
+    description:
+      "Lectura primero: portada con filtro por etiquetas y artículo con índice flotante, roles tipográficos y artículos relacionados; con el código de cada archivo.",
+    blockDescription:
+      "El blog de sebs7n-ui: portada con búsqueda y etiquetas, artículo con índice flotante y suscripción. Importa del paquete; la app cambia los artículos de `_data/posts.ts`.",
+    dependencies: ["sebs7n-ui", "@base-ui/react", "sonner", "lucide-react", "next-themes"],
+    transform: (file) => (file.path === "_lib/routes.ts" ? blogRoutes(file.content) : file.content),
   },
 ]
 

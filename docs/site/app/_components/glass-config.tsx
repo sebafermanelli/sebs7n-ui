@@ -3,7 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react"
 
 import { cssOfOklch, textoSobre, type Oklch } from "../_lib/color"
-import { ambientGuardado, CONFIG_VERSION } from "../_lib/wallpaper"
+import { ambientGuardado, CONFIG_VERSION, luzGuardada } from "../_lib/wallpaper"
 
 /**
  * La configuración del material que el visitante arma en el Playground.
@@ -87,7 +87,7 @@ function leer(): GlassConfig {
       brand: guardado.brand ?? null,
       brandDark: guardado.brandDark ?? null,
       ambient: ambientGuardado(guardado),
-      luz: guardado.luz ?? DEFAULTS.luz,
+      luz: luzGuardada(guardado),
       recientes: guardado.recientes ?? [],
     }
   } catch {

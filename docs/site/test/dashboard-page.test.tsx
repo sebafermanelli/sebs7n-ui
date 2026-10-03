@@ -1,11 +1,14 @@
 import { createElement } from "react"
-import { describe, expect, it } from "vitest"
+import { describe, expect, it, vi } from "vitest"
 
 import DashboardHomePage from "../app/templates/dashboard/page"
 import InvoicesPage from "../app/templates/dashboard/invoices/page"
 import CustomersPage from "../app/templates/dashboard/customers/page"
 import SettingsPage from "../app/templates/dashboard/settings/page"
 import { renderWithInvoices } from "./dashboard-render"
+
+// Inicio navega con `useRouter` («Ver detalle» de una métrica): sin App Router montado, se simula.
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: () => {} }), usePathname: () => "/" }))
 
 describe("páginas del dashboard", () => {
   it("Inicio muestra su encabezado, la acción principal y las métricas", () => {

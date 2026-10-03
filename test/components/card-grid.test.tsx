@@ -16,7 +16,7 @@ const fila = (columns?: 2 | 3 | 4) =>
         </Card>
       ))}
     </CardGrid>
-  ).container.firstElementChild as HTMLElement
+  ).container.querySelector("[data-slot=card-grid]") as HTMLElement
 
 describe("CardGrid", () => {
   // La regla: en una fila, la cabecera más alta fija la de todas, y lo mismo el cuerpo y el pie.
@@ -39,13 +39,20 @@ describe("CardGrid", () => {
     expect(grid.className).toContain("-mb-4")
   })
 
+  it("es un contenedor de consulta propio: las columnas siguen el ancho de la grilla y no el de la ventana", () => {
+    const grid = fila()
+    expect(grid.parentElement).toHaveAttribute("data-slot", "card-grid-container")
+    expect(grid.parentElement).toHaveClass("@container", "w-full")
+    expect(grid.className).not.toMatch(/(^|\s)(sm|md|lg|xl):/)
+  })
+
   it("el texto de la cabecera arranca arriba aunque la franja crezca", () => {
     expect(fila().className).toContain("content-start")
   })
 
-  it("columnas: una en el teléfono, las pedidas desde lg", () => {
-    expect(fila(4).className).toContain("lg:grid-cols-4")
-    expect(fila().className).toContain("lg:grid-cols-3")
+  it("columnas: una en una caja angosta, las pedidas según el ancho del contenedor", () => {
+    expect(fila(4).className).toContain("@4xl:grid-cols-4")
+    expect(fila().className).toContain("@3xl:grid-cols-3")
     expect(fila().className).toContain("grid-cols-1")
   })
 })
@@ -60,17 +67,17 @@ describe("CardGrid sin huérfanas", () => {
           </Card>
         ))}
       </CardGrid>
-    ).container.firstElementChild as HTMLElement
+    ).container.querySelector("[data-slot=card-grid]") as HTMLElement
 
   // Tres planes en dos columnas dejan uno solo abajo: o todas en paralelo o todas apiladas.
   it("con un número impar de cards no pasa por dos columnas", () => {
-    expect(conCards(3).className).not.toContain("sm:grid-cols-2")
-    expect(conCards(3).className).toContain("lg:grid-cols-3")
+    expect(conCards(3).className).not.toContain("@lg:grid-cols-2")
+    expect(conCards(3).className).toContain("@3xl:grid-cols-3")
   })
 
   it("con un número par sí", () => {
-    expect(conCards(6).className).toContain("sm:grid-cols-2")
-    expect(conCards(4, 4).className).toContain("sm:grid-cols-2")
+    expect(conCards(6).className).toContain("@lg:grid-cols-2")
+    expect(conCards(4, 4).className).toContain("@lg:grid-cols-2")
   })
 })
 

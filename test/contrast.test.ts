@@ -814,3 +814,17 @@ describe("Rating: las estrellas sobre la página y la card", () => {
     }
   }
 })
+
+// La línea de `MetricChart` es un gráfico (1.4.11, 3:1) sobre el cuerpo de la card: los tokens `-900`.
+// `brand` queda afuera: depende de la marca de la app y es el mismo `brand-900` del `Sparkline`.
+describe("Línea de MetricChart sobre la card (WCAG 1.4.11)", () => {
+  for (const theme of ["light", "dark"] as const) {
+    for (const color of ["green", "red", "amber"]) {
+      const linea = paleta[theme][`--sf-${color}-900`]!
+      const fondo = paleta[theme]["--sf-surface"]!
+      it(`${theme} · ${color}-900 (${linea}) sobre la superficie ${fondo} llega a 3:1`, () => {
+        expect(ratio(linea, fondo)).toBeGreaterThanOrEqual(3)
+      })
+    }
+  }
+})

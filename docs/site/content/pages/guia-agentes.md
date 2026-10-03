@@ -6,11 +6,13 @@ Si sos un agente: leé esta guía antes de escribir la primera pantalla y elegí
 
 **iCloud web (icloud.com), no el macOS nativo.** Los valores están medidos en claro y en oscuro. Lo que iCloud no tiene (Switch, Tooltip, toasts, Tree, Stepper) se deriva de sus tokens. No se inventan estilos: si algo no existe en el paquete, se arma con sus tokens y sus componentes.
 
+El [Playground](/docs/playground) es la referencia viva de los defaults: si cambia un default, se actualiza ahí. Muestra cuatro pantallas dentro de un `AppShell` (con el panel del asistente, ⌘K y los atajos), y cada una trae su «Cómo se arma» con los componentes que usa, el código para copiar y las reglas que ilustra.
+
 ## Reglas de sistema
 
 ### Un solo acento sólido por pantalla
 
-`Button` por defecto es el primario, en el acento, y va **uno** por pantalla: la acción principal («Nueva factura»). El resto, `secondary` (gris) o `plain` (texto en el acento). Los estados prendidos (Checkbox, Switch, Toggle) llevan el acento y no cuentan. `destructive` solo si borra, y siempre detrás de un `AlertDialog`.
+`Button` por defecto es el primario, en el acento, y va **uno** por pantalla: la acción principal («Nueva factura»). El resto, `secondary` (gris) o `plain` (texto en el acento). Los estados prendidos de Checkbox y Switch llevan el acento y no cuentan; el de `Toggle` y `ToggleGroup` es neutro (gris, semibold). `destructive` solo si borra, y siempre detrás de un `AlertDialog`.
 
 ### Tamaños
 
@@ -18,6 +20,8 @@ Una sola escala para campos y botones: `sm` 28 · `md` 36 · `lg` 40 (botones de
 
 - **`md` es el de una app**: contenido, formularios, diálogos. Es el default: no hace falta escribirlo.
 - **`sm` en barras**: toolbars, la barra de una tabla, paginación, filtros sobre una lista.
+  - **Una barra de filtros, entera en `sm`**: la búsqueda (`SearchField`), los selectores (`Select`, `MultiSelect`, `DatePicker`), el `ToggleGroup` y los botones de la barra (`Pausar`, `Exportar`, `Columnas`). Mezclar `sm` y `md` en la misma fila deja los controles a distinta altura. Vale igual en un dashboard, en una consola y en la portada de un blog: que la lista sea «contenido» no la hace una excepción.
+  - Lo que **no** es parte de la barra queda en `md`: la acción primaria de la página («Nueva factura», «Nuevo servicio»), los botones de un formulario y de un diálogo.
 - **`lg`** solo en pantallas de entrada (login) o una acción aislada muy importante.
 - El tamaño se elige **una vez por formulario**, no por campo. No hay una variable global de densidad: rompe el objetivo táctil.
 - Usá los defaults del paquete. Si un tamaño no queda bien, el problema es de la composición, no se corrige forzando `size` en cada componente.
@@ -34,7 +38,7 @@ Opacas y en capas. Si **es** la página, `bg-background`; si flota sobre ella, `
 
 ### Selección
 
-El resaltado de menús y el ítem activo del sidebar van en **gris** (`fill-2`, `fill-1`). El acento sólido es solo para la fila elegida de una lista o tabla **con foco**; sin foco, la fila elegida vuelve a gris.
+El resaltado de menús, el ítem activo del sidebar y el elegido de un `Toggle`/`ToggleGroup` van en **gris** (`fill-2`, `fill-1`, `fill-3` o la pastilla del segmentado). El acento sólido es solo para la fila elegida de una lista o tabla **con foco**; sin foco, la fila elegida vuelve a gris.
 
 ### Tipografía
 
@@ -48,9 +52,15 @@ Texto con `label` / `label-secondary` (≥ 4,5:1). `label-tertiary` no es para t
 
 Un link con forma de botón o de card: `buttonVariants()` / `cardVariants()` sobre `<a>` o `<Link>`. **Nunca** `render` de un `Button` para un link (Base UI le pone `role="button"`). Un link de texto: `linkVariants` (`inline`, `subtle`, `row`, `accent`). Una acción que abre un panel no es un link: es un `<button>`, aunque se vea como link. Un link que solo aparece en hover no existe en un celular.
 
+### Layout por ancho del contenido, no de la ventana
+
+Dentro de un `AppShell`, el layout responde al ancho del contenido (container queries `@md:`, `@lg:`…), no al de la ventana: así un panel lateral abierto no rompe las grillas. Los breakpoints de viewport quedan para pantallas completas (landing, blog, login, navbar). Ejemplo: `<div className="grid grid-cols-1 gap-4 @3xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">` en vez de `lg:grid-cols-…`. `AppShell` ya declara el `main` como contenedor (`@container/main`) y `AppShellContent` también (`@container`); `CardGrid`, `StatGrid`, `SettingsGrid`, `FilterBar` y `PageHeader` miden a su propio contenedor, así que andan igual fuera del shell. Umbrales del sistema: `@lg` (32 rem) pasa a 2 columnas, `@3xl` (48 rem) a 3 o a Configuración en 2, `@4xl` (56 rem) a 4 o a un tablero `2fr/1fr`; el panel de widgets editable (`WidgetBoard`) usa 1 columna, 2 desde `@xl` (36 rem) y 4 desde `@4xl`.
+
 ### Cards en fila: alineadas, siempre
 
 Cards que se leen juntas van en `CardGrid`: comparten filas (subgrid), así que **la cabecera más alta fija la de todas, y lo mismo el cuerpo y el pie**. Una cabecera más baja que la de al lado, o un pie que no cae a la misma altura que el vecino, es un error. Si una card de la fila no tiene cabecera, ninguna la lleva; y una card sin cuerpo no lleva cabecera (quedaría la franja del cuerpo vacía): título y texto van en `CardContent`. Y sin huérfanas: una fila va toda en paralelo o toda apilada, nunca «2 arriba y 1 abajo» (`CardGrid` saltea las dos columnas cuando la cantidad es impar).
+
+Un asistente o panel de ayuda que acompaña el trabajo va acoplado al costado (`AppShell` aside) y empuja el contenido; un diálogo o Sheet modal solo cuando hay que decidir algo antes de seguir. El botón que lo abre vive en la barra global, a la derecha.
 
 ## Elegir componente
 
@@ -62,7 +72,8 @@ Cards que se leen juntas van en `CardGrid`: comparten filas (subgrid), así que 
 | Ejecutar una acción desde un menú | `DropdownMenu` |
 | Una tarea corta | `Dialog` |
 | Confirmar algo irreversible | `AlertDialog` |
-| Un panel lateral (detalle, filtros) | `Sheet` |
+| Un asistente o panel de ayuda que acompaña el trabajo | `AppShell` con `aside` (acoplado, empuja el contenido) |
+| Un panel lateral de detalle o filtros que hay que decidir | `Sheet` |
 | Algo interactivo anclado a un botón | `Popover` |
 | Una línea de ayuda | `Tooltip` |
 | Confirmar que algo pasó | `toast()` |
@@ -80,6 +91,7 @@ Cards que se leen juntas van en `CardGrid`: comparten filas (subgrid), así que 
 | Un número clave | `Stat` dentro de una `Card` |
 | Un bloque con título en un tablero | `WidgetCard` |
 | Varias cards en fila (planes, beneficios, testimonios, una galería) | `Card` dentro de `CardGrid` |
+| Pantalla de Configuración (grupos de campos) | `SettingsSection` dentro de `SettingsGrid` |
 | Nada que mostrar | `EmptyState`, con una sola acción para salir del vacío |
 | Esperando datos | `Skeleton` del alto final, o `loading` del componente |
 
@@ -137,11 +149,12 @@ AppShellContent                      ancho máximo, márgenes y gap-6
 
 **Bloques de contenido:**
 
-- Métricas: `Stat` dentro de `Card`, en `grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4`.
-- Tablero: `WidgetCard` en `grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]` (el gráfico ancho, la lista angosta).
+- Métricas: `StatGrid` (un `Stat` dentro de `Card` cada uno; 1, 2 o 4 columnas según el ancho del contenedor). Si el usuario arma su pantalla, cada métrica es un widget del panel editable.
+- Tablero: un panel de widgets que el usuario edita (`WidgetBoard`, receta abajo): el gráfico ancho es un widget `md` y la lista angosta uno `sm`. Un tablero fijo, sin edición, es `WidgetCard` en una grilla por container query (`grid grid-cols-1 gap-4 @4xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]`).
 - Listado: `DataTable` con `filter`, `pageSize={10}`, columnas `sortable`, las numéricas con `numeric`, el filtro de estado en `toolbar` (tamaño `sm`) y `empty` con un `EmptyState variant="plain"`.
 - Detalle: un `Sheet` controlado por la página (el id elegido, no el objeto), con datos, `Timeline` y las acciones al pie.
 - Configuración: `Tabs`; un `Form` por pestaña con «Guardar cambios», salvo los `Switch`, que aplican al instante.
+- **Configuración = secciones (`SettingsSection`) en cards, 2 columnas desde `lg` y 1 en el teléfono (`SettingsGrid`); no una columna angosta de campos.** Cada sección trae título y descripción en la cabecera y los campos a lo ancho de la card; lo que necesita el ancho (una zona de arrastre, una lista) lleva `wide`. La barra «Cambios sin guardar» / «Descartar» / «Guardar» va a todo el ancho del contenido, fija abajo.
 
 **Estados:**
 
@@ -153,6 +166,66 @@ AppShellContent                      ancho máximo, márgenes y gap-6
 **Lo pesado, diferido:** un gráfico (Recharts) se carga con `React.lazy` y se monta después de hidratar, con un `Skeleton` mientras llega. `next/dynamic` agrega un preload al HTML y no ahorra nada.
 
 **A 390 px:** nada de scroll horizontal; las barras de filtros pasan a columna (`flex-col sm:flex-row`), los campos a ancho completo (`w-full sm:w-48`), y las fechas y montos de una lista angosta en formato corto.
+
+## Recetas
+
+### Panel de widgets editable
+
+La pantalla de inicio de iCloud, para cualquier app: widgets que el usuario ordena, saca y agrega, y que quedan guardados. La implementan el Inicio del [template de dashboard](/templates/dashboard) y el Resumen de la [consola](/templates/console). Se arma con tres piezas de `sebs7n-ui`, sin escribir arrastre ni persistencia:
+
+- `useWidgetLayout({ storageKey, widgets })` (`sebs7n-ui/lib/widget-layout`): el estado (qué se ve y en qué orden, edición, catálogo, avisos).
+- `WidgetBoard` (`sebs7n-ui/widget-board`): la grilla.
+- `WidgetBoardEditButton`: el «Editar» / «Listo» de la cabecera.
+
+```tsx
+const widgets: WidgetDef[] = [
+  { id: "billed", title: "Facturado", size: "sm", description: "Lo emitido en el mes.", preview: <Sparkline values={series} />, render: () => <StatGrid columns={1} items={[billed]} /> },
+  { id: "collections", title: "Facturado y cobrado", size: "md", render: () => <CollectionsWidget /> },
+]
+const layout = useWidgetLayout({ storageKey: "app:home:widgets", widgets })
+// …
+<PageHeaderActions>
+  <WidgetBoardEditButton layout={layout} />   {/* secundario */}
+  <Button>Nueva factura</Button>              {/* el único acento */}
+</PageHeaderActions>
+<WidgetBoard layout={layout} />
+```
+
+**El modelo.** Cada widget es `{ id, title, size?, description?, preview?, icon?, render }`. `id` estable y en inglés (es lo que se guarda); `render` devuelve la card y se llama en cada render, así lee de la pantalla (el store, los filtros) sin pasar por el modelo; `description` y `preview` (un `Sparkline`, una cifra) son lo que se ve en el catálogo. `size` son las columnas de una grilla de 4: `sm` 1, `md` 2, `lg` 4; por container query la grilla pasa a 2 columnas desde 36 rem de ancho del contenedor y a 1 por debajo de eso (con el panel del asistente abierto, el contenido se angosta y la grilla se reacomoda sola; no hay `sm:`/`lg:` de ventana). Las cards de una fila quedan alineadas: la card llena el alto de su celda. Una métrica con `StatGrid` va con `columns={1}`.
+
+**La edición.**
+
+- **Editar / Listo:** el botón de la cabecera, secundario (el acento es de la acción primaria). Anuncia «Modo edición…» en una región `status`.
+- **Mover:** los widgets tiemblan (no con `prefers-reduced-motion`: ahí un contorno punteado). Se reordenan arrastrando la card entera o con el teclado: Espacio toma, flechas mueven, Espacio suelta, Escape cancela, todo anunciado en español.
+- **Sacar:** un «−» en cada widget, con el nombre en su `aria-label` («Sacar Clientes»). El foco pasa al «−» que queda y no se pierde.
+- **Agregar:** «Agregar widget» abre un `Popover` (en el teléfono, la hoja de abajo) con los widgets que no están en pantalla, cada uno con su descripción y vista previa. Elegir uno lo suma al final y el foco va a su «−».
+- **Restablecer:** vuelve al orden original (deshabilitado, pero enfocable, si ya lo es).
+- **Vacío:** sin widgets en pantalla hay un `EmptyState` con «Agregar widget» y «Restablecer».
+
+**Persistencia.** El orden y los widgets visibles se guardan en `localStorage` con `useStoredState`: el HTML del servidor muestra el orden original y se adopta lo guardado después de montar. Un ID guardado que ya no existe se descarta. Si el panel depende de un proyecto o una cuenta, la clave lleva su id (`console:${project.id}:overview-widgets`): al cambiarla se carga el panel del otro.
+
+**Carga diferida (presupuesto de JS).** Sin editar, `WidgetBoard` es una grilla estática: no trae `@dnd-kit`. El arrastre, la barra de edición y el catálogo viven en otro módulo que se pide con `React.lazy` la primera vez que se aprieta «Editar» (no `next/dynamic`: no entra al HTML del servidor); mientras llega se ve la misma grilla, sin saltos. Una vez cargado queda montado. Los peers `@dnd-kit/*` son opcionales: hacen falta solo si se usa este componente. El estado que el widget necesita conservar al editar (el período elegido en una métrica) vive en la pantalla, no en la card: al pasar a edición las cards se montan de nuevo.
+
+**Con el panel lateral.** Nada cambia: la grilla mide el contenedor. Un clic en «Agregar widget» o «Restablecer» no saca de la edición; un clic en un espacio vacío, Escape o «Listo» sí.
+
+### Card de plan con uso
+
+El bloque de plan de Ajustes de iCloud: una `PromoCard` con el plan y, al lado, una `Card` con un `Meter` por cupo usado. Lo implementan Configuración › Facturación del dashboard (facturas, usuarios y espacio) y Estado y costos de la consola (cómputo, ancho de banda y almacenamiento).
+
+```tsx
+<div className="grid gap-5 @3xl:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
+  <PromoCard chip="4 de 5 usuarios" title="Plan Pro">
+    <PromoCardLink render={<button type="button" />}>Cambiar de plan</PromoCardLink>
+  </PromoCard>
+  <Card className="flex flex-col justify-between gap-5 p-6">
+    <h3 className="text-title-2 text-label">Uso del plan</h3>
+    <Meter label="Cupo de facturas" max={12} showValue value={9} />
+    <Meter format={{ style: "unit", unit: "gigabyte" }} label="Espacio" max={10} showValue value={2.9} />
+  </Card>
+</div>
+```
+
+Una sola `PromoCard` por pantalla. Es un `Meter` (un valor que sube y baja dentro de un rango), no un `Progress`. «Cambiar de plan» es el link de la promo, no un botón con acento. Cada `Meter` lleva `label`; las cifras salen de los datos de la app, no de números sueltos. Las unidades van por `format` (`Intl.NumberFormat`). Si el bloque se repite en muchas pantallas de una app, extraelo a un componente propio con las cifras como props.
 
 ## Anatomía de una landing
 
@@ -179,6 +252,8 @@ div.bg-ambient[data-ambient]         el wallpaper: barra y cards pasan solas a t
 - Lo que se mueve solo (`Marquee`) tiene que poder pausarse: en una landing, `pauseControl="press"` (tocar la franja pausa y reanuda; el botón queda para teclado). Nunca sin pausa.
 - Todo el texto en un solo archivo de datos: adaptar la landing es cambiar ese archivo.
 - A 390 px: el grupo de CTA pasa a columna (`flex-col sm:flex-row`), las grillas a una columna.
+
+**El propio sitio de sebs7n-ui sigue esta receta.** La home (`/`) y `/templates` comparten con la landing de referencia: la barra (marca con la versión en `Badge`, `NavigationMenu` con paneles, búsqueda ⌘K, GitHub, `ThemeSwitcher` diferido y «Empezar» en gris; en el teléfono, un `Drawer`), el hero centrado con el único acento primario, `SectionHeader` en cada sección, el ancho de 1080 px, el `scroll-mt-20` de las anclas, el wallpaper y el pie con grupos de links. Lo propio del sitio es el contenido (versión, instalación, «Por qué existe», componentes destacados, cifras de `site.json`, sección para agentes). El patrón (menú, tema y hoja del teléfono con `next/dynamic` y `ssr: false`) está copiado en `docs/site/app/_components`, no extraído al paquete: depende de los datos de navegación de cada sitio. `test/home-structure.test.ts` fija lo que comparten.
 
 ## Los templates
 

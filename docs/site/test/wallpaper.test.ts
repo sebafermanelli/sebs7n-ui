@@ -2,7 +2,7 @@
 // default) y el resto de las docs nunca.
 import { describe, expect, it } from "vitest"
 
-import { ambientGuardado, CONFIG_VERSION, docsWallpaper } from "../app/_lib/wallpaper"
+import { ambientGuardado, CONFIG_VERSION, docsWallpaper, luzGuardada } from "../app/_lib/wallpaper"
 
 describe("docsWallpaper", () => {
   it("el Playground lo lleva con el switch prendido", () => {
@@ -37,5 +37,25 @@ describe("ambientGuardado", () => {
 
   it("un valor roto no apaga el wallpaper", () => {
     expect(ambientGuardado({ v: CONFIG_VERSION, ambient: "no" })).toBe(true)
+  })
+})
+
+describe("luzGuardada", () => {
+  it("sin nada guardado, el default", () => {
+    expect(luzGuardada({})).toBe(1)
+  })
+
+  it("lo de la 1.x (luz 0, sin versión) no apaga el wallpaper", () => {
+    expect(luzGuardada({ luz: 0 })).toBe(1)
+  })
+
+  it("lo guardado desde la versión 2 se respeta", () => {
+    expect(luzGuardada({ v: CONFIG_VERSION, luz: 0.4 })).toBe(0.4)
+    expect(luzGuardada({ v: CONFIG_VERSION, luz: 0 })).toBe(0)
+  })
+
+  it("un valor roto o fuera de rango vuelve al default", () => {
+    expect(luzGuardada({ v: CONFIG_VERSION, luz: "x" })).toBe(1)
+    expect(luzGuardada({ v: CONFIG_VERSION, luz: 5 })).toBe(1)
   })
 })

@@ -1,3 +1,5 @@
+import { Card, CardContent } from "sebs7n-ui/card"
+
 import { CodeBlock } from "./code-block"
 import { DemoSlot } from "./demo-slot"
 
@@ -13,9 +15,11 @@ export function Example({ example, eager = false }: { example: Ejemplo; eager?: 
         </h3>
         {example.description && <p className="text-callout text-label-secondary">{example.description}</p>}
       </div>
-      <div className="flex min-h-32 items-center justify-center rounded-surface border border-separator bg-surface p-6 shadow-card">
-        <DemoSlot eager={eager} id={example.id} />
-      </div>
+      <Card>
+        <CardContent className="flex min-h-32 items-center justify-center">
+          <DemoSlot eager={eager} id={example.id} />
+        </CardContent>
+      </Card>
       <CodeBlock code={example.code} label={`Copiar el código de ${example.title}`} />
     </section>
   )

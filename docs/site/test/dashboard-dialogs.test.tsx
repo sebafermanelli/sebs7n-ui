@@ -10,10 +10,12 @@ const render = (over: Record<string, unknown> = {}) =>
   renderToString(
     createElement(InvoicesDataTable, {
       invoices: INVOICES_MOCK,
+      customers: ["Acme Corporation", "Globex Industries"],
       loading: false,
       selected: [],
       onSelectedChange: noop,
       onMarkPaid: noop,
+      onRemind: noop,
       onOpenDetail: noop,
       onVoid: noop,
       ...over,

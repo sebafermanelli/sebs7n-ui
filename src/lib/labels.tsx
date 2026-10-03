@@ -74,6 +74,13 @@ export type Labels = {
     navigation: string
     /** Texto del skip link, la primera parada de tabulación de la app. */
     skipToContent: string
+    /** Opcionales (2.10): el panel lateral acoplado. El default vive en `AppShell` (`asideLabels`), no en `defaultLabels`. */
+    /** Nombre del `<aside>` cuando la app no pasa `asideLabel`. */
+    aside?: string
+    /** Nombre de la «X» del panel lateral. */
+    closeAside?: string
+    /** Nombre del separador que cambia el ancho del panel. */
+    resizeAside?: string
   }
   /** Opcional (2.3): `AuthDivider`; el texto por defecto es `authLabels` de `sebs7n-ui/auth-layout` (ver `carousel`). */
   auth?: {
@@ -322,6 +329,65 @@ export type Labels = {
     /** El mismo botón con el bucle detenido: «Reanudar». */
     play: string
   }
+  /** Opcional (2.10): `NotificationsPopover`; los textos por defecto son `notificationsLabels` de `sebs7n-ui/notifications-popover` (ver `carousel`). */
+  notifications?: {
+    /** El título del popover y el nombre de la lista: «Avisos». */
+    title: string
+    /** Lo que se cuenta en el nombre del botón: «sin leer». */
+    unreadDetail: string
+    /** La descripción con todo leído: «Estás al día». */
+    upToDate: string
+    /** La lista vacía: «Todavía no hay avisos». */
+    empty: string
+    /** El botón de marcar todas: «Marcar todas como leídas». */
+    markAllRead: string
+    /** La marca de un aviso sin leer: «Nueva». */
+    unreadBadge: string
+  }
+  /** Opcional (2.10): `ShortcutsDialog`; los textos por defecto son `shortcutsLabels` de `sebs7n-ui/shortcuts-dialog` (ver `carousel`). */
+  shortcuts?: {
+    /** El título del diálogo: «Atajos de teclado». */
+    title: string
+    /** La bajada: cómo se tipean las secuencias. */
+    description: string
+    /** El nombre de la lista de atajos. */
+    list: string
+    /** Lo que se lee entre las teclas de una secuencia: «luego». */
+    then: string
+  }
+  /** Opcional (2.10): `CommandPalette`; los textos por defecto son `commandPaletteLabels` de `sebs7n-ui/command-palette` (ver `carousel`). */
+  commandPalette?: {
+    /** Mientras `loadGroups` trae los ítems: «Cargando…». */
+    loading: string
+    /** Si `loadGroups` falla: «No se pudo cargar la búsqueda». */
+    loadError: string
+  }
+  /** Opcional (2.10): `LogViewer`; los textos por defecto son `logViewerLabels` de `sebs7n-ui/log-viewer` (ver `carousel`). */
+  logViewer?: {
+    /** El nombre del visor si la app no pasa `aria-label`: «Registro». */
+    label: string
+    /** Sin líneas: «Todavía no hay líneas». */
+    empty: string
+    /** Cargando: «Cargando…». */
+    loading: string
+    /** El nivel `warn`, dicho con letras: «Aviso». */
+    warn: string
+    /** El nivel `error`, dicho con letras: «Error». */
+    error: string
+    /** El nivel `info`, dicho con letras: «Info». */
+    info: string
+  }
+  /** Opcional (2.10): `BulkActionsBar`; los textos por defecto son `bulkActionsLabels` de `sebs7n-ui/bulk-actions-bar` (ver `carousel`). */
+  bulkActions?: {
+    /** El nombre del grupo: «Acciones sobre la selección». */
+    label: string
+    /** El botón que vacía la selección: «Limpiar selección». */
+    clear: string
+    /** El contador con `count` en singular: «1 seleccionado». Con `{count}`. */
+    selectedOne: string
+    /** El contador en plural: «{count} seleccionados». */
+    selectedOther: string
+  }
   meter: {
     /** «Libre», en la cabecera de `StackedMeter`. */
     free: string
@@ -448,6 +514,34 @@ export type Labels = {
     editing: string
     /** Lo que se anuncia al salir del modo edición. */
     done: string
+  }
+  /** Opcional: `WidgetBoard` y `useWidgetLayout`; los textos por defecto son `widgetBoardLabels` (ver `carousel`). */
+  widgetBoard?: {
+    /** El nombre de la lista de widgets. */
+    region: string
+    /** El botón que entra en edición y el que sale. */
+    edit: string
+    done: string
+    /** «Agregar widget»: el botón del catálogo y el del estado vacío. */
+    add: string
+    reset: string
+    /** La línea de ayuda de la barra de edición. */
+    hint: string
+    /** Lo que se anuncia al entrar en edición, al salir y al restablecer. */
+    editingAnnounce: string
+    doneAnnounce: string
+    resetAnnounce: string
+    /** El título y la descripción del catálogo, y lo que dice cuando no queda nada para agregar. */
+    catalogTitle: string
+    catalogDescription: string
+    catalogEmpty: string
+    /** Antes del nombre, en el nombre accesible de cada fila del catálogo: «Agregar Clientes». */
+    addNamed: string
+    /** El estado vacío: sin widgets en pantalla. */
+    emptyTitle: string
+    emptyDescription: string
+    /** Mientras se pide el módulo de edición. */
+    loading: string
   }
   stepper: {
     /** Nombre de la lista de pasos, si no trae `aria-label`. */

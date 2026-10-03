@@ -34,19 +34,18 @@ export const segmentedThumbClassName =
 /**
  * Un ítem de `ToggleGroup`: el segmento de iCloud cuando cada opción se prende sola (los B/I/U del
  * formato de Notes). No hay pastilla que se deslice —puede haber varios prendidos—: el ítem
- * prendido se marca él mismo con el acento sólido, como un toggle de ícono de iCloud (el de Calendar,
- * fondo del acento con el glifo blanco). La pastilla blanca de antes se distinguía de la pista gris
- * a 1,16:1 (revisión de R4); el acento llega a 3:1 en las cinco marcas. En oscuro va el paso 900 de
- * la marca (L fija) con el texto oscuro de la página: el 700 quedaba en 2,3:1 contra la pista.
+ * prendido se marca él mismo con la pastilla del segmentado (`bg-segment` + `shadow-segment`:
+ * blanca en claro, `#636366` en oscuro) y el texto en semibold. La selección es neutra, como la de
+ * `ListRow selected` y `SidebarItem active`: el acento queda para el anillo de foco y para la
+ * acción primaria de la pantalla.
  *
  * 24 de alto (28 con la pista), 14 en `label` y semibold prendido; con el dedo se ve igual y el área
  * crece a 44 (`segmentedHitAreaClassName`). Lleva el
- * separador de 1 × 16 del segmentado, centrado en el alto del ítem, escondido en el prendido y en el que le sigue. El anillo de
- * foco sobre el acento va en el color del texto (`[--sf-focus-inverse:currentColor]`).
+ * separador de 1 × 16 del segmentado, centrado en el alto del ítem, escondido en el prendido y en el que le sigue.
  */
 export const segmentedItemClassName =
   "relative inline-flex h-6 min-w-8 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-[calc(var(--radius-control)-2px)] px-3 text-callout whitespace-nowrap text-label outline-none select-none transition-surface " +
-  "focus-visible:focus-ring data-pressed:bg-brand-700 data-pressed:text-brand-contrast dark:data-pressed:bg-brand-900 dark:data-pressed:text-background data-pressed:font-semibold data-pressed:focus-visible:focus-ring-inverse [--sf-focus-inverse:currentColor] data-disabled:cursor-not-allowed data-disabled:opacity-40 " +
+  "focus-visible:focus-ring data-pressed:bg-segment data-pressed:shadow-segment data-pressed:font-semibold data-disabled:cursor-not-allowed data-disabled:opacity-40 " +
   "after:absolute after:left-0 after:top-1/2 after:-translate-y-1/2 after:h-4 after:w-px after:bg-fill-3 first:after:hidden data-pressed:after:hidden [[data-pressed]+&]:after:hidden " +
   "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 " +
   segmentedHitAreaClassName

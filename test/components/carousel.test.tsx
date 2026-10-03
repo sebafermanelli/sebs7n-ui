@@ -229,7 +229,7 @@ describe("Carousel bleed", () => {
   it("sin bleed, la vista de 2.0: aire para la sombra y la máscara de los costados", () => {
     render(<Plans />)
     const viewport = document.querySelector("[data-slot=carousel-content]")!
-    expect(viewport).toHaveClass("-mx-4", "px-4", "pt-4", "pb-10")
+    expect(viewport).toHaveClass("-mx-4", "px-4", "pt-6", "pb-16")
     expect(document.querySelector("[data-slot=carousel-item]")).toHaveClass("ps-4")
   })
 })

@@ -1,8 +1,10 @@
 "use client"
 
 import Link from "next/link"
+import { EmptyState } from "sebs7n-ui/empty-state"
 import { List, ListRow } from "sebs7n-ui/list-row"
 import { Skeleton } from "sebs7n-ui/skeleton"
+import { Tooltip, TooltipContent, TooltipTrigger } from "sebs7n-ui/tooltip"
 import { linkVariants } from "sebs7n-ui/variants/link"
 import { WidgetCard } from "sebs7n-ui/widget-card"
 
@@ -24,17 +26,25 @@ export function UpcomingWidget() {
           ))}
         </div>
       ) : rows.length === 0 ? (
-        <p className="text-callout text-label-secondary">No hay nada por cobrar.</p>
+        <EmptyState description="Las facturas que se emitan aparecen acá." title="Nada por cobrar" variant="plain" />
       ) : (
         <List aria-label="Facturas que vencen pronto">
           {rows.map((inv) => (
             <ListRow
-              // El punto es decorativo: el estado también está escrito en la descripción.
-              description={inv.status === "overdue" ? `${inv.id} · vencida` : `${inv.id} · vence el ${formatDayMonth(inv.dueDate)}`}
+              // El monto va debajo del nombre, no al costado: en una columna angosta, a la derecha le comía
+              // el ancho al nombre. Lo que queda a la derecha es corto («vencida», «8 oct») y el punto,
+              // decorativo, no es el único dato.
+              description={`${inv.id} · ${wholeMoney.format(inv.amount)}`}
               dot={inv.status === "overdue" ? "red" : "amber"}
               key={inv.id}
-              title={inv.customer}
-              trailing={wholeMoney.format(inv.amount)}
+              title={
+                // Si el nombre igual no entra, el tooltip lo dice completo.
+                <Tooltip>
+                  <TooltipTrigger render={<span className="block truncate" />}>{inv.customer}</TooltipTrigger>
+                  <TooltipContent>{inv.customer}</TooltipContent>
+                </Tooltip>
+              }
+              trailing={<span className="text-callout text-label-secondary">{inv.status === "overdue" ? "Vencida" : formatDayMonth(inv.dueDate)}</span>}
             />
           ))}
         </List>

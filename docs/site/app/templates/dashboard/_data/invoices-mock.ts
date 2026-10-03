@@ -12,6 +12,10 @@ export interface Invoice {
   paidAt?: string
   /** Cuándo se anuló (`YYYY-MM-DD`). Solo en las anuladas. */
   voidedAt?: string
+  /** Etiquetas que pone quien factura («urgente», «anual»): texto libre, sin repetidas. */
+  tags?: string[]
+  /** El recordatorio programado (`YYYY-MM-DDTHH:mm`, hora local). Solo en las que se deben. */
+  reminderAt?: string
 }
 
 export const INVOICES_MOCK: Invoice[] = [
@@ -23,6 +27,7 @@ export const INVOICES_MOCK: Invoice[] = [
     date: "2026-09-15",
     dueDate: "2026-10-15",
     status: "pending",
+    tags: ["anual"],
   },
   {
     id: "FAC-1002",
@@ -42,6 +47,7 @@ export const INVOICES_MOCK: Invoice[] = [
     date: "2026-08-20",
     dueDate: "2026-09-20",
     status: "overdue",
+    tags: ["urgente"],
   },
   {
     id: "FAC-1004",
@@ -70,6 +76,7 @@ export const INVOICES_MOCK: Invoice[] = [
     date: "2026-08-15",
     dueDate: "2026-09-15",
     status: "overdue",
+    tags: ["urgente", "mantenimiento"],
   },
   {
     id: "FAC-1007",
@@ -119,7 +126,8 @@ export function filterInvoices(
       !q ||
       inv.id.toLowerCase().includes(q) ||
       inv.customer.toLowerCase().includes(q) ||
-      inv.concept.toLowerCase().includes(q)
+      inv.concept.toLowerCase().includes(q) ||
+      (inv.tags ?? []).some((tag) => tag.toLowerCase().includes(q))
     const matchesStatus = status === "all" || inv.status === status
     return matchesSearch && matchesStatus
   })

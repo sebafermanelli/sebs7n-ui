@@ -1,15 +1,19 @@
 "use client"
 
-import { useId, useState } from "react"
+import { lazy, Suspense, useId, useState } from "react"
 import { Badge, type BadgeProps } from "sebs7n-ui/badge"
 import { Button } from "sebs7n-ui/button"
+import { Skeleton } from "sebs7n-ui/skeleton"
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from "sebs7n-ui/sheet"
 import { Timeline, TimelineItem } from "sebs7n-ui/timeline"
 
 import type { Invoice } from "../_data/invoices-mock"
-import { formatDate, money } from "../_lib/format"
+import { formatDate, formatDateTime, money } from "../_lib/format"
 import { isCollectable } from "../_state/invoices-reducer"
 import { STATUS_BADGE } from "./invoice-status"
+
+// Etiquetas y recordatorio traen TagsInput y DateTimePicker: se piden al abrir el panel, no con la tabla.
+const InvoiceExtras = lazy(() => import("./invoice-extras"))
 
 interface InvoiceEvent {
   title: string
@@ -27,6 +31,8 @@ export function invoiceEvents(inv: Invoice): InvoiceEvent[] {
   if (inv.status === "void" && inv.voidedAt) events.push({ title: "Anulada", date: inv.voidedAt, dot: "gray" })
   if (inv.status === "overdue") events.push({ title: "Venció sin cobrar", date: inv.dueDate, dot: "red" })
   if (inv.status === "pending") events.push({ title: "Vence", date: inv.dueDate, dot: "amber" })
+  if (inv.reminderAt && (inv.status === "pending" || inv.status === "overdue"))
+    events.push({ title: "Recordatorio programado", date: inv.reminderAt.slice(0, 10), description: formatDateTime(inv.reminderAt), dot: "blue" })
   return events
 }
 
@@ -35,9 +41,12 @@ interface InvoiceDetailSheetProps {
   onClose: () => void
   onMarkPaid: (id: string) => void
   onVoid: (invoice: Invoice) => void
+  /** Sin estas dos, el panel no ofrece etiquetas ni recordatorio. */
+  onTagsChange?: (id: string, tags: string[]) => void
+  onSchedule?: (id: string, at: string | null) => void
 }
 
-export function InvoiceDetailSheet({ invoice, onClose, onMarkPaid, onVoid }: InvoiceDetailSheetProps) {
+export function InvoiceDetailSheet({ invoice, onClose, onMarkPaid, onVoid, onTagsChange, onSchedule }: InvoiceDetailSheetProps) {
   const historyId = useId()
   // Al cerrar, `invoice` pasa a null antes de que termine la animación: se sigue mostrando la última.
   const [last, setLast] = useState<Invoice | null>(invoice)
@@ -89,6 +98,12 @@ export function InvoiceDetailSheet({ invoice, onClose, onMarkPaid, onVoid }: Inv
                   ))}
                 </Timeline>
               </section>
+
+              {onTagsChange && onSchedule && (
+                <Suspense fallback={<Skeleton className="h-24 w-full" />}>
+                  <InvoiceExtras invoice={shown} onSchedule={(at) => onSchedule(shown.id, at)} onTagsChange={(tags) => onTagsChange(shown.id, tags)} />
+                </Suspense>
+              )}
             </div>
 
             <SheetFooter>

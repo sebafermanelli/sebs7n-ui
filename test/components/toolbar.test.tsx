@@ -209,7 +209,7 @@ describe("Toolbar", () => {
 
     // Con `render={<ToggleGroupItem />}`: el segmento del ToggleGroup, sin nada del Button.
     const negrita = control("Negrita")
-    expect(negrita).toHaveClass("h-6", "data-pressed:bg-brand-700")
+    expect(negrita).toHaveClass("h-6", "data-pressed:bg-segment")
     expect(negrita.className).not.toMatch(/\bsize-6\b/)
     expect(negrita.className).not.toMatch(/hover:bg-fill-2/)
   })

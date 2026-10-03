@@ -37,7 +37,7 @@ import { Progress } from "sebs7n-ui/progress"
 import { RadioGroup, RadioGroupItem } from "sebs7n-ui/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "sebs7n-ui/select"
 import { Slider } from "sebs7n-ui/slider"
-import { Stat } from "sebs7n-ui/stat"
+import { StatGrid } from "sebs7n-ui/stat-grid"
 import { Switch } from "sebs7n-ui/switch"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "sebs7n-ui/table"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "sebs7n-ui/tabs"
@@ -48,13 +48,38 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "sebs7n
 import { cssOfOklch, hexOfOklch, oklchOfHex, type Oklch } from "../_lib/color"
 import { CodeBlock } from "./code-block"
 import { Veredicto } from "./color-picker"
-import { variables, useGlassConfig } from "./glass-config"
+import { variables, useGlassConfig, type GlassConfig } from "./glass-config"
 import { Showcase } from "./showcase"
 
 /** El brand del sitio, que es el del paquete. Es de donde arranca el selector. */
 const BRAND_DEL_SITIO: Oklch = [0.573, 0.214, 258]
 
 const numero = (valor: number) => valor.toFixed(2).replace(".", ",")
+
+/**
+ * El `globals.css` completo de la app: lo que pide la instalación (`@import` de Tailwind y del paquete, en ese
+ * orden) y, después, las variables que la configuración pisa. Es lo mismo que el sitio aplica a `<html>`.
+ */
+function globalsDe(pisadas: Record<string, string>): string {
+  return ['@import "tailwindcss";', '@import "sebs7n-ui/theme.css";', "", cssDe(pisadas)].join("\n")
+}
+
+/**
+ * El layout raíz equivalente: `ThemeProvider` de `next-themes` con `attribute="class"` (el paquete lee `.dark`) y
+ * el `AppShell` con `ambient` si el wallpaper está prendido y con `aside` si el panel del asistente lo está.
+ */
+function layoutDe(config: Pick<GlassConfig, "ambient">, asistente: boolean): string {
+  const props = [config.ambient && "  ambient", asistente && "  aside={<Assistant />}\n  asideOpen={open}\n  onAsideOpenChange={setOpen}", "  sidebar={<AppSidebar />}"].filter(Boolean)
+  return [
+    '<ThemeProvider attribute="class" defaultTheme="system" enableSystem>',
+    "  <TooltipProvider>",
+    `    <AppShell\n${props.map((linea) => String(linea).replace(/^/gm, "    ")).join("\n")}\n    >`,
+    "      {children}",
+    "    </AppShell>",
+    "  </TooltipProvider>",
+    "</ThemeProvider>"
+  ].join("\n")
+}
 
 /** El CSS que se pega en el `globals.css` de la app, después del `@import` del paquete. */
 function cssDe(pisadas: Record<string, string>): string {
@@ -73,6 +98,8 @@ export function Playground({ children }: { children?: React.ReactNode }) {
   const [montado, setMontado] = useState(false)
   useEffect(() => setMontado(true), [])
   const oscuro = montado && resolvedTheme === "dark"
+  // El panel del asistente (`AppShell aside`) abierto en la pantalla de ejemplo: solo para ver cómo reacciona el layout.
+  const [asistente, setAsistente] = useState(false)
 
   const brand = (oscuro ? (config.brandDark ?? config.brand) : config.brand) ?? BRAND_DEL_SITIO
   const pisadas = variables(config)
@@ -126,6 +153,10 @@ export function Playground({ children }: { children?: React.ReactNode }) {
             step={0.05}
             value={config.luz}
           />
+          <div className="flex h-8 items-center gap-2">
+            <Switch checked={asistente} id="pg-aside" onCheckedChange={setAsistente} />
+            <Label htmlFor="pg-aside">Panel del asistente</Label>
+          </div>
           <Button className="ml-auto" disabled={esDefault} onClick={reset} variant="ghost">
             <RotateCcwIcon />
             Volver al default
@@ -133,25 +164,28 @@ export function Playground({ children }: { children?: React.ReactNode }) {
         </div>
       </section>
 
-      <section aria-labelledby="pg-css" className="flex flex-col gap-3">
+      <section aria-labelledby="pg-css" className="flex flex-col gap-4">
         <div className="flex flex-col gap-1">
           <h2 className="text-title-2 text-label" id="pg-css">
             Tu configuración
           </h2>
           <p className="text-callout text-label-secondary">
-            Pegala en el <code className="text-mono-body">globals.css</code> de la app, después del{" "}
-            <code className="text-mono-body">@import &quot;sebs7n-ui/theme.css&quot;</code>. Queda guardada en este
-            navegador: el resto del sitio se ve con ella.
+            Así se integra lo que elegiste arriba: cuatro variables de marca y <code className="text-mono-body">--ambient</code> en el{" "}
+            <code className="text-mono-body">globals.css</code>, y el layout con <code className="text-mono-body">ThemeProvider</code> y{" "}
+            <code className="text-mono-body">AppShell</code>. Queda guardada en este navegador: el resto del sitio se ve con ella.
           </p>
         </div>
-        <CodeBlock code={cssDe(pisadas)} label="Copiar la configuración" />
-        {/* Prender el wallpaper no es una variable: es una prop del AppShell (o `bg-ambient` con
-            `data-ambient` en el contenedor de la página). Cuánto color, sí: `--ambient`, que sale
-            arriba con el resto. */}
-        {config.ambient && <CodeBlock code={`<AppShell ambient sidebar={…}>`} label="Copiar la prop del wallpaper" />}
+        <div className="flex flex-col gap-2">
+          <h3 className="text-callout font-semibold text-label">Copiá esto en tu globals.css</h3>
+          <CodeBlock code={globalsDe(pisadas)} label="Copiar el globals.css" />
+        </div>
+        <div className="flex flex-col gap-2">
+          <h3 className="text-callout font-semibold text-label">Y esto en tu layout</h3>
+          <CodeBlock code={layoutDe(config, asistente)} label="Copiar el layout" />
+        </div>
       </section>
 
-      <Showcase />
+      <Showcase ambient={config.ambient} asideOpen={asistente} onAsideOpenChange={setAsistente} />
       <Muestra />
       {children}
     </div>
@@ -180,7 +214,7 @@ function Muestra() {
   return (
     // El `TooltipProvider` ya no es global (ver `demo-slot.tsx`): cada pantalla con tooltips pone el suyo.
     <TooltipProvider>
-      <section aria-labelledby="pg-muestra" className="flex flex-col gap-4">
+      <section aria-labelledby="pg-muestra" className="@container flex flex-col gap-4">
         <div className="flex flex-col gap-1">
           <h2 className="text-title-2 text-label" id="pg-muestra">
             Cómo se ve
@@ -226,26 +260,16 @@ function Muestra() {
           </DropdownMenu>
         </Toolbar>
 
-        <div className="grid gap-4 sm:grid-cols-3">
-          <Card size="sm">
-            <CardContent>
-              <Stat delta="+12,4 %" hint="vs. mes anterior" label="Facturado" trend="up" value="$ 4.820.300" />
-            </CardContent>
-          </Card>
-          <Card size="sm">
-            <CardContent className="flex flex-col gap-3">
-              <Stat hint="Meta 95 %" label="Cobrado" value="91,6 %" />
-              <Progress aria-label="Cobrado" value={91.6} />
-            </CardContent>
-          </Card>
-          <Card size="sm">
-            <CardContent>
-              <Stat delta="+2" hint="facturas" label="Vencen esta semana" trend="down" value="7" />
-            </CardContent>
-          </Card>
-        </div>
+        <StatGrid
+          chartLayout="inset"
+          items={[
+            { label: "Facturado", value: "$ 4.820.300", delta: "+12,4 %", trend: "up", hint: "vs. mes anterior" },
+            { label: "Cobrado", value: "91,6 %", hint: "Meta 95 %", chart: <Progress aria-label="Cobrado" value={91.6} /> },
+            { label: "Vencen esta semana", value: "7", delta: "+2", trend: "down", hint: "facturas" }
+          ]}
+        />
 
-        <div className="grid gap-4 lg:grid-cols-2">
+        <div className="grid gap-4 @4xl:grid-cols-2">
           <Card>
             <CardHeader>
               <CardTitle>Factura nueva</CardTitle>
@@ -311,7 +335,7 @@ function Muestra() {
                     <PlusIcon />
                     Nueva factura
                   </Button>
-                  <Button>Guardar</Button>
+                  <Button variant="secondary">Guardar</Button>
                   <Button variant="secondary">Exportar</Button>
                   <Button variant="secondary">Filtrar</Button>
                   <Button variant="ghost">Cancelar</Button>
@@ -422,4 +446,4 @@ function Muestra() {
 
 // `oklchOfHex` y `cssOfOklch` se reexportan para los tests del sitio, que verifican que el CSS
 // que se copia es el que el paquete entiende.
-export { cssDe, cssOfOklch, oklchOfHex }
+export { cssDe, cssOfOklch, globalsDe, layoutDe, oklchOfHex }

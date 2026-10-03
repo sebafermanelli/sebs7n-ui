@@ -9,11 +9,5 @@ export const STATUS_BADGE: Record<InvoiceStatus, { label: string; color: BadgePr
   void: { label: "Anulada", color: "gray" },
 }
 
-// `items` del Select: es lo que hace que el trigger muestre «Todas las facturas» y no `all`.
-export const STATUS_ITEMS: Record<InvoiceStatus | "all", string> = {
-  all: "Todas las facturas",
-  paid: "Cobradas",
-  pending: "Pendientes",
-  overdue: "Vencidas",
-  void: "Anuladas",
-}
+// Las opciones del filtro de estados (`MultiSelect`): sin «todas», porque vacío ya es todas.
+export const STATUS_OPTIONS = (Object.keys(STATUS_BADGE) as InvoiceStatus[]).map((value) => ({ value, label: STATUS_BADGE[value].label }))

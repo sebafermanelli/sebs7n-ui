@@ -21,7 +21,7 @@ describe("Playground: pantallas", () => {
   const pantallas: [string, ComponentType, string][] = [
     ["home", HomeShowcase, "Facturas"],
     ["files", FilesShowcase, "Factura 0013.pdf"],
-    ["settings", SettingsShowcase, "Ajustes"],
+    ["settings", SettingsShowcase, "Guardar cambios"],
     ["mail", MailShowcase, "Comprobante de pago"],
   ]
 
@@ -32,7 +32,7 @@ describe("Playground: pantallas", () => {
 
   it("Inicio arranca fuera de edición, con «Editar» en la barra", () => {
     const html = renderToString(createElement(HomeShowcase))
-    expect(html).toMatch(/<button[^>]*data-slot="button"[^>]*>(?:<[^>]+>)*Editar</)
+    expect(html).toMatch(/<button[^>]*data-slot="widget-board-edit"[^>]*>(?:<[^>]+>)*Editar</)
     expect(html).not.toContain("animate-jiggle")
   })
 

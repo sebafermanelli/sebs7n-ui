@@ -82,7 +82,9 @@ type DataTablePropsBase<T> = Omit<TableProps, "children"> & {
   loading?: boolean
   /** Cuántas filas de esqueleto. Por defecto, `pageSize` o 5. */
   loadingRows?: number
-  /** Lo que va a la derecha de la búsqueda: filtros, «Nueva factura». */
+  /** Lo que va pegado a la derecha de la búsqueda, en la misma fila mientras entre: los selectores de filtro. */
+  filters?: React.ReactNode
+  /** Lo que va al final de la barra, contra el borde derecho: «Columnas», «Exportar», «Nueva factura». */
   toolbar?: React.ReactNode
   /** El locale del orden alfabético y de las fechas sin `cell`. Por defecto, el del navegador. */
   locale?: string
@@ -146,6 +148,7 @@ function DataTable<T>({
   empty,
   loading = false,
   loadingRows,
+  filters,
   toolbar,
   locale,
   labels: labelsProp,
@@ -312,7 +315,7 @@ function DataTable<T>({
 
   return (
     <div data-slot="data-table" className="flex w-full flex-col gap-2">
-      {(filter || toolbar) && (
+      {(filter || filters || toolbar) && (
         <div data-slot="data-table-toolbar" className="flex flex-wrap items-center gap-2">
           {filter && (
             <div className="relative w-full max-w-xs">
@@ -320,6 +323,7 @@ function DataTable<T>({
               <Input
                 aria-label={labels.search}
                 className="ps-8"
+                size="sm"
                 onChange={(event) => {
                   setQuery(event.target.value)
                   resetPage()
@@ -330,6 +334,7 @@ function DataTable<T>({
               />
             </div>
           )}
+          {filters && <div data-slot="data-table-filters" className="flex flex-wrap items-center gap-2">{filters}</div>}
           {toolbar && <div className="ms-auto flex items-center gap-2">{toolbar}</div>}
         </div>
       )}

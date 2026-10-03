@@ -17,7 +17,7 @@ export function TemplateCard({ title, description, category, href, features }: T
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center gap-2">
+        <div className="mb-1.5 flex items-center gap-2">
           <Badge size="sm">{category}</Badge>
           {href ? (
             <Badge color="green" size="sm">

@@ -21,7 +21,7 @@ type PageHeaderProps = Omit<React.ComponentProps<"header">, "children"> & {
 }
 
 // Sin márgenes propios: el espaciado lo pone el layout con gap.
-// Grilla de 2 columnas desde sm: título y descripción apilados en la columna 1 (también sin acciones),
+// Grilla de 2 columnas desde 32 rem de ancho del header (`@lg`, container query; el header es `@container`): título y descripción apilados en la columna 1 (también sin acciones),
 // acciones en la columna 2 de la primera fila;
 // cualquier otro hijo (filtros, tabs) ocupa una fila entera debajo. En mobile todo se apila.
 //
@@ -30,11 +30,11 @@ type PageHeaderProps = Omit<React.ComponentProps<"header">, "children"> & {
 // Component puede renderizar uno de cliente; lo que no puede es llamar un hook.
 function PageHeader({ className, breadcrumb, breadcrumbLabel, children, ...props }: PageHeaderProps) {
   return (
-    <header data-slot="page-header" className={cn("flex min-w-0 flex-col gap-2", className)} {...props}>
+    <header data-slot="page-header" className={cn("@container flex w-full min-w-0 flex-col gap-2", className)} {...props}>
       {breadcrumb && <PageHeaderBreadcrumb label={breadcrumbLabel}>{breadcrumb}</PageHeaderBreadcrumb>}
       <div
         data-slot="page-header-body"
-        className="grid min-w-0 grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-[minmax(0,1fr)_auto] [&>:not([data-slot^=page-header-])]:col-span-full"
+        className="grid min-w-0 grid-cols-1 gap-x-4 gap-y-2 @lg:grid-cols-[minmax(0,1fr)_auto] [&>:not([data-slot^=page-header-])]:col-span-full"
       >
         {children}
       </div>
@@ -46,7 +46,7 @@ function PageHeaderTitle({ className, ...props }: React.ComponentProps<"h1">) {
   return (
     <h1
       data-slot="page-header-title"
-      className={cn("min-w-0 text-large-title text-balance sm:col-start-1 break-words text-label", className)}
+      className={cn("min-w-0 text-large-title text-balance @lg:col-start-1 break-words text-label", className)}
       {...props}
     />
   )
@@ -57,7 +57,7 @@ function PageHeaderDescription({ className, ...props }: React.ComponentProps<"p"
   return (
     <p
       data-slot="page-header-description"
-      className={cn("min-w-0 max-w-[650px] text-body text-pretty text-label-secondary sm:col-start-1", className)}
+      className={cn("min-w-0 max-w-[650px] text-body text-pretty text-label-secondary @lg:col-start-1", className)}
       {...props}
     />
   )
@@ -67,7 +67,7 @@ function PageHeaderActions({ className, ...props }: React.ComponentProps<"div">)
   return (
     <div
       data-slot="page-header-actions"
-      className={cn("flex flex-wrap items-center gap-2 sm:col-start-2 sm:row-start-1 sm:self-center sm:justify-end", className)}
+      className={cn("flex flex-wrap items-center gap-2 @lg:col-start-2 @lg:row-start-1 @lg:self-center @lg:justify-end", className)}
       {...props}
     />
   )

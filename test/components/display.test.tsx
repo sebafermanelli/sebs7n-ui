@@ -12,12 +12,13 @@ import { cardVariants } from "../../src/variants/card"
 
 describe("Toggle (chip)", () => {
   // R4: el token de iCloud (los filtros de la búsqueda, el botón de formato de Notes): gris sin
-  // borde en reposo, el acento sólido prendido. Es el mismo objeto que `commandFilterClassName`.
-  it("gris en reposo; prendido, el acento sólido con su color de contraste; sin borde", async () => {
+  // borde en reposo; prendido, selección neutra (`fill-3`): el acento es del foco y de la acción primaria.
+  it("gris en reposo; prendido, gris más fuerte y semibold (nunca el acento); sin borde", async () => {
     render(<Toggle>Activos</Toggle>)
     const chip = screen.getByRole("button", { name: "Activos" })
     expect(chip).toHaveClass("h-9", "rounded-control", "bg-fill-1", "text-label", "hover:bg-fill-2")
-    expect(chip).toHaveClass("data-pressed:bg-brand-700", "data-pressed:text-brand-contrast", "data-pressed:focus-visible:focus-ring-inverse")
+    expect(chip).toHaveClass("data-pressed:bg-fill-3", "data-pressed:font-semibold")
+    expect(chip.className).not.toMatch(/brand/)
     expect(chip.className).not.toMatch(/(^|\s)border-(label|separator|gray)/)
     expect(chip).toHaveClass("data-disabled:opacity-40")
     await userEvent.click(chip)
@@ -42,7 +43,7 @@ describe("Toggle (chip)", () => {
   // hay pastilla que se deslice). Revisión de R4 (I4): el prendido era la pastilla blanca sobre la
   // pista gris (1,16:1 en claro); ahora es el acento sólido, como un toggle de ícono de iCloud, que
   // llega a 3:1 contra la pista (lo mide contrast.test.ts). En oscuro, el paso 900 de la marca.
-  it("ToggleGroup es el segmentado: pista fill-2 y el prendido en el acento sólido", () => {
+  it("ToggleGroup es el segmentado: pista fill-2 y el prendido en la pastilla neutra", () => {
     render(
       <ToggleGroup aria-label="Estilo" defaultValue={["a"]}>
         <ToggleGroupItem value="a">A</ToggleGroupItem>
@@ -52,10 +53,9 @@ describe("Toggle (chip)", () => {
     expect(screen.getByRole("group", { name: "Estilo" })).toHaveClass("rounded-control", "bg-fill-2", "p-0.5", "w-fit")
     const b = screen.getByRole("button", { name: "B" })
     expect(b).toHaveClass("h-6", "text-callout", "text-label", "data-pressed:font-semibold")
-    expect(b).toHaveClass("data-pressed:bg-brand-700", "data-pressed:text-brand-contrast", "dark:data-pressed:bg-brand-900", "dark:data-pressed:text-background")
-    expect(b.className).not.toMatch(/data-pressed:(bg-segment|shadow-segment)/)
-    // El anillo de foco sobre el acento va en el color del texto, que ya llega a 4,5:1 sobre él.
-    expect(b).toHaveClass("data-pressed:focus-visible:focus-ring-inverse", "[--sf-focus-inverse:currentColor]")
+    // Selección neutra: la pastilla del segmentado, sin acento; el foco sigue siendo el anillo normal.
+    expect(b).toHaveClass("data-pressed:bg-segment", "data-pressed:shadow-segment")
+    expect(b.className).not.toMatch(/brand/)
     expect(b).toHaveClass("after:w-px", "after:bg-fill-3", "first:after:hidden", "data-pressed:after:hidden", "[[data-pressed]+&]:after:hidden")
   })
 

@@ -1,7 +1,6 @@
 "use client"
 
 import {
-  BellIcon,
   CalendarIcon,
   EllipsisIcon,
   FileSpreadsheetIcon,
@@ -9,23 +8,26 @@ import {
   FolderIcon,
   ImageIcon,
   PlusIcon,
-  SearchIcon,
   SquarePenIcon,
   TrendingUpIcon,
   UserPlusIcon,
   UsersIcon,
   type LucideIcon,
 } from "lucide-react"
-import { useState, type ReactNode } from "react"
-import { Avatar, AvatarFallback } from "sebs7n-ui/avatar"
+import type { ReactNode } from "react"
+import { AppShellContent } from "sebs7n-ui/app-shell-content"
 import { Badge } from "sebs7n-ui/badge"
 import { Button } from "sebs7n-ui/button"
 import { CardRow } from "sebs7n-ui/card"
+import { useWidgetLayout, type WidgetDef } from "sebs7n-ui/lib/widget-layout"
 import { Meter } from "sebs7n-ui/meter"
-import { Navbar, NavbarContent } from "sebs7n-ui/navbar"
-import { SortableAddButton, SortableGrid } from "sebs7n-ui/sortable-grid"
+import { MetricChart } from "sebs7n-ui/metric-chart"
+import { PageHeader, PageHeaderActions, PageHeaderDescription, PageHeaderTitle } from "sebs7n-ui/page-header"
+import { Sparkline } from "sebs7n-ui/sparkline"
 import { Stat } from "sebs7n-ui/stat"
+import { StatGrid } from "sebs7n-ui/stat-grid"
 import { Tooltip, TooltipContent, TooltipTrigger } from "sebs7n-ui/tooltip"
+import { WidgetBoard, WidgetBoardEditButton } from "sebs7n-ui/widget-board"
 import { WidgetCard } from "sebs7n-ui/widget-card"
 
 import { AppIcon, type Fill } from "./parts"
@@ -33,25 +35,48 @@ import { AppIcon, type Fill } from "./parts"
 const FACTURAS = [
   { id: "0012", cliente: "Acme S.A.", fecha: "30/09" },
   { id: "0013", cliente: "Nube Digital", fecha: "28/09" },
-  { id: "0014", cliente: "Estudio Ruiz", fecha: "21/09" },
+  { id: "0014", cliente: "Estudio Ruiz", fecha: "21/09" }
 ]
 
 const CLIENTES = [
   { nombre: "Taller Sur", detalle: "Alta hoy · Responsable inscripto", saldo: "$ 0" },
   { nombre: "Nube Digital", detalle: "2 facturas abiertas", saldo: "$ 96.000" },
-  { nombre: "Acme S.A.", detalle: "Al día", saldo: "$ 128.400" },
+  { nombre: "Acme S.A.", detalle: "Al día", saldo: "$ 128.400" }
 ]
 
 const VENCIMIENTOS = [
   { dia: "Hoy", titulo: "Factura 0014 · Estudio Ruiz", detalle: "$ 41.200" },
   { dia: "Jue 2", titulo: "Pago a proveedores", detalle: "3 órdenes de pago" },
-  { dia: "Lun 6", titulo: "Cierre del mes", detalle: "Conciliar cobranzas" },
+  { dia: "Lun 6", titulo: "Cierre del mes", detalle: "Conciliar cobranzas" }
 ]
 
 const RECIENTES: { nombre: string; detalle: string; icono: LucideIcon; fill: Fill }[] = [
   { nombre: "Factura 0013.pdf", detalle: "Hoy 10:24 · 96 KB", icono: FileTextIcon, fill: "red" },
   { nombre: "Cobranzas septiembre.xlsx", detalle: "Ayer · 44 KB", icono: FileSpreadsheetIcon, fill: "green" },
-  { nombre: "Logo para facturas.png", detalle: "26/09 · 120 KB", icono: ImageIcon, fill: "blue" },
+  { nombre: "Logo para facturas.png", detalle: "26/09 · 120 KB", icono: ImageIcon, fill: "blue" }
+]
+
+/** Facturado y cobrado de los últimos seis meses: la serie del gráfico de la primera métrica y de los sparklines. */
+const SERIE = [
+  { label: "Abr", value: 3.1 },
+  { label: "May", value: 3.6 },
+  { label: "Jun", value: 3.4 },
+  { label: "Jul", value: 4.1 },
+  { label: "Ago", value: 4.3 },
+  { label: "Sep", value: 4.8 }
+]
+
+const METRICAS = [
+  {
+    label: "Facturado",
+    value: "$ 4,8 M",
+    delta: "+12,4 %",
+    trend: "up" as const,
+    hint: "vs. agosto",
+    chart: <MetricChart aria-label="Facturado en los últimos seis meses, en millones de pesos" data={SERIE} format={{ maximumFractionDigits: 1 }} height={120} name="Facturado" />
+  },
+  { label: "Cobrado", value: "91,6 %", delta: "+3,1 pts", trend: "up" as const, hint: "Meta 95 %", chart: <Sparkline values={[8, 20, 31, 52, 70, 91.6]} /> },
+  { label: "Vencidas", value: "1", delta: "+1", trend: "down" as const, hint: "facturas", chart: <Sparkline className="text-red-900" values={[0, 0, 1, 0, 0, 1]} /> }
 ]
 
 function Accion({ label, icon: Glyph }: { label: string; icon: LucideIcon }) {
@@ -73,20 +98,25 @@ function Mas({ label }: { label: string }) {
   )
 }
 
+const Fila = ({ children }: { children: ReactNode }) => <CardRow>{children}</CardRow>
+
 /**
- * Los widgets, en el orden de arriba. En modo edición («Editar», o mantener apretado uno) tiemblan,
- * se reordenan arrastrando (`SortableGrid`, la tarjeta entera) o con el teclado, se sacan con su «−»
- * y vuelven con el «+» de la barra, al lado de «Listo». El estado vive en la pantalla y se pierde al cambiar de pantalla.
+ * Los widgets del Inicio: el catálogo del `WidgetBoard`. Cada uno es un `WidgetDef` (id estable, título,
+ * tamaño, ícono y vista previa para el «+»). El orden y los visibles los guarda `useWidgetLayout` en este
+ * navegador; el arrastre, el «−» y el catálogo se piden recién al apretar «Editar».
  */
-const WIDGETS: { id: string; title: string; icon: ReactNode; wide?: boolean; card: ReactNode }[] = [
+const WIDGETS: WidgetDef[] = [
   {
     id: "invoices",
-    icon: <AppIcon fill="brand" icon={FileTextIcon} size="sm" />,
+    size: "md",
     title: "Facturas",
-    card: (
+    description: "Las últimas facturas emitidas.",
+    icon: <FileTextIcon />,
+    preview: <Sparkline values={[3, 5, 4, 6, 5, 8]} />,
+    render: () => (
       <WidgetCard
-        className="h-full"
         action={<Accion icon={SquarePenIcon} label="Nueva factura" />}
+        className="h-full"
         icon={<AppIcon fill="brand" icon={FileTextIcon} />}
         more={<Mas label="Ver todas las facturas" />}
         subtitle="Septiembre · 3 por cobrar"
@@ -96,16 +126,19 @@ const WIDGETS: { id: string; title: string; icon: ReactNode; wide?: boolean; car
           <CardRow description={`Factura ${factura.id}`} key={factura.id} title={factura.cliente} trailing={factura.fecha} />
         ))}
       </WidgetCard>
-    ),
+    )
   },
   {
     id: "clients",
-    icon: <AppIcon fill="green" icon={UsersIcon} size="sm" />,
+    size: "md",
     title: "Clientes",
-    card: (
+    description: "Altas y saldos de los clientes.",
+    icon: <UsersIcon />,
+    preview: <span className="truncate text-footnote text-label">23 activos</span>,
+    render: () => (
       <WidgetCard
-        className="h-full"
         action={<Accion icon={UserPlusIcon} label="Nuevo cliente" />}
+        className="h-full"
         icon={<AppIcon fill="green" icon={UsersIcon} />}
         more={<Mas label="Ver todos los clientes" />}
         subtitle="23 activos"
@@ -115,23 +148,26 @@ const WIDGETS: { id: string; title: string; icon: ReactNode; wide?: boolean; car
           <CardRow description={cliente.detalle} key={cliente.nombre} title={cliente.nombre} trailing={cliente.saldo} />
         ))}
       </WidgetCard>
-    ),
+    )
   },
   {
     id: "calendar",
-    icon: <AppIcon fill="red" icon={CalendarIcon} size="sm" />,
+    size: "md",
     title: "Calendario",
-    card: (
+    description: "Los próximos vencimientos.",
+    icon: <CalendarIcon />,
+    preview: <span className="truncate text-footnote text-label">Hoy · Factura 0014</span>,
+    render: () => (
       <WidgetCard
-        className="h-full"
         action={<Accion icon={PlusIcon} label="Nuevo recordatorio" />}
+        className="h-full"
         icon={<AppIcon fill="red" icon={CalendarIcon} />}
         more={<Mas label="Abrir el calendario" />}
         subtitle="Próximos vencimientos"
         title="Calendario"
       >
         {VENCIMIENTOS.map((vencimiento) => (
-          <CardRow key={vencimiento.titulo}>
+          <Fila key={vencimiento.titulo}>
             <div className="flex min-w-0 items-center gap-3">
               <span className="w-12 shrink-0 text-footnote font-semibold text-red-ink">{vencimiento.dia}</span>
               <span className="flex min-w-0 flex-col gap-0.5">
@@ -139,16 +175,19 @@ const WIDGETS: { id: string; title: string; icon: ReactNode; wide?: boolean; car
                 <span className="truncate text-footnote text-label-secondary">{vencimiento.detalle}</span>
               </span>
             </div>
-          </CardRow>
+          </Fila>
         ))}
       </WidgetCard>
-    ),
+    )
   },
   {
     id: "files",
-    icon: <AppIcon fill="blue" icon={FolderIcon} size="sm" />,
+    size: "md",
     title: "Archivos",
-    card: (
+    description: "Lo último que se subió.",
+    icon: <FolderIcon />,
+    preview: <span className="truncate text-footnote text-label">Factura 0013.pdf</span>,
+    render: () => (
       <WidgetCard
         className="h-full"
         icon={<AppIcon fill="blue" icon={FolderIcon} />}
@@ -157,7 +196,7 @@ const WIDGETS: { id: string; title: string; icon: ReactNode; wide?: boolean; car
         title="Archivos"
       >
         {RECIENTES.map((archivo) => (
-          <CardRow key={archivo.nombre}>
+          <Fila key={archivo.nombre}>
             <div className="flex min-w-0 items-center gap-3">
               <AppIcon fill={archivo.fill} icon={archivo.icono} size="sm" />
               <span className="flex min-w-0 flex-col gap-0.5">
@@ -165,17 +204,19 @@ const WIDGETS: { id: string; title: string; icon: ReactNode; wide?: boolean; car
                 <span className="truncate text-footnote text-label-secondary">{archivo.detalle}</span>
               </span>
             </div>
-          </CardRow>
+          </Fila>
         ))}
       </WidgetCard>
-    ),
+    )
   },
   {
     id: "collections",
-    icon: <AppIcon fill="purple" icon={TrendingUpIcon} size="sm" />,
     title: "Cobranza",
-    wide: true,
-    card: (
+    size: "lg",
+    description: "Lo cobrado contra la meta del mes.",
+    icon: <TrendingUpIcon />,
+    preview: <Meter aria-label="Cobrado" max={1} size="sm" value={0.916} />,
+    render: () => (
       <WidgetCard
         className="h-full"
         icon={<AppIcon fill="purple" icon={TrendingUpIcon} />}
@@ -202,73 +243,32 @@ const WIDGETS: { id: string; title: string; icon: ReactNode; wide?: boolean; car
           </div>
         </div>
       </WidgetCard>
-    ),
-  },
+    )
+  }
 ]
 
-/** La home de iCloud: el wallpaper, la barra translúcida y la grilla de widgets, que se reordena. */
+/**
+ * El Inicio de una app: métricas (`StatGrid` con `MetricChart` y `Sparkline`) y un panel de widgets que se
+ * edita (`WidgetBoard`). «Editar» es secundario y «Nueva factura» el único botón primario. Todo mide el ancho
+ * del contenido (container queries), así que con el panel del asistente abierto se acomoda solo.
+ */
 export function HomeShowcase() {
-  const [widgets, setWidgets] = useState(WIDGETS)
-  const [editing, setEditing] = useState(false)
-  const removed = WIDGETS.filter((widget) => !widgets.includes(widget))
+  const layout = useWidgetLayout({ storageKey: "sebs7n-docs:showcase:home", widgets: WIDGETS })
   return (
-    // El wallpaper (`bg-ambient`) es fijo a la ventana: lo mantiene adentro el `[contain:paint]` del marco.
-    <div className="@container h-full overflow-y-auto bg-ambient" data-ambient="">
-      <Navbar>
-        <NavbarContent>
-          <span className="flex items-center gap-2 text-headline text-label">
-            <AppIcon fill="brand" icon={FileTextIcon} size="sm" />
-            Facturación
-          </span>
-          <div className="flex items-center gap-1">
-            {/* En edición, el «+» con los widgets que se sacaron, al lado de «Listo». */}
-            {editing && (
-              <SortableAddButton
-                items={removed.map((widget) => ({ id: widget.id, label: widget.title, icon: widget.icon }))}
-                onSelect={(id) => setWidgets((all) => [...all, ...WIDGETS.filter((widget) => widget.id === id)])}
-                size="icon-sm"
-              />
-            )}
-            {/* En edición, «Listo» es el único acento de la pantalla. */}
-            <Button className="me-1" onClick={() => setEditing(!editing)} size="sm" variant={editing ? "default" : "secondary"}>
-              {editing ? "Listo" : "Editar"}
-            </Button>
-            <Accion icon={SearchIcon} label="Buscar" />
-            <Accion icon={BellIcon} label="Avisos" />
-            {/* En edición no: el único «+» es el de agregar widgets. */}
-            {!editing && <Accion icon={PlusIcon} label="Crear" />}
-            <Avatar className="ms-1" size="sm">
-              <AvatarFallback>AP</AvatarFallback>
-            </Avatar>
-          </div>
-        </NavbarContent>
-      </Navbar>
-
-      <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-8 @3xl:px-8">
-        <header className="flex items-center gap-4">
-          <Avatar size="xl">
-            <AvatarFallback>AP</AvatarFallback>
-          </Avatar>
-          <div className="flex min-w-0 flex-col gap-1">
-            <h3 className="text-large-title text-label">Buenas tardes</h3>
-            <p className="text-body text-label-secondary">Septiembre · 3 facturas por cobrar y 2 vencimientos esta semana.</p>
-          </div>
-        </header>
-
-        <SortableGrid
-          aria-label="Widgets"
-          className="@2xl:grid-cols-2 @5xl:grid-cols-3"
-          getKey={(widget) => widget.id}
-          getLabel={(widget) => widget.title}
-          itemClassName={(widget) => (widget.wide ? "@2xl:col-span-2" : undefined)}
-          editing={editing}
-          items={widgets}
-          onEditingChange={setEditing}
-          onRemove={(id) => setWidgets((all) => all.filter((widget) => widget.id !== id))}
-          onReorder={setWidgets}
-          renderItem={(widget) => widget.card}
-        />
-      </div>
-    </div>
+    <AppShellContent>
+      <PageHeader>
+        <PageHeaderTitle>Inicio</PageHeaderTitle>
+        <PageHeaderDescription>Septiembre · 3 facturas por cobrar y 2 vencimientos esta semana.</PageHeaderDescription>
+        <PageHeaderActions>
+          <WidgetBoardEditButton layout={layout} />
+          <Button>
+            <PlusIcon />
+            Nueva factura
+          </Button>
+        </PageHeaderActions>
+      </PageHeader>
+      <StatGrid items={METRICAS} />
+      <WidgetBoard layout={layout} />
+    </AppShellContent>
   )
 }

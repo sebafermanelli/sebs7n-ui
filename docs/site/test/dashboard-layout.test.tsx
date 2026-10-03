@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from "vitest"
 import DashboardLayout from "../app/templates/dashboard/layout"
 
 const nav = vi.hoisted(() => ({ pathname: "/templates/dashboard/invoices" }))
-vi.mock("next/navigation", () => ({ usePathname: () => nav.pathname }))
+vi.mock("next/navigation", () => ({ usePathname: () => nav.pathname, useRouter: () => ({ push: () => {} }) }))
 
 const render = () => renderToString(createElement(DashboardLayout, null, createElement("p", null, "contenido")))
 
@@ -22,6 +22,14 @@ describe("layout del dashboard", () => {
       expect(html).toContain(`href="${href}"`)
     }
     expect(html).toMatch(/aria-current="page"[^>]*href="\/templates\/dashboard\/invoices"|href="\/templates\/dashboard\/invoices"[^>]*aria-current="page"/)
+  })
+
+  it("el sidebar trae el buscador con su atajo ⌘K", () => {
+    expect(render()).toMatch(/data-slot="sidebar-search"[^>]*aria-keyshortcuts="Meta\+K"|aria-keyshortcuts="Meta\+K"[^>]*data-slot="sidebar-search"/)
+  })
+
+  it("la barra trae la campana de avisos", () => {
+    expect(render()).toMatch(/aria-label="Avisos, \d+ sin leer"/)
   })
 
   it("trae la vuelta a la galería para el teléfono", () => {

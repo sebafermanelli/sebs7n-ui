@@ -4,7 +4,7 @@ import { renderToString } from "react-dom/server"
 import { describe, expect, it } from "vitest"
 
 import { Pricing } from "../app/templates/landing/_components/pricing"
-import { annualMonthly, FAQ, PLANS } from "../app/templates/landing/_data/content"
+import { annualMonthly, FAQ, NAV, PLANS, STATS, TESTIMONIALS } from "../app/templates/landing/_data/content"
 import LandingPage from "../app/templates/landing/page"
 
 describe("precios", () => {
@@ -30,7 +30,7 @@ describe("página", () => {
 
   it("tiene un h1 y las secciones con sus anclas", () => {
     expect(html.match(/<h1/g)).toHaveLength(1)
-    for (const id of ["beneficios", "precios", "preguntas", "registro"]) expect(html).toContain(`id="${id}"`)
+    for (const id of ["beneficios", "producto", "cifras", "precios", "opiniones", "preguntas", "registro", "clientes"]) expect(html).toContain(`id="${id}"`)
   })
 
   it("los links internos apuntan a anclas que existen", () => {
@@ -42,6 +42,40 @@ describe("página", () => {
   it("trae los planes y las preguntas", () => {
     for (const plan of PLANS) expect(html).toContain(plan.name)
     for (const item of FAQ) expect(html).toContain(item.question)
+  })
+})
+
+describe("secciones nuevas", () => {
+  const html = renderToString(createElement(LandingPage))
+
+  it("las cifras salen de StatGrid y la vista del producto con componentes del paquete", () => {
+    for (const stat of STATS) expect(html).toContain(stat.label)
+    expect(html).toContain("Así se ve el tablero")
+    expect(html).toContain('data-slot="sparkline"')
+  })
+
+  it("el menú diferido deja links comunes hasta que llega, y el teléfono tiene su botón", () => {
+    for (const entry of NAV) expect(html).toContain(`href="${entry.href}"`)
+    expect(html).toContain('aria-label="Abrir el menú"')
+  })
+
+  it("el plan Empresa va a ventas (diálogo diferido) y los demás al registro", () => {
+    expect(PLANS.filter((plan) => plan.contact)).toHaveLength(1)
+    expect(html).toContain("Hablar con ventas")
+    expect(html).toContain('aria-haspopup="dialog"')
+  })
+
+  it("los testimonios traen valoración y todos citan algo", () => {
+    for (const item of TESTIMONIALS) {
+      expect(item.rating).toBeGreaterThanOrEqual(1)
+      expect(item.rating).toBeLessThanOrEqual(5)
+      expect(item.quote.length).toBeGreaterThan(0)
+    }
+    expect(html).toContain(TESTIMONIALS[0]!.quote)
+  })
+
+  it("en el teléfono los clientes son una lista, no una franja cortada", () => {
+    expect(html).toContain('aria-label="Clientes"')
   })
 })
 

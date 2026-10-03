@@ -7,7 +7,6 @@ import { defined } from "../internal/defined.js"
 import { useLabels, type Labels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
 import { Button } from "./button.js"
-import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip.js"
 
 /**
  * Copia un texto al portapapeles: el CUIT de un cliente, el número de una factura, el link de
@@ -38,23 +37,77 @@ type CopyButtonProps = Omit<React.ComponentProps<"button">, "value" | "children"
 
 const ICON_SIZE = { sm: "icon-sm", md: "icon-md", lg: "icon-lg" } as const
 
+// El tooltip (Base UI Tooltip + Floating UI, ~35 KB gzip) se pide recién cuando alguien apunta, enfoca o
+// copia: un botón de copiar en cada bloque de código no puede costarle eso a cada página al abrir.
+const CopyTip = React.lazy(() => import("../internal/copy-tip.js"))
+
+/** Lo que tarda en abrirse el tooltip al apuntar: el `delay` por defecto de `TooltipProvider`. */
+const TIP_DELAY_MS = 300
+
 /** Cuánto dura el ✓: lo que tarda en leerse y no tanto como para confundir un segundo click. */
 const COPIED_MS = 1500
 
-function CopyButton({ value, children, size = "sm", variant = "button", onCopy, labels: labelsProp, disabled, className, ...props }: CopyButtonProps) {
+function CopyButton({ value, children, size = "sm", variant = "button", onCopy, labels: labelsProp, disabled, className, ref, ...props }: CopyButtonProps) {
   const labels = { ...useLabels().copyButton, ...defined(labelsProp) }
   // Lo que pasó con el último click, mientras dura: «Copiado» o «No se pudo copiar».
   const [result, setResult] = React.useState<"copied" | "failed" | null>(null)
   const copied = result === "copied"
   const [hover, setHover] = React.useState(false)
+  // El tooltip no existe hasta la primera interacción: ahí se pide su módulo.
+  const [armed, setArmed] = React.useState(false)
+  const [anchor, setAnchor] = React.useState<HTMLButtonElement | null>(null)
   const timer = React.useRef<ReturnType<typeof setTimeout>>(undefined)
-  React.useEffect(() => () => clearTimeout(timer.current), [])
+  const hoverTimer = React.useRef<ReturnType<typeof setTimeout>>(undefined)
+  React.useEffect(
+    () => () => {
+      clearTimeout(timer.current)
+      clearTimeout(hoverTimer.current)
+    },
+    []
+  )
+  const setRef = (node: HTMLButtonElement | null) => {
+    setAnchor(node)
+    if (typeof ref === "function") ref(node)
+    else if (ref) ref.current = node
+  }
+  const show = (delay: number) => {
+    setArmed(true)
+    clearTimeout(hoverTimer.current)
+    hoverTimer.current = setTimeout(() => setHover(true), delay)
+  }
+  const hide = () => {
+    clearTimeout(hoverTimer.current)
+    setHover(false)
+  }
+  const tip = {
+    onPointerEnter: (event: React.PointerEvent<HTMLButtonElement>) => {
+      props.onPointerEnter?.(event)
+      show(TIP_DELAY_MS)
+    },
+    onPointerLeave: (event: React.PointerEvent<HTMLButtonElement>) => {
+      props.onPointerLeave?.(event)
+      hide()
+    },
+    onFocus: (event: React.FocusEvent<HTMLButtonElement>) => {
+      props.onFocus?.(event)
+      if (event.currentTarget.matches(":focus-visible")) show(0)
+    },
+    onBlur: (event: React.FocusEvent<HTMLButtonElement>) => {
+      props.onBlur?.(event)
+      hide()
+    },
+    onKeyDown: (event: React.KeyboardEvent<HTMLButtonElement>) => {
+      props.onKeyDown?.(event)
+      if (event.key === "Escape") hide()
+    }
+  }
 
   const copy = async (event: React.MouseEvent) => {
     // Adentro de una fila clickeable o de un link, copiar no abre la fila.
     event.preventDefault()
     event.stopPropagation()
     if (!value) return
+    setArmed(true)
     let ok = true
     try {
       await navigator.clipboard.writeText(value)
@@ -76,22 +129,25 @@ function CopyButton({ value, children, size = "sm", variant = "button", onCopy, 
       // Sin `aria-label`, «Copiar F-0012»: el valor solo dice el dato, no qué hace el botón. Empieza
       // con el verbo y sigue con el texto visible (2.5.3). El de la app, si lo hay, le gana.
       aria-label={`${labels.copy} ${value}`}
+      data-slot="copy-button"
       data-variant="inline"
       type="button"
       disabled={disabled || !value}
       onClick={copy}
+      ref={setRef}
       className={cn(
         "inline-flex min-h-6 max-w-full cursor-pointer items-center gap-1 rounded-tag px-0.5 font-mono text-footnote text-label-secondary outline-none transition-control touch-target-y",
         "hover:text-label focus-visible:focus-ring disabled:cursor-not-allowed disabled:text-label-tertiary [&_svg]:size-3.5 [&_svg]:shrink-0",
         className
       )}
       {...props}
+      {...tip}
     >
       <span className="truncate">{children ?? value}</span>
       {icon}
     </button>
   ) : children ? (
-    <Button size={size} type="button" variant="plain" disabled={disabled || !value} onClick={copy} className={className} {...props}>
+    <Button size={size} type="button" variant="plain" disabled={disabled || !value} onClick={copy} ref={setRef} className={className} {...props} {...tip}>
       {children}
       {icon}
     </Button>
@@ -103,8 +159,10 @@ function CopyButton({ value, children, size = "sm", variant = "button", onCopy, 
       variant="plain"
       disabled={disabled || !value}
       onClick={copy}
+      ref={setRef}
       className={className}
       {...props}
+      {...tip}
     >
       {icon}
     </Button>
@@ -112,12 +170,15 @@ function CopyButton({ value, children, size = "sm", variant = "button", onCopy, 
 
   return (
     <>
+      {button}
       {/* Con texto a la vista el tooltip de «Copiar» repite lo que ya se lee: solo aparece el «Copiado». */}
-      <Tooltip open={(hover && !children && !inline) || result !== null} onOpenChange={setHover}>
-        {/* `data-slot` del botón: el del trigger lo pisaría, y el botón sigue siendo un botón del sistema. */}
-        <TooltipTrigger closeOnClick={false} data-slot={inline ? "copy-button" : "button"} render={button} />
-        <TooltipContent>{result ? labels[result] : labels.copy}</TooltipContent>
-      </Tooltip>
+      {armed ? (
+        <React.Suspense fallback={null}>
+          <CopyTip anchor={anchor} open={(hover && !children && !inline) || result !== null}>
+            {result ? labels[result] : labels.copy}
+          </CopyTip>
+        </React.Suspense>
+      ) : null}
       <span className="sr-only" data-slot="copy-button-status" role="status">
         {result ? labels[result] : ""}
       </span>

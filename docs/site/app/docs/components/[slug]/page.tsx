@@ -3,6 +3,10 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 import { Fragment, ViewTransition } from "react"
 import { Badge } from "sebs7n-ui/badge"
+import { Kbd } from "sebs7n-ui/kbd"
+import { PageHeader, PageHeaderActions, PageHeaderDescription, PageHeaderTitle } from "sebs7n-ui/page-header"
+import { Separator } from "sebs7n-ui/separator"
+import { buttonVariants } from "sebs7n-ui/variants/button"
 
 import site from "@/.generated/site.json"
 import { CodeBlock } from "../../../_components/code-block"
@@ -27,7 +31,8 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
 function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
   return (
-    <section aria-labelledby={id} className="flex flex-col gap-4 border-t border-separator pt-8">
+    <section aria-labelledby={id} className="flex flex-col gap-4">
+      <Separator className="mb-4" />
       <h2 className="scroll-mt-24 text-title-2 text-label" id={id}>
         {title}
       </h2>
@@ -56,7 +61,7 @@ export default async function ComponentPage({ params }: Params) {
     <ViewTransition default="none" enter="page-in" exit="page-out">
       <div className="flex gap-10">
         <article className="flex min-w-0 flex-1 flex-col gap-10 pb-24">
-        <header className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3">
           <div className="flex items-center gap-2 text-footnote text-label-secondary">
             <span>{grupo?.title}</span>
             {!component.useClient && <Badge size="sm">Server Component</Badge>}
@@ -64,32 +69,32 @@ export default async function ComponentPage({ params }: Params) {
           {/* A 390 de ancho, «NavigationMenu» o «AppShellContent» en 48 no entran en una línea y la
               página scrolleaba de costado: se permite cortar entre las palabras del nombre
               (`<wbr>` antes de cada mayúscula) y, si ni así entra, donde sea. */}
-          <h1 className="text-large-title text-label wrap-break-word">
+          <PageHeader>
+          <PageHeaderTitle>
             {component.title.split(/(?=[A-Z])/).map((part, index) => (
               <Fragment key={index}>
                 {index > 0 && <wbr />}
                 {part}
               </Fragment>
             ))}
-          </h1>
-          <p className="text-body text-label-secondary">
+          </PageHeaderTitle>
+          <PageHeaderDescription>
             <Inline text={component.description} />
-          </p>
-          <div className="flex flex-wrap gap-2">
+          </PageHeaderDescription>
+          <PageHeaderActions>
             <MdLink href={`/docs/components/${component.slug}`} />
             <a
-              className="rounded-control border border-separator bg-surface px-3 py-1.5 text-callout font-medium text-label outline-none transition-control hover:bg-fill-2 focus-visible:focus-ring"
+              className={buttonVariants({ variant: "secondary", size: "sm" })}
               href={`https://github.com/sebafermanelli/sebs7n-ui/blob/main/src/components/${component.slug}.tsx`}
               rel="noreferrer"
               target="_blank"
             >
               Ver el código
             </a>
-          </div>
-          <div className="pt-2">
-            <CodeBlock code={component.importLine} label="Copiar el import" />
-          </div>
-        </header>
+          </PageHeaderActions>
+        </PageHeader>
+          <CodeBlock code={component.importLine} label="Copiar el import" />
+        </div>
 
         <Section id="ejemplos" title="Ejemplos">
           <div className="flex flex-col gap-10">
@@ -112,7 +117,9 @@ export default async function ComponentPage({ params }: Params) {
             <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-3">
               {component.keyboard.map(([tecla, que]) => (
                 <div className="contents" key={tecla + que}>
-                  <dt className="text-mono-body text-label">{tecla}</dt>
+                  <dt>
+                    <Kbd>{tecla}</Kbd>
+                  </dt>
                   <dd className="text-callout text-label-secondary">
                     <Inline text={que} />
                   </dd>
@@ -153,7 +160,7 @@ export default async function ComponentPage({ params }: Params) {
                 const destino = site.components.find((entry) => entry.slug === otro)
                 return (
                   <Link
-                    className="rounded-control border border-separator px-3 py-1.5 text-callout text-label outline-none transition-control hover:bg-gray-100 focus-visible:focus-ring"
+                    className={buttonVariants({ variant: "secondary", size: "sm" })}
                     href={`/docs/components/${otro}`}
                     key={otro}
                   >

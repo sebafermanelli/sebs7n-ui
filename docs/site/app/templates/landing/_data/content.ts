@@ -13,10 +13,35 @@ export const PRODUCT = {
 /** Adónde llevan las llamadas a la acción. En tu app, la ruta de registro. */
 export const CTA_HREF = "#registro"
 
-export const NAV_LINKS = [
-  { href: "#beneficios", label: "Beneficios" },
-  { href: "#precios", label: "Precios" },
-  { href: "#preguntas", label: "Preguntas" },
+export interface NavItem {
+  href: string
+  title: string
+  description: string
+}
+
+/**
+ * La navegación: «Producto» y «Ayuda» abren un panel con sus páginas; «Precios» es un link suelto
+ * (sin `items`). `href` de un grupo es adonde lleva su rótulo mientras llega el menú (y en el teléfono).
+ */
+export const NAV: { label: string; href: string; items?: NavItem[] }[] = [
+  {
+    label: "Producto",
+    href: "#beneficios",
+    items: [
+      { href: "#beneficios", title: "Beneficios", description: "Lo que hace falta para facturar y cobrar" },
+      { href: "#producto", title: "Vista del producto", description: "El tablero de cobranzas, por dentro" },
+      { href: "#cifras", title: "Cifras", description: "Cuánto se factura y cobra con Acme" },
+    ],
+  },
+  { label: "Precios", href: "#precios" },
+  {
+    label: "Ayuda",
+    href: "#preguntas",
+    items: [
+      { href: "#preguntas", title: "Preguntas frecuentes", description: "Prueba, baja, datos y cambio de plan" },
+      { href: "#opiniones", title: "Opiniones", description: "Lo que cuentan quienes ya lo usan" },
+    ],
+  },
 ]
 
 export const CLIENTS = ["Nube Digital", "Estudio Ruiz", "Óptica Sur", "Taller Norte", "Librería Central", "Acme S.A."]
@@ -40,6 +65,8 @@ export interface Plan {
   features: string[]
   /** El plan recomendado: lleva el botón primario. Uno solo. */
   featured?: boolean
+  /** Sin registro directo: el botón es «Hablar con ventas». */
+  contact?: boolean
 }
 
 export const PLANS: Plan[] = [
@@ -61,19 +88,48 @@ export const PLANS: Plan[] = [
     monthly: 79,
     description: "Para equipos de administración.",
     features: ["Todo lo de Profesional", "Usuarios ilimitados", "Permisos por rol", "Soporte prioritario"],
+    /** Se contrata hablando con ventas: su botón abre el formulario en vez de ir al registro. */
+    contact: true,
   },
 ]
 
 /** El precio por mes pagando el año: dos meses gratis, redondeado a entero. */
 export const annualMonthly = (monthly: number) => Math.round((monthly * 10) / 12)
 
+/** Lo que muestran los números de reseñas: el promedio (con decimales) y cuántas hay. */
+export const REVIEWS = { average: 4.8, count: 212 }
+
+/** Las cifras de la empresa, para `StatGrid`. Ya formateadas: el servidor no calcula nada. */
+export const STATS = [
+  { label: "Empresas que facturan", value: "12.400", hint: "en Argentina y Uruguay" },
+  { label: "Cobrado por mes", value: "US$ 38 M", delta: "+12 %", trend: "up", hint: "vs. el mes anterior" },
+  { label: "Cobradas en fecha", value: "93 %", delta: "+4 pts", trend: "up", hint: "vs. antes de usarlo" },
+  { label: "Tiempo para emitir", value: "48 s", hint: "de la factura al envío" },
+] as const
+
+/** El tablero de la vista del producto: datos de ejemplo, fijos. */
+export const DEMO = {
+  title: "Cobranzas de septiembre",
+  collected: "US$ 12.480",
+  delta: "+18 %",
+  hint: "vs. agosto",
+  /** Cobros por día de los últimos 14 días. */
+  series: [320, 410, 380, 520, 480, 610, 590, 700, 650, 820, 760, 910, 880, 1040],
+  invoices: [
+    { client: "Nube Digital", note: "Pagada el 28/09", status: "Pagada", color: "green", amount: "US$ 1.200" },
+    { client: "Estudio Ruiz", note: "Vence en 3 días", status: "Pendiente", color: "amber", amount: "US$ 840" },
+    { client: "Óptica Sur", note: "Venció hace 5 días", status: "Vencida", color: "red", amount: "US$ 310" },
+    { client: "Taller Norte", note: "Pagada el 25/09", status: "Pagada", color: "green", amount: "US$ 2.050" },
+  ],
+} as const
+
 export const TESTIMONIALS = [
-  { quote: "Pasamos de una planilla a cobrar todo en fecha. Los recordatorios solos ya pagan el plan.", name: "Laura Gómez", role: "Administración, Nube Digital" },
-  { quote: "Lo configuramos en una tarde. El contador recibe el libro de ventas sin que se lo mandemos.", name: "Martín Ruiz", role: "Socio, Estudio Ruiz" },
-  { quote: "Por fin veo lo que me deben sin abrir cinco archivos.", name: "Carla Sosa", role: "Dueña, Óptica Sur" },
-  { quote: "Los clientes pagan antes desde que les llega el aviso solo. Recuperamos semanas de caja.", name: "Diego Herrera", role: "Gerente, Taller Norte" },
-  { quote: "Cambiamos de plan dos veces sin hablar con nadie. Todo se ajustó solo.", name: "Paula Ríos", role: "Socia, Librería Central" },
-  { quote: "El equipo de cobranzas dejó de usar tres herramientas distintas.", name: "Sergio Paz", role: "Finanzas, Acme S.A." },
+  { quote: "Pasamos de una planilla a cobrar todo en fecha. Los recordatorios solos ya pagan el plan.", name: "Laura Gómez", rating: 5, since: "2024", role: "Administración, Nube Digital" },
+  { quote: "Lo configuramos en una tarde. El contador recibe el libro de ventas sin que se lo mandemos.", name: "Martín Ruiz", rating: 5, since: "2025", role: "Socio, Estudio Ruiz" },
+  { quote: "Por fin veo lo que me deben sin abrir cinco archivos.", name: "Carla Sosa", rating: 4, since: "2025", role: "Dueña, Óptica Sur" },
+  { quote: "Los clientes pagan antes desde que les llega el aviso solo. Recuperamos semanas de caja.", name: "Diego Herrera", rating: 5, since: "2024", role: "Gerente, Taller Norte" },
+  { quote: "Cambiamos de plan dos veces sin hablar con nadie. Todo se ajustó solo.", name: "Paula Ríos", rating: 5, since: "2023", role: "Socia, Librería Central" },
+  { quote: "El equipo de cobranzas dejó de usar tres herramientas distintas.", name: "Sergio Paz", rating: 4, since: "2025", role: "Finanzas, Acme S.A." },
 ]
 
 export const FAQ = [
@@ -84,6 +140,22 @@ export const FAQ = [
 ]
 
 export const FOOTER_GROUPS = [
-  { title: "Producto", links: [{ href: "#beneficios", label: "Beneficios" }, { href: "#precios", label: "Precios" }] },
-  { title: "Ayuda", links: [{ href: "#preguntas", label: "Preguntas frecuentes" }, { href: "#registro", label: "Empezar" }] },
+  {
+    title: "Producto",
+    links: [
+      { href: "#beneficios", label: "Beneficios" },
+      { href: "#producto", label: "Vista del producto" },
+      { href: "#cifras", label: "Cifras" },
+      { href: "#precios", label: "Precios" },
+    ],
+  },
+  {
+    title: "Ayuda",
+    links: [
+      { href: "#preguntas", label: "Preguntas frecuentes" },
+      { href: "#opiniones", label: "Opiniones" },
+      { href: "#registro", label: "Empezar" },
+    ],
+  },
+  { title: "Empresa", links: [{ href: "#clientes", label: "Quiénes nos usan" }] },
 ]

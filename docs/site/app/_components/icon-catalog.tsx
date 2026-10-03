@@ -1,10 +1,11 @@
 "use client"
 
-import { SearchIcon, type LucideIcon } from "lucide-react"
+import type { LucideIcon } from "lucide-react"
 import { cloneElement, useDeferredValue, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import { Button } from "sebs7n-ui/button"
 import { Icon } from "sebs7n-ui/icon"
-import { Input } from "sebs7n-ui/input"
+import { FilterBar } from "sebs7n-ui/filter-bar"
+import { SearchField } from "sebs7n-ui/search-field"
 import { ToggleGroup, ToggleGroupItem } from "sebs7n-ui/toggle-group"
 
 import { PAGINA } from "../_lib/iconos"
@@ -133,31 +134,33 @@ export function IconCatalog({ nombres, iniciales }: { nombres: string[]; inicial
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="relative w-full max-w-sm">
-          <Icon className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2" icon={SearchIcon} size="sm" tone="muted" />
-          <Input
+      <FilterBar
+        actions={
+          <span aria-live="polite" className="text-callout text-label-secondary">
+            {resultados.length === todos.length ? `${todos.length} íconos` : `${resultados.length} de ${todos.length}`}
+          </span>
+        }
+        filters={
+          <ToggleGroup aria-label="Tamaño" onValueChange={(v) => v[0] && setTamano(v[0] as Tamano)} size="sm" value={[tamano]}>
+            <ToggleGroupItem value="sm">16</ToggleGroupItem>
+            <ToggleGroupItem value="md">20</ToggleGroupItem>
+            <ToggleGroupItem value="lg">24</ToggleGroupItem>
+          </ToggleGroup>
+        }
+        role="search"
+        search={
+          <SearchField
             aria-label="Buscar un ícono"
-            className="pl-9"
-            onChange={(event) => {
-              setConsulta(event.target.value)
+            onValueChange={(valor) => {
+              setConsulta(valor)
               setLimite(PAGINA)
             }}
             placeholder="Buscar: arrow, user, file…"
-            enterKeyHint="search"
-            type="text"
+            size="sm"
             value={consulta}
           />
-        </div>
-        <ToggleGroup aria-label="Tamaño" onValueChange={(v) => v[0] && setTamano(v[0] as Tamano)} value={[tamano]}>
-          <ToggleGroupItem value="sm">16</ToggleGroupItem>
-          <ToggleGroupItem value="md">20</ToggleGroupItem>
-          <ToggleGroupItem value="lg">24</ToggleGroupItem>
-        </ToggleGroup>
-        <span aria-live="polite" className="text-callout text-label-secondary">
-          {resultados.length === todos.length ? `${todos.length} íconos` : `${resultados.length} de ${todos.length}`}
-        </span>
-      </div>
+        }
+      />
 
       {visibles.length === 0 ? (
         <p className="py-12 text-center text-callout text-label-secondary">Nada con «{diferida}». Probá en inglés: lucide nombra en inglés.</p>

@@ -1,5 +1,6 @@
 import { BellIcon, ChartColumnIcon, DownloadIcon, ReceiptIcon, ShieldCheckIcon, UsersIcon } from "lucide-react"
 import { Card, CardContent, CardGrid } from "sebs7n-ui/card"
+import { TextLink } from "sebs7n-ui/text-link"
 
 import { FEATURES, type FeatureIcon } from "../_data/content"
 import { SectionHeader } from "./section-header"
@@ -21,7 +22,7 @@ export function Features() {
         {FEATURES.map((feature) => (
           // Solo cuerpo: sin nada debajo, una cabecera dejaría la franja del cuerpo vacía.
           <Card key={feature.title}>
-            <CardContent className="flex gap-4 py-(--card-spacing)">
+            <CardContent className="flex gap-4">
               <span aria-hidden="true" className="text-brand-900 [&_svg]:size-7">
                 {ICONS[feature.icon]}
               </span>
@@ -33,6 +34,9 @@ export function Features() {
           </Card>
         ))}
       </CardGrid>
+      <TextLink className="self-center" href="#producto" trailing="chevron">
+        Ver el tablero por dentro
+      </TextLink>
     </section>
   )
 }

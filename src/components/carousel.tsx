@@ -181,11 +181,13 @@ function CarouselContent({ className, children, ...props }: React.ComponentProps
     // reservado, sin margen negativo: la máscara arma un contexto de apilamiento y una vista que se
     // metiera debajo del carrusel se quedaría con los clicks de lo que haya ahí. Embla mide el
     // contenedor de adentro, no la vista: el padding no le cambia las paradas.
+    // El aire de arriba y de abajo cubre la sombra de una card (`shadow-widget`: 17 px de desplazamiento y
+    // 40 de desenfoque, o sea ~23 arriba y ~57 abajo): con menos, la vista la corta en seco.
     // A sangre (`bleed`) no hay sombra que cuidar ni vecina que tapar: la vista recorta justo en su borde.
     <div
       ref={carouselRef}
       data-slot="carousel-content"
-      className={bleed ? "overflow-hidden" : "-mx-4 overflow-hidden px-4 pt-4 pb-10 [mask-image:linear-gradient(to_right,transparent,#000_16px,#000_calc(100%-16px),transparent)]"}
+      className={bleed ? "overflow-hidden" : "-mx-4 overflow-hidden px-4 pt-6 pb-16 [mask-image:linear-gradient(to_right,transparent,#000_16px,#000_calc(100%-16px),transparent)]"}
     >
       <div className={cn("flex", !bleed && (orientation === "horizontal" ? "-ms-4" : "-mt-4"), orientation === "vertical" && "flex-col", className)} {...props}>
         {slides.map((slide, index) => (

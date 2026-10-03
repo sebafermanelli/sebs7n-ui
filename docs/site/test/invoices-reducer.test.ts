@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 
 import type { Invoice } from "../app/templates/dashboard/_data/invoices-mock"
-import { invoicesReducer, isCollectable, nextInvoiceId, type InvoicesState } from "../app/templates/dashboard/_state/invoices-reducer"
+import { invoicesReducer, isCollectable, nextInvoiceId, normalizeTags, type InvoicesState } from "../app/templates/dashboard/_state/invoices-reducer"
 
 const invoice = (id: string, over: Partial<Invoice> = {}): Invoice => ({
   id,
@@ -14,11 +14,18 @@ const invoice = (id: string, over: Partial<Invoice> = {}): Invoice => ({
   ...over,
 })
 
-const state = (invoices: Invoice[]): InvoicesState => ({ invoices, loading: false })
+const state = (invoices: Invoice[]): InvoicesState => ({ invoices, loading: false, error: false })
 
 describe("invoicesReducer", () => {
   it("loaded apaga la carga", () => {
-    expect(invoicesReducer({ invoices: [], loading: true }, { type: "loaded" }).loading).toBe(false)
+    expect(invoicesReducer({ invoices: [], loading: true, error: false }, { type: "loaded" }).loading).toBe(false)
+  })
+
+  it("failed deja el error y retry vuelve a cargar", () => {
+    const failed = invoicesReducer({ invoices: [], loading: true, error: false }, { type: "failed" })
+    expect(failed).toMatchObject({ loading: false, error: true })
+    expect(invoicesReducer(failed, { type: "retry" })).toMatchObject({ loading: true, error: false })
+    expect(invoicesReducer(invoicesReducer(failed, { type: "retry" }), { type: "loaded" })).toMatchObject({ loading: false, error: false })
   })
 
   it("add pone la nueva arriba", () => {
@@ -48,6 +55,39 @@ describe("invoicesReducer", () => {
     const next = invoicesReducer(state([invoice("a", { status: "paid", paidAt: "2026-09-30" })]), { type: "void", id: "a", date: "2026-10-02" })
     expect(next.invoices[0]).toMatchObject({ status: "void", voidedAt: "2026-10-02" })
     expect(next.invoices[0]!.paidAt).toBeUndefined()
+  })
+})
+
+describe("reabrir, etiquetas y recordatorio", () => {
+  it("reopen vuelve una cobrada a pendiente, o a vencida si ya pasó su fecha, y le saca paidAt", () => {
+    const next = invoicesReducer(
+      state([invoice("a", { status: "paid", paidAt: "2026-09-30", dueDate: "2026-10-10" }), invoice("b", { status: "paid", paidAt: "2026-09-30", dueDate: "2026-09-01" }), invoice("c")]),
+      { type: "reopen", ids: ["a", "b", "c"], date: "2026-10-02" }
+    )
+    expect(next.invoices.map((inv) => [inv.status, inv.paidAt])).toEqual([
+      ["pending", undefined],
+      ["overdue", undefined],
+      ["pending", undefined],
+    ])
+  })
+
+  it("reopen y markPaid son inversas (para el «Deshacer» de arrastrar)", () => {
+    const start = [invoice("a")]
+    const paid = invoicesReducer(state(start), { type: "markPaid", ids: ["a"], date: "2026-10-02" })
+    expect(invoicesReducer(paid, { type: "reopen", ids: ["a"], date: "2026-10-02" }).invoices).toEqual(start)
+  })
+
+  it("setTags limpia espacios, vacías y repetidas sin distinguir mayúsculas", () => {
+    const next = invoicesReducer(state([invoice("a")]), { type: "setTags", id: "a", tags: [" urgente ", "Urgente", "", "anual"] })
+    expect(next.invoices[0]!.tags).toEqual(["urgente", "anual"])
+    expect(normalizeTags(["A", "a ", "b"])).toEqual(["A", "b"])
+  })
+
+  it("scheduleReminder programa y cancela, y solo en las que se deben", () => {
+    const programmed = invoicesReducer(state([invoice("a"), invoice("b", { status: "paid", paidAt: "2026-09-30" })]), { type: "scheduleReminder", id: "a", at: "2026-10-08T09:30" })
+    expect(programmed.invoices[0]!.reminderAt).toBe("2026-10-08T09:30")
+    expect(invoicesReducer(programmed, { type: "scheduleReminder", id: "b", at: "2026-10-08T09:30" }).invoices[1]!.reminderAt).toBeUndefined()
+    expect("reminderAt" in invoicesReducer(programmed, { type: "scheduleReminder", id: "a", at: null }).invoices[0]!).toBe(false)
   })
 })
 

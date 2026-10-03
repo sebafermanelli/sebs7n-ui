@@ -3,10 +3,11 @@
 import { ArrowLeftIcon, FileTextIcon, HomeIcon, SettingsIcon, UsersIcon } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarItem, SidebarItemBadge } from "sebs7n-ui/sidebar"
+import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarItem, SidebarItemBadge, SidebarSearch } from "sebs7n-ui/sidebar"
 
 import { CUSTOMERS_PATH, DASHBOARD_PATH, GALLERY_PATH, INVOICES_PATH, SETTINGS_PATH } from "../_lib/routes"
 import { useInvoicesStore } from "../_state/invoices-context"
+import { useDashboardCommand } from "./dashboard-command"
 
 const SECTIONS = [
   { href: DASHBOARD_PATH, label: "Inicio", icon: <HomeIcon /> },
@@ -17,9 +18,11 @@ const SECTIONS = [
 export function DashboardSidebar() {
   const pathname = usePathname()
   const { metrics, loading } = useInvoicesStore()
+  const command = useDashboardCommand()
   return (
     <Sidebar>
       <SidebarContent aria-label="Secciones">
+        <SidebarSearch onClick={command.open} shortcut="⌘K" />
         <SidebarGroup>
           <SidebarGroupLabel>Navegación</SidebarGroupLabel>
           {SECTIONS.map((section) => (

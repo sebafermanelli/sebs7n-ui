@@ -33,21 +33,55 @@ type TabsListProps = WithClassName<TabsPrimitive.List.Props> & {
   variant?: TabsVariant
 }
 
+// Mide si la tira scrollea y de qué lado le queda por mostrar; lo deja en dos atributos para el CSS.
+function useOverflowEdges(enabled: boolean) {
+  const [node, setNode] = React.useState<HTMLElement | null>(null)
+  const [edges, setEdges] = React.useState({ start: false, end: false })
+  React.useEffect(() => {
+    if (!enabled || !node) return
+    const measure = () => {
+      const max = node.scrollWidth - node.clientWidth
+      const left = Math.abs(node.scrollLeft)
+      const next = { start: left > 1, end: max - left > 1 }
+      setEdges((prev) => (prev.start === next.start && prev.end === next.end ? prev : next))
+    }
+    measure()
+    node.addEventListener("scroll", measure, { passive: true })
+    const observer = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(measure)
+    observer?.observe(node)
+    for (const child of Array.from(node.children)) observer?.observe(child)
+    return () => {
+      node.removeEventListener("scroll", measure)
+      observer?.disconnect()
+    }
+  }, [enabled, node])
+  return [setNode, edges] as const
+}
+
 function TabsList({ className, variant = "line", children, ...props }: TabsListProps) {
+  const [setNode, edges] = useOverflowEdges(variant === "line")
   return (
     <VarianteContext.Provider value={variant}>
       <TabsPrimitive.List
         data-slot="tabs-list"
         data-variant={variant}
+        data-overflow-start={edges.start ? "" : undefined}
+        data-overflow-end={edges.end ? "" : undefined}
+        ref={setNode}
         className={cn(
           variant === "line"
             ? // Medido en Settings: 30 entre pestañas + los 8 de padding de cada lado = 46 de texto a
               // texto. La línea base es `fill-3`, el `rgba(120,120,128,.36)` de iCloud, como sombra
               // interior: con muchas pestañas la tira scrollea de costado (sin barra) y un borde
               // quedaría afuera de la caja que recorta, con el subrayado de la activa escondido.
-              // La tira se sale 8 px de cada lado (`-mx-2`) para que el texto de la primera quede
-              // alineado con el contenido y su anillo de foco no se corte.
-              "relative -mx-2 flex w-[calc(100%+1rem)] items-center gap-7.5 overflow-x-auto shadow-[inset_0_-1px_0_var(--color-fill-3)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              // Ocupa el ancho de su caja, sin salirse (antes `-mx-2` la sacaba 8 px de cada lado). La
+              // primera y la última pestaña pierden el padding de afuera para que el texto quede alineado
+              // con el contenido. Si no entran, la tira scrollea y se desvanece del lado que tiene más
+              // (`data-overflow-start` / `data-overflow-end`): la última nunca queda cortada sin aviso.
+              "relative flex w-full items-center gap-7.5 overflow-x-auto shadow-[inset_0_-1px_0_var(--color-fill-3)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden " +
+              "data-overflow-end:[mask-image:linear-gradient(to_right,#000_calc(100%-2.5rem),transparent)] " +
+              "data-overflow-start:[mask-image:linear-gradient(to_left,#000_calc(100%-2.5rem),transparent)] " +
+              "data-overflow-start:data-overflow-end:[mask-image:linear-gradient(to_right,transparent,#000_2.5rem,#000_calc(100%-2.5rem),transparent)]"
             : // Grilla de columnas iguales: los segmentos de iCloud miden todos lo mismo, y así el
               // semibold del activo no corre a los vecinos.
               // `minmax(0,1fr)`: una columna puede achicarse por debajo de su texto (el texto largo se
@@ -88,9 +122,9 @@ const TRIGGER_VARIANT: Record<TabsVariant, string> = {
   // encima de la línea base (`-bottom-px`), así la reemplaza en ese tramo. La primera y la última
   // pierden el padding de afuera: el texto arranca alineado con la línea.
   line:
-    "h-15 shrink-0 px-2 text-body text-label-secondary hover:text-label data-active:text-label " +
+    "h-15 shrink-0 px-2 first:ps-0 last:pe-0 text-body text-label-secondary hover:text-label data-active:text-label " +
     "before:inset-y-3 before:rounded-control focus-visible:before:focus-ring " +
-    "after:inset-x-2 after:bottom-0 after:h-px after:bg-label after:opacity-0 data-active:after:opacity-100 " +
+    "after:inset-x-2 first:after:start-0 last:after:end-0 after:bottom-0 after:h-px after:bg-label after:opacity-0 data-active:after:opacity-100 " +
     // Revisión de R4: el subrayado aparece con una transición corta; quieto con movimiento reducido.
     "after:transition-opacity after:duration-200 motion-reduce:after:transition-none",
   // Calendar: segmento de 24 (28 con la pista), 14 en label y el activo en semibold. Con el dedo se
