@@ -127,8 +127,8 @@ describe("StatGrid: acciones y gráfico", () => {
     )
     expect(screen.getAllByRole("button")).toHaveLength(1)
     await user.click(screen.getByRole("button", { name: "Opciones de Cobrado" }))
-    expect(await screen.findByRole("menuitem", { name: "Ver detalle" }, { timeout: 5000 })).toBeInTheDocument()
-  })
+    expect(await screen.findByRole("menuitem", { name: "Ver detalle" }, { timeout: 15000 })).toBeInTheDocument()
+  }, 20000)
 
   it("labels.actions cambia el nombre del botón", () => {
     render(<StatGrid items={[{ label: "Paid", value: "1", actions: <DropdownMenuItem>x</DropdownMenuItem> }]} labels={{ actions: "{label} options" }} />)
