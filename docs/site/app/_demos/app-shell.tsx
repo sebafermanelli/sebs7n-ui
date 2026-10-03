@@ -24,12 +24,11 @@ import { UserMenu } from "sebs7n-ui/user-menu"
 
 /**
  * El layout completo
- * La barra global de 44 a todo el ancho (`header`), el sidebar a ras debajo y el contenido. Achicá la ventana por debajo de 1024px: el sidebar pasa a un Sheet detrás de la hamburguesa de la barra del teléfono.
+ * La barra global de 44 a todo el ancho (`header`), el sidebar a ras debajo y el contenido. Arrastrá el borde del sidebar para ensancharlo o angostarlo (por debajo de 140 px pliega al riel; doble clic o Enter alternan). Achicá la ventana por debajo de 1024px: el sidebar pasa a un Sheet detrás de la hamburguesa de la barra del teléfono, donde no hay separador.
  * El alto sale de `--app-shell-height`; acá está fijado en 560px para que entre en la página.
  */
 export function Completo() {
   const usuario = { name: "Ana Pérez", email: "ana@acme.com" }
-  const [collapsed, setCollapsed] = useState(false)
   return (
     <div className="w-full min-w-0 overflow-hidden rounded-surface border border-separator">
       <AppShell
@@ -51,11 +50,11 @@ export function Completo() {
           </>
         }
         sidebar={
-          <Sidebar collapsed={collapsed} id="shell-sidebar">
+          <Sidebar id="shell-sidebar">
             <SidebarHeader>
               <div className="flex h-8 items-center gap-2 ps-1 group-data-collapsed/sidebar:h-auto group-data-collapsed/sidebar:flex-col group-data-collapsed/sidebar:ps-0">
                 <span className="text-callout font-semibold text-label-secondary group-data-collapsed/sidebar:hidden">Espacio de trabajo</span>
-                <SidebarToggle onCollapsedChange={setCollapsed} />
+                <SidebarToggle />
               </div>
             </SidebarHeader>
             <SidebarContent>
@@ -109,7 +108,7 @@ export function Completo() {
 
 /**
  * Con panel lateral acoplado
- * El asistente o la ayuda van en `aside`: se acoplan a la derecha y empujan el contenido, sin tapar nada. El botón que lo abre vive en la barra global; el panel tiene su cabecera con la «X». Por debajo de 1024px pasa a un Sheet.
+ * El asistente o la ayuda van en `aside`: se acoplan a la derecha y empujan el contenido, sin tapar nada, y se ensanchan o angostan arrastrando su borde (doble clic restaura el ancho). El botón que lo abre vive en la barra global; el panel tiene su cabecera con la «X». Por debajo de 1024px pasa a un Sheet.
  */
 export function ConPanelLateral() {
   const [open, setOpen] = useState(false)
@@ -165,6 +164,46 @@ export function ConPanelLateral() {
             <PageHeaderDescription>Con el panel abierto, la página se achica y sigue operable.</PageHeaderDescription>
           </PageHeader>
           <Button>Nueva factura</Button>
+        </AppShellContent>
+      </AppShell>
+    </div>
+  )
+}
+
+/**
+ * Ancho y plegado controlados
+ * Para guardarlos donde quiera la app: `sidebarWidth` y `sidebarCollapsed` mandan, y `onSidebarWidthChange` / `onSidebarCollapsedChange` avisan al soltar. Con `sidebarStorageKey` el shell los recuerda solo, sin estado propio.
+ */
+export function AnchoControlado() {
+  const [width, setWidth] = useState(256)
+  const [collapsed, setCollapsed] = useState(false)
+  return (
+    <div className="w-full min-w-0 overflow-hidden rounded-surface border border-separator">
+      <AppShell
+        className="[--app-shell-height:320px]"
+        mobileBar={<span className="ml-auto" />}
+        onSidebarCollapsedChange={setCollapsed}
+        onSidebarWidthChange={setWidth}
+        sidebar={
+          <Sidebar>
+            <SidebarContent>
+              <SidebarGroup>
+                <SidebarItem active icon={<FileTextIcon />}>
+                  Facturas
+                </SidebarItem>
+                <SidebarItem icon={<UsersIcon />}>Clientes</SidebarItem>
+              </SidebarGroup>
+            </SidebarContent>
+          </Sidebar>
+        }
+        sidebarCollapsed={collapsed}
+        sidebarWidth={width}
+      >
+        <AppShellContent>
+          <PageHeader>
+            <PageHeaderTitle>Facturas</PageHeaderTitle>
+            <PageHeaderDescription>{collapsed ? "Sidebar plegado al riel." : `Sidebar de ${width} px.`}</PageHeaderDescription>
+          </PageHeader>
         </AppShellContent>
       </AppShell>
     </div>

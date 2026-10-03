@@ -46,6 +46,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
       }
       asideLabel="Asistente"
       asideOpen={open}
+      asideStorageKey="sebs7n-ui:dashboard:aside"
       asideTitle={
         <span className="inline-flex items-center gap-2">
           <AiIcon className="size-5" />
@@ -57,6 +58,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
       onAsideOpenChange={setOpen}
       pathname={pathname}
       sidebar={<DashboardSidebar />}
+      sidebarStorageKey="sebs7n-ui:dashboard:sidebar"
     >
       {children}
     </AppShell>

@@ -45,6 +45,7 @@ export function ConsoleShell({ children }: { children: ReactNode }) {
       }
       asideLabel="Asistente"
       asideOpen={assistantOpen}
+      asideStorageKey="sebs7n-ui:console:aside"
       asideTitle={
         <span className="inline-flex items-center gap-2">
           <AiIcon className="size-5" />
@@ -56,6 +57,7 @@ export function ConsoleShell({ children }: { children: ReactNode }) {
       onAsideOpenChange={setAssistantOpen}
       pathname={pathname}
       sidebar={<ConsoleSidebar />}
+      sidebarStorageKey="sebs7n-ui:console:sidebar"
     >
       {children}
     </AppShell>

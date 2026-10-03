@@ -60,6 +60,10 @@ Dentro de un `AppShell`, el layout responde al ancho del contenido (container qu
 
 Cards que se leen juntas van en `CardGrid`: comparten filas (subgrid), así que **la cabecera más alta fija la de todas, y lo mismo el cuerpo y el pie**. Una cabecera más baja que la de al lado, o un pie que no cae a la misma altura que el vecino, es un error. Si una card de la fila no tiene cabecera, ninguna la lleva; y una card sin cuerpo no lleva cabecera (quedaría la franja del cuerpo vacía): título y texto van en `CardContent`. Y sin huérfanas: una fila va toda en paralelo o toda apilada, nunca «2 arriba y 1 abajo» (`CardGrid` saltea las dos columnas cuando la cantidad es impar).
 
+### El usuario acomoda su espacio
+
+El sidebar y el panel lateral se redimensionan y se colapsan por defecto y recuerdan su ancho; en teléfono pasan a capas (Sheet/hoja) porque no entra todo. En `AppShell` el borde del sidebar y el del panel se arrastran (con teclado: flechas, Inicio/Fin, Enter y doble clic), el sidebar pliega al riel por debajo de 140 px, y `sidebarStorageKey` / `asideStorageKey` (una clave propia por app o template) guardan lo acomodado. No se apaga con `sidebarResizable={false}` salvo que haya una razón; y si los ítems no tienen ícono, `sidebarCollapsible={false}` en vez de un riel vacío. El panel nunca deja al contenido bajo 480 px: si no entra, pasa a hoja.
+
 Un asistente o panel de ayuda que acompaña el trabajo va acoplado al costado (`AppShell` aside) y empuja el contenido; un diálogo o Sheet modal solo cuando hay que decidir algo antes de seguir. El botón que lo abre vive en la barra global, a la derecha.
 
 ## Elegir componente

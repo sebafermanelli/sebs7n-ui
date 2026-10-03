@@ -99,6 +99,9 @@ export function DocsShell({ nav, version, children }: { nav: Grupo[]; version: s
       }
       pathname={pathname}
       sidebar={<DocsSidebar nav={nav} version={version} />}
+      // Los ítems de la documentación no tienen ícono: un riel quedaría vacío. El ancho sí se acomoda.
+      sidebarCollapsible={false}
+      sidebarStorageKey="sebs7n-ui:docs:sidebar"
     >
       {children}
     </AppShell>

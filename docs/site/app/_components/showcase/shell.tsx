@@ -50,7 +50,7 @@ type ShellProps = {
 }
 
 /**
- * El marco de las pantallas: un `AppShell` entero. Sidebar en riel (64), barra con «Preguntar a la IA» y los
+ * El marco de las pantallas: un `AppShell` entero. Sidebar en riel (64, redimensionable), barra con «Preguntar a la IA» y los
  * avisos, el panel lateral acoplado con el asistente, ⌘K, la hoja de atajos (`?`) y `g` + letra. Los atajos
  * solo valen con el foco adentro del marco: ⌘K del resto del sitio sigue siendo el buscador de la documentación.
  */
@@ -148,6 +148,7 @@ export function ShowcaseShell({ screen, onScreen, ambient, asideOpen, onAsideOpe
         }
         asideLabel="Asistente"
         asideOpen={asideOpen}
+        asideStorageKey="sebs7n-ui:playground:aside"
         asideTitle={
           <span className="inline-flex items-center gap-2">
             <AiIcon className="size-5" />
@@ -157,10 +158,12 @@ export function ShowcaseShell({ screen, onScreen, ambient, asideOpen, onAsideOpe
         asideWidth={340}
         header={barra(false)}
         mainId="showcase-main"
+        defaultSidebarCollapsed
         mobileBar={barra(true)}
         onAsideOpenChange={onAsideOpenChange}
+        sidebarStorageKey="sebs7n-ui:playground:sidebar"
         sidebar={
-          <Sidebar collapsed>
+          <Sidebar>
             <SidebarContent aria-label="Pantallas de la muestra">
               <SidebarGroup>
                 {SHOWCASES.map((item) => {
