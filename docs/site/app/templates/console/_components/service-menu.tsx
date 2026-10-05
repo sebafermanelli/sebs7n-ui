@@ -1,9 +1,9 @@
 "use client"
 
-import { MoreHorizontalIcon, PauseIcon, PlayIcon, RotateCwIcon, Trash2Icon } from "lucide-react"
+import { PauseIcon, PlayIcon, RotateCwIcon, Trash2Icon } from "lucide-react"
 import Link from "next/link"
-import { Button } from "sebs7n-ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "sebs7n-ui/dropdown-menu"
+import { DropdownMenuItem, DropdownMenuSeparator } from "sebs7n-ui/dropdown-menu"
+import { RowActions } from "sebs7n-ui/row-actions"
 
 import type { Service } from "../_data/mock"
 import { servicePath } from "../_lib/routes"
@@ -19,11 +19,7 @@ export interface ServiceActions {
 export function ServiceMenu({ service, actions }: { service: Service; actions: ServiceActions }) {
   const stopped = service.status === "stopped"
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger render={<Button aria-label={`Acciones para ${service.name}`} size="icon-sm" variant="plain" />}>
-        <MoreHorizontalIcon />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+    <RowActions label={`Acciones para ${service.name}`}>
         <DropdownMenuItem render={<Link href={servicePath(service.id)} />}>Ver detalle</DropdownMenuItem>
         <DropdownMenuItem disabled={stopped} onClick={() => actions.restart([service])}>
           <RotateCwIcon />
@@ -45,7 +41,6 @@ export function ServiceMenu({ service, actions }: { service: Service; actions: S
           <Trash2Icon />
           Eliminar
         </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    </RowActions>
   )
 }

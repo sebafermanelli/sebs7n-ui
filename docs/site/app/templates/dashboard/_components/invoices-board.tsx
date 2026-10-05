@@ -17,9 +17,10 @@ import {
   type KeyboardCoordinateGetter,
   type UniqueIdentifier,
 } from "@dnd-kit/core"
-import { ArrowRightLeftIcon, BanIcon, GripVerticalIcon, MoreHorizontalIcon, PanelRightIcon } from "lucide-react"
+import { ArrowRightLeftIcon, BanIcon, GripVerticalIcon, PanelRightIcon } from "lucide-react"
 import { useState, type ComponentType, type ReactNode } from "react"
 import { Badge } from "sebs7n-ui/badge"
+import { RowActions } from "sebs7n-ui/row-actions"
 import { Button } from "sebs7n-ui/button"
 import { Card, CardContent } from "sebs7n-ui/card"
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuSeparator, ContextMenuTrigger } from "sebs7n-ui/context-menu"
@@ -212,12 +213,7 @@ function BoardCard({ invoice, onMove, onOpenDetail, onVoid }: Pick<InvoicesBoard
           <BoardCardBody
             handle={
               <>
-                <DropdownMenu>
-                  <DropdownMenuTrigger render={<Button aria-label={`Acciones para ${invoice.id}`} size="icon-sm" variant="plain" />}>
-                    <MoreHorizontalIcon />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">{actions(DropdownMenuItem, DropdownMenuSeparator)}</DropdownMenuContent>
-                </DropdownMenu>
+                <RowActions label={`Acciones para ${invoice.id}`}>{actions(DropdownMenuItem, DropdownMenuSeparator)}</RowActions>
                 <Tooltip>
                   <TooltipTrigger
                     render={<Button aria-label={`Mover ${invoice.id}: apretá Espacio y usá las flechas`} className="touch-none" size="icon-sm" variant="plain" {...attributes} {...listeners} ref={setActivatorNodeRef} />}

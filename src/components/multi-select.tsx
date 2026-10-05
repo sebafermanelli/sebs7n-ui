@@ -5,7 +5,9 @@ import * as React from "react"
 import { defined } from "../internal/defined.js"
 import { MenuCheck } from "../internal/menu-check.js"
 import { useLabels, type Labels } from "../lib/labels.js"
+import { cn } from "../lib/utils.js"
 import { menuIndicatorClassName } from "../variants/menu.js"
+import { tagVariants } from "../variants/tag.js"
 import {
   Combobox,
   ComboboxChip,
@@ -59,8 +61,19 @@ type MultiSelectProps = {
   "aria-labelledby"?: string
   /** Clases de la superficie. */
   className?: string
+  /**
+   * Qué pasa cuando los chips no entran. `collapse` (default): **una sola línea** del alto de un `Select`; los chips que no
+   * entran se esconden detrás de un chip «+N» (con nombre accesible «y N más») que abre la lista, donde se ven y se
+   * quitan todos. `wrap`: los chips envuelven en varias filas y el campo crece.
+   */
+  overflow?: "collapse" | "wrap"
+  /** Con `collapse`, el tope de chips a la vista aunque entren más (el resto va en «+N»). */
+  maxVisible?: number
   labels?: Partial<Labels["multiSelect"]>
 }
+
+/** «y {count} más»: no está en `defaultLabels` (el componente es solo por subpath). */
+const MORE = "y {count} más"
 
 // El valor centinela de «Seleccionar todo»: va en la lista como una opción más, pero **nunca** en el
 // valor de Base UI. Ahí descalabraba los chips (Base UI quita un chip por índice: con todo elegido,
@@ -85,6 +98,8 @@ function MultiSelect({
   name,
   id,
   className,
+  overflow = "collapse",
+  maxVisible,
   labels: labelsProp,
   ...aria
 }: MultiSelectProps) {
@@ -92,6 +107,8 @@ function MultiSelect({
   const labels = { ...useLabels().multiSelect, ...defined(labelsProp) }
   const [own, setOwn] = React.useState(defaultValue)
   const [query, setQuery] = React.useState("")
+  const [open, setOpen] = React.useState(false)
+  const collapse = overflow === "collapse"
 
   const byValue = React.useMemo(() => new Map(options.map((option) => [option.value, option])), [options])
   const position = React.useMemo(() => new Map(options.map((option, index) => [option.value, index])), [options])
@@ -132,6 +149,46 @@ function MultiSelect({
 
   const label = (item: string) => (item === ALL ? labels.selectAll : (byValue.get(item)?.label ?? item))
 
+  // Los chips que entran en una línea: se miden con todos montados y se esconden los que pasan el borde.
+  // `fit === null` es la pasada de medir (todos a la vista); la siguiente, con el número.
+  const chipsRef = React.useRef<HTMLDivElement>(null)
+  const [fit, setFit] = React.useState<number | null>(null)
+  const valueKey = value.join("\u0000")
+  React.useLayoutEffect(() => setFit(null), [valueKey, size, collapse])
+  React.useLayoutEffect(() => {
+    if (!collapse || fit !== null) return
+    const row = chipsRef.current
+    if (!row) return
+    const chips = [...row.querySelectorAll<HTMLElement>("[data-slot=combobox-chip]")]
+    // Sin layout (jsdom, oculto): todos a la vista. Si no, lugar para el input (48), el «+N» (40) y los huecos de 4.
+    const room = row.clientWidth - 48
+    let used = 0
+    let count = row.clientWidth === 0 ? chips.length : 0
+    if (count === 0) {
+      for (const [index, chip] of chips.entries()) {
+        const next = used + chip.offsetWidth + 4
+        if (count > 0 && next + (index < chips.length - 1 ? 40 : 0) > room) break
+        used = next
+        count++
+      }
+    }
+    setFit(Math.min(count, maxVisible ?? count))
+  }, [collapse, fit, maxVisible, valueKey])
+  React.useEffect(() => {
+    const row = chipsRef.current
+    if (!collapse || !row || typeof ResizeObserver === "undefined") return
+    let width = row.clientWidth
+    const observer = new ResizeObserver(() => {
+      if (Math.abs(row.clientWidth - width) < 1) return
+      width = row.clientWidth
+      setFit(null)
+    })
+    observer.observe(row)
+    return () => observer.disconnect()
+  }, [collapse])
+  const shown = collapse && fit !== null ? value.slice(0, fit) : value
+  const hidden = value.length - shown.length
+
   return (
     <Combobox<string, true>
       disabled={disabled}
@@ -142,15 +199,31 @@ function MultiSelect({
       multiple
       name={name}
       onInputValueChange={(next) => setQuery(next)}
+      onOpenChange={setOpen}
+      open={open}
       onValueChange={(next) => handleChange(next as string[])}
       value={value}
     >
-      <ComboboxChips className={className} disabled={disabled} showClear={showClear && value.length > 0} size={size}>
-        {value.map((item) => (
-          <ComboboxChip key={item} textValue={label(item)}>
+      <ComboboxChips className={className} disabled={disabled} ref={chipsRef} showClear={showClear && value.length > 0} size={size} wrap={!collapse}>
+        {shown.map((item) => (
+          <ComboboxChip className={collapse ? "shrink-0" : undefined} key={item} textValue={label(item)}>
             {label(item)}
           </ComboboxChip>
         ))}
+        {hidden > 0 && (
+          // El resto, en la lista: abre el menú, donde cada elegido lleva su círculo y se quita con un click.
+          <button
+            aria-expanded={open}
+            aria-label={(labels.more ?? MORE).replace("{count}", String(hidden))}
+            className={cn(tagVariants({ size: size === "sm" ? "sm" : "md" }), "shrink-0 cursor-pointer outline-none focus-visible:focus-ring")}
+            data-slot="multi-select-more"
+            disabled={disabled}
+            onClick={() => setOpen(true)}
+            type="button"
+          >
+            +{hidden}
+          </button>
+        )}
         <ComboboxChipsInput id={id} placeholder={value.length ? undefined : placeholder} {...aria} />
       </ComboboxChips>
       <ComboboxContent>

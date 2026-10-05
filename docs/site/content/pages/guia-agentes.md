@@ -68,6 +68,12 @@ Cards que se leen juntas van en `CardGrid`: comparten filas (subgrid), así que 
 
 `Table stacked` apila las filas en el teléfono con el fondo de selección en la **fila** (no en cada celda), `TableCell stacked="full"|"corner"` ubica la celda principal y las acciones; en la fila elegida con foco, un link o un `text-label*` pasa solo a `on-selection`. `Card render={<Link … />}` hace una card que es un link entero y `Card span={2}` una card ancha en una `CardGrid` (la grilla cuenta por columnas ocupadas). `StatGrid` con 5 métricas va 1 columna, 3 + 2 llenando el ancho desde 48 rem y una sola fila desde 72 rem. `NumberField fullWidth` ocupa todo el ancho de su caja.
 
+### Tablas: ordenables, con menú de fila
+
+**Toda tabla con más de una columna comparable tiene encabezados ordenables**: `sortable` en `DataTable` o, en una `Table` del servidor, `SortableTableHead` con `href` (link real: `?sort=<col>&dir=asc|desc`, 1.er click ascendente, 2.º descendente, 3.º quita el orden y vuelve a la página 1) y `aria-sort`. **El menú de fila es `icon-sm` `plain` con `aria-label` de la fila** («Acciones para FAC-1024»): se usa `RowActions`, no se arma a mano ni se cambia de tamaño o variante.
+
+Un `MultiSelect` **mantiene su lugar y su alto** (una línea del alto de un `Select`, `sm` en una barra): lo que no entra va a un chip «+N» («y N más») que abre la lista, donde se ven y se quitan todos. Los chips en varias filas, solo con `overflow="wrap"` donde el campo es el protagonista.
+
 ### Aparecer sin perder contraste
 
 Una animación de aparición (al entrar en pantalla, en una landing) **no baja la opacidad del texto**: un fade deja el texto por debajo de contraste AA mientras aparece. Se anima solo el desplazamiento (`translate`) o el texto aparece ya a opacidad 1 y se anima su contenedor sin texto; con `prefers-reduced-motion: reduce`, sin movimiento. El paquete no trae un `Reveal`: si la app lo arma, que sea así.
@@ -118,6 +124,8 @@ Un asistente o panel de ayuda que acompaña el trabajo va acoplado al costado (`
 | La barra «Cambios sin guardar» / «Descartar» / «Guardar» de una pantalla de Configuración | `SaveBar` (`sebs7n-ui/save-bar`), fija abajo y a todo el ancho |
 | Alta o edición de algo desde su lista (`?new` / `?edit=<id>`) | `EntityOverlay` (`sebs7n-ui/entity-overlay`): `dialog` para el alta, `sheet` para la edición, con confirmación de cambios sin guardar |
 | «Limpiar filtros» en el vacío de una lista filtrada | `EmptyFiltersAction` (`sebs7n-ui/empty-filters-action`) como `action` del `EmptyState` |
+| Una tabla del servidor (filtros y página por URL) con columnas comparables | `SortableTableHead` (`sebs7n-ui/sortable-table-head`) en la cabecera, con `href` (`?sort=<col>&dir=asc\|desc`) |
+| El menú «…» de una fila | `RowActions` (`sebs7n-ui/row-actions`): `icon-sm` `plain`, con `aria-label` de la fila |
 | Eventos con fecha en un teléfono, donde un mes no entra | `CalendarAgenda` (`sebs7n-ui/calendar-agenda`) por debajo de `@2xl` y `CalendarView` desde ahí |
 | Nada que mostrar | `EmptyState`, con una sola acción para salir del vacío |
 | Esperando datos | `Skeleton` del alto final, o `loading` del componente |

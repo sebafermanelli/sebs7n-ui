@@ -791,16 +791,20 @@ export const COMPONENTS = {
       "Cada chip tiene su botón «Quitar Tarjeta de crédito», con el nombre de la opción.",
       "«Seleccionar todo» es una opción más, primera, que queda `aria-selected` cuando todas las que se ven están elegidas.",
       "Con `max`, las demás quedan `aria-disabled` y la lista dice «Máximo 3» en su región viva.",
+      "Los chips que no entran van detrás de un botón «+2» con nombre «y 2 más» (`labels.more`, con `{count}`) que abre la lista; ahí cada elegido tiene su `aria-selected` y se quita con un click. Backspace con el campo vacío quita el chip que está junto al campo.",
     ],
     usage: [
       "**Para elegir varias de una lista de más de 6 opciones o que se busca.** Con pocas opciones fijas, `CheckboxGroup` las muestra todas sin abrir nada.",
       "Para una sola, `Combobox` o `Select`.",
       "`value` sale en el orden de `options`, no en el de los clicks, y los chips también.",
+      "**Mantiene su lugar y su alto**: una línea del alto de un `Select` (28 · 36 · 40), así alinea con los otros controles de una `FilterBar`. Lo que no entra queda en «+N»; `overflow=\"wrap\"` vuelve a las varias filas.",
       "«Seleccionar todo» marca las habilitadas **que se ven**: con una búsqueda, las que coinciden. No aparece si `max` es menor que esas opciones.",
       "Solo por subpath (`sebs7n-ui/multi-select`): no está en el barrel, por peso.",
     ],
     props: {
       MultiSelect: {
+        overflow: "Cuando los chips no entran: `collapse` (default) los deja en **una sola línea** del alto de un `Select` y esconde el resto detrás de un chip «+N» (nombre accesible «y N más») que abre la lista, donde se ven y se quitan todos; `wrap` envuelve en varias filas y el campo crece.",
+        maxVisible: "Con `collapse`, el tope de chips a la vista aunque entren más: el resto va en «+N».",
         options: "Las opciones: `value`, `label` y `disabled`.",
         value: "Los valores elegidos. Pasarlo lo vuelve controlado.",
         defaultValue: "Los elegidos al arrancar.",
@@ -3535,6 +3539,62 @@ export const COMPONENTS = {
       },
     },
     related: ["empty-state", "filter-bar", "button"],
+  },
+  "sortable-table-head": {
+    title: "SortableTableHead",
+    group: "contenido",
+    description: "El encabezado ordenable de una `Table` del servidor (la que se ordena con `?sort=<col>&dir=asc|desc`): un `<th>` con `aria-sort` y un link (`href`) o un botón (`onSort`) con la flecha ↑↓. Mismo dibujo y mismo ciclo que los encabezados `sortable` de `DataTable`.",
+    keyboard: [["Tab · Enter", "El link o el botón de cada encabezado es una parada de Tab; Enter ordena. Siguiente estado: ascendente, descendente, sin orden."]],
+    a11y: [
+      "El `<th>` lleva `aria-sort` (`ascending`, `descending` o ninguno): el lector anuncia el orden de la columna. La flecha es decorativa (`aria-hidden`) y reserva su lugar sin orden, así el ancho no salta.",
+      "Con `href` es un `<a>` real: se puede abrir en otra pestaña, lo ve un crawler y ordenar no depende de JavaScript. Con `onSort`, un `<button type=\"button\">`.",
+      "Foco visible (`focus-ring`) y objetivo de 28 px de alto, como el de `DataTable`.",
+    ],
+    usage: [
+      "**Toda tabla con más de una columna comparable tiene encabezados ordenables.** Con `DataTable`, `sortable` en la columna; con `Table` + filtros y paginación por URL, `SortableTableHead`.",
+      "Por URL (Server Component de Next): `<SortableTableHead direction={sort === \"amount\" ? dir : null} href={(next) => hrefFor(\"amount\", next)} numeric>Importe</SortableTableHead>`, donde `hrefFor` arma `?sort=amount&dir=asc|desc` sobre los `searchParams` de la página (y quita `sort`/`dir` con `null` y vuelve a `page=1`). Con `next/link`: `renderLink={(props) => <Link {...props} />}`.",
+      "Por estado: `direction` y `onSort={(next) => …}`. El cliente ordena sus filas; el servidor ordena según `sort` y `dir`.",
+      "`numeric` alinea a la derecha con cifras tabulares, igual que `TableHead`.",
+    ],
+    props: {
+      SortableTableHead: {
+        direction: "La dirección de esta columna ahora (`asc`, `desc` o `null` si la tabla no está ordenada por ella).",
+        href: "Orden por link: recibe el siguiente estado (`asc`, `desc` o `null`) y devuelve la URL.",
+        onSort: "Orden por callback: se llama con el siguiente estado.",
+        renderLink: "El link de la app (`next/link`): recibe `href`, `className` y `children`.",
+        numeric: "Alinea a la derecha con cifras tabulares. Tiene que coincidir con las celdas de la columna.",
+      },
+    },
+    related: ["table", "data-table", "pagination", "filter-bar"],
+  },
+  "row-actions": {
+    title: "RowActions",
+    group: "contenido",
+    description: "El «…» de una fila de tabla o de lista: un botón `icon-sm` `plain` que abre un `DropdownMenu`, con tooltip y el nombre de la fila. La norma del sistema para el menú de una fila.",
+    keyboard: [
+      ["Tab", "El botón es una parada de Tab de la fila."],
+      ["Enter · Espacio · ↓", "Abren el menú; las flechas lo recorren y Escape lo cierra devolviendo el foco al botón."],
+    ],
+    a11y: [
+      "El botón lleva `aria-label` con **la fila** («Acciones para FAC-1024»): una columna de «…» sin nombre propio es ambigua para un lector de pantalla.",
+      "Es el `DropdownMenu` de siempre (menú con foco itinerante, `aria-expanded`) y el tooltip se abre también con el foco del teclado.",
+      "28 px de alto; con el dedo el área crece a 44 (`touch-target`).",
+    ],
+    usage: [
+      "**El menú de fila es `icon-sm` `plain` con `aria-label` de la fila**: no se arma a mano ni se cambia de tamaño o de variante. Va en la última columna, con la cabecera `<span className=\"sr-only\">Acciones</span>`; en una `Table stacked`, la celda `stacked=\"corner\"`.",
+      "Los hijos son ítems de `DropdownMenu` (`DropdownMenuItem`, `DropdownMenuSeparator`; el destructivo con `variant=\"destructive\"`).",
+      "`tooltip` cambia «Acciones»; `icon` el «…»; `align` (default `end`) alinea el menú.",
+    ],
+    props: {
+      RowActions: {
+        label: "El nombre accesible, con la fila: «Acciones para FAC-1024».",
+        tooltip: "Lo que dice el tooltip. Default «Acciones».",
+        align: "Cómo se alinea el menú respecto del botón. Default `end`.",
+        icon: "El ícono del botón. Por defecto, «…».",
+        disabled: "Apaga el botón.",
+      },
+    },
+    related: ["dropdown-menu", "table", "tooltip", "button"],
   },
   "filter-bar": {
     title: "FilterBar",

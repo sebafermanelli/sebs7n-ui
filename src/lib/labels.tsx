@@ -401,6 +401,8 @@ export type Labels = {
     selectAll: string
     /** Antes del tope, en la lista, cuando se llegó: «Máximo 3». */
     max: string
+    /** El nombre del chip «+N» de los elegidos que no entran: «y {count} más». Por defecto, el del componente. */
+    more?: string
   }
   numberField: {
     decrement: string

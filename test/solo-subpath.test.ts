@@ -64,6 +64,8 @@ const SOLO_SUBPATH = [
   "save-bar",
   "entity-overlay",
   "empty-filters-action",
+  "sortable-table-head",
+  "row-actions",
 ]
 
 describe("componentes solo por subpath", () => {

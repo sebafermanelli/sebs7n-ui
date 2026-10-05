@@ -192,6 +192,11 @@ type ComboboxChipsProps = WithClassName<ComboboxPrimitive.Chips.Props> & {
   showClear?: boolean
   disabled?: boolean
   labels?: { clear?: string; trigger?: string }
+  /**
+   * Los chips envuelven en varias filas y el campo crece (default). Con `false` es **una sola línea** del alto de un
+   * `Select` (28 · 36 · 40): lo que no entra lo esconde quien la usa (`MultiSelect` lo hace con «+N»).
+   */
+  wrap?: boolean
 }
 
 /**
@@ -202,7 +207,7 @@ type ComboboxChipsProps = WithClassName<ComboboxPrimitive.Chips.Props> & {
 const ChipSizeContext = React.createContext<TagSize>("md")
 
 // Selección múltiple: superficie de Input que crece con los chips.
-function ComboboxChips({ className, size = "md", showTrigger = true, showClear = false, disabled, labels, ...props }: ComboboxChipsProps) {
+function ComboboxChips({ className, size = "md", showTrigger = true, showClear = false, disabled, labels, wrap = true, ...props }: ComboboxChipsProps) {
   const l = useLabels().combobox
   return (
     <ComboboxPrimitive.InputGroup
@@ -212,16 +217,18 @@ function ComboboxChips({ className, size = "md", showTrigger = true, showClear =
       data-disabled={disabled ? "" : undefined}
       className={cn(
         inputShellClassName,
-        // Los chips pueden ocupar varias filas.
-        inputMultilineRadiusClassName,
+        // Los chips pueden ocupar varias filas (`wrap`); sin `wrap`, una línea del alto de un `Select`.
+        wrap && inputMultilineRadiusClassName,
         // Un chip mide 20 y el `md` 36: con `py-1` y el borde el `self-center` reparte el aire. En
         // `sm` el chip mide 16 y el campo 28: `py-0.5`.
-        "h-auto! data-[size=sm]:min-h-7 data-[size=md]:min-h-9 data-[size=lg]:min-h-10 pointer-coarse:data-[size=sm]:min-h-9 pointer-coarse:data-[size=md]:min-h-11 items-start py-1 data-[size=sm]:py-0.5 pr-1 pl-1",
+        wrap
+          ? "h-auto! data-[size=sm]:min-h-7 data-[size=md]:min-h-9 data-[size=lg]:min-h-10 pointer-coarse:data-[size=sm]:min-h-9 pointer-coarse:data-[size=md]:min-h-11 items-start py-1 data-[size=sm]:py-0.5 pr-1 pl-1"
+          : "h-7! data-[size=md]:h-9! data-[size=lg]:h-10! pointer-coarse:data-[size=sm]:h-9! pointer-coarse:data-[size=md]:h-11! items-center py-0 pr-1 pl-1",
         className
       )}
     >
       <ChipSizeContext.Provider value={size === "sm" ? "sm" : "md"}>
-        <ComboboxPrimitive.Chips data-slot="combobox-chips" className="flex min-w-0 flex-1 flex-wrap items-center gap-1 self-center" {...props} />
+        <ComboboxPrimitive.Chips data-slot="combobox-chips" className={cn("flex min-w-0 flex-1 items-center gap-1 self-center", wrap ? "flex-wrap" : "flex-nowrap overflow-hidden")} {...props} />
       </ChipSizeContext.Provider>
       {showClear && (
         <ComboboxPrimitive.Clear data-slot="combobox-clear" aria-label={labels?.clear ?? l.clear} disabled={disabled} className={cn(inputShellButtonClassName, "self-center")}>

@@ -1,10 +1,11 @@
 "use client"
 
-import { CopyIcon, DownloadIcon, EyeIcon, EyeOffIcon, MoreHorizontalIcon, PencilIcon, PlusIcon, Trash2Icon, UploadIcon } from "lucide-react"
+import { CopyIcon, DownloadIcon, EyeIcon, EyeOffIcon, PencilIcon, PlusIcon, Trash2Icon, UploadIcon } from "lucide-react"
 import dynamic from "next/dynamic"
 import { useState, type ReactNode } from "react"
 import { AppShellContent } from "sebs7n-ui/app-shell-content"
 import { Button } from "sebs7n-ui/button"
+import { RowActions } from "sebs7n-ui/row-actions"
 import { Card, CardContent } from "sebs7n-ui/card"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "sebs7n-ui/collapsible"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "sebs7n-ui/dropdown-menu"
@@ -94,11 +95,7 @@ export default function VariablesPage() {
             >
               <CopyIcon />
             </IconButton>
-            <DropdownMenu>
-              <DropdownMenuTrigger render={<Button aria-label={`Acciones para ${variable.key}`} size="icon-sm" variant="ghost" />}>
-                <MoreHorizontalIcon />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
+            <RowActions label={`Acciones para ${variable.key}`}>
                 <DropdownMenuItem onClick={() => setEditing(variable)}>
                   <PencilIcon />
                   Editar
@@ -108,8 +105,7 @@ export default function VariablesPage() {
                   <Trash2Icon />
                   Eliminar
                 </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            </RowActions>
           </span>
         }
       />

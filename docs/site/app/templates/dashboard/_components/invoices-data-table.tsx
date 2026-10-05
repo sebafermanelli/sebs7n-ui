@@ -1,6 +1,6 @@
 "use client"
 
-import { BanIcon, BellRingIcon, CheckCircle2Icon, Columns3Icon, DownloadIcon, MoreHorizontalIcon, PanelRightIcon } from "lucide-react"
+import { BanIcon, BellRingIcon, CheckCircle2Icon, Columns3Icon, DownloadIcon, PanelRightIcon } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
 import { Avatar, AvatarFallback } from "sebs7n-ui/avatar"
@@ -22,6 +22,7 @@ import { FilterBar } from "sebs7n-ui/filter-bar"
 import { HoverCard, HoverCardContent, HoverCardHeader, HoverCardTrigger } from "sebs7n-ui/hover-card"
 import { useStoredState } from "sebs7n-ui/lib/use-stored-state"
 import { MultiSelect } from "sebs7n-ui/multi-select"
+import { RowActions } from "sebs7n-ui/row-actions"
 import { SearchField } from "sebs7n-ui/search-field"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "sebs7n-ui/select"
 import { Tooltip, TooltipContent, TooltipTrigger } from "sebs7n-ui/tooltip"
@@ -167,14 +168,7 @@ export function InvoicesDataTable({
       id: "actions",
       header: <span className="sr-only">Acciones</span>,
       cell: (row) => (
-        <DropdownMenu>
-          <Tooltip>
-            <TooltipTrigger render={<DropdownMenuTrigger render={<Button aria-label={`Acciones para ${row.id}`} size="icon-sm" variant="plain" />} />}>
-              <MoreHorizontalIcon />
-            </TooltipTrigger>
-            <TooltipContent>Acciones</TooltipContent>
-          </Tooltip>
-          <DropdownMenuContent align="end">
+        <RowActions label={`Acciones para ${row.id}`}>
             <DropdownMenuItem onClick={() => onOpenDetail(row)}>
               <PanelRightIcon />
               Ver detalle
@@ -194,8 +188,7 @@ export function InvoicesDataTable({
                 </DropdownMenuItem>
               </>
             )}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        </RowActions>
       ),
       className: "w-12",
     },

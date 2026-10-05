@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { ChevronDownIcon, ChevronUpIcon, SearchIcon } from "lucide-react"
+import { SearchIcon } from "lucide-react"
 
 import { defined } from "../internal/defined.js"
 import { useLabels, type Labels } from "../lib/labels.js"
@@ -12,6 +12,7 @@ import { Checkbox } from "./checkbox.js"
 import { Input } from "./input.js"
 import { Pagination } from "./pagination.js"
 import { Skeleton } from "./skeleton.js"
+import { ariaSort, SortIndicator, sortHeadClassName } from "../internal/sort-head.js"
 import { Table, TableBody, TableCell, TableGroupHeader, TableHead, TableHeader, TableRow, type TableProps } from "./table.js"
 
 /**
@@ -364,7 +365,7 @@ function DataTable<T>({
               return (
                 <TableHead
                   key={column.id}
-                  aria-sort={direction === "asc" ? "ascending" : direction === "desc" ? "descending" : undefined}
+                  aria-sort={ariaSort(direction)}
                   numeric={column.numeric}
                   className={column.className}
                 >
@@ -377,19 +378,10 @@ function DataTable<T>({
                         setSort(next === "none" ? null : { id: column.id, direction: next })
                         resetPage()
                       }}
-                      className={cn(
-                        "-mx-1.5 inline-flex h-7 cursor-pointer items-center gap-1 rounded-control px-1.5 outline-none transition-control hover:bg-fill-1 hover:text-label focus-visible:focus-ring",
-                        direction && "text-label",
-                        column.numeric && "flex-row-reverse"
-                      )}
+                      className={sortHeadClassName(direction, column.numeric)}
                     >
                       {column.header}
-                      {/* La flecha es decorativa: el orden lo dice `aria-sort` en la cabecera. */}
-                      {direction === "desc" ? (
-                        <ChevronDownIcon aria-hidden="true" className="size-3.5" />
-                      ) : (
-                        <ChevronUpIcon aria-hidden="true" className={cn("size-3.5", !direction && "invisible")} />
-                      )}
+                      <SortIndicator direction={direction} />
                     </button>
                   ) : (
                     column.header

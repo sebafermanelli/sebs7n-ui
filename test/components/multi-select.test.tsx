@@ -164,3 +164,69 @@ describe("MultiSelect", () => {
     expect(screen.getByRole("combobox")).not.toHaveAttribute("placeholder")
   })
 })
+
+describe("MultiSelect: una sola línea con «+N»", () => {
+  // jsdom no mide: la fila mide 300 y cada chip 90 (lugar para 2 chips, el «+N» y el campo).
+  const medir = () => {
+    const ancho = vi.spyOn(HTMLElement.prototype, "clientWidth", "get").mockReturnValue(300)
+    const chip = vi.spyOn(HTMLElement.prototype, "offsetWidth", "get").mockReturnValue(90)
+    return () => {
+      ancho.mockRestore()
+      chip.mockRestore()
+    }
+  }
+  const todos = ["transferencia", "tarjeta", "debito", "efectivo"]
+
+  it("los que no entran se esconden detrás de «+N» con nombre accesible «y N más»", async () => {
+    const restore = medir()
+    render(<MultiSelect aria-label="Medios de pago" defaultValue={todos} options={MEDIOS} />)
+    await vi.waitFor(() => expect(chips()).toEqual(["Transferencia", "Tarjeta de crédito"]), { timeout: 20000 })
+    const mas = screen.getByRole("button", { name: "y 2 más" })
+    expect(mas).toHaveTextContent("+2")
+    restore()
+  }, 30000)
+
+  it("«+N» abre la lista, donde se ven todos los elegidos", async () => {
+    const restore = medir()
+    const user = userEvent.setup()
+    render(<MultiSelect aria-label="Medios de pago" defaultValue={todos} options={MEDIOS} />)
+    await user.click(await screen.findByRole("button", { name: "y 2 más" }))
+    const lista = await screen.findByRole("listbox")
+    expect(within(lista).getAllByRole("option", { selected: true })).toHaveLength(4)
+    restore()
+  }, 30000)
+
+  it("maxVisible tope; overflow=wrap deja todos y que el campo crezca", async () => {
+    const restore = medir()
+    const { rerender } = render(<MultiSelect aria-label="Medios de pago" defaultValue={todos} maxVisible={1} options={MEDIOS} />)
+    await screen.findByRole("button", { name: "y 3 más" })
+    expect(chips()).toEqual(["Transferencia"])
+    rerender(<MultiSelect aria-label="Medios de pago" defaultValue={todos} options={MEDIOS} overflow="wrap" />)
+    expect(screen.queryByRole("button", { name: /más$/ })).toBeNull()
+    expect(chips()).toHaveLength(4)
+    restore()
+  }, 30000)
+
+  it("tiene el alto de un Select: fijo en sm, md y lg (no crece)", () => {
+    const { container, rerender } = render(<MultiSelect aria-label="x" options={MEDIOS} size="sm" />)
+    const grupo = () => container.querySelector("[data-slot=combobox-chips-group]")!
+    expect(grupo().className).toContain("h-7!")
+    expect(grupo().className).not.toContain("h-auto!")
+    rerender(<MultiSelect aria-label="x" options={MEDIOS} size="lg" />)
+    expect(grupo().className).toContain("data-[size=lg]:h-10!")
+    rerender(<MultiSelect aria-label="x" options={MEDIOS} overflow="wrap" />)
+    expect(grupo().className).toContain("h-auto!")
+  })
+
+  it("Backspace con el campo vacío quita el último chip a la vista (el que está junto al campo)", async () => {
+    const restore = medir()
+    const user = userEvent.setup()
+    const onValueChange = vi.fn()
+    render(<MultiSelect aria-label="Medios de pago" defaultValue={todos} onValueChange={onValueChange} options={MEDIOS} />)
+    await screen.findByRole("button", { name: "y 2 más" })
+    await user.click(screen.getByRole("combobox", { name: "Medios de pago" }))
+    await user.keyboard("{Backspace}")
+    expect(onValueChange).toHaveBeenLastCalledWith(["transferencia", "debito", "efectivo"])
+    restore()
+  }, 30000)
+})
