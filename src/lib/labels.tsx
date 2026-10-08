@@ -84,6 +84,27 @@ export type Labels = {
     /** Nombre del separador que cambia el ancho del sidebar. */
     resizeSidebar?: string
   }
+  /** Opcional (2.15): el chip de `DocumentCitation`; el default es `documentSheetLabels` de `sebs7n-ui/document-sheet` (ver `carousel`). */
+  documentSheet?: {
+    /** El chip de una cita comprobada: «Verificada». */
+    verified: string
+    /** El chip de una cita por comprobar: «A verificar». */
+    pending: string
+  }
+  /** Opcional (2.15): `ScrollSequence`; el default es `scrollSequenceLabels` de `sebs7n-ui/scroll-sequence` (ver `carousel`). */
+  scrollSequence?: {
+    /** El nombre del indicador de pasos: «Pasos». */
+    steps: string
+    /** El texto de cada botón del indicador: «Ir al paso 2: Revisada». */
+    goToStep: (step: number, label: string) => string
+  }
+  /** Opcional (2.15): `TextDiff`; el default es `textDiffLabels` de `sebs7n-ui/text-diff` (ver `carousel`). */
+  textDiff?: {
+    /** Lo que lee un lector de pantalla antes del texto tachado: «Eliminado:». */
+    deleted: string
+    /** Lo que lee antes del texto agregado: «Agregado:». */
+    inserted: string
+  }
   /** Opcional (2.3): `AuthDivider`; el texto por defecto es `authLabels` de `sebs7n-ui/auth-layout` (ver `carousel`). */
   auth?: {
     /** El separador entre los proveedores y el formulario: «o». */

@@ -66,6 +66,10 @@ const SOLO_SUBPATH = [
   "empty-filters-action",
   "sortable-table-head",
   "row-actions",
+  "section-header",
+  "document-sheet",
+  "scroll-sequence",
+  "text-diff",
 ]
 
 describe("componentes solo por subpath", () => {
