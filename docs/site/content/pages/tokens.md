@@ -77,6 +77,19 @@ const heading = Source_Serif_4({ subsets: ["latin"], variable: "--font-heading" 
 
 Va junto a un rol (`font-display text-title-1`): cambia la familia, el rol pone tamaño y peso.
 
+### Titulares de marketing (opt-in)
+
+Para el hero de una landing, cuatro roles fluidos con más contraste que `text-large-title` (48). Usan `--font-display` (la fuente de titulares de la app) y ningún componente del paquete los pide: se usan a mano. Hay una demo viva en [Marketing](/docs/marketing).
+
+| Rol | Tamaño | Para qué |
+|---|---|---|
+| `text-display` | `clamp(40px → 72px)`, interlineado 1,04 | El titular del hero. |
+| `text-display-2` | `clamp(32px → 52px)`, 1,08 | Una sección grande. |
+| `text-display-3` | `clamp(24px → 34px)`, 1,15 | Un titular de bloque. |
+| `text-lead` | `clamp(17px → 21px)`, 1,5 (Inter) | La bajada bajo el titular. |
+
+El énfasis dentro de un titular es de **color sólido o de peso, nunca un degradé**: `emphasis-accent` (el acento como texto, AA), `emphasis-strong` (700) y `emphasis-muted` (el resto de la frase en `label-secondary`). `ease-out-expo` es la curva `cubic-bezier(0.16, 1, 0.3, 1)` de `Reveal`.
+
 Las clases de Geist (`text-copy-*`, `text-label-<n>`, `text-heading-*`, `text-button-*`) **siguen andando** y `cn()` las sigue fusionando, pero están obsoletas: el paquete ya no las usa y se van en 3.0.
 
 ## Radios

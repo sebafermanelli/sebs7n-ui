@@ -64,6 +64,7 @@ export const FOOTER_GROUPS = [
     links: [
       { href: "/docs", label: "Todos los componentes" },
       { href: "/docs/playground", label: "Playground" },
+      { href: "/docs/marketing", label: "Marketing" },
       { href: "/docs/iconos", label: "Iconos" },
       { href: "/templates", label: "Templates" }
     ]

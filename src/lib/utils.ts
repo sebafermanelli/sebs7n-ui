@@ -12,6 +12,8 @@ export const TYPE_SCALE = [
   // Roles tipográficos de iCloud (2.0): ver theme.css.
   "large-title", "title-1", "title-2", "title-3", "headline", "body", "body-large", "callout",
   "subheadline", "footnote", "caption", "mono-body", "mono-callout",
+  // Roles de marketing (2.17, opt-in): sin esto `cn("text-display", "text-label")` los tomaría por color.
+  "display", "display-2", "display-3", "lead",
 ] as const
 
 const twMerge = extendTailwindMerge<"touch-target" | "focus-ring">({

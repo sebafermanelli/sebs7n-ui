@@ -3666,6 +3666,167 @@ export const COMPONENTS = {
     },
     related: ["stepper", "document-sheet"],
   },
+  "window-frame": {
+    title: "WindowFrame",
+    group: "contenido",
+    description: "El marco de una ventana de producto —barra sutil con título y tres puntos neutros— para capturas, videos de demo y piezas de interfaz de una landing.",
+    keyboard: [["Tab", "No tiene paradas propias: es un marco. Lo que lleva adentro (un video, un enlace) se recorre como siempre."]],
+    a11y: [
+      "La barra es decorativa (`aria-hidden`); si pasás `title`, el marco es un `role=\"group\"` nombrado por él.",
+      "Una captura adentro lleva su `alt` real; el marco no lo reemplaza. Un video de demo, sus controles y un texto alternativo.",
+    ],
+    usage: [
+      "Es opt-in y solo por subpath (`sebs7n-ui/window-frame`). Ningún componente del paquete lo usa.",
+      "La sombra sale del set chico de 2.16: `resting` (`shadow-widget`), `floating` (`shadow-menu`, default) u `overlay` (`shadow-modal`). Sin glow.",
+      "Los tres puntos son `bg-fill-3`, grises: nada de rojo, amarillo y verde. `controls={false}` los saca; `bar` reemplaza la barra entera (unas pestañas).",
+      "Es Server Component: sin estado ni hooks.",
+    ],
+    props: {
+      WindowFrame: {
+        title: "El título de la barra, centrado. Nombra el grupo para un lector.",
+        controls: "Muestra los tres puntos de la ventana. Default `true`.",
+        elevation: "La sombra, del set chico: `resting` · `floating` (default) · `overlay`.",
+        bar: "Reemplaza el contenido de la barra (por ejemplo, pestañas). Reemplaza al título.",
+        contentClassName: "Clases del cuerpo, debajo de la barra.",
+      },
+    },
+    related: ["card", "section-backdrop", "document-sheet"],
+  },
+  reveal: {
+    title: "Reveal",
+    group: "contenido",
+    description: "Entrada al hacer scroll: el bloque sube unos píxeles y se asienta con easing exponencial, una sola vez; escalonable, respeta movimiento reducido y se ve sin JS.",
+    keyboard: [["Tab", "No cambia el orden ni las paradas: el contenido está en el DOM y es enfocable desde el primer render."]],
+    a11y: [
+      "Con `prefers-reduced-motion: reduce` nunca se esconde ni se mueve, y la transición se apaga.",
+      "Sin JS y en el primer render (servidor y primera pasada del cliente) el contenido ya está a la vista: no hay nada escondido que un lector de pantalla o un buscador no vea.",
+      "Lo que ya se ve al montar no se esconde, así el hero no parpadea al hidratar.",
+      "Por defecto **solo mueve**: la guía del sistema no baja la opacidad del texto mientras aparece. `fade` suma opacidad y es para piezas sin texto (una captura, un marco).",
+    ],
+    usage: [
+      "Opt-in y solo por subpath (`sebs7n-ui/reveal`). `RevealGroup` escalona a sus hijos de a `step` ms (default 80).",
+      "La curva es `cubic-bezier(0.16, 1, 0.3, 1)` (la utilidad `ease-out-expo`); la duración, 700 ms. Solo se anima `translate` (y `opacity` con `fade`).",
+      "Usalo en pocas cosas: un bloque por sección, no cada párrafo.",
+    ],
+    props: {
+      Reveal: {
+        delay: "Retraso de la entrada, en ms. `RevealGroup` lo calcula.",
+        distance: "Cuánto sube, en px. Default `16`.",
+        fade: "Suma opacidad a la entrada. Solo para piezas sin texto. Default `false`.",
+        threshold: "Fracción visible (0–1) con la que dispara. Default `0.15`.",
+        duration: "Duración, en ms. Default `700`.",
+      },
+      RevealGroup: {
+        step: "Espera entre un hijo y el siguiente, en ms. Default `80`.",
+        reveal: "Opciones que reciben todos los `Reveal` del grupo: `distance`, `fade`, `threshold`, `duration`, `className`.",
+      },
+    },
+    related: ["scroll-sequence", "scroll-story"],
+  },
+  "section-backdrop": {
+    title: "SectionBackdrop",
+    group: "contenido",
+    description: "Fondo de sección opt-in: lavado leve de la marca, retícula de filetes de 1 px o grano muy sutil. Nunca un degradé violeta ni un glow.",
+    keyboard: [["Tab", "No tiene paradas propias: la capa es decorativa y no recibe puntero."]],
+    a11y: [
+      "La capa es `aria-hidden` y `pointer-events-none`, y no lleva texto: el contraste del contenido se sigue midiendo contra `bg-background`.",
+      "`wash` usa la marca de la app al 7 %; `grid` el token `separator`; `grain` ruido al 5 %. Siguen el tema claro y oscuro solos.",
+    ],
+    usage: [
+      "Opt-in y solo por subpath (`sebs7n-ui/section-backdrop`). Una sección con fondo y el resto sin: el aire entre secciones ya marca el ritmo.",
+      "`grid` se desvanece hacia los bordes (`fade=\"top\"` o `\"center\"`) para que se lea como papel milimetrado y no como una trama.",
+      "Es Server Component y no pide recursos: el grano es un SVG inline.",
+    ],
+    props: {
+      SectionBackdrop: {
+        variant: "`wash` (default) · `grid` · `grain`.",
+        fade: "Desde dónde se apaga la textura: `top` (default), `center` o `none`. `wash` ya cae solo.",
+        backdropClassName: "Clases de la capa decorativa, no del contenedor.",
+      },
+    },
+    related: ["window-frame", "section-header"],
+  },
+  "scroll-story": {
+    title: "ScrollStory",
+    group: "contenido",
+    description: "Una escena pegajosa con pasos numerados: la lista editorial 01, 02, 03 a un lado y el escenario que cambia con el scroll al otro. Se apila sola si no entra.",
+    keyboard: [
+      ["Tab", "Recorre los pasos de la lista."],
+      ["Enter · Espacio", "Lleva la página al paso elegido."],
+    ],
+    a11y: [
+      "El paso actual lleva `aria-current=\"step\"` y el cambio se anuncia en una región `status` («Paso 2 de 3: Revisar»).",
+      "Con `prefers-reduced-motion: reduce`, sin JS o cuando no se cumple `minStage`, los pasos se ven apilados, en orden, cada uno con su título y su bajada.",
+      "El filete del paso actual se llena con `--scroll-sequence-step-progress`: solo `transform`.",
+    ],
+    usage: [
+      "Es `ScrollSequence` con la composición resuelta; opt-in y solo por subpath (`sebs7n-ui/scroll-story`). Acepta sus props (`stepLength`, `offset`, `onStepChange`).",
+      "`minStage` (default `(min-width: 768px) and (min-height: 600px)`): si la ventana no lo cumple, se apila. Antes de hidratar la misma consulta la aplica el CSS.",
+      "`children` dibuja el escenario para un `state`: `{ step, label, progress, stepProgress, mode, goTo }`.",
+    ],
+    props: {
+      ScrollStory: {
+        steps: "Los pasos `{ label, title, description? }`, en orden.",
+        minStage: "Media query que el escenario necesita; si no se cumple, los pasos se apilan. Default `(min-width: 768px) and (min-height: 600px)`.",
+        gridClassName: "Clases de la grilla de dos columnas.",
+      },
+    },
+    related: ["scroll-sequence", "stepper", "window-frame"],
+  },
+  "skip-link": {
+    title: "SkipLink",
+    group: "navegacion",
+    description: "«Ir al contenido» fuera de un `AppShell`: el mismo link, oculto hasta que recibe el foco, para la primera parada de Tab de una landing.",
+    keyboard: [
+      ["Tab", "Es la primera parada: aparece arriba a la izquierda."],
+      ["Enter", "Lleva el foco al `<main>` (`#main` por defecto)."],
+    ],
+    a11y: [
+      "Visible solo con el foco (`sr-only` + `focus-visible:not-sr-only`) y con el anillo de foco del sistema.",
+      "El destino necesita un `id`: `<main id=\"main\">`. El texto sale de `labels.appShell.skipToContent`.",
+    ],
+    usage: [
+      "Va como primer hijo del `<body>` o de la página. `AppShell` ya trae el suyo: no lo dupliques.",
+      "Solo por subpath (`sebs7n-ui/skip-link`).",
+    ],
+    props: {
+      SkipLink: {
+        href: "El ancla del contenido. Default `#main`.",
+      },
+    },
+    related: ["app-shell", "navbar"],
+  },
+  "navbar-mobile-menu": {
+    title: "NavbarMobileMenu",
+    group: "navegacion",
+    description: "El menú de la barra en el teléfono: un botón de ícono que abre la hoja de abajo con los links a 44 px, la CTA al pie y el tema.",
+    keyboard: [
+      ["Enter · Espacio", "Abre la hoja desde el botón."],
+      ["Tab", "Recorre los links, el tema y la CTA; el foco queda adentro."],
+      ["Escape", "Cierra y devuelve el foco al botón."],
+    ],
+    a11y: [
+      "El botón tiene nombre (`labels.open`, «Abrir menú») y la hoja es un diálogo nombrado por `title`.",
+      "Los links están en un `<nav>` con nombre; la página actual lleva `aria-current=\"page\"`; cada uno mide 44 px de alto.",
+      "Elegir un link cierra la hoja. El gesto de arrastrar es un atajo: Escape y el botón de cierre siempre funcionan.",
+    ],
+    usage: [
+      "Se oculta desde `md` (`md:hidden`); `className` lo cambia. Va dentro del `NavbarContent`, a la derecha.",
+      "`items[].render` recibe el link del router (`<Link href=\"/precios\" />`). `footer` es la CTA de la barra; `showTheme` suma el `ThemeSwitcher`.",
+      "Solo por subpath (`sebs7n-ui/navbar-mobile-menu`): trae `Drawer`, que no entra al barrel.",
+    ],
+    props: {
+      NavbarMobileMenu: {
+        title: "El título de la hoja; es su nombre accesible.",
+        description: "Una línea bajo el título, para el lector. Sin ella, se repite el título oculto.",
+        items: "Los links `{ href, label, active?, render? }`.",
+        footer: "Va al pie de la hoja: la CTA de la barra.",
+        showTheme: "Muestra la fila del tema. Default `false`.",
+        labels: "Los textos internos: `{ open, navigation, theme }`.",
+      },
+    },
+    related: ["navbar", "drawer", "navbar-link"],
+  },
   "text-diff": {
     title: "TextDiff",
     group: "contenido",

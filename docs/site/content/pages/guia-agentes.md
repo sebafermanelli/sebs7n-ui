@@ -78,7 +78,7 @@ Un `MultiSelect` **mantiene su lugar y su alto** (una línea del alto de un `Sel
 
 ### Aparecer sin perder contraste
 
-Una animación de aparición (al entrar en pantalla, en una landing) **no baja la opacidad del texto**: un fade deja el texto por debajo de contraste AA mientras aparece. Se anima solo el desplazamiento (`translate`) o el texto aparece ya a opacidad 1 y se anima su contenedor sin texto; con `prefers-reduced-motion: reduce`, sin movimiento. El paquete no trae un `Reveal`: si la app lo arma, que sea así.
+Una animación de aparición (al entrar en pantalla, en una landing) **no baja la opacidad del texto**: un fade deja el texto por debajo de contraste AA mientras aparece. Se anima solo el desplazamiento (`translate`) o el texto aparece ya a opacidad 1 y se anima su contenedor sin texto; con `prefers-reduced-motion: reduce`, sin movimiento. `Reveal` (`sebs7n-ui/reveal`, opt-in) ya lo hace así: solo mueve, y `fade` es para piezas sin texto.
 
 ### Un link con margen
 
@@ -133,6 +133,11 @@ Un asistente o panel de ayuda que acompaña el trabajo va acoplado al costado (`
 | Mostrar cómo queda un documento, con citas verificadas y versiones | `DocumentSheet` (`sebs7n-ui/document-sheet`) |
 | Qué cambió entre dos versiones de un texto | `TextDiff` (`sebs7n-ui/text-diff`); la comparación sola, `diffWords` (`sebs7n-ui/lib/text-diff`) |
 | Un proceso que avanza al bajar y retrocede al subir, en una landing | `ScrollSequence` (`sebs7n-ui/scroll-sequence`) |
+| Una captura o una pieza de interfaz de producto en una landing | `WindowFrame` (`sebs7n-ui/window-frame`): barra sutil y sombra del set chico |
+| Un recorrido en pasos numerados que avanza con el scroll | `ScrollStory` (`sebs7n-ui/scroll-story`; con `minStage` se apila si no entra) |
+| Que un bloque entre al hacer scroll | `Reveal` / `RevealGroup` (`sebs7n-ui/reveal`): solo `transform`, quieto con movimiento reducido |
+| Un fondo de sección (lavado de marca, retícula, grano) | `SectionBackdrop` (`sebs7n-ui/section-backdrop`): nunca degradé violeta ni glow |
+| El menú de la barra en el teléfono, «Ir al contenido» fuera del `AppShell` | `NavbarMobileMenu` (`sebs7n-ui/navbar-mobile-menu`), `SkipLink` (`sebs7n-ui/skip-link`) |
 | Nada que mostrar | `EmptyState`, con una sola acción para salir del vacío |
 | Esperando datos | `Skeleton` del alto final, o `loading` del componente |
 
