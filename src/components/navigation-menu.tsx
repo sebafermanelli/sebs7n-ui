@@ -239,12 +239,6 @@ function NavigationMenuLink({ className, title, description, icon, children, ...
 type NavigationMenuPositionerProps = NavigationMenuPrimitive.Positioner.Props &
   Pick<NavigationMenuPrimitive.Portal.Props, "container">
 
-/** 0,1875 rem = 3 px: padding del trigger (0,625) menos el aire del panel y del link (0,8125). */
-const alignToTriggerLabel = () => {
-  const rem = typeof document === "undefined" ? 16 : Number.parseFloat(getComputedStyle(document.documentElement).fontSize) || 16
-  return -0.1875 * rem
-}
-
 function NavigationMenuPositioner({
   className,
   container,
@@ -252,7 +246,7 @@ function NavigationMenuPositioner({
   // El panel arranca 3 px a la izquierda del trigger para que el texto de sus links (5 + 8 px de
   // aire por dentro) caiga justo debajo del texto del trigger (10 px de padding): alinear los
   // bordes dejaba el panel 11 px "afuera" del rótulo que lo abre.
-  alignOffset = alignToTriggerLabel,
+  alignOffset = -3,
   side = "bottom",
   sideOffset = 8,
   collisionPadding = 16,

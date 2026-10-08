@@ -44,7 +44,7 @@ export const segmentedThumbClassName =
  * separador de 1 × 16 del segmentado, centrado en el alto del ítem, escondido en el prendido y en el que le sigue.
  */
 export const segmentedItemClassName =
-  "relative inline-flex h-6 min-w-8 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-[calc(var(--radius-control)-2px)] px-3 text-callout whitespace-nowrap text-label outline-none select-none transition-surface " +
+  "relative inline-flex min-h-6 min-w-8 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-[calc(var(--radius-control)-2px)] px-3 py-px text-center text-callout text-balance text-label outline-none select-none transition-surface " +
   "focus-visible:focus-ring data-pressed:bg-segment data-pressed:shadow-segment data-pressed:font-semibold data-disabled:cursor-not-allowed data-disabled:opacity-40 " +
   "after:absolute after:start-0 after:top-1/2 after:-translate-y-1/2 after:h-4 after:w-px after:bg-fill-3 first:after:hidden data-pressed:after:hidden [[data-pressed]+&]:after:hidden " +
   "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 " +
@@ -55,4 +55,6 @@ export const segmentedItemClassName =
  * Calendar) y la posibilidad de achicarse por debajo de su texto.
  */
 export const segmentedGroupClassName =
+  // Las pistas valen lo que mide su palabra más larga como mínimo y se reparten el resto: en una caja angosta la etiqueta baja a una
+  // segunda línea (el segmento crece, `min-h-6`) en vez de apretarse contra los bordes o salirse de la pista.
   "inline-grid grid-flow-col auto-cols-[minmax(min-content,1fr)] data-[orientation=vertical]:grid-flow-row data-[orientation=vertical]:auto-cols-auto"

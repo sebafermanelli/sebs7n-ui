@@ -141,4 +141,9 @@ describe("Tag", () => {
     expect(tag).not.toHaveClass("h-5", "rounded-tag")
     expect(tagVariants({ className: "bg-gray-300" }).split(/\s+/)).not.toContain("bg-gray-700")
   })
+
+  it("la etiqueta que se trunca lleva title con el texto entero", () => {
+    const { container } = render(<Tag>Responsable inscripto</Tag>)
+    expect(container.querySelector('[data-slot="tag-label"]')).toHaveAttribute("title", "Responsable inscripto")
+  })
 })

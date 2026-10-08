@@ -45,7 +45,7 @@ describe("ToggleGroup size", () => {
     const [md, lg] = screen.getAllByRole("group")
     expect(md).toHaveAttribute("data-size", "md")
     expect(lg).toHaveAttribute("data-size", "lg")
-    expect(screen.getByRole("button", { name: "Lista" })).toHaveClass("group-data-[size=md]/toggle-group:not-in-data-[slot=toolbar]:h-8", "group-data-[size=lg]/toggle-group:not-in-data-[slot=toolbar]:h-9")
+    expect(screen.getByRole("button", { name: "Lista" })).toHaveClass("group-data-[size=md]/toggle-group:not-in-data-[slot=toolbar]:min-h-8", "group-data-[size=lg]/toggle-group:not-in-data-[slot=toolbar]:min-h-9")
   })
 })
 

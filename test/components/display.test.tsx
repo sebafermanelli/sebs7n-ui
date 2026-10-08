@@ -52,7 +52,7 @@ describe("Toggle (chip)", () => {
     )
     expect(screen.getByRole("group", { name: "Estilo" })).toHaveClass("rounded-control", "bg-fill-2", "p-0.5", "w-fit")
     const b = screen.getByRole("button", { name: "B" })
-    expect(b).toHaveClass("h-6", "text-callout", "text-label", "data-pressed:font-semibold")
+    expect(b).toHaveClass("min-h-6", "text-callout", "text-label", "data-pressed:font-semibold")
     // Selección neutra: la pastilla del segmentado, sin acento; el foco sigue siendo el anillo normal.
     expect(b).toHaveClass("data-pressed:bg-segment", "data-pressed:shadow-segment")
     expect(b.className).not.toMatch(/brand/)

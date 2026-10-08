@@ -325,4 +325,10 @@ describe("NumberField", () => {
     expect(container.querySelector("[data-slot=number-field-group]")).toHaveClass("w-full")
     expect(container.querySelector("[data-slot=number-field-group]")).not.toHaveClass("w-fit")
   })
+
+  it("los botones de 20 llevan un área de click de 24 (::after, WCAG 2.5.8)", async () => {
+    const { inputShellButtonClassName } = await import("../../src/variants/input")
+    expect(inputShellButtonClassName).toContain("relative")
+    expect(inputShellButtonClassName).toContain("after:-inset-0.5")
+  })
 })

@@ -51,7 +51,7 @@ function Tag({
       className={cn(tagVariants({ color, size, removable: Boolean(onRemove) }), className)}
       {...props}
     >
-      <span data-slot="tag-label" className="truncate">
+      <span data-slot="tag-label" title={typeof children === "string" ? children : undefined} className="truncate">
         {children}
       </span>
       {onRemove && (

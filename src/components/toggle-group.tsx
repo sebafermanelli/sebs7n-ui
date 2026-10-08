@@ -134,7 +134,7 @@ function ToggleGroupItem({ className, size: _size, name: _name, href, value, ren
     // Adentro de una Toolbar, 28 siempre: la barra tiene su escalón.
     className: cn(
       segmentedItemClassName,
-      "group-data-[size=md]/toggle-group:not-in-data-[slot=toolbar]:h-8 group-data-[size=lg]/toggle-group:not-in-data-[slot=toolbar]:h-9",
+      "group-data-[size=md]/toggle-group:not-in-data-[slot=toolbar]:min-h-8 group-data-[size=lg]/toggle-group:not-in-data-[slot=toolbar]:min-h-9",
       className
     ),
   }

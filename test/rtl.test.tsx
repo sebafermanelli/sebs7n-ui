@@ -84,3 +84,13 @@ describe("dirección de lectura", () => {
     expect(screen.getByRole("tab", { name: "Dos" })).toHaveFocus()
   })
 })
+
+// El `translate-x` está exento del barrido de arriba (a veces es simétrico), pero el pulgar del Switch no lo es: parte del
+// lado de inicio y en RTL, sin invertir, el prendido se salía de la pista (el audit de navegador midió 44 > 36).
+describe("RTL: lo que se mueve con translate-x", () => {
+  it("el pulgar del Switch prendido va hacia el otro lado en RTL", () => {
+    const fuente = readFileSync(join(root, "components/switch.tsx"), "utf8")
+    expect(fuente).toContain("group-data-[size=md]/switch:rtl:data-checked:-translate-x-4")
+    expect(fuente).toContain("group-data-[size=sm]/switch:rtl:data-checked:-translate-x-3")
+  })
+})

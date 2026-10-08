@@ -52,6 +52,8 @@ function Switch({ className, size = "md", variant = "default", ...props }: Switc
           "group-data-[size=md]/switch:size-4 group-data-[size=sm]/switch:size-3",
           "data-checked:bg-brand-contrast group-data-[variant=neutral]/switch:data-checked:bg-surface",
           "group-data-[size=md]/switch:data-checked:translate-x-4 group-data-[size=sm]/switch:data-checked:translate-x-3",
+          // En RTL el pulgar parte del lado derecho: prendido va hacia la izquierda, no se sale de la pista.
+          "group-data-[size=md]/switch:rtl:data-checked:-translate-x-4 group-data-[size=sm]/switch:rtl:data-checked:-translate-x-3",
           "group-data-disabled/switch:scale-100"
         )}
       />

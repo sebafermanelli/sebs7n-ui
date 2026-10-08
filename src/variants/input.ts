@@ -102,6 +102,7 @@ export const inputStartIconClassName = "pointer-events-none ms-3 flex shrink-0 t
 // NumberField). 20 px con el glifo de 14: en un campo `sm` un botón más grande lo llenaba de borde
 // a borde. Con el dedo, 28 (el campo ya creció a 36/44): arriba de los 24 de WCAG 2.5.8.
 export const inputShellButtonClassName =
-  "inline-flex size-5 pointer-coarse:size-7 shrink-0 cursor-pointer items-center justify-center rounded-[calc(var(--radius-control)-2px)] text-label-secondary outline-none transition-control " +
-  "hover:bg-fill-2 hover:text-label active:bg-fill-3 focus-visible:focus-ring " +
+  "relative inline-flex size-5 pointer-coarse:size-7 shrink-0 cursor-pointer items-center justify-center rounded-[calc(var(--radius-control)-2px)] text-label-secondary outline-none transition-control " +
+  // El `::after` lleva el área de click a 24 (WCAG 2.5.8) sin agrandar el dibujo de 20.
+  "after:absolute after:-inset-0.5 after:content-[''] hover:bg-fill-2 hover:text-label active:bg-fill-3 focus-visible:focus-ring " +
   "disabled:pointer-events-none data-disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:size-3.5"

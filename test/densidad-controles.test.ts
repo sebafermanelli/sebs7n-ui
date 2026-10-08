@@ -161,8 +161,8 @@ describe("una sola escala de alto para campos y botones", () => {
     const grupo = fuente("components/toggle-group.tsx")
     expect(grupo).toMatch(/useControlSize\(sizeProp, "md"\)/)
     expect(fuente("variants/segmented.ts")).toMatch(/\bp-0\.5\b[\s\S]*\bh-6\b/)
-    expect(grupo).toContain("group-data-[size=md]/toggle-group:not-in-data-[slot=toolbar]:h-8")
-    expect(grupo).toContain("group-data-[size=lg]/toggle-group:not-in-data-[slot=toolbar]:h-9")
+    expect(grupo).toContain("group-data-[size=md]/toggle-group:not-in-data-[slot=toolbar]:min-h-8")
+    expect(grupo).toContain("group-data-[size=lg]/toggle-group:not-in-data-[slot=toolbar]:min-h-9")
   })
 
   it("el NumberField mide lo que un Input: md 36 por defecto", () => {

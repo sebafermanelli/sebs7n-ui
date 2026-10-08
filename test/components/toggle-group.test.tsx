@@ -32,9 +32,9 @@ describe("ToggleGroup: tamaño por defecto", () => {
       </Toolbar>
     )
     const b = boton("B")
-    expect(b).toHaveClass("h-6")
-    expect(b.className).toMatch(/group-data-\[size=md\]\/toggle-group:not-in-data-\[slot=toolbar\]:h-8/)
-    expect(b.className).not.toMatch(/(^|\s)group-data-\[size=md\]\/toggle-group:h-8/)
+    expect(b).toHaveClass("min-h-6")
+    expect(b.className).toMatch(/group-data-\[size=md\]\/toggle-group:not-in-data-\[slot=toolbar\]:min-h-8/)
+    expect(b.className).not.toMatch(/(^|\s)group-data-\[size=md\]\/toggle-group:min-h-8/)
   })
 })
 
@@ -183,7 +183,7 @@ describe("ToggleGroupItem con href: opciones que navegan", () => {
     const user = userEvent.setup()
     render(<Filtro />)
     const [todas, pagadas] = screen.getAllByRole("link")
-    expect(pagadas).toHaveClass("h-6", "data-pressed:bg-segment", "group-data-[size=md]/toggle-group:not-in-data-[slot=toolbar]:h-8")
+    expect(pagadas).toHaveClass("min-h-6", "data-pressed:bg-segment", "group-data-[size=md]/toggle-group:not-in-data-[slot=toolbar]:min-h-8")
     await user.tab()
     expect(todas).toHaveFocus()
     await user.tab()
