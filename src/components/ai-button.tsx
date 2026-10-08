@@ -136,6 +136,11 @@ function AiLauncher({ className, label, labelVisible = false, labelSide = "left"
 type AiGlowProps = Omit<React.ComponentProps<"div">, "children"> & {
   /** La IA está trabajando. Sin esto el borde está apagado. */
   active?: boolean
+  /**
+   * `brand` tiñe el borde con escalones de la marca de la app en vez de los tonos de IA del paquete
+   * (violeta y magenta). Sin `tint`, igual que siempre. Para otros colores, `--ai-glow-1` … `--ai-glow-4`.
+   */
+  tint?: "brand"
 }
 
 /**
@@ -158,13 +163,13 @@ type AiGlowProps = Omit<React.ComponentProps<"div">, "children"> & {
  *
  * Es decoración. La espera la tiene que anunciar el contenedor con `aria-busy`.
  */
-function AiGlow({ className, active = false, ...props }: AiGlowProps) {
+function AiGlow({ className, active = false, tint, ...props }: AiGlowProps) {
   return (
     <div
       aria-hidden="true"
       data-ai-active={active ? "" : undefined}
       data-slot="ai-glow"
-      className={cn("pointer-events-none absolute inset-0 z-10 rounded-[inherit] ai-glow", className)}
+      className={cn("pointer-events-none absolute inset-0 z-10 rounded-[inherit] ai-glow", tint === "brand" && "ai-tint-brand", className)}
       {...props}
     />
   )

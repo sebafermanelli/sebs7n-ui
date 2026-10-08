@@ -76,6 +76,10 @@ const SOLO_SUBPATH = [
   "scroll-story",
   "skip-link",
   "navbar-mobile-menu",
+  "ruled-list",
+  "section",
+  "theme-switcher-lazy",
+  "waitlist-form",
 ]
 
 describe("componentes solo por subpath", () => {

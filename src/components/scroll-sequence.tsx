@@ -74,6 +74,12 @@ type ScrollSequenceProps = Omit<React.ComponentProps<"section">, "children"> & {
    * comportamiento no cambia. Antes de hidratar, el CSS aplica la misma consulta.
    */
   minStage?: string
+  /**
+   * `scale`: si el contenido del escenario es más alto que la pantalla (una ventana baja), se achica
+   * con `transform: scale()` (hasta 0,5) para que entre entero, en vez de quedar cortado. Con `scale`,
+   * el contenido mide lo que mide (no uses `h-full` adentro). Default `none`: igual que antes.
+   */
+  fit?: "none" | "scale"
   /** Cuánto scroll ocupa cada paso (cualquier largo CSS). Default `100svh`. */
   stepLength?: string
   /** Dónde se fija el escenario (el alto de una barra fija, por ejemplo `4rem`). Default `0px`. */
@@ -120,6 +126,7 @@ function ScrollSequence({
   offset = "0px",
   continuous = false,
   minStage,
+  fit = "none",
   indicator = true,
   stageClassName,
   onStepChange,
@@ -135,6 +142,8 @@ function ScrollSequence({
   const [fine, setFine] = React.useState(0)
   const trackRef = React.useRef<HTMLDivElement>(null)
   const stageRef = React.useRef<HTMLDivElement>(null)
+  const contentRef = React.useRef<HTMLDivElement>(null)
+  const fitRef = React.useRef<HTMLDivElement>(null)
   const onStepChangeRef = React.useRef(onStepChange)
   onStepChangeRef.current = onStepChange
 
@@ -217,6 +226,29 @@ function ScrollSequence({
     }
   }, [mode, count, continuous, offsetPx])
 
+  // `fit="scale"`: el contenido natural contra el alto que queda; se lee en cada cambio de tamaño.
+  React.useEffect(() => {
+    if (fit !== "scale" || mode !== "scroll") return
+    const holder = contentRef.current
+    const inner = fitRef.current
+    if (!holder || !inner) return
+    const measure = () => {
+      const available = holder.clientHeight
+      const natural = inner.offsetHeight
+      const scale = available > 0 && natural > available ? Math.max(0.5, available / natural) : 1
+      inner.style.setProperty("--scroll-sequence-fit", String(Math.round(scale * 1000) / 1000))
+    }
+    measure()
+    if (typeof ResizeObserver !== "function") {
+      window.addEventListener("resize", measure)
+      return () => window.removeEventListener("resize", measure)
+    }
+    const observer = new ResizeObserver(measure)
+    observer.observe(holder)
+    observer.observe(inner)
+    return () => observer.disconnect()
+  }, [fit, mode, step])
+
   const goTo = (index: number) => {
     const track = trackRef.current
     if (!track) return
@@ -297,8 +329,19 @@ function ScrollSequence({
             <p className="sr-only" role="status">
               {mode === "scroll" ? text.current(step + 1, count, steps[step]?.label ?? "") : ""}
             </p>
-            <div data-slot="scroll-sequence-content" className="relative min-h-0 flex-1">
-              {children(stateOf(step, scrollProgressNow, stepProgressNow, "scroll"))}
+            <div data-slot="scroll-sequence-content" ref={contentRef} className="relative min-h-0 flex-1">
+              {fit === "scale" ? (
+                <div
+                  ref={fitRef}
+                  data-slot="scroll-sequence-fit"
+                  className="mx-auto w-full origin-top"
+                  style={{ transform: "scale(var(--scroll-sequence-fit, 1))" }}
+                >
+                  {children(stateOf(step, scrollProgressNow, stepProgressNow, "scroll"))}
+                </div>
+              ) : (
+                children(stateOf(step, scrollProgressNow, stepProgressNow, "scroll"))
+              )}
             </div>
           </div>
         </div>

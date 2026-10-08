@@ -771,7 +771,7 @@
 
   /* Mientras la IA trabaja, el canto deja de ser un degradé quieto y gira. */
   &[data-ai-active]::after {
-    background: conic-gradient(from var(--sf-ai-angle), var(--sf-ai), var(--sf-ai-2), var(--sf-amber-600), var(--sf-blue-600), var(--sf-ai));
+    background: conic-gradient(from var(--sf-ai-angle), var(--ai-glow-1, var(--sf-ai)), var(--ai-glow-2, var(--sf-ai-2)), var(--ai-glow-3, var(--sf-amber-600)), var(--ai-glow-4, var(--sf-blue-600)), var(--ai-glow-1, var(--sf-ai)));
     opacity: 1;
     animation: var(--animate-ai-glow);
   }
@@ -794,6 +794,19 @@
  *
  * Con `prefers-reduced-motion` el borde se enciende pero no gira: lo corta el reset de base.css.
  */
+/**
+ * Tiñe `ai-glow` y el canto activo de `ai-rim` con la marca (opt-in, 2.17). Por defecto el borde de la IA
+ * usa los tonos de IA del paquete (violeta, magenta, ámbar y azul); con `ai-tint-brand` sale en escalones
+ * de la marca de la app. Para otros colores, las cuatro variables: `--ai-glow-1` … `--ai-glow-4`
+ * (el degradé cónico las recorre y vuelve a la primera). Sin ninguna, nada cambia.
+ */
+@utility ai-tint-brand {
+  --ai-glow-1: var(--sf-brand-700);
+  --ai-glow-2: var(--sf-brand-500);
+  --ai-glow-3: var(--sf-brand-900);
+  --ai-glow-4: var(--sf-brand-600);
+}
+
 @utility ai-glow {
   &::before,
   &::after {
@@ -806,11 +819,11 @@
     pointer-events: none;
     background: conic-gradient(
       from var(--sf-ai-angle),
-      var(--sf-ai),
-      var(--sf-ai-2),
-      var(--sf-amber-600),
-      var(--sf-blue-600),
-      var(--sf-ai)
+      var(--ai-glow-1, var(--sf-ai)),
+      var(--ai-glow-2, var(--sf-ai-2)),
+      var(--ai-glow-3, var(--sf-amber-600)),
+      var(--ai-glow-4, var(--sf-blue-600)),
+      var(--ai-glow-1, var(--sf-ai))
     );
     opacity: 0;
     transition: opacity 400ms ease;
@@ -1367,5 +1380,53 @@
   }
   :where([data-slot="textarea"][rows="12"]) {
     --sf-textarea-min: calc(12 * 1lh + 1.5rem + 2px);
+  }
+}
+
+/* ── Neutros con tinte de marca (opt-in, 2.17) ───────────────────────────────────────────────────
+ * `<html data-neutral-tint>` inclina los grises —páginas, superficies, filetes, rellenos y texto— hacia
+ * el matiz de la marca (`--brand-base`, o `--brand-base-dark` en oscuro) con un croma de 0,005 a 0,01:
+ * se siente, no se ve. Sin el atributo no cambia ni un valor: estas reglas no matchean.
+ *
+ * Va en `<html>` (donde viven `.dark` y las variables `--sf-*`) porque `var()` se resuelve en el elemento
+ * que declara el token. Las luminosidades (L) son las de los hex de arriba, pasadas a OKLCH, para que el
+ * contraste no cambie: `test/neutral-tint.test.ts` lo verifica con varios matices. El croma se ajusta
+ * con `--neutral-tint-chroma` (default 0,008).
+ */
+@layer base {
+  :root[data-neutral-tint] {
+    --sf-background: oklch(from var(--sf-brand-src) 0.996 var(--neutral-tint-chroma, 0.008) h);
+    --sf-surface: oklch(from var(--sf-brand-src) 0.996 var(--neutral-tint-chroma, 0.008) h);
+    --sf-surface-secondary: oklch(from var(--sf-brand-src) 0.9886 var(--neutral-tint-chroma, 0.008) h);
+    --sf-surface-bar: oklch(from var(--sf-brand-src) 0.9626 var(--neutral-tint-chroma, 0.008) h);
+    --sf-surface-header: oklch(from var(--sf-brand-src) 0.9626 var(--neutral-tint-chroma, 0.008) h);
+    --sf-group: oklch(from var(--sf-brand-src) 0.9674 var(--neutral-tint-chroma, 0.008) h);
+    --sf-separator: oklch(from var(--sf-brand-src) 0.9233 var(--neutral-tint-chroma, 0.008) h);
+    --sf-separator-strong: oklch(from var(--sf-brand-src) 0.8622 var(--neutral-tint-chroma, 0.008) h);
+    --sf-fill-1: oklch(from var(--sf-brand-src) 0.5753 calc(var(--neutral-tint-chroma, 0.008) * 2) h / 0.08);
+    --sf-fill-2: oklch(from var(--sf-brand-src) 0.5753 calc(var(--neutral-tint-chroma, 0.008) * 2) h / 0.12);
+    --sf-fill-3: oklch(from var(--sf-brand-src) 0.5753 calc(var(--neutral-tint-chroma, 0.008) * 2) h / 0.16);
+    --sf-hairline: oklch(from var(--sf-brand-src) 0.5753 calc(var(--neutral-tint-chroma, 0.008) * 2) h / 0.08);
+    --sf-label: oklch(from var(--sf-brand-src) 0.04 var(--neutral-tint-chroma, 0.008) h / 0.88);
+    --sf-label-secondary: oklch(from var(--sf-brand-src) 0.04 var(--neutral-tint-chroma, 0.008) h / 0.56);
+    --sf-label-tertiary: oklch(from var(--sf-brand-src) 0.04 var(--neutral-tint-chroma, 0.008) h / 0.48);
+  }
+
+  :root.dark[data-neutral-tint] {
+    --sf-background: oklch(from var(--sf-brand-src) 0.2273 var(--neutral-tint-chroma, 0.008) h);
+    --sf-surface: oklch(from var(--sf-brand-src) 0.2273 var(--neutral-tint-chroma, 0.008) h);
+    --sf-surface-secondary: oklch(from var(--sf-brand-src) 0.2448 var(--neutral-tint-chroma, 0.008) h);
+    --sf-surface-bar: oklch(from var(--sf-brand-src) 0.2939 var(--neutral-tint-chroma, 0.008) h);
+    --sf-surface-header: oklch(from var(--sf-brand-src) 0.3187 var(--neutral-tint-chroma, 0.008) h);
+    --sf-group: oklch(from var(--sf-brand-src) 0.3183 var(--neutral-tint-chroma, 0.008) h);
+    --sf-separator: oklch(from var(--sf-brand-src) 0.3258 var(--neutral-tint-chroma, 0.008) h);
+    --sf-separator-strong: oklch(from var(--sf-brand-src) 0.3569 var(--neutral-tint-chroma, 0.008) h);
+    --sf-fill-1: oklch(from var(--sf-brand-src) 0.5631 calc(var(--neutral-tint-chroma, 0.008) * 2) h / 0.25);
+    --sf-fill-2: oklch(from var(--sf-brand-src) 0.5631 calc(var(--neutral-tint-chroma, 0.008) * 2) h / 0.3);
+    --sf-fill-3: oklch(from var(--sf-brand-src) 0.5631 calc(var(--neutral-tint-chroma, 0.008) * 2) h / 0.36);
+    --sf-hairline: oklch(from var(--sf-brand-src) 0.5631 calc(var(--neutral-tint-chroma, 0.008) * 2) h / 0.25);
+    --sf-label: oklch(from var(--sf-brand-src) 0.995 var(--neutral-tint-chroma, 0.008) h / 0.98);
+    --sf-label-secondary: oklch(from var(--sf-brand-src) 0.995 var(--neutral-tint-chroma, 0.008) h / 0.66);
+    --sf-label-tertiary: oklch(from var(--sf-brand-src) 0.995 var(--neutral-tint-chroma, 0.008) h / 0.5);
   }
 }
