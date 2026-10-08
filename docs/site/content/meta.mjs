@@ -3876,6 +3876,26 @@ export const COMPONENTS = {
     },
     related: ["section-header", "section-backdrop", "page-header"],
   },
+  "locale-provider": {
+    title: "LocaleProvider",
+    group: "contenido",
+    description: "El idioma, la moneda y la zona horaria de toda la app en un solo lugar: reparte un `Format` (`useFormat`) y fija el idioma de Calendar, DatePicker y NumberField.",
+    keyboard: [["Tab", "No tiene paradas propias: no dibuja nada."]],
+    a11y: ["No dibuja nada. El idioma de los números y las fechas es lo que lee el lector de pantalla: declaralo igual que `lang` en `<html>`."],
+    usage: [
+      "Solo por subpath (`sebs7n-ui/locale-provider`). Sin provider, `es-AR` y `ARS`.",
+      "`useFormat()` devuelve `currency`, `number`, `percent`, `compact`, `unit`, `date`, `time`, `dateTime`, `relative`, `since` y `list`, todos por `Intl`: **ningún símbolo de moneda va escrito a mano**. La capa pura, sin React, es `sebs7n-ui/lib/format` (`createFormat`).",
+      "La prop `locale` de un componente sigue ganando; el provider ocupa su lugar cuando falta. `MetricChart`, que es de servidor, recibe `locale` por prop.",
+    ],
+    props: {
+      LocaleProvider: {
+        locale: "El idioma como lo entiende `Intl` («es-AR», «en-US»). Default `es-AR`.",
+        currency: "La moneda por defecto, código ISO 4217 («ARS», «USD»). Default `ARS`.",
+        timeZone: "La zona horaria IANA de las fechas con hora. Sin valor, la del navegador.",
+      },
+    },
+    related: ["number-field", "date-picker", "calendar"],
+  },
   "theme-switcher-lazy": {
     title: "ThemeSwitcherLazy",
     group: "navegacion",

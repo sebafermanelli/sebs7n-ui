@@ -1,9 +1,14 @@
 // Formatos del template, en un solo lugar: la tabla, el detalle, Inicio y Clientes muestran lo mismo.
 
-export const money = new Intl.NumberFormat("es-AR", { style: "currency", currency: "USD" })
+import { createFormat } from "sebs7n-ui/lib/format"
+
+// El idioma y la moneda, en un solo lugar: el símbolo lo pone `Intl`, no el código. En tu app: tu moneda (o un `LocaleProvider`).
+const f = createFormat({ locale: "es-AR", currency: "USD" })
+
+export const money = { format: (value: number) => f.currency(value) }
 
 /** Sin centavos: para listas angostas, donde el monto le come lugar a la descripción. */
-export const wholeMoney = new Intl.NumberFormat("es-AR", { style: "currency", currency: "USD", maximumFractionDigits: 0 })
+export const wholeMoney = { format: (value: number) => f.currency(value, { maximumFractionDigits: 0 }) }
 
 const shortDate = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", year: "numeric" })
 
