@@ -16,6 +16,8 @@ const only = process.argv[4]?.split(",")
 const site = JSON.parse(readFileSync(new URL("../.generated/site.json", import.meta.url), "utf8"))
 const axeSource = readFileSync(createRequire(import.meta.url).resolve("axe-core/axe.min.js"), "utf8")
 const slugs = only ?? site.components.map((c) => c.slug)
+// `EXTRA=/docs/playground,/templates/landing` suma páginas que no son de un componente (la home, el Playground y los templates).
+const extra = (process.env.EXTRA ?? "").split(",").filter(Boolean)
 
 const run = (...args) => execFileSync("agent-browser", args, { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 })
 // axe pesa ~500 kB: no entra en los argumentos del CLI, va por stdin.
@@ -31,8 +33,8 @@ const informe = {}
 run("set", "viewport", "1280", "900")
 for (const tema of ["light", "dark"]) {
   run("set", "media", tema)
-  for (const slug of slugs) {
-    run("open", `${base}/docs/components/${slug}`)
+  for (const slug of [...slugs, ...extra]) {
+    run("open", `${base}${slug.startsWith("/") ? slug : `/docs/components/${slug}`}`)
     run("wait", "1200")
     let violaciones
     try {

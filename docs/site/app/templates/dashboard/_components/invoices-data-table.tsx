@@ -267,12 +267,11 @@ export function InvoicesDataTable({
               value={filters.statuses}
             />
             <Select
-              aria-label="Cliente"
               items={{ all: "Todos los clientes", ...Object.fromEntries(customers.map((name) => [name, name])) }}
               onValueChange={(value) => setFilters({ ...filters, customer: value ?? "all" })}
               value={filters.customer}
             >
-              <SelectTrigger className="@xl:w-44" size="sm">
+              <SelectTrigger aria-label="Cliente" className="@xl:w-44" size="sm">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

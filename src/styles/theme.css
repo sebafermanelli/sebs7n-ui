@@ -671,7 +671,7 @@
     --sf-tint-fill: 22%;
     --sf-tint-border: 34%;
 
-    --sf-ai: oklch(0.68 0.19 293);
+    --sf-ai: oklch(0.71 0.19 293);
     --sf-ai-2: oklch(0.72 0.2 330);
     /* Se redeclara: `var()` se resuelve donde se declara, y el brand cambia por tema. En oscuro
        va el paso claro de la marca (`brand-900`, L 0,717): las barras, los campos (`fill-1`) y el
