@@ -12,7 +12,9 @@
     "start": "next start --port 4100",
     "budget": "node scripts/js-budget.mjs",
     "pretest": "npm run generate",
-    "test": "vitest run"
+    "test": "vitest run && VITEST_A11Y=1 vitest run",
+    "test:a11y": "VITEST_A11Y=1 vitest run",
+    "axe": "node scripts/axe-chrome.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",

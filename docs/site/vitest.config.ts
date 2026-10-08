@@ -3,6 +3,21 @@ import { defineConfig } from "vitest/config"
 
 const raiz = (ruta: string) => fileURLToPath(new URL(`../../${ruta}`, import.meta.url))
 
+// El test de accesibilidad (`test/a11y-demos.test.tsx`: axe sobre las demos, en jsdom) renderiza con `@testing-library/react`, que trae el `react-dom`
+// de la raíz: con el `react` del sitio los hooks de los componentes verían dos Reacts. Por eso corre aparte (`VITEST_A11Y=1`, `npm run test:a11y`),
+// con React y las librerías de componentes apuntando a las copias de la raíz; el resto de los tests usa las del sitio.
+const a11y = process.env.VITEST_A11Y === "1"
+const unaSolaCopia = a11y
+  ? [
+      ...["@base-ui/react", "lucide-react", "sonner", "next-themes", "@dnd-kit/core", "@dnd-kit/sortable", "@dnd-kit/utilities", "embla-carousel-react", "recharts"].map((paquete) => ({
+        find: new RegExp(`^${paquete}(/.*)?$`),
+        replacement: raiz(`node_modules/${paquete}`) + "$1",
+      })),
+      { find: /^react-dom(\/.*)?$/, replacement: raiz("node_modules/react-dom") + "$1" },
+      { find: /^react(\/.*)?$/, replacement: raiz("node_modules/react") + "$1" },
+    ]
+  : []
+
 export default defineConfig({
   // Los tests del sitio que tocan el paquete lo leen del código fuente, no de `node_modules`.
   //
@@ -13,14 +28,7 @@ export default defineConfig({
   // rompió el CI de la 1.0.0.
   resolve: {
     alias: [
-      // Una sola copia de React para todo: el test de accesibilidad (`a11y-demos.test.tsx`) renderiza con `@testing-library/react`, que trae el
-      // `react-dom` de la raíz; con el `react` del sitio los hooks de los componentes verían dos Reacts.
-      ...["@base-ui/react", "lucide-react", "sonner", "next-themes", "@dnd-kit/core", "@dnd-kit/sortable", "@dnd-kit/utilities", "embla-carousel-react", "recharts"].map((paquete) => ({
-        find: new RegExp(`^${paquete}(/.*)?$`),
-        replacement: raiz(`node_modules/${paquete}`) + "$1",
-      })),
-      { find: /^react-dom(\/.*)?$/, replacement: raiz("node_modules/react-dom") + "$1" },
-      { find: /^react(\/.*)?$/, replacement: raiz("node_modules/react") + "$1" },
+      ...unaSolaCopia,
       { find: /^sebs7n-ui\/lib\/(.+)$/, replacement: raiz("src/lib/$1") },
       { find: /^sebs7n-ui\/tokens\/(.+)$/, replacement: raiz("tokens/$1") },
       // Los componentes, para los tests que renderizan las pantallas del Playground (`showcase.test.ts`).
@@ -40,6 +48,7 @@ export default defineConfig({
   test: {
     environment: "node",
     globals: true,
-    include: ["test/**/*.test.{ts,tsx}"],
+    include: a11y ? ["test/a11y-*.test.tsx"] : ["test/**/*.test.{ts,tsx}"],
+    exclude: a11y ? ["node_modules/**"] : ["test/a11y-*.test.tsx", "node_modules/**"],
   },
 })

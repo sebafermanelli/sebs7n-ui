@@ -3892,6 +3892,7 @@ export const COMPONENTS = {
         locale: "El idioma como lo entiende `Intl` («es-AR», «en-US»). Default `es-AR`.",
         currency: "La moneda por defecto, código ISO 4217 («ARS», «USD»). Default `ARS`.",
         timeZone: "La zona horaria IANA de las fechas con hora. Sin valor, la del navegador.",
+        dir: "`ltr` o `rtl`: la dirección de lectura de los componentes de Base UI (flechas de Tabs, Slider, Menu y Tree; hacia dónde se abren los popups). Poné también `dir` en `<html>`.",
       },
     },
     related: ["number-field", "date-picker", "calendar"],

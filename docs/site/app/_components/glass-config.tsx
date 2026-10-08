@@ -152,7 +152,7 @@ export function desdePreset(id: string): Partial<GlassConfig> {
   }
 }
 
-const oklchDe = (color: string | Oklch): Oklch => (typeof color === "string" ? oklchOfHexLocal(color) : color)
+const oklchDe = (color: string | Oklch): Oklch => (typeof color === "string" ? (oklchOfHexLocal(color) ?? [0.573, 0.214, 258]) : color)
 
 const TODAS = [
   "--font-heading",

@@ -81,14 +81,15 @@ export function npmDependencies(source) {
  * El tema va en todos: un componente copiado a un proyecto que no tiene los
  * tokens compila pero se ve sin estilo, que es el peor de los dos fallos.
  */
-function registryDependencies(source, site) {
+function registryDependencies(source, site, dir = "components") {
   const deps = new Set([`${site}/r/theme.json`])
   if (/from "\.\.\/lib\/utils\.js"/.test(source)) deps.add(`${site}/r/utils.json`)
   for (const [, name] of source.matchAll(/(?:from "|import\(")\.\.\/(?:lib|internal)\/([a-z0-9-]+)\.js"/g)) {
     if (name !== "utils") deps.add(`${site}/r/lib-${name}.json`)
   }
   for (const [, name] of source.matchAll(/from "\.\.\/variants\/([a-z0-9-]+)\.js"/g)) deps.add(`${site}/r/variants-${name}.json`)
-  for (const [, name] of source.matchAll(/(?:from "|import\(")\.\/([a-z0-9-]+)\.js"/g)) deps.add(`${site}/r/${name}.json`)
+  // Un hermano: en un componente es otro componente; en `lib/` o `internal/` es otro helper (`lib-<nombre>`).
+  for (const [, name] of source.matchAll(/(?:from "|import\(")\.\/([a-z0-9-]+)\.js"/g)) deps.add(dir === "components" ? `${site}/r/${name}.json` : `${site}/r/${name === "utils" ? "utils" : `lib-${name}`}.json`)
   for (const [, name] of source.matchAll(/(?:from "|import\(")\.\.\/components\/([a-z0-9-]+)\.js"/g)) deps.add(`${site}/r/${name}.json`)
   return [...deps].sort()
 }
@@ -343,7 +344,7 @@ export function buildRegistry({ root, site, components, author }) {
       description: `Helper interno de sebs7n-ui: ${name}.`,
       author,
       dependencies: npmDependencies(source),
-      registryDependencies: registryDependencies(source, site),
+      registryDependencies: registryDependencies(source, site, dir),
       files: [
         {
           path: `registry/sebs7n-ui/lib/sebs7n-ui/${libFile(name)}${ext}`,
