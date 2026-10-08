@@ -76,7 +76,7 @@ export const menuItemSecondaryClassName = "text-label-secondary"
  * `min-w-52` (208): el menú más angosto de iCloud mide 207 con el borde.
  */
 export const menuPopupClassName =
-  "max-h-(--available-height) min-w-52 max-w-(--available-width) origin-(--transform-origin) overflow-y-auto rounded-menu bg-surface p-1.25 text-label shadow-menu outline-none transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0"
+  "max-h-(--available-height) min-w-52 max-w-(--available-width) origin-(--transform-origin) overflow-y-auto rounded-menu bg-surface p-1.25 text-label shadow-menu outline-none transition-[opacity,scale] duration-150 ease-out-expo motion-reduce:transition-none data-ending-style:scale-[0.98] data-ending-style:opacity-0 data-starting-style:scale-[0.98] data-starting-style:opacity-0"
 
 /**
  * El tilde (R3): el **círculo de acento a la derecha** del «View as» de Drive, que es el Select de

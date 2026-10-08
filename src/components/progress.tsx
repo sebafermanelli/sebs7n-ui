@@ -79,7 +79,7 @@ function Progress({ className, size = "md", label, showValue = false, trackClass
           className={cn(
             // Determinada: Base UI pone el ancho en un estilo inline, así que lo único
             // que hace falta acá es animarlo.
-            "h-full rounded-full bg-brand-700 transition-[width] duration-300 ease-out motion-reduce:transition-none",
+            "h-full rounded-full bg-brand-700 transition-[width] duration-300 ease-out-expo motion-reduce:transition-none",
             // Indeterminada: sin ancho inline, la pinta una franja corta que recorre la pista.
             "data-indeterminate:w-2/5 data-indeterminate:animate-progress-indeterminate",
             // Con movimiento reducido no queda una franja congelada a mitad de camino:

@@ -13,7 +13,7 @@
  * mientras se arrastra; el resto lo usa tal cual.
  */
 export const backdropClassName =
-  "fixed inset-0 z-50 bg-backdrop transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0"
+  "fixed inset-0 z-50 bg-backdrop transition-opacity duration-200 ease-out-expo motion-reduce:transition-none data-ending-style:opacity-0 data-starting-style:opacity-0"
 
 /**
  * El popup centrado de Dialog y AlertDialog.
@@ -22,11 +22,11 @@ export const backdropClassName =
  * (`bg-surface`), la sombra de popover con su filo (`shadow-modal`) y 20 px de padding. Lo
  * comparten Dialog y AlertDialog; la alerta es más angosta (`alertWidthClassName`), con 24 de
  * aire y centrada.
- * La entrada sube 8px mientras aparece: es la señal de que algo entró, no decoración.
+ * La entrada sube 8px y crece de 97 a 100 % mientras aparece, con easing exponencial y sin rebote: es la señal de que algo entró, no decoración.
  */
 export const modalPopupClassName =
   "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-panel bg-surface p-5 text-callout text-label shadow-modal outline-none " +
-  "transition-[opacity,translate] duration-150 data-ending-style:opacity-0 data-starting-style:translate-y-[calc(-50%+8px)] data-starting-style:opacity-0"
+  "transition-[opacity,translate,scale] duration-200 ease-out-expo motion-reduce:transition-none data-ending-style:scale-[0.98] data-ending-style:opacity-0 data-starting-style:translate-y-[calc(-50%+8px)] data-starting-style:scale-[0.97] data-starting-style:opacity-0"
 
 /**
  * El ancho de la alerta (AlertDialog): el mismo diálogo que Dialog, más angosto. 450 px es la
@@ -116,7 +116,7 @@ export const overlayCloseClassName = "absolute top-[calc(var(--sf-safe-top,0px)+
  */
 export const floatingPopupClassName =
   "flex max-h-(--available-height) w-64 max-w-(--available-width) origin-(--transform-origin) flex-col overflow-y-auto gap-2 rounded-menu bg-surface p-4 text-callout text-label shadow-menu outline-none " +
-  "focus-visible:focus-ring transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0"
+  "focus-visible:focus-ring transition-[opacity,scale] duration-150 ease-out-expo motion-reduce:transition-none data-ending-style:scale-[0.98] data-ending-style:opacity-0 data-starting-style:scale-[0.98] data-starting-style:opacity-0"
 
 /**
  * La superficie del Tooltip (R5a): chica, gris oscura con texto blanco de 12 en los dos temas

@@ -88,7 +88,7 @@ function NavigationMenuTrigger({ className, active, chevron = true, children, ..
       {chevron && (
         <NavigationMenuPrimitive.Icon
           data-slot="navigation-menu-icon"
-          className="flex transition-transform duration-150 ease-out motion-reduce:transition-none data-popup-open:rotate-180"
+          className="flex transition-transform duration-150 ease-out-expo motion-reduce:transition-none data-popup-open:rotate-180"
         >
           <ChevronDownIcon aria-hidden="true" className="size-3.5" />
         </NavigationMenuPrimitive.Icon>
@@ -128,7 +128,7 @@ function NavigationMenuContent({ className, ...props }: NavigationMenuContentPro
         // Entra y sale en la dirección desde la que venís, como en vercel.com:
         // pasar de un panel al de al lado se lee como un desplazamiento, no
         // como dos paneles distintos.
-        "transition-[opacity,translate] duration-150 ease-out motion-reduce:transition-none",
+        "transition-[opacity,translate] duration-150 ease-out-expo motion-reduce:transition-none",
         "data-starting-style:opacity-0 data-ending-style:opacity-0",
         "data-starting-style:data-[activation-direction=left]:-translate-x-1/4",
         "data-starting-style:data-[activation-direction=right]:translate-x-1/4",
@@ -249,7 +249,7 @@ function NavigationMenuPositioner({
         collisionAvoidance={{ side: "none" }}
         className={cn(
           "isolate z-50 h-(--positioner-height) w-(--positioner-width) max-w-(--available-width)",
-          "transition-[top,left,right,bottom] duration-200 ease-out motion-reduce:transition-none data-instant:transition-none",
+          "transition-[top,left,right,bottom] duration-200 ease-out-expo motion-reduce:transition-none data-instant:transition-none",
           "before:absolute before:inset-x-0 before:-top-2 before:h-2 before:content-['']",
           className
         )}
@@ -276,7 +276,7 @@ function NavigationMenuPopup({ className, ...props }: NavigationMenuPopupProps) 
         // el panel: con padding en los dos se sumaban, y un panel que entra de costado se corta en
         // el borde y no 5 px antes.
         "rounded-menu bg-surface text-label shadow-menu outline-none focus-visible:focus-ring",
-        "transition-[opacity,transform,width,height] duration-200 ease-out motion-reduce:transition-none",
+        "transition-[opacity,transform,width,height] duration-200 ease-out-expo motion-reduce:transition-none",
         "data-starting-style:scale-[0.98] data-starting-style:opacity-0",
         "data-ending-style:scale-[0.98] data-ending-style:opacity-0",
         "motion-reduce:data-starting-style:scale-100 motion-reduce:data-ending-style:scale-100",

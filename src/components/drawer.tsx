@@ -208,7 +208,7 @@ function DrawerContent({ className, children, showCloseButton = true, showHandle
             // `--drawer-swipe-strength` (0,1 a 1) escala la duración según la
             // velocidad con la que se soltó: un envión fuerte cierra rápido.
             // Con `prefers-reduced-motion` no hay transición: aparece y listo.
-            "transition-[transform] duration-[calc(320ms_*_var(--drawer-swipe-strength))] ease-out motion-reduce:transition-none",
+            "transition-[transform] duration-[calc(320ms_*_var(--drawer-swipe-strength))] ease-out-expo motion-reduce:transition-none",
             className
           )}
           {...props}

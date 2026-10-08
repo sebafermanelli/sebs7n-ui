@@ -46,7 +46,7 @@ function CollapsibleTrigger({ chevron = false, className, children, ...props }: 
       {children}
       <ChevronRightIcon
         aria-hidden="true"
-        className="size-3.5 shrink-0 text-label-secondary transition-transform duration-150 ease-out motion-reduce:transition-none group-data-panel-open/collapsible-trigger:rotate-90"
+        className="size-3.5 shrink-0 text-label-secondary transition-transform duration-150 ease-out-expo motion-reduce:transition-none group-data-panel-open/collapsible-trigger:rotate-90"
       />
     </CollapsiblePrimitive.Trigger>
   )
@@ -70,7 +70,7 @@ function CollapsibleContent({ className, children, panelClassName, ...props }: C
     <CollapsiblePrimitive.Panel
       data-slot="collapsible-content"
       className={cn(
-        "h-(--collapsible-panel-height) overflow-hidden transition-[height] duration-150 ease-out motion-reduce:transition-none",
+        "h-(--collapsible-panel-height) overflow-hidden transition-[height] duration-150 ease-out-expo motion-reduce:transition-none",
         "data-ending-style:h-0 data-starting-style:h-0",
         // Con `keepMounted` el panel cerrado queda en el DOM con [hidden]; `hidden="until-found"`
         // tiene que seguir siendo encontrable por el buscador del navegador.

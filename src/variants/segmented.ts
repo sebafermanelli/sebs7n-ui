@@ -29,7 +29,7 @@ export const segmentedTrackClassName =
  */
 export const segmentedThumbClassName =
   "pointer-events-none absolute -z-10 rounded-[calc(var(--radius-control)-2px)] bg-segment shadow-segment " +
-  "transition-[left,width,translate] duration-300 ease-[cubic-bezier(0.3,1.25,0.4,1)] motion-reduce:transition-none"
+  "transition-[left,width,translate] duration-300 ease-out-expo motion-reduce:transition-none"
 
 /**
  * Un ítem de `ToggleGroup`: el segmento de iCloud cuando cada opción se prende sola (los B/I/U del

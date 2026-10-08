@@ -34,7 +34,7 @@ function brandInk(base: number[], theme: "light" | "dark"): string {
 
 const css = readFileSync(join(import.meta.dirname, "../src/styles/theme.css"), "utf8")
 const block = css.slice(css.indexOf("Neutros con tinte de marca"))
-const tintCss = { light: block.slice(0, block.indexOf(":root.dark[data-neutral-tint]")), dark: block.slice(block.indexOf(":root.dark[data-neutral-tint]")) }
+const tintCss = { light: block.slice(0, block.indexOf(":root.dark:not([data-neutral-tint=\"off\"])")), dark: block.slice(block.indexOf(":root.dark:not([data-neutral-tint=\"off\"])")) }
 function tintToken(theme: "light" | "dark", name: string): { l: number; alpha: number } {
   const m = tintCss[theme].match(new RegExp(`--sf-${name}: oklch\\(from var\\(--sf-brand-src\\) ([\\d.]+) [^;]*?h(?: / ([\\d.]+))?\\);`))!
   return { l: Number(m[1]), alpha: m[2] ? Number(m[2]) : 1 }

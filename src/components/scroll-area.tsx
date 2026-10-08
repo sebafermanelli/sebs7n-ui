@@ -55,7 +55,7 @@ function ScrollAreaScrollbar({ className, ...props }: ScrollAreaScrollbarProps) 
     <ScrollAreaPrimitive.Scrollbar
       data-slot="scroll-area-scrollbar"
       className={cn(
-        "flex touch-none p-0.5 opacity-0 transition-opacity duration-150 ease-out select-none motion-reduce:transition-none",
+        "flex touch-none p-0.5 opacity-0 transition-opacity duration-150 ease-out-expo select-none motion-reduce:transition-none",
         // Invisible y sin capturar el puntero hasta que haga falta.
         "pointer-events-none data-hovering:pointer-events-auto data-hovering:opacity-100",
         "data-scrolling:pointer-events-auto data-scrolling:opacity-100 data-scrolling:duration-0",

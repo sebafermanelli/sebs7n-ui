@@ -94,7 +94,7 @@ function DisclosureTrigger({ chevron = true, className, children, ...props }: Di
       {chevron && (
         <ChevronRightIcon
           aria-hidden="true"
-          className="size-3.5 shrink-0 text-label-secondary transition-transform duration-150 ease-out motion-reduce:transition-none group-open/disclosure:rotate-90 group-data-[variant=inline]/disclosure:text-current"
+          className="size-3.5 shrink-0 text-label-secondary transition-transform duration-150 ease-out-expo motion-reduce:transition-none group-open/disclosure:rotate-90 group-data-[variant=inline]/disclosure:text-current"
         />
       )}
     </summary>

@@ -69,7 +69,7 @@ function AccordionTrigger({ className, chevron = true, children, headerClassName
         {chevron && (
           <ChevronRightIcon
             aria-hidden="true"
-            className="size-3.5 text-label-secondary transition-transform duration-150 ease-out motion-reduce:transition-none group-data-panel-open/accordion-trigger:rotate-90"
+            className="size-3.5 text-label-secondary transition-transform duration-150 ease-out-expo motion-reduce:transition-none group-data-panel-open/accordion-trigger:rotate-90"
           />
         )}
       </AccordionPrimitive.Trigger>
@@ -92,7 +92,7 @@ function AccordionContent({ className, children, panelClassName, ...props }: Acc
     <AccordionPrimitive.Panel
       data-slot="accordion-content"
       className={cn(
-        "h-(--accordion-panel-height) overflow-hidden transition-[height] duration-150 ease-out motion-reduce:transition-none",
+        "h-(--accordion-panel-height) overflow-hidden transition-[height] duration-150 ease-out-expo motion-reduce:transition-none",
         "data-ending-style:h-0 data-starting-style:h-0",
         "[&[hidden]:not([hidden='until-found'])]:hidden",
         panelClassName

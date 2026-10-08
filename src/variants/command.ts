@@ -11,7 +11,7 @@
  */
 export const commandDialogPopupClassName =
   "fixed top-[18vh] left-1/2 z-50 flex max-h-[min(480px,calc(100dvh-18vh-1rem))] w-[min(560px,calc(100%-2rem))] -translate-x-1/2 flex-col overflow-hidden rounded-menu bg-surface p-1.25 text-label shadow-menu outline-none " +
-  "transition-[opacity,scale] duration-150 data-ending-style:scale-[0.98] data-ending-style:opacity-0 data-starting-style:scale-[0.98] data-starting-style:opacity-0"
+  "transition-[opacity,scale] duration-150 ease-out-expo motion-reduce:transition-none data-ending-style:scale-[0.98] data-ending-style:opacity-0 data-starting-style:scale-[0.98] data-starting-style:opacity-0"
 
 /**
  * El search field de iCloud (§2.13): 36 px, radio 10, relleno `fill-1`, la lupa a 10 px del borde.

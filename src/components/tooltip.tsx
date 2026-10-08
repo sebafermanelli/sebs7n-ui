@@ -34,7 +34,7 @@ function TooltipContent({ className, side = "top", sideOffset = 6, align = "cent
           className={cn(
             "relative w-fit max-w-[min(20rem,var(--available-width))] origin-(--transform-origin)",
             tooltipSurfaceClassName,
-            "transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0",
+            "transition-opacity duration-150 ease-out-expo motion-reduce:transition-none data-ending-style:opacity-0 data-starting-style:opacity-0",
             className
           )}
           {...props}

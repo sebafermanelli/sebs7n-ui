@@ -83,7 +83,7 @@ function Meter({ className, label, showValue = false, size = "md", trackClassNam
             golpe se lee peor que uno que se estira. */}
         <MeterPrimitive.Indicator
           data-slot="meter-indicator"
-          className="rounded-full bg-brand-700 transition-[width] duration-300 ease-out motion-reduce:transition-none group-data-[size=lg]/meter:rounded-none"
+          className="rounded-full bg-brand-700 transition-[width] duration-300 ease-out-expo motion-reduce:transition-none group-data-[size=lg]/meter:rounded-none"
         />
       </MeterPrimitive.Track>
     </MeterPrimitive.Root>
@@ -156,7 +156,7 @@ function StackedMeter({ className, segments, max, format, locale, total, labels,
             aria-valuemax={scale}
             aria-valuenow={value(segment)}
             aria-valuetext={formatter.format(value(segment))}
-            className={cn("h-full shrink-0 transition-[width] duration-300 ease-out motion-reduce:transition-none", categoryFill[segment.color])}
+            className={cn("h-full shrink-0 transition-[width] duration-300 ease-out-expo motion-reduce:transition-none", categoryFill[segment.color])}
             style={{ width: pct(value(segment)) }}
           />
         ))}

@@ -233,7 +233,7 @@ function SidebarGroupLabel({ className, id, children, ...props }: React.Componen
           <span className="truncate">{children}</span>
           <ChevronRightIcon
             aria-hidden="true"
-            className="size-3 shrink-0 transition-transform duration-150 ease-out motion-reduce:transition-none group-aria-expanded/sidebar-section:rotate-90"
+            className="size-3 shrink-0 transition-transform duration-150 ease-out-expo motion-reduce:transition-none group-aria-expanded/sidebar-section:rotate-90"
           />
         </button>
       ) : (

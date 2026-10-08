@@ -7,8 +7,8 @@ import { composite, contrastRatio, hexOfOklch, luminanceOfHex } from "../src/lib
 
 const theme = readFileSync(join(import.meta.dirname, "../src/styles/theme.css"), "utf8")
 const block = theme.slice(theme.indexOf("Neutros con tinte de marca"))
-const light = block.slice(block.indexOf(":root[data-neutral-tint]"), block.indexOf(":root.dark[data-neutral-tint]"))
-const dark = block.slice(block.indexOf(":root.dark[data-neutral-tint]"))
+const light = block.slice(block.indexOf(":root:not([data-neutral-tint=\"off\"])"), block.indexOf(":root.dark:not([data-neutral-tint=\"off\"])"))
+const dark = block.slice(block.indexOf(":root.dark:not([data-neutral-tint=\"off\"])"))
 
 type Token = { l: number; k: number; alpha: number }
 /** Lee `oklch(from var(--sf-brand-src) L croma-o-calc h [/ alfa])` de un bloque. */
@@ -22,17 +22,17 @@ const tint = { light: parse(light), dark: parse(dark) }
 
 const color = (t: Token, hue: number, chroma: number) => hexOfOklch([t.l, chroma * t.k, hue])
 
-describe("neutros con tinte: opt-in", () => {
-  it("todas las reglas cuelgan de [data-neutral-tint]: sin el atributo no cambia ningún valor", () => {
+describe("neutros con tinte: default, con salida", () => {
+  it("todas las reglas se apagan con data-neutral-tint=off: vuelven los grises de 2.x", () => {
     const selectors = [...block.matchAll(/^\s*(:root[^{]*)\{/gm)].map((m) => m[1]!.trim())
-    expect(selectors).toEqual([":root[data-neutral-tint]", ":root.dark[data-neutral-tint]"])
+    expect(selectors).toEqual([":root:not([data-neutral-tint=\"off\"])", ":root.dark:not([data-neutral-tint=\"off\"])"])
     expect(block).not.toMatch(/^\s*(:root|\.dark|html|body)\s*\{/m)
   })
 
-  it("tiñe las mismas variables en claro y en oscuro, con croma 0,008 por defecto", () => {
+  it("tiñe las mismas variables en claro y en oscuro, con croma 0,01 por defecto", () => {
     expect(Object.keys(tint.light).sort()).toEqual(Object.keys(tint.dark).sort())
     expect(Object.keys(tint.light)).toEqual(expect.arrayContaining(["background", "surface", "group", "separator", "label", "label-secondary", "fill-1"]))
-    expect(block).toContain("var(--neutral-tint-chroma, 0.008)")
+    expect(block).toContain("var(--neutral-tint-chroma, 0.01)")
   })
 })
 
