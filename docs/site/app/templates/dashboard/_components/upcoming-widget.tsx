@@ -44,7 +44,7 @@ export function UpcomingWidget() {
               }
               trailing={
                 <span className="flex flex-col items-end">
-                  <span className="whitespace-nowrap">{wholeMoney.format(inv.amount)}</span>
+                  <span className="text-callout whitespace-nowrap">{wholeMoney.format(inv.amount)}</span>
                   <span className={inv.status === "overdue" ? "text-footnote text-red-ink" : "text-footnote text-label-secondary"}>
                     {inv.status === "overdue" ? "Vencida" : formatDayMonth(inv.dueDate)}
                   </span>
