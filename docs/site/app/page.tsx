@@ -11,6 +11,8 @@ import { buttonVariants } from "sebs7n-ui/variants/button"
 import { WindowFrame } from "sebs7n-ui/window-frame"
 
 import site from "@/.generated/site.json"
+import { CopyButton } from "sebs7n-ui/copy-button"
+
 import { CodeBlock } from "./_components/code-block"
 import { Inline } from "./_components/inline"
 import { SectionHeader } from "./_components/section-header"
@@ -42,17 +44,30 @@ export default function Home() {
   return (
     <div className="min-h-dvh bg-background" id="top">
       <SiteHeader version={site.version} />
-      <SectionBackdrop className="px-4 pt-12 pb-16 md:px-6 md:pt-20" variant="wash">
-        <div className="mx-auto w-full max-w-[1080px]">
-          <RevealGroup className="flex flex-col items-center gap-6 text-center [&>*]:max-w-full" step={90}>
+      {/*
+        El hero es una sola composición: a la izquierda lo que se dice, a la derecha lo que se ve (una pantalla armada con el paquete), y un
+        fondo continuo que cubre las dos cosas. El lavado de la marca se funde hacia abajo con una máscara (sin corte seco, el grano también) y
+        un foco suave detrás del titular y de la ventana marca dónde mirar. Bajo `lg` se apila: el texto y, debajo, la ventana entera.
+      */}
+      <SectionBackdrop
+        backdropClassName="[-webkit-mask-image:linear-gradient(to_bottom,#000_55%,transparent)] [mask-image:linear-gradient(to_bottom,#000_55%,transparent)]"
+        className="px-4 pt-10 pb-24 md:px-6 md:pt-16 md:pb-32"
+        variant="wash"
+      >
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[40rem] [background:radial-gradient(ellipse_55%_50%_at_30%_35%,color-mix(in_oklab,var(--sf-brand-700)_9%,transparent),transparent_70%),radial-gradient(ellipse_40%_45%_at_78%_45%,color-mix(in_oklab,var(--sf-brand-700)_6%,transparent),transparent_70%)]"
+        />
+        <div className="mx-auto grid w-full max-w-[1080px] items-center gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,33rem)] lg:gap-12">
+          <RevealGroup className="flex flex-col items-start gap-7 [&>*]:max-w-full" step={90}>
             <Badge>v{site.version}</Badge>
-            <h1 className="max-w-4xl text-display text-balance text-label">
+            <h1 className="text-display-2 text-balance text-label">
               Interfaces <span className="emphasis-accent">calmas</span>
               <span className="emphasis-muted">, con una sola dependencia.</span>
             </h1>
-            <p className="max-w-2xl text-lead text-pretty text-label-secondary">
-              El lenguaje de iCloud, cálido y cuidado: {site.components.length} componentes accesibles, neutros con el tinte de tu marca y
-              tipografía con carácter.
+            <p className="max-w-[34rem] text-lead text-pretty text-label-secondary">
+              El lenguaje de iCloud, cálido y cuidado: {site.components.length} componentes accesibles, neutros con el tinte de tu marca y tipografía con
+              carácter.
             </p>
             <div className="flex w-full max-w-xs flex-col gap-3 sm:w-auto sm:max-w-none sm:flex-row">
               <Link className={buttonVariants({ size: "lg" })} href={START_HREF}>
@@ -62,51 +77,54 @@ export default function Home() {
                 Probarlo en el Playground
               </Link>
             </div>
-            <div className="w-full max-w-xl pt-2 text-left">
-              <CodeBlock code={INSTALL} label="Copiar el comando de instalación" />
-            </div>
+            {/* El comando es un dato, no una acción: una línea tenue con su botón de copiar, por debajo de los botones. */}
+            <p className="flex max-w-full min-w-0 items-center gap-1 text-footnote text-label-secondary">
+              <code className="min-w-0 truncate text-mono-callout">{INSTALL}</code>
+              <CopyButton aria-label="Copiar el comando de instalación" value={INSTALL} />
+            </p>
           </RevealGroup>
+
+          <Reveal delay={160}>
+            <div className="flex flex-col items-center gap-5">
+              <WindowFrame className="w-full" elevation="overlay" title="Facturas">
+                <div className="flex items-center justify-between gap-3 border-b border-separator px-4 py-3">
+                  <p className="font-display text-title-3 text-label">Facturas</p>
+                  <Button size="sm" variant="secondary">
+                    Nueva factura
+                  </Button>
+                </div>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Número</TableHead>
+                      <TableHead>Cliente</TableHead>
+                      <TableHead className="text-end">Total</TableHead>
+                      <TableHead>Estado</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {FILAS.map(([code, client, total, status, color]) => (
+                      <TableRow key={code}>
+                        <TableCell>{code}</TableCell>
+                        <TableCell>{client}</TableCell>
+                        <TableCell className="text-end tabular-nums">{total}</TableCell>
+                        <TableCell>
+                          <Badge color={color}>{status}</Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </WindowFrame>
+              <div className="flex items-center gap-3">
+                <span className="text-callout text-label-secondary">Mirala en otro tema</span>
+                <ThemeSwitcherLazy />
+              </div>
+            </div>
+          </Reveal>
         </div>
       </SectionBackdrop>
-      <main className="mx-auto flex w-full max-w-[1080px] flex-col gap-20 px-4 pt-4 pb-20 md:gap-24 md:px-6 md:pb-24">
-
-        <Reveal>
-          <section className="flex scroll-mt-20 flex-col items-center gap-6" id="pantalla">
-            <WindowFrame className="w-full max-w-3xl" elevation="resting" title="Facturas">
-              <div className="flex items-center justify-between gap-3 border-b border-separator px-4 py-3">
-                <p className="font-display text-title-3 text-label">Facturas</p>
-                <Button size="sm" variant="secondary">Nueva factura</Button>
-              </div>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Número</TableHead>
-                    <TableHead>Cliente</TableHead>
-                    <TableHead className="text-end">Total</TableHead>
-                    <TableHead>Estado</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {FILAS.map(([code, client, total, status, color]) => (
-                    <TableRow key={code}>
-                      <TableCell>{code}</TableCell>
-                      <TableCell>{client}</TableCell>
-                      <TableCell className="text-end tabular-nums">{total}</TableCell>
-                      <TableCell>
-                        <Badge color={color}>{status}</Badge>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </WindowFrame>
-            <div className="flex items-center gap-3">
-              <span className="text-callout text-label-secondary">Mirala en otro tema</span>
-              <ThemeSwitcherLazy />
-            </div>
-          </section>
-        </Reveal>
-
+      <main className="mx-auto flex w-full max-w-[1080px] flex-col gap-20 px-4 pb-20 md:gap-24 md:px-6 md:pb-24">
         <Reveal>
           <section className="mx-auto flex w-full max-w-3xl scroll-mt-20 flex-col gap-10" id="razones">
             <SectionHeader subtitle="Lo que cambia respecto de copiar componentes a cada app." title="Por qué existe" />
