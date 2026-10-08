@@ -230,3 +230,18 @@ Desde 3.0 los grises del sistema —la página, las superficies, los filetes, lo
 - **El contraste no se mueve**: las luminosidades son las de los grises de siempre. `test/neutral-tint.test.ts` lo mide con siete matices y tres crómas, y `label-secondary` sigue sobre 4,5:1 en todas las superficies. Lo tintado: `background`, `surface*`, `group`, `separator*`, `fill-*`, `hairline` y `label*`. Los tokens de color (`gray-*`, `red-*`…) no se tocan.
 
 Abajo hay un interruptor para compararlo en vivo: apaga el tinte mientras estás en esta página.
+
+## Grano de fondo
+
+Desde 3.0 el wallpaper (`bg-ambient`, el de `AppShell ambient`) y el lavado de `SectionBackdrop wash` llevan un grano de película: un ruido SVG (`feTurbulence`) estático, mezclado en `overlay`, sin animación, sin canvas y sin JavaScript. Le saca lo plano al degradé sin sumar color.
+
+```tsx
+<html data-grain="off" …>      {/* sin grano */}
+<html data-grain="strong" …>   {/* marcado */}
+<html …>                       {/* sutil: el default */}
+```
+
+- **Variables:** `--grain-opacity` (intensidad: `0` apagado, `0.08` sutil, `0.18` marcado), `--grain-size` (el lado del mosaico, `160px`) y `--grain-image` (el ruido, por si querés otro).
+- **`prefers-contrast: more` lo apaga** solo.
+- **Contraste:** el grano mueve el fondo unas milésimas, así que `label-secondary` subió tres puntos de alfa en 3.0 (de 56 a 59 % en claro y de 66 a 69 % en oscuro) y `test/grain-contrast.test.ts` mide el peor píxel a las tres intensidades, con las cinco marcas, sobre cada tono del wallpaper.
+- **Costo:** una capa fija estática; el scroll no la repinta. En el Playground, «Grano de fondo» la prueba en las tres intensidades y el código que copiás lleva el atributo.

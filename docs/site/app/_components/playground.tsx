@@ -80,8 +80,8 @@ function globalsDe(pisadas: Record<string, string>): string {
  * el `AppShell` con `ambient` si el wallpaper está prendido y con `aside` si el panel del asistente lo está. Con el
  * tinte apagado, `data-neutral-tint="off"` en `<html>`; con una serif de titulares, la fuente cargada en `--font-heading`.
  */
-function layoutDe(config: Pick<GlassConfig, "ambient"> & Partial<Pick<GlassConfig, "tint" | "heading">>, asistente: boolean): string {
-  const { tint = true, heading = "inter" } = config
+function layoutDe(config: Pick<GlassConfig, "ambient"> & Partial<Pick<GlassConfig, "tint" | "heading" | "grain">>, asistente: boolean): string {
+  const { tint = true, heading = "inter", grain = "subtle" } = config
   const props = [config.ambient && "  ambient", asistente && "  aside={<Assistant />}\n  asideOpen={open}\n  onAsideOpenChange={setOpen}", "  sidebar={<AppSidebar />}"].filter(Boolean)
   const fuente =
     heading === "serif"
@@ -90,6 +90,7 @@ function layoutDe(config: Pick<GlassConfig, "ambient"> & Partial<Pick<GlassConfi
   const html = [
     heading === "serif" ? "className={`${inter.variable} ${heading.variable}`}" : null,
     !tint ? 'data-neutral-tint="off"' : null,
+    grain !== "subtle" ? `data-grain="${grain}"` : null,
   ].filter(Boolean)
   return [
     ...fuente,
@@ -236,6 +237,14 @@ export function Playground({ children }: { children?: React.ReactNode }) {
           <div className="flex h-8 items-center gap-2">
             <Switch checked={config.tint} id="pg-tint" onCheckedChange={(tint) => set({ tint })} />
             <Label htmlFor="pg-tint">Neutros con tinte</Label>
+          </div>
+          <div className="flex flex-col gap-2">
+            <span className="text-callout text-label">Grano de fondo</span>
+            <ToggleGroup aria-label="Grano de fondo" onValueChange={(valor) => set({ grain: valor[0] === "off" || valor[0] === "strong" ? valor[0] : "subtle" })} required value={[config.grain]}>
+              <ToggleGroupItem value="off">Apagado</ToggleGroupItem>
+              <ToggleGroupItem value="subtle">Sutil</ToggleGroupItem>
+              <ToggleGroupItem value="strong">Marcado</ToggleGroupItem>
+            </ToggleGroup>
           </div>
           <div className="flex flex-col gap-2">
             <span className="text-callout text-label">Fuente de titulares</span>

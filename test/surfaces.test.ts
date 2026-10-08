@@ -41,7 +41,7 @@ const ICLOUD = {
     background: "#ffffff", surface: "#ffffff", "surface-secondary": "#fbfbfd", "surface-bar": "#f2f2f7",
     "surface-header": "#f2f2f7", group: "#f4f4f5", "fill-1": "#78788014", "fill-2": "#7676801f",
     "fill-3": "#78788029", separator: "#e5e5ea", "separator-strong": "#d1d1d6", hairline: "#78788014",
-    label: "#000000e0", "label-secondary": "#0000008f", "label-tertiary": "#0000007a",
+    label: "#000000e0", "label-secondary": "#00000096", "label-tertiary": "#0000007a",
     // `translucent` no es el 85 % del header de widget de iCloud: es la barra y el acceso rápido
     // sobre el wallpaper, y al 60 % (el mismo alfa que en oscuro) el wallpaper se ve a través (W).
     "label-quaternary": "#78788029", "selection-inactive": "#dcdce0", translucent: "#f8f8fc99",
@@ -50,7 +50,7 @@ const ICLOUD = {
     background: "#1c1c1e", surface: "#1c1c1e", "surface-secondary": "#202023", "surface-bar": "#2c2c2e",
     "surface-header": "#323236", group: "#323235", "fill-1": "#74748040", "fill-2": "#7676804d",
     "fill-3": "#7878805c", separator: "#343436", "separator-strong": "#3c3c3e", hairline: "#74748040",
-    label: "#fffffffa", "label-secondary": "#ffffffa8", "label-tertiary": "#ffffff80",
+    label: "#fffffffa", "label-secondary": "#ffffffb0", "label-tertiary": "#ffffff80",
     "label-quaternary": "#7878805c", "selection-inactive": "#3c3c3e", translucent: "#38383d99",
   },
 } as const

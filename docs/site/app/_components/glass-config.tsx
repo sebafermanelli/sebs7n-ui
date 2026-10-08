@@ -29,13 +29,15 @@ export type GlassConfig = {
   luz: number
   /** Neutros con tinte de marca (el default de 3.0). `false` = `data-neutral-tint="off"` en `<html>`. */
   tint: boolean
+  /** Grano de fondo: `off` · `subtle` (default, sin atributo) · `strong` (`data-grain="strong"` en `<html>`). */
+  grain: "off" | "subtle" | "strong"
   /** La fuente de titulares: `inter` (la sans, sin `--font-heading`) o una serif de ejemplo cargada en `--font-heading`. */
   heading: "inter" | "serif"
   /** Los últimos colores de marca probados. No van al CSS: son la memoria del selector. */
   recientes: Oklch[]
 }
 
-export const DEFAULTS: GlassConfig = { brand: null, brandDark: null, ambient: true, luz: 1, tint: true, heading: "inter", recientes: [] }
+export const DEFAULTS: GlassConfig = { brand: null, brandDark: null, ambient: true, luz: 1, tint: true, grain: "subtle", heading: "inter", recientes: [] }
 
 const CLAVE = "sebs7n-ui:playground"
 
@@ -104,6 +106,7 @@ function leer(): GlassConfig {
       ambient: ambientGuardado(guardado),
       luz: luzGuardada(guardado),
       tint: guardado.tint ?? true,
+      grain: guardado.grain === "off" || guardado.grain === "strong" ? guardado.grain : "subtle",
       heading: guardado.heading === "serif" ? "serif" : "inter",
       recientes: guardado.recientes ?? [],
     }
@@ -126,6 +129,8 @@ export function GlassConfigProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const raiz = document.documentElement
     const pisadas = variablesAplicadas(config)
+    if (config.grain === "subtle") raiz.removeAttribute("data-grain")
+    else raiz.setAttribute("data-grain", config.grain)
     if (config.tint) raiz.removeAttribute("data-neutral-tint")
     else raiz.setAttribute("data-neutral-tint", "off")
     for (const nombre of TODAS) {

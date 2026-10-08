@@ -300,6 +300,17 @@
      */
     --ambient: 1;
 
+    /**
+     * Grano de fondo (3.0): ruido de película estático sobre el wallpaper (`bg-ambient`) y el lavado de `SectionBackdrop`.
+     * `--grain-opacity` es la intensidad (0 lo apaga), `--grain-size` el lado del mosaico, y `<html data-grain="off | strong">`
+     * elige un nivel sin escribir variables (sin atributo: sutil). Con `prefers-contrast: more` se apaga solo. El ruido es un SVG
+     * `feTurbulence` en gris, mezclado en `overlay` y centrado en gris medio (media 0,49; p0,1 = 0,08 y p99,9 = 0,90)
+     * (`test/grain-contrast.test.ts` mide el peor caso del texto sobre cada tono del wallpaper).
+     */
+    --grain-opacity: 0.08;
+    --grain-size: 160px;
+    --grain-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='.66 .66 .66 0 -.5 .66 .66 .66 0 -.5 .66 .66 .66 0 -.5 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+
     --sf-brand-src: var(--brand-base);
     --sf-brand-fg: var(--brand-contrast);
 
@@ -370,7 +381,7 @@
     --sf-separator-strong: #d1d1d6;
     --sf-hairline: #78788014;
     --sf-label: #000000e0;
-    --sf-label-secondary: #0000008f;
+    --sf-label-secondary: #00000096;
     --sf-label-tertiary: #0000007a;
     --sf-label-quaternary: #78788029;
     --sf-selection-inactive: #dcdce0;
@@ -575,7 +586,7 @@
     --sf-separator-strong: #3c3c3e;
     --sf-hairline: #74748040;
     --sf-label: #fffffffa;
-    --sf-label-secondary: #ffffffa8;
+    --sf-label-secondary: #ffffffb0;
     --sf-label-tertiary: #ffffff80;
     --sf-label-quaternary: #7878805c;
     --sf-selection-inactive: #3c3c3e;
@@ -901,6 +912,19 @@
   isolation: isolate;
   background-color: var(--color-background);
 
+  /* El grano (3.0): una capa fija encima del wallpaper, estática, sin JS ni animación. */
+  &::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image: var(--grain-image);
+    background-size: var(--grain-size) var(--grain-size);
+    mix-blend-mode: overlay;
+    opacity: var(--grain-opacity);
+  }
+
   &::before {
     content: "";
     position: fixed;
@@ -916,6 +940,30 @@
       radial-gradient(circle 60vmax at 105% -35%, oklch(from var(--sf-wallpaper-3) l c h / var(--ambient)) 45%, oklch(from var(--sf-wallpaper-1) l c h / var(--ambient)) 100%, transparent calc(100% + 0.5px)),
       linear-gradient(oklch(from var(--sf-wallpaper-1) l c h / var(--ambient)), oklch(from var(--sf-wallpaper-1) l c h / var(--ambient)));
   }
+}
+
+/* Niveles del grano: sin atributo es sutil; `off` lo apaga; `strong` lo marca. Con contraste más alto pedido por el sistema, apagado. */
+:root[data-grain="off"] {
+  --grain-opacity: 0;
+}
+:root[data-grain="strong"] {
+  --grain-opacity: 0.18;
+}
+@media (prefers-contrast: more) {
+  :root,
+  :root[data-grain] {
+    --grain-opacity: 0 !important;
+  }
+}
+/* El lavado de `SectionBackdrop wash` lleva el mismo grano, que sigue las mismas variables. */
+[data-slot="section-backdrop"][data-variant="wash"] > [data-slot="section-backdrop-layer"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--grain-image);
+  background-size: var(--grain-size) var(--grain-size);
+  mix-blend-mode: overlay;
+  opacity: var(--grain-opacity);
 }
 
 /**
@@ -1428,7 +1476,7 @@
     --sf-fill-3: oklch(from var(--sf-brand-src) 0.5753 calc(var(--neutral-tint-chroma, 0.01) * 2) h / 0.16);
     --sf-hairline: oklch(from var(--sf-brand-src) 0.5753 calc(var(--neutral-tint-chroma, 0.01) * 2) h / 0.08);
     --sf-label: oklch(from var(--sf-brand-src) 0.04 var(--neutral-tint-chroma, 0.01) h / 0.88);
-    --sf-label-secondary: oklch(from var(--sf-brand-src) 0.04 var(--neutral-tint-chroma, 0.01) h / 0.56);
+    --sf-label-secondary: oklch(from var(--sf-brand-src) 0.04 var(--neutral-tint-chroma, 0.01) h / 0.59);
     --sf-label-tertiary: oklch(from var(--sf-brand-src) 0.04 var(--neutral-tint-chroma, 0.01) h / 0.48);
   }
 
@@ -1446,7 +1494,7 @@
     --sf-fill-3: oklch(from var(--sf-brand-src) 0.5631 calc(var(--neutral-tint-chroma, 0.01) * 2) h / 0.36);
     --sf-hairline: oklch(from var(--sf-brand-src) 0.5631 calc(var(--neutral-tint-chroma, 0.01) * 2) h / 0.25);
     --sf-label: oklch(from var(--sf-brand-src) 0.995 var(--neutral-tint-chroma, 0.01) h / 0.98);
-    --sf-label-secondary: oklch(from var(--sf-brand-src) 0.995 var(--neutral-tint-chroma, 0.01) h / 0.66);
+    --sf-label-secondary: oklch(from var(--sf-brand-src) 0.995 var(--neutral-tint-chroma, 0.01) h / 0.69);
     --sf-label-tertiary: oklch(from var(--sf-brand-src) 0.995 var(--neutral-tint-chroma, 0.01) h / 0.5);
   }
 }
