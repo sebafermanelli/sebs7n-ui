@@ -91,7 +91,7 @@ El resto de la tabla (`xs` a `4xl`) es la escala de Tailwind. Ningún componente
 
 {{sombras}}
 
-Las de menú, modal y tooltip traen el filo de 1 px (`hairline`) que en iCloud hace de borde. No hay sombras decorativas: una sombra dice «esto flota» (menú, diálogo), «esto es un widget» o «este segmento está elegido». Botones, campos, casillas y pistas son planos.
+Tres niveles de elevación, todos chicos (2.16): **reposo** (`shadow-widget`, la card: filo + 0 1 2 / 0 2 8), **flotante** (`shadow-menu` y `shadow-tooltip`: filo + 0 1 3 / 0 4 14) y **overlay** (`shadow-modal`, diálogo, hoja y toast: filo + 0 2 6 / 0 10 28, un nivel arriba del menú para que un menú sobre un diálogo se siga leyendo encima). Cada una es una capa de contacto más una de ambiente, de poco desplazamiento, y el filo de 1 px (`hairline`) hace el trabajo del borde; en oscuro la misma geometría con más alfa. No hay sombras decorativas: una sombra dice «esto flota» (menú, diálogo), «esto es un widget» o «este segmento está elegido». Botones, campos, casillas y pistas son planos.
 
 ## Foco y movimiento
 
