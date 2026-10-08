@@ -514,32 +514,32 @@
     --sf-focus: color-mix(in srgb, var(--sf-brand-700) var(--sf-focus-alpha), transparent);
 
     /**
-     * Las sombras de iCloud web (2.0, catálogo §1.6). Planas en reposo: botones, campos y cards
-     * no llevan sombra; flota lo que se abre encima (menú, popover, diálogo) y el widget.
+     * Las sombras (2.16, «sombras chicas»). Parten de las de iCloud web (2.0, catálogo §1.6: menú
+     * 0 11 34, widget 0 17 40), que en una app de trabajo se leían grandes: ahora cada nivel es
+     * una sombra en capas de poco desplazamiento —una de contacto (1-2 px) y una de ambiente— y el
+     * filo de 1 px (`hairline`) hace el trabajo del borde. Tres niveles, de menos a más:
      *
-     *   menu / modal   0 11 34, con el filo de 1 px de un popover (`hairline`)
-     *   tooltip        la misma familia, más corta (iCloud no tiene tooltip propio)
-     *   widget         0 17 40, la card de Home sobre el wallpaper
-     *   segment        0 3 8, el segmento activo de un segmentado
-     *   badge          0 2 4, el contador rojo sobre un ícono
-     *   thumbnail      el filo de 1 px de una miniatura de archivo
-     *   card           plana (queda el token para la app); card-hover, la de una card que se toca
+     *   reposo     widget (la card) y card-hover: filo + 0 1 2 / 0 2 8
+     *   flotante   menu, tooltip: filo + 0 1 3 / 0 4 14 (tooltip 0 2 6)
+     *   overlay    modal (diálogo, hoja, toast): filo + 0 2 6 / 0 10 28; más que el menú, para que
+     *              un menú abierto sobre un diálogo siga leyéndose encima
+     *   detalle    segment, badge 0 1 2; thumbnail, el filo de 1 px de una miniatura
+     *   card       plana (queda el token para la app)
      *
-     * En claro iCloud solo mostró la de menú y la de widget (al 16 %, contra 65 % en oscuro); las
-     * otras se derivan de la oscura con esa misma proporción (× 0,247), y
-     * `test/profundidad.test.ts` lo sostiene.
+     * Planas en reposo: botones y campos no llevan sombra. `test/profundidad.test.ts` fija los
+     * valores y que cada nivel tenga más blur y más alfa que el anterior, en claro y en oscuro.
      */
-    --sf-shadow-menu: 0 0 0 1px var(--sf-hairline), 0 11px 34px 0 #00000029;
-    --sf-shadow-modal: var(--sf-shadow-menu);
-    --sf-shadow-tooltip: 0 0 0 1px var(--sf-hairline), 0 4px 12px 0 #0000001f;
-    --sf-shadow-widget: 0 17px 40px 0 #00000029;
-    --sf-shadow-segment: 0 3px 8px 0 #00000013;
-    --sf-shadow-badge: 0 2px 4px 0 #00000020;
+    --sf-shadow-widget: 0 0 0 1px var(--sf-hairline), 0 1px 2px 0 #0000000a, 0 2px 8px 0 #0000000f;
+    --sf-shadow-card-hover: 0 0 0 1px var(--sf-hairline), 0 1px 2px 0 #0000000d, 0 4px 12px 0 #00000017;
+    --sf-shadow-tooltip: 0 0 0 1px var(--sf-hairline), 0 2px 6px 0 #00000014;
+    --sf-shadow-menu: 0 0 0 1px var(--sf-hairline), 0 1px 3px 0 #0000000f, 0 4px 14px 0 #0000001a;
+    --sf-shadow-modal: 0 0 0 1px var(--sf-hairline), 0 2px 6px 0 #0000000f, 0 10px 28px 0 #0000001f;
+    --sf-shadow-segment: 0 1px 2px 0 #00000014;
+    --sf-shadow-badge: 0 1px 2px 0 #0000001a;
     --sf-shadow-thumbnail: 0 0 0 1px #00000029;
     --sf-shadow-card: 0 0 #0000;
-    --sf-shadow-card-hover: 0 4px 16px 0 #0000001f;
     /* El halo del botón de IA sólido: lo que dice «esto es de la IA» sin un borde. */
-    --sf-shadow-ai: 0 8px 18px -8px color-mix(in srgb, var(--sf-ai-solid) 80%, transparent);
+    --sf-shadow-ai: 0 3px 8px -3px color-mix(in srgb, var(--sf-ai-solid) 70%, transparent);
 
     --sf-chart-1: var(--sf-blue-700);
     --sf-chart-2: var(--sf-amber-900);
@@ -624,15 +624,16 @@
        3:1 con las marcas oscuras (terracota 2,2:1, azul 2,6:1 sobre `surface-header`). */
     --sf-focus: color-mix(in srgb, var(--sf-brand-900) var(--sf-focus-alpha), transparent);
 
-    /* En oscuro las de iCloud llegan al 65 %: sobre #1C1C1E una sombra suave no se ve. */
-    --sf-shadow-menu: 0 0 0 1px var(--sf-hairline), 0 11px 34px 0 #000000a6;
-    --sf-shadow-modal: var(--sf-shadow-menu);
-    --sf-shadow-tooltip: 0 0 0 1px var(--sf-hairline), 0 4px 12px 0 #00000080;
-    --sf-shadow-widget: 0 17px 40px 0 #000000a6;
-    --sf-shadow-segment: 0 3px 8px 0 #0000004d;
-    --sf-shadow-badge: 0 2px 4px 0 #00000080;
+    /* En oscuro la misma geometría con más alfa (30-60 %): sobre #1C1C1E una sombra suave no se
+       ve, y el filo (`hairline`, más claro que la superficie) es el que separa la capa. */
+    --sf-shadow-widget: 0 0 0 1px var(--sf-hairline), 0 1px 2px 0 #0000004d, 0 2px 8px 0 #00000059;
+    --sf-shadow-card-hover: 0 0 0 1px var(--sf-hairline), 0 1px 2px 0 #00000059, 0 4px 12px 0 #00000073;
+    --sf-shadow-tooltip: 0 0 0 1px var(--sf-hairline), 0 2px 6px 0 #00000066;
+    --sf-shadow-menu: 0 0 0 1px var(--sf-hairline), 0 1px 3px 0 #00000059, 0 4px 14px 0 #00000080;
+    --sf-shadow-modal: 0 0 0 1px var(--sf-hairline), 0 2px 6px 0 #00000066, 0 10px 28px 0 #00000099;
+    --sf-shadow-segment: 0 1px 2px 0 #0000004d;
+    --sf-shadow-badge: 0 1px 2px 0 #00000066;
     --sf-shadow-thumbnail: 0 0 0 1px #000000a6;
-    --sf-shadow-card-hover: 0 4px 16px 0 #00000080;
 
     --sf-chart-1: var(--sf-blue-700);
     --sf-chart-2: var(--sf-amber-600);
