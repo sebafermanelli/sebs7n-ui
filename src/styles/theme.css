@@ -1577,3 +1577,175 @@
     --sf-label-tertiary: oklch(from var(--sf-brand-src) 0.995 var(--neutral-tint-chroma, 0.01) h / 0.5);
   }
 }
+
+/* ── Alto contraste (3.0) ────────────────────────────────────────────────────────────────────────
+ * `<html data-contrast="high">` (la perilla del motor de tema) y `prefers-contrast: more` (el sistema, salvo `data-contrast="standard"`)
+ * suben los filetes, los rellenos y el texto secundario: los bordes se ven (≥ 3:1 contra la página), el texto tenue llega a ≥ 7:1 y el
+ * grano se apaga. No cambia ningún componente: son los mismos tokens con otro valor. Va al final y con más especificidad que el
+ * tinte de neutros (`:root:not(…)`), así que gana sin `!important`. `test/high-contrast.test.ts` mide los pares.
+ */
+:root:root[data-contrast="high"] {
+  --sf-separator: #00000059;
+  --sf-separator-strong: #00000099;
+  --sf-hairline: #00000059;
+  --sf-fill-1: #0000001f;
+  --sf-fill-2: #00000029;
+  --sf-fill-3: #00000033;
+  --sf-label: #000000f2;
+  --sf-label-secondary: #000000cc;
+  --sf-label-tertiary: #000000a6;
+  --grain-opacity: 0;
+}
+:root:root.dark[data-contrast="high"] {
+  --sf-separator: #ffffff59;
+  --sf-separator-strong: #ffffff99;
+  --sf-hairline: #ffffff59;
+  --sf-fill-1: #ffffff29;
+  --sf-fill-2: #ffffff33;
+  --sf-fill-3: #ffffff3d;
+  --sf-label: #ffffff;
+  --sf-label-secondary: #ffffffe0;
+  --sf-label-tertiary: #ffffffb3;
+  --grain-opacity: 0;
+}
+@media (prefers-contrast: more) {
+  :root:root:not([data-contrast="standard"]) {
+    --sf-separator: #00000059;
+    --sf-separator-strong: #00000099;
+    --sf-hairline: #00000059;
+    --sf-fill-1: #0000001f;
+    --sf-fill-2: #00000029;
+    --sf-fill-3: #00000033;
+    --sf-label: #000000f2;
+    --sf-label-secondary: #000000cc;
+    --sf-label-tertiary: #000000a6;
+  }
+  :root:root.dark:not([data-contrast="standard"]) {
+    --sf-separator: #ffffff59;
+    --sf-separator-strong: #ffffff99;
+    --sf-hairline: #ffffff59;
+    --sf-fill-1: #ffffff29;
+    --sf-fill-2: #ffffff33;
+    --sf-fill-3: #ffffff3d;
+    --sf-label: #ffffff;
+    --sf-label-secondary: #ffffffe0;
+    --sf-label-tertiary: #ffffffb3;
+  }
+}
+/* Los campos no tienen borde (relleno `fill-1`): con alto contraste ganan uno visible. */
+:root[data-contrast="high"] :is([data-slot="input"], [data-slot="textarea"], [data-slot="select-trigger"], [data-slot="number-field-input"], [data-slot="otp-field-slot"]) {
+  border-color: var(--sf-separator-strong);
+}
+@media (prefers-contrast: more) {
+  :root:not([data-contrast="standard"]) :is([data-slot="input"], [data-slot="textarea"], [data-slot="select-trigger"], [data-slot="number-field-input"], [data-slot="otp-field-slot"]) {
+    border-color: var(--sf-separator-strong);
+  }
+}
+
+/* ── Windows de alto contraste (forced-colors) ───────────────────────────────────────────────────
+ * Con `forced-colors: active` el navegador pisa los colores y borra los fondos: lo que se decía solo con un relleno (elegido, marcado,
+ * un Badge, la pista de un Progress) tiene que decirse con un borde o un contorno de color de sistema, y el foco nunca desaparece.
+ */
+@media (forced-colors: active) {
+  :focus-visible {
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
+  }
+  :is([data-slot="badge"], [data-slot="tag"], [data-slot="count-badge"]) {
+    border: 1px solid currentColor;
+  }
+  :is([data-checked], [data-selected], [data-pressed], [data-state="selected"], [data-active], [aria-selected="true"], [aria-current="page"], [aria-checked="true"]) {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
+  :is([data-slot="checkbox"], [data-slot="radio"], [data-slot="switch"], [data-slot="slider-thumb"], [data-slot="progress"], [data-slot="meter"]) {
+    border: 1px solid CanvasText;
+    forced-color-adjust: none;
+    background-color: ButtonFace;
+  }
+  [data-slot="switch"][data-checked],
+  [data-slot="checkbox"][data-checked],
+  [data-slot="progress"] > * {
+    background-color: Highlight;
+  }
+  [data-slot="input"], [data-slot="textarea"], [data-slot="select-trigger"] {
+    border: 1px solid CanvasText;
+  }
+}
+
+/* ── Impresión (3.0) ────────────────────────────────────────────────────────────────────────────
+ * Lo que se imprime es el contenido: sin barras, sin paneles laterales, sin avisos ni wallpaper, fondos planos y blanco sobre negro
+ * invertido. Las tablas repiten su cabecera y no parten una fila; un `DocumentSheet` ocupa la página. Lo que la app no quiere impreso
+ * lleva `data-print="hide"`; lo que sí, aunque sea chrome, `data-print="show"`.
+ */
+@media print {
+  :root,
+  :root.dark {
+    color-scheme: light;
+    --sf-background: #ffffff;
+    --sf-surface: #ffffff;
+    --sf-surface-secondary: #ffffff;
+    --sf-label: #000000;
+    --sf-label-secondary: #333333;
+    --grain-opacity: 0;
+  }
+  body {
+    background: #fff !important;
+    color: #000;
+  }
+  [data-slot="app-shell-header"],
+  [data-slot="app-shell-mobile-bar"],
+  [data-slot="app-shell-sidebar"],
+  [data-slot="app-shell-sidebar-handle"],
+  [data-slot="app-shell-aside-column"],
+  [data-slot="app-shell-aside"],
+  [data-slot="navbar"],
+  [data-slot="toolbar"],
+  [data-slot="save-bar"],
+  [data-slot="skip-link"],
+  [data-sonner-toaster],
+  [data-print="hide"] {
+    display: none !important;
+  }
+  [data-slot="app-shell"],
+  [data-slot="app-shell-column"],
+  [data-slot="app-shell-main"] {
+    display: block !important;
+    height: auto !important;
+    overflow: visible !important;
+    padding: 0 !important;
+  }
+  *,
+  *::before,
+  *::after {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  .bg-ambient::before,
+  .bg-ambient::after,
+  [data-slot="section-backdrop-layer"] {
+    display: none !important;
+  }
+  table {
+    break-inside: auto;
+  }
+  thead {
+    display: table-header-group;
+  }
+  tr,
+  [data-slot="card"],
+  [data-slot="document-sheet-section"] {
+    break-inside: avoid;
+  }
+  [data-slot="document-sheet"] {
+    border: 0 !important;
+    max-width: none !important;
+    width: 100% !important;
+    margin: 0 !important;
+  }
+  a[href^="http"]:not([data-print="no-url"])::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    color: #333;
+  }
+}
