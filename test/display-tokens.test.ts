@@ -6,7 +6,7 @@ import { describe, expect, it } from "vitest"
 const theme = readFileSync(join(import.meta.dirname, "../src/styles/theme.css"), "utf8")
 const utility = (name: string) => theme.match(new RegExp(`^@utility ${name} \\{(.*)\\}$`, "m"))?.[1]
 
-describe("kit de marketing: tokens opt-in", () => {
+describe("escala display y énfasis: tokens opt-in", () => {
   it("la escala display es fluida (clamp) y con más contraste que large-title (48)", () => {
     for (const name of ["text-display", "text-display-2", "text-display-3", "text-lead"]) expect(utility(name), name).toMatch(/font-size: clamp\(/)
     const max = (name: string) => parseFloat(utility(name)!.match(/clamp\([^,]+,[^,]+,\s*([\d.]+)rem\)/)![1]!) * 16
@@ -24,7 +24,7 @@ describe("kit de marketing: tokens opt-in", () => {
     expect(utility("emphasis-accent")).toBe(" color: var(--color-brand-ink); ")
     expect(utility("emphasis-strong")).toContain("font-weight: 700")
     expect(utility("emphasis-muted")).toContain("--color-label-secondary")
-    const block = theme.slice(theme.indexOf("Marketing (opt-in"), theme.indexOf("@utility text-title-1"))
+    const block = theme.slice(theme.indexOf("Escala display y énfasis (3.0"), theme.indexOf("@utility text-title-1"))
     expect(block).not.toMatch(/gradient|background-clip/)
   })
 

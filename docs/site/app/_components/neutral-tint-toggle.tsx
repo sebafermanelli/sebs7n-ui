@@ -4,15 +4,15 @@ import * as React from "react"
 import { Switch } from "sebs7n-ui/switch"
 
 /**
- * Prende `data-neutral-tint` en `<html>` mientras la página está abierta, para ver los neutros inclinados hacia la
- * marca. Al salir de la página (o al apagarlo) se saca: el resto del sitio no cambia.
+ * Compara los neutros con y sin tinte: apagado, pone `data-neutral-tint="off"` en `<html>` mientras la página está
+ * abierta. Al salir (o al volver a prenderlo) se saca: el resto del sitio queda con el tinte, que es el default.
  */
 export function NeutralTintToggle() {
-  const [on, setOn] = React.useState(false)
+  const [on, setOn] = React.useState(true)
   React.useEffect(() => {
     const root = document.documentElement
-    if (on) root.setAttribute("data-neutral-tint", "")
-    else root.removeAttribute("data-neutral-tint")
+    if (on) root.removeAttribute("data-neutral-tint")
+    else root.setAttribute("data-neutral-tint", "off")
     return () => root.removeAttribute("data-neutral-tint")
   }, [on])
   return (

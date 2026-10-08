@@ -5,7 +5,7 @@ import type { FileGridProps } from "../src/components/file-grid"
 import { cn, type DistributiveOmit } from "../src/lib/utils"
 
 describe("cn", () => {
-  it("los roles de marketing conviven con un color de texto y entre sí gana el último", () => {
+  it("los roles display conviven con un color de texto y entre sí gana el último", () => {
     expect(cn("text-display", "text-label")).toBe("text-display text-label")
     expect(cn("text-display", "text-display-2")).toBe("text-display-2")
     expect(cn("text-lead", "text-label-secondary")).toBe("text-lead text-label-secondary")

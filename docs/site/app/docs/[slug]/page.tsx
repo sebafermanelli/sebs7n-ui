@@ -7,6 +7,7 @@ import site from "@/.generated/site.json"
 import { Inline } from "../../_components/inline"
 import { MdLink } from "../../_components/md-link"
 import { PageNav } from "../../_components/page-nav"
+import { PageExtras } from "../../_components/page-extras"
 import { headings, Prose } from "../../_components/prose"
 
 type Params = { params: Promise<{ slug: string }> }
@@ -43,6 +44,7 @@ export default async function SystemPage({ params }: Params) {
           </PageHeaderActions>
         </PageHeader>
         <Prose markdown={page.body} />
+        <PageExtras slug={page.slug} />
       </article>
       <PageNav items={headings(page.body)} />
     </div>

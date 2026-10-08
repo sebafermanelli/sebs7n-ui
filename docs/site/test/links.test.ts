@@ -29,7 +29,6 @@ const validas = new Set<string>([
   "/docs",
   "/docs/iconos",
   "/docs/playground",
-  "/docs/marketing",
   "/templates",
   "/templates/dashboard",
   "/templates/landing",

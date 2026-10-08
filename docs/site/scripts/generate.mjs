@@ -203,20 +203,12 @@ const PLAYGROUND = {
   description: "Elegí el color de marca, el tema y el wallpaper, mirá los componentes cambiar y copiá el CSS.",
 }
 
-// Marketing tampoco es un .md: es una página compuesta con las piezas del kit (app/docs/marketing).
-const MARKETING = {
-  title: "Marketing",
-  href: "/docs/marketing",
-  description: "El kit opt-in para una landing expresiva: escala display, énfasis, fondos de sección, Reveal, WindowFrame y ScrollStory.",
-}
-
 const nav = [
   {
     id: "sistema",
     title: "Sistema",
     items: [
       { title: PLAYGROUND.title, href: PLAYGROUND.href },
-      { title: MARKETING.title, href: MARKETING.href },
       ...pages.map((page) => ({ title: page.title, href: `/docs/${page.slug}` })),
       { title: ICONOS.title, href: ICONOS.href },
     ],
@@ -232,7 +224,6 @@ const nav = [
 
 const search = [
   { title: PLAYGROUND.title, href: PLAYGROUND.href, group: "Sistema", description: PLAYGROUND.description, keywords: "brand color picker theming wallpaper configurar" },
-  { title: MARKETING.title, href: MARKETING.href, group: "Sistema", description: MARKETING.description, keywords: "landing display tipografia reveal scroll window frame backdrop fondo grano reticula" },
   { title: ICONOS.title, href: ICONOS.href, group: "Sistema", description: ICONOS.description, keywords: "icon lucide svg" },
   ...pages.map((page) => ({
     title: page.title,

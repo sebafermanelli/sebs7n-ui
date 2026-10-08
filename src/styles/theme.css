@@ -1205,8 +1205,8 @@
  * semibold: iCloud no usa el regular de la HIG para títulos.
  */
 @utility text-large-title { font-family: var(--font-sans); font-size: 48px; line-height: 52px; font-weight: 600; letter-spacing: -0.005em; }
-/* ── Marketing (opt-in, 2.17) ──────────────────────────────────────────────────────────────────
- * Roles de titular para una landing: más contraste de tamaños que `text-large-title` (48), fluidos con
+/* ── Escala display y énfasis (3.0) ──────────────────────────────────────────────────────────────────
+ * Roles de titular para pantallas expresivas: más contraste de tamaños que `text-large-title` (48), fluidos con
  * `clamp()` entre 390 px y 1280 px y en la fuente de titulares (`--font-display`, que la app carga en
  * `--font-heading`; sin ella, la sans). Ningún componente del paquete los usa: se piden a mano.
  * El énfasis es de color sólido o de peso, nunca un degradé: `emphasis-accent` (el acento como texto,

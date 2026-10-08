@@ -63,7 +63,7 @@ La fuente es **Inter** (la carga la app, ver [Instalación](/docs/instalacion)) 
 
 ### Fuente de titulares
 
-`font-display` es la fuente de los titulares de una landing (el `<h1>` del hero, `SectionHeader`, el título de `DocumentSheet`). **El paquete no carga ninguna fuente**: la elige la app y la declara en la variable `--font-heading`; sin ella, `font-display` cae en Inter y no cambia nada.
+`font-display` es la fuente de los titulares. Desde 3.0 la usan los componentes que tienen un titular: `PageHeader`, `SectionHeader`, el título de `Card`, de `Dialog`, `AlertDialog`, `Sheet`, `Drawer` y `Popover`, `EmptyState`, `AuthLayout` y `DocumentSheet`. **El paquete no carga ninguna fuente**: la elige la app y la declara en la variable `--font-heading`; sin ella, `font-display` cae en la sans (Inter) y no cambia nada.
 
 ```tsx
 // app/layout.tsx
@@ -75,11 +75,11 @@ const heading = Source_Serif_4({ subsets: ["latin"], variable: "--font-heading" 
 <html className={`${inter.variable} ${heading.variable}`} lang="es">
 ```
 
-Va junto a un rol (`font-display text-title-1`): cambia la familia, el rol pone tamaño y peso.
+Va junto a un rol (`font-display text-title-1`): cambia la familia, el rol pone tamaño y peso. Abajo, en [Tipografía en uso](#tipografia-en-uso), se ve el mismo titular con Bitter cargada como lo haría una app.
 
-### Titulares de marketing (opt-in)
+### Escala display
 
-Para el hero de una landing, cuatro roles fluidos con más contraste que `text-large-title` (48). Usan `--font-display` (la fuente de titulares de la app) y ningún componente del paquete los pide: se usan a mano. Hay una demo viva en [Marketing](/docs/marketing).
+Para el titular de una portada, cuatro roles fluidos con más contraste que `text-large-title` (48). Usan `--font-display` (la fuente de titulares de la app); los componentes de datos no los piden, se usan a mano donde la pantalla es expresiva.
 
 | Rol | Tamaño | Para qué |
 |---|---|---|
@@ -88,13 +88,17 @@ Para el hero de una landing, cuatro roles fluidos con más contraste que `text-l
 | `text-display-3` | `clamp(24px → 34px)`, 1,15 | Un titular de bloque. |
 | `text-lead` | `clamp(17px → 21px)`, 1,5 (Inter) | La bajada bajo el titular. |
 
-El énfasis dentro de un titular es de **color sólido o de peso, nunca un degradé**: `emphasis-accent` (el acento como texto, AA), `emphasis-strong` (700) y `emphasis-muted` (el resto de la frase en `label-secondary`). `ease-out-expo` es la curva `cubic-bezier(0.16, 1, 0.3, 1)` de `Reveal`.
+El énfasis dentro de un titular es de **color sólido o de peso, nunca un degradé**: `emphasis-accent` (el acento como texto, AA), `emphasis-strong` (700) y `emphasis-muted` (el resto de la frase en `label-secondary`).
 
-### Neutros con tinte (opt-in)
+### Movimiento
 
-`data-neutral-tint` en `<html>` inclina los grises hacia el matiz de la marca (croma 0,008). Los valores salen de `theme.css`; ver [Theming](/docs/theming) para el uso y las garantías de contraste.
+Todo lo que se mueve usa `ease-out-expo`, `cubic-bezier(0.16, 1, 0.3, 1)`: arranca rápido y frena largo, sin rebote. `transition-control` y `transition-surface` (180 ms), los overlays (200 ms, con escala de 97 a 100 %), el pulgar del Switch y el segmentado, y la entrada de `Reveal`. Con `prefers-reduced-motion` todo queda quieto.
 
-Las clases de Geist (`text-copy-*`, `text-label-<n>`, `text-heading-*`, `text-button-*`) **siguen andando** y `cn()` las sigue fusionando, pero están obsoletas: el paquete ya no las usa y se van en 3.0.
+### Neutros con tinte
+
+Desde 3.0 los grises se inclinan hacia el matiz de la marca por defecto (croma 0,01). Los valores salen de `theme.css`; para apagarlo y para las garantías de contraste, ver [Theming](/docs/theming).
+
+Las clases de Geist (`text-copy-*`, `text-label-<n>`, `text-heading-*`, `text-button-*`) **siguen andando** y `cn()` las sigue fusionando, pero están obsoletas: el paquete ya no las usa y se van en 4.0.
 
 ## Radios
 
@@ -118,8 +122,12 @@ Tres niveles de elevación, todos chicos (2.16): **reposo** (`shadow-widget`, la
 | `focus-visible:focus-ring-inverse` | Lo mismo sobre un fondo de color (botón de acento, casilla marcada). |
 | `focus:focus-border` | Campos: Input, Textarea, Select, Combobox. El mismo anillo interior, también con el puntero, y el campo pierde el relleno (la búsqueda de iCloud). |
 | `focus:focus-border-error` | Lo mismo, en rojo, cuando el campo tiene `aria-invalid`. |
-| `transition-control` | 150 ms, `ease`, solo color / fondo / borde / sombra / opacidad. |
-| `transition-thumb` | El pulgar de `Slider` y `Switch`. |
+| `transition-control` | 180 ms, `ease-out-expo`, solo color / fondo / borde / sombra / opacidad. |
+| `transition-thumb` | El pulgar de `Slider` y `Switch`: 240 ms, `ease-out-expo`, sin rebote. |
 | `animate-skeleton` | El brillo que cruza el `Skeleton`, quieto con movimiento reducido. |
 
 Todas las animaciones pasan por `motion-reduce`, además del reset global del paquete.
+
+## Tipografía en uso
+
+El mismo titular, con la escala display y una fuente de titulares cargada como lo haría una app (Bitter en `--font-heading`; el sitio sigue en Inter y el paquete no trae fuentes).

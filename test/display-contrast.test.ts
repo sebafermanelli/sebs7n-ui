@@ -1,10 +1,10 @@
 // @vitest-environment node
 //
-// Auditoría de contraste AA del kit de marketing: el énfasis de color (`emphasis-accent` = `brand-ink`,
+// Auditoría de contraste AA del escala display y énfasis: el énfasis de color (`emphasis-accent` = `brand-ink`,
 // `emphasis-muted` = `label-secondary`) sobre cada fondo que puede tener un titular o una bajada —la página,
 // la franja `grouped`, el lavado de `SectionBackdrop` al 7 % y los neutros con tinte—, en claro y en oscuro,
 // con las marcas de ejemplo del paquete y una verde profundo. Imprime la tabla de ratios (`npx vitest run
-// test/marketing-contrast.test.ts`) y falla si algún texto queda bajo 4,5:1.
+// test/display-contrast.test.ts`) y falla si algún texto queda bajo 4,5:1.
 import { readFileSync, writeFileSync } from "node:fs"
 import { join } from "node:path"
 import { describe, expect, it } from "vitest"
@@ -85,7 +85,7 @@ for (const [marca, themes] of Object.entries(MARCAS)) {
   }
 }
 
-describe("kit de marketing: contraste AA del énfasis y los fondos", () => {
+describe("escala display y énfasis: contraste AA del énfasis y los fondos", () => {
   it("imprime la tabla de ratios", () => {
     const worst = (par: string) => Math.min(...rows.filter((r) => r.par === par).map((r) => r.ratio))
     // `CONTRAST_OUT=ruta` guarda la tabla completa (la consola de los tests está silenciada).
