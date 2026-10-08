@@ -16,6 +16,11 @@ type BadgeTone = {
     /** El badge de app de iCloud: un círculo con un número (no leídos, pendientes). */
     | "count"
   color?: BadgeColor
+  /**
+   * `soft` (default desde 3.0): fondo tintado al 12 % con texto de la paleta. `solid`: el relleno de color de 2.x, opt-in para un estado
+   * que tiene que gritar. `count` siempre es sólido.
+   */
+  appearance?: "soft" | "solid"
 }
 
 // El `color` del `<span>` también se saca: acá `color` es la paleta del badge, no el
@@ -43,13 +48,14 @@ type BadgeProps = WithClassName<Omit<React.ComponentProps<"span">, "color">> &
  * renderizada en el server, un listado— se llevaba Base UI al bundle de cliente por nada.
  * El DOM que sale es el mismo: `<span>` con `data-slot`, `data-variant` y `data-color`.
  */
-function Badge({ className, variant = "solid", color = "gray", size = "md", dot = false, label, render, children, ...props }: BadgeProps) {
+function Badge({ className, variant = "solid", appearance = "soft", color = "gray", size = "md", dot = false, label, render, children, ...props }: BadgeProps) {
   return renderElement(render, "span", {
     "data-slot": "badge",
     "data-variant": variant,
+    "data-appearance": variant === "count" ? "solid" : appearance,
     "data-color": color,
     ...props,
-    className: cn(badgeVariants({ variant, color, size }), className),
+    className: cn(badgeVariants({ variant, appearance, color, size }), className),
     children: (
       <>
         {/* El punto va en la tinta (2.0): del color del badge, sobre su propio relleno, no se veía. */}

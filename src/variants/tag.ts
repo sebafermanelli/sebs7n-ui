@@ -29,7 +29,8 @@ export type TagVariantProps = {
  */
 export const tagVariants = ({ color = "gray", size = "md", removable = false, className }: TagVariantProps = {}) =>
   cn(
-    badgeVariants({ color, size }),
+    // El Tag y el chip siguen sólidos (3.0): lo distingue el botón de quitar, no el relleno.
+    badgeVariants({ color, size, appearance: "solid" }),
     // El anillo de foco del botón de quitar es un box-shadow: con el
     // overflow-hidden del badge quedaría cortado justo donde importa.
     "max-w-full overflow-visible",

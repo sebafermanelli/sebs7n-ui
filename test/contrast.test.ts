@@ -253,7 +253,7 @@ describe("Badge y Tag sólidos: la tinta sobre su relleno (WCAG 1.4.3)", () => {
   }
   for (const color of PALETAS) {
     if (color === "brand") continue
-    const clases = badgeVariants({ color })
+    const clases = badgeVariants({ color, appearance: "solid" })
     // El relleno es un paso de la paleta (`bg-red-800`) o uno propio del badge (`bg-badge-gray`).
     const [, familia, paso] = clases.match(/(?:^|\s)bg-([a-z]+)-(\d+|[a-z]+)(?:\s|$)/)!
     const tintaBlanca = /(?:^|\s)text-white(?:\s|$)/.test(clases)

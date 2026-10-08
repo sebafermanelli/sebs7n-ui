@@ -71,7 +71,7 @@ describe("Tag", () => {
     render(
       <>
         <Tag color="blue">Tag</Tag>
-        <Badge color="blue">Badge</Badge>
+        <Badge appearance="solid" color="blue">Badge</Badge>
       </>
     )
     const tag = screen.getByText("Tag").closest("[data-slot=tag]")!

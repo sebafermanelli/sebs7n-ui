@@ -50,6 +50,47 @@ const inkWhite = "text-white [--sf-tag-press:rgb(0_0_0/0.25)]"
  * Tamaños (R4): `md` 20, `sm` 16, texto 12 en los dos. Un Badge nunca mide más que un botón `sm`
  * (28) ni que la fila de menú (30) donde vive.
  */
+const SOLID_FILL: Record<string, string> = {
+  gray: cn("bg-badge-gray", inkWhite),
+  // El brand es el color de la selección: adentro de un ítem seleccionado se invierte, o desaparecería. Los demás
+  // colores traen su tinta y se leen igual sobre el acento, como las etiquetas del Finder en una fila seleccionada.
+  brand: "bg-brand-700 text-brand-contrast [--sf-tag-press:rgb(0_0_0/0.25)] inside-selection:bg-on-selection inside-selection:text-selection",
+  red: cn("bg-red-800", inkWhite),
+  amber: cn("bg-badge-amber", inkWhite),
+  green: cn("bg-badge-green", inkWhite),
+  blue: cn("bg-blue-800", inkWhite),
+  teal: cn("bg-badge-teal", inkWhite),
+  purple: cn("bg-purple-700", inkWhite),
+  pink: cn("bg-pink-800", inkWhite),
+}
+
+/**
+ * El aspecto suave (3.0, el default): el paso `-700` de la paleta al 12 % de fondo y la tinta de la paleta
+ * (`text-<color>-ink`, el 60 % de `-900` y el 40 % de `-1000`) como texto. Se lee como un estado y no como un botón
+ * de colores; `test/badge-soft-contrast.test.ts` mide la tinta sobre su tinte, en claro y oscuro y con cinco marcas.
+ * El gris usa `fill-2` y el texto primario. Dentro de una fila seleccionada (acento sólido) pasa a blanco sobre
+ * un velo: el tinte no se vería.
+ */
+const SOFT_FILL: Record<string, string> = {
+  gray: "bg-fill-2 text-label",
+  brand: "bg-brand-700/12 text-brand-ink",
+  red: "bg-red-700/12 text-red-ink",
+  amber: "bg-amber-700/12 text-amber-ink",
+  green: "bg-green-700/12 text-green-ink",
+  blue: "bg-blue-700/12 text-blue-ink",
+  teal: "bg-teal-700/12 text-teal-ink",
+  purple: "bg-purple-700/12 text-purple-ink",
+  pink: "bg-pink-700/12 text-pink-ink",
+}
+const SOFT_SELECTED = "inside-selection:bg-on-selection/20 inside-selection:text-on-selection"
+const COLORS = Object.keys(SOLID_FILL)
+// `count` siempre es sólido; `solid`/`subtle` (variant) con appearance solid también.
+const SOLID = COLORS.flatMap((color) => [
+  { appearance: "solid" as const, color: color as BadgeColor, className: SOLID_FILL[color] },
+  { variant: "count" as const, color: color as BadgeColor, className: SOLID_FILL[color] },
+])
+const SOFT = COLORS.map((color) => ({ appearance: "soft" as const, variant: ["solid", "subtle"] as ("solid" | "subtle")[], color: color as BadgeColor, className: cn(SOFT_FILL[color], SOFT_SELECTED) }))
+
 const badgeVariantsBase = cva(
   // `inside-selection:[&>svg]:text-current!`: el ítem de menú resaltado pinta todo `svg` de adentro
   // de `on-selection` con un selector más fuerte que el de acá, y un ícono blanco sobre un badge
@@ -58,27 +99,19 @@ const badgeVariantsBase = cva(
   {
     variants: {
       variant: { solid: "", subtle: "", count: "rounded-full text-caption tabular-nums shadow-badge" },
-      color: {
-        gray: cn("bg-badge-gray", inkWhite),
-        // El brand es el color de la selección: adentro de un ítem seleccionado se invierte, o
-        // desaparecería. Los demás colores traen su tinta y se leen igual sobre el acento, como
-        // las etiquetas del Finder en una fila seleccionada.
-        brand: "bg-brand-700 text-brand-contrast [--sf-tag-press:rgb(0_0_0/0.25)] inside-selection:bg-on-selection inside-selection:text-selection",
-        red: cn("bg-red-800", inkWhite),
-        amber: cn("bg-badge-amber", inkWhite),
-        green: cn("bg-badge-green", inkWhite),
-        blue: cn("bg-blue-800", inkWhite),
-        teal: cn("bg-badge-teal", inkWhite),
-        purple: cn("bg-purple-700", inkWhite),
-        pink: cn("bg-pink-800", inkWhite),
-      },
+      // 3.0: el default es `soft` (fondo tintado al 12 % con la tinta de la paleta, que llega a 4,5:1 sobre su propio tinte);
+      // `solid` es el relleno de 2.x, opt-in. `count` siempre es sólido.
+      appearance: { soft: "", solid: "" },
+      color: { gray: "", brand: "", red: "", amber: "", green: "", blue: "", teal: "", purple: "", pink: "" },
       size: { sm: "h-4 px-1", md: "h-5 px-1.5" },
     },
     compoundVariants: [
+      ...SOLID,
+      ...SOFT,
       { variant: "count", size: "md", className: "min-w-5" },
       { variant: "count", size: "sm", className: "min-w-4" },
     ],
-    defaultVariants: { variant: "solid", color: "gray", size: "md" },
+    defaultVariants: { variant: "solid", appearance: "soft", color: "gray", size: "md" },
   }
 )
 

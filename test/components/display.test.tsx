@@ -74,7 +74,7 @@ describe("Toggle (chip)", () => {
 describe("Badge", () => {
   // 2.0: la etiqueta del Finder. Relleno sólido, sin borde, sin brillo ni vidrio, 4 px de radio.
   it("sólido por color: relleno lleno, sin borde, sin brillo, radio de etiqueta", () => {
-    render(<Badge color="amber">Pendiente</Badge>)
+    render(<Badge appearance="solid" color="amber">Pendiente</Badge>)
     const badge = screen.getByText("Pendiente")
     // R4: 20 de alto (16 en sm) y texto 12: un Badge nunca mide más que un botón sm (28) ni que
     // la fila de menú (30) donde vive.
@@ -96,10 +96,25 @@ describe("Badge", () => {
       pink: ["bg-pink-800", "text-white"],
     } as const
     for (const [color, clases] of Object.entries(esperado)) {
-      const { unmount } = render(<Badge color={color as keyof typeof esperado}>{color}</Badge>)
+      const { unmount } = render(<Badge appearance="solid" color={color as keyof typeof esperado}>{color}</Badge>)
       expect(screen.getByText(color), color).toHaveClass(...clases)
       unmount()
     }
+  })
+
+  // 3.0: el default es suave (tinte al 12 % y tinta de la paleta); el sólido es opt-in con `appearance="solid"`.
+  it("el default es suave: fondo tintado y texto de la paleta", () => {
+    render(<Badge color="green">Pagada</Badge>)
+    const badge = screen.getByText("Pagada")
+    expect(badge).toHaveClass("bg-green-700/12", "text-green-ink")
+    expect(badge).toHaveAttribute("data-appearance", "soft")
+    expect(badge.className).not.toContain("text-white")
+  })
+
+  it("count siempre es sólido, también con appearance suave", () => {
+    render(<Badge color="red" variant="count">3</Badge>)
+    expect(screen.getByText("3")).toHaveClass("bg-red-800", "text-white", "rounded-full")
+    expect(screen.getByText("3")).toHaveAttribute("data-appearance", "solid")
   })
 
   // `subtle` queda por compatibilidad: se ve igual que `solid`.
@@ -173,7 +188,7 @@ describe("Badge", () => {
   // el elemento del llamador manda, sus props sobreviven y el punto sigue adentro.
   it("render reemplaza el span y conserva las props del elemento", () => {
     render(
-      <Badge color="green" dot render={<a className="underline" href="/planes" />}>
+      <Badge appearance="solid" color="green" dot render={<a className="underline" href="/planes" />}>
         Pro
       </Badge>
     )

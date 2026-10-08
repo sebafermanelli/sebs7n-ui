@@ -201,7 +201,7 @@ export const COMPONENTS = {
     title: "Badge",
     group: "fundamentos",
     detallado: true,
-    description: "Etiqueta de estado: nueve colores sólidos y sin borde, con punto opcional, y el contador redondo de iCloud (`variant=\"count\"`).",
+    description: "Etiqueta de estado: nueve colores con fondo tintado suave (o sólido, opt-in), sin borde, con punto opcional, y el contador redondo de iCloud (`variant=\"count\"`).",
     keyboard: [["—", "No es interactivo. Si tiene que serlo, `render={<button />}` y pasa a comportarse como un botón."]],
     a11y: [
       "Es un `<span>`: no anuncia nada por sí solo. El color no puede ser la única señal — el texto tiene que decir el estado.",
@@ -211,7 +211,8 @@ export const COMPONENTS = {
     ],
     usage: [
       "**Estado, no acción.** Si se puede hacer click, es un `Button` o un `Toggle`.",
-      "Sólido desde 2.0. `variant=\"subtle\"` se acepta por compatibilidad y se ve igual.",
+      "Desde 3.0 el default es **suave**: el `-700` de la paleta al 12 % de fondo y la tinta de la paleta como texto (4,5:1 medido en claro y oscuro con cinco marcas). `appearance=\"solid\"` recupera el relleno de 2.x para un estado que tiene que gritar. `Tag` y los chips siguen sólidos.",
+      "`variant=\"subtle\"` está obsoleto: se acepta y se ve igual que el default.",
       "**`variant=\"count\"` es para un número**, el badge de app de iCloud: no leídos, pendientes. Un círculo de 20 con 11 px y sombra; el estado («Pagada») va en el badge rectangular.",
       "`label` le da al lector el número con contexto: `<Badge variant=\"count\" label=\"3 sin leer\">3</Badge>` se anuncia «3 sin leer».",
       "El color tiene que significar algo consistente en toda la app: `green` pagado, `amber` pendiente, `red` vencido. No lo elijas por estética.",
@@ -220,7 +221,8 @@ export const COMPONENTS = {
     ],
     props: {
       Badge: {
-        variant: "`solid` (el default) · `count` (círculo con un número, el badge de app de iCloud). `subtle` está **obsoleto**: se acepta y se ve igual que `solid`.",
+        variant: "`solid` (el default) · `count` (círculo con un número, el badge de app de iCloud, siempre sólido). `subtle` está **obsoleto**.",
+        appearance: "`soft` (default desde 3.0: tinte al 12 % con texto de la paleta) · `solid` (el relleno de color de 2.x).",
         size: "`sm` 16px · `md` 20px de alto. El texto es 12 (`text-footnote`) en los dos; en `count`, 11.",
         label: "El texto para el lector de pantalla, con contexto («3 sin leer»). El número visible queda escondido del lector para que no se anuncie dos veces. **Con `count` ponelo siempre**: un «3» suelto no dice qué cuenta.",
         color: "Nueve tonos, todos sólidos.",

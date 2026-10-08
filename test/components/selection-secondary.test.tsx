@@ -142,15 +142,21 @@ describe("Badge adentro de un ítem seleccionado", () => {
   // toca, como las etiquetas del Finder en una fila seleccionada. Lo único que se protege es el
   // ícono de adentro, que el ítem resaltado pinta de `on-selection` con un selector más fuerte.
   it("un color sólido conserva su relleno y su tinta", () => {
-    render(<Badge color="red">Vencida</Badge>)
+    render(<Badge appearance="solid" color="red">Vencida</Badge>)
     const badge = screen.getByText("Vencida")
     expect(badge.className).not.toMatch(/inside-selection:(bg|text|border)-/)
     expect(badge).toHaveClass("inside-selection:[&>svg]:text-current!")
   })
 
+  // 3.0: el aspecto suave (default) no se ve sobre el acento: pasa a un velo de `on-selection` con su texto.
+  it("el aspecto suave pasa a un velo con texto on-selection", () => {
+    render(<Badge color="green">Pagada</Badge>)
+    expect(screen.getByText("Pagada")).toHaveClass("inside-selection:bg-on-selection/20", "inside-selection:text-on-selection")
+  })
+
   // El brand sólido es el mismo color que la selección: sin esto desaparece.
   it("brand se invierte", () => {
-    render(<Badge color="brand">Nuevo</Badge>)
+    render(<Badge appearance="solid" color="brand">Nuevo</Badge>)
     expect(screen.getByText("Nuevo")).toHaveClass("inside-selection:bg-on-selection", "inside-selection:text-selection")
   })
 })
