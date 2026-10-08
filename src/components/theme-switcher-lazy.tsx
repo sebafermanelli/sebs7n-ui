@@ -8,7 +8,7 @@ import type { ThemeSwitcherProps } from "./theme-switcher.js"
 const ThemeSwitcher = React.lazy(() => import("./theme-switcher.js").then((mod) => ({ default: mod.ThemeSwitcher })))
 
 /**
- * `ThemeSwitcher` diferido, sin salto: ocupa el lugar exacto (96 × 32) desde el primer render, y su JS
+ * `ThemeSwitcher` diferido, sin salto: ocupa el lugar exacto (100 × 28, lo que mide el control) desde el primer render, y su JS
  * se pide cuando el navegador queda libre —o antes, si el puntero o el foco llegan primero—.
  *
  * ```tsx
@@ -30,7 +30,7 @@ function ThemeSwitcherLazy({ className, ...props }: ThemeSwitcherProps) {
     return () => window.clearTimeout(id)
   }, [])
 
-  const size = "inline-flex h-8 w-24 shrink-0"
+  const size = "inline-flex h-7 w-[100px] shrink-0"
   if (!ready) {
     return (
       <span
@@ -44,7 +44,7 @@ function ThemeSwitcherLazy({ className, ...props }: ThemeSwitcherProps) {
   }
   return (
     <React.Suspense fallback={<span aria-hidden="true" className={cn(size, "rounded-control bg-fill-1", className)} data-slot="theme-switcher-placeholder" />}>
-      <ThemeSwitcher className={cn(size, className)} {...props} />
+      <ThemeSwitcher className={className} {...props} />
     </React.Suspense>
   )
 }

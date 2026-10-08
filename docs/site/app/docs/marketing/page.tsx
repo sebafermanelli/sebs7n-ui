@@ -22,7 +22,8 @@ import { Basic as SkipLinkDemo } from "../../_demos/skip-link"
 import { Basic as WindowFrameDemo, Elevations } from "../../_demos/window-frame"
 
 // Solo para esta página: la fuente de titulares de una landing de ejemplo (Bitter), cargada como lo haría una app
-// (`--font-heading`). El sitio sigue en Inter; el paquete no trae fuentes.
+// (`--font-heading`). El sitio sigue en Inter; el paquete no trae fuentes. En una app la variable va en <html>; acá se acota a un
+// contenedor, y como `--font-display` se resuelve en la raíz, se la reapunta a mano en el mismo contenedor.
 const bitter = Bitter({ subsets: ["latin"], variable: "--font-heading", display: "swap" })
 
 export const metadata: Metadata = {
@@ -57,7 +58,7 @@ export default function MarketingPage() {
           </PageHeaderDescription>
         </PageHeader>
 
-        <div className={`${bitter.variable} flex flex-col gap-20`}>
+        <div className={`${bitter.variable} flex flex-col gap-20`} style={{ "--font-display": "var(--font-heading)" } as React.CSSProperties}>
         <SectionBackdrop className="-mx-4 rounded-surface px-4 py-16 @lg:-mx-8 @lg:px-8" variant="grid">
           <div className="flex flex-col gap-6">
             <Reveal>
@@ -81,7 +82,7 @@ export default function MarketingPage() {
         </SectionBackdrop>
 
         <Block
-          description="Cuatro roles nuevos para titulares de marketing, con más contraste que `text-large-title` (48). Llevan la fuente de titulares de la app (`--font-heading`)."
+          description="Cuatro roles nuevos para titulares de marketing, con más contraste que text-large-title (48). Llevan la fuente de titulares de la app (--font-heading)."
           id="escala"
           title="Escala display"
         >
@@ -121,7 +122,7 @@ export default function MarketingPage() {
         </Block>
 
         <Block
-          description="El marco de una ventana de producto, con las sombras del set chico (`resting`, `floating`, `overlay`)."
+          description="El marco de una ventana de producto, con las sombras del set chico (resting, floating, overlay)."
           id="marco"
           title="WindowFrame"
         >
@@ -154,14 +155,14 @@ export default function MarketingPage() {
         </Block>
 
         <Block
-          description="Los grises, las superficies, los filetes y el texto se inclinan hacia el matiz de la marca (croma 0,005 a 0,01) solo donde se activa `data-neutral-tint` en `<html>`. Probalo: el sitio entero cambia mientras estás en esta página."
+          description="Los grises, las superficies, los filetes y el texto se inclinan hacia el matiz de la marca (croma 0,005 a 0,01) solo donde se activa data-neutral-tint en <html>. Probalo: el sitio entero cambia mientras estás en esta página."
           id="tinte"
           title="Neutros con tinte de marca"
         >
           <NeutralTintToggle />
         </Block>
 
-        <Block description="Funciones, preguntas o un modelo de seguridad como lista con filetes y numeración, en vez de cards idénticas con ícono. Y una franja `grouped` a todo el ancho." id="listas" title="RuledList, DefinitionList y Section">
+        <Block description="Funciones, preguntas o un modelo de seguridad como lista con filetes y numeración, en vez de cards idénticas con ícono. Y una franja grouped a todo el ancho." id="listas" title="RuledList, DefinitionList y Section">
           <div className="grid gap-8 @3xl:grid-cols-2">
             <Numbered />
             <Definitions />
@@ -169,7 +170,7 @@ export default function MarketingPage() {
           <Grouped />
         </Block>
 
-        <Block description="El borde de la IA mientras trabaja, tintado con la marca de la app (`tint=&quot;brand&quot;`) en vez del violeta y magenta del paquete." id="glow" title="AiGlow tintable">
+        <Block description="El borde de la IA mientras trabaja, tintado con la marca de la app (tint=brand) en vez del violeta y magenta del paquete." id="glow" title="AiGlow tintable">
           <Card className="relative max-w-md">
             <AiGlow active tint="brand" />
             <CardContent>

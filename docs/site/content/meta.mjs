@@ -3876,7 +3876,7 @@ export const COMPONENTS = {
   "theme-switcher-lazy": {
     title: "ThemeSwitcherLazy",
     group: "navegacion",
-    description: "El `ThemeSwitcher` diferido sin salto: ocupa 96 × 32 desde el primer render y su JS se pide al quedar libre el navegador o al apuntarlo.",
+    description: "El `ThemeSwitcher` diferido sin salto: ocupa 100 × 28 desde el primer render y su JS se pide al quedar libre el navegador o al apuntarlo.",
     keyboard: [["Tab", "Cuando carga, es el mismo grupo de radios que `ThemeSwitcher` (flechas para elegir)."]],
     a11y: ["El placeholder es `aria-hidden`; el control real aparece en el mismo lugar con su `radiogroup` nombrado."],
     usage: ["Opt-in y solo por subpath (`sebs7n-ui/theme-switcher-lazy`), para la barra de una landing. Mismas props que `ThemeSwitcher`.", "Si el foco llega al lugar antes de que cargue, el control real se pide en ese momento."],
