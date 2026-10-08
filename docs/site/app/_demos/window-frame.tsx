@@ -36,7 +36,7 @@ export function Basic() {
  */
 export function Elevations() {
   return (
-    <div className="grid w-full gap-6 sm:grid-cols-3">
+    <div className="grid w-full gap-6 @lg:grid-cols-3">
       {(["resting", "floating", "overlay"] as const).map((elevation) => (
         <WindowFrame controls={false} elevation={elevation} key={elevation} title={elevation}>
           <p className="p-4 text-callout text-label-secondary">shadow-{elevation === "resting" ? "widget" : elevation === "floating" ? "menu" : "modal"}</p>

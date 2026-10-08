@@ -3715,6 +3715,7 @@ export const COMPONENTS = {
         fade: "Suma opacidad a la entrada. Solo para piezas sin texto. Default `false`.",
         threshold: "Fracción visible (0–1) con la que dispara. Default `0.15`.",
         duration: "Duración, en ms. Default `700`.",
+        style: "Estilos en línea; se suman a las variables de la entrada (`--reveal-distance`).",
       },
       RevealGroup: {
         step: "Espera entre un hijo y el siguiente, en ms. Default `80`.",

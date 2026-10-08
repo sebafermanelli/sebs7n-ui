@@ -15,7 +15,7 @@ const ITEMS = [
  */
 export function Staggered() {
   return (
-    <RevealGroup className="grid w-full gap-4 sm:grid-cols-3" step={90}>
+    <RevealGroup className="grid w-full gap-4 @lg:grid-cols-3" step={90}>
       {ITEMS.map(([title, text]) => (
         <Card key={title}>
           <CardContent>

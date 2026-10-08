@@ -13,7 +13,7 @@ const VARIANTS = [
  */
 export function Variants() {
   return (
-    <div className="grid w-full gap-4 sm:grid-cols-3">
+    <div className="grid w-full gap-4 @lg:grid-cols-3">
       {VARIANTS.map(([variant, text]) => (
         <SectionBackdrop className="rounded-surface border border-separator px-4 py-10" key={variant} variant={variant}>
           <SectionHeader align="start" description={text} level={3} title={variant} />

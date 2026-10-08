@@ -45,7 +45,7 @@ export default function MarketingPage() {
           </PageHeaderDescription>
         </PageHeader>
 
-        <SectionBackdrop className="-mx-4 rounded-surface px-4 py-16 sm:-mx-8 sm:px-8" variant="grid">
+        <SectionBackdrop className="-mx-4 rounded-surface px-4 py-16 @lg:-mx-8 @lg:px-8" variant="grid">
           <div className="flex flex-col gap-6">
             <Reveal>
               <h2 className="text-display text-label">
@@ -74,7 +74,7 @@ export default function MarketingPage() {
         >
           <div className="flex flex-col divide-y divide-separator rounded-surface border border-separator">
             {SCALE.map(([role, range, use]) => (
-              <div className="grid gap-2 p-5 @container sm:grid-cols-[12rem_minmax(0,1fr)] sm:gap-6" key={role}>
+              <div className="grid gap-2 p-5 @lg:grid-cols-[12rem_minmax(0,1fr)] @lg:gap-6" key={role}>
                 <div className="flex flex-col gap-0.5">
                   <code className="text-callout text-label">{role}</code>
                   <span className="text-footnote text-label-secondary">{range}</span>
@@ -84,7 +84,7 @@ export default function MarketingPage() {
               </div>
             ))}
           </div>
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid gap-4 @lg:grid-cols-3">
             <p className="text-display-3 text-label">
               Resalta con <span className="emphasis-accent">color</span>
             </p>
@@ -121,7 +121,7 @@ export default function MarketingPage() {
           id="reveal"
           title="Reveal"
         >
-          <RevealGroup className="grid gap-4 sm:grid-cols-3" step={90}>
+          <RevealGroup className="grid gap-4 @lg:grid-cols-3" step={90}>
             {["Emitir", "Enviar", "Cobrar"].map((title) => (
               <WindowFrame controls={false} elevation="resting" key={title} title={title}>
                 <p className="p-4 text-callout text-label-secondary">Entra {title === "Emitir" ? "primero" : title === "Enviar" ? "después" : "al final"}.</p>
