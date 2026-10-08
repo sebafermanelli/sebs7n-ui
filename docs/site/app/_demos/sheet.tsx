@@ -5,6 +5,7 @@ import { Button } from "sebs7n-ui/button"
 import { Input } from "sebs7n-ui/input"
 import { Label } from "sebs7n-ui/label"
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "sebs7n-ui/sheet"
+import { Inline } from "../_components/inline"
 
 /** Panel lateral de filtros */
 export function Basico() {
@@ -38,7 +39,7 @@ export function Basico() {
         <SheetContent side="left">
           <SheetHeader>
             <SheetTitle>Navegación</SheetTitle>
-            <SheetDescription>Es el lado que usa el `AppShell` en mobile.</SheetDescription>
+            <SheetDescription><Inline text="Es el lado que usa el `AppShell` en mobile." /></SheetDescription>
           </SheetHeader>
         </SheetContent>
       </Sheet>

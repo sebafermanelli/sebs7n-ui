@@ -164,7 +164,7 @@ export default function Home() {
 
         <Reveal>
           <section className="mx-auto flex w-full max-w-3xl scroll-mt-20 flex-col gap-10" id="agentes">
-            <SectionHeader subtitle="Todo el sitio está en texto plano; cada página responde en markdown con .md." title="Para un agente" />
+            <SectionHeader subtitle={<Inline text="Todo el sitio está en texto plano. Agregale `.md` al final de la URL de cualquier página y te la devuelve en markdown." />} title="Para un agente" />
             <DefinitionList>
               {[
                 { href: "/llms.txt", what: "El índice completo, una línea por página." },
