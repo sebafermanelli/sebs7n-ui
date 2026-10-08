@@ -97,6 +97,8 @@ export type Labels = {
     steps: string
     /** El texto de cada botón del indicador: «Ir al paso 2: Revisada». */
     goToStep: (step: number, label: string) => string
+    /** Lo que se anuncia al cambiar de paso: «Paso 2 de 3: Revisada». */
+    current: (step: number, count: number, label: string) => string
   }
   /** Opcional (2.15): `TextDiff`; el default es `textDiffLabels` de `sebs7n-ui/text-diff` (ver `carousel`). */
   textDiff?: {
