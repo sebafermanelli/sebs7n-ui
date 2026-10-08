@@ -124,6 +124,12 @@
      un sistema a otro. La app la carga (`next/font/google` con `variable: "--font-inter"`, o
      `@fontsource-variable/inter`); si no, cae en `system-ui`. */
   --font-sans: var(--font-inter), "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
+  /* La de titulares (`font-display`), opcional y de la app: la carga ella con
+     `next/font` y `variable: "--font-heading"` en `<html>`. El paquete no trae fuentes. Sin
+     `--font-heading` cae en la sans, así un titular con `font-display` nunca queda sin fuente.
+     Va con un rol (`font-display text-title-1`): la utilidad de una sola propiedad sale después
+     que los roles en el CSS y les gana el `font-family`. */
+  --font-display: var(--font-heading, var(--font-inter, "Inter Variable")), "Inter", ui-sans-serif, system-ui, sans-serif;
   /* La mono del sistema: SF Mono en Mac, Consolas en Windows. En código la diferencia entre
      sistemas no molesta y no vale 60 KB de fuente. */
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
