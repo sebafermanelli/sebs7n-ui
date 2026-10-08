@@ -61,6 +61,22 @@ La fuente es **Inter** (la carga la app, ver [Instalación](/docs/instalacion)) 
 | `text-footnote` · `text-caption` | Snippets, badges, contadores, pie legal. |
 | `text-mono-body` · `text-mono-callout` | Código, IDs, atajos. La mono es la del sistema. |
 
+### Fuente de titulares
+
+`font-display` es la fuente de los titulares de una landing (el `<h1>` del hero, `SectionHeader`, el título de `DocumentSheet`). **El paquete no carga ninguna fuente**: la elige la app y la declara en la variable `--font-heading`; sin ella, `font-display` cae en Inter y no cambia nada.
+
+```tsx
+// app/layout.tsx
+import { Inter, Source_Serif_4 } from "next/font/google"
+
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
+const heading = Source_Serif_4({ subsets: ["latin"], variable: "--font-heading" })
+
+<html className={`${inter.variable} ${heading.variable}`} lang="es">
+```
+
+Va junto a un rol (`font-display text-title-1`): cambia la familia, el rol pone tamaño y peso.
+
 Las clases de Geist (`text-copy-*`, `text-label-<n>`, `text-heading-*`, `text-button-*`) **siguen andando** y `cn()` las sigue fusionando, pero están obsoletas: el paquete ya no las usa y se van en 3.0.
 
 ## Radios

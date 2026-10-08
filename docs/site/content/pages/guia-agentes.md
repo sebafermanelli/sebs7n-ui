@@ -23,7 +23,7 @@ Una sola escala para campos y botones: `sm` 28 · `md` 36 · `lg` 40 (botones de
   - **Una barra de filtros, entera en `sm`**: la búsqueda (`SearchField`), los selectores (`Select`, `MultiSelect`, `DatePicker`), el `ToggleGroup` y los botones de la barra (`Pausar`, `Exportar`, `Columnas`). Mezclar `sm` y `md` en la misma fila deja los controles a distinta altura. Vale igual en un dashboard, en una consola y en la portada de un blog: que la lista sea «contenido» no la hace una excepción.
   - Lo que **no** es parte de la barra queda en `md`: la acción primaria de la página («Nueva factura», «Nuevo servicio»), los botones de un formulario y de un diálogo.
 - **`lg`** solo en pantallas de entrada (login) o una acción aislada muy importante.
-- El tamaño se elige **una vez por formulario**, no por campo. No hay una variable global de densidad: rompe el objetivo táctil.
+- El tamaño se elige **una vez por formulario**, no por campo: `<Form size="lg">` lo pasa a todos sus controles (`Input`, `Select`, `Checkbox`, `Button`…), y el que declara su `size` gana. Fuera de un `Form`, `ControlSizeProvider` (`sebs7n-ui/lib/control-size`). No hay una variable global de densidad: rompe el objetivo táctil.
 - Usá los defaults del paquete. Si un tamaño no queda bien, el problema es de la composición, no se corrige forzando `size` en cada componente.
 
 ### Radios
@@ -43,6 +43,8 @@ El resaltado de menús, el ítem activo del sidebar y el elegido de un `Toggle`/
 ### Tipografía
 
 Por roles, como iCloud: `text-large-title` 48 (el título de la página), `title-1/2/3` 28/21/19, `headline` y `body` 17, `subheadline` 15, `callout` 14 (el cromo: barras, menús, tablas), `footnote` 12, `caption` 11. Un `<h1>` por página, que pone `PageHeaderTitle`.
+
+Una landing puede tener su fuente de titulares: `font-display` junto al rol (`font-display text-title-1`), con la fuente cargada por la app en `--font-heading`. El paquete no trae fuentes; sin `--font-heading`, es Inter. En una app de trabajo, no.
 
 ### Color del texto
 
@@ -127,6 +129,10 @@ Un asistente o panel de ayuda que acompaña el trabajo va acoplado al costado (`
 | Una tabla del servidor (filtros y página por URL) con columnas comparables | `SortableTableHead` (`sebs7n-ui/sortable-table-head`) en la cabecera, con `href` (`?sort=<col>&dir=asc\|desc`) |
 | El menú «…» de una fila | `RowActions` (`sebs7n-ui/row-actions`): `icon-sm` `plain`, con `aria-label` de la fila |
 | Eventos con fecha en un teléfono, donde un mes no entra | `CalendarAgenda` (`sebs7n-ui/calendar-agenda`) por debajo de `@2xl` y `CalendarView` desde ahí |
+| El encabezado de una sección de landing (título y bajada) | `SectionHeader` (`sebs7n-ui/section-header`) |
+| Mostrar cómo queda un documento, con citas verificadas y versiones | `DocumentSheet` (`sebs7n-ui/document-sheet`) |
+| Qué cambió entre dos versiones de un texto | `TextDiff` (`sebs7n-ui/text-diff`); la comparación sola, `diffWords` (`sebs7n-ui/lib/text-diff`) |
+| Un proceso que avanza al bajar y retrocede al subir, en una landing | `ScrollSequence` (`sebs7n-ui/scroll-sequence`) |
 | Nada que mostrar | `EmptyState`, con una sola acción para salir del vacío |
 | Esperando datos | `Skeleton` del alto final, o `loading` del componente |
 
@@ -285,7 +291,8 @@ div.bg-ambient[data-ambient]         el wallpaper: barra y cards pasan solas a t
 ```
 
 - **Un acento por pantalla:** en una página que se recorre con scroll, la regla es por lo que se ve a la vez. La CTA del hero, el plan recomendado y el cierre van en el acento porque nunca comparten pantalla; la CTA de la barra y las secundarias, en gris.
-- Cada sección abre con un `<h2>` en `text-title-1` y una bajada en `text-body text-label-secondary`, centrados.
+- Cada sección abre con un `SectionHeader` (`sebs7n-ui/section-header`): el `<h2>` en `text-title-1` con `font-display` y la bajada en `text-body text-label-secondary`, centrados. No se arma a mano.
+- Una secuencia que se cuenta con el scroll (un documento que pasa de borrador a emitido) va con `ScrollSequence`: el paso es función del scroll —baja y avanza, sube y retrocede—, el movimiento solo con `transform` y `opacity` (nunca la opacidad del texto), y con movimiento reducido o sin JS los pasos se ven apilados.
 - Las secciones con ancla llevan `scroll-mt-20`: si no, el título queda debajo de la barra.
 - Server Components: cliente solo lo que cambia con un click (el toggle de precios). Una landing tiene que ser liviana.
 - Lo que se mueve solo (`Marquee`) tiene que poder pausarse: en una landing, `pauseControl="press"` (tocar la franja pausa y reanuda; el botón queda para teclado). Nunca sin pausa.

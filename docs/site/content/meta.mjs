@@ -501,12 +501,14 @@ export const COMPONENTS = {
       "`onFormSubmit` recibe los valores ya juntados por `name`: no hace falta `FormData` ni un `useState` por campo.",
       "Para validar todo contra un schema está `validate()` de `sebs7n-ui/lib/schema`, que devuelve el valor parseado o los errores con la forma que espera esta prop.",
       "El submit se deshabilita mientras se envía (`<Button loading>`), o el mismo formulario se manda dos veces.",
+      "**El tamaño se elige una vez, en el `Form`** (`<Form size=\"lg\">` en una pantalla de entrada): no se repite `size` en cada campo. Fuera de un `Form`, `ControlSizeProvider` (`sebs7n-ui/lib/control-size`) hace lo mismo.",
     ],
     props: {
       Form: {
         errors: "Objeto `{ nombreDelCampo: mensaje }`. Es para los errores que solo conoce el servidor.",
         onFormSubmit: "Recibe los valores juntados por `name`. Ya hace `preventDefault()`.",
         validationMode: "Cuándo se validan los campos que no lo definan por su cuenta.",
+        size: "`sm` · `md` · `lg`: el tamaño de todos los controles de adentro (`Input`, `Select`, `Checkbox`, `Button`…). El que declara su `size` gana; popups y diálogos lo reinician. Sin `size`, el default de cada control.",
       },
     },
     related: ["field", "fieldset", "button"],
@@ -1187,6 +1189,7 @@ export const COMPONENTS = {
     props: {
       Checkbox: {
         shape: "`square` (16 px, radio 4, el default) · `circle` (22 px, borde de 1,5, el check de Reminders).",
+        size: "`sm` 14 · `md` 16 (default) · `lg` 20 px, solo en `square`; sin `size`, el de un `Form` o `FilterBar` que la contenga. El área táctil no cambia.",
       },
     },
     related: ["checkbox-group", "switch", "label"],
@@ -3566,6 +3569,124 @@ export const COMPONENTS = {
       },
     },
     related: ["table", "data-table", "pagination", "filter-bar"],
+  },
+  "section-header": {
+    title: "SectionHeader",
+    group: "contenido",
+    description: "El encabezado de una sección de landing: título con la fuente de titulares (`font-display`) y una bajada, siempre del mismo tamaño y separación.",
+    keyboard: [["Tab", "No tiene paradas propias: es texto. Un link dentro de la bajada se recorre como cualquier link."]],
+    a11y: [
+      "El título es un `<h2>` por defecto; `level` cambia la semántica (`3`, `4`) sin cambiar el dibujo, para respetar el esquema de la página.",
+      "`id` va al encabezado, no a la caja: es lo que nombra la sección con `aria-labelledby`.",
+    ],
+    usage: [
+      "Cada sección de una landing abre con uno, centrado (`align=\"center\"`, el default); `align=\"start\"` cuando la sección es una columna de texto.",
+      "La fuente de titulares la define la app con `--font-heading`; sin ella, el título sale en Inter (ver Tokens › Tipografía).",
+      "Es Server Component y va solo por subpath (`sebs7n-ui/section-header`).",
+    ],
+    props: {
+      SectionHeader: {
+        title: "El título de la sección.",
+        description: "La bajada, en `text-body text-label-secondary`.",
+        align: "`center` (default) · `start`.",
+        level: "El nivel del encabezado: `2` (default), `3` o `4`. No cambia el tamaño.",
+        id: "Va al encabezado, para el `aria-labelledby` de la sección.",
+      },
+    },
+    related: ["page-header", "card"],
+  },
+  "document-sheet": {
+    title: "DocumentSheet",
+    group: "contenido",
+    description: "Una hoja de documento dibujada como papel —factura, contrato, informe—, con citas que llevan su chip de verificación, un recuadro de cifras y la línea de versiones.",
+    keyboard: [["Tab", "No tiene paradas propias: es una ilustración. Un link dentro de una sección se recorre como cualquier link."]],
+    a11y: [
+      "Es un `<figure>` con nombre (`label`) y su `<figcaption>`: una ilustración del documento, no el documento.",
+      "Los títulos de adentro son `<p>`, no `<h*>`: la hoja no mete encabezados en el esquema de la página.",
+      "El estado de cada cita va en texto («Verificada», «A verificar»), no solo en color.",
+      "El resumen es una lista de definiciones (`<dl>`) y las versiones una lista ordenada con `aria-current=\"step\"` en la actual.",
+    ],
+    usage: [
+      "Para mostrar en una landing o un panel cómo queda un documento: la hoja con el margen rayado, sin edición.",
+      "`DocumentCitation` envuelve el tramo citado y le agrega el chip; los textos del chip se cambian con `labels` o con `LabelsProvider` (`documentSheet`).",
+      "Server Component, solo por subpath (`sebs7n-ui/document-sheet`). Para mostrar qué cambió entre dos versiones de un párrafo, `TextDiff`.",
+    ],
+    props: {
+      DocumentSheet: {
+        label: "El nombre accesible de la figura.",
+        caption: "Una línea debajo de la hoja (`<figcaption>`).",
+      },
+      DocumentSheetSection: { heading: "El rótulo de la sección, en versalitas chicas." },
+      DocumentCitation: {
+        status: "`verified` (chip verde) · `pending` (ámbar).",
+        labels: "Los textos del chip: `{ verified, pending }`.",
+      },
+      DocumentSheetSummary: {
+        items: "Las filas `{ label, value }` del recuadro de cifras.",
+        footnote: "Una línea al pie del recuadro: de dónde salen las cifras.",
+      },
+      DocumentSheetVersions: {
+        items: "Las versiones `{ id, detail? }`, en orden.",
+        current: "El `id` de la versión actual. Default: la última.",
+      },
+    },
+    related: ["text-diff", "badge", "card"],
+  },
+  "scroll-sequence": {
+    title: "ScrollSequence",
+    group: "contenido",
+    description: "Un escenario fijo (sticky) cuyo paso lo maneja el scroll: avanza al bajar y retrocede al subir, porque el estado es función pura del recorrido.",
+    keyboard: [
+      ["Tab", "Recorre los botones del indicador de pasos."],
+      ["Enter · Espacio", "Lleva la página al paso elegido."],
+    ],
+    a11y: [
+      "El indicador es una lista (`aria-label` «Pasos») de botones con `aria-current=\"step\"` en el actual; cada uno dice adónde lleva («Ir al paso 2: Revisada»).",
+      "El cambio de paso se anuncia en una región `status` («Paso 2 de 3: Revisada»): un lector de pantalla no ve el escenario cambiar.",
+      "Con `prefers-reduced-motion: reduce` no hay escenario fijo: los pasos se ven apilados, en orden. Sin JavaScript, igual.",
+    ],
+    usage: [
+      "`children` es una función que recibe `{ step, label, stepCount, progress, stepProgress, mode }` y dibuja el escenario. En la versión apilada se llama una vez por paso, con `mode=\"static\"`.",
+      "**El estado no es una animación que se dispara**: el mismo lugar de la página muestra siempre el mismo paso (`scrollSequenceState(progreso, pasos)`).",
+      "Para el movimiento fino usá las variables CSS `--scroll-sequence-progress` y `--scroll-sequence-step-progress` del escenario en `transform` u `opacity` (nunca en `width`, `top` o `height`). `continuous` re-renderiza en cada cuadro solo si de verdad hace falta.",
+      "`offset` es el alto de una barra fija (`4rem`) y `stepLength` cuánto scroll ocupa cada paso (default `100svh`).",
+      "El HTML del servidor trae las dos versiones (escenario y lista apilada) y el CSS muestra la que corresponde; al montar, la otra se desmonta. Un `id` dentro de `children` sale repetido hasta entonces.",
+    ],
+    props: {
+      ScrollSequence: {
+        steps: "Los pasos `{ label }`, en orden.",
+        stepLength: "Cuánto scroll ocupa cada paso. Default `100svh`.",
+        offset: "Dónde se fija el escenario (el alto de una barra fija). Default `0px`.",
+        continuous: "Re-renderiza en cada cuadro con el `progress` fino. Default `false`.",
+        indicator: "Muestra el indicador de pasos. Default `true`.",
+        stageClassName: "Clases del escenario fijo.",
+        onStepChange: "Avisa cada cambio de paso.",
+        labels: "Los textos internos: `{ steps, goToStep, current }`.",
+      },
+    },
+    related: ["stepper", "document-sheet"],
+  },
+  "text-diff": {
+    title: "TextDiff",
+    group: "contenido",
+    description: "Los cambios entre dos versiones de un texto, en línea: lo quitado tachado y lo agregado subrayado, palabra por palabra.",
+    keyboard: [["Tab", "No tiene paradas propias: es texto. El lector de pantalla lo recorre en orden, con «Eliminado:» y «Agregado:» delante de cada cambio."]],
+    a11y: [
+      "Usa `<del>` e `<ins>`, y como los lectores de pantalla no los anuncian, cada parte lleva un aviso oculto («Eliminado:», «Agregado:»).",
+      "No depende del color: tachado y subrayado se leen igual en escala de grises; el texto queda en `text-label`.",
+    ],
+    usage: [
+      "Para revisar qué cambió de una versión a otra de una cláusula, una descripción o una nota. La comparación es `diffWords` de `sebs7n-ui/lib/text-diff`, pura: sirve en el servidor y para armar otra vista.",
+      "Textos muy largos (más de un millón de pares de palabras) se marcan como reemplazados enteros, para no trabar el render.",
+    ],
+    props: {
+      TextDiff: {
+        from: "El texto de la versión anterior.",
+        to: "El texto de la versión nueva.",
+        labels: "Los avisos para lector: `{ deleted, inserted }`.",
+      },
+    },
+    related: ["document-sheet"],
   },
   "row-actions": {
     title: "RowActions",
