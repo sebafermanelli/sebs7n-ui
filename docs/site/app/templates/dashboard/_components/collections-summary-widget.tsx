@@ -33,13 +33,17 @@ export function CollectionsSummaryWidget({ metrics, loading = false }: { metrics
             legend
             locale="es-AR"
             max={metrics.totalBilled}
+            summary={
+              <>
+                <span className="text-body text-label-secondary">Total facturado</span> {wholeMoney.format(metrics.totalBilled)}
+              </>
+            }
             segments={[
               { label: "Cobrado", value: metrics.paidAmount, color: "green" },
               { label: "Pendiente", value: metrics.pendingAmount, color: "amber" },
               { label: "Vencido", value: metrics.overdueAmount, color: "red" },
             ]}
           />
-          <p className="text-callout text-label-secondary">{`Total facturado: ${wholeMoney.format(metrics.totalBilled)}`}</p>
         </div>
       )}
     </WidgetCard>

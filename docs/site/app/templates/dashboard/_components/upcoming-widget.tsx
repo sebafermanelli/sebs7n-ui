@@ -31,11 +31,9 @@ export function UpcomingWidget() {
         <List aria-label="Facturas que vencen pronto">
           {rows.map((inv) => (
             <ListRow
-              // El monto va debajo del nombre, no al costado: en una columna angosta, a la derecha le comía
-              // el ancho al nombre. Lo que queda a la derecha es corto («vencida», «8 oct») y el punto,
-              // decorativo, no es el único dato.
-              description={`${inv.id} · ${wholeMoney.format(inv.amount)}`}
-              dot={inv.status === "overdue" ? "red" : "amber"}
+              // El importe va fijo a la derecha, con su estado o fecha debajo: no se corta nunca (`trailing` no se
+              // encoge) y es el nombre el que trunca, con su tooltip. Debajo del nombre queda solo el código.
+              description={inv.id}
               key={inv.id}
               title={
                 // Si el nombre igual no entra, el tooltip lo dice completo.
@@ -44,7 +42,14 @@ export function UpcomingWidget() {
                   <TooltipContent>{inv.customer}</TooltipContent>
                 </Tooltip>
               }
-              trailing={<span className="text-callout text-label-secondary">{inv.status === "overdue" ? "Vencida" : formatDayMonth(inv.dueDate)}</span>}
+              trailing={
+                <span className="flex flex-col items-end">
+                  <span className="whitespace-nowrap">{wholeMoney.format(inv.amount)}</span>
+                  <span className={inv.status === "overdue" ? "text-footnote text-red-ink" : "text-footnote text-label-secondary"}>
+                    {inv.status === "overdue" ? "Vencida" : formatDayMonth(inv.dueDate)}
+                  </span>
+                </span>
+              }
             />
           ))}
         </List>

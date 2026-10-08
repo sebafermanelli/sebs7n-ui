@@ -4339,6 +4339,7 @@ export const COMPONENTS = {
         locale: "El locale de `Intl.NumberFormat`.",
         total: "El chip del total, a la izquierda de la cabecera: blanco, radio 10, 28/700.",
         legend: "El desglose debajo de la barra: punto, nombre y valor.",
+        summary: "Reemplaza la cabecera «Libre · Usado» (3.0), para un total que no es una cuota (lo facturado, lo cobrado): el número principal en `text-label`, la etiqueta en `text-label-secondary`.",
       },
     },
     related: ["progress", "stat", "slider"],

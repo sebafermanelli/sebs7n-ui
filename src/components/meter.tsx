@@ -112,6 +112,11 @@ type StackedMeterPropsBase = Omit<React.ComponentProps<"div">, "children"> & {
   labels?: Partial<Labels["meter"]>
   /** El desglose debajo: punto, nombre y valor de cada segmento. */
   legend?: boolean
+  /**
+   * Reemplaza la cabecera «Libre X · Usado Y» (3.0). Para un total que no es una cuota —lo facturado, lo cobrado—: el
+   * número principal va en `text-label` y la etiqueta en `text-label-secondary`.
+   */
+  summary?: React.ReactNode
 }
 
 /**
@@ -122,7 +127,7 @@ type StackedMeterPropsBase = Omit<React.ComponentProps<"div">, "children"> & {
  *
  * El grupo necesita nombre (`aria-label` o `aria-labelledby`).
  */
-function StackedMeter({ className, segments, max, format, locale, total, labels, legend = false, ...props }: StackedMeterProps) {
+function StackedMeter({ className, segments, max, format, locale, total, labels, legend = false, summary, ...props }: StackedMeterProps) {
   const text = { ...useLabels().meter, ...labels }
   const formatter = new Intl.NumberFormat(locale, format)
   // Un valor negativo no ocupa lugar. Si lo usado pasa el máximo (una cuota que se excedió), la barra
@@ -139,11 +144,15 @@ function StackedMeter({ className, segments, max, format, locale, total, labels,
           <span className="rounded-item bg-white px-2.5 py-2 text-title-1 font-bold text-black/90 tabular-nums shadow-thumbnail">{total}</span>
         )}
         <p data-slot="stacked-meter-summary" className="ms-auto text-title-2 text-label tabular-nums">
-          <span className="text-label-secondary">
-            {text.free} {formatter.format(Math.max(0, max - used))}
-          </span>
-          {" · "}
-          {text.used} {formatter.format(used)}
+          {summary ?? (
+            <>
+              <span className="text-label-secondary">
+                {text.free} {formatter.format(Math.max(0, max - used))}
+              </span>
+              {" · "}
+              {text.used} {formatter.format(used)}
+            </>
+          )}
         </p>
       </div>
       <div data-slot="stacked-meter-track" className="flex h-4 w-full gap-px overflow-hidden rounded-meter bg-fill-3">
