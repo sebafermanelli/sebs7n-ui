@@ -136,7 +136,6 @@ function BreadcrumbSeparator({ className, children, ...props }: React.ComponentP
   return (
     <li
       data-slot="breadcrumb-separator"
-      role="presentation"
       aria-hidden="true"
       className={cn("inline-flex shrink-0 items-center text-label-tertiary [&>svg]:size-2.5", className)}
       {...props}
@@ -156,7 +155,6 @@ function BreadcrumbEllipsis({ className, label = "Rutas intermedias", ...props }
   return (
     <li
       data-slot="breadcrumb-ellipsis"
-      role="presentation"
       // Mismo criterio que el «…» del Pagination: los puntos avisan que hay
       // niveles colapsados, así que son información y no adorno. El separador
       // de al lado sí se queda en `gray-700` —un chevron más oscuro competiría

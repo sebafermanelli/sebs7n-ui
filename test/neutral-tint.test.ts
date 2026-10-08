@@ -6,7 +6,7 @@ import { describe, expect, it } from "vitest"
 import { composite, contrastRatio, hexOfOklch, luminanceOfHex } from "../src/lib/contrast.js"
 
 const theme = readFileSync(join(import.meta.dirname, "../src/styles/theme.css"), "utf8")
-const block = theme.slice(theme.indexOf("Neutros con tinte de marca"), theme.indexOf("Alto contraste (3.0)"))
+const block = theme.slice(theme.indexOf("Neutros con tinte de marca"), theme.indexOf("Motor de tema (3.0)"))
 const light = block.slice(block.indexOf(":root:not([data-neutral-tint=\"off\"])"), block.indexOf(":root.dark:not([data-neutral-tint=\"off\"])"))
 const dark = block.slice(block.indexOf(":root.dark:not([data-neutral-tint=\"off\"])"))
 

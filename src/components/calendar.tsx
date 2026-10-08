@@ -356,7 +356,7 @@ function Calendar(props: CalendarProps) {
                         const iso = toISODate(dia)
                         if (!isSameMonth(dia, mes)) {
                           return (
-                            <td aria-hidden="true" className="size-7 pointer-coarse:size-10 p-0 text-center text-callout tabular-nums text-label-tertiary" data-outside="" key={iso}>
+                            <td aria-hidden="true" className="size-7 pointer-coarse:size-10 p-0 text-center text-callout tabular-nums text-label-secondary" data-outside="" key={iso}>
                               {cuantos === 1 ? dia.getDate() : null}
                             </td>
                           )

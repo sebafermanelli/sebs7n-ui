@@ -1172,7 +1172,7 @@
 @utility transition-control {
   transition-property: color, background-color, border-color, box-shadow, opacity;
   transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-  transition-duration: 180ms;
+  transition-duration: var(--motion-duration, 180ms);
 }
 
 /* El ancho de un panel del AppShell (sidebar, panel lateral) al plegar, abrir o soltar el separador.
@@ -1196,7 +1196,7 @@
 @utility transition-surface {
   transition-property: color, background-color, border-color, box-shadow, opacity, translate;
   transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-  transition-duration: 180ms;
+  transition-duration: var(--motion-duration, 180ms);
 }
 
 /**
@@ -1577,6 +1577,55 @@
     --sf-label-secondary: oklch(from var(--sf-brand-src) 0.995 var(--neutral-tint-chroma, 0.01) var(--neutral-tint-hue, h) / 0.69);
     --sf-label-tertiary: oklch(from var(--sf-brand-src) 0.995 var(--neutral-tint-chroma, 0.01) var(--neutral-tint-hue, h) / 0.5);
   }
+}
+
+/* ── Motor de tema (3.0): las perillas ──────────────────────────────────────────────────────────
+ * Cada perilla es un atributo `data-*` en `<html>` (y alguna variable); `createTheme()` (`sebs7n-ui/lib/theme`) los escribe a partir de una
+ * configuración. Sin JavaScript en runtime: todo es CSS. Sin el atributo, el default de siempre. Son valores de los tokens que ya existen
+ * (`--radius-*`, `--spacing`, `--sf-shadow-*`), no clases nuevas: ningún componente se entera.
+ */
+/* Forma: UNA escala que gobierna los 12 roles de radio. `standard` es la de iCloud (el default). */
+:root[data-shape="sharp"] {
+  --radius-control: 2px; --radius-field: 2px; --radius-item: 2px; --radius-surface: 2px; --radius-panel: 2px; --radius-menu: 3px;
+  --radius-menu-item: 2px; --radius-tag: 1px; --radius-tooltip: 2px; --radius-meter: 2px; --radius-menu-header: 2px; --radius-thumb: 1px;
+}
+:root[data-shape="soft"] {
+  --radius-control: 10px; --radius-field: 12px; --radius-item: 12px; --radius-surface: 14px; --radius-panel: 14px; --radius-menu: 16px;
+  --radius-menu-item: 10px; --radius-tag: 5px; --radius-tooltip: 8px; --radius-meter: 8px; --radius-menu-header: 9px; --radius-thumb: 6px;
+}
+:root[data-shape="round"] {
+  --radius-control: 14px; --radius-field: 18px; --radius-item: 16px; --radius-surface: 20px; --radius-panel: 20px; --radius-menu: 22px;
+  --radius-menu-item: 14px; --radius-tag: 6px; --radius-tooltip: 10px; --radius-meter: 10px; --radius-menu-header: 12px; --radius-thumb: 8px;
+}
+/* Densidad: `--spacing` es la unidad de Tailwind (alturas, paddings y huecos salen de ahí). Con el dedo (`pointer: coarse`) no baja: el
+   objetivo táctil de 44 px no se negocia. */
+:root[data-density="compact"] { --spacing: 0.22rem; --card-spacing: calc(var(--spacing) * 4); }
+:root[data-density="comfortable"] { --spacing: 0.28rem; --card-spacing: calc(var(--spacing) * 4); }
+@media (pointer: coarse) {
+  :root[data-density="compact"] { --spacing: 0.25rem; }
+}
+/* Superficies: `flat` deja el filo de 1 px y saca la sombra; `raised` es el default (sombras chicas en capas). */
+:root:root[data-surface="flat"] {
+  --sf-shadow-widget: 0 0 0 1px var(--sf-separator-strong);
+  --sf-shadow-card-hover: 0 0 0 1px var(--sf-label-tertiary);
+  --sf-shadow-menu: 0 0 0 1px var(--sf-separator-strong);
+  --sf-shadow-tooltip: 0 0 0 1px var(--sf-separator-strong);
+  --sf-shadow-modal: 0 0 0 1px var(--sf-separator-strong);
+}
+/* Tipografía: tracking y escala de los titulares (los que llevan `font-display`). */
+:root[data-type-tracking="tight"] [class~="font-display"] { letter-spacing: -0.02em; }
+:root[data-type-tracking="airy"] [class~="font-display"] { letter-spacing: 0.01em; }
+:root[data-type-scale="large"] [class~="font-display"] { zoom: 1.08; }
+:root[data-type-scale="compact"] [class~="font-display"] { zoom: 0.94; }
+/* Movimiento: `calm` alarga las transiciones de los controles; `none` es `prefers-reduced-motion` por decisión de la app. */
+:root[data-motion="calm"] { --motion-duration: 300ms; }
+:root[data-motion="none"] *,
+:root[data-motion="none"] *::before,
+:root[data-motion="none"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
 }
 
 /* ── Alto contraste (3.0) ────────────────────────────────────────────────────────────────────────

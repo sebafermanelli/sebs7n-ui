@@ -50,20 +50,11 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "sebs7n
 import { cssOfOklch, hexOfOklch, oklchOfHex, type Oklch } from "../_lib/color"
 import { CodeBlock } from "./code-block"
 import { Veredicto } from "./color-picker"
-import { variables, useGlassConfig, type GlassConfig } from "./glass-config"
+import { createTheme } from "sebs7n-ui/lib/theme"
+
+import { DEFAULTS, toThemeConfig, variables, useGlassConfig, type GlassConfig } from "./glass-config"
 import { Showcase } from "./showcase"
-
-/** El brand del sitio, que es el del paquete. Es de donde arranca el selector. */
-const BRAND_DEL_SITIO: Oklch = [0.573, 0.214, 258]
-
-/** Cinco marcas de ejemplo para probar el matiz: el tinte de neutros, el acento y los contrastes las siguen. */
-const MARCAS_DE_EJEMPLO: { id: string; nombre: string; claro: Oklch; oscuro: Oklch }[] = [
-  { id: "azul", nombre: "Azul", claro: [0.573, 0.214, 258], oscuro: [0.573, 0.214, 258] },
-  { id: "teal", nombre: "Teal", claro: [0.515, 0.099, 183], oscuro: [0.62, 0.11, 183] },
-  { id: "terracota", nombre: "Terracota", claro: [0.55, 0.16, 35], oscuro: [0.55, 0.16, 35] },
-  { id: "esmeralda", nombre: "Esmeralda", claro: [0.53, 0.13, 162], oscuro: [0.74, 0.13, 162] },
-  { id: "pino", nombre: "Verde pino", claro: [0.42, 0.09, 160], oscuro: [0.7, 0.11, 160] },
-]
+import { BRAND_DEL_SITIO, ThemeBuilder } from "./theme-builder"
 
 const numero = (valor: number) => valor.toFixed(2).replace(".", ",")
 
@@ -80,17 +71,17 @@ function globalsDe(pisadas: Record<string, string>): string {
  * el `AppShell` con `ambient` si el wallpaper está prendido y con `aside` si el panel del asistente lo está. Con el
  * tinte apagado, `data-neutral-tint="off"` en `<html>`; con una serif de titulares, la fuente cargada en `--font-heading`.
  */
-function layoutDe(config: Pick<GlassConfig, "ambient"> & Partial<Pick<GlassConfig, "tint" | "heading" | "grain">>, asistente: boolean): string {
-  const { tint = true, heading = "inter", grain = "subtle" } = config
+function layoutDe(config: Pick<GlassConfig, "ambient"> & Partial<GlassConfig>, asistente: boolean): string {
+  const full = { ...DEFAULTS, ...config }
+  const tema = createTheme({ ...toThemeConfig(full), brand: undefined })
   const props = [config.ambient && "  ambient", asistente && "  aside={<Assistant />}\n  asideOpen={open}\n  onAsideOpenChange={setOpen}", "  sidebar={<AppSidebar />}"].filter(Boolean)
   const fuente =
-    heading === "serif"
+    full.heading === "serif"
       ? ['import { Bitter, Inter } from "next/font/google"', 'const heading = Bitter({ subsets: ["latin"], variable: "--font-heading" })', 'const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })', ""]
       : []
   const html = [
-    heading === "serif" ? "className={`${inter.variable} ${heading.variable}`}" : null,
-    !tint ? 'data-neutral-tint="off"' : null,
-    grain !== "subtle" ? `data-grain="${grain}"` : null,
+    full.heading === "serif" ? "className={`${inter.variable} ${heading.variable}`}" : null,
+    ...Object.entries(tema.attributes).map(([k, v]) => `${k}="${v}"`),
   ].filter(Boolean)
   return [
     ...fuente,
@@ -104,6 +95,11 @@ function layoutDe(config: Pick<GlassConfig, "ambient"> & Partial<Pick<GlassConfi
     "</ThemeProvider>",
     ...(html.length ? ["  </body>", "</html>"] : []),
   ].join("\n")
+}
+
+/** La configuración como JSON (`ThemeConfig`, con su `$schema`): lo que `createTheme()` recibe. */
+function jsonDe(config: Partial<GlassConfig>): string {
+  return JSON.stringify({ $schema: "https://ui.sebastianfermanelli.com/schemas/theme-config.json", ...toThemeConfig({ ...DEFAULTS, ...config }) }, null, 2)
 }
 
 /** El CSS que se pega en el `globals.css` de la app, después del `@import` del paquete. */
@@ -130,6 +126,7 @@ export function Playground({ children }: { children?: React.ReactNode }) {
 
   const brand = (oscuro ? (config.brandDark ?? config.brand) : config.brand) ?? BRAND_DEL_SITIO
   const pisadas = variables(config)
+  const avisos = createTheme(toThemeConfig(config)).warnings
 
   return (
     <div className="flex flex-col gap-10">
@@ -156,114 +153,14 @@ export function Playground({ children }: { children?: React.ReactNode }) {
           </>
         ) : (
           <>
-        <div className="flex flex-wrap items-end gap-x-8 gap-y-4">
-          {/* Ancho fijo: el rótulo cambia con el tema («claro», «oscuro») y, midiendo lo que mide su
-              texto, la columna corría todo lo que tiene a la derecha al cambiar de tema. */}
-          <div className="flex w-52 flex-col gap-2">
-            <span className="text-callout whitespace-nowrap text-label">Color de marca · tema {oscuro ? "oscuro" : "claro"}</span>
-            <ColorPicker
-              aria-label={`Color de marca (tema ${oscuro ? "oscuro" : "claro"})`}
-              className="w-40"
-              footer={(color) => <Veredicto color={color} superficie={oscuro ? "#1c1c1e" : "#ffffff"} />}
-              onOpenChange={(abierto) => {
-                if (abierto) return
-                // Lo que se probó y se dejó queda a mano para volver: el más nuevo adelante.
-                set({ recientes: [brand, ...config.recientes.filter((otro) => hexOfOklch(otro) !== hexOfOklch(brand))].slice(0, 10) })
-              }}
-              onValueChange={(color) => set(oscuro ? { brandDark: color } : { brand: color })}
-              recent={config.recientes}
-              value={brand}
-            />
-          </div>
-          <div className="flex flex-col gap-2">
-            <span className="text-callout text-label">Tema</span>
-            <ThemeSwitcher />
-          </div>
-          <div className="flex h-8 items-center gap-2">
-            <Switch checked={config.ambient} id="pg-ambient" onCheckedChange={(ambient) => set({ ambient })} />
-            <Label htmlFor="pg-ambient">Wallpaper</Label>
-          </div>
-          <Slider
-            className="w-48"
-            disabled={!config.ambient}
-            format={{ maximumFractionDigits: 2, minimumFractionDigits: 2 }}
-            label="Color del wallpaper"
-            locale="es-AR"
-            max={1}
-            min={0}
-            onValueChange={(valor) => set({ luz: Number((valor as number).toFixed(2)) })}
-            showValue
-            step={0.05}
-            value={config.luz}
-          />
-          <div className="flex h-8 items-center gap-2">
-            <Switch checked={asistente} id="pg-aside" onCheckedChange={setAsistente} />
-            <Label htmlFor="pg-aside">Panel del asistente</Label>
-          </div>
-        </div>
-        <Separator />
-        <div className="flex flex-wrap items-end gap-x-8 gap-y-4">
-          <div className="flex flex-col gap-2">
-            <span className="text-callout text-label">Matiz de marca</span>
-            <ToggleGroup
-              aria-label="Marca de ejemplo"
-              onValueChange={(valor) => {
-                const marca = MARCAS_DE_EJEMPLO.find((m) => m.id === valor[0])
-                if (marca) set({ brand: marca.claro, brandDark: marca.oscuro })
-              }}
-              value={[MARCAS_DE_EJEMPLO.find((m) => hexOfOklch(m.claro) === hexOfOklch(config.brand ?? BRAND_DEL_SITIO))?.id ?? ""]}
-            >
-              {MARCAS_DE_EJEMPLO.map((marca) => (
-                <ToggleGroupItem key={marca.id} value={marca.id}>
-                  {marca.nombre}
-                </ToggleGroupItem>
-              ))}
-            </ToggleGroup>
-          </div>
-          <Slider
-            className="w-48"
-            label="Matiz (0–360°)"
-            max={360}
-            min={0}
-            onValueChange={(valor) => {
-              const h = valor as number
-              const [l, c] = brand
-              set(oscuro ? { brandDark: [l, c, h] } : { brand: [l, c, h], brandDark: config.brandDark ? [config.brandDark[0], config.brandDark[1], h] : null })
-            }}
-            showValue
-            step={1}
-            value={Math.round(brand[2])}
-          />
-          <div className="flex h-8 items-center gap-2">
-            <Switch checked={config.tint} id="pg-tint" onCheckedChange={(tint) => set({ tint })} />
-            <Label htmlFor="pg-tint">Neutros con tinte</Label>
-          </div>
-          <div className="flex flex-col gap-2">
-            <span className="text-callout text-label">Grano de fondo</span>
-            <ToggleGroup aria-label="Grano de fondo" onValueChange={(valor) => set({ grain: valor[0] === "off" || valor[0] === "strong" ? valor[0] : "subtle" })} required value={[config.grain]}>
-              <ToggleGroupItem value="off">Apagado</ToggleGroupItem>
-              <ToggleGroupItem value="subtle">Sutil</ToggleGroupItem>
-              <ToggleGroupItem value="strong">Marcado</ToggleGroupItem>
-            </ToggleGroup>
-          </div>
-          <div className="flex flex-col gap-2">
-            <span className="text-callout text-label">Fuente de titulares</span>
-            <ToggleGroup aria-label="Fuente de titulares" onValueChange={(valor) => set({ heading: valor[0] === "serif" ? "serif" : "inter" })} required value={[config.heading]}>
-              <ToggleGroupItem value="inter">Inter</ToggleGroupItem>
-              <ToggleGroupItem value="serif">Serif (Bitter)</ToggleGroupItem>
-            </ToggleGroup>
-          </div>
-          <div className="ml-auto flex items-center gap-2">
-            <Button onClick={() => setCompacto(true)} variant="ghost">
-              <ChevronsDownUpIcon />
-              Compactar
-            </Button>
-            <Button disabled={esDefault} onClick={reset} variant="ghost">
-              <RotateCcwIcon />
-              Volver al default
-            </Button>
-          </div>
-        </div>
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="text-title-3 text-label">Constructor de tema</h2>
+              <Button onClick={() => setCompacto(true)} variant="ghost">
+                <ChevronsDownUpIcon />
+                Compactar
+              </Button>
+            </div>
+            <ThemeBuilder asistente={asistente} brand={brand} config={config} esDefault={esDefault} oscuro={oscuro} reset={reset} set={set} setAsistente={setAsistente} />
           </>
         )}
       </section>
@@ -287,6 +184,17 @@ export function Playground({ children }: { children?: React.ReactNode }) {
           <h3 className="text-callout font-semibold text-label">Y esto en tu layout</h3>
           <CodeBlock code={layoutDe(config, asistente)} label="Copiar el layout" />
         </div>
+        <div className="flex flex-col gap-2">
+          <h3 className="text-callout font-semibold text-label">O la configuración, para <code className="text-mono-body">createTheme()</code></h3>
+          <CodeBlock code={jsonDe(config)} label="Copiar el JSON de la configuración" />
+        </div>
+        {avisos.length > 0 && (
+          <ul aria-label="Avisos del motor de tema" className="flex flex-col gap-1 text-callout text-warning-ink">
+            {avisos.map((aviso) => (
+              <li key={aviso}>{aviso}</li>
+            ))}
+          </ul>
+        )}
       </section>
 
       <Showcase ambient={config.ambient} asideOpen={asistente} onAsideOpenChange={setAsistente} />
@@ -550,4 +458,4 @@ function Muestra() {
 
 // `oklchOfHex` y `cssOfOklch` se reexportan para los tests del sitio, que verifican que el CSS
 // que se copia es el que el paquete entiende.
-export { cssDe, cssOfOklch, globalsDe, layoutDe, oklchOfHex }
+export { cssDe, cssOfOklch, globalsDe, jsonDe, layoutDe, oklchOfHex }

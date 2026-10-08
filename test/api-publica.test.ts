@@ -56,7 +56,7 @@ describe("API pública: los tipos de props se exportan", () => {
   // Las excepciones son `lib/countries` y `lib/phone` (R7): las tablas de países y de códigos de
   // discado pesan y el barrel está en su tope de 58 kB. Van solo por subpath, como los componentes
   // de `SOLO_SUBPATH` (`test/solo-subpath.test.ts`), y el README los nombra igual.
-  const LIB_SOLO_SUBPATH = ["countries.ts", "phone.ts", "use-stored-state.ts", "use-key-sequence.ts", "widget-layout.ts", "list-view.ts", "text-diff.ts", "format.ts"]
+  const LIB_SOLO_SUBPATH = ["countries.ts", "phone.ts", "use-stored-state.ts", "use-key-sequence.ts", "widget-layout.ts", "list-view.ts", "text-diff.ts", "format.ts", "theme.ts"]
 
   it("el barrel exporta todo lo público de lib/ y variants/", () => {
     const barrel = readFileSync(join(root, "src/index.ts"), "utf8")

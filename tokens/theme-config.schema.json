@@ -1,0 +1,173 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ui.sebastianfermanelli.com/schemas/theme-config.json",
+  "title": "ThemeConfig",
+  "description": "La configuración de createTheme() de sebs7n-ui.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "brand": {
+      "description": "El color base (#rrggbb o [L, C, H] en OKLCH), o { light, dark? }.",
+      "oneOf": [
+        {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 3,
+              "maxItems": 3
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "required": [
+            "light"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "light": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "minItems": 3,
+                  "maxItems": 3
+                }
+              ]
+            },
+            "dark": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "minItems": 3,
+                  "maxItems": 3
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "shape": {
+      "enum": [
+        "sharp",
+        "standard",
+        "soft",
+        "round"
+      ]
+    },
+    "density": {
+      "enum": [
+        "compact",
+        "standard",
+        "comfortable"
+      ]
+    },
+    "neutrals": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tint": {
+          "enum": [
+            "none",
+            "brand",
+            "warm",
+            "cool"
+          ]
+        },
+        "intensity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "surfaces": {
+      "enum": [
+        "flat",
+        "raised",
+        "translucent"
+      ]
+    },
+    "background": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "wallpaper": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "grain": {
+          "enum": [
+            "off",
+            "subtle",
+            "strong"
+          ]
+        }
+      }
+    },
+    "typography": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "heading": {
+          "type": "string"
+        },
+        "scale": {
+          "enum": [
+            "compact",
+            "standard",
+            "large"
+          ]
+        },
+        "tracking": {
+          "enum": [
+            "tight",
+            "standard",
+            "airy"
+          ]
+        }
+      }
+    },
+    "motion": {
+      "enum": [
+        "calm",
+        "standard",
+        "none"
+      ]
+    },
+    "contrast": {
+      "enum": [
+        "standard",
+        "high"
+      ]
+    }
+  }
+}

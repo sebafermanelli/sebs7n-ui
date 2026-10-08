@@ -2,7 +2,9 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react"
 
-import { cssOfOklch, textoSobre, type Oklch } from "../_lib/color"
+import { cssOfOklch, oklchOfHex as oklchOfHexLocal, textoSobre, type Oklch } from "../_lib/color"
+import { createTheme, PRESETS, type ThemeConfig } from "sebs7n-ui/lib/theme"
+
 import { ambientGuardado, CONFIG_VERSION, luzGuardada } from "../_lib/wallpaper"
 
 /**
@@ -33,11 +35,24 @@ export type GlassConfig = {
   grain: "off" | "subtle" | "strong"
   /** La fuente de titulares: `inter` (la sans, sin `--font-heading`) o una serif de ejemplo cargada en `--font-heading`. */
   heading: "inter" | "serif"
+  /** Las perillas del motor de tema (`sebs7n-ui/lib/theme`): forma, densidad, neutros, superficies, movimiento y contraste. */
+  shape: NonNullable<ThemeConfig["shape"]>
+  density: NonNullable<ThemeConfig["density"]>
+  surfaces: NonNullable<ThemeConfig["surfaces"]>
+  motion: NonNullable<ThemeConfig["motion"]>
+  contrast: NonNullable<ThemeConfig["contrast"]>
+  /** `brand` (el default) · `warm` · `cool` · `none`, con su intensidad de 0 a 1. `tint: false` es `none`. */
+  neutralsKind: NonNullable<NonNullable<ThemeConfig["neutrals"]>["tint"]>
+  neutralsIntensity: number
+  typeScale: NonNullable<NonNullable<ThemeConfig["typography"]>["scale"]>
+  typeTracking: NonNullable<NonNullable<ThemeConfig["typography"]>["tracking"]>
+  /** El preset por industria elegido (`PRESETS`), solo para mostrarlo: lo que vale son los campos de arriba. */
+  preset: string | null
   /** Los últimos colores de marca probados. No van al CSS: son la memoria del selector. */
   recientes: Oklch[]
 }
 
-export const DEFAULTS: GlassConfig = { brand: null, brandDark: null, ambient: true, luz: 1, tint: true, grain: "subtle", heading: "inter", recientes: [] }
+export const DEFAULTS: GlassConfig = { brand: null, brandDark: null, ambient: true, luz: 1, tint: true, grain: "subtle", heading: "inter", shape: "standard", density: "standard", surfaces: "raised", motion: "standard", contrast: "standard", neutralsKind: "brand", neutralsIntensity: 1, typeScale: "standard", typeTracking: "standard", preset: null, recientes: [] }
 
 const CLAVE = "sebs7n-ui:playground"
 
@@ -76,11 +91,73 @@ export function variables(config: GlassConfig): Record<string, string> {
     salida["--brand-contrast-dark"] = textoSobre(oscuro).hex
   }
   if (config.ambient && config.luz !== DEFAULTS.luz) salida["--ambient"] = String(config.luz)
+  // Lo demás lo calcula el motor de tema (matiz e intensidad de los neutros; la marca ya está acá con el veredicto del sitio).
+  const motor = createTheme({ ...toThemeConfig(config), brand: undefined }).variables.light
+  for (const nombre of ["--neutral-tint-hue", "--neutral-tint-chroma"]) if (motor[nombre]) salida[nombre] = motor[nombre]!
   return salida
 }
 
+/** Los atributos `data-*` que escribe el motor de tema: se limpian todos antes de poner los de la configuración. */
+export const ATRIBUTOS_DEL_TEMA = ["data-shape", "data-density", "data-surface", "data-motion", "data-contrast", "data-neutral-tint", "data-grain", "data-type-scale", "data-type-tracking"]
+
+/** La configuración del Playground como `ThemeConfig` (lo que `createTheme` entiende y lo que se exporta como JSON). */
+export function toThemeConfig(parcial: Partial<GlassConfig>): ThemeConfig {
+  const c = { ...DEFAULTS, ...parcial }
+  const out: ThemeConfig = {}
+  if (c.brand || c.brandDark) out.brand = { light: (c.brand ?? c.brandDark) as Oklch, ...(c.brandDark ? { dark: c.brandDark } : {}) }
+  if (c.shape !== "standard") out.shape = c.shape
+  if (c.density !== "standard") out.density = c.density
+  if (c.surfaces !== "raised") out.surfaces = c.surfaces
+  if (c.motion !== "standard") out.motion = c.motion
+  if (c.contrast !== "standard") out.contrast = c.contrast
+  const tint = c.tint ? c.neutralsKind : "none"
+  if (tint !== "brand" || c.neutralsIntensity !== 1) out.neutrals = { tint, ...(c.neutralsIntensity !== 1 ? { intensity: c.neutralsIntensity } : {}) }
+  const background: NonNullable<ThemeConfig["background"]> = {}
+  if (c.ambient && c.luz !== 1) background.wallpaper = c.luz
+  if (!c.ambient) background.wallpaper = 0
+  if (c.grain !== "subtle") background.grain = c.grain
+  if (Object.keys(background).length) out.background = background
+  const typography: NonNullable<ThemeConfig["typography"]> = {}
+  if (c.typeScale !== "standard") typography.scale = c.typeScale
+  if (c.typeTracking !== "standard") typography.tracking = c.typeTracking
+  if (Object.keys(typography).length) out.typography = typography
+  return out
+}
+
+/** Un preset del motor de tema como campos del Playground (lo que no declara vuelve a su default). */
+export function desdePreset(id: string): Partial<GlassConfig> {
+  const preset = PRESETS[id]
+  if (!preset) return {}
+  const t = preset.config
+  const brand = t.brand == null ? null : typeof t.brand === "string" ? oklchDe(t.brand) : Array.isArray(t.brand) ? (t.brand as unknown as Oklch) : oklchDe((t.brand as { light: string | Oklch }).light)
+  const brandDark = t.brand != null && typeof t.brand === "object" && !Array.isArray(t.brand) && "dark" in t.brand && t.brand.dark != null ? oklchDe(t.brand.dark) : null
+  return {
+    preset: id,
+    brand,
+    brandDark,
+    shape: t.shape ?? "standard",
+    density: t.density ?? "standard",
+    surfaces: t.surfaces ?? "raised",
+    motion: t.motion ?? "standard",
+    contrast: t.contrast ?? "standard",
+    tint: t.neutrals?.tint !== "none",
+    neutralsKind: t.neutrals?.tint && t.neutrals.tint !== "none" ? t.neutrals.tint : "brand",
+    neutralsIntensity: t.neutrals?.intensity ?? 1,
+    ambient: (t.background?.wallpaper ?? 1) > 0,
+    luz: t.background?.wallpaper && t.background.wallpaper > 0 ? t.background.wallpaper : 1,
+    grain: t.background?.grain ?? "subtle",
+    heading: "inter",
+    typeScale: t.typography?.scale ?? "standard",
+    typeTracking: t.typography?.tracking ?? "standard",
+  }
+}
+
+const oklchDe = (color: string | Oklch): Oklch => (typeof color === "string" ? oklchOfHexLocal(color) : color)
+
 const TODAS = [
   "--font-heading",
+  "--neutral-tint-hue",
+  "--neutral-tint-chroma",
   "--brand-base",
   "--brand-contrast",
   "--brand-base-dark",
@@ -107,6 +184,16 @@ function leer(): GlassConfig {
       luz: luzGuardada(guardado),
       tint: guardado.tint ?? true,
       grain: guardado.grain === "off" || guardado.grain === "strong" ? guardado.grain : "subtle",
+      shape: guardado.shape ?? "standard",
+      density: guardado.density ?? "standard",
+      surfaces: guardado.surfaces ?? "raised",
+      motion: guardado.motion ?? "standard",
+      contrast: guardado.contrast ?? "standard",
+      neutralsKind: guardado.neutralsKind ?? "brand",
+      neutralsIntensity: typeof guardado.neutralsIntensity === "number" ? guardado.neutralsIntensity : 1,
+      typeScale: guardado.typeScale ?? "standard",
+      typeTracking: guardado.typeTracking ?? "standard",
+      preset: guardado.preset ?? null,
       heading: guardado.heading === "serif" ? "serif" : "inter",
       recientes: guardado.recientes ?? [],
     }
@@ -129,10 +216,8 @@ export function GlassConfigProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const raiz = document.documentElement
     const pisadas = variablesAplicadas(config)
-    if (config.grain === "subtle") raiz.removeAttribute("data-grain")
-    else raiz.setAttribute("data-grain", config.grain)
-    if (config.tint) raiz.removeAttribute("data-neutral-tint")
-    else raiz.setAttribute("data-neutral-tint", "off")
+    for (const atributo of ATRIBUTOS_DEL_TEMA) raiz.removeAttribute(atributo)
+    for (const [atributo, valor] of Object.entries(createTheme({ ...toThemeConfig(config), brand: undefined }).attributes)) raiz.setAttribute(atributo, valor)
     for (const nombre of TODAS) {
       if (nombre in pisadas) raiz.style.setProperty(nombre, pisadas[nombre]!)
       else raiz.style.removeProperty(nombre)

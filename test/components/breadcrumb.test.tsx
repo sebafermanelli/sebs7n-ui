@@ -84,7 +84,8 @@ describe("Breadcrumb", () => {
     expect(separadores).toHaveLength(4)
     for (const separador of separadores) {
       expect(separador).toHaveAttribute("aria-hidden", "true")
-      expect(separador).toHaveAttribute("role", "presentation")
+      // 3.0: sin `role="presentation"` (axe: una lista con hijos presentation es inválida); `aria-hidden` alcanza.
+      expect(separador).not.toHaveAttribute("role")
     }
     // La lista accesible sigue teniendo cinco ítems: los separadores no cuentan.
     expect(screen.getAllByRole("listitem")).toHaveLength(5)
