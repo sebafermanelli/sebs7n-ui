@@ -34,7 +34,7 @@ function RuledList({ marker = "number", className, ...props }: RuledListProps) {
     <Tag
       data-slot="ruled-list"
       data-marker={marker}
-      className={cn("m-0 flex list-none flex-col border-t border-separator p-0 [counter-reset:ruled-item]", className)}
+      className={cn("@container m-0 flex list-none flex-col border-t border-separator p-0 [counter-reset:ruled-item]", className)}
       {...props}
     />
   )
@@ -70,7 +70,7 @@ type DefinitionListProps = React.ComponentProps<"dl">
 
 /** Una lista de definiciones con filetes: término a la izquierda, detalle a la derecha. */
 function DefinitionList({ className, ...props }: DefinitionListProps) {
-  return <dl data-slot="definition-list" className={cn("m-0 flex flex-col border-t border-separator", className)} {...props} />
+  return <dl data-slot="definition-list" className={cn("@container m-0 flex flex-col border-t border-separator", className)} {...props} />
 }
 
 type DefinitionItemProps = Omit<React.ComponentProps<"div">, "title"> & {
