@@ -16,8 +16,8 @@ export default function BlogPage() {
   return (
     <PageShell narrow>
       <header className="flex flex-col gap-3">
-        <h1 className="text-large-title text-label">{BLOG.name}</h1>
-        <p className="text-body-large text-label-secondary">{BLOG.tagline}</p>
+        <h1 className="text-display-2 text-label">{BLOG.name}</h1>
+        <p className="text-lead text-label-secondary">{BLOG.tagline}</p>
       </header>
       <PostsBrowser />
       <Newsletter />

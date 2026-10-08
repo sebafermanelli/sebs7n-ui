@@ -29,7 +29,7 @@ Solo para quien construye componentes:
   `max-w-(--available-width)` y `max-h-(--available-height)` en la superficie, y al costado
   (`side="right"`) sin lugar cae arriba o abajo (`internal/collision.ts`). Si es de contenido, se
   adapta a la hoja de abajo en el teléfono con `internal/adaptive-popover.tsx`.
-- **La escala tipográfica de Geist** sigue en el CSS hasta 3.0 y ningún componente la usa: lo
+- **La escala tipográfica de Geist** sigue en el CSS hasta 4.0 y ningún componente la usa: lo
   nuevo va con los roles de iCloud.
 
 ## Accesibilidad: lo que el paquete garantiza y cómo se prueba

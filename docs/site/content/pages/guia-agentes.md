@@ -80,6 +80,13 @@ Un `MultiSelect` **mantiene su lugar y su alto** (una línea del alto de un `Sel
 
 Una animación de aparición (al entrar en pantalla, en una landing) **no baja la opacidad del texto**: un fade deja el texto por debajo de contraste AA mientras aparece. Se anima solo el desplazamiento (`translate`) o el texto aparece ya a opacidad 1 y se anima su contenedor sin texto; con `prefers-reduced-motion: reduce`, sin movimiento. `Reveal` (`sebs7n-ui/reveal`, opt-in) ya lo hace así: solo mueve, y `fade` es para piezas sin texto.
 
+### Cálido y cuidado (3.0)
+
+- **Neutros con tinte:** el default. Los grises siguen el matiz de la marca de la app; no pongas grises hexadecimales propios. Para apagarlo, `data-neutral-tint="off"` en `<html>`.
+- **Titulares:** un título lleva `font-display` junto a un rol (`font-display text-title-1`); los componentes con título ya lo traen. La app declara `--font-heading`; sin ella cae en la sans.
+- **Movimiento:** `ease-out-expo`, sin rebote, y todo quieto con `prefers-reduced-motion`. Algo que aparece de golpe (un error, un vacío) usa `animate-rise`; nunca baja la opacidad del texto.
+- **Vacíos y errores que enseñan:** `EmptyState` con `description` (por qué está vacío) y `hint` (cómo se llena); el error de un campo dice qué corregir, no solo que falló.
+
 ### Un link con margen
 
 `TextLink` respeta los márgenes verticales de la app (`mt-4`, `my-2`): con uno pasa a `inline-block`; en texto corrido, sin margen, sigue en línea.

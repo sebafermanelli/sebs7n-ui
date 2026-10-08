@@ -16,14 +16,14 @@ Copia la carpeta a `app/landing/` e instala `sebs7n-ui`, `@base-ui/react`, `luci
 
 | Archivo | Qué hace |
 |---|---|
-| `page.tsx` | Server Component: el wallpaper y las secciones en orden |
+| `page.tsx` | Server Component: `SkipLink`, el wallpaper y las secciones en orden, cada una con `Reveal` |
 | `_data/content.ts` | **lo que se cambia**: todo el texto, los planes, los clientes, las preguntas y adónde van las CTA |
 | `_components/landing-navbar.tsx` | `Navbar` translúcida con links a las anclas y una CTA gris |
-| `_components/hero.tsx` | el `<h1>` y la única acción primaria de la primera pantalla |
+| `_components/hero.tsx` | el `<h1>` en `text-display`, la bajada en `text-lead` y la única acción primaria, con `RevealGroup` |
 | `_components/clients.tsx` | `Marquee` de clientes; tocar pausa y reanuda |
-| `_components/features.tsx` | beneficios en grilla 1/2/3 de `Card` |
+| `_components/features.tsx` | beneficios en `RuledList` numerada (01, 02…), sin cards iguales con ícono |
 | `_components/site-nav.tsx`, `mobile-menu.tsx` | `NavigationMenu` en escritorio y `Drawer` en el teléfono, pedidos después de hidratar |
-| `_components/product-demo.tsx`, `stats.tsx` | la sección de producto armada con componentes del paquete y las cifras con `StatGrid` |
+| `_components/product-demo.tsx`, `stats.tsx` | la sección de producto en un `WindowFrame`, armada con componentes del paquete y las cifras con `StatGrid` |
 | `_components/sales-dialog.tsx` | «Hablar con ventas»: `Dialog` con `Form`, `Fieldset`, `PhoneInput`, `CountryPicker` y `Combobox`, que se baja al primer clic |
 | `_components/testimonials-carousel.tsx` | los testimonios en `Carousel` con `Rating` |
 | `_components/pricing.tsx` | el único componente de cliente: `ToggleGroup` mensual/anual y los planes |

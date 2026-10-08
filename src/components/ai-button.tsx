@@ -123,7 +123,7 @@ function AiLauncher({ className, label, labelVisible = false, labelSide = "left"
           tooltipSurfaceClassName,
           "pointer-events-none absolute top-1/2 -translate-y-1/2 whitespace-nowrap",
           labelSide === "left" ? "right-full mr-3" : "left-full ml-3",
-          "opacity-0 transition-opacity duration-150 data-visible:opacity-100",
+          "opacity-0 transition-opacity duration-150 ease-out-expo motion-reduce:transition-none data-visible:opacity-100",
           "group-hover/ai-launcher:opacity-100 group-focus-visible/ai-launcher:opacity-100"
         )}
       >

@@ -1,7 +1,7 @@
 import { Badge } from "sebs7n-ui/badge"
-import { Card, CardContent } from "sebs7n-ui/card"
 import { Sparkline } from "sebs7n-ui/sparkline"
 import { Stat } from "sebs7n-ui/stat"
+import { WindowFrame } from "sebs7n-ui/window-frame"
 
 import { DEMO } from "../_data/content"
 import { SectionHeader } from "./section-header"
@@ -13,9 +13,8 @@ export function ProductDemo() {
     <section className="flex scroll-mt-20 flex-col gap-10" id="producto">
       <SectionHeader subtitle="Lo que te deben, lo que cobraste y lo que vence esta semana, sin armar nada." title="Así se ve el tablero" />
       <figure className="mx-auto flex w-full max-w-4xl flex-col gap-3">
-        <Card>
-          <CardContent className="flex flex-col gap-6">
-            <p className="text-headline text-label">{DEMO.title}</p>
+        <WindowFrame contentClassName="p-5" elevation="resting" title={DEMO.title}>
+          <div className="flex flex-col gap-6">
             <div className="grid gap-8 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
               <div className="flex flex-col gap-4">
                 <Stat delta={DEMO.delta} hint={DEMO.hint} label="Cobrado" trend="up" value={DEMO.collected} />
@@ -35,8 +34,8 @@ export function ProductDemo() {
                 ))}
               </ul>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </WindowFrame>
         <figcaption className="text-center text-footnote text-label-secondary">Datos de ejemplo.</figcaption>
       </figure>
     </section>

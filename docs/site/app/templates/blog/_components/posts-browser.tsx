@@ -61,7 +61,7 @@ export function PostsBrowser() {
           ))}
         </div>
       ) : (
-        <EmptyState description="Probá con otra etiqueta o con otras palabras." title="No hay artículos que coincidan" />
+        <EmptyState description="Probá con otra etiqueta o con otras palabras." hint="Las etiquetas de arriba se combinan con la búsqueda." title="No hay artículos que coincidan" />
       )}
       <p aria-live="polite" className="text-callout text-label-secondary">
         {shown.length} de {POSTS.length} artículos

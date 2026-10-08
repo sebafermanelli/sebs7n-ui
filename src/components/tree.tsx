@@ -467,7 +467,7 @@ function Tree({
                 <LoaderCircleIcon className="size-3.5 animate-spin motion-reduce:animate-none" />
               ) : folder ? (
                 <ChevronRightIcon
-                  className={cn("size-3.5 transition-transform duration-200 motion-reduce:transition-none", open && "rotate-90")}
+                  className={cn("size-3.5 transition-transform duration-200 ease-out-expo motion-reduce:transition-none", open && "rotate-90")}
                   strokeWidth={2.5}
                 />
               ) : null}
