@@ -70,6 +70,12 @@ const SOLO_SUBPATH = [
   "document-sheet",
   "scroll-sequence",
   "text-diff",
+  "window-frame",
+  "reveal",
+  "section-backdrop",
+  "scroll-story",
+  "skip-link",
+  "navbar-mobile-menu",
 ]
 
 describe("componentes solo por subpath", () => {

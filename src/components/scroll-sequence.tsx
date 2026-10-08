@@ -48,8 +48,10 @@ type ScrollSequenceState = {
   progress: number
   /** Cuánto se recorrió del paso actual, de 0 a 1 (mismo criterio que `progress`). */
   stepProgress: number
-  /** `scroll` en el escenario fijo; `static` en la lista apilada (sin JS o con movimiento reducido). */
+  /** `scroll` en el escenario fijo; `static` en la lista apilada (sin JS, con movimiento reducido o sin `minStage`). */
   mode: "scroll" | "static"
+  /** Lleva la página al paso `index` (desplazamiento suave). En la versión apilada no hace nada. */
+  goTo: (index: number) => void
 }
 
 type ScrollSequenceLabels = NonNullable<Labels["scrollSequence"]>
@@ -66,6 +68,12 @@ type ScrollSequenceProps = Omit<React.ComponentProps<"section">, "children"> & {
   steps: ScrollSequenceStep[]
   /** Dibuja el escenario para un estado. Se llama una vez por paso en la versión apilada. */
   children: (state: ScrollSequenceState) => React.ReactNode
+  /**
+   * Una media query que el escenario necesita para tener sentido (`"(min-width: 640px) and (min-height: 640px)"`).
+   * Si no se cumple, los pasos se ven apilados, como con movimiento reducido. Sin ella, el
+   * comportamiento no cambia. Antes de hidratar, el CSS aplica la misma consulta.
+   */
+  minStage?: string
   /** Cuánto scroll ocupa cada paso (cualquier largo CSS). Default `100svh`. */
   stepLength?: string
   /** Dónde se fija el escenario (el alto de una barra fija, por ejemplo `4rem`). Default `0px`. */
@@ -102,6 +110,7 @@ function scrollSequenceState(progress: number, stepCount: number): { step: numbe
   return { step, stepProgress: clamp01(scaled - step) }
 }
 
+const noop = () => {}
 const REDUCE = "(prefers-reduced-motion: reduce)"
 
 function ScrollSequence({
@@ -110,6 +119,7 @@ function ScrollSequence({
   stepLength = "100svh",
   offset = "0px",
   continuous = false,
+  minStage,
   indicator = true,
   stageClassName,
   onStepChange,
@@ -129,12 +139,18 @@ function ScrollSequence({
   onStepChangeRef.current = onStepChange
 
   React.useEffect(() => {
-    const media = typeof window.matchMedia === "function" ? window.matchMedia(REDUCE) : null
-    const apply = () => setMode(media?.matches ? "static" : "scroll")
+    const canMatch = typeof window.matchMedia === "function"
+    const media = canMatch ? window.matchMedia(REDUCE) : null
+    const stage = canMatch && minStage ? window.matchMedia(minStage) : null
+    const apply = () => setMode(media?.matches || (stage && !stage.matches) ? "static" : "scroll")
     apply()
     media?.addEventListener?.("change", apply)
-    return () => media?.removeEventListener?.("change", apply)
-  }, [])
+    stage?.addEventListener?.("change", apply)
+    return () => {
+      media?.removeEventListener?.("change", apply)
+      stage?.removeEventListener?.("change", apply)
+    }
+  }, [minStage])
 
   // El offset en px se lee del `top` computado del escenario: así acepta `4rem` o `calc(…)`.
   const offsetPx = React.useCallback(() => {
@@ -219,6 +235,7 @@ function ScrollSequence({
     progress,
     stepProgress,
     mode: m,
+    goTo: m === "scroll" ? goTo : noop,
   })
 
   const showScroll = mode !== "static"
@@ -235,6 +252,10 @@ function ScrollSequence({
         <noscript>
           <style>{`[data-scroll-sequence="${uid}"][data-slot=scroll-sequence-track]{display:none!important}[data-scroll-sequence="${uid}"][data-slot=scroll-sequence-static]{display:flex!important}`}</style>
         </noscript>
+      )}
+      {mode === null && minStage && (
+        // Mismo criterio antes de hidratar: si el escenario no entra, el CSS ya muestra la lista.
+        <style>{`@media not all and ${minStage}{[data-scroll-sequence="${uid}"][data-slot=scroll-sequence-track]{display:none!important}[data-scroll-sequence="${uid}"][data-slot=scroll-sequence-static]{display:flex!important}}`}</style>
       )}
       {showScroll && (
         <div
