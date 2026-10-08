@@ -4,7 +4,7 @@
 // tooltips, dialogs, context menu, toasts…) y mide, con la geometría real, lo que un test de jsdom no puede ver. Usa el CLI
 // `agent-browser` (Chromium) que ya tiene quien mantiene el sitio: no suma ninguna dependencia al paquete. Con el sitio en :4100:
 //
-//   node scripts/overflow-audit.mjs [--out dir] [--slugs a,b] [--viewports 1280,500] [--themes light,dark] [--rtl] [--shots]
+//   node scripts/overflow-audit.mjs [--out dir] [--slugs a,b] [--viewports 1280,500] [--themes light,dark] [--rtl: solo la pasada en RTL, con dir=rtl en <html>] [--shots]
 //
 // Escribe `<out>/findings.json` y `<out>/informe.md` (tabla componente × hallazgo × severidad × captura). Reglas:
 //   a overflow-x   `scrollWidth > clientWidth` sin overflow auto/scroll ni ellipsis
@@ -42,7 +42,7 @@ const evalStdin = (script) => execFileSync("agent-browser", [...session, "eval",
 
 const PROBE = String.raw`(async (RTL) => {
   const sleep = (t) => new Promise((r) => setTimeout(r, t))
-  if (RTL) document.documentElement.dir = "rtl"
+  if (RTL) { document.documentElement.dir = "rtl"; await sleep(600) } // el tiempo de las transiciones (el pulgar del Switch) para medir el estado final
   const findings = []
   const vw = innerWidth, vh = innerHeight
   const SKIP = "header, footer, nextjs-portal, [data-nextjs-toast], [data-slot=site-nav], .sr-only, [aria-hidden=true]:not([data-slot])"
@@ -68,6 +68,24 @@ const PROBE = String.raw`(async (RTL) => {
     walk(el, 0)
     return out
   }
+  // Texto propio (nodos de texto directos): el único caso en que el desborde no se ve en la geometría de un hijo.
+  // Cuánto sobresale el texto propio del borde del elemento (geometría del texto, no el scrollWidth: un pseudoelemento de área de click lo infla).
+  const textOut = (el) => {
+    let out = 0
+    const r = el.getBoundingClientRect()
+    for (const n of el.childNodes) {
+      if (n.nodeType !== 3 || !n.textContent.trim()) continue
+      const range = document.createRange()
+      range.selectNodeContents(n)
+      const t = range.getBoundingClientRect()
+      out = Math.max(out, t.right - r.right, r.left - t.left)
+    }
+    return out
+  }
+  // Lo que recorta o desborda a propósito: carruseles y marquesinas, tiradores, filas de un visor que scrollea.
+  const INTENCIONAL = "[data-slot=carousel], [data-slot=marquee], [data-slot=resizable-handle], [data-slot=slider-thumb], [data-slot=slider], [data-slot=log-viewer], [data-slot=scroll-area]"
+  const intencional = (el) => !!el.closest(INTENCIONAL) || getComputedStyle(el).opacity === "0"
+  const scrollsInside = (el) => { for (let p = el.parentElement; p && p !== document.body; p = p.parentElement) if (/(auto|scroll)/.test(getComputedStyle(p).overflowX) && p.scrollWidth > p.clientWidth) return true; return false }
   const measure = (root, state, trigger) => {
     const all = [root, ...root.querySelectorAll("*")].filter((e) => vis(e) && !e.closest(SKIP))
     for (const el of all) {
@@ -75,7 +93,7 @@ const PROBE = String.raw`(async (RTL) => {
       const ox = s.overflowX, scrolls = ox === "auto" || ox === "scroll"
       const ellipsis = s.textOverflow === "ellipsis" || s.webkitLineClamp !== "none" && s.webkitLineClamp !== ""
       // a / c: desborde horizontal y texto cortado
-      if (el.scrollWidth > el.clientWidth + 1 && el.clientWidth > 0 && !scrolls && s.display !== "inline" && !el.closest("[data-slot=reveal]") && (inflowOut(el, r) > 1.5 || ellipsis || el.children.length === 0)) {
+      if (el.scrollWidth > el.clientWidth + 1 && el.clientWidth > 0 && !scrolls && s.display !== "inline" && !el.closest("[data-slot=reveal]") && (inflowOut(el, r) > 2.5 || ellipsis || textOut(el) > 1) && el.clientWidth > 2 && !intencional(el) && !scrollsInside(el)) {
         if (ellipsis && (ox === "hidden" || ox === "clip")) {
           if (!el.title && !el.getAttribute("aria-label") && !el.closest("[title],[aria-label]")) push("truncated", "med", el, "ellipsis sin title (" + el.scrollWidth + ">" + el.clientWidth + ")", state)
         } else if (ox === "hidden" || ox === "clip") {
@@ -91,7 +109,7 @@ const PROBE = String.raw`(async (RTL) => {
           const cr = c.getBoundingClientRect()
           const cp = getComputedStyle(c).position
           if (cp === "absolute" || cp === "fixed") continue
-          if (cr.right > r.right + 1.5 || cr.left < r.left - 1.5) push("child-out", "high", c, "sale del contenedor " + sel(el) + " por " + Math.round(Math.max(cr.right - r.right, r.left - cr.left)) + " px", state)
+          if (!intencional(el) && (cr.right > r.right + 3 || cr.left < r.left - 3)) push("child-out", "high", c, "sale del contenedor " + sel(el) + " por " + Math.round(Math.max(cr.right - r.right, r.left - cr.left)) + " px", state)
         }
       }
       // h: objetivo táctil (solo controles de verdad, con el ::after si lo hay)
@@ -100,7 +118,7 @@ const PROBE = String.raw`(async (RTL) => {
         const a = getComputedStyle(el, "::after")
         if (a.position === "absolute" && a.content !== "none") { const aw = parseFloat(a.width) || 0, ah = parseFloat(a.height) || 0; w = Math.max(w, aw); h = Math.max(h, ah) }
         if (el.tagName === "A" && s.display === "inline") continue
-        if (h < 24 && w < 24 && !el.matches("input[type=checkbox], input[type=radio]")) push("small-target", "low", el, Math.round(w) + "x" + Math.round(h) + " < 24", state)
+        if (h < 24 && w < 24 && !el.matches("input[type=checkbox], input[type=radio], input[type=range]") && !intencional(el)) push("small-target", "low", el, Math.round(w) + "x" + Math.round(h) + " < 24", state)
       }
     }
     // f: padding y aire interno asimétricos en popups e ítems
@@ -130,7 +148,10 @@ const PROBE = String.raw`(async (RTL) => {
     // d / e: panel flotante vs viewport y vs trigger
     if (trigger && state !== "static") {
       const r = root.getBoundingClientRect()
-      if (r.right > vw + 1 || r.left < -1 || r.bottom > vh + 1 && r.height < vh || r.top < -1) push("off-viewport", "high", root, "rect " + Math.round(r.left) + "," + Math.round(r.top) + " → " + Math.round(r.right) + "," + Math.round(r.bottom) + " en " + vw + "x" + vh, state)
+      // Solo lo que flota en un portal: una demo en línea más abajo del pliegue no es un panel fuera de pantalla.
+      const t0 = trigger.getBoundingClientRect()
+      // Un tooltip que quedó abierto de un trigger anterior y ya salió de la pantalla por el scroll no es un panel fuera de lugar.
+      if (!mainEl.contains(root) && t0.top >= 0 && t0.bottom <= vh && (r.right > vw + 1 || r.left < -1 || r.bottom > vh + 1 && r.height < vh || r.top < -1)) push("off-viewport", "high", root, "rect " + Math.round(r.left) + "," + Math.round(r.top) + " → " + Math.round(r.right) + "," + Math.round(r.bottom) + " en " + vw + "x" + vh, state)
       const t = trigger.getBoundingClientRect()
       const dx = Math.min(Math.abs(r.left - t.left), Math.abs(r.right - t.right), Math.abs(r.left + r.width / 2 - (t.left + t.width / 2)))
       const dy = Math.min(Math.abs(r.top - t.top), Math.abs(r.bottom - t.bottom), Math.abs(r.top + r.height / 2 - (t.top + t.height / 2)))
@@ -138,7 +159,9 @@ const PROBE = String.raw`(async (RTL) => {
       const d = side === "v" ? dx : dy
       // un popup más ancho que la ventana o pegado al borde por colisión se mueve a propósito
       const colision = r.left <= 17 || r.right >= vw - 17 || r.top <= 17 || r.bottom >= vh - 17
-      if (d > 4 && !root.closest("[data-slot=context-menu-content]") && !colision && r.width < vw * 0.9) push("misaligned", "low", root, "a " + Math.round(d) + " px del trigger " + sel(trigger), state)
+      // Sin ancla propia: toasts, diálogos y hojas se ubican contra la ventana; selects y comboboxes alinean el texto de la fila, no el borde.
+      const sinAncla = root.closest("[data-sonner-toast], [data-slot=context-menu-content], [data-slot=dialog-content], [data-slot=alert-dialog-content], [data-slot=command-dialog], [data-slot=sheet-content], [data-slot=drawer-content], [data-slot=combobox-content], [data-slot=select-content]")
+      if (d > 4 && !sinAncla && !colision && r.width < vw * 0.9) push("misaligned", "low", root, "a " + Math.round(d) + " px del trigger " + sel(trigger), state)
     }
   }
 
@@ -188,7 +211,7 @@ for (const vp of viewports) {
   run("set", "viewport", vp, vp === "500" ? "900" : "900")
   for (const tema of themes) {
     run("set", "media", tema)
-    for (const dir of rtl ? ["ltr", "rtl"] : ["ltr"]) {
+    for (const dir of rtl ? ["rtl"] : ["ltr"]) {
       for (const slug of [...slugs, ...extra]) {
         const url = `${base}${slug.startsWith("/") ? slug : `/docs/components/${slug}`}`
         const combo = `${slug}@${vp}/${tema}/${dir}`

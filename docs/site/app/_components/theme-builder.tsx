@@ -119,7 +119,8 @@ export function ThemeBuilder({ config, set, reset, esDefault, oscuro, brand, asi
 
       <Separator />
 
-      <div className="grid gap-x-8 gap-y-5 @lg:grid-cols-2 @3xl:grid-cols-3">
+      {/* Columnas de 19 rem como mínimo: un segmentado de cuatro opciones («Sin tinte · De la marca · Cálido · Frío») no entra en menos. */}
+      <div className="grid gap-x-8 gap-y-5 @lg:grid-cols-[repeat(auto-fit,minmax(min(100%,19rem),1fr))]">
         <Grupo titulo="Marcas de ejemplo (matiz)">
           <div aria-label="Marca de ejemplo" className="flex flex-wrap gap-2" role="group">
             {MARCAS_DE_EJEMPLO.map((marca) => (
