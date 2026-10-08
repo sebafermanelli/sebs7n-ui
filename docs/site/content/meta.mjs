@@ -4018,7 +4018,7 @@ export const COMPONENTS = {
   "metric-chart": {
     title: "MetricChart",
     group: "contenido",
-    description: "El gráfico de una métrica en SVG a mano: área o línea con guías, eje Y a la derecha y tooltip con línea punteada al pasar el puntero o con el teclado.",
+    description: "El gráfico de una métrica en SVG a mano: área o línea y tooltip con línea punteada (guías y eje Y a la derecha solo con `showAxis`, desde 3.0) al pasar el puntero o con el teclado.",
     keyboard: [
       ["Tab", "Entra al gráfico y muestra el último punto."],
       ["← →", "Mueven el punto activo (y su tooltip) de a uno."],

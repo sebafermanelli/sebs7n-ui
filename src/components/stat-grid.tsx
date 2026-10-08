@@ -26,7 +26,7 @@ type StatGridItem = {
   /** Contexto de la cifra. */
   hint?: React.ReactNode
   /**
-   * Un gráfico al pie de la card, del ancho completo: un `MetricChart` (con eje y tooltip, ocupa el
+   * Un gráfico al pie de la card, del ancho completo: un `MetricChart` (sin ejes por defecto, con tooltip, ocupa el
    * alto que sobra) o un `Sparkline` de `h-14` (decorativo, se oculta solo del lector: la cifra y el
    * `delta` dicen el dato). Va pegado abajo, así las cards de una fila
    * alinean su gráfico aunque el texto de arriba tenga distinto alto. Cargando, pasa a esqueleto.

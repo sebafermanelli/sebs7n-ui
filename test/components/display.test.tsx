@@ -78,22 +78,22 @@ describe("Badge", () => {
     const badge = screen.getByText("Pendiente")
     // R4: 20 de alto (16 en sm) y texto 12: un Badge nunca mide más que un botón sm (28) ni que
     // la fila de menú (30) donde vive.
-    expect(badge).toHaveClass("bg-badge-amber", "text-white", "rounded-tag", "text-footnote", "h-5")
+    expect(badge).toHaveClass("badge-solid-amber", "rounded-tag", "text-footnote", "h-5")
     expect(badge.className).not.toMatch(/(^|\s)border(\s|$|-)|sheen|shadow-|glass|material-|--sf-tint|rounded-full/)
     expect(badge).toHaveAttribute("data-variant", "solid")
   })
 
   it("los nueve colores son sólidos, con la misma tinta blanca", () => {
     const esperado = {
-      gray: ["bg-badge-gray", "text-white"],
-      brand: ["bg-brand-700", "text-brand-contrast"],
-      red: ["bg-red-800", "text-white"],
-      amber: ["bg-badge-amber", "text-white"],
-      green: ["bg-badge-green", "text-white"],
-      blue: ["bg-blue-800", "text-white"],
-      teal: ["bg-badge-teal", "text-white"],
-      purple: ["bg-purple-700", "text-white"],
-      pink: ["bg-pink-800", "text-white"],
+      gray: ["badge-solid-gray"],
+      brand: ["badge-solid-brand"],
+      red: ["badge-solid-red"],
+      amber: ["badge-solid-amber"],
+      green: ["badge-solid-green"],
+      blue: ["badge-solid-blue"],
+      teal: ["badge-solid-teal"],
+      purple: ["badge-solid-purple"],
+      pink: ["badge-solid-pink"],
     } as const
     for (const [color, clases] of Object.entries(esperado)) {
       const { unmount } = render(<Badge appearance="solid" color={color as keyof typeof esperado}>{color}</Badge>)
@@ -106,15 +106,13 @@ describe("Badge", () => {
   it("el default es suave: fondo tintado y texto de la paleta", () => {
     render(<Badge color="green">Pagada</Badge>)
     const badge = screen.getByText("Pagada")
-    expect(badge).toHaveClass("bg-green-700/12", "text-green-ink")
-    expect(badge).toHaveAttribute("data-appearance", "soft")
+    expect(badge).toHaveClass("badge-soft-green")
     expect(badge.className).not.toContain("text-white")
   })
 
   it("count siempre es sólido, también con appearance suave", () => {
     render(<Badge color="red" variant="count">3</Badge>)
-    expect(screen.getByText("3")).toHaveClass("bg-red-800", "text-white", "rounded-full")
-    expect(screen.getByText("3")).toHaveAttribute("data-appearance", "solid")
+    expect(screen.getByText("3")).toHaveClass("badge-solid-red", "rounded-full")
   })
 
   // `subtle` queda por compatibilidad: se ve igual que `solid`.
@@ -147,7 +145,7 @@ describe("Badge", () => {
     )
     const badge = screen.getByText("3")
     expect(badge).toHaveAttribute("data-variant", "count")
-    expect(badge).toHaveClass("h-5", "min-w-5", "rounded-full", "text-caption", "tabular-nums", "shadow-badge", "bg-red-800", "text-white")
+    expect(badge).toHaveClass("h-5", "min-w-5", "rounded-full", "text-caption", "tabular-nums", "shadow-badge", "badge-solid-red")
     expect(badge).not.toHaveClass("rounded-tag", "text-footnote")
   })
 
@@ -196,7 +194,7 @@ describe("Badge", () => {
     expect(link).toHaveAttribute("href", "/planes")
     expect(link).toHaveAttribute("data-slot", "badge")
     expect(link).toHaveAttribute("data-color", "green")
-    expect(link).toHaveClass("bg-badge-green", "underline")
+    expect(link).toHaveClass("badge-solid-green", "underline")
     expect(link.querySelector("[data-slot=badge-dot]")).not.toBeNull()
   })
 })

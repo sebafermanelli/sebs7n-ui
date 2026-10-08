@@ -563,14 +563,14 @@
     --sf-brand-src: var(--brand-base-dark);
     --sf-brand-fg: var(--brand-contrast-dark);
 
-    /* La home oscura de iCloud: una base azul noche y círculos cada vez más claros y saturados
-       hacia adelante. El tope de L 0,385 es el que deja al secundario en 4,5:1 directo encima; el
+    /* La home oscura de iCloud, más quieta en 3.0: una base azul noche y círculos cada vez más claros hacia adelante, con
+       el croma al 60 % de antes (la luminosidad sigue: es lo que deja ver el wallpaper a través del material) para no competir con el acento: un solo azul fuerte por pantalla. El tope de L 0,385 es el que deja al secundario en 4,5:1 directo encima; el
        croma alto es lo que la hace azul y no gris. Se redeclaran porque `--sf-brand-src` cambia
        en `.dark`. */
-    --sf-wallpaper-1: oklch(from var(--sf-brand-src) 0.2 calc(c * 0.55) h);
-    --sf-wallpaper-2: oklch(from var(--sf-brand-src) 0.27 calc(c * 0.75) calc(h + 6));
-    --sf-wallpaper-3: oklch(from var(--sf-brand-src) 0.33 calc(c * 0.95) calc(h - 4));
-    --sf-wallpaper-4: oklch(from var(--sf-brand-src) 0.385 calc(c * 0.9) calc(h - 10));
+    --sf-wallpaper-1: oklch(from var(--sf-brand-src) 0.2 calc(c * 0.35) h);
+    --sf-wallpaper-2: oklch(from var(--sf-brand-src) 0.27 calc(c * 0.5) calc(h + 6));
+    --sf-wallpaper-3: oklch(from var(--sf-brand-src) 0.33 calc(c * 0.62) calc(h - 4));
+    --sf-wallpaper-4: oklch(from var(--sf-brand-src) 0.385 calc(c * 0.6) calc(h - 10));
 
     /* La escala «systemGray» de iOS que usa iCloud en oscuro: la página es #1C1C1E, no negro. */
     --sf-background: #1c1c1e;
@@ -1089,6 +1089,29 @@
     animation: none;
   }
 }
+
+/* Badge (3.0). Suave (default): el `-700` de la paleta al 12 % de fondo y la tinta de la paleta como texto
+   (`test/badge-soft-contrast.test.ts`). Sólido: el relleno de 2.x con tinta blanca (`test/contrast.test.ts`). Los nombres los arma
+   `badgeVariants()` con `appearance` y `color`, así que se declaran acá con `@source inline`. */
+@source inline("badge-{soft,solid}-{gray,brand,red,amber,green,blue,teal,purple,pink}");
+@utility badge-soft-gray { background-color: var(--color-fill-2); color: var(--color-label); }
+@utility badge-soft-brand { background-color: color-mix(in srgb, var(--color-brand-700) 12%, transparent); color: var(--color-brand-ink); }
+@utility badge-soft-red { background-color: color-mix(in srgb, var(--color-red-700) 12%, transparent); color: var(--color-red-ink); }
+@utility badge-soft-amber { background-color: color-mix(in srgb, var(--color-amber-700) 12%, transparent); color: var(--color-amber-ink); }
+@utility badge-soft-green { background-color: color-mix(in srgb, var(--color-green-700) 12%, transparent); color: var(--color-green-ink); }
+@utility badge-soft-blue { background-color: color-mix(in srgb, var(--color-blue-700) 12%, transparent); color: var(--color-blue-ink); }
+@utility badge-soft-teal { background-color: color-mix(in srgb, var(--color-teal-700) 12%, transparent); color: var(--color-teal-ink); }
+@utility badge-soft-purple { background-color: color-mix(in srgb, var(--color-purple-700) 12%, transparent); color: var(--color-purple-ink); }
+@utility badge-soft-pink { background-color: color-mix(in srgb, var(--color-pink-700) 12%, transparent); color: var(--color-pink-ink); }
+@utility badge-solid-gray { background-color: var(--color-badge-gray); color: #fff; --sf-tag-press: rgb(0 0 0 / 0.25); }
+@utility badge-solid-brand { background-color: var(--color-brand-700); color: var(--color-brand-contrast); --sf-tag-press: rgb(0 0 0 / 0.25); }
+@utility badge-solid-red { background-color: var(--color-red-800); color: #fff; --sf-tag-press: rgb(0 0 0 / 0.25); }
+@utility badge-solid-amber { background-color: var(--color-badge-amber); color: #fff; --sf-tag-press: rgb(0 0 0 / 0.25); }
+@utility badge-solid-green { background-color: var(--color-badge-green); color: #fff; --sf-tag-press: rgb(0 0 0 / 0.25); }
+@utility badge-solid-blue { background-color: var(--color-blue-800); color: #fff; --sf-tag-press: rgb(0 0 0 / 0.25); }
+@utility badge-solid-teal { background-color: var(--color-badge-teal); color: #fff; --sf-tag-press: rgb(0 0 0 / 0.25); }
+@utility badge-solid-purple { background-color: var(--color-purple-700); color: #fff; --sf-tag-press: rgb(0 0 0 / 0.25); }
+@utility badge-solid-pink { background-color: var(--color-pink-800); color: #fff; --sf-tag-press: rgb(0 0 0 / 0.25); }
 
 @utility transition-control {
   transition-property: color, background-color, border-color, box-shadow, opacity;

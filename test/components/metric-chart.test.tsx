@@ -31,14 +31,21 @@ describe("MetricChart", () => {
     expect(container.querySelectorAll("polygon")).toHaveLength(0)
   })
 
-  it("el eje Y va a la derecha, con guías y etiquetas compactas redondeadas a 1-2-5", () => {
+  // 3.0: sin ejes por defecto (solo línea, área y tooltip); `showAxis` los vuelve a poner.
+  it("sin showAxis no hay guías ni etiquetas de eje", () => {
     const { container } = render(<MetricChart aria-label="Cobros" data={DATA} />)
+    expect(container.querySelector("[data-slot=metric-chart-axis]")).toBeNull()
+    expect(container.querySelectorAll("line")).toHaveLength(0)
+  })
+
+  it("showAxis: el eje Y va a la derecha, con guías y etiquetas compactas redondeadas a 1-2-5", () => {
+    const { container } = render(<MetricChart aria-label="Cobros" data={DATA} showAxis />)
     const axis = container.querySelector("[data-slot=metric-chart-axis]")!
     expect(Array.from(axis.querySelectorAll("span")).map((n) => n.textContent)).toEqual(["0", "2K", "4K"])
     expect(container.querySelectorAll("line")).toHaveLength(3)
   })
 
-  it("showAxis={false} saca guías y etiquetas", () => {
+  it("showAxis={false} saca guías y etiquetas (el default)", () => {
     const { container } = render(<MetricChart aria-label="Cobros" data={DATA} showAxis={false} />)
     expect(container.querySelector("[data-slot=metric-chart-axis]")).toBeNull()
     expect(container.querySelectorAll("line")).toHaveLength(0)
@@ -47,13 +54,13 @@ describe("MetricChart", () => {
   it("format admite opciones de Intl y funciones; axisFormat manda en el eje", () => {
     const { container, rerender } = render(<MetricChart aria-label="Cobros" data={DATA} format={{ style: "currency", currency: "USD", maximumFractionDigits: 0 }} />)
     expect(screen.getByRole("cell", { name: /3\.100/ })).toHaveTextContent("US$")
-    rerender(<MetricChart aria-label="Cobros" axisFormat={(v) => `${v}!`} data={DATA} format={(v) => `${v} u.`} />)
+    rerender(<MetricChart aria-label="Cobros" axisFormat={(v) => `${v}!`} data={DATA} showAxis format={(v) => `${v} u.`} />)
     expect(screen.getByRole("cell", { name: "3100 u." })).toBeInTheDocument()
     expect(container.querySelector("[data-slot=metric-chart-axis] span")).toHaveTextContent("0!")
   })
 
   it("yTicks cambia la cantidad aproximada de etiquetas", () => {
-    const { container } = render(<MetricChart aria-label="Cobros" data={DATA} yTicks={2} />)
+    const { container } = render(<MetricChart aria-label="Cobros" data={DATA} showAxis yTicks={2} />)
     expect(container.querySelectorAll("[data-slot=metric-chart-axis] span").length).toBeLessThan(4)
   })
 
@@ -150,7 +157,7 @@ describe("MetricChart: interacción", () => {
 
   it("el puntero activa el punto más cercano y al salir se suelta", async () => {
     const user = userEvent.setup()
-    render(<MetricChart aria-label="Cobros" data={DATA} />)
+    render(<MetricChart aria-label="Cobros" data={DATA} showAxis />)
     const frame = chart()
     frame.getBoundingClientRect = () => ({ left: 0, top: 0, width: 244, height: 100, right: 244, bottom: 100, x: 0, y: 0, toJSON: () => ({}) })
     await user.pointer({ target: frame, coords: { clientX: 0 } })

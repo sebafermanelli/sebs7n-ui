@@ -52,7 +52,6 @@ function Badge({ className, variant = "solid", appearance = "soft", color = "gra
   return renderElement(render, "span", {
     "data-slot": "badge",
     "data-variant": variant,
-    "data-appearance": variant === "count" ? "solid" : appearance,
     "data-color": color,
     ...props,
     className: cn(badgeVariants({ variant, appearance, color, size }), className),

@@ -247,20 +247,23 @@ describe("Anillo de foco interior en las cuatro marcas (WCAG 1.4.11)", () => {
 // También el hover del botón de quitar del Tag: el velo (`--sf-tag-press`) va del lado contrario
 // a la tinta, y la X es un ícono (3:1), pero se le pide 4,5 porque es lo único que dice «quitar».
 describe("Badge y Tag sólidos: la tinta sobre su relleno (WCAG 1.4.3)", () => {
+  const css = read("theme.css")
   const rgba = (valor: string): [string, number] => {
     const [r, g, b, a] = valor.split(/[\s/]+/).map(Number)
     return [`#${[r, g, b].map((c) => c!.toString(16).padStart(2, "0")).join("")}`, a!]
   }
   for (const color of PALETAS) {
     if (color === "brand") continue
-    const clases = badgeVariants({ color, appearance: "solid" })
-    // El relleno es un paso de la paleta (`bg-red-800`) o uno propio del badge (`bg-badge-gray`).
-    const [, familia, paso] = clases.match(/(?:^|\s)bg-([a-z]+)-(\d+|[a-z]+)(?:\s|$)/)!
-    const tintaBlanca = /(?:^|\s)text-white(?:\s|$)/.test(clases)
+    // 3.0: relleno y tinta son la utilidad `badge-solid-<color>` de theme.css (y `badgeVariants` la nombra).
+    expect(badgeVariants({ color, appearance: "solid" })).toContain(`badge-solid-${color}`)
+    const clases = css.match(new RegExp(`@utility badge-solid-${color} \\{([^}]*)\\}`))![1]!
+    // El relleno es un paso de la paleta (`--color-red-800`) o uno propio del badge (`--color-badge-gray`).
+    const [, familia, paso] = clases.match(/var\(--color-([a-z]+)-(\d+|[a-z]+)\)/)!
+    const tintaBlanca = /color: #fff;/.test(clases)
     it(`${color}: la tinta es blanca, la misma en los nueve colores`, () => {
       expect(tintaBlanca).toBe(true)
     })
-    const velo = rgba(clases.match(/\[--sf-tag-press:rgb\(([^)]+)\)\]/)![1]!.replaceAll("_", " "))
+    const velo = rgba(clases.match(/--sf-tag-press: rgb\(([^)]+)\)/)![1]!)
     for (const theme of ["light", "dark"] as const) {
       const relleno = heredado(theme, `--sf-${familia}-${paso}`)
       const tinta = tintaBlanca ? "#ffffff" : composite("#000000", 0.85, relleno)

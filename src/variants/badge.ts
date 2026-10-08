@@ -50,46 +50,13 @@ const inkWhite = "text-white [--sf-tag-press:rgb(0_0_0/0.25)]"
  * Tamaños (R4): `md` 20, `sm` 16, texto 12 en los dos. Un Badge nunca mide más que un botón `sm`
  * (28) ni que la fila de menú (30) donde vive.
  */
-const SOLID_FILL: Record<string, string> = {
-  gray: cn("bg-badge-gray", inkWhite),
-  // El brand es el color de la selección: adentro de un ítem seleccionado se invierte, o desaparecería. Los demás
-  // colores traen su tinta y se leen igual sobre el acento, como las etiquetas del Finder en una fila seleccionada.
-  brand: "bg-brand-700 text-brand-contrast [--sf-tag-press:rgb(0_0_0/0.25)] inside-selection:bg-on-selection inside-selection:text-selection",
-  red: cn("bg-red-800", inkWhite),
-  amber: cn("bg-badge-amber", inkWhite),
-  green: cn("bg-badge-green", inkWhite),
-  blue: cn("bg-blue-800", inkWhite),
-  teal: cn("bg-badge-teal", inkWhite),
-  purple: cn("bg-purple-700", inkWhite),
-  pink: cn("bg-pink-800", inkWhite),
-}
-
-/**
- * El aspecto suave (3.0, el default): el paso `-700` de la paleta al 12 % de fondo y la tinta de la paleta
- * (`text-<color>-ink`, el 60 % de `-900` y el 40 % de `-1000`) como texto. Se lee como un estado y no como un botón
- * de colores; `test/badge-soft-contrast.test.ts` mide la tinta sobre su tinte, en claro y oscuro y con cinco marcas.
- * El gris usa `fill-2` y el texto primario. Dentro de una fila seleccionada (acento sólido) pasa a blanco sobre
- * un velo: el tinte no se vería.
- */
-const SOFT_FILL: Record<string, string> = {
-  gray: "bg-fill-2 text-label",
-  brand: "bg-brand-700/12 text-brand-ink",
-  red: "bg-red-700/12 text-red-ink",
-  amber: "bg-amber-700/12 text-amber-ink",
-  green: "bg-green-700/12 text-green-ink",
-  blue: "bg-blue-700/12 text-blue-ink",
-  teal: "bg-teal-700/12 text-teal-ink",
-  purple: "bg-purple-700/12 text-purple-ink",
-  pink: "bg-pink-700/12 text-pink-ink",
-}
+// El relleno y la tinta de cada color son utilidades de `theme.css` (`badge-soft-*`, el aspecto suave; `badge-solid-*`, el sólido de 2.x):
+// las clases viajan en el JS como una sola palabra y `badgeVariants()` suelto sobre un `<a>` sigue andando. Como el nombre se arma
+// con `appearance` y `color`, el `@source inline()` de `theme.css` las declara para que Tailwind las genere.
+// El brand sólido es el color de la selección: adentro de un ítem seleccionado se invierte, o desaparecería; los demás colores traen
+// su tinta y se leen igual sobre el acento, como las etiquetas del Finder en una fila seleccionada. El suave pasa a un velo.
+const BRAND_SELECTED = "inside-selection:bg-on-selection inside-selection:text-selection"
 const SOFT_SELECTED = "inside-selection:bg-on-selection/20 inside-selection:text-on-selection"
-const COLORS = Object.keys(SOLID_FILL)
-// `count` siempre es sólido; `solid`/`subtle` (variant) con appearance solid también.
-const SOLID = COLORS.flatMap((color) => [
-  { appearance: "solid" as const, color: color as BadgeColor, className: SOLID_FILL[color] },
-  { variant: "count" as const, color: color as BadgeColor, className: SOLID_FILL[color] },
-])
-const SOFT = COLORS.map((color) => ({ appearance: "soft" as const, variant: ["solid", "subtle"] as ("solid" | "subtle")[], color: color as BadgeColor, className: cn(SOFT_FILL[color], SOFT_SELECTED) }))
 
 const badgeVariantsBase = cva(
   // `inside-selection:[&>svg]:text-current!`: el ítem de menú resaltado pinta todo `svg` de adentro
@@ -106,8 +73,8 @@ const badgeVariantsBase = cva(
       size: { sm: "h-4 px-1", md: "h-5 px-1.5" },
     },
     compoundVariants: [
-      ...SOLID,
-      ...SOFT,
+      { appearance: "soft", className: SOFT_SELECTED },
+      { appearance: "solid", color: "brand", className: BRAND_SELECTED },
       { variant: "count", size: "md", className: "min-w-5" },
       { variant: "count", size: "sm", className: "min-w-4" },
     ],
@@ -116,7 +83,11 @@ const badgeVariantsBase = cva(
 )
 
 // Pasa por cn() (tailwind-merge): usada sobre <a>/<Link>, la clase de la variante tiene que ganarle a la base.
-export const badgeVariants = (props?: Parameters<typeof badgeVariantsBase>[0]) => cn(badgeVariantsBase(props))
+export const badgeVariants = (props?: Parameters<typeof badgeVariantsBase>[0]) => {
+  // `count` siempre es sólido.
+  const appearance = props?.variant === "count" ? "solid" : (props?.appearance ?? "soft")
+  return cn(badgeVariantsBase({ ...props, appearance }), `badge-${appearance}-${props?.color ?? "gray"}`)
+}
 
 /**
  * El `-700` de cada paleta, para un punto de estado suelto (fuera de un Badge).

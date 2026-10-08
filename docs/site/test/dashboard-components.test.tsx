@@ -33,11 +33,12 @@ describe("dashboard subcomponents", () => {
     expect(none.find((item) => item.id === "pending")!.value).toBe("1 factura")
   })
 
-  it("con serie, los cuatro indicadores llevan su gráfico con eje y tooltip, y el menú «…»", () => {
+  it("con serie, los cuatro indicadores llevan su gráfico (sin ejes, con tooltip) y el menú «…»", () => {
     const series = { billed: [1, 2, 3], collected: [3, 2, 1], pending: [1, 1, 2], overdue: [0, 1, 1], labels: ["Jul 2026", "Ago 2026", "Sep 2026"] }
     const html = renderToString(createElement(DashboardMetrics, { metrics, series }))
     expect((html.match(/data-slot="metric-chart"/g) ?? []).length).toBe(4)
-    expect((html.match(/data-slot="metric-chart-axis"/g) ?? []).length).toBe(4)
+    // 3.0: las cards de métricas no llevan ejes por defecto (solo línea, área y tooltip).
+    expect((html.match(/data-slot="metric-chart-axis"/g) ?? []).length).toBe(0)
     expect((html.match(/data-slot="stat-grid-chart"/g) ?? []).length).toBe(4)
     expect((html.match(/Opciones de /g) ?? []).length).toBe(4)
     expect(html).toContain("Sep 2026")

@@ -52,7 +52,7 @@ type MetricChartProps = Omit<React.ComponentProps<"div">, "children" | "color" |
   locale?: string
   /** Cuántas etiquetas aproximadas en el eje Y (la escala redondea a pasos 1-2-5). Por defecto 4. */
   yTicks?: number
-  /** Dibuja guías y etiquetas del eje Y, a la derecha. Por defecto `true`. */
+  /** Dibuja guías y etiquetas del eje Y, a la derecha. Por defecto `false` desde 3.0: en una card de métrica solo línea, área y tooltip. */
   showAxis?: boolean
   /** Pinta el área bajo la curva. Por defecto `true`. */
   area?: boolean
@@ -110,7 +110,7 @@ function MetricChart({
   axisFormat,
   locale = "es-AR",
   yTicks = 4,
-  showAxis = true,
+  showAxis = false,
   area = true,
   color = "brand",
   interactive = true,

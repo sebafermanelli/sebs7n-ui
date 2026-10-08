@@ -76,7 +76,7 @@ describe("Tag", () => {
     )
     const tag = screen.getByText("Tag").closest("[data-slot=tag]")!
     for (const el of [tag, screen.getByText("Badge")]) {
-      expect(el).toHaveClass("bg-blue-800", "text-white", "rounded-tag", "h-5")
+      expect(el).toHaveClass("badge-solid-blue", "rounded-tag", "h-5")
       expect(el.className).not.toMatch(/(^|\s)border(\s|$|-)|sheen|shadow-|--sf-tint/)
     }
   })
@@ -94,9 +94,9 @@ describe("Tag", () => {
         </Tag>
       </>
     )
-    expect(screen.getByText("Urgente").closest("[data-slot=tag]")).toHaveClass("[--sf-tag-press:rgb(0_0_0/0.25)]")
+    expect(screen.getByText("Urgente").closest("[data-slot=tag]")).toHaveClass("badge-solid-red")
     // Con la tinta blanca en todos, el velo oscurece en todos.
-    expect(screen.getByText("Pendiente").closest("[data-slot=tag]")).toHaveClass("[--sf-tag-press:rgb(0_0_0/0.25)]")
+    expect(screen.getByText("Pendiente").closest("[data-slot=tag]")).toHaveClass("badge-solid-amber")
     const quitar = screen.getByRole("button", { name: "Quitar Urgente" })
     expect(quitar).toHaveClass("hover:bg-(--sf-tag-press)")
     expect(quitar.className).not.toMatch(/gray-alpha/)
