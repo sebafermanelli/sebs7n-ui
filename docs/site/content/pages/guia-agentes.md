@@ -80,6 +80,10 @@ Un `MultiSelect` **mantiene su lugar y su alto** (una línea del alto de un `Sel
 
 Una animación de aparición (al entrar en pantalla, en una landing) **no baja la opacidad del texto**: un fade deja el texto por debajo de contraste AA mientras aparece. Se anima solo el desplazamiento (`translate`) o el texto aparece ya a opacidad 1 y se anima su contenedor sin texto; con `prefers-reduced-motion: reduce`, sin movimiento. `Reveal` (`sebs7n-ui/reveal`, opt-in) ya lo hace así: solo mueve, y `fade` es para piezas sin texto.
 
+### Jerarquía de botones (3.0)
+
+De más a menos fuerte: **`default`** (acento sólido, **una por pantalla**) → **`secondary`** (relleno gris, las demás acciones) → **`plain`** (texto de acento en semibold, una acción de texto como «Editar») → **`ghost`** (texto tenue sin relleno, «Cancelar» o un ícono de barra; sube a texto primario con el puntero) → **`link`** (solo texto en línea, dentro de un párrafo). `destructive` y `destructive-plain` repiten secondary y plain en rojo. `accent` es un alias obsoleto de `default`. Un estado se dice con `Badge` suave (default) y `appearance="solid"` solo cuando tiene que gritar.
+
 ### Cálido y cuidado (3.0)
 
 - **Neutros con tinte:** el default. Los grises siguen el matiz de la marca de la app; no pongas grises hexadecimales propios. Para apagarlo, `data-neutral-tint="off"` en `<html>`.

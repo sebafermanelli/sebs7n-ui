@@ -120,6 +120,7 @@ export const COMPONENTS = {
       "Deshabilitado es opacidad .4, como en iCloud: los controles inactivos quedan fuera de WCAG 1.4.3, y el botón apagado sigue siendo reconocible.",
     ],
     usage: [
+      "**Jerarquía (3.0), de más a menos fuerte:** `default` (acento sólido, una por pantalla) → `secondary` (relleno gris) → `plain` (texto de acento semibold: «Editar») → `ghost` (texto tenue sin relleno: «Cancelar», un ícono de barra) → `link` (solo texto en línea). `destructive` y `destructive-plain` son las dos alturas en rojo; `accent` es un alias obsoleto de `default`.",
       "**Un solo acento sólido por pantalla.** `default` es el primario de iCloud (el acento sólido) y va en la acción principal; las demás son `secondary` (gris) o `plain` (texto de acento). iCloud no tiene botón con borde: la jerarquía es acento sólido → gris → texto de acento → ícono.",
       "**Botón de ícono de una toolbar:** `size=\"icon-sm\" variant=\"plain\"` (28 × 28, glifo en el acento, gris claro con el puntero), como los de Drive. `variant=\"ghost\"` para el glifo neutro: la X de un diálogo, la barra global (`icon-md`, 36).",
       "**Un link con forma de botón es un `<a>`**: `className={buttonVariants({ variant })}` sobre `<Link>`. No uses `render` para links: con el `nativeButton` que trae el `Button` por defecto, Base UI le pone `type=\"button\"` al `<a>` y avisa por consola en desarrollo.",

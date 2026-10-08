@@ -75,7 +75,7 @@ describe("Button", () => {
   })
 
   it("secondary y ghost hacen hover con los rellenos de iCloud", () => {
-    expect(buttonVariants({ variant: "ghost" })).toContain("text-label hover:bg-fill-2")
+    expect(buttonVariants({ variant: "ghost" })).toContain("text-label-secondary hover:bg-fill-2 hover:text-label")
     expect(buttonVariants({ variant: "secondary" })).toContain("bg-fill-2 text-label hover:bg-fill-3")
   })
 

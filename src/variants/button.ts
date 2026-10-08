@@ -2,6 +2,10 @@ import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "../lib/utils.js"
 
+// Jerarquía (3.0), de más a menos fuerte: `default` (acento sólido: UNA por pantalla) → `secondary` (relleno gris: las demás
+// acciones) → `plain` (texto de acento semibold: una acción de texto, «Editar») → `ghost` (texto tenue sin relleno: «Cancelar», un ícono
+// de barra) → `link` (solo texto en línea, dentro de un párrafo). `destructive` y `destructive-plain` son las mismas dos
+// alturas en rojo. `accent` es un alias obsoleto de `default`.
 const buttonVariantsBase = cva(
   // Deshabilitado = opacidad .4 y nada más, como los botones de iCloud: el botón apagado sigue
   // siendo el mismo botón, con su color. Los estados inactivos quedan fuera de WCAG 1.4.3.
@@ -23,8 +27,9 @@ const buttonVariantsBase = cva(
         // (brand-900 no llega a 4,5:1 sobre fill-2 en claro con todas las marcas); el glifo en
         // `brand-900`, el azul de la toolbar de Drive (3:1). Ver test/contrast.test.ts.
         plain: "font-semibold text-brand-ink hover:bg-fill-2 active:bg-highlight [&_svg]:text-brand-900",
-        // El `push neutral`: lo mismo con el texto `label` (la X de un diálogo, la barra global).
-        ghost: "text-label hover:bg-fill-2 active:bg-fill-3",
+        // El `push neutral` (3.0): sin fondo, texto regular en `label-secondary` que sube a `label` con el puntero (la X de un
+        // diálogo, «Cancelar», la barra global). Es lo más quieto de la jerarquía: se distingue de `plain` (acento, semibold).
+        ghost: "text-label-secondary hover:bg-fill-2 hover:text-label active:bg-fill-3 active:text-label",
         // `block.secondary.destructive`: gris con el texto rojo. `red-ink` llega a 4,5:1 sobre fill-2
         // y fill-3 en los dos temas.
         destructive: "bg-fill-2 text-red-ink hover:bg-fill-3 active:bg-fill-3",
