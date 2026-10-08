@@ -51,7 +51,7 @@ type PopoverTitleProps = WithClassName<PopoverPrimitive.Title.Props>
 function PopoverTitle({ className, ...props }: PopoverTitleProps) {
   // En la hoja, el título es el del Drawer: Base UI lo conecta al `aria-labelledby` de la hoja.
   const Title = useInDrawer()?.Title ?? PopoverPrimitive.Title
-  return <Title data-slot="popover-title" className={cn("text-headline text-label", className)} {...props} />
+  return <Title data-slot="popover-title" className={cn("font-display text-headline text-label", className)} {...props} />
 }
 
 type PopoverDescriptionProps = WithClassName<PopoverPrimitive.Description.Props>

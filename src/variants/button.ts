@@ -14,7 +14,7 @@ const buttonVariantsBase = cva(
       variant: {
         // El primario (`block.primary`): el acento sólido con su color de contraste.
         default: "bg-brand-700 text-brand-contrast hover:bg-brand-800 active:bg-brand-800 focus-visible:focus-ring-inverse",
-        /** @deprecated Desde 2.0 es lo mismo que `default` (el primario de iCloud); se va en 3.0. */
+        /** @deprecated Desde 2.0 es lo mismo que `default` (el primario de iCloud); se va en 4.0. */
         accent: "bg-brand-700 text-brand-contrast hover:bg-brand-800 active:bg-brand-800 focus-visible:focus-ring-inverse",
         // El gris (`block.secondary`): `fill-2` y `fill-3` con el puntero.
         secondary: "bg-fill-2 text-label hover:bg-fill-3 active:bg-fill-3",

@@ -96,7 +96,7 @@ function AuthHeader({ className, brand, children, ...props }: AuthHeaderProps) {
 
 /** El `<h1>` de la pantalla. Uno solo: con `AuthStatus` en lugar del formulario, el título es el suyo. */
 function AuthTitle({ className, ...props }: React.ComponentProps<"h1">) {
-  return <h1 data-slot="auth-title" className={cn("text-title-1 text-balance text-label", className)} {...props} />
+  return <h1 data-slot="auth-title" className={cn("font-display text-title-1 text-balance text-label", className)} {...props} />
 }
 
 function AuthDescription({ className, ...props }: React.ComponentProps<"p">) {
@@ -226,7 +226,7 @@ function AuthStatus({ className, icon, title, titleAs: Title = "h1", description
         </div>
       )}
       <div className="flex flex-col gap-1.5">
-        <Title data-slot="auth-status-title" className="text-title-2 text-balance text-label">
+        <Title data-slot="auth-status-title" className="font-display text-title-2 text-balance text-label">
           {title}
         </Title>
         {description != null && (

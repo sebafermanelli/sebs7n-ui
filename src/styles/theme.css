@@ -1195,16 +1195,16 @@
 }
 
 /**
- * Roles tipográficos (2.0) con la escala de iCloud web: base 17 y pasos 11/12/14/15/17/19/21/28, con
+ * Roles tipográficos (2.0) con la escala de iCloud web: base 17 y pasos 11/12/14/15/17/19/22/32 (3.0: más contraste entre títulos), con
  * 48 para el título grande de una página (Ajustes, Almacenamiento). Los componentes usan SOLO estos.
  *
  * Los nombres son los de Apple y no cambian; cambian los valores. En iCloud el chrome —ítems de
  * menú, campos, botones compactos, metadatos de tabla— va en 14 (`callout`), las filas del sidebar
  * en 15 (`subheadline`) y lo que se lee —el nombre en una tabla, un recordatorio, un párrafo— en 17
- * (`body`). Sin tracking salvo el de 48, que iCloud cierra −0,24 px (−0,005em). Los títulos van en
+ * (`body`). Tracking solo en los títulos (3.0: −0,012em a 48, −0,01em a 32), que con la fuente de titulares se leen más cerrados. Los títulos van en
  * semibold: iCloud no usa el regular de la HIG para títulos.
  */
-@utility text-large-title { font-family: var(--font-sans); font-size: 48px; line-height: 52px; font-weight: 600; letter-spacing: -0.005em; }
+@utility text-large-title { font-family: var(--font-sans); font-size: 48px; line-height: 52px; font-weight: 600; letter-spacing: -0.012em; }
 /* ── Escala display y énfasis (3.0) ──────────────────────────────────────────────────────────────────
  * Roles de titular para pantallas expresivas: más contraste de tamaños que `text-large-title` (48), fluidos con
  * `clamp()` entre 390 px y 1280 px y en la fuente de titulares (`--font-display`, que la app carga en
@@ -1220,8 +1220,8 @@
 @utility emphasis-strong { font-weight: 700; }
 @utility emphasis-muted { color: var(--color-label-secondary); }
 @utility ease-out-expo { transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1); }
-@utility text-title-1 { font-family: var(--font-sans); font-size: 28px; line-height: 34px; font-weight: 600; }
-@utility text-title-2 { font-family: var(--font-sans); font-size: 21px; line-height: 25px; font-weight: 600; }
+@utility text-title-1 { font-family: var(--font-sans); font-size: 32px; line-height: 38px; font-weight: 600; letter-spacing: -0.01em; }
+@utility text-title-2 { font-family: var(--font-sans); font-size: 22px; line-height: 28px; font-weight: 600; letter-spacing: -0.006em; }
 @utility text-title-3 { font-family: var(--font-sans); font-size: 19px; line-height: 24px; font-weight: 600; }
 @utility text-headline { font-family: var(--font-sans); font-size: 17px; line-height: 22px; font-weight: 600; }
 @utility text-body { font-family: var(--font-sans); font-size: 17px; line-height: 22px; font-weight: 400; }

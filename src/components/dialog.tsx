@@ -97,7 +97,7 @@ function DialogFooter({ className, ...props }: React.ComponentProps<"div">) {
 type DialogTitleProps = WithClassName<DialogPrimitive.Title.Props>
 
 function DialogTitle({ className, ...props }: DialogTitleProps) {
-  return <DialogPrimitive.Title data-slot="dialog-title" className={cn("text-title-3 text-label", className)} {...props} />
+  return <DialogPrimitive.Title data-slot="dialog-title" className={cn("font-display text-title-3 text-label", className)} {...props} />
 }
 
 type DialogDescriptionProps = WithClassName<DialogPrimitive.Description.Props>

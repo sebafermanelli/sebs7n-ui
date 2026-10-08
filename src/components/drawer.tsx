@@ -279,7 +279,7 @@ function DrawerFooter({ className, ...props }: React.ComponentProps<"div">) {
 type DrawerTitleProps = WithClassName<DrawerPrimitive.Title.Props>
 
 function DrawerTitle({ className, ...props }: DrawerTitleProps) {
-  return <DrawerPrimitive.Title data-slot="drawer-title" className={cn("text-title-3 text-label", className)} {...props} />
+  return <DrawerPrimitive.Title data-slot="drawer-title" className={cn("font-display text-title-3 text-label", className)} {...props} />
 }
 
 type DrawerDescriptionProps = WithClassName<DrawerPrimitive.Description.Props>

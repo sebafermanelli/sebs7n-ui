@@ -52,7 +52,7 @@ function EmptyState({ className, icon, title, titleAs: Title = "h2", description
         {/* El tenue de iCloud es el cuaternario; va el terciario, que en 28/600 (texto grande) llega a 3:1. */}
         <Title
           data-slot="empty-state-title"
-          className={cn("text-title-3 text-balance text-label", variant === "placeholder" && "text-title-1 text-label-tertiary")}
+          className={cn("font-display text-title-3 text-balance text-label", variant === "placeholder" && "text-title-1 text-label-tertiary")}
         >
           {title}
         </Title>

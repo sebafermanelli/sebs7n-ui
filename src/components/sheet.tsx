@@ -115,7 +115,7 @@ function SheetFooter({ className, ...props }: React.ComponentProps<"div">) {
 type SheetTitleProps = WithClassName<SheetPrimitive.Title.Props>
 
 function SheetTitle({ className, ...props }: SheetTitleProps) {
-  return <SheetPrimitive.Title data-slot="sheet-title" className={cn("text-title-3 text-label", className)} {...props} />
+  return <SheetPrimitive.Title data-slot="sheet-title" className={cn("font-display text-title-3 text-label", className)} {...props} />
 }
 
 type SheetDescriptionProps = WithClassName<SheetPrimitive.Description.Props>

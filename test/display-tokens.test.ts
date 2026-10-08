@@ -34,6 +34,6 @@ describe("escala display y énfasis: tokens opt-in", () => {
 
   it("los roles existentes no cambiaron", () => {
     expect(utility("text-large-title")).toContain("font-size: 48px")
-    expect(utility("text-title-1")).toContain("font-size: 28px")
+    expect(utility("text-title-1")).toContain("font-size: 32px")
   })
 })
