@@ -14,7 +14,7 @@ type Token = { l: number; k: number; alpha: number }
 /** Lee `oklch(from var(--sf-brand-src) L croma-o-calc h [/ alfa])` de un bloque. */
 function parse(css: string): Record<string, Token> {
   const out: Record<string, Token> = {}
-  for (const [, name, l, mult, alpha] of css.matchAll(/--sf-([\w-]+): oklch\(from var\(--sf-brand-src\) ([\d.]+) (?:var\(--neutral-tint-chroma, [\d.]+\)|calc\(var\(--neutral-tint-chroma, [\d.]+\) \* (\d+)\)) h(?: \/ ([\d.]+))?\);/g))
+  for (const [, name, l, mult, alpha] of css.matchAll(/--sf-([\w-]+): oklch\(from var\(--sf-brand-src\) ([\d.]+) (?:var\(--neutral-tint-chroma, [\d.]+\)|calc\(var\(--neutral-tint-chroma, [\d.]+\) \* (\d+)\)) var\(--neutral-tint-hue, h\)(?: \/ ([\d.]+))?\);/g))
     out[name!] = { l: Number(l), k: mult ? Number(mult) : 1, alpha: alpha ? Number(alpha) : 1 }
   return out
 }

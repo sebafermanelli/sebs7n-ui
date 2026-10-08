@@ -139,7 +139,10 @@ function DocumentSheetSummary({ items, footnote, className, ...props }: Document
         </div>
       ))}
       {footnote != null && (
-        <p className="col-span-2 mt-1 border-t border-separator-strong pt-1.5 text-caption text-label-secondary">{footnote}</p>
+        // Un `<p>` no puede ir directo en un `<dl>` (axe: definition-list): la nota es un `<dd>` dentro de su propio grupo.
+        <div className="col-span-2 mt-1 border-t border-separator-strong pt-1.5">
+          <dd className="text-caption text-label-secondary">{footnote}</dd>
+        </div>
       )}
     </dl>
   )

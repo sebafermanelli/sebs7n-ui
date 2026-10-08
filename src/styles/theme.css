@@ -1538,43 +1538,44 @@
  * Va en `<html>` (donde viven `.dark` y las variables `--sf-*`) porque `var()` se resuelve en el elemento
  * que declara el token. Las luminosidades (L) son las de los hex de arriba, pasadas a OKLCH, para que el
  * contraste no cambie: `test/neutral-tint.test.ts` lo verifica con varios matices. El croma se ajusta
- * con `--neutral-tint-chroma` (default 0,01, el tope de lo medido: más de eso pide revisar los pares).
+ * con `--neutral-tint-chroma` (default 0,01, el tope de lo medido: más de eso pide revisar los pares), y el matiz con
+ * `--neutral-tint-hue` (sin valor, el de la marca: `warm` ≈ 70, `cool` ≈ 240 en el motor de tema).
  */
 @layer base {
   :root:not([data-neutral-tint="off"]) {
-    --sf-background: oklch(from var(--sf-brand-src) 0.996 var(--neutral-tint-chroma, 0.01) h);
-    --sf-surface: oklch(from var(--sf-brand-src) 0.996 var(--neutral-tint-chroma, 0.01) h);
-    --sf-surface-secondary: oklch(from var(--sf-brand-src) 0.9886 var(--neutral-tint-chroma, 0.01) h);
-    --sf-surface-bar: oklch(from var(--sf-brand-src) 0.9626 var(--neutral-tint-chroma, 0.01) h);
-    --sf-surface-header: oklch(from var(--sf-brand-src) 0.9626 var(--neutral-tint-chroma, 0.01) h);
-    --sf-group: oklch(from var(--sf-brand-src) 0.9674 var(--neutral-tint-chroma, 0.01) h);
-    --sf-separator: oklch(from var(--sf-brand-src) 0.9233 var(--neutral-tint-chroma, 0.01) h);
-    --sf-separator-strong: oklch(from var(--sf-brand-src) 0.8622 var(--neutral-tint-chroma, 0.01) h);
-    --sf-fill-1: oklch(from var(--sf-brand-src) 0.5753 calc(var(--neutral-tint-chroma, 0.01) * 2) h / 0.08);
-    --sf-fill-2: oklch(from var(--sf-brand-src) 0.5753 calc(var(--neutral-tint-chroma, 0.01) * 2) h / 0.12);
-    --sf-fill-3: oklch(from var(--sf-brand-src) 0.5753 calc(var(--neutral-tint-chroma, 0.01) * 2) h / 0.16);
-    --sf-hairline: oklch(from var(--sf-brand-src) 0.5753 calc(var(--neutral-tint-chroma, 0.01) * 2) h / 0.08);
-    --sf-label: oklch(from var(--sf-brand-src) 0.04 var(--neutral-tint-chroma, 0.01) h / 0.88);
-    --sf-label-secondary: oklch(from var(--sf-brand-src) 0.04 var(--neutral-tint-chroma, 0.01) h / 0.59);
-    --sf-label-tertiary: oklch(from var(--sf-brand-src) 0.04 var(--neutral-tint-chroma, 0.01) h / 0.48);
+    --sf-background: oklch(from var(--sf-brand-src) 0.996 var(--neutral-tint-chroma, 0.01) var(--neutral-tint-hue, h));
+    --sf-surface: oklch(from var(--sf-brand-src) 0.996 var(--neutral-tint-chroma, 0.01) var(--neutral-tint-hue, h));
+    --sf-surface-secondary: oklch(from var(--sf-brand-src) 0.9886 var(--neutral-tint-chroma, 0.01) var(--neutral-tint-hue, h));
+    --sf-surface-bar: oklch(from var(--sf-brand-src) 0.9626 var(--neutral-tint-chroma, 0.01) var(--neutral-tint-hue, h));
+    --sf-surface-header: oklch(from var(--sf-brand-src) 0.9626 var(--neutral-tint-chroma, 0.01) var(--neutral-tint-hue, h));
+    --sf-group: oklch(from var(--sf-brand-src) 0.9674 var(--neutral-tint-chroma, 0.01) var(--neutral-tint-hue, h));
+    --sf-separator: oklch(from var(--sf-brand-src) 0.9233 var(--neutral-tint-chroma, 0.01) var(--neutral-tint-hue, h));
+    --sf-separator-strong: oklch(from var(--sf-brand-src) 0.8622 var(--neutral-tint-chroma, 0.01) var(--neutral-tint-hue, h));
+    --sf-fill-1: oklch(from var(--sf-brand-src) 0.5753 calc(var(--neutral-tint-chroma, 0.01) * 2) var(--neutral-tint-hue, h) / 0.08);
+    --sf-fill-2: oklch(from var(--sf-brand-src) 0.5753 calc(var(--neutral-tint-chroma, 0.01) * 2) var(--neutral-tint-hue, h) / 0.12);
+    --sf-fill-3: oklch(from var(--sf-brand-src) 0.5753 calc(var(--neutral-tint-chroma, 0.01) * 2) var(--neutral-tint-hue, h) / 0.16);
+    --sf-hairline: oklch(from var(--sf-brand-src) 0.5753 calc(var(--neutral-tint-chroma, 0.01) * 2) var(--neutral-tint-hue, h) / 0.08);
+    --sf-label: oklch(from var(--sf-brand-src) 0.04 var(--neutral-tint-chroma, 0.01) var(--neutral-tint-hue, h) / 0.88);
+    --sf-label-secondary: oklch(from var(--sf-brand-src) 0.04 var(--neutral-tint-chroma, 0.01) var(--neutral-tint-hue, h) / 0.59);
+    --sf-label-tertiary: oklch(from var(--sf-brand-src) 0.04 var(--neutral-tint-chroma, 0.01) var(--neutral-tint-hue, h) / 0.48);
   }
 
   :root.dark:not([data-neutral-tint="off"]) {
-    --sf-background: oklch(from var(--sf-brand-src) 0.2273 var(--neutral-tint-chroma, 0.01) h);
-    --sf-surface: oklch(from var(--sf-brand-src) 0.2273 var(--neutral-tint-chroma, 0.01) h);
-    --sf-surface-secondary: oklch(from var(--sf-brand-src) 0.2448 var(--neutral-tint-chroma, 0.01) h);
-    --sf-surface-bar: oklch(from var(--sf-brand-src) 0.2939 var(--neutral-tint-chroma, 0.01) h);
-    --sf-surface-header: oklch(from var(--sf-brand-src) 0.3187 var(--neutral-tint-chroma, 0.01) h);
-    --sf-group: oklch(from var(--sf-brand-src) 0.3183 var(--neutral-tint-chroma, 0.01) h);
-    --sf-separator: oklch(from var(--sf-brand-src) 0.3258 var(--neutral-tint-chroma, 0.01) h);
-    --sf-separator-strong: oklch(from var(--sf-brand-src) 0.3569 var(--neutral-tint-chroma, 0.01) h);
-    --sf-fill-1: oklch(from var(--sf-brand-src) 0.5631 calc(var(--neutral-tint-chroma, 0.01) * 2) h / 0.25);
-    --sf-fill-2: oklch(from var(--sf-brand-src) 0.5631 calc(var(--neutral-tint-chroma, 0.01) * 2) h / 0.3);
-    --sf-fill-3: oklch(from var(--sf-brand-src) 0.5631 calc(var(--neutral-tint-chroma, 0.01) * 2) h / 0.36);
-    --sf-hairline: oklch(from var(--sf-brand-src) 0.5631 calc(var(--neutral-tint-chroma, 0.01) * 2) h / 0.25);
-    --sf-label: oklch(from var(--sf-brand-src) 0.995 var(--neutral-tint-chroma, 0.01) h / 0.98);
-    --sf-label-secondary: oklch(from var(--sf-brand-src) 0.995 var(--neutral-tint-chroma, 0.01) h / 0.69);
-    --sf-label-tertiary: oklch(from var(--sf-brand-src) 0.995 var(--neutral-tint-chroma, 0.01) h / 0.5);
+    --sf-background: oklch(from var(--sf-brand-src) 0.2273 var(--neutral-tint-chroma, 0.01) var(--neutral-tint-hue, h));
+    --sf-surface: oklch(from var(--sf-brand-src) 0.2273 var(--neutral-tint-chroma, 0.01) var(--neutral-tint-hue, h));
+    --sf-surface-secondary: oklch(from var(--sf-brand-src) 0.2448 var(--neutral-tint-chroma, 0.01) var(--neutral-tint-hue, h));
+    --sf-surface-bar: oklch(from var(--sf-brand-src) 0.2939 var(--neutral-tint-chroma, 0.01) var(--neutral-tint-hue, h));
+    --sf-surface-header: oklch(from var(--sf-brand-src) 0.3187 var(--neutral-tint-chroma, 0.01) var(--neutral-tint-hue, h));
+    --sf-group: oklch(from var(--sf-brand-src) 0.3183 var(--neutral-tint-chroma, 0.01) var(--neutral-tint-hue, h));
+    --sf-separator: oklch(from var(--sf-brand-src) 0.3258 var(--neutral-tint-chroma, 0.01) var(--neutral-tint-hue, h));
+    --sf-separator-strong: oklch(from var(--sf-brand-src) 0.3569 var(--neutral-tint-chroma, 0.01) var(--neutral-tint-hue, h));
+    --sf-fill-1: oklch(from var(--sf-brand-src) 0.5631 calc(var(--neutral-tint-chroma, 0.01) * 2) var(--neutral-tint-hue, h) / 0.25);
+    --sf-fill-2: oklch(from var(--sf-brand-src) 0.5631 calc(var(--neutral-tint-chroma, 0.01) * 2) var(--neutral-tint-hue, h) / 0.3);
+    --sf-fill-3: oklch(from var(--sf-brand-src) 0.5631 calc(var(--neutral-tint-chroma, 0.01) * 2) var(--neutral-tint-hue, h) / 0.36);
+    --sf-hairline: oklch(from var(--sf-brand-src) 0.5631 calc(var(--neutral-tint-chroma, 0.01) * 2) var(--neutral-tint-hue, h) / 0.25);
+    --sf-label: oklch(from var(--sf-brand-src) 0.995 var(--neutral-tint-chroma, 0.01) var(--neutral-tint-hue, h) / 0.98);
+    --sf-label-secondary: oklch(from var(--sf-brand-src) 0.995 var(--neutral-tint-chroma, 0.01) var(--neutral-tint-hue, h) / 0.69);
+    --sf-label-tertiary: oklch(from var(--sf-brand-src) 0.995 var(--neutral-tint-chroma, 0.01) var(--neutral-tint-hue, h) / 0.5);
   }
 }
 

@@ -108,7 +108,6 @@ function Pagination({
           slot.type === "ellipsis" ? (
             <li
               data-slot="pagination-ellipsis"
-              role="presentation"
               // `gray-900` y no `gray-700`: los puntos son `aria-hidden`, pero
               // se ven, y en claro `gray-700` sobre la página da 3,23:1. Que al
               // lado haya un `sr-only` resuelve a quien escucha, no a quien mira.

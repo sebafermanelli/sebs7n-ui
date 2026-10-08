@@ -92,7 +92,9 @@ describe("Pagination", () => {
     const huecos = container.querySelectorAll("[data-slot=pagination-ellipsis]")
     expect(huecos).toHaveLength(2)
     for (const hueco of huecos) {
-      expect(hueco).toHaveAttribute("role", "presentation")
+      // 3.0: es un `<li>` común (con `role="presentation"` axe marca la lista como inválida).
+      expect(hueco.tagName).toBe("LI")
+      expect(hueco).not.toHaveAttribute("role")
       expect(hueco.querySelector("[aria-hidden=true]")).toHaveTextContent("…")
       expect(hueco.querySelector(".sr-only")).toHaveTextContent("Más páginas")
     }

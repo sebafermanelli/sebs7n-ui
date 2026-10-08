@@ -22,7 +22,7 @@ const block = css.slice(css.indexOf("Neutros con tinte de marca"))
 const cut = block.indexOf(":root.dark:not(")
 const tintCss = { light: block.slice(0, cut), dark: block.slice(cut) }
 function token(theme: "light" | "dark", name: string) {
-  const m = tintCss[theme].match(new RegExp(`--sf-${name}: oklch\\(from var\\(--sf-brand-src\\) ([\\d.]+) (?:var\\([^)]*\\)|calc\\(var\\([^)]*\\) \\* (\\d+)\\)) h(?: / ([\\d.]+))?\\);`))!
+  const m = tintCss[theme].match(new RegExp(`--sf-${name}: oklch\\(from var\\(--sf-brand-src\\) ([\\d.]+) (?:var\\([^)]*\\)|calc\\(var\\([^)]*\\) \\* (\\d+)\\)) var\\(--neutral-tint-hue, h\\)(?: / ([\\d.]+))?\\);`))!
   return { l: Number(m[1]), k: m[2] ? Number(m[2]) : 1, alpha: m[3] ? Number(m[3]) : 1 }
 }
 

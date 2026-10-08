@@ -13,9 +13,18 @@ export default defineConfig({
   // rompió el CI de la 1.0.0.
   resolve: {
     alias: [
+      // Una sola copia de React para todo: el test de accesibilidad (`a11y-demos.test.tsx`) renderiza con `@testing-library/react`, que trae el
+      // `react-dom` de la raíz; con el `react` del sitio los hooks de los componentes verían dos Reacts.
+      ...["@base-ui/react", "lucide-react", "sonner", "next-themes", "@dnd-kit/core", "@dnd-kit/sortable", "@dnd-kit/utilities", "embla-carousel-react", "recharts"].map((paquete) => ({
+        find: new RegExp(`^${paquete}(/.*)?$`),
+        replacement: raiz(`node_modules/${paquete}`) + "$1",
+      })),
+      { find: /^react-dom(\/.*)?$/, replacement: raiz("node_modules/react-dom") + "$1" },
+      { find: /^react(\/.*)?$/, replacement: raiz("node_modules/react") + "$1" },
       { find: /^sebs7n-ui\/lib\/(.+)$/, replacement: raiz("src/lib/$1") },
       { find: /^sebs7n-ui\/tokens\/(.+)$/, replacement: raiz("tokens/$1") },
       // Los componentes, para los tests que renderizan las pantallas del Playground (`showcase.test.ts`).
+      { find: /^sebs7n-ui$/, replacement: raiz("src/index.ts") },
       { find: /^sebs7n-ui\/labels$/, replacement: raiz("src/lib/labels.tsx") },
       { find: /^sebs7n-ui\/variants\/(.+)$/, replacement: raiz("src/variants/$1.ts") },
       { find: /^sebs7n-ui\/([a-z-]+)$/, replacement: raiz("src/components/$1.tsx") },

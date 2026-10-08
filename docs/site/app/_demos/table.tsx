@@ -37,7 +37,7 @@ export function Basico() {
           <TableHead>Nº</TableHead>
           <TableHead>Estado</TableHead>
           <TableHead numeric>Importe</TableHead>
-          <TableHead className="w-12" />
+          <TableHead className="w-12"><span className="sr-only">Acciones</span></TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
