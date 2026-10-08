@@ -91,6 +91,10 @@ De más a menos fuerte: **`default`** (acento sólido, **una por pantalla**) →
 - **Movimiento:** `ease-out-expo`, sin rebote, y todo quieto con `prefers-reduced-motion`. Algo que aparece de golpe (un error, un vacío) usa `animate-rise`; nunca baja la opacidad del texto.
 - **Vacíos y errores que enseñan:** `EmptyState` con `description` (por qué está vacío) y `hint` (cómo se llena); el error de un campo dice qué corregir, no solo que falló.
 
+### Variar el tema sin tocar componentes (3.0)
+
+Lo básico de una app —marca, forma, densidad, neutros, superficies, fondo, tipografía, movimiento y contraste— se configura con `createTheme()` (`sebs7n-ui/lib/theme`) o con uno de los cinco presets por industria: se escribe el CSS y los `data-*` en `<html>`, **no se pisan clases ni radios en cada componente**. Estados con los roles semánticos (`success`, `warning`, `danger`, `info`), nunca con el acento de la marca; series de gráfico con `--color-data-n`. Idioma, moneda y fechas con `LocaleProvider` (`sebs7n-ui/locale-provider`) y `lib/format`: ningún símbolo de moneda va escrito a mano. Para RTL, `LocaleProvider dir="rtl"` y `dir` en `<html>`; el paquete usa propiedades lógicas (`ms-`, `pe-`, `text-start`), así que tus clases también.
+
 ### Un link con margen
 
 `TextLink` respeta los márgenes verticales de la app (`mt-4`, `my-2`): con uno pasa a `inline-block`; en texto corrido, sin margen, sigue en línea.

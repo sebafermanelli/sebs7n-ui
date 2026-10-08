@@ -215,6 +215,56 @@ El espaciado interno de `Card` sale de `--card-spacing`, que se puede pisar punt
 <AppShell className="[--app-shell-height:720px]" … />
 ```
 
+## Motor de tema: nueve perillas y cinco presets
+
+Desde 3.0, cada app puede variar lo básico con **una configuración tipada** y sin JavaScript en runtime. `createTheme(config)` (`sebs7n-ui/lib/theme`, solo por subpath, tree-shakeable) devuelve el CSS, los atributos de `<html>` y los avisos; todo lo demás es CSS sobre los tokens de siempre. **Sin configuración no escribe nada**: es el «cálido y cuidado».
+
+```ts
+import { createTheme, PRESETS } from "sebs7n-ui/lib/theme"
+
+const theme = createTheme({
+  brand: "#0a6c74",                          // un solo color base
+  shape: "soft",
+  density: "comfortable",
+  neutrals: { tint: "cool", intensity: 0.8 },
+  typography: { heading: "var(--font-heading)", tracking: "tight" },
+})
+
+theme.css          // → al globals.css, después de @import "sebs7n-ui/theme.css"
+theme.attributes   // → <html {...theme.attributes}>  ({ "data-shape": "soft", … })
+theme.warnings     // → lo que no llega a AA o se parece a un color semántico
+createTheme(PRESETS["clinico-calmo"].config)   // un preset por industria
+```
+
+| Perilla | Valores | Cómo se aplica |
+|---|---|---|
+| `brand` | `#rrggbb`, `[L, C, H]` o `{ light, dark? }` | `--brand-base`, `--brand-contrast` y sus pares de oscuro; los diez pasos, los estados y el texto sobre el acento salen de ahí. Elige blanco o negro para el texto y **avisa** si el acento como texto o sobre su tinte no llega a 4,5:1 |
+| `shape` | `sharp` · `standard` · `soft` · `round` | `data-shape`: UNA escala que gobierna los 12 roles de radio |
+| `density` | `compact` · `standard` · `comfortable` | `data-density`: `--spacing` (alturas, paddings y huecos); con el dedo no baja de 44 px |
+| `neutrals` | `tint`: `none` · `brand` · `warm` · `cool`, `intensity` 0–1 | `data-neutral-tint="off"`, `--neutral-tint-hue` y `--neutral-tint-chroma` |
+| `surfaces` | `flat` · `raised` · `translucent` | `data-surface`: `flat` deja el filo de 1 px y saca la sombra |
+| `background` | `wallpaper` 0–1, `grain` `off` · `subtle` · `strong` | `--ambient` y `data-grain` |
+| `typography` | `text`, `heading` (una `font-family`), `scale`, `tracking` | `--font-inter`, `--font-heading`, `data-type-scale` y `data-type-tracking` |
+| `motion` | `calm` · `standard` · `none` | `data-motion` (`none` es `prefers-reduced-motion` por decisión de la app) |
+| `contrast` | `standard` · `high` | `data-contrast`; con `prefers-contrast: more` se aplica solo |
+
+El tipo es `ThemeConfig` y el JSON schema, `themeConfigSchema` (también en `tokens/theme-config.schema.json`), para validar una configuración que viene de un archivo. En el [Playground](/docs/playground) el **constructor de tema** mueve todas las perillas en vivo, muestra el sistema entero reaccionando y exporta el CSS, el layout y el JSON.
+
+**Presets por industria.** Cada uno se mide: `createTheme` no avisa nada y el texto sobre el acento y sobre los neutros con su matiz llega a AA en claro y oscuro (`test/theme-presets.test.ts`).
+
+| Preset | Industria | Qué cambia |
+|---|---|---|
+| `calido` | el default | iCloud con neutros tintados, sombras chicas, titulares con carácter |
+| `sobrio-profesional` | legal y finanzas | azul profundo, esquinas casi rectas, superficies planas, titulares con serif |
+| `clinico-calmo` | salud | verde azulado, esquinas suaves, densidad cómoda, neutros fríos, movimiento calmo |
+| `denso-operativo` | logística y back-office | densidad compacta, esquinas rectas, sin sombras ni grano, neutros sin tinte |
+| `editorial` | medios | acento casi negro, titulares grandes con serif y tracking cerrado, neutros cálidos |
+| `calido-consumo` | turismo y comercio | ámbar tostado, esquinas redondas, densidad cómoda, neutros cálidos y grano suave |
+
+**Colores semánticos.** `success`, `warning`, `danger` e `info` (con `-ink` y `-soft`) **no salen de la marca**: ninguna configuración los cambia, así que una marca verde o roja no confunde un error con un éxito. `createTheme` avisa si el matiz de la marca queda a menos de 25° de uno. La **paleta de datos** (`--color-data-1` a `-8`, también `--color-chart-n`) son 8 series que se distinguen con daltonismo y llegan a 3:1 contra la página en claro y oscuro.
+
+**Pruebas visuales.** `npm run visual` (en `docs/site`, con el sitio en :4100) captura una pantalla de referencia por preset y por combinación clave y la compara contra `visual/baseline/`; `npm run visual:update` regenera la línea base después de un cambio intencional.
+
 ## Neutros con tinte de marca
 
 Desde 3.0 los grises del sistema —la página, las superficies, los filetes, los rellenos y el texto— se inclinan hacia el matiz de la marca con un croma de 0,005 a 0,01 (OKLCH). Se siente, no se ve: es lo que hace la página cálida y no un gris de fábrica. No hay nada que prender; el matiz sale de la marca de cada app.

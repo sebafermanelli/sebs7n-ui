@@ -12,7 +12,7 @@ import { ThemeSwitcher } from "sebs7n-ui/theme-switcher"
 import { ToggleGroup, ToggleGroupItem } from "sebs7n-ui/toggle-group"
 import { Button } from "sebs7n-ui/button"
 
-import { hexOfOklch, type Oklch } from "../_lib/color"
+import { cssOfOklch, hexOfOklch, type Oklch } from "../_lib/color"
 import { Veredicto } from "./color-picker"
 import { desdePreset, type GlassConfig } from "./glass-config"
 
@@ -121,21 +121,20 @@ export function ThemeBuilder({ config, set, reset, esDefault, oscuro, brand, asi
 
       <div className="grid gap-x-8 gap-y-5 @lg:grid-cols-2 @3xl:grid-cols-3">
         <Grupo titulo="Marcas de ejemplo (matiz)">
-          <ToggleGroup
-            aria-label="Marca de ejemplo"
-            className="w-fit max-w-full flex-wrap"
-            onValueChange={(valor) => {
-              const marca = MARCAS_DE_EJEMPLO.find((m) => m.id === valor[0])
-              if (marca) tocar({ brand: marca.claro, brandDark: marca.oscuro })
-            }}
-            value={[marcaActiva]}
-          >
+          <div aria-label="Marca de ejemplo" className="flex flex-wrap gap-2" role="group">
             {MARCAS_DE_EJEMPLO.map((marca) => (
-              <ToggleGroupItem key={marca.id} value={marca.id}>
-                {marca.nombre}
-              </ToggleGroupItem>
+              <button
+                aria-label={marca.nombre}
+                aria-pressed={marcaActiva === marca.id}
+                className="flex size-8 cursor-pointer items-center justify-center rounded-full border border-separator-strong outline-none transition-control focus-visible:focus-ring aria-pressed:ring-2 aria-pressed:ring-label aria-pressed:ring-offset-2 aria-pressed:ring-offset-surface"
+                key={marca.id}
+                onClick={() => tocar({ brand: marca.claro, brandDark: marca.oscuro })}
+                style={{ background: cssOfOklch(oscuro ? marca.oscuro : marca.claro) }}
+                title={marca.nombre}
+                type="button"
+              />
             ))}
-          </ToggleGroup>
+          </div>
           <Slider
             className="w-56"
             label="Matiz (0–360°)"

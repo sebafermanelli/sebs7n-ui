@@ -100,6 +100,10 @@ Desde 3.0 los grises se inclinan hacia el matiz de la marca por defecto (croma 0
 
 Las clases de Geist (`text-copy-*`, `text-label-<n>`, `text-heading-*`, `text-button-*`) **siguen andando** y `cn()` las sigue fusionando, pero están obsoletas: el paquete ya no las usa y se van en 4.0.
 
+## Roles semánticos y paleta de datos
+
+`success`, `warning`, `danger` e `info` son roles fijos, independientes de la marca (`bg-success-soft`, `text-danger-ink`, `bg-info`…): cada uno trae el relleno (`success`), la tinta de texto (`success-ink`, ≥ 4,5:1 sobre su tinte) y el tinte al 12 % (`success-soft`). Alert, Badge suave, Toast, Icon, `FieldError` y `SaveBar` los usan. Para series de un gráfico, `--color-data-1` a `--color-data-8` (alias `--color-chart-1` a `-8`): se distinguen con deuteranopía, protanopía y tritanopía, y llegan a 3:1 contra la página (`test/data-palette.test.ts`). El color nunca es el único dato: la leyenda lleva el nombre.
+
 ## Radios
 
 {{radios}}

@@ -14,7 +14,9 @@
     "pretest": "npm run generate",
     "test": "vitest run && VITEST_A11Y=1 vitest run",
     "test:a11y": "VITEST_A11Y=1 vitest run",
-    "axe": "node scripts/axe-chrome.mjs"
+    "axe": "node scripts/axe-chrome.mjs",
+    "visual": "node scripts/visual-themes.mjs",
+    "visual:update": "node scripts/visual-themes.mjs --update"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",

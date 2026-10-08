@@ -14,3 +14,4 @@ public/llms-full.txt
 public/templates/
 registry.json
 tsconfig.tsbuildinfo
+visual/diff/
