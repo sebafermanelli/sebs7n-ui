@@ -88,6 +88,8 @@ export default [
     // `Card span` se movieron a `base.css` para no sumar JS. Umbral a 63,5 (sin avisar a Sebastián: ver el informe de 2.13.0).
     // 2.15.0: 63,26 kB (+0,10). `Form size` y `Checkbox size` leen el contexto de tamaño, y `ControlSizeProvider`
     // sale por el barrel; `SectionHeader`, `DocumentSheet`, `ScrollSequence` y `TextDiff` van solo por subpath.
-    limit: "63.5 kB",
+    // 3.0.0: 63,57 kB (+0,07). `LocaleProvider`, formato, RTL lógico y áreas de 24 px.
+    // Sebastián aprobó subir a 64 el 2026-10-08.
+    limit: "64 kB",
   },
 ]
