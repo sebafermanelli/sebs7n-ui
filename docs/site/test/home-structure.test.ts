@@ -49,11 +49,11 @@ describe("home y landing comparten estructura", () => {
       expect(src).toContain("max-w-[1080px]")
       expect(src).not.toMatch(/^"use client"/)
     }
-    expect(home).toContain('className="min-h-dvh bg-background" id="top"')
+    expect(home).toContain('className="isolate min-h-dvh bg-background" id="top"')
     // El titular en la escala display, la bajada en text-lead y una pantalla armada en un WindowFrame.
     expect(home).toContain("text-display")
     expect(home).toContain("text-lead")
-    for (const pieza of ["Reveal", "RevealGroup", "WindowFrame", "RuledList", "SectionBackdrop", "ThemeSwitcherLazy"]) expect(home, pieza).toContain(`<${pieza}`)
+    for (const pieza of ["Reveal", "RevealGroup", "WindowFrame", "RuledList", "SiteBackdrop", "ThemeSwitcherLazy"]) expect(home, pieza).toContain(`<${pieza}`)
     // Sin la grilla de cards idénticas con ícono de antes.
     expect(home).not.toContain("<CardGrid")
     expect(home.match(/<SectionHeader/g)!.length).toBeGreaterThanOrEqual(3)

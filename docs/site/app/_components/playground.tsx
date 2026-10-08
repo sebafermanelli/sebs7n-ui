@@ -182,7 +182,7 @@ export function Playground({ children }: { children?: React.ReactNode }) {
         </div>
         <div className="flex flex-col gap-2">
           <h3 className="text-callout font-semibold text-label">Y esto en tu layout</h3>
-          <CodeBlock code={layoutDe(config, asistente)} label="Copiar el layout" />
+          <CodeBlock code={layoutDe({ ...config, ambient: config.fondo !== "liso" }, asistente)} label="Copiar el layout" />
         </div>
         <div className="flex flex-col gap-2">
           <h3 className="text-callout font-semibold text-label">O la configuración, para <code className="text-mono-body">createTheme()</code></h3>
@@ -197,7 +197,7 @@ export function Playground({ children }: { children?: React.ReactNode }) {
         )}
       </section>
 
-      <Showcase ambient={config.ambient} asideOpen={asistente} onAsideOpenChange={setAsistente} />
+      <Showcase fondo={config.fondo} asideOpen={asistente} onAsideOpenChange={setAsistente} />
       <Muestra />
       {children}
     </div>

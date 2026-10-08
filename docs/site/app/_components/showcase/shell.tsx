@@ -1,5 +1,7 @@
 "use client"
 
+import { type Fondo } from "../../_lib/wallpaper"
+import { cn } from "sebs7n-ui/lib/utils"
 import { FileTextIcon, FolderIcon, HomeIcon, MailIcon, PlusIcon, SearchIcon, SettingsIcon, type LucideIcon } from "lucide-react"
 import { lazy, Suspense, useEffect, useRef, useState, type ReactNode } from "react"
 import { AiButton, AiIcon } from "sebs7n-ui/ai-button"
@@ -40,8 +42,8 @@ const ATAJOS: ShortcutItem[] = [
 type ShellProps = {
   screen: ShowcaseId
   onScreen: (screen: ShowcaseId) => void
-  /** El wallpaper (`AppShell ambient`): lo decide el Playground. */
-  ambient: boolean
+  /** El fondo del marco (`AppShell ambient` para el wallpaper de iCloud): lo decide el Playground. */
+  fondo: Fondo
   asideOpen: boolean
   onAsideOpenChange: (open: boolean) => void
   /** Se llama con el ancho del contenido (`main`), en px, cada vez que cambia. */
@@ -54,7 +56,7 @@ type ShellProps = {
  * avisos, el panel lateral acoplado con el asistente, ⌘K, la hoja de atajos (`?`) y `g` + letra. Los atajos
  * solo valen con el foco adentro del marco: ⌘K del resto del sitio sigue siendo el buscador de la documentación.
  */
-export function ShowcaseShell({ screen, onScreen, ambient, asideOpen, onAsideOpenChange, onWidth, children }: ShellProps) {
+export function ShowcaseShell({ screen, onScreen, fondo, asideOpen, onAsideOpenChange, onWidth, children }: ShellProps) {
   const frame = useRef<HTMLDivElement>(null)
   const [paletteUsed, setPaletteUsed] = useState(false)
   const [paletteOpen, setPaletteOpen] = useState(false)
@@ -139,8 +141,9 @@ export function ShowcaseShell({ screen, onScreen, ambient, asideOpen, onAsideOpe
     <div className="h-full overflow-y-auto" ref={frame}>
       <AppShell
         // El alto del marco, no el de la ventana: lo que usan el sidebar, el panel y las pantallas con paneles.
-        className="[--app-shell-height:var(--showcase-height)] [--showcase-split:calc(var(--app-shell-height)-2.75rem)]"
-        ambient={ambient}
+        ambient={fondo === "icloud"}
+        // Con el fondo del sitio la raíz va transparente: detrás del shell está `SiteBackdrop`, dentro del marco.
+        className={cn(fondo === "site" && "bg-transparent", "[--app-shell-height:var(--showcase-height)] [--showcase-split:calc(var(--app-shell-height)-2.75rem)]")}
         aside={
           <Suspense fallback={null}>
             <AssistantPanel screen={screen} />

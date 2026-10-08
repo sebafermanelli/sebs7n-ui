@@ -67,7 +67,7 @@ describe("Toggle (chip)", () => {
         <ToggleGroupItem value="s">Semana</ToggleGroupItem>
       </ToggleGroup>
     )
-    expect(screen.getByRole("group", { name: "Vista" })).toHaveClass("inline-grid", "grid-flow-col", "auto-cols-[minmax(0,1fr)]", "data-[orientation=vertical]:grid-flow-row")
+    expect(screen.getByRole("group", { name: "Vista" })).toHaveClass("inline-grid", "grid-flow-col", "auto-cols-[minmax(min-content,1fr)]", "data-[orientation=vertical]:grid-flow-row")
   })
 })
 

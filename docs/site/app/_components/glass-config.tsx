@@ -5,7 +5,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 import { cssOfOklch, oklchOfHex as oklchOfHexLocal, textoSobre, type Oklch } from "../_lib/color"
 import { createTheme, PRESETS, type ThemeConfig } from "sebs7n-ui/lib/theme"
 
-import { ambientGuardado, CONFIG_VERSION, luzGuardada } from "../_lib/wallpaper"
+import { CONFIG_VERSION, fondoGuardado, luzGuardada, type Fondo } from "../_lib/wallpaper"
 
 /**
  * La configuración del material que el visitante arma en el Playground.
@@ -27,6 +27,11 @@ export type GlassConfig = {
    * Las otras páginas de docs son opacas siempre, y la home lo lleva siempre (`_lib/wallpaper.ts`).
    */
   ambient: boolean
+  /**
+   * El fondo del sitio y del Playground: `site` (default, el de la home), `icloud` (el wallpaper de ondas,
+   * `ambient: true`) o `liso`. Es solo del sitio de docs: el default del paquete para una app no cambia.
+   */
+  fondo: Fondo
   /** `--ambient`: cuánto color lleva el wallpaper, de 0 a 1. */
   luz: number
   /** Neutros con tinte de marca (el default de 3.0). `false` = `data-neutral-tint="off"` en `<html>`. */
@@ -52,7 +57,7 @@ export type GlassConfig = {
   recientes: Oklch[]
 }
 
-export const DEFAULTS: GlassConfig = { brand: null, brandDark: null, ambient: true, luz: 1, tint: true, grain: "subtle", heading: "inter", shape: "standard", density: "standard", surfaces: "raised", motion: "standard", contrast: "standard", neutralsKind: "brand", neutralsIntensity: 1, typeScale: "standard", typeTracking: "standard", preset: null, recientes: [] }
+export const DEFAULTS: GlassConfig = { brand: null, brandDark: null, ambient: false, fondo: "site", luz: 1, tint: true, grain: "subtle", heading: "inter", shape: "standard", density: "standard", surfaces: "raised", motion: "standard", contrast: "standard", neutralsKind: "brand", neutralsIntensity: 1, typeScale: "standard", typeTracking: "standard", preset: null, recientes: [] }
 
 const CLAVE = "sebs7n-ui:playground"
 
@@ -90,7 +95,7 @@ export function variables(config: GlassConfig): Record<string, string> {
     salida["--brand-base-dark"] = cssOfOklch(oscuro)
     salida["--brand-contrast-dark"] = textoSobre(oscuro).hex
   }
-  if (config.ambient && config.luz !== DEFAULTS.luz) salida["--ambient"] = String(config.luz)
+  if (config.fondo === "icloud" && config.luz !== DEFAULTS.luz) salida["--ambient"] = String(config.luz)
   // Lo demás lo calcula el motor de tema (matiz e intensidad de los neutros; la marca ya está acá con el veredicto del sitio).
   const motor = createTheme({ ...toThemeConfig(config), brand: undefined }).variables.light
   for (const nombre of ["--neutral-tint-hue", "--neutral-tint-chroma"]) if (motor[nombre]) salida[nombre] = motor[nombre]!
@@ -113,8 +118,9 @@ export function toThemeConfig(parcial: Partial<GlassConfig>): ThemeConfig {
   const tint = c.tint ? c.neutralsKind : "none"
   if (tint !== "brand" || c.neutralsIntensity !== 1) out.neutrals = { tint, ...(c.neutralsIntensity !== 1 ? { intensity: c.neutralsIntensity } : {}) }
   const background: NonNullable<ThemeConfig["background"]> = {}
-  if (c.ambient && c.luz !== 1) background.wallpaper = c.luz
-  if (!c.ambient) background.wallpaper = 0
+  // `site` es solo del sitio de docs: lo que se exporta para una app sigue siendo el wallpaper del paquete.
+  if (c.fondo === "icloud" && c.luz !== 1) background.wallpaper = c.luz
+  if (c.fondo === "liso") background.wallpaper = 0
   if (c.grain !== "subtle") background.grain = c.grain
   if (Object.keys(background).length) out.background = background
   const typography: NonNullable<ThemeConfig["typography"]> = {}
@@ -143,7 +149,8 @@ export function desdePreset(id: string): Partial<GlassConfig> {
     tint: t.neutrals?.tint !== "none",
     neutralsKind: t.neutrals?.tint && t.neutrals.tint !== "none" ? t.neutrals.tint : "brand",
     neutralsIntensity: t.neutrals?.intensity ?? 1,
-    ambient: (t.background?.wallpaper ?? 1) > 0,
+    // Un preset con el wallpaper en 0 es «liso»; si no, deja el fondo que el visitante eligió.
+    ...((t.background?.wallpaper ?? 1) > 0 ? {} : { ambient: false, fondo: "liso" as const }),
     luz: t.background?.wallpaper && t.background.wallpaper > 0 ? t.background.wallpaper : 1,
     grain: t.background?.grain ?? "subtle",
     heading: "inter",
@@ -180,7 +187,8 @@ function leer(): GlassConfig {
     return {
       brand: guardado.brand ?? null,
       brandDark: guardado.brandDark ?? null,
-      ambient: ambientGuardado(guardado),
+      ambient: fondoGuardado(guardado) === "icloud",
+      fondo: fondoGuardado(guardado),
       luz: luzGuardada(guardado),
       tint: guardado.tint ?? true,
       grain: guardado.grain === "off" || guardado.grain === "strong" ? guardado.grain : "subtle",
@@ -227,6 +235,8 @@ export function GlassConfigProvider({ children }: { children: ReactNode }) {
   const set = useCallback((cambios: Partial<GlassConfig>) => {
     setConfig((actual) => {
       const siguiente = { ...actual, ...cambios }
+      // `ambient` es el wallpaper de iCloud prendido: sale del fondo, no se elige aparte.
+      siguiente.ambient = siguiente.fondo === "icloud"
       try {
         localStorage.setItem(CLAVE, JSON.stringify({ ...siguiente, v: CONFIG_VERSION }))
       } catch {

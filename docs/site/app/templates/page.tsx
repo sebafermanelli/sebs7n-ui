@@ -4,6 +4,7 @@ import { CardGrid } from "sebs7n-ui/card"
 import { PageHeader, PageHeaderDescription, PageHeaderTitle } from "sebs7n-ui/page-header"
 
 import site from "@/.generated/site.json"
+import { SiteBackdrop } from "../_components/site-backdrop"
 import { SiteHeader } from "../_components/site-header"
 import { TemplateCard } from "./_components/template-card"
 
@@ -14,7 +15,8 @@ export const metadata: Metadata = {
 
 export default function TemplatesPage() {
   return (
-    <div className="min-h-dvh bg-ambient" data-ambient="">
+    <div className="isolate min-h-dvh bg-background">
+      <SiteBackdrop />
       <SiteHeader version={site.version} />
       <main className="mx-auto flex w-full max-w-[1080px] flex-col gap-12 px-4 py-16 md:px-6 md:py-20">
         <PageHeader>

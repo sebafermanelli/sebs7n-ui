@@ -50,6 +50,24 @@ const PROBE = String.raw`(async (RTL) => {
   const sel = (el) => { const slot = el.closest("[data-slot]")?.getAttribute("data-slot"); const t = (el.textContent || "").trim().replace(/\s+/g, " ").slice(0, 30); return (el.tagName.toLowerCase() + (el.getAttribute("data-slot") ? "[" + el.getAttribute("data-slot") + "]" : slot ? "<" + slot + ">" : "") + (t ? ' "' + t + '"' : "")) }
   const push = (rule, sev, el, msg, state) => findings.push({ rule, sev, el: sel(el), msg, state })
 
+  // Cuánto sobresalen los hijos "en flujo" del borde del elemento: un badge absoluto o un thumb con translate
+  // inflan el scrollWidth a propósito y no son un desborde. Se mide la geometría real de lo que está en el flujo.
+  const inflowOut = (el, r) => {
+    let out = 0
+    const walk = (n, depth) => {
+      for (const c of n.children) {
+        const cs = getComputedStyle(c)
+        if (cs.position === "absolute" || cs.position === "fixed" || cs.display === "none" || cs.visibility === "hidden") continue
+        const cr = c.getBoundingClientRect()
+        if (cr.width === 0 && cr.height === 0) continue
+        if (cs.transform !== "none" && depth > 0) continue
+        out = Math.max(out, cr.right - r.right, r.left - cr.left)
+        if (depth < 3 && !/^(hidden|clip|auto|scroll)$/.test(cs.overflowX)) walk(c, depth + 1)
+      }
+    }
+    walk(el, 0)
+    return out
+  }
   const measure = (root, state, trigger) => {
     const all = [root, ...root.querySelectorAll("*")].filter((e) => vis(e) && !e.closest(SKIP))
     for (const el of all) {
@@ -57,7 +75,7 @@ const PROBE = String.raw`(async (RTL) => {
       const ox = s.overflowX, scrolls = ox === "auto" || ox === "scroll"
       const ellipsis = s.textOverflow === "ellipsis" || s.webkitLineClamp !== "none" && s.webkitLineClamp !== ""
       // a / c: desborde horizontal y texto cortado
-      if (el.scrollWidth > el.clientWidth + 1 && el.clientWidth > 0 && !scrolls && s.display !== "inline") {
+      if (el.scrollWidth > el.clientWidth + 1 && el.clientWidth > 0 && !scrolls && s.display !== "inline" && !el.closest("[data-slot=reveal]") && (inflowOut(el, r) > 1.5 || ellipsis || el.children.length === 0)) {
         if (ellipsis && (ox === "hidden" || ox === "clip")) {
           if (!el.title && !el.getAttribute("aria-label") && !el.closest("[title],[aria-label]")) push("truncated", "med", el, "ellipsis sin title (" + el.scrollWidth + ">" + el.clientWidth + ")", state)
         } else if (ox === "hidden" || ox === "clip") {

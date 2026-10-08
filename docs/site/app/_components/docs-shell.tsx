@@ -15,7 +15,8 @@ import {
 } from "sebs7n-ui/sidebar"
 import { ThemeSwitcher } from "sebs7n-ui/theme-switcher"
 
-import { docsWallpaper } from "../_lib/wallpaper"
+import { docsFondo } from "../_lib/wallpaper"
+import { SiteBackdrop } from "./site-backdrop"
 import { DocsNav } from "./docs-nav"
 import { useGlassConfig } from "./glass-config"
 import { SearchButton, useSearch } from "./search"
@@ -76,10 +77,15 @@ function DocsSidebar({ nav, version }: { nav: Grupo[]; version: string }) {
 export function DocsShell({ nav, version, children }: { nav: Grupo[]; version: string; children: ReactNode }) {
   const pathname = usePathname()
   const { config } = useGlassConfig()
+  // El fondo de la home en todas las páginas de docs; el wallpaper de iCloud solo se previsualiza en el Playground.
+  const fondo = docsFondo(pathname, config.fondo)
   return (
+    <>
+    {fondo === "site" && <SiteBackdrop />}
     <AppShell
-      // El wallpaper solo en el Playground (con su switch); el resto de las docs es opaco (W).
-      ambient={docsWallpaper(pathname, config.ambient)}
+      ambient={fondo === "icloud"}
+      // La raíz del shell pinta `bg-background`: con el fondo del sitio va transparente para que se vea detrás.
+      className={fondo === "site" ? "bg-transparent" : undefined}
       header={
         <>
           <Marca version={version} />
@@ -105,5 +111,6 @@ export function DocsShell({ nav, version, children }: { nav: Grupo[]; version: s
     >
       {children}
     </AppShell>
+    </>
   )
 }

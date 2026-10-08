@@ -4,7 +4,6 @@ import { Badge } from "sebs7n-ui/badge"
 import { Button } from "sebs7n-ui/button"
 import { Reveal, RevealGroup } from "sebs7n-ui/reveal"
 import { DefinitionItem, DefinitionList, RuledList, RuledListItem } from "sebs7n-ui/ruled-list"
-import { SectionBackdrop } from "sebs7n-ui/section-backdrop"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "sebs7n-ui/table"
 import { ThemeSwitcherLazy } from "sebs7n-ui/theme-switcher-lazy"
 import { buttonVariants } from "sebs7n-ui/variants/button"
@@ -15,6 +14,7 @@ import { CopyButton } from "sebs7n-ui/copy-button"
 
 import { CodeBlock } from "./_components/code-block"
 import { Inline } from "./_components/inline"
+import { SiteBackdrop } from "./_components/site-backdrop"
 import { SectionHeader } from "./_components/section-header"
 import { SiteFooter } from "./_components/site-footer"
 import { SiteHeader } from "./_components/site-header"
@@ -42,22 +42,14 @@ const INSTALL = `pnpm add sebs7n-ui @base-ui/react next-themes sonner`
 export default function Home() {
   const destacados = site.components.filter((component) => component.detallado).slice(0, 6)
   return (
-    <div className="min-h-dvh bg-background" id="top">
+    <div className="isolate min-h-dvh bg-background" id="top">
+      <SiteBackdrop />
       <SiteHeader version={site.version} />
       {/*
-        El hero es una sola composición: a la izquierda lo que se dice, a la derecha lo que se ve (una pantalla armada con el paquete), y un
-        fondo continuo que cubre las dos cosas. El lavado de la marca se funde hacia abajo con una máscara (sin corte seco, el grano también) y
-        un foco suave detrás del titular y de la ventana marca dónde mirar. Bajo `lg` se apila: el texto y, debajo, la ventana entera.
+        El hero es una sola composición: a la izquierda lo que se dice, a la derecha lo que se ve (una pantalla armada con el paquete). El fondo
+        continuo es `SiteBackdrop`, el mismo de todo el sitio: lavado de la marca y grano que se funden hacia abajo, y dos focos suaves. Bajo `lg` se apila: el texto y, debajo, la ventana entera.
       */}
-      <SectionBackdrop
-        backdropClassName="[-webkit-mask-image:linear-gradient(to_bottom,#000_55%,transparent)] [mask-image:linear-gradient(to_bottom,#000_55%,transparent)]"
-        className="px-4 pt-10 pb-24 md:px-6 md:pt-16 md:pb-32"
-        variant="wash"
-      >
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[40rem] [background:radial-gradient(ellipse_55%_50%_at_30%_35%,color-mix(in_oklab,var(--sf-brand-700)_9%,transparent),transparent_70%),radial-gradient(ellipse_40%_45%_at_78%_45%,color-mix(in_oklab,var(--sf-brand-700)_6%,transparent),transparent_70%)]"
-        />
+      <div className="px-4 pt-10 pb-24 md:px-6 md:pt-16 md:pb-32">
         <div className="mx-auto grid w-full max-w-[1080px] items-center gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,33rem)] lg:gap-12">
           <RevealGroup className="flex flex-col items-start gap-7 [&>*]:max-w-full" step={90}>
             <Badge>v{site.version}</Badge>
@@ -123,7 +115,7 @@ export default function Home() {
             </div>
           </Reveal>
         </div>
-      </SectionBackdrop>
+      </div>
       <main className="mx-auto flex w-full max-w-[1080px] flex-col gap-20 px-4 pb-20 md:gap-24 md:px-6 md:pb-24">
         <Reveal>
           <section className="mx-auto flex w-full max-w-3xl scroll-mt-20 flex-col gap-10" id="razones">

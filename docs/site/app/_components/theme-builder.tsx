@@ -186,13 +186,10 @@ export function ThemeBuilder({ config, set, reset, esDefault, oscuro, brand, asi
         </Grupo>
 
         <Grupo titulo="Fondo">
-          <div className="flex items-center gap-2">
-            <Switch checked={config.ambient} id="pg-ambient" onCheckedChange={(ambient) => tocar({ ambient })} />
-            <Label htmlFor="pg-ambient">Wallpaper</Label>
-          </div>
+          <Opciones nombre="Wallpaper" onChange={(fondo) => tocar({ fondo, ambient: fondo === "icloud" })} opciones={[["site", "Fondo del sitio"], ["icloud", "Wallpaper iCloud"], ["liso", "Liso"]]} valor={config.fondo} />
           <Slider
             className="w-56"
-            disabled={!config.ambient}
+            disabled={config.fondo !== "icloud"}
             format={{ maximumFractionDigits: 2, minimumFractionDigits: 2 }}
             label="Color del wallpaper"
             locale="es-AR"

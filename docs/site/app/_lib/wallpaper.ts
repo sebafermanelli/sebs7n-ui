@@ -31,3 +31,21 @@ export function luzGuardada(guardado: { v?: unknown; luz?: unknown }): number {
     ? guardado.luz
     : 1
 }
+
+/**
+ * El fondo del sitio (no del paquete): `site` es el de la home (`SiteBackdrop`: lavado de la marca y grano),
+ * `icloud` el wallpaper de ondas que el paquete le da a una app (`bg-ambient`) y `liso` la página sin nada.
+ * El wallpaper solo se previsualiza en el Playground: en el resto de las páginas, `icloud` cae en `site`.
+ */
+export type Fondo = "site" | "icloud" | "liso"
+
+export const FONDOS: readonly Fondo[] = ["site", "icloud", "liso"]
+
+export function fondoGuardado(guardado: { fondo?: unknown; v?: unknown; ambient?: unknown }): Fondo {
+  return FONDOS.includes(guardado.fondo as Fondo) ? (guardado.fondo as Fondo) : "site"
+}
+
+export function docsFondo(pathname: string | null, fondo: Fondo): Fondo {
+  if (fondo === "icloud" && !docsWallpaper(pathname, true)) return "site"
+  return fondo
+}

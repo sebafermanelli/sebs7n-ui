@@ -1,5 +1,7 @@
 "use client"
 
+import { SiteBackdrop } from "../site-backdrop"
+import { type Fondo } from "../../_lib/wallpaper"
 import { lazy, Suspense, useCallback, useEffect, useState } from "react"
 import { Tabs, TabsList, TabsTrigger } from "sebs7n-ui/tabs"
 import { TooltipProvider } from "sebs7n-ui/tooltip"
@@ -24,15 +26,15 @@ const STORAGE_KEY = "sebs7n-docs:showcase"
 const esShowcase = (valor: unknown): valor is ShowcaseId => SHOWCASES.some((showcase) => showcase.id === valor)
 
 type ShowcaseProps = {
-  /** El wallpaper del marco (`AppShell ambient`): el interruptor del Playground. */
-  ambient?: boolean
+  /** El fondo del marco: el del sitio, el wallpaper de iCloud (`AppShell ambient`) o liso. Lo elige el Playground. */
+  fondo?: Fondo
   /** El panel lateral con el asistente, abierto o no: el interruptor «Panel del asistente» del Playground. */
   asideOpen?: boolean
   onAsideOpenChange?: (open: boolean) => void
 }
 
 /** Pantallas enteras armadas con el paquete, una por vez, dentro de un `AppShell` de alto fijo. */
-export function Showcase({ ambient = true, asideOpen = false, onAsideOpenChange }: ShowcaseProps) {
+export function Showcase({ fondo = "site", asideOpen = false, onAsideOpenChange }: ShowcaseProps) {
   const [elegida, setElegida] = useState<ShowcaseId>("home")
   // La pantalla se monta recién en el cliente: prerenderizada, su chunk iría en el HTML.
   const [montado, setMontado] = useState(false)
@@ -97,10 +99,11 @@ export function Showcase({ ambient = true, asideOpen = false, onAsideOpenChange 
         className="relative h-(--showcase-height) overflow-hidden rounded-surface bg-background ring-1 ring-separator shadow-card [--showcase-height:560px] [contain:paint] sm:[--showcase-height:640px]"
         data-slot="showcase-frame"
       >
+        {fondo === "site" && <SiteBackdrop />}
         {montado && (
           <Suspense fallback={null}>
             <TooltipProvider>
-              <ShowcaseShell ambient={ambient} asideOpen={abierto} onAsideOpenChange={abrir} onScreen={elegir} onWidth={setAncho} screen={elegida}>
+              <ShowcaseShell fondo={fondo} asideOpen={abierto} onAsideOpenChange={abrir} onScreen={elegir} onWidth={setAncho} screen={elegida}>
                 <Suspense fallback={null}>
                   <Layout />
                 </Suspense>

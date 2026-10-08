@@ -2,7 +2,7 @@
 // default) y el resto de las docs nunca.
 import { describe, expect, it } from "vitest"
 
-import { ambientGuardado, CONFIG_VERSION, docsWallpaper, luzGuardada } from "../app/_lib/wallpaper"
+import { ambientGuardado, CONFIG_VERSION, docsFondo, docsWallpaper, fondoGuardado, luzGuardada } from "../app/_lib/wallpaper"
 
 describe("docsWallpaper", () => {
   it("el Playground lo lleva con el switch prendido", () => {
@@ -57,5 +57,24 @@ describe("luzGuardada", () => {
   it("un valor roto o fuera de rango vuelve al default", () => {
     expect(luzGuardada({ v: CONFIG_VERSION, luz: "x" })).toBe(1)
     expect(luzGuardada({ v: CONFIG_VERSION, luz: 5 })).toBe(1)
+  })
+})
+
+describe("fondo del sitio", () => {
+  it("el default es el fondo de la home", () => {
+    expect(fondoGuardado({})).toBe("site")
+    expect(fondoGuardado({ fondo: "otro" })).toBe("site")
+    expect(fondoGuardado({ fondo: "icloud" })).toBe("icloud")
+    expect(fondoGuardado({ fondo: "liso" })).toBe("liso")
+  })
+
+  it("el wallpaper de iCloud solo se previsualiza en el Playground; en el resto de las docs cae en el fondo del sitio", () => {
+    expect(docsFondo("/docs/playground", "icloud")).toBe("icloud")
+    expect(docsFondo("/docs/components/card", "icloud")).toBe("site")
+    expect(docsFondo("/docs/components/card", "site")).toBe("site")
+  })
+
+  it("liso es liso en todas partes", () => {
+    for (const ruta of ["/docs/playground", "/docs/components/card", "/docs"]) expect(docsFondo(ruta, "liso")).toBe("liso")
   })
 })

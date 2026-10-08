@@ -55,4 +55,4 @@ export const segmentedItemClassName =
  * Calendar) y la posibilidad de achicarse por debajo de su texto.
  */
 export const segmentedGroupClassName =
-  "inline-grid grid-flow-col auto-cols-[minmax(0,1fr)] data-[orientation=vertical]:grid-flow-row data-[orientation=vertical]:auto-cols-auto"
+  "inline-grid grid-flow-col auto-cols-[minmax(min-content,1fr)] data-[orientation=vertical]:grid-flow-row data-[orientation=vertical]:auto-cols-auto"

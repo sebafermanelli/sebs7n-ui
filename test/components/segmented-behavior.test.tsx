@@ -166,4 +166,10 @@ describe("el separador del segmentado", () => {
     expect(classes).toContain("after:-translate-y-1/2")
     expect(classes).not.toContain("after:top-1")
   })
+
+  it("las pistas del ToggleGroup no bajan de lo que mide su texto: la etiqueta conserva su aire en una caja angosta", async () => {
+    const { segmentedGroupClassName } = await import("../../src/variants/segmented")
+    expect(segmentedGroupClassName).toContain("auto-cols-[minmax(min-content,1fr)]")
+    expect(segmentedGroupClassName).not.toContain("minmax(0,1fr)")
+  })
 })
