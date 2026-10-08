@@ -22,9 +22,9 @@ const iconTones = {
   muted: "text-label-secondary",
   subtle: "text-label-tertiary",
   brand: "text-brand-900",
-  success: "text-green-900",
-  warning: "text-amber-900",
-  danger: "text-red-900",
+  success: "text-success-ink",
+  warning: "text-warning-ink",
+  danger: "text-danger-ink",
 } as const
 
 type IconProps = WithClassName<Omit<LucideProps, "ref" | "size">> & {

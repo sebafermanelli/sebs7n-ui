@@ -132,7 +132,8 @@ describe("Separator / Skeleton", () => {
 })
 
 describe("Alert", () => {
-  it("fondo neutro; la variante solo cambia franja e ícono", () => {
+  // 3.0: el rol semántico (independiente de la marca) pone el tinte de fondo y la tinta del ícono; sin franja a un costado.
+  it("el rol semántico tiñe el fondo y el ícono, sin franja", () => {
     render(
       <Alert variant="warning">
         <InfoIcon />
@@ -141,22 +142,26 @@ describe("Alert", () => {
       </Alert>
     )
     const alert = screen.getByRole("alert")
-    expect(alert).toHaveClass("bg-fill-1", "border-transparent", "rounded-surface", "before:bg-amber-700", "*:[svg]:text-amber-900")
+    expect(alert).toHaveClass("bg-warning-soft", "border-transparent", "rounded-surface", "*:[svg]:text-warning-ink")
+    expect(alert.className).not.toMatch(/before:/)
     expect(screen.getByText("Cargalo antes de facturar.")).toHaveClass("text-label-secondary")
+  })
+
+  it("hay info, success, warning y danger; error es el alias de danger", () => {
+    for (const [variant, tinte] of [["info", "bg-info-soft"], ["success", "bg-success-soft"], ["danger", "bg-danger-soft"], ["error", "bg-danger-soft"]] as const) {
+      const { unmount } = render(<Alert variant={variant}>x</Alert>)
+      expect(screen.getByRole("alert")).toHaveClass(tinte)
+      unmount()
+    }
+  })
+
+  it("el neutro conserva fill-1", () => {
+    render(<Alert>x</Alert>)
+    expect(screen.getByRole("alert")).toHaveClass("bg-fill-1")
   })
 
   it("es un relleno sin blur: vive adentro de una Card", () => {
     render(<Alert>x</Alert>)
     expect(screen.getByRole("alert").className).not.toMatch(/(^|\s)glass(\s|$)/)
-  })
-
-  it("la franja es una píldora adentro de la superficie, no pegada al borde", () => {
-    render(<Alert variant="error">x</Alert>)
-    const alert = screen.getByRole("alert")
-    expect(alert).toHaveClass("before:left-2", "before:inset-y-3", "before:w-1", "before:rounded-full", "before:bg-red-700")
-    // Pegada al borde, con el radio de 20px las puntas quedaban afuera del contorno.
-    expect(alert.className).not.toMatch(/before:left-0|before:rounded-r-full/)
-    // El texto deja lugar: 20px de padding contra los 12 donde termina la franja.
-    expect(alert).toHaveClass("pl-5")
   })
 })

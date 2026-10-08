@@ -132,6 +132,6 @@ describe("Label", () => {
     const star = label.querySelector("span")
     expect(star).toHaveTextContent("*")
     expect(star).toHaveAttribute("aria-hidden", "true")
-    expect(star).toHaveClass("text-red-900")
+    expect(star).toHaveClass("text-danger-ink")
   })
 })

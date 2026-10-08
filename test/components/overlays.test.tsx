@@ -572,7 +572,7 @@ describe("Toaster", () => {
     const aviso = await screen.findByText("Listo")
     const fila = aviso.closest("[data-sonner-toast]")!
     const icono = fila.querySelector("svg")!
-    expect(icono).toHaveClass("text-green-900")
+    expect(icono).toHaveClass("text-success-ink")
     expect(icono).toHaveAttribute("aria-hidden", "true")
   })
 })

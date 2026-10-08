@@ -17,7 +17,7 @@ function Label({ className, required = false, children, ...props }: LabelProps) 
     >
       {children}
       {required && (
-        <span aria-hidden="true" className="text-red-900">
+        <span aria-hidden="true" className="text-danger-ink">
           *
         </span>
       )}

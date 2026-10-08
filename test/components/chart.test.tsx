@@ -34,8 +34,8 @@ describe("ChartContainer", () => {
     expect(chart.style.getPropertyValue("--color-margen")).toBe("var(--color-teal-700)")
   })
 
-  it("una sexta serie no inventa un color", () => {
-    const seis: ChartConfig = Object.fromEntries(["a", "b", "c", "d", "e", "f"].map((k) => [k, { label: k }]))
+  it("una novena serie no inventa un color", () => {
+    const seis: ChartConfig = Object.fromEntries(["a", "b", "c", "d", "e", "f", "g", "h", "i"].map((k) => [k, { label: k }]))
     const { container } = render(
       <ChartContainer config={seis}>
         <div />
@@ -43,7 +43,8 @@ describe("ChartContainer", () => {
     )
     const chart = container.querySelector("[data-slot=chart]") as HTMLElement
     expect(chart.style.getPropertyValue("--color-e")).toBe("var(--sf-chart-5)")
-    expect(chart.style.getPropertyValue("--color-f")).toBe("")
+    expect(chart.style.getPropertyValue("--color-h")).toBe("var(--sf-chart-8)")
+    expect(chart.style.getPropertyValue("--color-i")).toBe("")
   })
 
   it("el color sigue a la entidad, no al orden en que se filtra", () => {

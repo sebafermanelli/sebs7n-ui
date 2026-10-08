@@ -50,7 +50,7 @@ function SaveBar({ dirty, pending = false, onDiscard, onSave, saveDisabled, labe
       {...props}
     >
       <p aria-live="polite" className="flex items-center gap-2 text-callout text-label-secondary" role="status">
-        {dirty ? <CircleDotIcon aria-hidden="true" className="size-4 text-amber-900" /> : <CheckCircle2Icon aria-hidden="true" className="size-4 text-green-900" />}
+        {dirty ? <CircleDotIcon aria-hidden="true" className="size-4 text-warning-ink" /> : <CheckCircle2Icon aria-hidden="true" className="size-4 text-green-900" />}
         {dirty ? labels.unsaved : labels.saved}
       </p>
       <div className="flex w-full gap-2 @md:ml-auto @md:w-auto">

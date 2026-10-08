@@ -18,10 +18,10 @@ function Toaster(props: ToasterProps) {
       duration={4000}
       className="toaster group"
       icons={{
-        success: <CircleCheckIcon className="size-4 text-green-900" />,
-        info: <InfoIcon className="size-4 text-blue-900" />,
-        warning: <TriangleAlertIcon className="size-4 text-amber-900" />,
-        error: <OctagonXIcon className="size-4 text-red-900" />,
+        success: <CircleCheckIcon className="size-4 text-success-ink" />,
+        info: <InfoIcon className="size-4 text-info-ink" />,
+        warning: <TriangleAlertIcon className="size-4 text-warning-ink" />,
+        error: <OctagonXIcon className="size-4 text-danger-ink" />,
         loading: <Loader2Icon className="size-4 animate-spin text-label-secondary" />,
       }}
       toastOptions={{

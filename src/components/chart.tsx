@@ -31,8 +31,8 @@ function useChart() {
   return context
 }
 
-/** Cinco series y no más. La sexta se agrupa en «Otros» o se parte en otro gráfico. */
-const PALETTE_SIZE = 5
+/** Ocho series y no más (3.0, antes cinco): la paleta de datos accesible. La novena se agrupa en «Otros» o se parte en otro gráfico. */
+const PALETTE_SIZE = 8
 
 /**
  * `--color-<clave>` por serie, en el contenedor: el gráfico las lee con

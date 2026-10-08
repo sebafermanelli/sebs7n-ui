@@ -253,6 +253,26 @@
   --color-ai-solid: var(--sf-ai-solid);
   --color-ai-solid-hover: var(--sf-ai-solid-hover);
 
+  /**
+   * Roles semánticos (3.0): éxito, aviso, peligro e información, **independientes de la marca**. Una marca verde o roja no cambia lo
+   * que significa un error o un éxito: estos roles salen de las paletas fijas del sistema (green, amber, red, blue), no de
+   * `--brand-base`. Cada uno trae el `solid` (relleno, 3:1 como objeto gráfico), la `ink` (texto, ≥ 4,5:1 sobre su propio tinte) y el
+   * `soft` (el tinte al 12 %, el fondo de un Alert o un Badge suave). Alert, Badge, Toast, Progress/Meter y los errores de Field los
+   * usan; `test/semantic-colors.test.ts` mide los pares con cinco marcas.
+   */
+  --color-success: var(--color-green-700);
+  --color-success-ink: var(--color-green-ink);
+  --color-success-soft: color-mix(in srgb, var(--color-green-700) 12%, transparent);
+  --color-warning: var(--color-amber-700);
+  --color-warning-ink: var(--color-amber-ink);
+  --color-warning-soft: color-mix(in srgb, var(--color-amber-700) 12%, transparent);
+  --color-danger: var(--color-red-700);
+  --color-danger-ink: var(--color-red-ink);
+  --color-danger-soft: color-mix(in srgb, var(--color-red-700) 12%, transparent);
+  --color-info: var(--color-blue-700);
+  --color-info-ink: var(--color-blue-ink);
+  --color-info-soft: color-mix(in srgb, var(--color-blue-700) 12%, transparent);
+
   --color-highlight: var(--sf-highlight);
   --color-highlight-active: var(--sf-highlight-active);
   --color-selection: var(--sf-selection);
@@ -284,6 +304,17 @@
   --color-chart-3: var(--sf-chart-3);
   --color-chart-4: var(--sf-chart-4);
   --color-chart-5: var(--sf-chart-5);
+  --color-chart-6: var(--sf-chart-6);
+  --color-chart-7: var(--sf-chart-7);
+  --color-chart-8: var(--sf-chart-8);
+  --color-data-1: var(--sf-data-1);
+  --color-data-2: var(--sf-data-2);
+  --color-data-3: var(--sf-data-3);
+  --color-data-4: var(--sf-data-4);
+  --color-data-5: var(--sf-data-5);
+  --color-data-6: var(--sf-data-6);
+  --color-data-7: var(--sf-data-7);
+  --color-data-8: var(--sf-data-8);
 }
 
 @layer base {
@@ -552,11 +583,24 @@
     /* El halo del botón de IA sólido: lo que dice «esto es de la IA» sin un borde. */
     --sf-shadow-ai: 0 3px 8px -3px color-mix(in srgb, var(--sf-ai-solid) 70%, transparent);
 
-    --sf-chart-1: var(--sf-blue-700);
-    --sf-chart-2: var(--sf-amber-900);
-    --sf-chart-3: var(--sf-pink-700);
-    --sf-chart-4: var(--sf-purple-700);
-    --sf-chart-5: var(--sf-green-700);
+    /* Paleta de datos (3.0): 8 series que se distinguen con daltonismo (deuteranopía, protanopía y tritanopía, ΔE OKLab ≥ 0,06) y llegan a 3:1
+       contra la página, en claro y en oscuro (`test/data-palette.test.ts`). Independiente de la marca. `--sf-chart-n` son alias para Chart. */
+    --sf-data-1: #4845a5;
+    --sf-data-2: #cb6620;
+    --sf-data-3: #2c9a88;
+    --sf-data-4: #a45859;
+    --sf-data-5: #8968f4;
+    --sf-data-6: #80421a;
+    --sf-data-7: #6d4177;
+    --sf-data-8: #8b5d96;
+    --sf-chart-1: var(--sf-data-1);
+    --sf-chart-2: var(--sf-data-2);
+    --sf-chart-3: var(--sf-data-3);
+    --sf-chart-4: var(--sf-data-4);
+    --sf-chart-5: var(--sf-data-5);
+    --sf-chart-6: var(--sf-data-6);
+    --sf-chart-7: var(--sf-data-7);
+    --sf-chart-8: var(--sf-data-8);
   }
 
   .dark {
@@ -646,11 +690,23 @@
     --sf-shadow-badge: 0 1px 2px 0 #00000066;
     --sf-shadow-thumbnail: 0 0 0 1px #000000a6;
 
-    --sf-chart-1: var(--sf-blue-700);
-    --sf-chart-2: var(--sf-amber-600);
-    --sf-chart-3: var(--sf-pink-700);
-    --sf-chart-4: var(--sf-purple-700);
-    --sf-chart-5: var(--sf-green-700);
+    /* La paleta de datos en oscuro: más clara, para 3:1 contra #1C1C1E. */
+    --sf-data-1: #878bf2;
+    --sf-data-2: #fbbb87;
+    --sf-data-3: #83e0c1;
+    --sf-data-4: #e996a2;
+    --sf-data-5: #b7b931;
+    --sf-data-6: #dfb9fc;
+    --sf-data-7: #b9914b;
+    --sf-data-8: #6e6e73;
+    --sf-chart-1: var(--sf-data-1);
+    --sf-chart-2: var(--sf-data-2);
+    --sf-chart-3: var(--sf-data-3);
+    --sf-chart-4: var(--sf-data-4);
+    --sf-chart-5: var(--sf-data-5);
+    --sf-chart-6: var(--sf-data-6);
+    --sf-chart-7: var(--sf-data-7);
+    --sf-chart-8: var(--sf-data-8);
   }
 }
 

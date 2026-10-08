@@ -73,7 +73,7 @@ function FieldLabel({ className, required = false, indicator = false, children, 
     >
       {children}
       {(required || indicator) && (
-        <span aria-hidden="true" className="text-red-900">
+        <span aria-hidden="true" className="text-danger-ink">
           *
         </span>
       )}
@@ -143,7 +143,7 @@ function FieldError({ className, alert = false, ...props }: FieldErrorProps) {
       data-slot="field-error"
       role={alert ? "alert" : undefined}
       className={cn(
-        "animate-rise text-callout text-red-900",
+        "animate-rise text-callout text-danger-ink",
         // Con más de un mensaje, Base UI los mete en un `<ul>` sin estilo, que
         // el reset de Tailwind deja como un párrafo pegado. Con viñeta y
         // sangría se lee que son dos problemas distintos y no una frase larga.

@@ -44,7 +44,7 @@ describe("Icon", () => {
     )
     expect(screen.getByTestId("current").getAttribute("class")).not.toMatch(/text-/)
     expect(screen.getByTestId("current")).toHaveAttribute("stroke", "currentColor")
-    expect(screen.getByTestId("danger")).toHaveClass("text-red-900")
+    expect(screen.getByTestId("danger")).toHaveClass("text-danger-ink")
     expect(screen.getByTestId("brand")).toHaveClass("text-brand-900")
   })
 
