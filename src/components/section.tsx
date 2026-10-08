@@ -27,13 +27,12 @@ type SectionProps = React.ComponentProps<"section"> & {
   innerClassName?: string
 }
 
-function Section({ variant = "default", maxWidth = "1080px", innerClassName, className, style, children, ...props }: SectionProps) {
+function Section({ variant = "default", maxWidth = "1080px", innerClassName, className, children, ...props }: SectionProps) {
   return (
     <section
       data-slot="section"
       data-variant={variant}
       className={cn("w-full scroll-mt-20", variant === "grouped" && "border-y border-separator bg-grouped", className)}
-      style={style}
       {...props}
     >
       <div className={cn("mx-auto flex w-full flex-col gap-10 px-4", variant === "grouped" ? "py-16" : "py-4", innerClassName)} style={{ maxWidth }}>

@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { Bitter } from "next/font/google"
 import { ViewTransition } from "react"
 import { Button } from "sebs7n-ui/button"
 import { PageHeader, PageHeaderDescription, PageHeaderTitle } from "sebs7n-ui/page-header"
@@ -7,11 +8,22 @@ import { SectionBackdrop } from "sebs7n-ui/section-backdrop"
 import { SectionHeader } from "sebs7n-ui/section-header"
 import { WindowFrame } from "sebs7n-ui/window-frame"
 
+import { AiGlow } from "sebs7n-ui/ai-button"
+import { Card, CardContent } from "sebs7n-ui/card"
+import { Basic as WaitlistDemo, WithError as WaitlistErrorDemo } from "../../_demos/waitlist-form"
+import { Definitions, Numbered } from "../../_demos/ruled-list"
+import { Grouped } from "../../_demos/section"
+import { Basic as ThemeSwitcherLazyDemo } from "../../_demos/theme-switcher-lazy"
+import { NeutralTintToggle } from "../../_components/neutral-tint-toggle"
 import { Basic as NavbarMobileMenuDemo } from "../../_demos/navbar-mobile-menu"
 import { Basic as ScrollStoryDemo } from "../../_demos/scroll-story"
 import { Variants as BackdropVariants } from "../../_demos/section-backdrop"
 import { Basic as SkipLinkDemo } from "../../_demos/skip-link"
 import { Basic as WindowFrameDemo, Elevations } from "../../_demos/window-frame"
+
+// Solo para esta página: la fuente de titulares de una landing de ejemplo (Bitter), cargada como lo haría una app
+// (`--font-heading`). El sitio sigue en Inter; el paquete no trae fuentes.
+const bitter = Bitter({ subsets: ["latin"], variable: "--font-heading", display: "swap" })
 
 export const metadata: Metadata = {
   title: "Marketing",
@@ -45,6 +57,7 @@ export default function MarketingPage() {
           </PageHeaderDescription>
         </PageHeader>
 
+        <div className={`${bitter.variable} flex flex-col gap-20`}>
         <SectionBackdrop className="-mx-4 rounded-surface px-4 py-16 @lg:-mx-8 @lg:px-8" variant="grid">
           <div className="flex flex-col gap-6">
             <Reveal>
@@ -97,6 +110,8 @@ export default function MarketingPage() {
           </div>
         </Block>
 
+        </div>
+
         <Block
           description="Tres texturas quietas, opt-in por sección. Se apagan hacia los bordes y siguen el tema claro y oscuro."
           id="fondos"
@@ -138,9 +153,43 @@ export default function MarketingPage() {
           <ScrollStoryDemo />
         </Block>
 
+        <Block
+          description="Los grises, las superficies, los filetes y el texto se inclinan hacia el matiz de la marca (croma 0,005 a 0,01) solo donde se activa `data-neutral-tint` en `<html>`. Probalo: el sitio entero cambia mientras estás en esta página."
+          id="tinte"
+          title="Neutros con tinte de marca"
+        >
+          <NeutralTintToggle />
+        </Block>
+
+        <Block description="Funciones, preguntas o un modelo de seguridad como lista con filetes y numeración, en vez de cards idénticas con ícono. Y una franja `grouped` a todo el ancho." id="listas" title="RuledList, DefinitionList y Section">
+          <div className="grid gap-8 @3xl:grid-cols-2">
+            <Numbered />
+            <Definitions />
+          </div>
+          <Grouped />
+        </Block>
+
+        <Block description="El borde de la IA mientras trabaja, tintado con la marca de la app (`tint=&quot;brand&quot;`) en vez del violeta y magenta del paquete." id="glow" title="AiGlow tintable">
+          <Card className="relative max-w-md">
+            <AiGlow active tint="brand" />
+            <CardContent>
+              <p className="text-headline text-label">Leyendo el documento</p>
+              <p className="text-callout text-label-secondary">Una señal de estado: solo está encendido mientras la IA trabaja.</p>
+            </CardContent>
+          </Card>
+        </Block>
+
+        <Block description="Email, un campo opcional, consentimiento y los estados de enviando, error y éxito. El envío es de la app." id="espera" title="WaitlistForm">
+          <div className="grid gap-8 @3xl:grid-cols-2">
+            <WaitlistDemo />
+            <WaitlistErrorDemo />
+          </div>
+        </Block>
+
         <Block description="Dos piezas chicas que una landing necesita: «Ir al contenido» y el menú de la barra en el teléfono." id="navegacion" title="SkipLink y NavbarMobileMenu">
           <SkipLinkDemo />
           <NavbarMobileMenuDemo />
+          <ThemeSwitcherLazyDemo />
         </Block>
       </div>
     </ViewTransition>

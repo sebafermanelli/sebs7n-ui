@@ -214,3 +214,18 @@ El espaciado interno de `Card` sale de `--card-spacing`, que se puede pisar punt
 ```tsx
 <AppShell className="[--app-shell-height:720px]" … />
 ```
+
+## Neutros con tinte de marca (opt-in)
+
+Por defecto los grises del sistema son los de iCloud, sin matiz. Si la marca es sobria y querés que se sienta en todo —no solo en el acento—, prendé `data-neutral-tint` en `<html>`: la página, las superficies, los filetes, los rellenos y el texto se inclinan hacia el matiz de la marca con un croma de 0,005 a 0,01 (OKLCH). Se siente, no se ve.
+
+```tsx
+<html className="…" data-neutral-tint lang="es">
+```
+
+- **Va en `<html>`** (junto a `.dark` y las variables `--sf-*`): un token se resuelve en el elemento que lo declara, así que no se puede acotar a un `<div>`.
+- **Sigue la marca**: usa `--brand-base` en claro y `--brand-base-dark` en oscuro; cambiar la marca cambia el tinte.
+- **Se ajusta** con `--neutral-tint-chroma` (default `0.008`; entre `0.005` y `0.01` es sutil).
+- **Sin el atributo no cambia nada**: ni un valor ni un hex. Las luminosidades son las de los grises de siempre, así que el contraste no se mueve: `test/neutral-tint.test.ts` lo mide con siete matices y tres crómas, y `label-secondary` sigue sobre 4,5:1 en todas las superficies. Lo tintado: `background`, `surface*`, `group`, `separator*`, `fill-*`, `hairline` y `label*`. Los tokens de color (`gray-*`, `red-*`…) no se tocan.
+
+Hay un interruptor para verlo en vivo en [Marketing](/docs/marketing).

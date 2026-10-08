@@ -90,6 +90,10 @@ Para el hero de una landing, cuatro roles fluidos con más contraste que `text-l
 
 El énfasis dentro de un titular es de **color sólido o de peso, nunca un degradé**: `emphasis-accent` (el acento como texto, AA), `emphasis-strong` (700) y `emphasis-muted` (el resto de la frase en `label-secondary`). `ease-out-expo` es la curva `cubic-bezier(0.16, 1, 0.3, 1)` de `Reveal`.
 
+### Neutros con tinte (opt-in)
+
+`data-neutral-tint` en `<html>` inclina los grises hacia el matiz de la marca (croma 0,008). Los valores salen de `theme.css`; ver [Theming](/docs/theming) para el uso y las garantías de contraste.
+
 Las clases de Geist (`text-copy-*`, `text-label-<n>`, `text-heading-*`, `text-button-*`) **siguen andando** y `cn()` las sigue fusionando, pero están obsoletas: el paquete ya no las usa y se van en 3.0.
 
 ## Radios
