@@ -18,7 +18,7 @@ import {
   ComboboxStatus,
   type ComboboxLabelProps,
 } from "./combobox.js"
-import { useControlSize } from "../internal/control-size.js"
+import { useControlSize } from "../lib/control-size.js"
 
 // Texto libre con sugerencias: el valor es el texto del input (value/onValueChange son strings).
 // Popup, lista, grupos, vacío y estado son las mismas piezas que Combobox.

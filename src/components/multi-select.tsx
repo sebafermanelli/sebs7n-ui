@@ -19,7 +19,7 @@ import {
   ComboboxList,
   ComboboxStatus,
 } from "./combobox.js"
-import { useControlSize } from "../internal/control-size.js"
+import { useControlSize } from "../lib/control-size.js"
 
 /**
  * Elegir varias opciones de una lista: los elegidos como chips (el `Tag` del sistema) en la

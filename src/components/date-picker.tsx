@@ -20,7 +20,7 @@ import {
 } from "../variants/input.js"
 import { Button } from "./button.js"
 import { Calendar } from "./calendar.js"
-import { useControlSize } from "../internal/control-size.js"
+import { useControlSize } from "../lib/control-size.js"
 
 type DatePickerLabels = Labels["datePicker"]
 

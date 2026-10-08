@@ -86,6 +86,8 @@ export default [
     // 2.13.0: 63,08 KB. `FilterBar size` (contexto `internal/control-size` leído por Button, Input, Select, ToggleGroup, NumberField,
     // MultiSelect, fechas, buscador; y su reinicio en popups, diálogos y hojas) +0,25 kB; los estilos de `Table stacked` y de
     // `Card span` se movieron a `base.css` para no sumar JS. Umbral a 63,5 (sin avisar a Sebastián: ver el informe de 2.13.0).
+    // 2.15.0: 63,26 kB (+0,10). `Form size` y `Checkbox size` leen el contexto de tamaño, y `ControlSizeProvider`
+    // sale por el barrel; `SectionHeader`, `DocumentSheet`, `ScrollSequence` y `TextDiff` van solo por subpath.
     limit: "63.5 kB",
   },
 ]

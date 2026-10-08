@@ -11,7 +11,7 @@ import { useFormReset } from "../internal/form-reset.js"
 import { cn } from "../lib/utils.js"
 import { DatePicker } from "./date-picker.js"
 import { TimePicker } from "./time-picker.js"
-import { useControlSize } from "../internal/control-size.js"
+import { useControlSize } from "../lib/control-size.js"
 
 type DateTimePickerProps = {
   /** La fecha y hora elegidas. `null` es ninguna. Pasarlo lo vuelve controlado. */

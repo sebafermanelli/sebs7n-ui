@@ -8,7 +8,7 @@ import { mergeRefs } from "../internal/merge-refs.js"
 import { useLabels, type Labels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput, type InputGroupInputProps } from "./input-group.js"
-import { useControlSize } from "../internal/control-size.js"
+import { useControlSize } from "../lib/control-size.js"
 
 type SearchFieldLabels = NonNullable<Labels["searchField"]>
 

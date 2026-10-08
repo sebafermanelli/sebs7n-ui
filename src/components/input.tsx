@@ -10,7 +10,7 @@ import {
   inputPaddingClassName,
   inputSizeClassName,
 } from "../variants/input.js"
-import { useControlSize } from "../internal/control-size.js"
+import { useControlSize } from "../lib/control-size.js"
 
 type InputProps = Omit<InputPrimitive.Props, "className" | "size"> & {
   className?: string

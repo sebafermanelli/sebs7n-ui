@@ -5,7 +5,7 @@ import { AlertDialog as AlertDialogPrimitive } from "@base-ui/react/alert-dialog
 
 import { cn, type WithClassName } from "../lib/utils.js"
 import { alertFooterClassName, alertWidthClassName, backdropClassName, modalPopupClassName } from "../variants/overlay.js"
-import { ControlSizeProvider } from "../internal/control-size.js"
+import { ControlSizeProvider } from "../lib/control-size.js"
 import type { ButtonTextSize } from "../variants/button.js"
 import { Button, type ButtonBaseProps } from "./button.js"
 

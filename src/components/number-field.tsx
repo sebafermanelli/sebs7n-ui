@@ -7,7 +7,7 @@ import { MinusIcon, PlusIcon } from "lucide-react"
 import { useLabels } from "../lib/labels.js"
 import { cn, type WithClassName } from "../lib/utils.js"
 import { inputShellButtonClassName, inputShellClassName, inputShellInputClassName } from "../variants/input.js"
-import { useControlSize } from "../internal/control-size.js"
+import { useControlSize } from "../lib/control-size.js"
 
 /**
  * Un número, con botones de −/+ y formato por locale.

@@ -3,7 +3,7 @@
 import { Checkbox as CheckboxPrimitive } from "@base-ui/react/checkbox"
 import { CheckIcon, MinusIcon } from "lucide-react"
 
-import { useControlSize } from "../internal/control-size.js"
+import { useControlSize } from "../lib/control-size.js"
 import { cn, type WithClassName } from "../lib/utils.js"
 
 type CheckboxProps = WithClassName<CheckboxPrimitive.Root.Props> & {

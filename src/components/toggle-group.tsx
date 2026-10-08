@@ -11,7 +11,7 @@ import { renderElement, type RenderElement } from "../lib/render.js"
 import { cn, type WithClassName } from "../lib/utils.js"
 import { segmentedGroupClassName, segmentedItemClassName, segmentedTrackClassName } from "../variants/segmented.js"
 import type { ToggleProps } from "./toggle.js"
-import { useControlSize } from "../internal/control-size.js"
+import { useControlSize } from "../lib/control-size.js"
 
 type ToggleGroupProps = WithClassName<ToggleGroupPrimitive.Props> & {
   /**

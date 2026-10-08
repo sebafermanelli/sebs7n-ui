@@ -2,7 +2,7 @@
 
 import { Form as FormPrimitive } from "@base-ui/react/form"
 
-import { ControlSizeProvider, type ControlSize } from "../internal/control-size.js"
+import { ControlSizeProvider, type ControlSize } from "../lib/control-size.js"
 import { cn, type WithClassName } from "../lib/utils.js"
 
 /**

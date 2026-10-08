@@ -1,6 +1,6 @@
 import type * as React from "react"
 
-import { ControlSizeProvider, type ControlSize } from "../internal/control-size.js"
+import { ControlSizeProvider, type ControlSize } from "../lib/control-size.js"
 import { cn } from "../lib/utils.js"
 
 type FilterBarProps = Omit<React.ComponentProps<"div">, "children"> & {

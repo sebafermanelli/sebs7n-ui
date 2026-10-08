@@ -2,7 +2,7 @@
 
 import { Button as ButtonPrimitive } from "@base-ui/react/button"
 
-import { useContextControlSize } from "../internal/control-size.js"
+import { useContextControlSize } from "../lib/control-size.js"
 import { cn, type WithClassName } from "../lib/utils.js"
 import {
   buttonVariants,

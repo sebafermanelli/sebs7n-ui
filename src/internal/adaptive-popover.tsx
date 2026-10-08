@@ -4,7 +4,7 @@ import * as React from "react"
 import { Popover as PopoverPrimitive } from "@base-ui/react/popover"
 
 import { cn } from "../lib/utils.js"
-import { ControlSizeProvider } from "../internal/control-size.js"
+import { ControlSizeProvider } from "../lib/control-size.js"
 import { floatingPopupClassName } from "../variants/overlay.js"
 
 /**

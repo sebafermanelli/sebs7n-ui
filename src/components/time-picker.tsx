@@ -15,7 +15,7 @@ import { cn } from "../lib/utils.js"
 import { inputShellClassName, inputShellInputClassName } from "../variants/input.js"
 import { menuGutterClassName, menuIndicatorClassName } from "../variants/menu.js"
 import { AutocompleteContent, AutocompleteItem, AutocompleteList } from "./autocomplete.js"
-import { useControlSize } from "../internal/control-size.js"
+import { useControlSize } from "../lib/control-size.js"
 
 type TimePickerProps = {
   /** La hora elegida, «HH:MM» en 24 h. `null` es ninguna. Pasarlo lo vuelve controlado. */

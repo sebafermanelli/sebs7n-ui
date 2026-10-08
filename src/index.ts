@@ -28,7 +28,7 @@ export {
 } from "./lib/dates.js"
 export { paginationRange, type PaginationRangeOptions, type PaginationSlot } from "./lib/pagination.js"
 export { defaultLabels, LabelsProvider, useLabels, type Labels, type PartialLabels } from "./lib/labels.js"
-export { ControlSizeProvider, useControlSize, type ControlSize } from "./lib/control-size.js"
+export { ControlSizeProvider, useContextControlSize, useControlSize, type ControlSize } from "./lib/control-size.js"
 export { renderElement, type RenderElement } from "./lib/render.js"
 export {
   fieldValidator,
