@@ -2,6 +2,7 @@
 
 import { Form as FormPrimitive } from "@base-ui/react/form"
 
+import { ControlSizeProvider, type ControlSize } from "../internal/control-size.js"
 import { cn, type WithClassName } from "../lib/utils.js"
 
 /**
@@ -38,13 +39,23 @@ import { cn, type WithClassName } from "../lib/utils.js"
  * `sebs7n-ui/lib/schema`, que traduce el schema a lo que esperan `Form` y
  * `Field`.
  */
-type FormProps<Values extends Record<string, unknown> = Record<string, unknown>> = WithClassName<FormPrimitive.Props<Values>>
+type FormProps<Values extends Record<string, unknown> = Record<string, unknown>> = WithClassName<FormPrimitive.Props<Values>> & {
+  /**
+   * El tamaño de todos los controles de adentro (`Input`, `Select`, `Checkbox`, `Button`…), para no
+   * escribir `size` en cada uno: el que declara el suyo gana, y los popups y diálogos lo reinician.
+   * Sin `size`, cada control usa su default.
+   */
+  size?: ControlSize
+}
 
 function Form<Values extends Record<string, unknown> = Record<string, unknown>>({
   className,
+  size,
   ...props
 }: FormProps<Values>) {
-  return <FormPrimitive data-slot="form" className={cn("flex flex-col gap-6", className)} {...props} />
+  const form = <FormPrimitive data-slot="form" className={cn("flex flex-col gap-6", className)} {...props} />
+  // Sin `size` no se monta el provider: un Form dentro de una `FilterBar` sigue heredando el de la barra.
+  return size ? <ControlSizeProvider size={size}>{form}</ControlSizeProvider> : form
 }
 
 export { Form, type FormProps }
