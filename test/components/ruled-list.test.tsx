@@ -63,4 +63,19 @@ describe("DefinitionList", () => {
     expect(container.querySelectorAll("dl > div > dt")).toHaveLength(2)
     expect(container.querySelector("dd")).toHaveTextContent("30 días corridos.")
   })
+
+  it("la columna del término se ajusta al término y lo parte si no entra, sin pegarse al detalle", () => {
+    const { container } = render(
+      <DefinitionList>
+        <DefinitionItem term="/docs/components/button.md">Cualquier página como markdown.</DefinitionItem>
+      </DefinitionList>
+    )
+    const item = container.querySelector('[data-slot="definition-item"]') as HTMLElement
+    expect(item.className).toContain("@lg:grid-cols-[fit-content(45%)_minmax(0,1fr)]")
+    expect(item.className).toContain("@lg:gap-6")
+    expect(item.className).not.toContain("12rem_")
+    const dt = container.querySelector("dt") as HTMLElement
+    expect(dt.className).toContain("[overflow-wrap:anywhere]")
+    expect(dt.className).toContain("@lg:min-w-48")
+  })
 })

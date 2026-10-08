@@ -23,7 +23,7 @@ export default function SiteNav() {
             {entry.items ? (
               <>
                 <NavigationMenuTrigger>{entry.label}</NavigationMenuTrigger>
-                <NavigationMenuContent className="sm:w-80">
+                <NavigationMenuContent>
                   <ul className="grid gap-0.5">
                     {entry.items.map((item) => (
                       <li key={item.href}>

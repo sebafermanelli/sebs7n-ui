@@ -124,16 +124,22 @@ function NavigationMenuContent({ className, ...props }: NavigationMenuContentPro
       className={cn(
         // `[&[hidden]]:hidden`: con `keepMounted` el contenido cerrado vive oculto en la barra, y
         // una grilla en el `className` (`grid`, `flex`) le ganaría al `hidden` del navegador.
-        "h-full w-[calc(100vw-2.5rem)] p-1.25 sm:w-max sm:min-w-64 [&[hidden]]:hidden",
+        // El ancho sale del contenido de cada ítem (`w-max`) acotado entre 16 y 26 rem: al pasar de un
+        // panel a otro el popup se ajusta al que entra (Base UI anima `--popup-width`) y una
+        // descripción larga baja a una segunda línea en vez de empujar el panel hasta el borde.
+        "h-full w-[calc(100vw-2.5rem)] p-1.25 sm:w-max sm:max-w-[min(26rem,calc(100vw-2.5rem))] sm:min-w-64 [&[hidden]]:hidden",
         // Entra y sale en la dirección desde la que venís, como en vercel.com:
         // pasar de un panel al de al lado se lee como un desplazamiento, no
         // como dos paneles distintos.
         "transition-[opacity,translate] duration-150 ease-out-expo motion-reduce:transition-none",
         "data-starting-style:opacity-0 data-ending-style:opacity-0",
-        "data-starting-style:data-[activation-direction=left]:-translate-x-1/4",
-        "data-starting-style:data-[activation-direction=right]:translate-x-1/4",
-        "data-ending-style:data-[activation-direction=left]:translate-x-1/4",
-        "data-ending-style:data-[activation-direction=right]:-translate-x-1/4",
+        // 8 px y no un cuarto del ancho: con paneles de anchos distintos, un cuarto barría medio panel
+        // por debajo del `overflow-hidden` y el saliente se solapaba con el entrante.
+        "data-ending-style:pointer-events-none",
+        "data-starting-style:data-[activation-direction=left]:-translate-x-2",
+        "data-starting-style:data-[activation-direction=right]:translate-x-2",
+        "data-ending-style:data-[activation-direction=left]:translate-x-2",
+        "data-ending-style:data-[activation-direction=right]:-translate-x-2",
         "motion-reduce:data-starting-style:translate-x-0 motion-reduce:data-ending-style:translate-x-0",
         className
       )}
@@ -158,7 +164,7 @@ type NavigationMenuLinkProps = Omit<NavigationMenuPrimitive.Link.Props, "classNa
   className?: string
   /** Título del ítem. Con él, el link se arma como tarjeta del mega menú. */
   title?: React.ReactNode
-  /** Una línea, no dos: se trunca. Dice a quién le sirve la página, no qué es. */
+  /** Hasta dos líneas (después se corta con puntos suspensivos y `title`). Dice a quién le sirve la página, no qué es. */
   description?: React.ReactNode
   /** Ícono de 16px a la izquierda. Opcional. */
   icon?: React.ReactNode
@@ -208,7 +214,11 @@ function NavigationMenuLink({ className, title, description, icon, children, ...
             {title}
           </span>
           {description && (
-            <span data-slot="navigation-menu-link-description" className="truncate text-callout text-label-secondary">
+            <span
+              data-slot="navigation-menu-link-description"
+              title={typeof description === "string" ? description : undefined}
+              className="line-clamp-2 text-callout text-label-secondary"
+            >
               {description}
             </span>
           )}
@@ -229,10 +239,20 @@ function NavigationMenuLink({ className, title, description, icon, children, ...
 type NavigationMenuPositionerProps = NavigationMenuPrimitive.Positioner.Props &
   Pick<NavigationMenuPrimitive.Portal.Props, "container">
 
+/** 0,1875 rem = 3 px: padding del trigger (0,625) menos el aire del panel y del link (0,8125). */
+const alignToTriggerLabel = () => {
+  const rem = typeof document === "undefined" ? 16 : Number.parseFloat(getComputedStyle(document.documentElement).fontSize) || 16
+  return -0.1875 * rem
+}
+
 function NavigationMenuPositioner({
   className,
   container,
   align = "start",
+  // El panel arranca 3 px a la izquierda del trigger para que el texto de sus links (5 + 8 px de
+  // aire por dentro) caiga justo debajo del texto del trigger (10 px de padding): alinear los
+  // bordes dejaba el panel 11 px "afuera" del rótulo que lo abre.
+  alignOffset = alignToTriggerLabel,
   side = "bottom",
   sideOffset = 8,
   collisionPadding = 16,
@@ -243,6 +263,7 @@ function NavigationMenuPositioner({
       <NavigationMenuPrimitive.Positioner
         data-slot="navigation-menu-positioner"
         align={align}
+        alignOffset={alignOffset}
         side={side}
         sideOffset={sideOffset}
         collisionPadding={collisionPadding}
@@ -304,6 +325,7 @@ type NavigationMenuViewportProps = WithClassName<NavigationMenuPrimitive.Viewpor
   align?: NavigationMenuPrimitive.Positioner.Props["align"]
   side?: NavigationMenuPrimitive.Positioner.Props["side"]
   sideOffset?: NavigationMenuPrimitive.Positioner.Props["sideOffset"]
+  alignOffset?: NavigationMenuPrimitive.Positioner.Props["alignOffset"]
   container?: NavigationMenuPrimitive.Portal.Props["container"]
 }
 
@@ -314,6 +336,7 @@ function NavigationMenuViewport({
   align,
   side,
   sideOffset,
+  alignOffset,
   container,
   ...props
 }: NavigationMenuViewportProps) {
@@ -322,6 +345,7 @@ function NavigationMenuViewport({
       align={align}
       side={side}
       sideOffset={sideOffset}
+      alignOffset={alignOffset}
       container={container}
       className={positionerClassName}
     >

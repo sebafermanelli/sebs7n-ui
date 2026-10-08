@@ -81,8 +81,11 @@ type DefinitionItemProps = Omit<React.ComponentProps<"div">, "title"> & {
 /** Un par término/detalle: `children` es el detalle (`<dd>`). */
 function DefinitionItem({ term, className, children, ...props }: DefinitionItemProps) {
   return (
-    <div data-slot="definition-item" className={cn("grid gap-1 border-b border-separator py-4 @lg:grid-cols-[12rem_minmax(0,1fr)] @lg:gap-6", className)} {...props}>
-      <dt className="text-callout font-semibold text-label">{term}</dt>
+    <div data-slot="definition-item" className={cn(// La columna del término mide lo que mide el término (mínimo 12 rem, que va en el `dt`, y tope
+        // 45 %): con 12 rem fijos, una ruta en monoespaciado (`/docs/components/button.md`) se
+        // salía de la columna y quedaba pegada al detalle. El `gap-6` queda siempre entre las dos.
+        "grid gap-1 border-b border-separator py-4 @lg:grid-cols-[fit-content(45%)_minmax(0,1fr)] @lg:gap-6", className)} {...props}>
+      <dt className="min-w-0 text-callout font-semibold text-label [overflow-wrap:anywhere] @lg:min-w-48">{term}</dt>
       <dd className="m-0 text-callout text-label-secondary">{children}</dd>
     </div>
   )

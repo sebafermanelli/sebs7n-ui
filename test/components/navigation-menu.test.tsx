@@ -178,4 +178,29 @@ describe("NavigationMenu", () => {
     expect(link.tagName).toBe("A")
     expect(link.closest("ul")).toBeTruthy()
   })
+  it("el ancho sale del contenido, acotado, y la descripción baja a dos líneas con title", async () => {
+    render(<Nav />)
+    await userEvent.click(trigger())
+    const content = await waitFor(() => {
+      const el = document.querySelector('[data-slot="navigation-menu-content"]:not([hidden])')
+      expect(el).not.toBeNull()
+      return el as HTMLElement
+    })
+    expect(content.className).toContain("sm:w-max")
+    expect(content.className).toContain("sm:min-w-64")
+    expect(content.className).toContain("sm:max-w-[min(26rem,calc(100vw-2.5rem))]")
+    const description = document.querySelector('[data-slot="navigation-menu-link-description"]') as HTMLElement
+    expect(description.className).toContain("line-clamp-2")
+    expect(description.className).not.toContain("truncate")
+    expect(description).toHaveAttribute("title", SERVICES[0]!.description)
+  })
+
+  it("el cruce entre paneles se desplaza 8 px y el saliente no recibe el mouse", async () => {
+    render(<Nav />)
+    await userEvent.click(trigger())
+    const content = await waitFor(() => document.querySelector('[data-slot="navigation-menu-content"]:not([hidden])') as HTMLElement)
+    expect(content.className).toContain("data-starting-style:data-[activation-direction=left]:-translate-x-2")
+    expect(content.className).not.toContain("translate-x-1/4")
+    expect(content.className).toContain("data-ending-style:pointer-events-none")
+  })
 })
