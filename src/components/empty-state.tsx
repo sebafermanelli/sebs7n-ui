@@ -11,6 +11,11 @@ type EmptyStateProps = Omit<React.ComponentProps<"div">, "title"> & {
   /** Botón o link para salir del vacío. Uno solo. */
   action?: React.ReactNode
   /**
+   * Una línea que enseña (3.0): cómo se llena esta pantalla o dónde se hace lo que falta («Las facturas que emitas
+   * aparecen acá»). Va debajo de la acción, en tono tenue. Un vacío que solo dice «no hay nada» no ayuda.
+   */
+  hint?: React.ReactNode
+  /**
    * `default`: un grupo plano para el vacío suelto en la página. `subtle`: la zona
    * hundida de `Card variant="subtle"`. `plain`: sin superficie, para adentro de una Card o de
    * una Table, que ya son el grupo. `placeholder`: el panel vacío de iCloud («No Message Selected»),
@@ -23,13 +28,13 @@ type EmptyStateProps = Omit<React.ComponentProps<"div">, "title"> & {
 // hundida de `subtle`, que en oscuro sobre la página negra casi no se veía. Adentro de una Card o
 // de una Table el grupo ya está, y un segundo borde con sombra es una caja adentro de otra: para
 // eso `subtle` (la de `cardVariants`) y `plain`, que no dibuja superficie.
-function EmptyState({ className, icon, title, titleAs: Title = "h2", description, action, variant = "default", children, ...props }: EmptyStateProps) {
+function EmptyState({ className, icon, title, titleAs: Title = "h2", description, action, hint, variant = "default", children, ...props }: EmptyStateProps) {
   return (
     <div
       data-slot="empty-state"
       data-variant={variant}
       className={cn(
-        "flex flex-col text-callout text-label",
+        "flex animate-rise flex-col text-callout text-label",
         // Desde R5a la Card es un widget con sombra; el vacío sigue siendo un grupo plano.
         variant === "default" && "rounded-surface bg-grouped",
         variant === "subtle" && "rounded-surface bg-fill-1",
@@ -49,7 +54,7 @@ function EmptyState({ className, icon, title, titleAs: Title = "h2", description
         </div>
       )}
       <div className="flex max-w-sm flex-col gap-1">
-        {/* El tenue de iCloud es el cuaternario; va el terciario, que en 28/600 (texto grande) llega a 3:1. */}
+        {/* El tenue de iCloud es el cuaternario; va el terciario, que en 32/600 (texto grande) llega a 3:1. */}
         <Title
           data-slot="empty-state-title"
           className={cn("font-display text-title-3 text-balance text-label", variant === "placeholder" && "text-title-1 text-label-tertiary")}
@@ -66,6 +71,11 @@ function EmptyState({ className, icon, title, titleAs: Title = "h2", description
         <div data-slot="empty-state-action" className="flex flex-wrap items-center justify-center gap-2">
           {action}
         </div>
+      )}
+      {hint && (
+        <p data-slot="empty-state-hint" className="max-w-sm text-footnote text-pretty text-label-secondary">
+          {hint}
+        </p>
       )}
       {children}
     </div>

@@ -4267,6 +4267,7 @@ export const COMPONENTS = {
         icon: "El ícono de arriba, dentro de su cuadrito. Es decoración (`aria-hidden`): el título tiene que alcanzar solo.",
         title: "Qué falta, en una línea. Sale como el heading que diga `titleAs`.",
         description: "La línea que explica por qué no hay nada y qué se puede hacer.",
+        hint: "Una línea que enseña cómo se llena la pantalla o dónde se hace lo que falta, debajo de la acción y en tono tenue (3.0).",
       },
     },
     related: ["alert", "card", "table"],

@@ -14,6 +14,7 @@ export function Basico() {
       <EmptyState
         action={<Button>Nueva factura</Button>}
         description="Cuando emitas la primera, va a aparecer acá con su estado y su vencimiento."
+        hint="También podés importarlas desde un archivo, en Más acciones."
         icon={<FileTextIcon />}
         title="Todavía no emitiste ninguna factura"
       />
