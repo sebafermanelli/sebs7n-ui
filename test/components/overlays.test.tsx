@@ -181,13 +181,13 @@ describe("Select", () => {
     )
     const elegida = await screen.findByRole("option", { name: "Pesos" })
     const otra = screen.getByRole("option", { name: "Dólares" })
-    expect(elegida).toHaveClass("pr-9")
-    expect(otra).toHaveClass("pr-9")
-    expect(elegida.querySelector("[data-slot=select-item-indicator]")).toHaveClass("right-2.5")
+    expect(elegida).toHaveClass("pe-9")
+    expect(otra).toHaveClass("pe-9")
+    expect(elegida.querySelector("[data-slot=select-item-indicator]")).toHaveClass("end-2.5")
     expect(elegida.querySelector("[data-slot=menu-check]")).toHaveClass("rounded-full", "bg-brand-900")
     // El título alinea con el texto de las opciones: los dos arrancan en px-2.5.
     expect(screen.getByText("Monedas")).toHaveClass("px-2.5")
-    expect(screen.getByText("Monedas").className).not.toMatch(/(^|\s)pl-7\b/)
+    expect(screen.getByText("Monedas").className).not.toMatch(/(^|\s)ps-7\b/)
   })
 })
 
@@ -264,7 +264,7 @@ describe("Select como pop-up button de macOS (2.0)", () => {
         </SelectContent>
       </Select>
     )
-    expect(await screen.findByRole("option", { name: "Pesos" })).toHaveClass("px-3", "pr-9")
+    expect(await screen.findByRole("option", { name: "Pesos" })).toHaveClass("px-3", "pe-9")
     expect(screen.getByText("Monedas")).toHaveClass("px-3")
   })
 
@@ -347,8 +347,8 @@ describe("diálogo de iCloud (2.0, R2)", () => {
     const x = await screen.findByRole("button", { name: "Cerrar" })
     // Con `p-5` el renglón del título (24 px) está centrado a 32 px del borde; la X mide 28, así
     // que va a 18 px (`4.5`) para que su centro caiga en la misma línea.
-    expect(x).toHaveClass("top-4.5", "left-4.5", "size-7", "rounded-control")
-    expect(x).not.toHaveClass("right-4.5", "size-9")
+    expect(x).toHaveClass("top-4.5", "start-4.5", "size-7", "rounded-control")
+    expect(x).not.toHaveClass("end-4.5", "size-9")
     expect(x.className).toContain("[&_svg:not([class*='size-'])]:size-3.5")
   })
 
@@ -365,7 +365,7 @@ describe("diálogo de iCloud (2.0, R2)", () => {
     expect(await screen.findByRole("heading", { name: "Factura 0012" })).toHaveClass("text-title-3")
     const header = screen.getByRole("dialog").querySelector('[data-slot="dialog-header"]')!
     expect(header).toHaveClass("text-center", "px-8")
-    expect(header).not.toHaveClass("pr-8")
+    expect(header).not.toHaveClass("pe-8")
   })
 })
 
@@ -432,7 +432,7 @@ describe("Hojas pegadas: la X", () => {
 describe("Hojas y el área segura (notch, isla, barra de gestos)", () => {
   it("la X suma el área segura de los bordes de pantalla que toca la hoja", () => {
     expect(overlayCloseClassName.split(" ")).toEqual(
-      expect.arrayContaining(["top-[calc(var(--sf-safe-top,0px)+1.125rem)]", "right-[calc(var(--sf-safe-right,0px)+1.125rem)]"])
+      expect.arrayContaining(["top-[calc(var(--sf-safe-top,0px)+1.125rem)]", "end-[calc(var(--sf-safe-right,0px)+1.125rem)]"])
     )
   })
 

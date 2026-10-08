@@ -25,7 +25,7 @@ function Collapsible({ className, ...props }: CollapsibleProps) {
 }
 
 const disclosureClassName =
-  "group/collapsible-trigger inline-flex cursor-pointer items-center gap-1.5 rounded-control text-left outline-none focus-visible:focus-ring"
+  "group/collapsible-trigger inline-flex cursor-pointer items-center gap-1.5 rounded-control text-start outline-none focus-visible:focus-ring"
 
 type CollapsibleTriggerProps = CollapsiblePrimitive.Trigger.Props & {
   /**

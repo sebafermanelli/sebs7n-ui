@@ -427,7 +427,7 @@ describe("SortableGrid", () => {
       render(<Removable />)
       const remove = screen.getByRole("button", { name: "Sacar Clientes" })
       expect(remove).toHaveAttribute("data-slot", "sortable-remove")
-      expect(remove).toHaveClass("absolute", "-top-2", "-left-2", "size-[22px]", "rounded-full", "touch-target")
+      expect(remove).toHaveClass("absolute", "-top-2", "-start-2", "size-[22px]", "rounded-full", "touch-target")
       // Gris oscuro como el de iOS (≥ 3:1 contra la cabecera de la card, ver contrast.test.ts).
       expect(remove).toHaveClass("bg-gray-800", "text-white")
       expect(remove).not.toHaveClass("bg-surface-bar")

@@ -119,10 +119,10 @@ describe("Tag", () => {
         React
       </Tag>
     )
-    expect(screen.getByText("React").closest("[data-slot=tag]")).toHaveClass("h-4", "pr-0.5")
+    expect(screen.getByText("React").closest("[data-slot=tag]")).toHaveClass("h-4", "pe-0.5")
     expect(screen.getByRole("button")).toHaveClass("size-3", "after:-inset-1.5")
     rerender(<Tag onRemove={() => {}}>React</Tag>)
-    expect(screen.getByText("React").closest("[data-slot=tag]")).toHaveClass("h-5", "pr-0.5")
+    expect(screen.getByText("React").closest("[data-slot=tag]")).toHaveClass("h-5", "pe-0.5")
     expect(screen.getByRole("button")).toHaveClass("size-4")
   })
 

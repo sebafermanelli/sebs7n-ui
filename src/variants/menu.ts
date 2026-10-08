@@ -52,7 +52,7 @@ export const menuItemDestructiveClassName = "text-red-ink [&>svg:first-child:not
  * emerald quedaban en 4,0–4,2). Es la misma regla que el botón `plain` (test/contrast.test.ts).
  */
 export const menuItemExternalClassName = "text-brand-ink"
-export const menuItemExternalIconClassName = "ml-auto size-3.5"
+export const menuItemExternalIconClassName = "ms-auto size-3.5"
 
 /**
  * El envoltorio del contenido de una opción de Select o Combobox. Ahí el ícono no es hijo directo
@@ -82,23 +82,23 @@ export const menuPopupClassName =
  * El tilde (R3): el **círculo de acento a la derecha** del «View as» de Drive, que es el Select de
  * iCloud. Reemplaza la canaleta izquierda de la fase 3 (la del menú de macOS). Cuatro piezas:
  *
- * - `menuGutterClassName` (`pr-9`) va en todo ítem que puede llevar tilde: `CheckboxItem`,
+ * - `menuGutterClassName` (`pe-9`) va en todo ítem que puede llevar tilde: `CheckboxItem`,
  *   `RadioItem` y las opciones de Select y Combobox (elegida o no: todas reservan el lugar, así el
- *   ancho del menú no cambia al marcar). El atajo, con su `ml-auto`, queda antes de esa columna.
+ *   ancho del menú no cambia al marcar). El atajo, con su `ms-auto`, queda antes de esa columna.
  * - `menuIndicatorClassName` ubica el tilde en la columna: 10 px del borde, 16 de círculo.
  * - `menuCheckClassName` es el círculo: `brand-900` (la tinta de link) con el tilde en el color de
  *   la superficie; claro sobre oscuro en claro, oscuro sobre claro en oscuro, como el día elegido
  *   del calendario de iCloud.
- * - `menuInsetClassName` (`data-inset:pl-9`) es lo que hace `inset` en un ítem común o un título:
+ * - `menuInsetClassName` (`data-inset:ps-9`) es lo que hace `inset` en un ítem común o un título:
  *   lo alinea con el texto de los ítems que llevan ícono (10 + 16 + 10).
  *
- * Los componentes ponen el `pr-9` **después** del `className` de la app en el `cn()`: un `px-3` de
- * la app haría que tailwind-merge descarte el `pr-9` si fuera antes, y el texto se metería debajo
+ * Los componentes ponen el `pe-9` **después** del `className` de la app en el `cn()`: un `px-3` de
+ * la app haría que tailwind-merge descarte el `pe-9` si fuera antes, y el texto se metería debajo
  * del tilde. Tailwind v4 emite `padding-right` después de `padding-inline`, así que le gana al `px-*`.
  */
-export const menuGutterClassName = "pr-9"
-export const menuInsetClassName = "data-inset:pl-9"
-export const menuIndicatorClassName = "pointer-events-none absolute right-2.5 flex items-center"
+export const menuGutterClassName = "pe-9"
+export const menuInsetClassName = "data-inset:ps-9"
+export const menuIndicatorClassName = "pointer-events-none absolute end-2.5 flex items-center"
 export const menuCheckClassName = "flex size-4 items-center justify-center rounded-full bg-brand-900 text-surface"
 
 /**

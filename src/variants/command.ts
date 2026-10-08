@@ -37,7 +37,7 @@ export const commandFilterClassName =
  * el dedo sube a 44 de verdad, como los ítems de menú: las filas están pegadas.
  */
 export const commandItemClassName =
-  "group/command-item relative flex min-h-7.5 pointer-coarse:min-h-11 cursor-pointer items-center gap-1.5 rounded-menu-item px-2.5 py-1 text-callout text-label outline-none select-none transition-control has-[>[data-slot=command-item-icon]]:pl-1 " +
+  "group/command-item relative flex min-h-7.5 pointer-coarse:min-h-11 cursor-pointer items-center gap-1.5 rounded-menu-item px-2.5 py-1 text-callout text-label outline-none select-none transition-control has-[>[data-slot=command-item-icon]]:ps-1 " +
   "data-highlighted:bg-fill-2 active:bg-fill-3 data-disabled:cursor-not-allowed data-disabled:text-label-tertiary [&_svg]:pointer-events-none [&_svg]:shrink-0"
 
 /**

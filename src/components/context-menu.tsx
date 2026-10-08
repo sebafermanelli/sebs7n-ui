@@ -232,7 +232,7 @@ function ContextMenuSeparator({ className, ...props }: ContextMenuSeparatorProps
 // `SidebarItemBadge`, por el mismo motivo.
 function ContextMenuShortcut({ className, children, ...props }: React.ComponentProps<"span">) {
   return (
-    <span data-slot="context-menu-shortcut" className={cn("ml-auto pl-4 text-callout", menuItemSecondaryClassName, className)} {...props}>
+    <span data-slot="context-menu-shortcut" className={cn("ms-auto ps-4 text-callout", menuItemSecondaryClassName, className)} {...props}>
       <span className="sr-only">,</span>{" "}
       {children}
     </span>
@@ -254,7 +254,7 @@ function ContextMenuSubTrigger({ className, inset, children, ...props }: Context
       {...props}
     >
       {children}
-      <ChevronRightIcon data-slot="context-menu-sub-icon" className="ml-auto text-label-secondary" />
+      <ChevronRightIcon data-slot="context-menu-sub-icon" className="ms-auto text-label-secondary" />
     </ContextMenuPrimitive.SubmenuTrigger>
   )
 }

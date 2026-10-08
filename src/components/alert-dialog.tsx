@@ -174,7 +174,7 @@ function AlertDialogDescription({ className, align = "center", ...props }: Alert
     <AlertDialogPrimitive.Description
       data-slot="alert-dialog-description"
       data-align={align}
-      className={cn("text-callout leading-5 text-pretty text-label-secondary", align === "start" && "w-full text-left", className)}
+      className={cn("text-callout leading-5 text-pretty text-label-secondary", align === "start" && "w-full text-start", className)}
       {...props}
     />
   )

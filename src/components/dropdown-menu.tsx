@@ -140,7 +140,7 @@ function DropdownMenuSeparator({ className, ...props }: DropdownMenuSeparatorPro
 // `SidebarItemBadge`, por el mismo motivo.
 function DropdownMenuShortcut({ className, children, ...props }: React.ComponentProps<"span">) {
   return (
-    <span data-slot="dropdown-menu-shortcut" className={cn("ml-auto pl-4 text-callout", menuItemSecondaryClassName, className)} {...props}>
+    <span data-slot="dropdown-menu-shortcut" className={cn("ms-auto ps-4 text-callout", menuItemSecondaryClassName, className)} {...props}>
       <span className="sr-only">,</span>{" "}
       {children}
     </span>
@@ -162,7 +162,7 @@ function DropdownMenuSubTrigger({ className, inset, children, ...props }: Dropdo
       {...props}
     >
       {children}
-      <ChevronRightIcon data-slot="dropdown-menu-sub-icon" className="ml-auto text-label-secondary" />
+      <ChevronRightIcon data-slot="dropdown-menu-sub-icon" className="ms-auto text-label-secondary" />
     </MenuPrimitive.SubmenuTrigger>
   )
 }

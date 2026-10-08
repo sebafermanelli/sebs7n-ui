@@ -90,7 +90,7 @@ function Toolbar({ className, onKeyDown, variant: variantProp = "bar", ...props 
         ],
         "data-[orientation=vertical]:w-fit data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-stretch",
         variant === "bar" &&
-          "data-[orientation=vertical]:min-h-0 data-[orientation=vertical]:border-b-0 data-[orientation=vertical]:border-r data-[orientation=vertical]:px-1.5 data-[orientation=vertical]:py-2.5",
+          "data-[orientation=vertical]:min-h-0 data-[orientation=vertical]:border-b-0 data-[orientation=vertical]:border-e data-[orientation=vertical]:px-1.5 data-[orientation=vertical]:py-2.5",
         className
       )}
       {...props}

@@ -34,7 +34,7 @@ export const tagVariants = ({ color = "gray", size = "md", removable = false, cl
     // El anillo de foco del botón de quitar es un box-shadow: con el
     // overflow-hidden del badge quedaría cortado justo donde importa.
     "max-w-full overflow-visible",
-    removable && (size === "sm" ? "gap-0.5 pr-0.5" : "gap-1 pr-0.5"),
+    removable && (size === "sm" ? "gap-0.5 pe-0.5" : "gap-1 pe-0.5"),
     className
   )
 

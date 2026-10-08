@@ -162,9 +162,9 @@ describe("Menubar", () => {
     const check = await screen.findByRole("menuitemcheckbox", { name: /Barra lateral/ })
     expect(check).toHaveAttribute("aria-checked", "true")
     // El tilde va en la columna de la derecha, después del atajo, que conserva su lugar.
-    expect(check).toHaveClass("pr-9")
-    expect(check.querySelector("[data-slot=menubar-item-indicator]")).toHaveClass("right-2.5")
-    expect(check.querySelector("[data-slot=menubar-shortcut]")).toHaveClass("ml-auto")
+    expect(check).toHaveClass("pe-9")
+    expect(check.querySelector("[data-slot=menubar-item-indicator]")).toHaveClass("end-2.5")
+    expect(check.querySelector("[data-slot=menubar-shortcut]")).toHaveClass("ms-auto")
   })
 
   it("el título abierto se marca con fondo y comparte la pastilla del sistema", async () => {

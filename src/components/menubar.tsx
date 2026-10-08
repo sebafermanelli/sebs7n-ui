@@ -199,7 +199,7 @@ function MenubarSeparator({ className, ...props }: MenubarSeparatorProps) {
 // `SidebarItemBadge`, por el mismo motivo.
 function MenubarShortcut({ className, children, ...props }: React.ComponentProps<"span">) {
   return (
-    <span data-slot="menubar-shortcut" className={cn("ml-auto pl-4 text-callout", menuItemSecondaryClassName, className)} {...props}>
+    <span data-slot="menubar-shortcut" className={cn("ms-auto ps-4 text-callout", menuItemSecondaryClassName, className)} {...props}>
       <span className="sr-only">,</span>{" "}
       {children}
     </span>
@@ -221,7 +221,7 @@ function MenubarSubTrigger({ className, inset, children, ...props }: MenubarSubT
       {...props}
     >
       {children}
-      <ChevronRightIcon data-slot="menubar-sub-icon" className="ml-auto text-label-secondary" />
+      <ChevronRightIcon data-slot="menubar-sub-icon" className="ms-auto text-label-secondary" />
     </MenuPrimitive.SubmenuTrigger>
   )
 }

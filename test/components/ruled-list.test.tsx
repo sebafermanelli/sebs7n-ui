@@ -47,7 +47,7 @@ describe("RuledList", () => {
       </RuledList>
     )
     expect(html).toContain("border-separator")
-    expect(html).not.toMatch(/border-l-|border-r-|shadow/)
+    expect(html).not.toMatch(/border-s-|border-e-|shadow/)
   })
 })
 

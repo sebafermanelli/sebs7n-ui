@@ -31,7 +31,7 @@ type ComboboxInputProps = Omit<ComboboxPrimitive.Input.Props, "className" | "siz
   /** Botón para vaciar; aparece solo cuando hay un valor. */
   showClear?: boolean
   labels?: { clear?: string; trigger?: string }
-  /** Un ícono adelante, adentro del campo (una lupa, un pin): decorativo. Reemplaza el `pl-10` a mano. */
+  /** Un ícono adelante, adentro del campo (una lupa, un pin): decorativo. Reemplaza el `ps-10` a mano. */
   startIcon?: React.ReactNode
 }
 
@@ -56,7 +56,7 @@ function ComboboxInput({
       data-size={size}
       // disabled en el input (no en el root) también apaga la superficie.
       data-disabled={disabled ? "" : undefined}
-      className={cn(inputShellClassName, (showTrigger || showClear) && "pr-1", groupClassName)}
+      className={cn(inputShellClassName, (showTrigger || showClear) && "pe-1", groupClassName)}
     >
       {startIcon && (
         <span aria-hidden="true" data-slot="input-start-icon" className={inputStartIconClassName}>
@@ -222,8 +222,8 @@ function ComboboxChips({ className, size = "md", showTrigger = true, showClear =
         // Un chip mide 20 y el `md` 36: con `py-1` y el borde el `self-center` reparte el aire. En
         // `sm` el chip mide 16 y el campo 28: `py-0.5`.
         wrap
-          ? "h-auto! data-[size=sm]:min-h-7 data-[size=md]:min-h-9 data-[size=lg]:min-h-10 pointer-coarse:data-[size=sm]:min-h-9 pointer-coarse:data-[size=md]:min-h-11 items-start py-1 data-[size=sm]:py-0.5 pr-1 pl-1"
-          : "h-7! data-[size=md]:h-9! data-[size=lg]:h-10! pointer-coarse:data-[size=sm]:h-9! pointer-coarse:data-[size=md]:h-11! items-center py-0 pr-1 pl-1",
+          ? "h-auto! data-[size=sm]:min-h-7 data-[size=md]:min-h-9 data-[size=lg]:min-h-10 pointer-coarse:data-[size=sm]:min-h-9 pointer-coarse:data-[size=md]:min-h-11 items-start py-1 data-[size=sm]:py-0.5 pe-1 ps-1"
+          : "h-7! data-[size=md]:h-9! data-[size=lg]:h-10! pointer-coarse:data-[size=sm]:h-9! pointer-coarse:data-[size=md]:h-11! items-center py-0 pe-1 ps-1",
         className
       )}
     >

@@ -375,12 +375,12 @@ describe("menús de macOS (2.0)", () => {
     )
     const listbox = await screen.findByRole("listbox")
     const elegida = within(listbox).getByRole("option", { name: "Chile" })
-    expect(elegida).toHaveClass("pr-9")
-    expect(elegida.querySelector("[data-slot=combobox-item-indicator]")).toHaveClass("right-2.5")
+    expect(elegida).toHaveClass("pe-9")
+    expect(elegida.querySelector("[data-slot=combobox-item-indicator]")).toHaveClass("end-2.5")
     // Todas reservan la columna del tilde: el ancho de la lista no cambia al elegir.
-    expect(within(listbox).getByRole("option", { name: "Argentina" })).toHaveClass("pr-9")
+    expect(within(listbox).getByRole("option", { name: "Argentina" })).toHaveClass("pe-9")
     // El título alinea con el texto de las opciones, que arranca en el mismo px-2.5.
-    expect(screen.getByText("Sudamérica").className).not.toMatch(/(^|\s)pl-7\b/)
+    expect(screen.getByText("Sudamérica").className).not.toMatch(/(^|\s)ps-7\b/)
   })
 
   it("Combobox: el botón que abre la lista es ⌃⌄, como el de Select, también con chips", () => {
@@ -429,8 +429,8 @@ describe("menús de macOS (2.0)", () => {
       </Autocomplete>
     )
     const sugerencia = await screen.findByRole("option", { name: "Rosario" })
-    expect(sugerencia.className).not.toMatch(/(^|\s)pr-9\b/)
-    expect(screen.getByText("Santa Fe").className).not.toMatch(/(^|\s)pr-9\b/)
+    expect(sugerencia.className).not.toMatch(/(^|\s)pe-9\b/)
+    expect(screen.getByText("Santa Fe").className).not.toMatch(/(^|\s)pe-9\b/)
   })
 })
 

@@ -147,7 +147,7 @@ function FieldError({ className, alert = false, ...props }: FieldErrorProps) {
         // Con más de un mensaje, Base UI los mete en un `<ul>` sin estilo, que
         // el reset de Tailwind deja como un párrafo pegado. Con viñeta y
         // sangría se lee que son dos problemas distintos y no una frase larga.
-        "[&>ul]:list-disc [&>ul]:space-y-1 [&>ul]:pl-4",
+        "[&>ul]:list-disc [&>ul]:space-y-1 [&>ul]:ps-4",
         className
       )}
       {...props}

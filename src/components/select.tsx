@@ -49,7 +49,7 @@ function SelectTrigger({ className, size: sizeProp, children, ...props }: Select
 type SelectValueProps = WithClassName<SelectPrimitive.Value.Props>
 
 function SelectValue({ className, ...props }: SelectValueProps) {
-  return <SelectPrimitive.Value data-slot="select-value" className={cn("flex-1 text-left", className)} {...props} />
+  return <SelectPrimitive.Value data-slot="select-value" className={cn("flex-1 text-start", className)} {...props} />
 }
 
 type SelectContentProps = WithClassName<SelectPrimitive.Popup.Props> &

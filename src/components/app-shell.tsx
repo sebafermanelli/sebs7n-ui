@@ -363,7 +363,7 @@ function AppShell({
     return () => cancelAnimationFrame(frame)
   }, [sheet, listo])
 
-  const triggerProps = { variant: "plain", size: "icon-sm", "aria-label": labels.openMenu, className: "-ml-1" } as const
+  const triggerProps = { variant: "plain", size: "icon-sm", "aria-label": labels.openMenu, className: "-ms-1" } as const
 
   const asideHeader = (
     <>
@@ -392,7 +392,7 @@ function AppShell({
               requestAnimationFrame(() => mainRef.current?.focus({ preventScroll: true }))
               return false
             }}
-            className="gap-0 overflow-hidden overscroll-contain p-0 [&_[data-slot=sidebar-header]>:first-child]:pr-10"
+            className="gap-0 overflow-hidden overscroll-contain p-0 [&_[data-slot=sidebar-header]>:first-child]:pe-10"
           >
             <sheet.SheetTitle className="sr-only">{labels.navigation}</sheet.SheetTitle>
             <SidebarInSheetContext.Provider value={true}>{sidebar}</SidebarInSheetContext.Provider>
@@ -442,7 +442,7 @@ function AppShell({
       >
         <a
           href={`#${mainId}`}
-          className="sr-only z-50 rounded-control bg-surface px-3 py-2 text-callout text-label shadow-menu focus-visible:not-sr-only focus-visible:fixed focus-visible:top-2 focus-visible:left-2 focus-visible:focus-ring"
+          className="sr-only z-50 rounded-control bg-surface px-3 py-2 text-callout text-label shadow-menu focus-visible:not-sr-only focus-visible:fixed focus-visible:top-2 focus-visible:start-2 focus-visible:focus-ring"
         >
           {labels.skipToContent}
         </a>

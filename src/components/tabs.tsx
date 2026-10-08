@@ -97,7 +97,7 @@ function TabsList({ className, variant = "line", children, ...props }: TabsListP
           // `left` y `width` es lo que hace que el segmento se deslice en vez de saltar.
           <TabsPrimitive.Indicator
             data-slot="tabs-indicator"
-            className={cn(segmentedThumbClassName, "top-(--active-tab-top) left-(--active-tab-left) h-(--active-tab-height) w-(--active-tab-width)")}
+            className={cn(segmentedThumbClassName, "top-(--active-tab-top) start-(--active-tab-left) h-(--active-tab-height) w-(--active-tab-width)")}
           />
         )}
       </TabsPrimitive.List>
@@ -133,7 +133,7 @@ const TRIGGER_VARIANT: Record<TabsVariant, string> = {
   // esconde en el activo y en el que le sigue, donde lo taparía el segmento elevado.
   segmented:
     "h-6 min-w-0 px-3 rounded-[calc(var(--radius-control)-2px)] text-callout text-label data-active:font-semibold focus-visible:focus-ring " +
-    "after:left-0 after:top-1 after:h-4 after:w-px after:bg-fill-3 first:after:hidden data-active:after:hidden [[data-active]+&]:after:hidden " +
+    "after:start-0 after:top-1 after:h-4 after:w-px after:bg-fill-3 first:after:hidden data-active:after:hidden [[data-active]+&]:after:hidden " +
     segmentedHitAreaClassName,
 }
 

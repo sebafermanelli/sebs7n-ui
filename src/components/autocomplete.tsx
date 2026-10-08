@@ -39,7 +39,7 @@ type AutocompleteInputProps = Omit<AutocompletePrimitive.Input.Props, "className
   showTrigger?: boolean
   showClear?: boolean
   labels?: { clear?: string; trigger?: string }
-  /** Un ícono adelante, adentro del campo (una lupa, un pin): decorativo. Reemplaza el `pl-10` a mano. */
+  /** Un ícono adelante, adentro del campo (una lupa, un pin): decorativo. Reemplaza el `ps-10` a mano. */
   startIcon?: React.ReactNode
 }
 
@@ -64,7 +64,7 @@ function AutocompleteInput({
       data-size={size}
       // disabled en el input (no en el root) también apaga la superficie.
       data-disabled={disabled ? "" : undefined}
-      className={cn(inputShellClassName, (showTrigger || showClear) && "pr-1", groupClassName)}
+      className={cn(inputShellClassName, (showTrigger || showClear) && "pe-1", groupClassName)}
     >
       {startIcon && (
         <span aria-hidden="true" data-slot="input-start-icon" className={inputStartIconClassName}>

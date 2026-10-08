@@ -102,10 +102,10 @@ function SheetContent({ className, children, side = "right", showCloseButton = t
 }
 
 // Mismo padding (20 px) y título que Dialog (2.0): el pie va sin línea arriba y con 12 px entre
-// botones para que, apilados, las áreas de 44 no se pisen. El título va a la izquierda y `pr-12`
+// botones para que, apilados, las áreas de 44 no se pisen. El título va a la izquierda y `pe-12`
 // deja lugar a la X, que queda en su línea, del otro lado.
 function SheetHeader({ className, ...props }: React.ComponentProps<"div">) {
-  return <div data-slot="sheet-header" className={cn("flex flex-col gap-1 p-5 pr-12", className)} {...props} />
+  return <div data-slot="sheet-header" className={cn("flex flex-col gap-1 p-5 pe-12", className)} {...props} />
 }
 
 function SheetFooter({ className, ...props }: React.ComponentProps<"div">) {

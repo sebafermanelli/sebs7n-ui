@@ -226,7 +226,7 @@ function DatePicker(props: DatePickerProps) {
           inputDisabledClassName,
           inputInvalidClassName,
           inputPaddingClassName[size],
-          "flex w-full min-w-0 cursor-pointer items-center gap-2 text-left",
+          "flex w-full min-w-0 cursor-pointer items-center gap-2 text-start",
           "focus-visible:focus-border data-popup-open:focus-border data-placeholder:text-label-secondary",
           "[&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:text-label-secondary",
           className

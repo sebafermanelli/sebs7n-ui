@@ -77,7 +77,7 @@ export const closeButtonClassName = "size-7 [&_svg:not([class*='size-'])]:size-3
  * el centro del título queda a 32 px del borde; la X mide 28, así que a 18 px (`4.5`) su centro
  * cae en la misma línea.
  */
-export const dialogCloseClassName = "absolute top-4.5 left-4.5"
+export const dialogCloseClassName = "absolute top-4.5 start-4.5"
 
 /**
  * Dónde va la X de Sheet y Drawer: arriba a la derecha. iCloud no tiene panel lateral; en una hoja
@@ -89,7 +89,7 @@ export const dialogCloseClassName = "absolute top-4.5 left-4.5"
  * `--sf-safe-top` y `--sf-safe-right` solo para los bordes de pantalla que toca (una hoja de abajo
  * no suma el notch de arriba); sin ellas, 0.
  */
-export const overlayCloseClassName = "absolute top-[calc(var(--sf-safe-top,0px)+1.125rem)] right-[calc(var(--sf-safe-right,0px)+1.125rem)]"
+export const overlayCloseClassName = "absolute top-[calc(var(--sf-safe-top,0px)+1.125rem)] end-[calc(var(--sf-safe-right,0px)+1.125rem)]"
 
 /**
  * El popup anclado a un disparador: Popover y HoverCard, que son el mismo objeto.

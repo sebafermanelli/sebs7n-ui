@@ -28,7 +28,7 @@ function SkipLink({ href = "#main", className, children, ...props }: SkipLinkPro
       data-slot="skip-link"
       href={href}
       className={cn(
-        "sr-only z-50 rounded-control bg-surface px-3 py-2 text-callout text-label shadow-menu focus-visible:not-sr-only focus-visible:fixed focus-visible:top-2 focus-visible:left-2 focus-visible:focus-ring",
+        "sr-only z-50 rounded-control bg-surface px-3 py-2 text-callout text-label shadow-menu focus-visible:not-sr-only focus-visible:fixed focus-visible:top-2 focus-visible:start-2 focus-visible:focus-ring",
         className
       )}
       {...props}

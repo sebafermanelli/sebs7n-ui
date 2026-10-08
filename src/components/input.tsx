@@ -31,7 +31,7 @@ function Input({ className, size: sizeProp, ...props }: InputProps) {
         inputPaddingClassName[size],
         // El `peer` es para que la etiqueta flotante de `Field` sepa si el campo está enfocado.
         "peer w-full min-w-0 placeholder:text-label-secondary focus:focus-border",
-        "file:mr-3 file:h-full file:border-0 file:bg-transparent file:text-callout file:text-label",
+        "file:me-3 file:h-full file:border-0 file:bg-transparent file:text-callout file:text-label",
         className
       )}
       {...props}

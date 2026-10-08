@@ -176,7 +176,7 @@ function WaitlistForm({
       ))}
       {honeypot && (
         // Un campo trampa: fuera de pantalla, sin foco y sin lector. Una persona no lo ve ni lo llena.
-        <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+        <div aria-hidden="true" className="absolute -start-[9999px] h-0 w-0 overflow-hidden">
           <label htmlFor={`${uid}-hp`}>{honeypot}</label>
           <input autoComplete="off" id={`${uid}-hp`} name={honeypot} tabIndex={-1} type="text" />
         </div>

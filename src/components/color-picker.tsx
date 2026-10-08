@@ -127,8 +127,8 @@ function ColorPicker({
           inputInvalidClassName,
           inputPaddingClassName[size],
           // La muestra va pegada al borde, como el ícono de un campo: menos aire a la izquierda.
-          "flex w-full min-w-0 cursor-pointer items-center gap-2 text-left",
-          size === "sm" ? "pl-1.5" : size === "lg" ? "pl-2.5" : "pl-2",
+          "flex w-full min-w-0 cursor-pointer items-center gap-2 text-start",
+          size === "sm" ? "ps-1.5" : size === "lg" ? "ps-2.5" : "ps-2",
           "focus-visible:focus-border data-popup-open:focus-border",
           "data-[size=sm]:[&>[data-slot=color-picker-swatch]]:size-5",
           className

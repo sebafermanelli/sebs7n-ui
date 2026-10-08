@@ -184,9 +184,9 @@ describe("menú de iCloud (R3)", () => {
     abrirConClickDerecho()
 
     const tildado = await screen.findByRole("menuitemcheckbox", { name: "Marcada como favorita" })
-    expect(tildado).toHaveClass("pr-9")
-    expect(tildado.querySelector("[data-slot=context-menu-item-indicator]")).toHaveClass("right-2.5")
-    expect(screen.getByRole("menuitem", { name: /Renombrar/ })).toHaveClass("data-inset:pl-9")
-    expect(screen.getByText("portada-marzo.jpg", { selector: "[data-slot=context-menu-label]" })).toHaveClass("data-inset:pl-9")
+    expect(tildado).toHaveClass("pe-9")
+    expect(tildado.querySelector("[data-slot=context-menu-item-indicator]")).toHaveClass("end-2.5")
+    expect(screen.getByRole("menuitem", { name: /Renombrar/ })).toHaveClass("data-inset:ps-9")
+    expect(screen.getByText("portada-marzo.jpg", { selector: "[data-slot=context-menu-label]" })).toHaveClass("data-inset:ps-9")
   })
 })

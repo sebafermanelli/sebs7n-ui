@@ -77,9 +77,9 @@ describe("Sidebar", () => {
     const { rerender } = render(<Example />)
     const aside = screen.getByRole("complementary")
     expect(aside).toHaveAttribute("data-slot", "sidebar")
-    expect(aside).toHaveClass("w-(--sidebar-width,15rem)", "data-collapsed:w-16", "bg-surface-secondary", "border-r", "border-separator-strong", "flex-col", "h-full")
+    expect(aside).toHaveClass("w-(--sidebar-width,15rem)", "data-collapsed:w-16", "bg-surface-secondary", "border-e", "border-separator-strong", "flex-col", "h-full")
     // 2.0: sin la píldora flotante de 1.x: ni margen, ni radio, ni sombra.
-    expect(aside.className).not.toMatch(/(^|\s)(m-3|mr-0|rounded-panel|shadow-menu)(\s|$)/)
+    expect(aside.className).not.toMatch(/(^|\s)(m-3|me-0|rounded-panel|shadow-menu)(\s|$)/)
     expect(aside).not.toHaveAttribute("data-variant")
     expect(aside).not.toHaveAttribute("data-collapsed")
     // La transición del ancho solo existe dentro de un AppShell que ya fue tocado (`in-data-animate`).
@@ -94,7 +94,7 @@ describe("Sidebar", () => {
     const aside = screen.getByRole("complementary")
     expect(aside).not.toHaveAttribute("variant")
     expect(aside).not.toHaveAttribute("data-variant")
-    expect(aside).toHaveClass("border-r")
+    expect(aside).toHaveClass("border-e")
   })
 
   it("el contenido deja 10 px a cada lado del ítem, como iCloud", () => {
@@ -132,7 +132,7 @@ describe("Sidebar", () => {
     // Solo el ícono propio del ítem (hijo directo): el svg de un Badge adentro conserva su color.
     expect(clients).toHaveClass("[&>svg]:text-brand-900", "[&>svg:not([class*='size-'])]:size-[18px]")
     expect(clients.className).not.toContain("[&_svg]:text-brand-900")
-    expect(screen.getByText("3")).toHaveClass("ml-auto", "text-callout", "tabular-nums", "text-label-secondary")
+    expect(screen.getByText("3")).toHaveClass("ms-auto", "text-callout", "tabular-nums", "text-label-secondary")
     // Adentro del activo, el contador también pasa al color de contraste.
     expect(screen.getByText("3").className).not.toMatch(/selection/)
   })

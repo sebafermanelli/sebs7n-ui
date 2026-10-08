@@ -383,12 +383,12 @@ function Calendar(props: CalendarProps) {
                               // `touch-target` no sirve acá. 40 y no 44: siete de 44 más el `p-3` del DatePicker
                               // no entran en un teléfono de 320 px; siete de 40 sí.
                               "size-7 pointer-coarse:size-10 p-0",
-                              "data-[range=middle]:bg-highlight data-[range=middle]:first:rounded-l-full data-[range=middle]:last:rounded-r-full",
+                              "data-[range=middle]:bg-highlight data-[range=middle]:first:rounded-s-full data-[range=middle]:last:rounded-e-full",
                               "data-[range=start]:bg-[linear-gradient(to_right,transparent_50%,var(--color-highlight)_50%)]",
                               "data-[range=end]:bg-[linear-gradient(to_left,transparent_50%,var(--color-highlight)_50%)]",
                               // La banda no sale del mes: en el primer y el último día se cierra redonda,
                               // igual que en las puntas de una semana, en vez de cortarse contra un hueco.
-                              "data-[range=middle]:data-month-start:rounded-l-full data-[range=middle]:data-month-end:rounded-r-full",
+                              "data-[range=middle]:data-month-start:rounded-s-full data-[range=middle]:data-month-end:rounded-e-full",
                               "data-[range=start]:data-month-end:bg-none data-[range=end]:data-month-start:bg-none"
                             )}
                             data-month-end={isSameMonth(addDays(dia, 1), mes) ? undefined : ""}

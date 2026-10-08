@@ -152,7 +152,7 @@ describe("Toolbar", () => {
   it("vertical: columna angosta con el borde a la derecha", () => {
     render(<Toolbar aria-label="Herramientas" orientation="vertical" />)
     const barra = screen.getByRole("toolbar")
-    expect(barra).toHaveClass("data-[orientation=vertical]:w-fit", "data-[orientation=vertical]:border-b-0", "data-[orientation=vertical]:border-r")
+    expect(barra).toHaveClass("data-[orientation=vertical]:w-fit", "data-[orientation=vertical]:border-b-0", "data-[orientation=vertical]:border-e")
   })
 
   it("`plain` no lleva material: es la barra que vive adentro de otra superficie", () => {

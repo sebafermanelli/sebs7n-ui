@@ -115,7 +115,7 @@ function StatGrid({ items, columns, chartLayout = "bleed", loading = false, labe
           <Card key={item.id ?? (typeof item.label === "string" ? item.label : index)}>
             <CardContent className={cn("relative", item.chart != null && "flex h-full flex-col gap-3")}>
               <Stat
-                className={item.actions != null ? "[&_[data-slot=stat-label]]:pr-8" : undefined}
+                className={item.actions != null ? "[&_[data-slot=stat-label]]:pe-8" : undefined}
                 delta={loading || inline ? undefined : item.delta}
                 hint={item.hint}
                 label={item.label}
@@ -142,7 +142,7 @@ function StatGrid({ items, columns, chartLayout = "bleed", loading = false, labe
                 }
               />
               {item.actions != null && (
-                <div className="absolute top-(--card-spacing) right-(--card-spacing) -mt-1 -mr-1.5" data-slot="stat-grid-actions">
+                <div className="absolute top-(--card-spacing) end-(--card-spacing) -mt-1 -me-1.5" data-slot="stat-grid-actions">
                   <StatActions loading={loading} name={name.trim()}>
                     {item.actions}
                   </StatActions>

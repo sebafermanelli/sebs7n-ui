@@ -136,7 +136,7 @@ function CardContent({ className, columns = 1, ...props }: CardContentProps) {
         // aunque los cuatro paddings midan lo mismo.
         "relative p-(--card-spacing) pb-[calc(var(--card-spacing)+0.25rem)] has-data-[slot=card-row]:p-2.5",
         "data-[columns=2]:grid data-[columns=2]:grid-cols-2 data-[columns=2]:gap-x-10",
-        "data-[columns=2]:before:absolute data-[columns=2]:before:inset-y-(--card-spacing) data-[columns=2]:before:left-1/2 data-[columns=2]:before:w-px data-[columns=2]:before:bg-fill-3",
+        "data-[columns=2]:before:absolute data-[columns=2]:before:inset-y-(--card-spacing) data-[columns=2]:before:start-1/2 data-[columns=2]:before:w-px data-[columns=2]:before:bg-fill-3",
         "data-[columns=2]:[&>[data-slot=card-row]:nth-child(2)]:before:hidden",
         className
       )}

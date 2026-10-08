@@ -207,8 +207,8 @@ describe("menú de macOS (2.0)", () => {
       </DropdownMenu>
     )
     const tildado = await screen.findByRole("menuitemcheckbox", { name: "Mostrar vencidas" })
-    expect(tildado).toHaveClass("px-3", "pr-9")
-    expect(screen.getByRole("menuitemradio", { name: "Por mes" })).toHaveClass("px-3", "pr-9")
+    expect(tildado).toHaveClass("px-3", "pe-9")
+    expect(screen.getByRole("menuitemradio", { name: "Por mes" })).toHaveClass("px-3", "pe-9")
   })
 
   it("el tilde es el círculo de acento a la derecha, como el «View as» de iCloud", async () => {
@@ -226,18 +226,18 @@ describe("menú de macOS (2.0)", () => {
       </DropdownMenu>
     )
     const tildado = await screen.findByRole("menuitemcheckbox", { name: "Mostrar vencidas" })
-    expect(tildado).toHaveClass("pr-9")
-    expect(tildado.className).not.toMatch(/(^|\s)pl-7\b/)
+    expect(tildado).toHaveClass("pe-9")
+    expect(tildado.className).not.toMatch(/(^|\s)ps-7\b/)
     const indicador = tildado.querySelector("[data-slot=dropdown-menu-item-indicator]")!
-    expect(indicador).toHaveClass("right-2.5")
+    expect(indicador).toHaveClass("end-2.5")
     expect(indicador.firstElementChild).toHaveClass("size-4", "rounded-full", "bg-brand-900", "text-surface")
     const radio = screen.getByRole("menuitemradio", { name: "Por mes" })
-    expect(radio).toHaveClass("pr-9")
-    expect(radio.querySelector("[data-slot=dropdown-menu-item-indicator]")).toHaveClass("right-2.5")
+    expect(radio).toHaveClass("pe-9")
+    expect(radio.querySelector("[data-slot=dropdown-menu-item-indicator]")).toHaveClass("end-2.5")
     // `inset` alinea con el texto de los ítems que llevan ícono: 10 + 16 + 10.
-    expect(screen.getByRole("menuitem", { name: "Exportar" })).toHaveClass("data-inset:pl-9")
+    expect(screen.getByRole("menuitem", { name: "Exportar" })).toHaveClass("data-inset:ps-9")
     // Un ítem sin tilde no reserva la columna.
-    expect(screen.getByRole("menuitem", { name: "Imprimir" }).className).not.toMatch(/(^|\s)pr-9\b/)
+    expect(screen.getByRole("menuitem", { name: "Imprimir" }).className).not.toMatch(/(^|\s)pe-9\b/)
   })
 
   it("el título de grupo es una fila de 30, 14/600 en el color del texto (el «View as» de iCloud)", async () => {
@@ -312,7 +312,7 @@ describe("menú de macOS (2.0)", () => {
     expect(ayuda).toHaveClass("text-brand-ink")
     const flecha = ayuda.querySelector("svg.lucide-arrow-up-right")!
     expect(flecha).toHaveAttribute("aria-hidden", "true")
-    expect(flecha).toHaveClass("ml-auto")
+    expect(flecha).toHaveClass("ms-auto")
     expect(ayuda.lastElementChild).toBe(flecha)
     expect(screen.getByRole("menuitem", { name: "Atajos" })).not.toHaveAttribute("data-external")
   })
@@ -330,7 +330,7 @@ describe("menú de macOS (2.0)", () => {
       </DropdownMenu>
     )
     const atajo = (await screen.findByRole("menuitem", { name: /Guardar/ })).querySelector("[data-slot=dropdown-menu-shortcut]")
-    expect(atajo).toHaveClass("ml-auto", "text-callout", "text-label-secondary")
+    expect(atajo).toHaveClass("ms-auto", "text-callout", "text-label-secondary")
     expect(atajo).not.toHaveClass("text-mono-callout")
   })
 
@@ -393,7 +393,7 @@ describe("inset en los ítems marcables", () => {
     )
     for (const item of [await screen.findByRole("menuitemcheckbox", { name: "Barra lateral" }), screen.getByRole("menuitemradio", { name: "Lista" })]) {
       expect(item).toHaveAttribute("data-inset")
-      expect(item).toHaveClass("data-inset:pl-9", "pr-9")
+      expect(item).toHaveClass("data-inset:ps-9", "pe-9")
     }
   })
 

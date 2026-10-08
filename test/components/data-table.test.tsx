@@ -37,7 +37,7 @@ describe("DataTable", () => {
     expect(within(tabla).getAllByRole("columnheader").map((th) => th.textContent)).toEqual(["Cliente", "Estado", "Importe"])
     expect(clientes()).toEqual(["Nube Digital", "Acme S.A.", "Óptica Sur", "Estudio Ruiz"])
     // `cell` dibuja la celda; `numeric` la alinea a la derecha con cifras tabulares.
-    expect(screen.getByText("$ 96000")).toHaveClass("text-right", "tabular-nums")
+    expect(screen.getByText("$ 96000")).toHaveClass("text-end", "tabular-nums")
   })
 
   it("ordena con el botón de la cabecera: ascendente, descendente y sin orden, con aria-sort", async () => {

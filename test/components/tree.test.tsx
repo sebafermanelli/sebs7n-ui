@@ -163,7 +163,7 @@ describe("Tree", () => {
     expect(cabecera).toHaveAttribute("aria-hidden", "true")
     expect(within(cabecera as HTMLElement).getByText("Tamaño")).toHaveStyle({ gridColumn: "2" })
     expect(item("Notas.txt")).toHaveTextContent("2 KB")
-    expect(screen.getByText("2 KB")).toHaveClass("text-right", "tabular-nums")
+    expect(screen.getByText("2 KB")).toHaveClass("text-end", "tabular-nums")
   })
 
   it("selección de iCloud: acento con el foco en el árbol, gris sin foco", () => {

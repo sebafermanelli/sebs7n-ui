@@ -40,7 +40,7 @@ function Sidebar({ className, collapsed: collapsedProp, variant: _variant, ...pr
         data-slot="sidebar"
         data-collapsed={collapsed ? "" : undefined}
         className={cn(
-          "group/sidebar relative flex h-full w-(--sidebar-width,15rem) shrink-0 flex-col overflow-x-clip border-r border-separator-strong bg-surface-secondary text-label data-collapsed:w-16",
+          "group/sidebar relative flex h-full w-(--sidebar-width,15rem) shrink-0 flex-col overflow-x-clip border-e border-separator-strong bg-surface-secondary text-label data-collapsed:w-16",
           // El ancho lo pone el AppShell (`--sidebar-width`) y cambia con transición (`transition-panel`, quieta mientras se arrastra).
           "in-data-animate:transition-panel",
           // Sobre el wallpaper (W) la columna es el cuerpo translúcido de los widgets: el sidebar es
@@ -228,7 +228,7 @@ function SidebarGroupLabel({ className, id, children, ...props }: React.Componen
           aria-expanded={group.open}
           aria-controls={group.panelId}
           onClick={group.toggle}
-          className="group/sidebar-section flex h-full min-w-0 flex-1 cursor-pointer items-center gap-1 rounded-control px-1.5 text-left outline-none transition-control hover:text-label focus-visible:focus-ring"
+          className="group/sidebar-section flex h-full min-w-0 flex-1 cursor-pointer items-center gap-1 rounded-control px-1.5 text-start outline-none transition-control hover:text-label focus-visible:focus-ring"
         >
           <span className="truncate">{children}</span>
           <ChevronRightIcon
@@ -282,7 +282,7 @@ function SidebarItemBadge({ className, label, children, ...props }: SidebarItemB
   return (
     <span
       data-slot="sidebar-item-badge"
-      className={cn("ml-auto shrink-0 text-callout text-label-secondary tabular-nums group-data-collapsed/sidebar:sr-only", className)}
+      className={cn("ms-auto shrink-0 text-callout text-label-secondary tabular-nums group-data-collapsed/sidebar:sr-only", className)}
       {...props}
     >
       {/* La coma es solo para el lector; el espacio queda al inicio de línea y CSS lo colapsa. */}
@@ -354,7 +354,7 @@ function SidebarItem({ className, icon, active = false, tooltip, render, childre
               <span
                 data-slot="sidebar-item-dot"
                 aria-hidden="true"
-                className="absolute top-1 right-1 hidden size-1.5 rounded-full bg-label-secondary group-data-collapsed/sidebar:block"
+                className="absolute top-1 end-1 hidden size-1.5 rounded-full bg-label-secondary group-data-collapsed/sidebar:block"
               />
             )}
           </>
@@ -411,7 +411,7 @@ function SidebarSearch({
         // borde y el texto en 14. Con el foco pierde el relleno y queda el anillo interior. Con el Kbd
         // `sm` de 18 quedan 7 px de aire arriba y abajo. El texto va en secundario y no en terciario:
         // es el nombre del botón, y el terciario no llega a 4,5:1.
-        "flex h-8 pointer-coarse:h-11 w-full min-w-0 cursor-pointer items-center gap-1.5 rounded-field bg-fill-1 px-2.5 text-left text-callout text-label-secondary outline-none transition-control hover:text-label focus-visible:bg-transparent focus-visible:focus-ring [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+        "flex h-8 pointer-coarse:h-11 w-full min-w-0 cursor-pointer items-center gap-1.5 rounded-field bg-fill-1 px-2.5 text-start text-callout text-label-secondary outline-none transition-control hover:text-label focus-visible:bg-transparent focus-visible:focus-ring [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
         // Colapsado es un ícono más de la columna: el cuadrado de 32 de los ítems, no un campo.
         "group-data-collapsed/sidebar:h-8 group-data-collapsed/sidebar:w-8 pointer-coarse:group-data-collapsed/sidebar:h-11 pointer-coarse:group-data-collapsed/sidebar:w-11 group-data-collapsed/sidebar:justify-center group-data-collapsed/sidebar:px-0",
         className

@@ -259,7 +259,7 @@ function DrawerHeader({ className, ...props }: React.ComponentProps<"div">) {
       data-slot="drawer-header"
       className={cn(
         // Mismo padding que Dialog (20 px, 2.0).
-        "flex flex-col gap-1 px-5 pt-2 pb-4 pr-12",
+        "flex flex-col gap-1 px-5 pt-2 pb-4 pe-12",
         // Las hojas laterales no tienen la franja del handle arriba, así que el
         // título necesita su propio aire: 20 px, y así queda en la línea de la X.
         "group-data-[swipe-direction=left]/drawer:pt-5 group-data-[swipe-direction=right]/drawer:pt-5",

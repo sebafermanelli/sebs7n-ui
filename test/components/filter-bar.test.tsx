@@ -20,7 +20,7 @@ describe("FilterBar", () => {
     render(<FilterBar actions={<button>Exportar</button>} filters={<button>Estado</button>} search="x" />)
     expect(document.querySelector("[data-slot=filter-bar]")).toHaveClass("flex-col", "@xl:flex-row")
     // Las acciones van a la derecha en escritorio y se reparten la fila en el teléfono: sin huérfanos.
-    expect(document.querySelector("[data-slot=filter-bar-actions]")).toHaveClass("@xl:ml-auto", "@max-xl:[&>*]:flex-1")
+    expect(document.querySelector("[data-slot=filter-bar-actions]")).toHaveClass("@xl:ms-auto", "@max-xl:[&>*]:flex-1")
     expect(document.querySelector("[data-slot=filter-bar-search]")).toHaveClass("w-full", "@xl:w-72")
   })
 

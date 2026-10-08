@@ -45,10 +45,15 @@ Solo para quien construye componentes:
 | Teclado: los flotantes abren con Enter/Espacio/flechas, Escape cierra y devuelve el foco; `AppShell` trae «Ir al contenido» | tests de componentes |
 | Estado anunciado (`aria-current`, `aria-keyshortcuts`, `aria-busy`, `ComboboxStatus` live) y movimiento reducido (reset de `base.css` + `motion-reduce` en los recorridos) | tests de componentes |
 | Errores: el estilo sale de `aria-invalid`, nunca de una clase de color; `Form` enfoca el primer inválido; `FieldError alert` para `onChange` | tests de `field` / `form` |
-| Textos internos traducibles con `LabelsProvider` | `test/labels.test.tsx` |
+| Textos internos traducibles con `LabelsProvider`; formato por idioma con `LocaleProvider` / `lib/format` | `test/labels.test.tsx`, `test/format.test.ts` |
+| RTL: propiedades lógicas y dirección de lectura | `test/rtl.test.tsx` |
+| Alto contraste (`data-contrast="high"`, `prefers-contrast`), forced-colors e impresión | `test/high-contrast.test.ts` |
+| Roles semánticos independientes de la marca y paleta de datos para daltonismo | `test/semantic-colors.test.ts`, `test/data-palette.test.ts` |
 
-Los deshabilitados están exentos de contraste a propósito. **LTR only:** en RTL no se rompe, queda
-espejado (≈ 90 clases físicas; migrar a utilidades lógicas es todo o nada).
+Los deshabilitados están exentos de contraste a propósito. **RTL:** desde 3.0 el paquete usa propiedades lógicas (`ms-`, `pe-`, `start-`, `text-start`, `rounded-s-`…) y
+`LocaleProvider dir="rtl"` invierte las flechas y los popups de Base UI; `test/rtl.test.tsx` falla ante una clase física
+nueva en `src/` (las exentas son las que hablan de un lado de la pantalla: `side`, `swipe-direction`, `labelSide`, el
+centrado con `translate-x` y los gráficos).
 
 Le queda a la app: el texto de los `aria-label`, `Label` o `Field` en cada campo, el mensaje de
 error con `match`/`validate`, un `<h1>` por página, `lang` en `<html>`, escuchar los atajos,

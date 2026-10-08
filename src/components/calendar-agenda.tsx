@@ -84,7 +84,7 @@ function CalendarAgenda({ events, onEventClick, locale = "es-AR", hour12, empty,
                   <span className="min-w-0 flex-1 break-words">{e.title}</span>
                 </>
               )
-              const rowClass = "flex min-h-11 w-full items-center gap-3 px-4 py-2 text-left text-callout"
+              const rowClass = "flex min-h-11 w-full items-center gap-3 px-4 py-2 text-start text-callout"
               return (
                 <li key={e.id}>
                   {onEventClick ? (

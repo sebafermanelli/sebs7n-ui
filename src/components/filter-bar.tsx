@@ -55,7 +55,7 @@ function FilterBar({ search, filters, actions, size = "sm", className, ...props 
         </div>
       )}
       {actions != null && (
-        <div data-slot="filter-bar-actions" className="flex flex-wrap items-center gap-2 @max-xl:[&>*]:flex-1 @xl:ml-auto">
+        <div data-slot="filter-bar-actions" className="flex flex-wrap items-center gap-2 @max-xl:[&>*]:flex-1 @xl:ms-auto">
           {actions}
         </div>
       )}

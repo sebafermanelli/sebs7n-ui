@@ -84,7 +84,7 @@ type AiLauncherProps = Omit<React.ComponentProps<"button">, "children"> & {
  * Es opaco —flota encima de lo que sea— y lleva el canto en el degradé de la IA,
  * que es lo que lo distingue de cualquier otro botón flotante.
  *
- * **No se posiciona solo.** Dónde flota lo decide la app (`className="fixed right-6 bottom-6"`),
+ * **No se posiciona solo.** Dónde flota lo decide la app (`className="fixed end-6 bottom-6"`),
  * porque depende de qué más haya ahí: una barra inferior en mobile, un banner de cookies, el
  * área segura de un teléfono.
  *

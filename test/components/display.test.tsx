@@ -365,7 +365,7 @@ describe("Table", () => {
     expect(fila).toHaveClass("[&>td]:bg-[length:100%_1px]", "[&>td:first-child]:bg-[length:calc(100%-10px)_1px]", "first:[&>td]:bg-none")
     // La primera celda es el nombre (17, principal); el resto, metadatos en 14 secundario.
     expect(screen.getByText("Ana")).toHaveClass("first:text-body", "first:text-label", "text-callout", "text-label-secondary", "px-2.5")
-    expect(screen.getByText("$1.200")).toHaveClass("text-right", "tabular-nums")
+    expect(screen.getByText("$1.200")).toHaveClass("text-end", "tabular-nums")
   })
 
   it("TableGroupHeader: el título de grupo de Drive, 19/600 con el contador inline", () => {

@@ -78,7 +78,7 @@ function ChatHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="chat-header"
-      className={cn("flex shrink-0 items-center gap-2 border-b border-separator py-2 pr-2 pl-4", className)}
+      className={cn("flex shrink-0 items-center gap-2 border-b border-separator py-2 pe-2 ps-4", className)}
       {...props}
     />
   )
@@ -191,8 +191,8 @@ function ChatMessage({ className, from, ...props }: ChatMessageProps) {
       className={cn(
         "flex max-w-full flex-col gap-1 wrap-anywhere",
         // La esquina de abajo a la derecha más cerrada: es la cola del globo, de dónde sale.
-        "data-[from=user]:ml-8 data-[from=user]:self-end data-[from=user]:rounded-surface data-[from=user]:rounded-br-control data-[from=user]:bg-highlight data-[from=user]:px-3.5 data-[from=user]:py-2 data-[from=user]:whitespace-pre-wrap",
-        "data-[from=assistant]:mr-8 data-[from=assistant]:items-start data-[from=assistant]:self-start",
+        "data-[from=user]:ms-8 data-[from=user]:self-end data-[from=user]:rounded-surface data-[from=user]:rounded-ee-control data-[from=user]:bg-highlight data-[from=user]:px-3.5 data-[from=user]:py-2 data-[from=user]:whitespace-pre-wrap",
+        "data-[from=assistant]:me-8 data-[from=assistant]:items-start data-[from=assistant]:self-start",
         className
       )}
       {...props}
@@ -229,7 +229,7 @@ function ChatSuggestion({ className, type = "button", ...props }: React.Componen
       className={cn(
         inputControlClassName,
         inputMultilineRadiusClassName,
-        "min-h-10 w-full cursor-pointer px-4 py-2 text-left transition-surface pointer-coarse:min-h-11",
+        "min-h-10 w-full cursor-pointer px-4 py-2 text-start transition-surface pointer-coarse:min-h-11",
         "hover:bg-fill-2 active:scale-[0.99] focus-visible:focus-ring",
         "disabled:cursor-not-allowed disabled:text-label-tertiary",
         className

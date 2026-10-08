@@ -83,7 +83,7 @@ function DisclosureTrigger({ chevron = true, className, children, ...props }: Di
       data-slot="disclosure-trigger"
       className={cn(
         // `list-none` y el `::-webkit-details-marker` escondido: el triángulo del navegador lo reemplaza el chevron.
-        "flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 rounded-control px-1 py-2.5 text-left text-headline text-label outline-none select-none transition-control [&::-webkit-details-marker]:hidden",
+        "flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 rounded-control px-1 py-2.5 text-start text-headline text-label outline-none select-none transition-control [&::-webkit-details-marker]:hidden",
         "focus-visible:focus-ring",
         "group-data-[variant=inline]/disclosure:inline-flex group-data-[variant=inline]/disclosure:min-h-0 group-data-[variant=inline]/disclosure:justify-start group-data-[variant=inline]/disclosure:gap-1.5 group-data-[variant=inline]/disclosure:px-0 group-data-[variant=inline]/disclosure:py-0 group-data-[variant=inline]/disclosure:text-callout group-data-[variant=inline]/disclosure:text-label-secondary group-data-[variant=inline]/disclosure:hover:text-label",
         className

@@ -53,7 +53,7 @@ function SaveBar({ dirty, pending = false, onDiscard, onSave, saveDisabled, labe
         {dirty ? <CircleDotIcon aria-hidden="true" className="size-4 text-warning-ink" /> : <CheckCircle2Icon aria-hidden="true" className="size-4 text-green-900" />}
         {dirty ? labels.unsaved : labels.saved}
       </p>
-      <div className="flex w-full gap-2 @md:ml-auto @md:w-auto">
+      <div className="flex w-full gap-2 @md:ms-auto @md:w-auto">
         <Button className="flex-1" disabled={!dirty || pending} onClick={onDiscard} type="button" variant="secondary">
           {labels.discard}
         </Button>

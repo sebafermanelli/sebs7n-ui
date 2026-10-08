@@ -746,7 +746,7 @@ function SortableItem({ id, onRemove, press, editing, draggable, index, label, l
         onClick={onRemove}
         className={cn(
           "relative z-10 flex size-[22px] shrink-0 items-center justify-center rounded-full bg-gray-800 text-white shadow-menu outline-none transition-control touch-target hover:brightness-90 focus-visible:focus-ring",
-          variant === "grid" && "absolute -top-2 -left-2"
+          variant === "grid" && "absolute -top-2 -start-2"
         )}
       >
         <MinusIcon aria-hidden="true" className="size-3.5" strokeWidth={3} />

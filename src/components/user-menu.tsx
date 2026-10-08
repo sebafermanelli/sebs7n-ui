@@ -80,7 +80,7 @@ function UserMenu({ user, collapsed: collapsedProp, side, align, children, signO
     <DropdownMenuTrigger
       data-slot="user-menu-trigger"
       className={cn(
-        "flex h-10 pointer-coarse:h-12 w-full min-w-0 cursor-pointer items-center gap-2 rounded-control px-2 text-left outline-none transition-control hover:bg-fill-1 focus-visible:focus-ring data-popup-open:bg-fill-2",
+        "flex h-10 pointer-coarse:h-12 w-full min-w-0 cursor-pointer items-center gap-2 rounded-control px-2 text-start outline-none transition-control hover:bg-fill-1 focus-visible:focus-ring data-popup-open:bg-fill-2",
         className
       )}
     >
@@ -136,7 +136,7 @@ function UserMenu({ user, collapsed: collapsedProp, side, align, children, signO
             [
               "theme",
               showTheme && (
-                <div data-slot="user-menu-theme" className="flex h-10 items-center justify-between gap-2 pr-1 pl-2 text-callout text-label">
+                <div data-slot="user-menu-theme" className="flex h-10 items-center justify-between gap-2 pe-1 ps-2 text-callout text-label">
                   <span aria-hidden="true">{tema}</span>
                   <ThemeMenuRadio labels={{ group: tema, ...labels?.switcher }} />
                 </div>

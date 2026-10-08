@@ -384,8 +384,8 @@ describe("textos largos en la alerta", () => {
         </AlertDialogContent>
       </AlertDialog>
     )
-    expect(await screen.findByText("Un texto de varios renglones.")).toHaveClass("w-full", "text-left")
-    expect(screen.getByText("Corto.").className).not.toMatch(/text-left/)
+    expect(await screen.findByText("Un texto de varios renglones.")).toHaveClass("w-full", "text-start")
+    expect(screen.getByText("Corto.").className).not.toMatch(/text-start/)
   })
 
   it("un botón con una palabra larga no desborda la columna del pie", async () => {

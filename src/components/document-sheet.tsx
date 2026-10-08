@@ -34,10 +34,10 @@ type DocumentSheetProps = React.ComponentProps<"figure"> & {
 function DocumentSheet({ label, caption, className, children, ...props }: DocumentSheetProps) {
   return (
     <figure aria-label={label} data-slot="document-sheet" className={cn("m-0", className)} {...props}>
-      <div className="relative rounded-surface border border-separator-strong bg-surface py-6 pr-6 pl-12 shadow-widget max-sm:py-4 max-sm:pr-4 max-sm:pl-10">
+      <div className="relative rounded-surface border border-separator-strong bg-surface py-6 pe-6 ps-12 shadow-widget max-sm:py-4 max-sm:pe-4 max-sm:ps-10">
         {/* El margen de cuaderno son dos filetes de 1 px: decoración, fuera del árbol accesible. */}
-        <span aria-hidden="true" className="absolute inset-y-0 left-9 w-px bg-separator-strong max-sm:left-6" />
-        <span aria-hidden="true" className="absolute inset-y-0 left-10 w-px bg-separator-strong max-sm:left-7" />
+        <span aria-hidden="true" className="absolute inset-y-0 start-9 w-px bg-separator-strong max-sm:start-6" />
+        <span aria-hidden="true" className="absolute inset-y-0 start-10 w-px bg-separator-strong max-sm:start-7" />
         {children}
       </div>
       {caption != null && <figcaption className="mt-3 text-footnote text-label-secondary">{caption}</figcaption>}
@@ -135,7 +135,7 @@ function DocumentSheetSummary({ items, footnote, className, ...props }: Document
       {items.map((row, index) => (
         <div className="col-span-2 grid grid-cols-subgrid" key={index}>
           <dt className="text-label-secondary">{row.label}</dt>
-          <dd className="text-right font-semibold text-label tabular-nums">{row.value}</dd>
+          <dd className="text-end font-semibold text-label tabular-nums">{row.value}</dd>
         </div>
       ))}
       {footnote != null && (
@@ -167,18 +167,18 @@ function DocumentSheetVersions({ items, current, className, ...props }: Document
         return (
           <li
             aria-current={active ? "step" : undefined}
-            className="relative pt-[18px] pr-2 text-footnote text-label-secondary"
+            className="relative pt-[18px] pe-2 text-footnote text-label-secondary"
             data-active={active || undefined}
             key={version.id}
           >
             <span
               aria-hidden="true"
               className={cn(
-                "absolute top-1 left-0 z-10 size-[9px] rounded-full border-[1.5px]",
+                "absolute top-1 start-0 z-10 size-[9px] rounded-full border-[1.5px]",
                 active ? "border-label bg-label" : "border-label-secondary bg-surface"
               )}
             />
-            {index < items.length - 1 && <span aria-hidden="true" className="absolute top-2 right-0 left-[9px] h-px bg-separator-strong" />}
+            {index < items.length - 1 && <span aria-hidden="true" className="absolute top-2 end-0 start-[9px] h-px bg-separator-strong" />}
             <b className="block text-callout font-semibold text-label">{version.id}</b>
             {version.detail}
           </li>

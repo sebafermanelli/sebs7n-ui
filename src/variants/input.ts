@@ -33,7 +33,7 @@ export const inputMultilineRadiusClassName = "rounded-[min(var(--radius-field),-
 /**
  * El aire a los costados de un campo de una línea, por tamaño. Sube con el alto.
  *
- * Es una clase plana por tamaño y no `data-[size=sm]:px-3.5`. Con la variante, un `pl-9` del
+ * Es una clase plana por tamaño y no `data-[size=sm]:px-3.5`. Con la variante, un `ps-9` del
  * llamador —el lugar para una lupa— perdía: la variante tiene más especificidad, y
  * tailwind-merge no las ve como un conflicto porque no comparten modificador.
  */

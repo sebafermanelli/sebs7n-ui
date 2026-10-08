@@ -421,7 +421,7 @@ function Tree({
           key={index}
           role={isGrid ? "columnheader" : undefined}
           data-column={index}
-          className={cn("min-w-0 truncate px-3", column.numeric && "text-right")}
+          className={cn("min-w-0 truncate px-3", column.numeric && "text-end")}
           style={columnStyle(index)}
         >
           {column.header}
@@ -557,7 +557,7 @@ function Tree({
                     }}
                     className={cn(
                       "flex h-full min-w-0 items-center truncate px-3 whitespace-nowrap inside-selection:text-on-selection",
-                      column.numeric && "justify-end text-right tabular-nums",
+                      column.numeric && "justify-end text-end tabular-nums",
                       cellClassName
                     )}
                     style={columnStyle(index)}
@@ -575,7 +575,7 @@ function Tree({
                     data-column={index}
                     className={cn(
                       "min-w-0 truncate px-3 whitespace-nowrap inside-selection:text-on-selection",
-                      column.numeric && "text-right tabular-nums"
+                      column.numeric && "text-end tabular-nums"
                     )}
                     style={columnStyle(index)}
                   >

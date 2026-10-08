@@ -46,7 +46,7 @@ export const segmentedThumbClassName =
 export const segmentedItemClassName =
   "relative inline-flex h-6 min-w-8 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-[calc(var(--radius-control)-2px)] px-3 text-callout whitespace-nowrap text-label outline-none select-none transition-surface " +
   "focus-visible:focus-ring data-pressed:bg-segment data-pressed:shadow-segment data-pressed:font-semibold data-disabled:cursor-not-allowed data-disabled:opacity-40 " +
-  "after:absolute after:left-0 after:top-1/2 after:-translate-y-1/2 after:h-4 after:w-px after:bg-fill-3 first:after:hidden data-pressed:after:hidden [[data-pressed]+&]:after:hidden " +
+  "after:absolute after:start-0 after:top-1/2 after:-translate-y-1/2 after:h-4 after:w-px after:bg-fill-3 first:after:hidden data-pressed:after:hidden [[data-pressed]+&]:after:hidden " +
   "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 " +
   segmentedHitAreaClassName
 

@@ -28,7 +28,7 @@ export const groupClassName = cn(segmentedTrackClassName, "inline-flex")
 // (como el botón de ícono de al lado) y el área crece a 44 de alto, invisible.
 export const itemClassName =
   "relative inline-flex h-6 w-8 cursor-pointer items-center justify-center rounded-[calc(var(--radius-control)-2px)] text-label-secondary outline-none transition-control hover:text-label focus-visible:focus-ring data-checked:text-label [&_svg]:pointer-events-none [&_svg]:size-4 " +
-  "after:absolute after:left-0 after:top-1 after:h-4 after:w-px after:bg-fill-3 first:after:hidden data-checked:after:hidden [[data-checked]+&]:after:hidden " +
+  "after:absolute after:start-0 after:top-1 after:h-4 after:w-px after:bg-fill-3 first:after:hidden data-checked:after:hidden [[data-checked]+&]:after:hidden " +
   segmentedHitAreaClassName
 
 /**
