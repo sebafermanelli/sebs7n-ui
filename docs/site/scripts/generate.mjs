@@ -269,14 +269,20 @@ const registryLines = [
   "// Generado por scripts/generate.mjs. No editar.",
   'import dynamic from "next/dynamic"',
   "",
-  "export const DEMOS: Record<string, React.ComponentType> = {",
+  "// Los cargadores, aparte de los componentes: el Playground pide los chunks de las demos en los ratos libres del",
+  "// navegador (`DemoSlot prefetch`) para que, al llegar a una, ya esté y no se vea un marco vacío.",
+  "export const LOADERS: Record<string, () => Promise<{ default: React.ComponentType }>> = {",
   ...[...examplesBySlug.entries()].flatMap(([slug, examples]) =>
     examples.map(
       (example) =>
-        `  ${JSON.stringify(example.id)}: dynamic(() => import("./${slug}").then((mod) => ({ default: mod.${example.component} }))),`
+        `  ${JSON.stringify(example.id)}: () => import("./${slug}").then((mod) => ({ default: mod.${example.component} })),`
     )
   ),
   "}",
+  "",
+  "export const DEMOS: Record<string, React.ComponentType> = Object.fromEntries(",
+  "  Object.entries(LOADERS).map(([id, loader]) => [id, dynamic(loader)])",
+  ")",
   "",
 ]
 writeFileSync(join(demosDir, "registry.ts"), registryLines.join("\n"))

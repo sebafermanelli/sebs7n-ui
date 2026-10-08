@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
+import { Bitter, Inter } from "next/font/google"
 
 import site from "@/.generated/site.json"
 import { Providers } from "./providers"
@@ -15,9 +15,13 @@ export const metadata: Metadata = {
 // Inter variable con la variable que lee `--font-sans` del paquete.
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" })
 
+// La serif de ejemplo del Playground («Fuente de titulares»). `preload: false`: el @font-face existe, pero el archivo
+// se pide solo si alguien la elige, así que ninguna otra página paga por ella.
+const serif = Bitter({ subsets: ["latin"], variable: "--font-serif-demo", display: "swap", preload: false })
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html className={inter.variable} lang="es" suppressHydrationWarning>
+    <html className={`${inter.variable} ${serif.variable}`} lang="es" suppressHydrationWarning>
       {/* Lisa, como las apps de iCloud. El wallpaper (`bg-ambient` + `data-ambient`) lo lleva la home
           en su contenedor y el Playground en su `AppShell ambient` (`_lib/wallpaper.ts`). */}
       <body>

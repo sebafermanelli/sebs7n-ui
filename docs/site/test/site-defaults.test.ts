@@ -58,5 +58,6 @@ describe("sitio: layout dentro del AppShell por ancho del contenedor", () => {
 })
 
 describe("sitio: las grillas de cards comparten filas", () => {
-  it.each(["page.tsx", "docs/page.tsx"])("%s usa CardGrid", (f) => expect(read(join(app, f))).toContain("<CardGrid"))
+  // La home ya no usa cards en grilla (3.0): es una escena con RuledList y DefinitionList (`home-structure.test.ts`).
+  it.each(["docs/page.tsx"])("%s usa CardGrid", (f) => expect(read(join(app, f))).toContain("<CardGrid"))
 })

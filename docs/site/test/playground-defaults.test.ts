@@ -203,6 +203,16 @@ describe("controles del Playground = cómo se configura el sistema", () => {
     expect(layoutDe({ ambient: true }, false)).not.toContain("aside=")
   })
 
+  it("el tinte apagado y la serif de titulares se reflejan en el layout copiable", () => {
+    const base = layoutDe({ ambient: true }, false)
+    expect(base).not.toContain("data-neutral-tint")
+    expect(base).not.toContain("--font-heading")
+    const apagado = layoutDe({ ambient: true, tint: false }, false)
+    expect(apagado).toContain('data-neutral-tint="off"')
+    const serif = layoutDe({ ambient: true, heading: "serif" }, false)
+    for (const parte of ['variable: "--font-heading"', "heading.variable"]) expect(serif).toContain(parte)
+  })
+
   it("las variables que el sitio pisa son las que documenta la instalación (theme.css)", () => {
     const glass = readFileSync(new URL("../app/_components/glass-config.tsx", import.meta.url).pathname, "utf8")
     const theme = readFileSync(join(pkgRoot, "src/styles/theme.css"), "utf8")

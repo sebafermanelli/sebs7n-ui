@@ -1,6 +1,6 @@
 "use client"
 
-import { BellIcon, MoreHorizontalIcon, PlusIcon, RotateCcwIcon, SearchIcon } from "lucide-react"
+import { BellIcon, ChevronsDownUpIcon, ChevronsUpDownIcon, MoreHorizontalIcon, PlusIcon, RotateCcwIcon, SearchIcon } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useEffect, useId, useState } from "react"
 import { Alert, AlertDescription, AlertTitle } from "sebs7n-ui/alert"
@@ -36,10 +36,12 @@ import { Label } from "sebs7n-ui/label"
 import { Progress } from "sebs7n-ui/progress"
 import { RadioGroup, RadioGroupItem } from "sebs7n-ui/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "sebs7n-ui/select"
+import { Separator } from "sebs7n-ui/separator"
 import { Slider } from "sebs7n-ui/slider"
 import { StatGrid } from "sebs7n-ui/stat-grid"
 import { Switch } from "sebs7n-ui/switch"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "sebs7n-ui/table"
+import { ToggleGroup, ToggleGroupItem } from "sebs7n-ui/toggle-group"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "sebs7n-ui/tabs"
 import { ThemeSwitcher } from "sebs7n-ui/theme-switcher"
 import { Toolbar, ToolbarButton, ToolbarSeparator } from "sebs7n-ui/toolbar"
@@ -54,6 +56,15 @@ import { Showcase } from "./showcase"
 /** El brand del sitio, que es el del paquete. Es de donde arranca el selector. */
 const BRAND_DEL_SITIO: Oklch = [0.573, 0.214, 258]
 
+/** Cinco marcas de ejemplo para probar el matiz: el tinte de neutros, el acento y los contrastes las siguen. */
+const MARCAS_DE_EJEMPLO: { id: string; nombre: string; claro: Oklch; oscuro: Oklch }[] = [
+  { id: "azul", nombre: "Azul", claro: [0.573, 0.214, 258], oscuro: [0.573, 0.214, 258] },
+  { id: "teal", nombre: "Teal", claro: [0.515, 0.099, 183], oscuro: [0.62, 0.11, 183] },
+  { id: "terracota", nombre: "Terracota", claro: [0.55, 0.16, 35], oscuro: [0.55, 0.16, 35] },
+  { id: "esmeralda", nombre: "Esmeralda", claro: [0.53, 0.13, 162], oscuro: [0.74, 0.13, 162] },
+  { id: "pino", nombre: "Verde pino", claro: [0.42, 0.09, 160], oscuro: [0.7, 0.11, 160] },
+]
+
 const numero = (valor: number) => valor.toFixed(2).replace(".", ",")
 
 /**
@@ -66,18 +77,31 @@ function globalsDe(pisadas: Record<string, string>): string {
 
 /**
  * El layout raíz equivalente: `ThemeProvider` de `next-themes` con `attribute="class"` (el paquete lee `.dark`) y
- * el `AppShell` con `ambient` si el wallpaper está prendido y con `aside` si el panel del asistente lo está.
+ * el `AppShell` con `ambient` si el wallpaper está prendido y con `aside` si el panel del asistente lo está. Con el
+ * tinte apagado, `data-neutral-tint="off"` en `<html>`; con una serif de titulares, la fuente cargada en `--font-heading`.
  */
-function layoutDe(config: Pick<GlassConfig, "ambient">, asistente: boolean): string {
+function layoutDe(config: Pick<GlassConfig, "ambient"> & Partial<Pick<GlassConfig, "tint" | "heading">>, asistente: boolean): string {
+  const { tint = true, heading = "inter" } = config
   const props = [config.ambient && "  ambient", asistente && "  aside={<Assistant />}\n  asideOpen={open}\n  onAsideOpenChange={setOpen}", "  sidebar={<AppSidebar />}"].filter(Boolean)
+  const fuente =
+    heading === "serif"
+      ? ['import { Bitter, Inter } from "next/font/google"', 'const heading = Bitter({ subsets: ["latin"], variable: "--font-heading" })', 'const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })', ""]
+      : []
+  const html = [
+    heading === "serif" ? "className={`${inter.variable} ${heading.variable}`}" : null,
+    !tint ? 'data-neutral-tint="off"' : null,
+  ].filter(Boolean)
   return [
+    ...fuente,
+    ...(html.length ? [`<html ${html.join(" ")} lang="es">`, "  <body>"] : []),
     '<ThemeProvider attribute="class" defaultTheme="system" enableSystem>',
     "  <TooltipProvider>",
     `    <AppShell\n${props.map((linea) => String(linea).replace(/^/gm, "    ")).join("\n")}\n    >`,
     "      {children}",
     "    </AppShell>",
     "  </TooltipProvider>",
-    "</ThemeProvider>"
+    "</ThemeProvider>",
+    ...(html.length ? ["  </body>", "</html>"] : []),
   ].join("\n")
 }
 
@@ -100,19 +124,37 @@ export function Playground({ children }: { children?: React.ReactNode }) {
   const oscuro = montado && resolvedTheme === "dark"
   // El panel del asistente (`AppShell aside`) abierto en la pantalla de ejemplo: solo para ver cómo reacciona el layout.
   const [asistente, setAsistente] = useState(false)
+  // La barra compacta (una línea) es la que se queda pegada al scrollear; expandido, el panel pasa con la página.
+  const [compacto, setCompacto] = useState(false)
 
   const brand = (oscuro ? (config.brandDark ?? config.brand) : config.brand) ?? BRAND_DEL_SITIO
   const pisadas = variables(config)
 
   return (
     <div className="flex flex-col gap-10">
-      {/* Desde `md` se pega debajo de la barra del AppShell (44): con un `top` fijo quedaba tapado
-          por la barra, que está en una capa superior. En un celular no: el panel ocupa casi toda la
-          pantalla y pegado tapaba las vistas que configura; ahí se va con el scroll. */}
+      {/* El panel es alto (marca, tema, wallpaper, tinte, fuente): expandido pasa con el scroll y no tapa lo que se
+          recorre. Compacto —una barra de una línea— sí se pega debajo de la barra del AppShell (44), con los controles
+          que más se tocan; los títulos de abajo llevan `scroll-mt` para que al saltar a un ancla no queden detrás. */}
       <section
         aria-label="Configuración"
-        className="md:sticky md:top-[calc(var(--app-shell-header,0px)+--spacing(3))] md:z-30 flex flex-col gap-5 rounded-panel border border-separator bg-surface p-5 shadow-menu"
+        className={
+          compacto
+            ? "sticky top-[calc(var(--app-shell-header,0px)+--spacing(3))] z-30 flex flex-wrap items-center gap-x-6 gap-y-2 rounded-panel border border-separator bg-surface px-4 py-2.5 shadow-menu"
+            : "flex flex-col gap-5 rounded-panel border border-separator bg-surface p-5 shadow-menu"
+        }
       >
+        {compacto ? (
+          <>
+            <span className="text-callout font-semibold text-label">Configuración</span>
+            <ThemeSwitcher />
+            <span aria-hidden="true" className="size-5 rounded-full border border-separator" style={{ background: cssOfOklch(brand) }} />
+            <Button className="ml-auto" onClick={() => setCompacto(false)} size="sm" variant="plain">
+              <ChevronsUpDownIcon />
+              Expandir
+            </Button>
+          </>
+        ) : (
+          <>
         <div className="flex flex-wrap items-end gap-x-8 gap-y-4">
           {/* Ancho fijo: el rótulo cambia con el tema («claro», «oscuro») y, midiendo lo que mide su
               texto, la columna corría todo lo que tiene a la derecha al cambiar de tema. */}
@@ -157,11 +199,64 @@ export function Playground({ children }: { children?: React.ReactNode }) {
             <Switch checked={asistente} id="pg-aside" onCheckedChange={setAsistente} />
             <Label htmlFor="pg-aside">Panel del asistente</Label>
           </div>
-          <Button className="ml-auto" disabled={esDefault} onClick={reset} variant="ghost">
-            <RotateCcwIcon />
-            Volver al default
-          </Button>
         </div>
+        <Separator />
+        <div className="flex flex-wrap items-end gap-x-8 gap-y-4">
+          <div className="flex flex-col gap-2">
+            <span className="text-callout text-label">Matiz de marca</span>
+            <ToggleGroup
+              aria-label="Marca de ejemplo"
+              onValueChange={(valor) => {
+                const marca = MARCAS_DE_EJEMPLO.find((m) => m.id === valor[0])
+                if (marca) set({ brand: marca.claro, brandDark: marca.oscuro })
+              }}
+              value={[MARCAS_DE_EJEMPLO.find((m) => hexOfOklch(m.claro) === hexOfOklch(config.brand ?? BRAND_DEL_SITIO))?.id ?? ""]}
+            >
+              {MARCAS_DE_EJEMPLO.map((marca) => (
+                <ToggleGroupItem key={marca.id} value={marca.id}>
+                  {marca.nombre}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
+          </div>
+          <Slider
+            className="w-48"
+            label="Matiz (0–360°)"
+            max={360}
+            min={0}
+            onValueChange={(valor) => {
+              const h = valor as number
+              const [l, c] = brand
+              set(oscuro ? { brandDark: [l, c, h] } : { brand: [l, c, h], brandDark: config.brandDark ? [config.brandDark[0], config.brandDark[1], h] : null })
+            }}
+            showValue
+            step={1}
+            value={Math.round(brand[2])}
+          />
+          <div className="flex h-8 items-center gap-2">
+            <Switch checked={config.tint} id="pg-tint" onCheckedChange={(tint) => set({ tint })} />
+            <Label htmlFor="pg-tint">Neutros con tinte</Label>
+          </div>
+          <div className="flex flex-col gap-2">
+            <span className="text-callout text-label">Fuente de titulares</span>
+            <ToggleGroup aria-label="Fuente de titulares" onValueChange={(valor) => set({ heading: valor[0] === "serif" ? "serif" : "inter" })} required value={[config.heading]}>
+              <ToggleGroupItem value="inter">Inter</ToggleGroupItem>
+              <ToggleGroupItem value="serif">Serif (Bitter)</ToggleGroupItem>
+            </ToggleGroup>
+          </div>
+          <div className="ml-auto flex items-center gap-2">
+            <Button onClick={() => setCompacto(true)} variant="ghost">
+              <ChevronsDownUpIcon />
+              Compactar
+            </Button>
+            <Button disabled={esDefault} onClick={reset} variant="ghost">
+              <RotateCcwIcon />
+              Volver al default
+            </Button>
+          </div>
+        </div>
+          </>
+        )}
       </section>
 
       <section aria-labelledby="pg-css" className="flex flex-col gap-4">

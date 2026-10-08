@@ -27,11 +27,15 @@ export type GlassConfig = {
   ambient: boolean
   /** `--ambient`: cuánto color lleva el wallpaper, de 0 a 1. */
   luz: number
+  /** Neutros con tinte de marca (el default de 3.0). `false` = `data-neutral-tint="off"` en `<html>`. */
+  tint: boolean
+  /** La fuente de titulares: `inter` (la sans, sin `--font-heading`) o una serif de ejemplo cargada en `--font-heading`. */
+  heading: "inter" | "serif"
   /** Los últimos colores de marca probados. No van al CSS: son la memoria del selector. */
   recientes: Oklch[]
 }
 
-export const DEFAULTS: GlassConfig = { brand: null, brandDark: null, ambient: true, luz: 1, recientes: [] }
+export const DEFAULTS: GlassConfig = { brand: null, brandDark: null, ambient: true, luz: 1, tint: true, heading: "inter", recientes: [] }
 
 const CLAVE = "sebs7n-ui:playground"
 
@@ -44,7 +48,17 @@ type Contexto = {
 
 const GlassConfigContext = createContext<Contexto | null>(null)
 
-/** Las variables que la configuración pisa. Lo que está en su default no aparece. */
+/** La serif de ejemplo (Bitter, cargada en el layout del sitio con `--font-serif-demo`). */
+export const SERIF_DE_EJEMPLO = "var(--font-serif-demo)"
+
+/** Las variables que se ESCRIBEN en `<html>`: las del CSS que se copia y, además, `--font-heading` si hay serif. */
+export function variablesAplicadas(config: GlassConfig): Record<string, string> {
+  const salida = variables(config)
+  if (config.heading === "serif") salida["--font-heading"] = SERIF_DE_EJEMPLO
+  return salida
+}
+
+/** Las variables que la configuración pisa en el CSS que se copia (la fuente va en el layout, con `next/font`). Lo que está en su default no aparece. */
 export function variables(config: GlassConfig): Record<string, string> {
   const salida: Record<string, string> = {}
   if (config.brand) {
@@ -64,6 +78,7 @@ export function variables(config: GlassConfig): Record<string, string> {
 }
 
 const TODAS = [
+  "--font-heading",
   "--brand-base",
   "--brand-contrast",
   "--brand-base-dark",
@@ -88,6 +103,8 @@ function leer(): GlassConfig {
       brandDark: guardado.brandDark ?? null,
       ambient: ambientGuardado(guardado),
       luz: luzGuardada(guardado),
+      tint: guardado.tint ?? true,
+      heading: guardado.heading === "serif" ? "serif" : "inter",
       recientes: guardado.recientes ?? [],
     }
   } catch {
@@ -108,7 +125,9 @@ export function GlassConfigProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const raiz = document.documentElement
-    const pisadas = variables(config)
+    const pisadas = variablesAplicadas(config)
+    if (config.tint) raiz.removeAttribute("data-neutral-tint")
+    else raiz.setAttribute("data-neutral-tint", "off")
     for (const nombre of TODAS) {
       if (nombre in pisadas) raiz.style.setProperty(nombre, pisadas[nombre]!)
       else raiz.style.removeProperty(nombre)

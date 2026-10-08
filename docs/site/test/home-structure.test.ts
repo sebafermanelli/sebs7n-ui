@@ -42,17 +42,20 @@ describe("home y landing comparten estructura", () => {
     }
   })
 
-  it("la home: mismo ancho, hero centrado, wallpaper, SectionHeader y pie de la landing", () => {
+  it("la home: mismo ancho, escena «cálido y cuidado» con piezas del paquete y pie de la landing", () => {
     const home = read("page.tsx")
     const ref = read("templates/landing/page.tsx")
     for (const src of [home, ref]) {
-      expect(src).toContain('className="min-h-dvh bg-ambient" data-ambient=""')
       expect(src).toContain("max-w-[1080px]")
       expect(src).not.toMatch(/^"use client"/)
     }
-    expect(home).toContain("items-center gap-6 pt-12 text-center md:pt-20")
-    expect(landing("hero.tsx")).toContain("items-center gap-6 pt-12 text-center md:pt-20")
-    expect(home).toContain("w-full max-w-xs flex-col gap-3 sm:w-auto sm:max-w-none sm:flex-row")
+    expect(home).toContain('className="min-h-dvh bg-background" id="top"')
+    // El titular en la escala display, la bajada en text-lead y una pantalla armada en un WindowFrame.
+    expect(home).toContain("text-display")
+    expect(home).toContain("text-lead")
+    for (const pieza of ["Reveal", "RevealGroup", "WindowFrame", "RuledList", "SectionBackdrop", "ThemeSwitcherLazy"]) expect(home, pieza).toContain(`<${pieza}`)
+    // Sin la grilla de cards idénticas con ícono de antes.
+    expect(home).not.toContain("<CardGrid")
     expect(home.match(/<SectionHeader/g)!.length).toBeGreaterThanOrEqual(3)
     expect(home.match(/<h1[\s>]/g)).toHaveLength(1)
     expect(home).toContain("<SiteFooter")

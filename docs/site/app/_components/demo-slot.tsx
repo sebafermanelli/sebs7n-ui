@@ -2,7 +2,9 @@
 
 import { lazy, Suspense, useEffect, useRef, useState } from "react"
 
-import { DEMOS } from "../_demos/registry"
+import { Skeleton } from "sebs7n-ui/skeleton"
+
+import { DEMOS, LOADERS } from "../_demos/registry"
 
 // El corte de código tiene que caer del lado del cliente, y por eso esto existe.
 //
@@ -33,7 +35,12 @@ import { DEMOS } from "../_demos/registry"
 // prerenderizada, se queda con su HTML mientras llegan los dos chunks.
 const TooltipProvider = lazy(() => import("sebs7n-ui/tooltip").then((mod) => ({ default: mod.TooltipProvider })))
 
-export function DemoSlot({ id, eager = false }: { id: string; eager?: boolean }) {
+/**
+ * `reserve` (el Playground): mientras la demo no está, el marco muestra un esqueleto del alto de una demo y no un hueco,
+ * y el navegador va pidiendo los chunks de las demos en sus ratos libres, así que al llegar a una ya está
+ * y no hay marco vacío ni salto de layout al scrollear rápido.
+ */
+export function DemoSlot({ id, eager = false, reserve = false }: { id: string; eager?: boolean; reserve?: boolean }) {
   const Demo = DEMOS[id]
   const marco = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(eager)
@@ -49,20 +56,34 @@ export function DemoSlot({ id, eager = false }: { id: string; eager?: boolean })
           observer.disconnect()
         }
       },
-      { rootMargin: "400px" }
+      { rootMargin: reserve ? "1500px" : "400px" }
     )
     observer.observe(nodo)
     return () => observer.disconnect()
   }, [eager])
 
+  useEffect(() => {
+    if (!reserve) return
+    const loader = LOADERS[id]
+    if (!loader) return
+    // Cuando el navegador está libre: sin competir con el scroll ni con la red de la página.
+    const w = window as unknown as { requestIdleCallback?: (cb: () => void) => number; cancelIdleCallback?: (h: number) => void }
+    const handle = w.requestIdleCallback ? w.requestIdleCallback(() => void loader()) : window.setTimeout(() => void loader(), 1500)
+    return () => {
+      if (w.requestIdleCallback) w.cancelIdleCallback?.(handle)
+      else window.clearTimeout(handle)
+    }
+  }, [id, reserve])
+
   if (!Demo) return <p className="text-callout text-red-900">Falta la demo {id}.</p>
   return (
     // Mismo centrado que el marco de `Example`, para que la demo quede donde quedaba.
     <div className="flex w-full items-center justify-center" ref={marco}>
+      {!visible && reserve && <Skeleton aria-hidden="true" className="h-32 w-full" />}
       {visible && (
         // Cada entrada del registry es un `next/dynamic`, o sea un `React.lazy`: sin este
         // Suspense el render se corta.
-        <Suspense fallback={<span aria-hidden="true" className="block h-8" />}>
+        <Suspense fallback={reserve ? <Skeleton aria-hidden="true" className="h-32 w-full" /> : <span aria-hidden="true" className="block h-8" />}>
           <TooltipProvider>
             <Demo />
           </TooltipProvider>
