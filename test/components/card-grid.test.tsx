@@ -139,4 +139,15 @@ describe("Card como link y cards asimétricas", () => {
     // 2 + 1 = 3 columnas ocupadas: una grilla de 3 sin hueco
     expect(container.querySelector("[data-slot=card-grid]")).toHaveClass("@3xl:grid-cols-3")
   })
+
+  it("las cards con filas compartidas tienen una sola columna 0–1fr (el contenido ancho no las desborda)", () => {
+    const { container } = render(
+      <CardGrid>
+        <Card>a</Card>
+      </CardGrid>
+    )
+    const cls = container.querySelector("[data-slot=card-grid]")!.className
+    expect(cls).toContain("[&>[data-slot=card]]:grid-cols-[minmax(0,1fr)]")
+    expect(cls).toContain("[&>[data-slot=card]>*]:min-w-0")
+  })
 })

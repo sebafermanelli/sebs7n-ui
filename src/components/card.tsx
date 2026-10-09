@@ -258,7 +258,7 @@ function CardGrid({ className, columns = 3, children, ...props }: CardGridProps)
         // quedaba con aire vacío abajo). Entre filas de cards, el margen de cada una, compensado al final.
         "-mb-4 grid grid-cols-1 gap-x-4 gap-y-0 [&>[data-slot=card]]:mb-4",
         colClass,
-        "[&>[data-slot=card]]:row-span-3 [&>[data-slot=card]]:grid [&>[data-slot=card]]:grid-rows-subgrid [&>[data-slot=card]]:gap-0",
+        "[&>[data-slot=card]]:row-span-3 [&>[data-slot=card]]:grid [&>[data-slot=card]]:grid-cols-[minmax(0,1fr)] [&>[data-slot=card]]:grid-rows-subgrid [&>[data-slot=card]]:gap-0 [&>[data-slot=card]>*]:min-w-0",
         // La franja crece hasta la más alta de la fila: el texto arranca arriba, no centrado.
         "[&>[data-slot=card]>[data-slot=card-header]]:content-start",
         className

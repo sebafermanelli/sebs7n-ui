@@ -56,6 +56,14 @@ describe("SettingsSection", () => {
     expect(screen.getByRole("region")).toHaveClass("grid-rows-subgrid")
   })
 
+  it("la columna de la sección es 0–1fr: el contenido ancho no ensancha la card ni se corta", () => {
+    render(<SettingsSection title="A">a</SettingsSection>)
+    const region = screen.getByRole("region")
+    // Sin esto la columna implícita es `auto` y toma el ancho del contenido más ancho (416 px de
+    // sección con una columna de 474): `overflow-hidden` de la Card corta lo de la derecha.
+    expect(region).toHaveClass("grid-cols-[minmax(0,1fr)]", "[&>*]:min-w-0")
+  })
+
   it("se renderiza en el servidor, sin estado de cliente", () => {
     expect(renderToString(<SettingsSection title="Servidor">x</SettingsSection>)).toContain("Servidor")
   })

@@ -57,7 +57,7 @@ function SettingsSection({ className, id, title, description, footer, wide, chil
       className={cn(
         // 24 en vez de los 20 de `Card`: los campos llevan hints y checks que, con 20, rozaban el borde de abajo.
         // El cuerpo (`CardContent`) conserva `p-(--card-spacing)` entero: el mismo aire arriba, abajo y a los costados.
-        "row-span-3 grid grid-rows-subgrid gap-0 [--card-spacing:--spacing(6)] [&>[data-slot=card-header]]:content-start",
+        "row-span-3 grid grid-cols-[minmax(0,1fr)] grid-rows-subgrid gap-0 [&>*]:min-w-0 [--card-spacing:--spacing(6)] [&>[data-slot=card-header]]:content-start",
         wide && "@3xl:col-span-2",
         className
       )}

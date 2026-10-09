@@ -78,7 +78,7 @@ export function SettingsShowcase() {
               <List aria-label="Cuenta">
                 <ListRow chevron description="Razón social y domicilio fiscal" icon={<BuildingIcon />} onClick={nada} title="Datos de la empresa" />
                 <ListRow chevron icon={<UsersIcon />} onClick={nada} title="Usuarios" trailing="12" />
-                <ListRow chevron icon={<MailIcon />} onClick={nada} title="Correo de contacto" trailing="admin@empresa.com" />
+                <ListRow chevron description="admin@empresa.com" icon={<MailIcon />} onClick={nada} title="Correo de contacto" />
               </List>
             </SettingsSection>
             <SettingsSection description="Compartido entre los 12 usuarios del plan." title="Espacio">
@@ -94,9 +94,9 @@ export function SettingsShowcase() {
                 />
                 <List aria-label="Qué usa el espacio">
                   <ListSection title="Usado por la cuenta" total="26 GB">
-                    <ListRow description="1.204 comprobantes" dot="amber" icon={<FileTextIcon />} inline title="Facturas" trailing="13,5 GB" />
-                    <ListRow description="Todos los archivos" dot="purple" icon={<FolderIcon />} inline title="Documentos" trailing="6,1 GB" />
-                    <ListRow description="Logos y firmas" dot="teal" icon={<ImageIcon />} inline title="Imágenes" trailing="4 GB" />
+                    <ListRow description="1.204 comprobantes" dot="amber" icon={<FileTextIcon />} title="Facturas" trailing="13,5 GB" />
+                    <ListRow description="Todos los archivos" dot="purple" icon={<FolderIcon />} title="Documentos" trailing="6,1 GB" />
+                    <ListRow description="Logos y firmas" dot="teal" icon={<ImageIcon />} title="Imágenes" trailing="4 GB" />
                   </ListSection>
                 </List>
               </div>
