@@ -1,11 +1,13 @@
 "use client"
 
 import type * as React from "react"
-import { useSyncExternalStore } from "react"
+import { useCallback, useSyncExternalStore } from "react"
+import { flushSync } from "react-dom"
 import { MonitorIcon, MoonIcon, SunIcon } from "lucide-react"
 import { useTheme } from "next-themes"
 
 import { cn } from "../lib/utils.js"
+import { startThemeTransition } from "../lib/theme-transition.js"
 import { segmentedThumbClassName, segmentedTrackClassName } from "../variants/segmented.js"
 // Con `../internal/` y no `./`: el registry lee `./x.js` como un componente.
 import { segmentedHitAreaClassName } from "../internal/segmented-hit-area.js"
@@ -60,7 +62,13 @@ export function Pastilla({ index }: { index: number }) {
 
 // Sin enableSystem en el ThemeProvider, next-themes no incluye "system" en themes: no se ofrece.
 export function useThemeOptions() {
-  const { theme, setTheme, themes } = useTheme()
+  const { theme, setTheme: setThemeNow, themes } = useTheme()
+  // Fundido del tema entero. next-themes pone la clase en un efecto: `flushSync` lo corre dentro
+  // del callback de la transición, así la captura nueva ya trae el tema nuevo (sin flash).
+  const setTheme = useCallback(
+    (value: string) => startThemeTransition(() => flushSync(() => setThemeNow(value))),
+    [setThemeNow]
+  )
   const hasSystem = themes.includes("system")
   const options = hasSystem ? OPTIONS : OPTIONS.filter((option) => option.value !== "system")
   const actual = theme ?? (hasSystem ? "system" : "")

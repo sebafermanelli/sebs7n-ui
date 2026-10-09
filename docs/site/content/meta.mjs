@@ -2603,6 +2603,7 @@ export const COMPONENTS = {
       "`ThemeSwitcher` para fuera de un menú: header público, página de ajustes.",
       "`ThemeMenuRadio` dentro de un `DropdownMenu`. `UserMenu` ya lo trae.",
       "Necesita `next-themes` con `attribute=\"class\"` y `suppressHydrationWarning` en `<html>`.",
+      "El cambio de tema es un fundido de ~280 ms de todo el documento (`document.startViewTransition`, solo opacidad, `ease-out-expo`); con `prefers-reduced-motion: reduce` o sin soporte es instantáneo. **No pongas `disableTransitionOnChange` en el `ThemeProvider`**: corta las transiciones de CSS y ya no hace falta. Para cambiar el tema desde tu código, `startThemeTransition(apply)` de `sebs7n-ui/lib/theme-transition` (con React, `apply` = `() => flushSync(() => setTheme(valor))`).",
     ],
     props: {
       ThemeSwitcher: {

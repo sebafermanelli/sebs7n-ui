@@ -199,7 +199,7 @@ Así está armado el [template de dashboard](/templates/dashboard). Para una app
 - `AppShell` con `header` (la barra global de escritorio: nombre de la app a la izquierda, `UserMenu` a la derecha), `mobileBar` (la del teléfono: nombre y avatar), `sidebar` y `pathname` (con `usePathname()`, para cerrar el menú del teléfono al navegar).
 - `Sidebar` con `SidebarItem render={<Link href=… />}` y `active` según la ruta; un `SidebarItemBadge` para un contador; Configuración abajo, en un `SidebarGroup className="mt-auto"`.
 - El estado que comparten las secciones, en un provider dentro del layout: navegar no lo remonta.
-- El tema no va aparte: `UserMenu` ya trae la fila de tema.
+- El tema no va aparte: `UserMenu` ya trae la fila de tema. El `ThemeProvider` de `next-themes` va **sin `disableTransitionOnChange`**: el paquete hace el fundido del cambio de tema solo (`startThemeTransition`) y esa opción lo corta.
 
 **Cada página:**
 

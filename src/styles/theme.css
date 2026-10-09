@@ -1799,3 +1799,30 @@
     color: #333;
   }
 }
+
+/* Cambio de tema: fundido de opacidad del documento entero (`startThemeTransition`). Solo con el
+   atributo que pone la función, para no tocar otras View Transitions de la app. La captura nueva
+   aparece por encima de la vieja (que queda quieta y opaca): no hay punto medio translúcido ni
+   parpadeo, y el fondo del `body` y `color-scheme` viajan en las capturas. El `animation-name` va
+   explícito porque una app puede tener `::view-transition-*(root) { animation: none }`. Sin
+   escala ni deslizamiento; con movimiento reducido la función ni la arranca. */
+@keyframes theme-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+html[data-theme-transition]::view-transition-group(root) {
+  animation: none;
+}
+html[data-theme-transition]::view-transition-old(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+html[data-theme-transition]::view-transition-new(root) {
+  animation: theme-fade-in 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  mix-blend-mode: normal;
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme-transition]::view-transition-new(root) {
+    animation: none !important;
+  }
+}
