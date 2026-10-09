@@ -30,14 +30,21 @@ export type FormatConfig = {
   timeZone?: string
 }
 
-/** Las fechas «solo día» (`YYYY-MM-DD`) son locales: con `new Date(iso)` serían UTC y en Argentina darían el día anterior. */
-function toDate(value: Date | string | number): Date {
+/**
+ * Las fechas «solo día» (`YYYY-MM-DD`) no tienen hora ni zona: se arman en UTC y se formatean en UTC, así el día no se corre
+ * con la zona del servidor ni con `timeZone` (con `new Date(iso)` en Argentina darían el día anterior).
+ */
+function resolveDate(value: Date | string | number, timeZone: string | undefined): { date: Date; timeZone: string | undefined } {
   if (typeof value === "string") {
     const dia = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value)
-    if (dia) return new Date(Number(dia[1]), Number(dia[2]) - 1, Number(dia[3]))
+    if (dia) return { date: new Date(Date.UTC(Number(dia[1]), Number(dia[2]) - 1, Number(dia[3]))), timeZone: "UTC" }
   }
-  return value instanceof Date ? value : new Date(value)
+  return { date: value instanceof Date ? value : new Date(value), timeZone }
 }
+
+/** `dateStyle`/`timeStyle` no se pueden combinar con campos sueltos (`day`, `hour`…): si llegan campos, el estilo por defecto sale. */
+const FIELDS = ["weekday", "era", "year", "month", "day", "dayPeriod", "hour", "minute", "second", "fractionalSecondDigits", "timeZoneName"] as const
+const hasFields = (options?: Intl.DateTimeFormatOptions) => !!options && FIELDS.some((k) => options[k] !== undefined)
 
 export function createFormat(config: FormatConfig = {}) {
   const locale = config.locale ?? DEFAULT_LOCALE
@@ -70,20 +77,30 @@ export function createFormat(config: FormatConfig = {}) {
     unit: (value: number, unit: string, options?: Intl.NumberFormatOptions) =>
       get("u", { unit, ...options }, () => new Intl.NumberFormat(locale, { style: "unit", unit, ...options })).format(value),
     /** Una fecha; sin opciones, «8 de oct de 2026» (el orden y las palabras son del idioma). */
-    date: (value: Date | string | number, options?: Intl.DateTimeFormatOptions) =>
-      get("d", { timeZone, ...options }, () => new Intl.DateTimeFormat(locale, { day: "numeric", month: "short", year: "numeric", timeZone, ...options })).format(toDate(value)),
+    date: (value: Date | string | number, options?: Intl.DateTimeFormatOptions) => {
+      const r = resolveDate(value, timeZone)
+      const opts = { timeZone: r.timeZone, ...options }
+      return get("d", opts, () => new Intl.DateTimeFormat(locale, hasFields(options) || options?.dateStyle ? opts : { day: "numeric", month: "short", year: "numeric", ...opts })).format(r.date)
+    },
     /** Una hora, en el formato de horas del idioma (`hour12: false` fuerza las 24). */
-    time: (value: Date | string | number, options?: Intl.DateTimeFormatOptions) =>
-      get("t", { timeZone, ...options }, () => new Intl.DateTimeFormat(locale, { hour: "2-digit", minute: "2-digit", timeZone, ...options })).format(toDate(value)),
+    time: (value: Date | string | number, options?: Intl.DateTimeFormatOptions) => {
+      const r = resolveDate(value, timeZone)
+      const opts = { timeZone: r.timeZone, ...options }
+      return get("t", opts, () => new Intl.DateTimeFormat(locale, hasFields(options) || options?.timeStyle ? opts : { hour: "2-digit", minute: "2-digit", ...opts })).format(r.date)
+    },
     /** Fecha y hora, en el formato del idioma. */
-    dateTime: (value: Date | string | number, options?: Intl.DateTimeFormatOptions) =>
-      get("dt", { timeZone, ...options }, () => new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short", timeZone, ...options })).format(toDate(value)),
+    dateTime: (value: Date | string | number, options?: Intl.DateTimeFormatOptions) => {
+      const r = resolveDate(value, timeZone)
+      const opts = { timeZone: r.timeZone, ...options }
+      const custom = hasFields(options) || options?.dateStyle || options?.timeStyle
+      return get("dt", opts, () => new Intl.DateTimeFormat(locale, custom ? opts : { dateStyle: "medium", timeStyle: "short", ...opts })).format(r.date)
+    },
     /** Una fecha relativa a un número de unidades: `(-2, "day")` → «anteayer»; `(3, "hour")` → «dentro de 3 horas». */
     relative: (value: number, unit: Intl.RelativeTimeFormatUnit, options?: Intl.RelativeTimeFormatOptions) =>
       get("r", options, () => new Intl.RelativeTimeFormat(locale, { numeric: "auto", ...options })).format(value, unit),
     /** Cuánto falta o pasó entre `value` y `now`, en la unidad que mejor lo cuenta. */
     since: (value: Date | string | number, now: Date | number = new Date()) => {
-      const seconds = (toDate(value).getTime() - (now instanceof Date ? now.getTime() : now)) / 1000
+      const seconds = (resolveDate(value, timeZone).date.getTime() - (now instanceof Date ? now.getTime() : now)) / 1000
       const steps: [Intl.RelativeTimeFormatUnit, number][] = [["year", 31536000], ["month", 2592000], ["week", 604800], ["day", 86400], ["hour", 3600], ["minute", 60]]
       const [unit, size] = steps.find(([, size]) => Math.abs(seconds) >= size) ?? (["second", 1] as [Intl.RelativeTimeFormatUnit, number])
       return get("r", { numeric: "auto" }, () => new Intl.RelativeTimeFormat(locale, { numeric: "auto" })).format(Math.round(seconds / size), unit)
