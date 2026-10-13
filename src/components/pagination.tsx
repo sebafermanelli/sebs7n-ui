@@ -111,7 +111,7 @@ function Pagination({
               // `gray-900` y no `gray-700`: los puntos son `aria-hidden`, pero
               // se ven, y en claro `gray-700` sobre la página da 3,23:1. Que al
               // lado haya un `sr-only` resuelve a quien escucha, no a quien mira.
-              className={cn("inline-flex items-center justify-center text-label-secondary", size === "sm" ? "size-7" : "size-9")}
+              className={cn("inline-flex items-center justify-center text-label-secondary", size === "sm" ? "size-7" : "size-8")}
               key={`ellipsis-${slot.side}`}
             >
               <span aria-hidden="true">…</span>

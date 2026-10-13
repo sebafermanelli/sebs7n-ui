@@ -43,8 +43,8 @@ describe("PageHeader", () => {
       </PageHeader>
     )
     const title = screen.getByRole("heading", { level: 1, name: "Viajes" })
-    expect(title).toHaveClass("text-large-title", "text-label")
-    expect(screen.getByText("12 activos · 3 salen esta semana")).toHaveClass("text-body", "text-label-secondary")
+    expect(title).toHaveClass("text-title-1", "text-label")
+    expect(screen.getByText("12 activos · 3 salen esta semana")).toHaveClass("text-callout", "text-label-secondary")
     const actions = screen.getByRole("button", { name: "Nuevo viaje" }).parentElement!
     expect(actions).toHaveAttribute("data-slot", "page-header-actions")
     expect(actions).toHaveClass("flex-wrap", "@lg:col-start-2", "@lg:row-start-1")
@@ -128,7 +128,7 @@ describe("EmptyState", () => {
     expect(title).toHaveClass("text-title-3", "text-label")
     expect(screen.getByText("Creá el primero para empezar a cargar pasajeros.")).toHaveClass("text-callout", "text-label-secondary")
     const root = title.closest("[data-slot=empty-state]")!
-    expect(root).toHaveClass("bg-grouped", "rounded-surface", "items-center", "text-center", "py-12")
+    expect(root).toHaveClass("bg-grouped", "rounded-surface", "items-center", "text-center", "py-8")
     // Desde 2.0 es un grupo, como una Card: fondo sólido y borde, sin la sombra hundida de `subtle`.
     expect(root).not.toHaveClass("shadow-track")
     expect(root).not.toHaveClass("bg-fill-1")
@@ -166,7 +166,7 @@ describe("EmptyState variant", () => {
     rerender(<EmptyState title="Vacío" variant="plain" />)
     expect(root()).toHaveAttribute("data-variant", "plain")
     expect(root().className).not.toMatch(/\bbg-grouped\b|(^|\s)border(\s|$)|shadow-|bg-/)
-    expect(root()).toHaveClass("items-center", "text-center", "py-12")
+    expect(root()).toHaveClass("items-center", "text-center", "py-8")
   })
 })
 

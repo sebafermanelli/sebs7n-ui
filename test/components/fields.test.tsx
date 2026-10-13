@@ -60,8 +60,8 @@ describe("Input", () => {
 
   it.each([
     ["sm", "data-[size=sm]:h-7"],
-    ["md", "data-[size=md]:h-9"],
-    ["lg", "data-[size=lg]:h-10"],
+    ["md", "data-[size=md]:h-8"],
+    ["lg", "data-[size=lg]:h-9"],
   ] as const)("size %s", (size, cls) => {
     render(<Input size={size} placeholder={size} />)
     const input = screen.getByPlaceholderText(size)

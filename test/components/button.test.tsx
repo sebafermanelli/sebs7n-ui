@@ -9,7 +9,7 @@ describe("Button", () => {
   it("por defecto es el primario de iCloud: el acento sólido, tamaño md", () => {
     render(<Button>Deploy</Button>)
     const button = screen.getByRole("button", { name: "Deploy" })
-    expect(button).toHaveClass("bg-brand-700", "text-brand-contrast", "hover:bg-brand-800", "h-9", "px-3")
+    expect(button).toHaveClass("bg-brand-700", "text-brand-contrast", "hover:bg-brand-800", "h-8", "px-3")
   })
 
   // iCloud apaga un botón con opacidad (.4 en toolbars y en los de texto), sin cambiarle el color:
@@ -92,17 +92,17 @@ describe("Button", () => {
   // (glifo 18), 40 con el de 20.
   it("los glifos crecen con el botón de ícono", () => {
     expect(buttonVariants({ size: "icon-sm" })).not.toMatch(/\[&_svg:not\(\[class\*='size-'\]\)\]:size-(4\.5|5)/)
-    expect(buttonVariants({ size: "icon-md" })).toContain("[&_svg:not([class*='size-'])]:size-4.5")
-    expect(buttonVariants({ size: "icon-lg" })).toContain("[&_svg:not([class*='size-'])]:size-5")
+    expect(buttonVariants({ size: "icon-md" })).toContain("[&_svg:not([class*='size-'])]:size-4")
+    expect(buttonVariants({ size: "icon-lg" })).toContain("[&_svg:not([class*='size-'])]:size-4.5")
   })
 
   it.each([
     ["sm", "h-7"],
-    ["md", "h-9"],
-    ["lg", "h-10"],
+    ["md", "h-8"],
+    ["lg", "h-9"],
     ["icon-sm", "size-7"],
-    ["icon-md", "size-9"],
-    ["icon-lg", "size-10"],
+    ["icon-md", "size-8"],
+    ["icon-lg", "size-9"],
   ] as const)("size %s → %s", (size, cls) => {
     expect(buttonVariants({ size }).split(" ")).toContain(cls)
   })

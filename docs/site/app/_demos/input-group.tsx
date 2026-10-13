@@ -65,7 +65,7 @@ export function ConBoton() {
 
 /**
  * Tamaños
- * 28, 36 y 40, los mismos altos que los botones: un campo y un botón del mismo `size` miden lo mismo.
+ * 28, 32 y 36, los mismos altos que los botones: un campo y un botón del mismo `size` miden lo mismo.
  */
 export function Tamanos() {
   return (

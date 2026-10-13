@@ -46,10 +46,10 @@ describe("Accordion", () => {
     expect(trigger).toHaveAttribute("aria-expanded", "false")
   })
 
-  it("el disclosure de iCloud: chevron › al final que gira a ⌄, fila de 44 y separadores a todo el ancho", () => {
+  it("el disclosure de iCloud: chevron › al final que gira a ⌄, fila de 40 y separadores a todo el ancho", () => {
     render(<Faq />)
     const trigger = screen.getByRole("button", { name: "¿Qué incluye?" })
-    expect(trigger).toHaveClass("min-h-11", "py-2.5", "text-headline", "text-label")
+    expect(trigger).toHaveClass("min-h-10", "py-2", "text-headline", "text-label")
     const chevron = trigger.querySelector("svg")!
     expect(chevron).toHaveClass("lucide-chevron-right", "group-data-panel-open/accordion-trigger:rotate-90", "motion-reduce:transition-none")
     expect(chevron).toHaveAttribute("aria-hidden", "true")

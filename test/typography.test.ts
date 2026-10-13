@@ -83,18 +83,18 @@ describe("fuente", () => {
 })
 
 /**
- * La escala de iCloud web (2.0): base 17, pasos 11/12/14/15/17/19/22/32 y 48 de display (3.0: title-1 y title-2 suben para más contraste). Los roles
+ * La escala de iCloud web (2.0): 4.0 compacta: base 15, pasos 11/12/14/15/17/20/28 y 36 de display. Los roles
  * conservan el nombre de Apple para que los componentes no se renombren; cambia el valor. El
- * chrome (menús, campos, botones, metadatos) es `callout` (14), como en iCloud; `body` (17) es
+ * chrome (menús, campos, botones, metadatos) es `callout` (14), como en iCloud; `body` (15, antes 17) es
  * el texto que se lee: celdas, párrafos, recordatorios.
  */
 const APPLE_ROLES: Record<string, { size: number; weight: number; lineHeight: number }> = {
-  "large-title": { size: 48, weight: 600, lineHeight: 52 },
-  "title-1": { size: 32, weight: 600, lineHeight: 38 },
-  "title-2": { size: 22, weight: 600, lineHeight: 28 },
-  "title-3": { size: 19, weight: 600, lineHeight: 24 },
-  headline: { size: 17, weight: 600, lineHeight: 22 },
-  body: { size: 17, weight: 400, lineHeight: 22 },
+  "large-title": { size: 36, weight: 600, lineHeight: 42 },
+  "title-1": { size: 28, weight: 600, lineHeight: 34 },
+  "title-2": { size: 20, weight: 600, lineHeight: 26 },
+  "title-3": { size: 17, weight: 600, lineHeight: 22 },
+  headline: { size: 15, weight: 600, lineHeight: 20 },
+  body: { size: 15, weight: 400, lineHeight: 20 },
   // Alias de `body` desde R1: era el cuerpo de los controles `lg` (15 px). Queda para no romper.
   "body-large": { size: 17, weight: 400, lineHeight: 22 },
   subheadline: { size: 15, weight: 400, lineHeight: 20 },
@@ -115,7 +115,7 @@ describe("roles de Apple con la escala de iCloud (2.0)", () => {
   })
 
   it("solo usa pasos de la escala de iCloud", () => {
-    const pasos = new Set([11, 12, 14, 15, 17, 19, 22, 32, 48])
+    const pasos = new Set([11, 12, 14, 15, 17, 20, 28, 36])
     for (const [role, { size }] of Object.entries(APPLE_ROLES)) expect(pasos.has(size), role).toBe(true)
   })
 

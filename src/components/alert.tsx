@@ -7,7 +7,7 @@ import { cn } from "../lib/utils.js"
 // tinta del rol (`*-ink`, ≥ 4,5:1). Sin franja de color a un costado (3.0): el rol lo dicen el tinte, el ícono y el texto. Los roles son
 // independientes de la marca (`--color-success` & co.); `brand` queda para un aviso del producto.
 const alertVariants = cva(
-  "group/alert relative grid w-full gap-0.5 rounded-surface border border-transparent bg-fill-1 py-3 pe-4 ps-4 text-start text-callout has-[>svg]:grid-cols-[auto_1fr] has-[>svg]:gap-x-3 *:[svg]:row-span-2 *:[svg]:mt-0.5 *:[svg:not([class*='size-'])]:size-4",
+  "group/alert relative grid w-full gap-0.5 rounded-surface border border-transparent bg-fill-1 py-2.5 pe-3.5 ps-3.5 text-start text-callout has-[>svg]:grid-cols-[auto_1fr] has-[>svg]:gap-x-3 *:[svg]:row-span-2 *:[svg]:mt-0.5 *:[svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {

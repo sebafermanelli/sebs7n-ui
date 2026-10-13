@@ -27,7 +27,7 @@ export function FilterList() {
 
 /**
  * Tamaños
- * 28, 36 y 40, como los campos del formulario.
+ * 28, 32 y 36, como los campos del formulario.
  */
 export function Sizes() {
   return (

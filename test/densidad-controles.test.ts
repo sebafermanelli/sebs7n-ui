@@ -15,8 +15,7 @@ import { toggleVariants } from "../src/variants/toggle"
  * Con 17 adentro, un campo o un HoverCard se veían desproporcionados al lado de un Badge de 12.
  *
  * Y un campo y un botón en la misma fila tienen que medir lo mismo: los campos y los botones
- * comparten una sola escala de alto —sm 28, md 36, lg 40—, la del search field de iCloud (32–36)
- * y su botón de modal (36).
+ * comparten una sola escala de alto —sm 28, md 32, lg 36 (4.0; antes 28 · 36 · 40)—, la del search field de iCloud (32–36).
  */
 const root = join(import.meta.dirname, "..")
 const fuente = (archivo: string) => readFileSync(join(root, "src", archivo), "utf8")
@@ -72,9 +71,6 @@ const PERMITIDOS: Record<string, string[]> = {
   // Los campos, con el dedo, a 17: con menos de 16 px iOS hace zoom al enfocar.
   "variants/input.ts": ["pointer-coarse:text-body-large"],
   "components/command.tsx": ["pointer-coarse:text-body-large"],
-  // R4: las pestañas de línea son la navegación de una página, como las de Settings de iCloud, que
-  // van en 17 (medido). La segmentada, que sí es un control, sigue en 14.
-  "components/tabs.tsx": ["text-body"],
   // R5a: la cabecera de cuenta del menú de iCloud lleva el nombre en 17/600 (no es un control).
   "components/user-menu.tsx": ["text-headline"],
 }
@@ -90,12 +86,12 @@ describe("el texto de un control no pasa de 15 px", () => {
 })
 
 describe("una sola escala de alto para campos y botones", () => {
-  it("campos: sm 28, md 36, lg 40; con el dedo sm 36 y md 44", () => {
+  it("campos: sm 28, md 32, lg 36 (4.0); con el dedo sm 36 y md 44", () => {
     expect(inputSizeClassName.split(" ")).toEqual(
       expect.arrayContaining([
         "data-[size=sm]:h-7",
-        "data-[size=md]:h-9",
-        "data-[size=lg]:h-10",
+        "data-[size=md]:h-8",
+        "data-[size=lg]:h-9",
         "pointer-coarse:data-[size=sm]:h-9",
         "pointer-coarse:data-[size=md]:h-11",
       ])
@@ -106,12 +102,12 @@ describe("una sola escala de alto para campos y botones", () => {
   it("botones: los mismos altos, texto 14 e íconos 16 en todos los tamaños", () => {
     const clases = (size: Parameters<typeof buttonVariants>[0]) => buttonVariants(size).split(" ")
     expect(clases({ size: "sm" })).toEqual(expect.arrayContaining(["h-7", "text-callout"]))
-    expect(clases({ size: "md" })).toEqual(expect.arrayContaining(["h-9", "text-callout"]))
-    expect(clases({ size: "lg" })).toEqual(expect.arrayContaining(["h-10", "text-callout"]))
+    expect(clases({ size: "md" })).toEqual(expect.arrayContaining(["h-8", "text-callout"]))
+    expect(clases({ size: "lg" })).toEqual(expect.arrayContaining(["h-9", "text-callout"]))
     expect(clases({ size: "lg" }).join(" ")).not.toMatch(/size-5/)
     expect(clases({ size: "icon-sm" })).toContain("size-7")
-    expect(clases({ size: "icon-md" })).toContain("size-9")
-    expect(clases({ size: "icon-lg" })).toContain("size-10")
+    expect(clases({ size: "icon-md" })).toContain("size-8")
+    expect(clases({ size: "icon-lg" })).toContain("size-9")
   })
 
   // Todos los campos de una línea salen de `inputSizeClassName` (o de `inputShellClassName`, que
@@ -131,12 +127,12 @@ describe("una sola escala de alto para campos y botones", () => {
 
   it("las casillas del OTP son cuadrados de los mismos altos", () => {
     const otp = fuente("components/otp-field.tsx")
-    for (const clase of ["data-[size=sm]:size-7", "data-[size=md]:size-9", "data-[size=lg]:size-10"]) expect(otp).toContain(clase)
+    for (const clase of ["data-[size=sm]:size-7", "data-[size=md]:size-8", "data-[size=lg]:size-9"]) expect(otp).toContain(clase)
   })
 
   it("el Combobox con chips crece desde los mismos altos", () => {
     const combobox = fuente("components/combobox.tsx")
-    for (const clase of ["data-[size=sm]:min-h-7", "data-[size=md]:min-h-9", "data-[size=lg]:min-h-10"]) expect(combobox).toContain(clase)
+    for (const clase of ["data-[size=sm]:min-h-7", "data-[size=md]:min-h-8", "data-[size=lg]:min-h-9"]) expect(combobox).toContain(clase)
   })
 
   it("en la barra de herramientas, el campo y los botones son del escalón sm (28)", () => {
@@ -146,33 +142,33 @@ describe("una sola escala de alto para campos y botones", () => {
   })
 
   // 2.5: el Toggle suelto también va en una barra de filtros al lado de la búsqueda y los Select, así
-  // que pasó a md (36) como el ToggleGroup. Adentro de una Toolbar se queda en 28, el escalón de la barra.
-  it("un chip (Toggle) es md (36) por defecto y en una Toolbar mide 28", () => {
+  // que pasó a md (32) como el ToggleGroup. Adentro de una Toolbar se queda en 28, el escalón de la barra.
+  it("un chip (Toggle) es md (32) por defecto y en una Toolbar mide 28", () => {
     const clases = toggleVariants().split(" ")
-    expect(clases).toContain("h-9")
+    expect(clases).toContain("h-8")
     expect(clases).toContain("in-data-[slot=toolbar]:h-7")
     expect(toggleVariants({ size: "sm" }).split(" ")).toContain("h-7")
   })
 
   // 2.4: en una barra de filtros el segmentado va al lado de la búsqueda y de los Select (md, 36), así
-  // que su default pasó de sm a md. La pista suma 2 + 2 de padding: el ítem mide 24 · 32 · 36 para que
-  // la pista dé 28 · 36 · 40. Adentro de una Toolbar se queda en 28, el escalón de la barra.
-  it("el ToggleGroup es md (36) por defecto y su pista mide 28 · 36 · 40", () => {
+  // que su default pasó de sm a md. La pista suma 2 + 2 de padding: el ítem mide 24 · 28 · 32 para que
+  // la pista dé 28 · 32 · 36. Adentro de una Toolbar se queda en 28, el escalón de la barra.
+  it("el ToggleGroup es md (32) por defecto y su pista mide 28 · 32 · 36", () => {
     const grupo = fuente("components/toggle-group.tsx")
     expect(grupo).toMatch(/useControlSize\(sizeProp, "md"\)/)
     expect(fuente("variants/segmented.ts")).toMatch(/\bp-0\.5\b[\s\S]*\bh-6\b/)
-    expect(grupo).toContain("group-data-[size=md]/toggle-group:not-in-data-[slot=toolbar]:min-h-8")
-    expect(grupo).toContain("group-data-[size=lg]/toggle-group:not-in-data-[slot=toolbar]:min-h-9")
+    expect(grupo).toContain("group-data-[size=md]/toggle-group:not-in-data-[slot=toolbar]:min-h-7")
+    expect(grupo).toContain("group-data-[size=lg]/toggle-group:not-in-data-[slot=toolbar]:min-h-8")
   })
 
-  it("el NumberField mide lo que un Input: md 36 por defecto", () => {
+  it("el NumberField mide lo que un Input: md 32 por defecto", () => {
     const campo = fuente("components/number-field.tsx")
     expect(campo).toMatch(/useControlSize\(sizeProp, "md"\)/)
-    expect(campo).toContain("`sm` 28, `md` 36, `lg` 40")
+    expect(campo).toContain("`sm` 28, `md` 32, `lg` 36")
   })
 
-  it("el campo del chat mide lo que el botón de enviar (md, 36)", () => {
-    expect(fuente("components/chat.tsx")).toContain("min-h-9")
+  it("el campo del chat mide lo que el botón de enviar (md, 32)", () => {
+    expect(fuente("components/chat.tsx")).toContain("min-h-8")
   })
 })
 

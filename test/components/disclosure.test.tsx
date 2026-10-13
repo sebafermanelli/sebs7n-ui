@@ -42,7 +42,7 @@ describe("Disclosure", () => {
     render(<Faq />)
     const trigger = screen.getByText("¿Puedo anular una factura?").closest("summary")!
     expect(trigger).toHaveAttribute("data-slot", "disclosure-trigger")
-    expect(trigger).toHaveClass("list-none", "min-h-11", "text-headline", "focus-visible:focus-ring", "[&::-webkit-details-marker]:hidden")
+    expect(trigger).toHaveClass("list-none", "min-h-10", "text-headline", "focus-visible:focus-ring", "[&::-webkit-details-marker]:hidden")
     expect(trigger.closest("details")).toHaveClass("group/disclosure", "border-t", "border-separator")
     expect(document.querySelector("[data-slot=disclosure-group]")).toHaveClass("border-b", "border-separator")
     const chevron = trigger.querySelector("svg")!

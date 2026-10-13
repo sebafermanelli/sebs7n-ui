@@ -18,7 +18,7 @@ function SettingsGrid({ className, children, ...props }: SettingsGridProps) {
       data-slot="settings-grid"
       // Sin gap vertical (separaría las filas internas de cada card): el aire entre filas es el
       // margen de cada sección, compensado al final.
-      className={cn("-mb-4 grid grid-cols-1 gap-x-4 gap-y-0 @3xl:grid-cols-2 [&>[data-slot=settings-section]]:mb-4", className)}
+      className={cn("-mb-3 grid grid-cols-1 gap-x-3 gap-y-0 @3xl:grid-cols-2 [&>[data-slot=settings-section]]:mb-3", className)}
       {...props}
     >
       {children}
@@ -57,7 +57,7 @@ function SettingsSection({ className, id, title, description, footer, wide, chil
       className={cn(
         // 24 en vez de los 20 de `Card`: los campos llevan hints y checks que, con 20, rozaban el borde de abajo.
         // El cuerpo (`CardContent`) conserva `p-(--card-spacing)` entero: el mismo aire arriba, abajo y a los costados.
-        "row-span-3 grid grid-cols-[minmax(0,1fr)] grid-rows-subgrid gap-0 [&>*]:min-w-0 [--card-spacing:--spacing(6)] [&>[data-slot=card-header]]:content-start",
+        "row-span-3 grid grid-cols-[minmax(0,1fr)] grid-rows-subgrid gap-0 [&>*]:min-w-0 [--card-spacing:--spacing(5)] [&>[data-slot=card-header]]:content-start",
         wide && "@3xl:col-span-2",
         className
       )}
@@ -67,7 +67,7 @@ function SettingsSection({ className, id, title, description, footer, wide, chil
         <CardTitle id={titleId}>{title}</CardTitle>
         {description != null && <CardDescription>{description}</CardDescription>}
       </CardHeader>
-      <CardContent className="flex flex-col gap-5">{children}</CardContent>
+      <CardContent className="flex flex-col gap-4">{children}</CardContent>
       {footer != null && <CardFooter className="pb-(--card-spacing)">{footer}</CardFooter>}
     </Card>
   )

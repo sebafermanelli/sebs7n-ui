@@ -194,7 +194,7 @@ type ComboboxChipsProps = WithClassName<ComboboxPrimitive.Chips.Props> & {
   labels?: { clear?: string; trigger?: string }
   /**
    * Los chips envuelven en varias filas y el campo crece (default). Con `false` es **una sola línea** del alto de un
-   * `Select` (28 · 36 · 40): lo que no entra lo esconde quien la usa (`MultiSelect` lo hace con «+N»).
+   * `Select` (28 · 32 · 36): lo que no entra lo esconde quien la usa (`MultiSelect` lo hace con «+N»).
    */
   wrap?: boolean
 }
@@ -222,8 +222,8 @@ function ComboboxChips({ className, size = "md", showTrigger = true, showClear =
         // Un chip mide 20 y el `md` 36: con `py-1` y el borde el `self-center` reparte el aire. En
         // `sm` el chip mide 16 y el campo 28: `py-0.5`.
         wrap
-          ? "h-auto! data-[size=sm]:min-h-7 data-[size=md]:min-h-9 data-[size=lg]:min-h-10 pointer-coarse:data-[size=sm]:min-h-9 pointer-coarse:data-[size=md]:min-h-11 items-start py-1 data-[size=sm]:py-0.5 pe-1 ps-1"
-          : "h-7! data-[size=md]:h-9! data-[size=lg]:h-10! pointer-coarse:data-[size=sm]:h-9! pointer-coarse:data-[size=md]:h-11! items-center py-0 pe-1 ps-1",
+          ? "h-auto! data-[size=sm]:min-h-7 data-[size=md]:min-h-8 data-[size=lg]:min-h-9 pointer-coarse:data-[size=sm]:min-h-9 pointer-coarse:data-[size=md]:min-h-11 items-start py-1 data-[size=sm]:py-0.5 pe-1 ps-1"
+          : "h-7! data-[size=md]:h-8! data-[size=lg]:h-9! pointer-coarse:data-[size=sm]:h-9! pointer-coarse:data-[size=md]:h-11! items-center py-0 pe-1 ps-1",
         className
       )}
     >

@@ -63,8 +63,8 @@ function CardHeader({ className, icon, children, ...props }: CardHeaderProps) {
       className={cn(
         // `last:grow`: si la cabecera cierra la card y una grilla estira la card, la franja la llena; si no,
         // abajo quedaba una banda del cuerpo, más oscura sobre el wallpaper.
-        "group/card-header grid min-h-20 auto-rows-min content-center items-center gap-x-4 gap-y-0.5 px-(--card-spacing) py-3.5 last:grow",
-        "bg-(--card-strip,var(--color-surface-bar)) group-data-[size=sm]/card:min-h-0 group-data-[size=sm]/card:py-3",
+        "group/card-header grid min-h-14 auto-rows-min content-center items-center gap-x-3 gap-y-0.5 px-(--card-spacing) py-3 last:grow",
+        "bg-(--card-strip,var(--color-surface-bar)) group-data-[size=sm]/card:min-h-0 group-data-[size=sm]/card:py-2.5",
         "has-data-[slot=card-action]:grid-cols-[1fr_auto] data-icon:grid-cols-[auto_1fr] data-icon:has-data-[slot=card-action]:grid-cols-[auto_1fr_auto]",
         className
       )}
@@ -74,7 +74,7 @@ function CardHeader({ className, icon, children, ...props }: CardHeaderProps) {
         <span
           data-slot="card-icon"
           aria-hidden="true"
-          className="row-span-2 row-start-1 flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-control [&>svg]:size-full [&>img]:size-full"
+          className="row-span-2 row-start-1 flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-control [&>svg]:size-full [&>img]:size-full"
         >
           {icon}
         </span>
@@ -88,7 +88,7 @@ function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-title"
-      className={cn("min-w-0 font-display text-title-2 text-label group-data-icon/card-header:col-start-2 group-data-[size=sm]/card:text-title-3", className)}
+      className={cn("min-w-0 font-display text-headline text-label group-data-icon/card-header:col-start-2 group-data-[size=sm]/card:text-callout group-data-[size=sm]/card:font-semibold", className)}
       {...props}
     />
   )
@@ -98,7 +98,7 @@ function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-description"
-      className={cn("min-w-0 text-callout text-label-secondary group-data-icon/card-header:col-start-2", className)}
+      className={cn("min-w-0 text-footnote text-label-secondary group-data-icon/card-header:col-start-2", className)}
       {...props}
     />
   )
@@ -134,8 +134,8 @@ function CardContent({ className, columns = 1, ...props }: CardContentProps) {
       className={cn(
         // El pie lleva 4 px más que los otros lados: con el interlineado del texto la última línea parece pegada al borde
         // aunque los cuatro paddings midan lo mismo.
-        "relative p-(--card-spacing) pb-[calc(var(--card-spacing)+0.25rem)] has-data-[slot=card-row]:p-2.5",
-        "data-[columns=2]:grid data-[columns=2]:grid-cols-2 data-[columns=2]:gap-x-10",
+        "relative p-(--card-spacing) pb-[calc(var(--card-spacing)+0.25rem)] has-data-[slot=card-row]:p-2",
+        "data-[columns=2]:grid data-[columns=2]:grid-cols-2 data-[columns=2]:gap-x-8",
         "data-[columns=2]:before:absolute data-[columns=2]:before:inset-y-(--card-spacing) data-[columns=2]:before:start-1/2 data-[columns=2]:before:w-px data-[columns=2]:before:bg-fill-3",
         "data-[columns=2]:[&>[data-slot=card-row]:nth-child(2)]:before:hidden",
         className
@@ -162,8 +162,8 @@ function CardRow({ className, title, description, trailing, children, ...props }
     <div
       data-slot="card-row"
       className={cn(
-        "relative flex min-h-15 min-w-0 flex-col justify-center gap-0.5 rounded-control px-2.5 py-2 text-callout text-label",
-        "before:absolute before:inset-x-2.5 before:top-0 before:h-px before:bg-separator first:before:hidden",
+        "relative flex min-h-12 min-w-0 flex-col justify-center gap-0.5 rounded-control px-2 py-1.5 text-callout text-label",
+        "before:absolute before:inset-x-2 before:top-0 before:h-px before:bg-separator first:before:hidden",
         className
       )}
       {...props}
@@ -189,7 +189,7 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-footer"
-      className={cn("flex min-h-10 items-center justify-between gap-2 px-(--card-spacing) pb-2", className)}
+      className={cn("flex min-h-9 items-center justify-between gap-2 px-(--card-spacing) pb-2", className)}
       {...props}
     />
   )
@@ -256,7 +256,7 @@ function CardGrid({ className, columns = 3, children, ...props }: CardGridProps)
       className={cn(
         // Sin gap vertical: separaría también las filas internas de cada card (una card sin pie
         // quedaba con aire vacío abajo). Entre filas de cards, el margen de cada una, compensado al final.
-        "-mb-4 grid grid-cols-1 gap-x-4 gap-y-0 [&>[data-slot=card]]:mb-4",
+        "-mb-3 grid grid-cols-1 gap-x-3 gap-y-0 [&>[data-slot=card]]:mb-3",
         colClass,
         "[&>[data-slot=card]]:row-span-3 [&>[data-slot=card]]:grid [&>[data-slot=card]]:grid-cols-[minmax(0,1fr)] [&>[data-slot=card]]:grid-rows-subgrid [&>[data-slot=card]]:gap-0 [&>[data-slot=card]>*]:min-w-0",
         // La franja crece hasta la más alta de la fila: el texto arranca arriba, no centrado.

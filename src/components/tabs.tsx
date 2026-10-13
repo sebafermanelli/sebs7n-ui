@@ -70,7 +70,7 @@ function TabsList({ className, variant = "line", children, ...props }: TabsListP
         ref={setNode}
         className={cn(
           variant === "line"
-            ? // Medido en Settings: 30 entre pestañas + los 8 de padding de cada lado = 46 de texto a
+            ? // 20 entre pestañas + los 8 de padding de cada lado = 36 de texto a
               // texto. La línea base es `fill-3`, el `rgba(120,120,128,.36)` de iCloud, como sombra
               // interior: con muchas pestañas la tira scrollea de costado (sin barra) y un borde
               // quedaría afuera de la caja que recorta, con el subrayado de la activa escondido.
@@ -78,7 +78,7 @@ function TabsList({ className, variant = "line", children, ...props }: TabsListP
               // primera y la última pestaña pierden el padding de afuera para que el texto quede alineado
               // con el contenido. Si no entran, la tira scrollea y se desvanece del lado que tiene más
               // (`data-overflow-start` / `data-overflow-end`): la última nunca queda cortada sin aviso.
-              "relative flex w-full items-center gap-7.5 overflow-x-auto shadow-[inset_0_-1px_0_var(--color-fill-3)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden " +
+              "relative flex w-full items-center gap-5 overflow-x-auto shadow-[inset_0_-1px_0_var(--color-fill-3)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden " +
               "data-overflow-end:[mask-image:linear-gradient(to_right,#000_calc(100%-2.5rem),transparent)] " +
               "data-overflow-start:[mask-image:linear-gradient(to_left,#000_calc(100%-2.5rem),transparent)] " +
               "data-overflow-start:data-overflow-end:[mask-image:linear-gradient(to_right,transparent,#000_2.5rem,#000_calc(100%-2.5rem),transparent)]"
@@ -117,13 +117,12 @@ const TRIGGER =
   "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
 
 const TRIGGER_VARIANT: Record<TabsVariant, string> = {
-  // Settings: 17 (la excepción a los 14 de un control: son la navegación de la página, como en
-  // iCloud), 60 de alto. El subrayado (`after`) va del ancho del texto —descuenta el padding— y
+  // 14, como un control, y 40 de alto (4.0; antes 17 y 60, las de Settings de iCloud; con el dedo, 44). El subrayado (`after`) va del ancho del texto —descuenta el padding— y
   // encima de la línea base (`-bottom-px`), así la reemplaza en ese tramo. La primera y la última
   // pierden el padding de afuera: el texto arranca alineado con la línea.
   line:
-    "h-15 shrink-0 px-2 first:ps-0 last:pe-0 text-body text-label-secondary hover:text-label data-active:text-label " +
-    "before:inset-y-3 before:rounded-control focus-visible:before:focus-ring " +
+    "h-10 pointer-coarse:h-11 shrink-0 px-2 first:ps-0 last:pe-0 text-callout text-label-secondary hover:text-label data-active:text-label " +
+    "before:inset-y-1.5 before:rounded-control focus-visible:before:focus-ring " +
     "after:inset-x-2 first:after:start-0 last:after:end-0 after:bottom-0 after:h-px after:bg-label after:opacity-0 data-active:after:opacity-100 " +
     // Revisión de R4: el subrayado aparece con una transición corta; quieto con movimiento reducido.
     "after:transition-opacity after:duration-200 motion-reduce:after:transition-none",

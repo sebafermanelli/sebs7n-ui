@@ -19,13 +19,13 @@ export const backdropClassName =
  * El popup centrado de Dialog y AlertDialog.
  *
  * Es el contenedor de diálogo de iCloud (catálogo §2.15): radio 11 (`rounded-panel`), opaco
- * (`bg-surface`), la sombra de popover con su filo (`shadow-modal`) y 20 px de padding. Lo
+ * (`bg-surface`), la sombra de popover con su filo (`shadow-modal`) y 16 px de padding (4.0; antes 20). Lo
  * comparten Dialog y AlertDialog; la alerta es más angosta (`alertWidthClassName`), con 24 de
  * aire y centrada.
  * La entrada sube 8px y crece de 97 a 100 % mientras aparece, con easing exponencial y sin rebote: es la señal de que algo entró, no decoración.
  */
 export const modalPopupClassName =
-  "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-panel bg-surface p-5 text-callout text-label shadow-modal outline-none " +
+  "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-3 rounded-panel bg-surface p-4 text-callout text-label shadow-modal outline-none " +
   "transition-[opacity,translate,scale] duration-200 ease-out-expo motion-reduce:transition-none data-ending-style:scale-[0.98] data-ending-style:opacity-0 data-starting-style:translate-y-[calc(-50%+8px)] data-starting-style:scale-[0.97] data-starting-style:opacity-0"
 
 /**
@@ -42,12 +42,12 @@ export const alertWidthClassName = "max-w-[min(450px,calc(100%-2rem))]"
  *
  * La última línea es una red de seguridad: un Button es `whitespace-nowrap`, y una etiqueta larga
  * en media alerta se salía del botón. Acá el texto baja de renglón (centrado), una palabra sola más
- * larga que la columna se corta (`min-w-0` + `break-words`) y el botón crece en alto desde sus 36.
+ * larga que la columna se corta (`min-w-0` + `break-words`) y el botón crece en alto desde sus 32.
  * Por eso el `size` de los botones no cambia nada adentro del pie.
  */
 export const alertFooterClassName =
   "grid w-full auto-cols-fr grid-flow-col gap-2.5 pt-2 has-[>:nth-child(3)]:grid-flow-row max-[360px]:grid-flow-row [&>*]:w-full " +
-  "[&>*]:h-auto [&>*]:min-h-9 [&>*]:min-w-0 [&>*]:py-1.5 [&>*]:text-center [&>*]:whitespace-normal [&>*]:break-words"
+  "[&>*]:h-auto [&>*]:min-h-8 [&>*]:min-w-0 [&>*]:py-1.5 [&>*]:text-center [&>*]:whitespace-normal [&>*]:break-words"
 
 /**
  * El pie de Dialog: los botones abajo a la derecha, sin línea arriba y
@@ -73,11 +73,11 @@ export const closeButtonClassName = "size-7 [&_svg:not([class*='size-'])]:size-3
 
 /**
  * Dónde va la X de un Dialog: **arriba a la izquierda**, como en iCloud (Calendar → «Go To
- * Date…»), con el título centrado. Con el padding de 20 px y el título `title-3` (renglón de 24),
- * el centro del título queda a 32 px del borde; la X mide 28, así que a 18 px (`4.5`) su centro
+ * Date…»), con el título centrado. Con el padding de 16 px y el título `title-3` (renglón de 22),
+ * el centro del título queda a 27 px del borde; la X mide 28, así que a 13 px (`3.25`) su centro
  * cae en la misma línea.
  */
-export const dialogCloseClassName = "absolute top-4.5 start-4.5"
+export const dialogCloseClassName = "absolute top-3.25 start-3.5"
 
 /**
  * Dónde va la X de Sheet y Drawer: arriba a la derecha. iCloud no tiene panel lateral; en una hoja
@@ -89,7 +89,7 @@ export const dialogCloseClassName = "absolute top-4.5 start-4.5"
  * `--sf-safe-top` y `--sf-safe-right` solo para los bordes de pantalla que toca (una hoja de abajo
  * no suma el notch de arriba); sin ellas, 0.
  */
-export const overlayCloseClassName = "absolute top-[calc(var(--sf-safe-top,0px)+1.125rem)] end-[calc(var(--sf-safe-right,0px)+1.125rem)]"
+export const overlayCloseClassName = "absolute top-[calc(var(--sf-safe-top,0px)+0.8125rem)] end-[calc(var(--sf-safe-right,0px)+0.875rem)]"
 
 /**
  * El popup anclado a un disparador: Popover y HoverCard, que son el mismo objeto.

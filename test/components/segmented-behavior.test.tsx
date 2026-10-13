@@ -88,12 +88,12 @@ describe("Tabs: línea de Settings y segmentado de Calendar", () => {
     expect(list).toHaveAttribute("data-variant", "line")
     // La línea base es una sombra interior (y no un borde): con `overflow-x-auto` el borde queda
     // fuera de la caja que recorta y el subrayado de la activa no se vería encima.
-    expect(list).toHaveClass("w-full", "shadow-[inset_0_-1px_0_var(--color-fill-3)]", "gap-7.5")
+    expect(list).toHaveClass("w-full", "shadow-[inset_0_-1px_0_var(--color-fill-3)]", "gap-5")
     expect(list.className).not.toMatch(/(^|\s)border-b(\s|$)/)
     expect(list.className).not.toMatch(/(^|\s)-mx-2(\s|$)/)
     expect(list.querySelector("[data-slot=tabs-indicator]")).toBeNull()
     const tab = screen.getByRole("tab", { name: "Pagos" })
-    expect(tab).toHaveClass("h-15", "px-2", "shrink-0", "text-body", "text-label-secondary")
+    expect(tab).toHaveClass("h-10", "px-2", "shrink-0", "text-callout", "text-label-secondary")
     expect(tab).toHaveClass("after:inset-x-2", "after:bottom-0", "after:h-px", "after:bg-label", "after:opacity-0", "data-active:after:opacity-100")
   })
 

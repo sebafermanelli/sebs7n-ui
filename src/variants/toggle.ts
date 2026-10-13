@@ -16,7 +16,7 @@ import { cn } from "../lib/utils.js"
  */
 const toggleVariantsBase = cva(
   "touch-target inline-flex w-fit shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-control bg-fill-1 text-callout whitespace-nowrap text-label outline-none select-none transition-surface hover:bg-fill-2 focus-visible:focus-ring data-pressed:bg-fill-3 data-pressed:font-semibold data-pressed:hover:bg-fill-3 data-disabled:cursor-not-allowed data-disabled:opacity-40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
-  { variants: { size: { sm: "h-7 px-2.5", md: "h-9 px-3 in-data-[slot=toolbar]:h-7 in-data-[slot=toolbar]:px-2.5", lg: "h-10 px-3.5" } }, defaultVariants: { size: "md" } }
+  { variants: { size: { sm: "h-7 px-2.5", md: "h-8 px-3 in-data-[slot=toolbar]:h-7 in-data-[slot=toolbar]:px-2.5", lg: "h-9 px-3.5" } }, defaultVariants: { size: "md" } }
 )
 
 // Pasa por cn() (tailwind-merge): usada sobre <a>/<Link>, la clase de la variante tiene que ganarle a la base.

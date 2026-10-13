@@ -63,11 +63,11 @@ describe("Drawer al estilo iCloud (2.0)", () => {
     render(<DrawerDePrueba defaultOpen />)
     const hoja = await screen.findByRole("dialog")
     expect(screen.getByRole("heading", { name: "Filtrar viajes" })).toHaveClass("text-title-3")
-    expect(hoja.querySelector("[data-slot=drawer-header]")).toHaveClass("px-5")
-    expect(hoja.querySelector("[data-slot=drawer-body]")).toHaveClass("px-5")
+    expect(hoja.querySelector("[data-slot=drawer-header]")).toHaveClass("px-4")
+    expect(hoja.querySelector("[data-slot=drawer-body]")).toHaveClass("px-4")
     const pie = hoja.querySelector("[data-slot=drawer-footer]")!
     // Siempre en columna: 12 px para que las áreas de 44 de dos botones no se pisen.
-    expect(pie).toHaveClass("p-5", "gap-3")
+    expect(pie).toHaveClass("p-4", "gap-3")
     expect(pie).not.toHaveClass("border-t")
   })
 })

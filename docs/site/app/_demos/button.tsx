@@ -26,7 +26,7 @@ export function Variantes() {
 
 /**
  * Tamaños
- * 28, 36 y 40: los mismos altos que los campos, texto de 14 en los tres.
+ * 28, 32 y 36: los mismos altos que los campos, texto de 14 en los tres.
  */
 export function Tamanos() {
   return (

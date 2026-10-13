@@ -41,7 +41,7 @@ describe("SettingsSection", () => {
     const body = region.querySelector("[data-slot=card-content]")!
     expect(body).toHaveClass("p-(--card-spacing)")
     expect(body.className).not.toMatch(/(^|\s)(p[btylrx]?-0|pb-\d|py-\d|-mb-)/)
-    expect(region.className).toContain("[--card-spacing:--spacing(6)]")
+    expect(region.className).toContain("[--card-spacing:--spacing(5)]")
     expect(region.querySelector("[data-slot=card-footer]")).toHaveClass("pb-(--card-spacing)")
   })
 

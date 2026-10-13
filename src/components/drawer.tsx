@@ -247,7 +247,7 @@ function DrawerBody({ className, ...props }: DrawerBodyProps) {
   return (
     <DrawerPrimitive.Content
       data-slot="drawer-body"
-      className={cn("min-h-0 flex-1 overflow-auto overscroll-contain scroll-fade px-5", className)}
+      className={cn("min-h-0 flex-1 overflow-auto overscroll-contain scroll-fade px-4", className)}
       {...props}
     />
   )
@@ -258,11 +258,11 @@ function DrawerHeader({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="drawer-header"
       className={cn(
-        // Mismo padding que Dialog (20 px, 2.0).
-        "flex flex-col gap-1 px-5 pt-2 pb-4 pe-12",
+        // Mismo padding que Dialog (16 px, 4.0).
+        "flex flex-col gap-1 px-4 pt-2 pb-3 pe-11",
         // Las hojas laterales no tienen la franja del handle arriba, así que el
-        // título necesita su propio aire: 20 px, y así queda en la línea de la X.
-        "group-data-[swipe-direction=left]/drawer:pt-5 group-data-[swipe-direction=right]/drawer:pt-5",
+        // título necesita su propio aire: 16 px, y así queda en la línea de la X.
+        "group-data-[swipe-direction=left]/drawer:pt-4 group-data-[swipe-direction=right]/drawer:pt-4",
         className
       )}
       {...props}
@@ -273,7 +273,7 @@ function DrawerHeader({ className, ...props }: React.ComponentProps<"div">) {
 function DrawerFooter({ className, ...props }: React.ComponentProps<"div">) {
   // Sin línea arriba, como el pie de Dialog (2.0). Siempre en columna: 12 px para que
   // las áreas de 44 de dos botones de 32 no se pisen.
-  return <div data-slot="drawer-footer" className={cn("mt-auto flex flex-col gap-3 p-5", className)} {...props} />
+  return <div data-slot="drawer-footer" className={cn("mt-auto flex flex-col gap-3 p-4", className)} {...props} />
 }
 
 type DrawerTitleProps = WithClassName<DrawerPrimitive.Title.Props>

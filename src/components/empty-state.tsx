@@ -39,7 +39,7 @@ function EmptyState({ className, icon, title, titleAs: Title = "h2", description
         variant === "default" && "rounded-surface bg-grouped",
         variant === "subtle" && "rounded-surface bg-fill-1",
         variant === "placeholder" && "h-full",
-        "items-center justify-center gap-4 px-6 py-12 text-center",
+        "items-center justify-center gap-3 px-6 py-8 text-center",
         className
       )}
       {...props}
@@ -48,7 +48,7 @@ function EmptyState({ className, icon, title, titleAs: Title = "h2", description
         <div
           data-slot="empty-state-icon"
           aria-hidden="true"
-          className="flex size-10 items-center justify-center rounded-control bg-fill-1 text-label-secondary [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-5"
+          className="flex size-9 items-center justify-center rounded-control bg-fill-1 text-label-secondary [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-5"
         >
           {icon}
         </div>

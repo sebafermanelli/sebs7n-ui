@@ -49,7 +49,7 @@ export const inputPaddingClassName = { sm: "px-2.5", md: "px-3", lg: "px-3" } as
  * así que `touch-target` no le sirve: el área de toque tiene que ser el campo mismo.
  */
 export const inputSizeClassName =
-  "data-[size=sm]:h-7 data-[size=md]:h-9 data-[size=lg]:h-10 " +
+  "data-[size=sm]:h-7 data-[size=md]:h-8 data-[size=lg]:h-9 " +
   "pointer-coarse:data-[size=sm]:h-9 pointer-coarse:data-[size=md]:h-11"
 
 /**

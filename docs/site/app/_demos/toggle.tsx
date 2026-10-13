@@ -20,7 +20,7 @@ export function Basico() {
 
 /**
  * Tamaños y en un formulario
- * `size` 28, 36 o 40 como los botones; en un `Field`, `FieldLabel` lo nombra y con `name` viaja en el form.
+ * `size` 28, 32 o 36 como los botones; en un `Field`, `FieldLabel` lo nombra y con `name` viaja en el form.
  */
 export function TamanosYFormulario() {
   return (

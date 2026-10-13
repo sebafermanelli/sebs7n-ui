@@ -70,7 +70,7 @@ describe("Tabs", () => {
         </TabsList>
       </Tabs>
     )
-    expect(screen.getByRole("tab", { name: "Resumen" })).toHaveClass("h-15")
+    expect(screen.getByRole("tab", { name: "Resumen" })).toHaveClass("h-10")
     rerender(
       <Tabs defaultValue="a">
         <TabsList variant="segmented">

@@ -20,8 +20,8 @@ describe("Toggle size", () => {
     )
     // `w-fit`: en la columna de un Field no se estira a todo el ancho.
     expect(screen.getByRole("button", { name: "Negrita" })).toHaveClass("h-7", "px-2.5", "w-fit")
-    expect(screen.getByRole("button", { name: "Cursiva" })).toHaveClass("h-9", "px-3")
-    expect(screen.getByRole("button", { name: "Subrayado" })).toHaveClass("h-10", "px-3.5")
+    expect(screen.getByRole("button", { name: "Cursiva" })).toHaveClass("h-8", "px-3")
+    expect(screen.getByRole("button", { name: "Subrayado" })).toHaveClass("h-9", "px-3.5")
   })
 
   it("afuera de un Field no suma un id que la app no pidió", () => {
@@ -45,7 +45,7 @@ describe("ToggleGroup size", () => {
     const [md, lg] = screen.getAllByRole("group")
     expect(md).toHaveAttribute("data-size", "md")
     expect(lg).toHaveAttribute("data-size", "lg")
-    expect(screen.getByRole("button", { name: "Lista" })).toHaveClass("group-data-[size=md]/toggle-group:not-in-data-[slot=toolbar]:min-h-8", "group-data-[size=lg]/toggle-group:not-in-data-[slot=toolbar]:min-h-9")
+    expect(screen.getByRole("button", { name: "Lista" })).toHaveClass("group-data-[size=md]/toggle-group:not-in-data-[slot=toolbar]:min-h-7", "group-data-[size=lg]/toggle-group:not-in-data-[slot=toolbar]:min-h-8")
   })
 })
 

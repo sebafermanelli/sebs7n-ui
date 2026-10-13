@@ -79,7 +79,7 @@ Va junto a un rol (`font-display text-title-1`): cambia la familia, el rol pone 
 
 ### Escala display
 
-Para el titular de una portada, cuatro roles fluidos con más contraste que `text-large-title` (48). Usan `--font-display` (la fuente de titulares de la app); los componentes de datos no los piden, se usan a mano donde la pantalla es expresiva.
+Para el titular de una portada, cuatro roles fluidos con más contraste que `text-large-title` (36). Usan `--font-display` (la fuente de titulares de la app); los componentes de datos no los piden, se usan a mano donde la pantalla es expresiva.
 
 | Rol | Tamaño | Para qué |
 |---|---|---|

@@ -74,13 +74,13 @@ function PromoCard({ className, title, chip, children, ...props }: PromoCardProp
       aria-labelledby={id}
       data-slot="promo-card"
       className={cn(
-        "relative grid min-h-64 grid-cols-[1fr_auto] grid-rows-[1fr_auto] gap-4 overflow-hidden rounded-3xl p-7 text-brand-contrast",
+        "relative grid min-h-52 grid-cols-[1fr_auto] grid-rows-[1fr_auto] gap-3 overflow-hidden rounded-3xl p-6 text-brand-contrast",
         "bg-[linear-gradient(135deg,var(--color-brand-700),color-mix(in_oklch,var(--color-brand-700),#000_25%))] shadow-[0_2px_4px_color-mix(in_oklch,var(--color-brand-700),transparent_80%),0_6px_16px_color-mix(in_oklch,var(--color-brand-700),transparent_70%)]",
         className
       )}
       {...props}
     >
-      <div id={id} className="col-span-2 text-large-title font-bold">
+      <div id={id} className="col-span-2 text-title-1 font-bold">
         {title}
       </div>
       <div className="flex flex-col items-start gap-1 self-end">{children}</div>

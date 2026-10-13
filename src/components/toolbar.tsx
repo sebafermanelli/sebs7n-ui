@@ -85,7 +85,7 @@ function Toolbar({ className, onKeyDown, variant: variantProp = "bar", ...props 
         // La barra fija de iCloud: 44 con el borde adentro, sin radio ni cápsula.
         // Sobre el wallpaper (W), el material de la barra global: translúcida con blur.
         variant === "bar" && [
-          "min-h-11 w-full border-b border-separator bg-surface-bar px-2.5",
+          "min-h-10 w-full border-b border-separator bg-surface-bar px-2.5",
           "in-data-ambient:material-translucent",
         ],
         "data-[orientation=vertical]:w-fit data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-stretch",

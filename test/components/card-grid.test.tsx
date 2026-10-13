@@ -45,10 +45,10 @@ describe("CardGrid", () => {
   // como margen de cada card, compensado al final de la grilla.
   it("sin gap vertical: la separación entre filas es margen de la card", () => {
     const grid = fila()
-    expect(grid.className).toContain("gap-x-4")
+    expect(grid.className).toContain("gap-x-3")
     expect(grid.className).toContain("gap-y-0")
-    expect(grid.className).toContain("[&>[data-slot=card]]:mb-4")
-    expect(grid.className).toContain("-mb-4")
+    expect(grid.className).toContain("[&>[data-slot=card]]:mb-3")
+    expect(grid.className).toContain("-mb-3")
   })
 
   it("es un contenedor de consulta propio: las columnas siguen el ancho de la grilla y no el de la ventana", () => {

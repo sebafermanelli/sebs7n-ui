@@ -72,7 +72,7 @@ describe("WaitlistForm", () => {
 
   it("size lg por defecto, heredado por el botón y el campo (Form size)", () => {
     render(<WaitlistForm onSubmit={vi.fn()} />)
-    expect(screen.getByRole("button", { name: "Sumarme a la lista" })).toHaveClass("h-10")
+    expect(screen.getByRole("button", { name: "Sumarme a la lista" })).toHaveClass("h-9")
     expect(email()).toHaveAttribute("data-size", "lg")
   })
 

@@ -16,7 +16,7 @@ El [Playground](/docs/playground) es la referencia viva de los defaults: si camb
 
 ### Tamaños
 
-Una sola escala para campos y botones: `sm` 28 · `md` 36 · `lg` 40 (botones de ícono 28 · 36 · 40), texto de 14.
+Una sola escala para campos y botones: `sm` 28 · `md` 32 · `lg` 36 (botones de ícono 28 · 32 · 36; compacta desde 4.0), texto de 14.
 
 - **`md` es el de una app**: contenido, formularios, diálogos. Es el default: no hace falta escribirlo.
 - **`sm` en barras**: toolbars, la barra de una tabla, paginación, filtros sobre una lista.
@@ -42,7 +42,7 @@ El resaltado de menús, el ítem activo del sidebar y el elegido de un `Toggle`/
 
 ### Tipografía
 
-Por roles, como iCloud: `text-large-title` 48 (el título de la página), `title-1/2/3` 28/21/19, `headline` y `body` 17, `subheadline` 15, `callout` 14 (el cromo: barras, menús, tablas), `footnote` 12, `caption` 11. Un `<h1>` por página, que pone `PageHeaderTitle`.
+Por roles, como iCloud: `text-large-title` 36 (el título de la página; `PageHeaderTitle` usa `title-1`, 28), `title-1/2/3` 28/20/17, `headline`, `body` y `subheadline` 15 (escala compacta de 4.0; los campos con el dedo siguen en 17), `callout` 14 (el cromo: barras, menús, tablas), `footnote` 12, `caption` 11. Un `<h1>` por página, que pone `PageHeaderTitle`.
 
 Una landing puede tener su fuente de titulares: `font-display` junto al rol (`font-display text-title-1`), con la fuente cargada por la app en `--font-heading`. El paquete no trae fuentes; sin `--font-heading`, es Inter. En una app de trabajo, no.
 

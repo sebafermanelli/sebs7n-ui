@@ -111,7 +111,7 @@ function AlertDialogContent({ className, ref, initialFocus, ...props }: AlertDia
         <AlertDialogPrimitive.Popup
           data-slot="alert-dialog-content"
           // 24 px de aire (el diálogo común lleva 20) y todo centrado, como la alerta de iCloud.
-          className={cn(modalPopupClassName, alertWidthClassName, "justify-items-center p-6 text-center", className)}
+          className={cn(modalPopupClassName, alertWidthClassName, "justify-items-center p-5 text-center", className)}
           ref={foco.mergedRef}
           initialFocus={initialFocus ?? foco.initialFocus}
           {...props}

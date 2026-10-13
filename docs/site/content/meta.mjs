@@ -133,7 +133,7 @@ export const COMPONENTS = {
         loading: "Muestra el spinner encima del contenido y cancela el `onClick`. El ancho no cambia.",
         onClick: "Se ignora mientras `loading` está activo.",
         variant: "`default` (acento sólido) · `secondary` (gris) · `plain` (texto de acento) · `ghost` (texto neutro) · `destructive` (gris con texto rojo) · `destructive-plain` (texto rojo) · `link`. `accent` es un alias **obsoleto** de `default`; `outline` **se fue** en 2.0 (reemplazo: `secondary`).",
-        size: "`sm` 28 px · `md` 36 px · `lg` 40 px, los mismos altos que los campos (un botón al lado de un campo del mismo `size` mide lo mismo), texto 14 e íconos 16. Los `icon-*` son cuadrados: 28 (barra de herramientas, cerrar un diálogo; glifo 16), 36 (barra global; glifo 18) y 40 (glifo 20). Con el dedo el área crece a 44 sin cambiar lo que se ve.",
+        size: "`sm` 28 px · `md` 32 px · `lg` 36 px, los mismos altos que los campos (un botón al lado de un campo del mismo `size` mide lo mismo), texto 14 e íconos 16. Los `icon-*` son cuadrados: 28 (barra de herramientas, cerrar un diálogo; glifo 16), 32 (barra global; glifo 16) y 36 (glifo 18). Con el dedo el área crece a 44 sin cambiar lo que se ve.",
       },
     },
     related: ["badge", "dropdown-menu", "alert-dialog"],
@@ -537,7 +537,7 @@ export const COMPONENTS = {
       "Un campo obligatorio se marca en la etiqueta (`required` en `FieldLabel` o en `Label`), no con un asterisco pegado al placeholder.",
       "Para un buscador con sugerencias no uses `Input` a mano: `Combobox` o `Autocomplete`.",
     ],
-    props: { Input: { size: "`sm` 28 px · `md` 36 px · `lg` 40 px, con el texto en 14 en los tres. Los comparten todos los campos y el `Button`." } },
+    props: { Input: { size: "`sm` 28 px · `md` 32 px · `lg` 36 px, con el texto en 14 en los tres. Los comparten todos los campos y el `Button`." } },
     related: ["field", "label", "textarea", "select", "combobox"],
   },
   "input-group": {
@@ -563,7 +563,7 @@ export const COMPONENTS = {
     ],
     props: {
       InputGroup: {
-        size: "`sm` 28, `md` 36 (default), `lg` 40.",
+        size: "`sm` 28, `md` 32 (default), `lg` 36.",
         disabled: "Apaga el campo, los botones de adentro y la superficie (a .4).",
       },
       InputGroupAddon: {
@@ -668,7 +668,7 @@ export const COMPONENTS = {
     props: {
       OTPField: {
         length: "Cuántas casillas. Seis es lo que manda casi todo el mundo por SMS.",
-        size: "`sm` 28 px · `md` 36 px · `lg` 40 px, las mismas alturas que `Input`.",
+        size: "`sm` 28 px · `md` 32 px · `lg` 36 px, las mismas alturas que `Input`.",
         inputClassName: "Clases de cada casilla, para tocar el ancho o el tipo de letra sin reescribir el componente.",
       },
     },
@@ -764,7 +764,7 @@ export const COMPONENTS = {
         disabled: "En el root apaga todo el combobox. En el input solo apaga la superficie, y la lista sigue viva.",
       },
       ComboboxInput: {
-        size: "Mismas tres alturas que `Input`: `sm` 28 px · `md` 36 px · `lg` 40 px.",
+        size: "Mismas tres alturas que `Input`: `sm` 28 px · `md` 32 px · `lg` 36 px.",
         showClear: "La cruz de limpiar. Aparece sola cuando hay valor.",
         showTrigger: "El ⌃⌄ que abre la lista, el mismo del `Select`.",
         disabled: "Apaga el input y la superficie que lo rodea. Para bloquear todo el combobox, ponelo en el root.",
@@ -802,7 +802,7 @@ export const COMPONENTS = {
       "**Para elegir varias de una lista de más de 6 opciones o que se busca.** Con pocas opciones fijas, `CheckboxGroup` las muestra todas sin abrir nada.",
       "Para una sola, `Combobox` o `Select`.",
       "`value` sale en el orden de `options`, no en el de los clicks, y los chips también.",
-      "**Mantiene su lugar y su alto**: una línea del alto de un `Select` (28 · 36 · 40), así alinea con los otros controles de una `FilterBar`. Lo que no entra queda en «+N»; `overflow=\"wrap\"` vuelve a las varias filas.",
+      "**Mantiene su lugar y su alto**: una línea del alto de un `Select` (28 · 32 · 36), así alinea con los otros controles de una `FilterBar`. Lo que no entra queda en «+N»; `overflow=\"wrap\"` vuelve a las varias filas.",
       "«Seleccionar todo» marca las habilitadas **que se ven**: con una búsqueda, las que coinciden. No aparece si `max` es menor que esas opciones.",
       "Solo por subpath (`sebs7n-ui/multi-select`): no está en el barrel, por peso.",
     ],
@@ -817,7 +817,7 @@ export const COMPONENTS = {
         placeholder: "Lo que dice el campo sin elegidos.",
         selectAll: "Una opción «Seleccionar todo» arriba de la lista.",
         max: "Cuántas se pueden elegir.",
-        size: "`sm` 28, `md` 36 (default), `lg` 40.",
+        size: "`sm` 28, `md` 32 (default), `lg` 36.",
         showClear: "El botón que vacía la selección. Por defecto, sí.",
         disabled: "Apaga el campo.",
         name: "El nombre en un `<form>`: se envía un valor por elegido.",
@@ -928,7 +928,7 @@ export const COMPONENTS = {
         filter: "Cómo se comparan las sugerencias con lo tipeado. Con `null` no filtra: es lo que va cuando busca el servidor.",
       },
       AutocompleteInput: {
-        size: "Mismas tres alturas que `Input`: `sm` 28 px · `md` 36 px · `lg` 40 px.",
+        size: "Mismas tres alturas que `Input`: `sm` 28 px · `md` 32 px · `lg` 36 px.",
         groupClassName: "Clases de la superficie con borde que envuelve al input y a sus botones. Acá va el ancho.",
         showClear: "La cruz de limpiar. Aparece sola cuando hay texto.",
         disabled: "Apaga el input y la superficie que lo rodea. Para bloquear todo, ponelo en el root.",
@@ -1293,7 +1293,7 @@ export const COMPONENTS = {
       "Si la acción navega o abre algo, es un `Button`.",
       "Varios toggles relacionados van en un `ToggleGroup`.",
       "**El botón de negrita de una barra no es este.** Ahí va un `ToolbarButton render={<ToggleGroupItem />}` adentro de un `ToggleGroup`: el segmentado. `Toggle` es el chip suelto que filtra.",
-      "`size`: 28 (el default, un chip), 36 o 40, los altos de `Button`, para un formulario que ya eligió ese tamaño.",
+      "`size`: 28 (el default, un chip), 32 o 36, los altos de `Button`, para un formulario que ya eligió ese tamaño.",
       "Como control de un formulario: con `name`, prendido manda `value` (o «on») y apagado nada, como un checkbox. Dentro de un `Field` se registra: `FieldLabel` lo nombra y `Form` manda el booleano con el `name` del campo.",
     ],
     props: {
@@ -1325,12 +1325,12 @@ export const COMPONENTS = {
       "Los B/I/U de un editor, la alineación, «Lista / Cuadrícula». Para filtros sueltos que envuelven en varias filas, `Toggle` de a uno.",
       "**Filtro de selección única** (estado, tipo, período): `ToggleGroup required` si son hasta ~4 opciones fijas y entran enteras en 390 px (un celular), con todas a la vista y siempre una elegida. «Todas» es una opción más, con `value=\"\"`, no la ausencia de las demás. Si son más, no entran o el conjunto es dinámico (categorías), va un `Select`.",
       "Si el filtro vive en la URL, cada opción es un link: `href` en un `<a>` suelto o, con Next, `render={<Link href=\"…\" />}`, que conserva el prefetch y abrir en pestaña nueva. El `value` del grupo sale de los searchParams.",
-      "`size`: la pista de 28, 36 (el default) o 40, como los campos del formulario; en una barra de filtros mide lo que la búsqueda y los `Select`. Adentro de una `Toolbar` queda en 28.",
+      "`size`: la pista de 28, 32 (el default) o 36, como los campos del formulario; en una barra de filtros mide lo que la búsqueda y los `Select`. Adentro de una `Toolbar` queda en 28.",
       "Como control de un formulario: con `name`, cada valor prendido viaja como un campo, como un grupo de checkboxes. Dentro de un `Field`, `FieldLabel` nombra el grupo, `Form` manda la lista y, si queda inválido (o `required` sin elegir), enfoca el primer ítem.",
     ],
     props: {
       ToggleGroup: {
-        size: "La pista: `sm` 28 · `md` 36 (default) · `lg` 40. Adentro de una `Toolbar`, 28 siempre.",
+        size: "La pista: `sm` 28 · `md` 32 (default) · `lg` 36. Adentro de una `Toolbar`, 28 siempre.",
         ...heredadas("value", "defaultValue", "onValueChange", "multiple", "orientation", "loopFocus", "disabled"),
       },
       ToggleGroupItem: {
@@ -1514,7 +1514,7 @@ export const COMPONENTS = {
     props: {
       NumberField: {
         fullWidth: "El grupo ocupa todo el ancho de su caja, como un `Input`. Por defecto abraza al número y a los botones.",
-        size: "`sm` 28 px · `md` 36 px (default) · `lg` 40 px. Los mismos altos que `Input`.",
+        size: "`sm` 28 px · `md` 32 px (default) · `lg` 36 px. Los mismos altos que `Input`.",
         locale: "El de `Intl.NumberFormat`: decide los separadores. Sin él, `numberField.locale` del `LabelsProvider`, y si tampoco, el del navegador.",
         format: "Opciones de `Intl.NumberFormat`. Cambian lo que se ve, nunca el valor. Con `currency`, se mezclan encima del formato de moneda.",
         step: "Cuánto mueven las flechas y los botones. Con `currency`, `\"any\"` salvo que lo pases.",
@@ -1588,7 +1588,7 @@ export const COMPONENTS = {
       "**El foco arranca en el botón por defecto.** Con una acción destructiva es `AlertDialogCancel`, esté donde esté en el pie: un Return de más no borra nada; sin `AlertDialogCancel`, el foco va al diálogo y nunca a la acción que destruye. Sin destructiva es la acción `default`, y Return la dispara. Un `initialFocus` propio gana siempre.",
     ],
     usage: [
-      "**Es la alerta de iCloud**: el mismo diálogo que `Dialog` (radio 11, opaco), de 450 px, con 24 de aire y todo centrado. Arriba, opcional, `AlertDialogIcon` con el ícono de lo que pasa en trazo (`<FileXIcon strokeWidth={1.5} />`), que toma el color de la marca y se lleva a 36 px; después el título (`headline`), el detalle (`callout`, secundario) y los botones.",
+      "**Es la alerta de iCloud**: el mismo diálogo que `Dialog` (radio 11, opaco), de 450 px, con 20 de aire y todo centrado. Arriba, opcional, `AlertDialogIcon` con el ícono de lo que pasa en trazo (`<FileXIcon strokeWidth={1.5} />`), que toma el color de la marca y se lleva a 36 px; después el título (`headline`), el detalle (`callout`, secundario) y los botones.",
       "**El botón por defecto es el seguro, y es el del acento.** En una alerta destructiva es «Cancelar» (acento sólido, con el foco) y la acción que destruye va en gris con el texto rojo (`variant=\"destructive\"`); una acción `default` al lado también va en gris, para que haya un solo acento. En una que no destruye nada, la acción es el acento y «Cancelar» el gris. El componente lo decide solo según el `variant` de `AlertDialogAction`: **un `<Button variant=\"destructive\">` suelto en el pie no se detecta**.",
       "**Destructiva sin «Cancelar»:** no queda ningún acento —la destructiva es gris con texto rojo y una acción `default` al lado también pasa al gris— y el foco inicial es el popup, nunca la acción que destruye. Si querés un botón seguro con el foco, poné `AlertDialogCancel`.",
       "**Un texto de más de dos o tres renglones, `<AlertDialogDescription align=\"start\">`**: centrado, cada renglón arranca en otro lugar y se lee mal.",
@@ -1603,7 +1603,7 @@ export const COMPONENTS = {
       AlertDialogAction: {
         variant: "`default`: el botón por defecto, acento sólido. `destructive`: gris con el texto rojo, y «Cancelar» pasa a ser el acento y el foco inicial. Desde 2.0; hasta 1.x eran el negro y el rojo sólido.",
         loading: "El spinner del `Button` mientras corre la acción. Es el motivo por el que esta acción no cierra sola.",
-        size: "Solo cuenta fuera de `AlertDialogFooter`: en el pie todos los botones miden 36 como mínimo y crecen si el texto baja de renglón.",
+        size: "Solo cuenta fuera de `AlertDialogFooter`: en el pie todos los botones miden 32 como mínimo y crecen si el texto baja de renglón.",
       },
       AlertDialogDescription: {
         align: "`center` (default) para una o dos líneas; `start` para un texto largo.",
@@ -1873,7 +1873,7 @@ export const COMPONENTS = {
     ],
     usage: [
       "**`CommandDialog` para una búsqueda global** que se abre con ⌘K y flota sobre cualquier pantalla; **`Command` incrustado** cuando la búsqueda es parte de la página (un panel lateral, una pantalla de «ir a»). El atajo lo registra la app.",
-      "**Es la búsqueda de iCloud** (2.0): el campo de 36 px con radio 10 y relleno gris, que con el foco pierde el relleno y queda con el anillo interior, y abajo los resultados como las filas de un menú (30 px, radio 8, ícono en el acento). `CommandDialog` es la superficie de un popover: radio 12, opaca, anclada arriba. Hasta R1 era la paleta de Spotlight, con sugerencia en línea y pista `tab`: iCloud no completa en línea.",
+      "**Es la búsqueda de iCloud** (2.0): el campo de 32 px con radio 10 y relleno gris, que con el foco pierde el relleno y queda con el anillo interior, y abajo los resultados como las filas de un menú (30 px, radio 8, ícono en el acento). `CommandDialog` es la superficie de un popover: radio 12, opaca, anclada arriba. Hasta R1 era la paleta de Spotlight, con sugerencia en línea y pista `tab`: iCloud no completa en línea.",
       "**El elegido va en el gris del resaltado de menú, no en el acento.** El primer resultado está elegido desde la primera tecla, y una franja de acento fija gritaría más que los resultados.",
       "`CommandEmpty` va **al lado** de `CommandList`, no adentro: un listbox solo admite opciones y grupos.",
       "Los filtros (`CommandFilters`) son los tokens con que iCloud acota una búsqueda: van abajo del campo, el marcado en el acento. No filtran solos: exponen el valor con `onValueChange` y la app decide qué grupos o ítems pasa.",
@@ -2237,7 +2237,7 @@ export const COMPONENTS = {
         value: "El `value` de la tab activa. Pasarlo lo vuelve controlado: es lo que hace falta para atar las tabs a la URL.",
       },
       TabsList: {
-        variant: "`line` (el default desde 2.0: 17 px, subrayado de 1 px del ancho del texto sobre una línea base, 60 de alto) · `segmented` (pista de 28, segmentos de 24).",
+        variant: "`line` (el default desde 2.0: 14 px, subrayado de 1 px del ancho del texto sobre una línea base, 40 de alto (4.0; antes 17 y 60)) · `segmented` (pista de 28, segmentos de 24).",
         loopFocus: "Si al pasar de la última tab las flechas vuelven a la primera.",
         // `line`: ocupa el ancho de su caja; si las pestañas no entran, scrollea de costado y se desvanece del lado que tiene más (ya no se sale 8 px con `-mx-2`).
       },

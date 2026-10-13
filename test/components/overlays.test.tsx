@@ -137,7 +137,7 @@ describe("Select", () => {
       </Select>
     )
     const trigger = screen.getByRole("combobox", { name: "Moneda" })
-    expect(trigger).toHaveClass("bg-fill-1", "focus-visible:focus-border", "data-placeholder:text-label-secondary", "data-[size=md]:h-9")
+    expect(trigger).toHaveClass("bg-fill-1", "focus-visible:focus-border", "data-placeholder:text-label-secondary", "data-[size=md]:h-8")
     await userEvent.click(trigger)
     await userEvent.click(await screen.findByRole("option", { name: "USD" }))
     expect(onValueChange).toHaveBeenCalledWith("usd", expect.anything())
@@ -289,7 +289,7 @@ describe("Dialog", () => {
     )
     await userEvent.click(screen.getByRole("button", { name: "Nuevo viaje" }))
     const dialog = await screen.findByRole("dialog")
-    expect(dialog).toHaveClass("shadow-modal", "rounded-panel", "p-5", "gap-4", "bg-surface")
+    expect(dialog).toHaveClass("shadow-modal", "rounded-panel", "p-4", "gap-3", "bg-surface")
     expect(screen.getByText("Cargá los datos.")).toHaveClass("text-label-secondary")
     await userEvent.click(screen.getByRole("button", { name: "Cerrar" }))
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull())
@@ -345,9 +345,9 @@ describe("diálogo de iCloud (2.0, R2)", () => {
       </Dialog>
     )
     const x = await screen.findByRole("button", { name: "Cerrar" })
-    // Con `p-5` el renglón del título (24 px) está centrado a 32 px del borde; la X mide 28, así
-    // que va a 18 px (`4.5`) para que su centro caiga en la misma línea.
-    expect(x).toHaveClass("top-4.5", "start-4.5", "size-7", "rounded-control")
+    // Con `p-4` el renglón del título (22 px) está centrado a 27 px del borde; la X mide 28, así
+    // que va a 13 px (`3.25`) para que su centro caiga en la misma línea.
+    expect(x).toHaveClass("top-3.25", "start-3.5", "size-7", "rounded-control")
     expect(x).not.toHaveClass("end-4.5", "size-9")
     expect(x.className).toContain("[&_svg:not([class*='size-'])]:size-3.5")
   })
@@ -432,7 +432,7 @@ describe("Hojas pegadas: la X", () => {
 describe("Hojas y el área segura (notch, isla, barra de gestos)", () => {
   it("la X suma el área segura de los bordes de pantalla que toca la hoja", () => {
     expect(overlayCloseClassName.split(" ")).toEqual(
-      expect.arrayContaining(["top-[calc(var(--sf-safe-top,0px)+1.125rem)]", "end-[calc(var(--sf-safe-right,0px)+1.125rem)]"])
+      expect.arrayContaining(["top-[calc(var(--sf-safe-top,0px)+0.8125rem)]", "end-[calc(var(--sf-safe-right,0px)+0.875rem)]"])
     )
   })
 
@@ -469,10 +469,10 @@ describe("Sheet, Popover al estilo iCloud (2.0)", () => {
       </Sheet>
     )
     const hoja = await screen.findByRole("dialog")
-    expect(hoja.querySelector("[data-slot=sheet-header]")).toHaveClass("p-5")
+    expect(hoja.querySelector("[data-slot=sheet-header]")).toHaveClass("p-4")
     expect(screen.getByRole("heading", { name: "Filtrar facturas" })).toHaveClass("text-title-3")
     const pie = hoja.querySelector("[data-slot=sheet-footer]")!
-    expect(pie).toHaveClass("p-5", "gap-3")
+    expect(pie).toHaveClass("p-4", "gap-3")
     expect(pie).not.toHaveClass("border-t")
     // La X, en la línea del título: la misma cuenta que en Dialog (18 px), más el área segura.
     expect(screen.getByRole("button", { name: "Cerrar" })).toHaveClass(...overlayCloseClassName.split(" "))

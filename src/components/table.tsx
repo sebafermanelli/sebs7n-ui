@@ -65,7 +65,7 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
     <tr
       data-slot="table-row"
       className={cn(
-        "group/table-row group/selectable h-[41px] group-data-[density=compact]/table:h-8 [&>*]:transition-control",
+        "group/table-row group/selectable h-9 pointer-coarse:h-11 group-data-[density=compact]/table:h-7 pointer-coarse:group-data-[density=compact]/table:h-9 [&>*]:transition-control",
         // Radio 10 en los extremos: la fila elegida (o con el puntero) es una píldora de Drive. El
         // fondo va en las celdas porque un `<tr>` no dibuja radio.
         "[&>td:first-child]:rounded-s-item [&>td:last-child]:rounded-e-item",
@@ -110,7 +110,7 @@ function TableHead({ className, numeric = false, ...props }: TableHeadProps) {
     <th
       data-slot="table-head"
       className={cn(
-        "h-11 px-2.5 text-start align-middle text-callout font-normal whitespace-nowrap text-label-secondary shadow-[inset_0_-1px_0_var(--color-separator)]",
+        "h-9 pointer-coarse:h-11 px-2.5 text-start align-middle text-callout font-normal whitespace-nowrap text-label-secondary shadow-[inset_0_-1px_0_var(--color-separator)]",
         numeric && "text-end tabular-nums",
         className
       )}
@@ -131,7 +131,7 @@ function TableCell({ className, numeric = false, stacked, ...props }: TableCellP
       data-slot="table-cell"
       data-stacked={stacked}
       className={cn(
-        "px-2.5 align-middle whitespace-nowrap text-callout text-label-secondary first:text-body first:text-label group-data-[state=selected]/table-row:group-focus-within/table:text-on-selection",
+        "px-2.5 align-middle whitespace-nowrap text-callout text-label-secondary first:text-label group-data-[state=selected]/table-row:group-focus-within/table:text-on-selection",
         numeric && "text-end tabular-nums",
         className
       )}
@@ -158,7 +158,7 @@ type TableGroupHeaderProps = Omit<React.ComponentProps<"tr">, "children"> & {
 function TableGroupHeader({ className, children, count, colSpan, ...props }: TableGroupHeaderProps) {
   return (
     <tr data-slot="table-group-header" className={className} {...props}>
-      <th scope="rowgroup" colSpan={colSpan} className="h-[58px] px-0.5 pt-3 text-start align-middle text-title-3 whitespace-nowrap text-label">
+      <th scope="rowgroup" colSpan={colSpan} className="h-11 px-0.5 pt-2 text-start align-middle text-title-3 whitespace-nowrap text-label">
         {children}
         {count != null && (
           <>

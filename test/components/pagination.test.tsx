@@ -71,8 +71,8 @@ describe("Pagination", () => {
   it("los «…» miden lo mismo que un número", () => {
     const { container } = render(<Pagination page={50} pageCount={100} />)
     const numero = screen.getByRole("button", { name: "Página 50" })
-    expect(numero).toHaveClass("size-9")
-    for (const hueco of container.querySelectorAll("[data-slot=pagination-ellipsis]")) expect(hueco).toHaveClass("size-9")
+    expect(numero).toHaveClass("size-8")
+    for (const hueco of container.querySelectorAll("[data-slot=pagination-ellipsis]")) expect(hueco).toHaveClass("size-8")
     const { container: chico } = render(<Pagination page={50} pageCount={100} size="sm" />)
     for (const hueco of chico.querySelectorAll("[data-slot=pagination-ellipsis]")) expect(hueco).toHaveClass("size-7")
   })

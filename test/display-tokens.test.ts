@@ -7,7 +7,7 @@ const theme = readFileSync(join(import.meta.dirname, "../src/styles/theme.css"),
 const utility = (name: string) => theme.match(new RegExp(`^@utility ${name} \\{(.*)\\}$`, "m"))?.[1]
 
 describe("escala display y énfasis: tokens opt-in", () => {
-  it("la escala display es fluida (clamp) y con más contraste que large-title (48)", () => {
+  it("la escala display es fluida (clamp) y con más contraste que large-title (36)", () => {
     for (const name of ["text-display", "text-display-2", "text-display-3", "text-lead"]) expect(utility(name), name).toMatch(/font-size: clamp\(/)
     const max = (name: string) => parseFloat(utility(name)!.match(/clamp\([^,]+,[^,]+,\s*([\d.]+)rem\)/)![1]!) * 16
     expect(max("text-display")).toBeGreaterThanOrEqual(48 * 1.25)
@@ -32,8 +32,8 @@ describe("escala display y énfasis: tokens opt-in", () => {
     expect(utility("ease-out-expo")).toContain("cubic-bezier(0.16, 1, 0.3, 1)")
   })
 
-  it("los roles existentes no cambiaron", () => {
-    expect(utility("text-large-title")).toContain("font-size: 48px")
-    expect(utility("text-title-1")).toContain("font-size: 32px")
+  it("los roles de titular siguen la escala compacta (4.0)", () => {
+    expect(utility("text-large-title")).toContain("font-size: 36px")
+    expect(utility("text-title-1")).toContain("font-size: 28px")
   })
 })

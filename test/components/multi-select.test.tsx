@@ -213,7 +213,7 @@ describe("MultiSelect: una sola línea con «+N»", () => {
     expect(grupo().className).toContain("h-7!")
     expect(grupo().className).not.toContain("h-auto!")
     rerender(<MultiSelect aria-label="x" options={MEDIOS} size="lg" />)
-    expect(grupo().className).toContain("data-[size=lg]:h-10!")
+    expect(grupo().className).toContain("data-[size=lg]:h-9!")
     rerender(<MultiSelect aria-label="x" options={MEDIOS} overflow="wrap" />)
     expect(grupo().className).toContain("h-auto!")
   })

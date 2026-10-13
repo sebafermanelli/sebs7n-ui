@@ -16,7 +16,7 @@ describe("Toggle (chip)", () => {
   it("gris en reposo; prendido, gris más fuerte y semibold (nunca el acento); sin borde", async () => {
     render(<Toggle>Activos</Toggle>)
     const chip = screen.getByRole("button", { name: "Activos" })
-    expect(chip).toHaveClass("h-9", "rounded-control", "bg-fill-1", "text-label", "hover:bg-fill-2")
+    expect(chip).toHaveClass("h-8", "rounded-control", "bg-fill-1", "text-label", "hover:bg-fill-2")
     expect(chip).toHaveClass("data-pressed:bg-fill-3", "data-pressed:font-semibold")
     expect(chip.className).not.toMatch(/brand/)
     expect(chip.className).not.toMatch(/(^|\s)border-(label|separator|gray)/)
@@ -212,12 +212,12 @@ describe("Card", () => {
       </Card>
     )
     const card = screen.getByText("Ingresos").closest("[data-slot=card]")!
-    expect(card).toHaveClass("bg-surface", "shadow-widget", "rounded-surface", "overflow-hidden", "[--card-spacing:--spacing(5)]")
+    expect(card).toHaveClass("bg-surface", "shadow-widget", "rounded-surface", "overflow-hidden", "[--card-spacing:--spacing(4)]")
     // La cabecera es una franja de otro tono, no un bloque con padding dentro de la card.
     const header = card.querySelector("[data-slot=card-header]")!
-    expect(header).toHaveClass("bg-(--card-strip,var(--color-surface-bar))", "min-h-20", "px-(--card-spacing)")
-    expect(screen.getByText("Ingresos")).toHaveClass("text-title-2")
-    expect(screen.getByText("Últimos 30 días")).toHaveClass("text-callout", "text-label-secondary")
+    expect(header).toHaveClass("bg-(--card-strip,var(--color-surface-bar))", "min-h-14", "px-(--card-spacing)")
+    expect(screen.getByText("Ingresos")).toHaveClass("text-headline")
+    expect(screen.getByText("Últimos 30 días")).toHaveClass("text-footnote", "text-label-secondary")
     // Sin franja de pie: ni línea arriba ni el padding grande de 1.x.
     const pie = screen.getByText("pie")
     expect(pie.className).not.toMatch(/(^|\s)border-t(\s|$)|pt-\(--card-spacing\)/)
@@ -279,7 +279,7 @@ describe("Card", () => {
       </Card>
     )
     const icono = screen.getByTestId("icono").closest("[data-slot=card-icon]")!
-    expect(icono).toHaveClass("size-10", "row-span-2")
+    expect(icono).toHaveClass("size-8", "row-span-2")
     expect(icono).toHaveAttribute("aria-hidden", "true")
     expect(icono.parentElement).toHaveAttribute("data-icon")
     expect(screen.getByText("Correo")).toHaveClass("group-data-icon/card-header:col-start-2")
@@ -299,7 +299,7 @@ describe("Card", () => {
     expect(content).toHaveAttribute("data-columns", "2")
     expect(content).toHaveClass("data-[columns=2]:grid-cols-2", "data-[columns=2]:before:w-px", "data-[columns=2]:before:bg-fill-3")
     const fila = screen.getByText("Uno").closest("[data-slot=card-row]")!
-    expect(fila).toHaveClass("min-h-15", "rounded-control", "px-2.5", "before:inset-x-2.5", "before:bg-separator", "first:before:hidden")
+    expect(fila).toHaveClass("min-h-12", "rounded-control", "px-2", "before:inset-x-2", "before:bg-separator", "first:before:hidden")
     expect(screen.getByText("Uno")).toHaveClass("text-callout", "text-label")
     expect(screen.getByText("detalle")).toHaveClass("text-footnote", "text-label-secondary")
     expect(screen.getByText("9:57")).toHaveClass("text-footnote")
@@ -334,7 +334,7 @@ describe("Card", () => {
 })
 
 describe("Table", () => {
-  it("la lista de Drive: sin caja, cabecera 14 secundaria sin fondo, filas de 41 con hover fill-1", () => {
+  it("la lista de Drive: sin caja, cabecera 14 secundaria sin fondo, filas de 36 con hover fill-1", () => {
     render(
       <Table>
         <TableHeader>
@@ -357,14 +357,14 @@ describe("Table", () => {
     expect(screen.getByRole("table")).toHaveClass("border-separate", "border-spacing-0")
     const head = screen.getByText("Cliente")
     // El terciario de iCloud no llega a 4,5:1 en 14: va el secundario.
-    expect(head).toHaveClass("h-11", "text-callout", "font-normal", "text-label-secondary", "shadow-[inset_0_-1px_0_var(--color-separator)]")
+    expect(head).toHaveClass("h-9", "text-callout", "font-normal", "text-label-secondary", "shadow-[inset_0_-1px_0_var(--color-separator)]")
     expect(screen.getByRole("table").querySelector("thead")!.className).not.toMatch(/bg-/)
     const fila = screen.getByText("Ana").closest("tr")!
-    expect(fila).toHaveClass("h-[41px]", "hover:[&>td]:bg-fill-1", "[&>td:first-child]:rounded-s-item", "[&>td:last-child]:rounded-e-item")
+    expect(fila).toHaveClass("h-9", "hover:[&>td]:bg-fill-1", "[&>td:first-child]:rounded-s-item", "[&>td:last-child]:rounded-e-item")
     // Separador interior: una línea de 1 px arriba de cada celda, que arranca a 10 del borde.
     expect(fila).toHaveClass("[&>td]:bg-[length:100%_1px]", "[&>td:first-child]:bg-[length:calc(100%-10px)_1px]", "first:[&>td]:bg-none")
     // La primera celda es el nombre (17, principal); el resto, metadatos en 14 secundario.
-    expect(screen.getByText("Ana")).toHaveClass("first:text-body", "first:text-label", "text-callout", "text-label-secondary", "px-2.5")
+    expect(screen.getByText("Ana")).toHaveClass("first:text-label", "text-callout", "text-label-secondary", "px-2.5")
     expect(screen.getByText("$1.200")).toHaveClass("text-end", "tabular-nums")
   })
 
@@ -386,7 +386,7 @@ describe("Table", () => {
     // las columnas que tiene la tabla: con 100 el lector anunciaba una tabla de 100 columnas.
     expect(th).toHaveAttribute("scope", "rowgroup")
     expect(th).toHaveAttribute("colspan", "1")
-    expect(th).toHaveClass("h-[58px]", "text-title-3", "text-label")
+    expect(th).toHaveClass("h-11", "text-title-3", "text-label")
     expect(screen.getByText("6 ítems")).toHaveClass("text-subheadline", "font-normal", "text-label-secondary")
     // La fila que sigue al título no lleva separador arriba.
     expect(screen.getByText("Ana").closest("tr")).toHaveClass("[[data-slot=table-group-header]+&]:[&>td]:bg-none")

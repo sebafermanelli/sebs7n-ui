@@ -43,7 +43,7 @@ describe("AlertDialog", () => {
     render(<Example />)
     await userEvent.click(screen.getByRole("button", { name: "Eliminar viaje" }))
     const dialog = await screen.findByRole("alertdialog")
-    expect(dialog).toHaveClass("shadow-modal", "rounded-panel", "p-6", "gap-4", "bg-surface")
+    expect(dialog).toHaveClass("shadow-modal", "rounded-panel", "p-5", "gap-3", "bg-surface")
     expect(dialog.className).not.toMatch(/\bborder\b/)
     expect(screen.getByText("¿Eliminar el viaje?")).toHaveClass("text-headline", "text-label")
     expect(screen.getByText("Se borran también los pasajeros cargados.")).toHaveClass("text-callout", "text-label-secondary")
@@ -137,10 +137,10 @@ describe("alerta de iCloud (2.0, R2)", () => {
     )
   }
 
-  it("es el diálogo de iCloud: radio 11, opaco, 24 de aire, 450 px como máximo y todo centrado", async () => {
+  it("es el diálogo de iCloud: radio 11, opaco, 20 de aire, 450 px como máximo y todo centrado", async () => {
     render(<Alerta />)
     const alerta = await screen.findByRole("alertdialog")
-    expect(alerta).toHaveClass("rounded-panel", "p-6", "bg-surface", "shadow-modal", "max-w-[min(450px,calc(100%-2rem))]", "text-center", "justify-items-center")
+    expect(alerta).toHaveClass("rounded-panel", "p-5", "bg-surface", "shadow-modal", "max-w-[min(450px,calc(100%-2rem))]", "text-center", "justify-items-center")
   })
 
   it("el ícono va arriba al centro, en la marca, y es decorativo", async () => {

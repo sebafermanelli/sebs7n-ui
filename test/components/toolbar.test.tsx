@@ -130,7 +130,7 @@ describe("Toolbar", () => {
     render(<Toolbar aria-label="Acciones" />)
     const barra = screen.getByRole("toolbar")
     expect(barra).toHaveAttribute("data-variant", "bar")
-    expect(barra).toHaveClass("w-full", "min-h-11", "bg-surface-bar", "border-b", "border-separator", "px-2.5", "gap-1.5")
+    expect(barra).toHaveClass("w-full", "min-h-10", "bg-surface-bar", "border-b", "border-separator", "px-2.5", "gap-1.5")
     expect(barra.className).not.toMatch(/(^|\s)(rounded-menu|rounded-surface|p-1)(\s|$)/)
   })
 

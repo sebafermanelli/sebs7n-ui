@@ -19,7 +19,7 @@ describe("InputGroup", () => {
     )
     const input = screen.getByRole("textbox", { name: "Importe" })
     // La superficie (relleno, radio 10, alto) es el grupo; el input es transparente.
-    expect(grupo()).toHaveClass("rounded-field", "bg-fill-1", "data-[size=md]:h-9")
+    expect(grupo()).toHaveClass("rounded-field", "bg-fill-1", "data-[size=md]:h-8")
     expect(grupo()).toHaveAttribute("data-size", "md")
     expect(input).toHaveClass("bg-transparent")
     expect(grupo().textContent).toBe("$ARS")

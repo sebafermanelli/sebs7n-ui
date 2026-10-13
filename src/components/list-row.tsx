@@ -36,7 +36,7 @@ function ListSection({ className, title, total, children, ...props }: ListSectio
   const id = React.useId()
   return (
     <li data-slot="list-section" className={cn("flex flex-col not-first:mt-4", className)} {...props}>
-      <div data-slot="list-section-header" className="flex min-h-12 items-end justify-between gap-4 px-2.5 pb-2">
+      <div data-slot="list-section-header" className="flex min-h-9 items-end justify-between gap-4 px-2.5 pb-1.5">
         <span id={id} className="min-w-0 truncate text-title-3 text-label">
           {title}
         </span>
@@ -143,7 +143,7 @@ function ListRow({
     </>
   )
   const inner = cn(
-    "flex min-h-11 w-full min-w-0 items-center gap-3 rounded-item px-2.5 py-2 text-start outline-none",
+    "flex min-h-10 pointer-coarse:min-h-11 w-full min-w-0 items-center gap-3 rounded-item px-2.5 py-1.5 text-start outline-none",
     interactive && "cursor-pointer focus-visible:focus-ring group-data-[state=selected]/selectable:focus-visible:focus-ring-inverse"
   )
   return (

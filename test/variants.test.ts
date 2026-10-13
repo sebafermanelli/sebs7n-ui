@@ -59,13 +59,13 @@ describe("variantes exportadas pasan por cn()", () => {
    * En 2.0, la densidad de macOS: `h-10 px-4` pasó a `h-8 px-3`, y se sumó `touch-target`,
    * que va al final porque lo pone una variante compuesta: el `link` no lo lleva. Con iCloud (R1)
    * el botón es plano: sin `shadow-button-inverted` ni hundimiento. En la revisión visual de R1 el
-   * `md` pasó a `h-9`, el alto compartido con los campos. En R4 el default es el primario de iCloud
+   * `md` pasó a `h-9` (4.0: `h-8`), el alto compartido con los campos. En R4 el default es el primario de iCloud
    * —el acento sólido, antes el negro— y el deshabilitado es `opacity-40`; el anillo es el inverso
    * (`focus-ring-inverse`), que `cn()` deja en lugar del de la base.
    */
   const CADENA = {
     "default/md":
-      "relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-control border border-transparent whitespace-nowrap outline-none select-none transition-surface data-disabled:cursor-not-allowed data-disabled:opacity-40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 bg-brand-700 text-brand-contrast hover:bg-brand-800 active:bg-brand-800 focus-visible:focus-ring-inverse h-9 px-3 text-callout touch-target",
+      "relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-control border border-transparent whitespace-nowrap outline-none select-none transition-surface data-disabled:cursor-not-allowed data-disabled:opacity-40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 bg-brand-700 text-brand-contrast hover:bg-brand-800 active:bg-brand-800 focus-visible:focus-ring-inverse h-8 px-3 text-callout touch-target",
   } as const
 
   it("buttonVariants emite la cadena fijada", () => {
@@ -100,18 +100,18 @@ describe("variantes exportadas pasan por cn()", () => {
 describe("densidad macOS (2.0)", () => {
   it("botones: sm 24, md 32, lg 40; los de ícono, cuadrados de lo mismo", () => {
     expect(classes(buttonVariants({ size: "sm" }))).toContain("h-7")
-    expect(classes(buttonVariants({ size: "md" }))).toContain("h-9")
-    expect(classes(buttonVariants({ size: "lg" }))).toContain("h-10")
+    expect(classes(buttonVariants({ size: "md" }))).toContain("h-8")
+    expect(classes(buttonVariants({ size: "lg" }))).toContain("h-9")
     expect(classes(buttonVariants({ size: "icon-sm" }))).toContain("size-7")
-    expect(classes(buttonVariants({ size: "icon-md" }))).toContain("size-9")
-    expect(classes(buttonVariants({ size: "icon-lg" }))).toContain("size-10")
+    expect(classes(buttonVariants({ size: "icon-md" }))).toContain("size-8")
+    expect(classes(buttonVariants({ size: "icon-lg" }))).toContain("size-9")
   })
 
   it("campos: sm 24, md 32, lg 40", () => {
     const out = classes(inputSizeClassName)
     expect(out).toContain("data-[size=sm]:h-7")
-    expect(out).toContain("data-[size=md]:h-9")
-    expect(out).toContain("data-[size=lg]:h-10")
+    expect(out).toContain("data-[size=md]:h-8")
+    expect(out).toContain("data-[size=lg]:h-9")
   })
 
   it("ítems de menú a 30 y del sidebar a 32 (iCloud)", () => {

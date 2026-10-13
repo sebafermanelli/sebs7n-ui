@@ -38,18 +38,17 @@ const buttonVariantsBase = cva(
         link: "h-auto! rounded-sm border-0 px-0! text-brand-900 underline-offset-4 hover:text-brand-1000 hover:underline",
       },
       size: {
-        // La escala que comparten campos y botones (revisión visual de R1): 28, 36 y 40. 36 es el
-        // botón del modal de iCloud y el alto de su search field, así que un botón al lado de un
-        // campo del mismo `size` mide lo mismo. Texto 14 e íconos 16 en los tres: iCloud no agranda
+        // La escala que comparten campos y botones (4.0, compacta; antes 28, 36 y 40): 28, 32 y 36. Un
+        // botón al lado de un campo del mismo `size` mide lo mismo. Texto 14 e íconos 16 en los tres: iCloud no agranda
         // la letra de un control. Con el dedo el área crece a 44 por `touch-target`.
         sm: "h-7 px-2.5 text-callout",
-        md: "h-9 px-3 text-callout",
-        lg: "h-10 px-3.5 text-callout",
+        md: "h-8 px-3 text-callout",
+        lg: "h-9 px-3.5 text-callout",
         // Los de ícono son los de iCloud: 28 el de una barra de herramientas y el de cerrar un
-        // diálogo (glifo 16; iCloud 17), 36 el de la barra global (glifo 18) y 40 con el de 20.
+        // diálogo (glifo 16; iCloud 17), 32 el de la barra global (glifo 16) y 36 con el de 18.
         "icon-sm": "size-7",
-        "icon-md": "size-9 [&_svg:not([class*='size-'])]:size-4.5",
-        "icon-lg": "size-10 [&_svg:not([class*='size-'])]:size-5",
+        "icon-md": "size-8 [&_svg:not([class*='size-'])]:size-4",
+        "icon-lg": "size-9 [&_svg:not([class*='size-'])]:size-4.5",
       },
     },
     compoundVariants: [

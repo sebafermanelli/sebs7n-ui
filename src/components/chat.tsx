@@ -389,7 +389,7 @@ function ChatInput({
           // 36 px como el botón de al lado (`icon-md`), texto 14. En táctil, 44 px y 17 de letra:
           // con menos de 16, iOS hace zoom al enfocar. Sin `field-sizing` (un Safari viejo) queda en
           // una línea con scroll.
-          "field-sizing-content max-h-36 min-h-9 min-w-0 flex-1 resize-none overflow-y-auto px-3 py-2 placeholder:text-label-secondary focus:focus-border",
+          "field-sizing-content max-h-36 min-h-8 min-w-0 flex-1 resize-none overflow-y-auto px-3 py-2 placeholder:text-label-secondary focus:focus-border",
           "pointer-coarse:min-h-11 pointer-coarse:py-2.5 pointer-coarse:text-body-large",
           "disabled:cursor-not-allowed disabled:opacity-40"
         )}

@@ -248,7 +248,7 @@ function TagsInput({
           inputShellClassName,
           inputMultilineRadiusClassName,
           // Los chips pueden ocupar varias filas, como `ComboboxChips`: el alto mínimo es el del tamaño.
-          "h-auto! cursor-text flex-wrap gap-1 px-1 py-1 data-[size=sm]:min-h-7 data-[size=sm]:py-0.5 data-[size=md]:min-h-9 data-[size=lg]:min-h-10 pointer-coarse:data-[size=sm]:min-h-9 pointer-coarse:data-[size=md]:min-h-11",
+          "h-auto! cursor-text flex-wrap gap-1 px-1 py-1 data-[size=sm]:min-h-7 data-[size=sm]:py-0.5 data-[size=md]:min-h-8 data-[size=lg]:min-h-9 pointer-coarse:data-[size=sm]:min-h-9 pointer-coarse:data-[size=md]:min-h-11",
           className
         )}
       >

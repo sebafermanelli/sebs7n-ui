@@ -48,7 +48,7 @@ export function Varios() {
 
 /**
  * Filtro de selección única
- * En una barra de filtros, al lado de la búsqueda: los dos miden 36 (`md`, el default). `required` hace que siempre haya una elegida y «Todas» es una opción más, con `value=""`, que es lo que suele traer la URL.
+ * En una barra de filtros, al lado de la búsqueda: los dos miden 32 (`md`, el default). `required` hace que siempre haya una elegida y «Todas» es una opción más, con `value=""`, que es lo que suele traer la URL.
  */
 export function FiltroUnico() {
   const [estado, setEstado] = useState([""])

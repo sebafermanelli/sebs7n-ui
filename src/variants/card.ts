@@ -22,9 +22,9 @@ const cardVariantsBase = cva("group/card relative flex flex-col overflow-hidden 
       subtle: "bg-fill-1 [--card-strip:transparent]",
     },
     size: {
-      sm: "[--card-spacing:--spacing(4)]",
-      // 20, el padding de un widget de iCloud.
-      md: "[--card-spacing:--spacing(5)]",
+      sm: "[--card-spacing:--spacing(3)]",
+      // 16 (antes 20, el de un widget de iCloud).
+      md: "[--card-spacing:--spacing(4)]",
     },
     interactive: {
       // Sube un pixel al pasar el puntero; al apretar vuelve a su lugar y se oscurece con una capa

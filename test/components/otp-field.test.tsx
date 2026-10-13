@@ -178,8 +178,8 @@ describe("OTPField", () => {
 
   it.each([
     ["sm", "data-[size=sm]:size-7"],
-    ["md", "data-[size=md]:size-9"],
-    ["lg", "data-[size=lg]:size-10"],
+    ["md", "data-[size=md]:size-8"],
+    ["lg", "data-[size=lg]:size-9"],
   ] as const)("size %s", (size, cls) => {
     render(<OTPField aria-label="Código" size={size} />)
     const casilla = casillas()[0]!

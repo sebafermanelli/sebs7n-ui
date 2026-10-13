@@ -46,7 +46,7 @@ function PageHeaderTitle({ className, ...props }: React.ComponentProps<"h1">) {
   return (
     <h1
       data-slot="page-header-title"
-      className={cn("min-w-0 font-display text-large-title text-balance @lg:col-start-1 break-words text-label", className)}
+      className={cn("min-w-0 font-display text-title-1 text-balance @lg:col-start-1 break-words text-label", className)}
       {...props}
     />
   )
@@ -57,7 +57,7 @@ function PageHeaderDescription({ className, ...props }: React.ComponentProps<"p"
   return (
     <p
       data-slot="page-header-description"
-      className={cn("min-w-0 max-w-[650px] text-body text-pretty text-label-secondary @lg:col-start-1", className)}
+      className={cn("min-w-0 max-w-[650px] text-callout text-pretty text-label-secondary @lg:col-start-1", className)}
       {...props}
     />
   )

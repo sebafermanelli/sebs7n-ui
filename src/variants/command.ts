@@ -19,7 +19,7 @@ export const commandDialogPopupClassName =
  * en Mail. Va en la caja y no en el `input` porque la lupa está adentro. Con el dedo, 44.
  */
 export const commandInputClassName =
-  "flex h-9 pointer-coarse:h-11 shrink-0 items-center gap-2 rounded-field bg-fill-1 px-2.5 transition-control focus-within:bg-transparent focus-within:focus-ring"
+  "flex h-8 pointer-coarse:h-11 shrink-0 items-center gap-2 rounded-field bg-fill-1 px-2.5 transition-control focus-within:bg-transparent focus-within:focus-ring"
 
 /**
  * Un filtro de la búsqueda: el token de iCloud (§2.13), gris (`fill-1`) y el prendido en el acento

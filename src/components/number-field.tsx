@@ -38,7 +38,7 @@ type NumberFieldProps = WithClassName<NumberFieldPrimitive.Root.Props> & {
   className?: string
   /** Clases del `<input>`, por si hay que cambiarle la alineación del número. */
   inputClassName?: string
-  /** Alto del control: `sm` 28, `md` 36, `lg` 40. Los mismos que `Input`. */
+  /** Alto del control: `sm` 28, `md` 32, `lg` 36. Los mismos que `Input`. */
   size?: "sm" | "md" | "lg"
   /** El grupo ocupa todo el ancho de su caja (el `Input` lo hace por defecto; este abraza al número). Equivale a `className="w-full"`. */
   fullWidth?: boolean

@@ -242,7 +242,7 @@ describe("Command", () => {
     expect(campo).toHaveAccessibleName("Buscar")
     expect(campo).toHaveAttribute("placeholder", "Buscar")
     const caja = campo.closest("[data-slot='command-input-wrapper']")!
-    expect(caja).toHaveClass("h-9", "rounded-field", "bg-fill-1", "focus-within:bg-transparent", "focus-within:focus-ring")
+    expect(caja).toHaveClass("h-8", "rounded-field", "bg-fill-1", "focus-within:bg-transparent", "focus-within:focus-ring")
     expect(caja).not.toHaveClass("h-12", "border-b")
     expect(caja.querySelector("svg.lucide-search")).toHaveClass("size-4", "text-label-tertiary")
   })

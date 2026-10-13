@@ -57,7 +57,7 @@ function AccordionTrigger({ className, chevron = true, children, headerClassName
       <AccordionPrimitive.Trigger
         data-slot="accordion-trigger"
         className={cn(
-          "group/accordion-trigger flex min-h-11 flex-1 cursor-pointer items-center justify-between gap-3 rounded-control px-1 py-2.5 text-start text-headline text-label outline-none select-none transition-control",
+          "group/accordion-trigger flex min-h-10 pointer-coarse:min-h-11 flex-1 cursor-pointer items-center justify-between gap-3 rounded-control px-1 py-2 text-start text-headline text-label outline-none select-none transition-control",
           "focus-visible:focus-ring",
           "data-disabled:cursor-not-allowed data-disabled:text-label-tertiary data-disabled:hover:text-label-tertiary",
           "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
@@ -99,7 +99,7 @@ function AccordionContent({ className, children, panelClassName, ...props }: Acc
       )}
       {...props}
     >
-      <div data-slot="accordion-content-inner" className={cn("px-1 pb-3 text-callout text-label-secondary", className)}>
+      <div data-slot="accordion-content-inner" className={cn("px-1 pb-2.5 text-callout text-label-secondary", className)}>
         {children}
       </div>
     </AccordionPrimitive.Panel>
