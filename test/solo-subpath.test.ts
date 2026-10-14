@@ -35,6 +35,8 @@ const SOLO_SUBPATH = [
   "sortable-list",
   "sortable-grid",
   "drop-zone",
+  "image-crop-dialog",
+  "avatar-upload",
   "carousel",
   "list-index",
   "marquee",

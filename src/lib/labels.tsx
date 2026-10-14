@@ -342,6 +342,29 @@ export type Labels = {
     /** La fila de `compact` con `multiple`: «Agregar más». */
     addMore?: string
   }
+  /** Opcional: `ImageCropDialog`; el texto por defecto es `imageCropLabels` de `sebs7n-ui/image-crop-dialog` (ver `carousel`). */
+  imageCrop?: {
+    title?: string
+    description?: string
+    zoom?: string
+    cancel?: string
+    save?: string
+    saving?: string
+    preview?: string
+    area?: string
+    saveError?: string
+    loadError?: string
+  }
+  /** Opcional: `AvatarUpload`; el texto por defecto es `avatarUploadLabels` de `sebs7n-ui/avatar-upload` (ver `carousel`). */
+  avatarUpload?: {
+    upload?: string
+    remove?: string
+    invalidType?: string
+    /** Lleva `{max}`: «La imagen pesa más de {max}». */
+    tooLarge?: string
+    removeError?: string
+    loading?: string
+  }
   /** Opcional: `ListIndex`; el texto por defecto es `listIndexLabels` de `sebs7n-ui/list-index` (ver `carousel`). */
   listIndex?: {
     /** El nombre del `nav`: «Índice alfabético». */
