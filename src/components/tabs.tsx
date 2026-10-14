@@ -10,7 +10,7 @@ import { segmentedThumbClassName, segmentedTrackClassName } from "../variants/se
 type TabsProps = WithClassName<TabsPrimitive.Root.Props>
 
 function Tabs({ className, ...props }: TabsProps) {
-  return <TabsPrimitive.Root data-slot="tabs" className={cn("flex flex-col gap-4", className)} {...props} />
+  return <TabsPrimitive.Root data-slot="tabs" className={cn("flex min-w-0 flex-col gap-4", className)} {...props} />
 }
 
 type TabsVariant = "line" | "segmented"
@@ -32,6 +32,11 @@ type TabsListProps = WithClassName<TabsPrimitive.List.Props> & {
    */
   variant?: TabsVariant
 }
+
+// `min-w-0` en la raíz y en la tira (4.0.1): dentro de un flex o una grilla, un hijo mide como mínimo lo que
+// su contenido, así que la tira crecía hasta mostrar todas las pestañas, nunca desbordaba y la última
+// quedaba cortada por la ventana sin que se prendiera el desvanecido. Con `min-w-0` se queda en el ancho
+// del contenedor y scrollea (con el aviso).
 
 // Mide si la tira scrollea y de qué lado le queda por mostrar; lo deja en dos atributos para el CSS.
 function useOverflowEdges(enabled: boolean) {
@@ -78,10 +83,10 @@ function TabsList({ className, variant = "line", children, ...props }: TabsListP
               // primera y la última pestaña pierden el padding de afuera para que el texto quede alineado
               // con el contenido. Si no entran, la tira scrollea y se desvanece del lado que tiene más
               // (`data-overflow-start` / `data-overflow-end`): la última nunca queda cortada sin aviso.
-              "relative flex w-full items-center gap-5 overflow-x-auto shadow-[inset_0_-1px_0_var(--color-fill-3)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden " +
-              "data-overflow-end:[mask-image:linear-gradient(to_right,#000_calc(100%-2.5rem),transparent)] " +
-              "data-overflow-start:[mask-image:linear-gradient(to_left,#000_calc(100%-2.5rem),transparent)] " +
-              "data-overflow-start:data-overflow-end:[mask-image:linear-gradient(to_right,transparent,#000_2.5rem,#000_calc(100%-2.5rem),transparent)]"
+              "relative flex w-full max-w-full min-w-0 items-center gap-5 overflow-x-auto shadow-[inset_0_-1px_0_var(--color-fill-3)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden " +
+              "data-overflow-end:[mask-image:linear-gradient(to_right,#000_calc(100%-3rem),transparent)] " +
+              "data-overflow-start:[mask-image:linear-gradient(to_left,#000_calc(100%-3rem),transparent)] " +
+              "data-overflow-start:data-overflow-end:[mask-image:linear-gradient(to_right,transparent,#000_3rem,#000_calc(100%-3rem),transparent)]"
             : // Grilla de columnas iguales: los segmentos de iCloud miden todos lo mismo, y así el
               // semibold del activo no corre a los vecinos.
               // `minmax(0,1fr)`: una columna puede achicarse por debajo de su texto (el texto largo se

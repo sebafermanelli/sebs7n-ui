@@ -43,4 +43,18 @@ describe("TabsList line: pestañas que no entran", () => {
       else delete (proto as unknown as Record<string, unknown>).clientWidth
     }
   })
+
+  // 4.0.1: dentro de un flex/grid la raíz y la tira se quedaban en el ancho de todas las pestañas, nunca
+  // desbordaban y la última quedaba cortada sin desvanecido.
+  it("la raíz y la tira pueden achicarse (min-w-0) para desbordar y mostrar el aviso", () => {
+    render(
+      <Tabs defaultValue="a">
+        <TabsList aria-label="t">
+          <TabsTrigger value="a">A</TabsTrigger>
+        </TabsList>
+      </Tabs>
+    )
+    expect(screen.getByRole("tablist")).toHaveClass("min-w-0", "max-w-full")
+    expect(screen.getByRole("tablist").parentElement).toHaveClass("min-w-0")
+  })
 })
