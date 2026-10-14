@@ -49,7 +49,8 @@ type CardHeaderProps = React.ComponentProps<"div"> & {
   icon?: React.ReactNode
 }
 
-// La franja: 80 de alto en `md` (la de iCloud), `surface-bar` sobre el cuerpo `surface`: más gris
+// La franja: 56 de alto en `md` con título y descripción de una línea (4.0.1: 62 → 56, y la descripción
+// de 2 líneas ya no llega a 78: `line-clamp-1`, o `line-clamp-none` en `CardDescription` si hace falta entera), `surface-bar` sobre el cuerpo `surface`: más gris
 // en claro, más clara en oscuro. Grilla de hasta tres columnas —ícono, textos, acción— y dos filas
 // —título y subtítulo—, centrada en alto.
 // El color lo pone la card en `--card-strip` (`variants/card.ts`): `surface-bar`; sobre el
@@ -63,8 +64,8 @@ function CardHeader({ className, icon, children, ...props }: CardHeaderProps) {
       className={cn(
         // `last:grow`: si la cabecera cierra la card y una grilla estira la card, la franja la llena; si no,
         // abajo quedaba una banda del cuerpo, más oscura sobre el wallpaper.
-        "group/card-header grid min-h-14 auto-rows-min content-center items-center gap-x-3 gap-y-0.5 px-(--card-spacing) py-3 last:grow",
-        "bg-(--card-strip,var(--color-surface-bar)) group-data-[size=sm]/card:min-h-0 group-data-[size=sm]/card:py-2.5",
+        "group/card-header grid min-h-14 auto-rows-min content-center items-center gap-x-3 gap-y-0 px-(--card-spacing) py-2.5 last:grow",
+        "bg-(--card-strip,var(--color-surface-bar)) group-data-[size=sm]/card:min-h-0 group-data-[size=sm]/card:py-2",
         "has-data-[slot=card-action]:grid-cols-[1fr_auto] data-icon:grid-cols-[auto_1fr] data-icon:has-data-[slot=card-action]:grid-cols-[auto_1fr_auto]",
         className
       )}
@@ -98,7 +99,7 @@ function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-description"
-      className={cn("min-w-0 text-footnote text-label-secondary group-data-icon/card-header:col-start-2", className)}
+      className={cn("line-clamp-1 min-w-0 text-footnote text-label-secondary group-data-icon/card-header:col-start-2", className)}
       {...props}
     />
   )

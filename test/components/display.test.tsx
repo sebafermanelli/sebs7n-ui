@@ -218,6 +218,9 @@ describe("Card", () => {
     expect(header).toHaveClass("bg-(--card-strip,var(--color-surface-bar))", "min-h-14", "px-(--card-spacing)")
     expect(screen.getByText("Ingresos")).toHaveClass("text-headline")
     expect(screen.getByText("Últimos 30 días")).toHaveClass("text-footnote", "text-label-secondary")
+    // 4.0.1: cabecera compacta (56 con descripción de una línea) y la descripción no pasa de una línea.
+    expect(header).toHaveClass("py-2.5", "gap-y-0")
+    expect(screen.getByText("Últimos 30 días")).toHaveClass("line-clamp-1")
     // Sin franja de pie: ni línea arriba ni el padding grande de 1.x.
     const pie = screen.getByText("pie")
     expect(pie.className).not.toMatch(/(^|\s)border-t(\s|$)|pt-\(--card-spacing\)/)
