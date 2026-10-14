@@ -34,6 +34,7 @@ Cuatro subpaths traen un peer **opcional**: lo instala solo la app que usa ese c
 | `sebs7n-ui/chart` | `recharts` `^3.10.0` |
 | `sebs7n-ui/sortable-list` · `sebs7n-ui/sortable-grid` | `@dnd-kit/core` `^6.3.1` · `@dnd-kit/sortable` `^10.0.0` · `@dnd-kit/utilities` `^3.2.2` |
 | `sebs7n-ui/carousel` | `embla-carousel-react` `^8.6.0` |
+| `sebs7n-ui/image-crop-dialog`, `sebs7n-ui/avatar-upload` | `react-easy-crop` `^6.2.4` |
 
 La fuente es **Inter**, y la carga la app: el paquete no la trae ni la declara como peer. `--font-sans` lee `--font-inter`, que define el layout raíz (ver abajo); sin ella todo cae en `system-ui`. La mono es la del sistema (SF Mono, Consolas): no hay nada que cargar.
 

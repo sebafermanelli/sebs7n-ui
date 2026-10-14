@@ -66,7 +66,7 @@ zoom 200 % y 320 px sin scroll horizontal.
   `SOLO_SUBPATH` en `test/solo-subpath.test.ts` (más `lib/countries` y `lib/phone` en
   `test/api-publica.test.ts`). Componente nuevo y grande → a esa lista.
 - **Peers opcionales:** `recharts` (`chart`), `@dnd-kit/core` + `sortable` + `utilities`
-  (`sortable-list`, `sortable-grid`) y `embla-carousel-react` (`carousel`) están en
+  (`sortable-list`, `sortable-grid`) `embla-carousel-react` (`carousel`) y `react-easy-crop` (`image-crop-dialog`, `avatar-upload`) están en
   `peerDependenciesMeta` como `optional`; solo los importa su subpath, nunca el barrel.
 - **Base UI internals:** los controles propios se registran en `Field`/`Form` con
   `internal/field-control.ts`, que usa `@base-ui/react/internals/*` (no documentados). Por eso el peer

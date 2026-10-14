@@ -9,7 +9,7 @@ const raiz = (ruta: string) => fileURLToPath(new URL(`../../${ruta}`, import.met
 const a11y = process.env.VITEST_A11Y === "1"
 const unaSolaCopia = a11y
   ? [
-      ...["@base-ui/react", "lucide-react", "sonner", "next-themes", "@dnd-kit/core", "@dnd-kit/sortable", "@dnd-kit/utilities", "embla-carousel-react", "recharts"].map((paquete) => ({
+      ...["@base-ui/react", "lucide-react", "sonner", "next-themes", "@dnd-kit/core", "@dnd-kit/sortable", "@dnd-kit/utilities", "embla-carousel-react", "react-easy-crop", "recharts"].map((paquete) => ({
         find: new RegExp(`^${paquete}(/.*)?$`),
         replacement: raiz(`node_modules/${paquete}`) + "$1",
       })),
