@@ -97,3 +97,32 @@ export function WithError() {
     />
   )
 }
+
+/**
+ * Verificar el archivo por su contenido
+ * Con `checkSignature` se mira la firma del archivo original (PNG, JPEG o WebP), no solo su nombre: elegí cualquier archivo que no sea una imagen, aunque termine en .png, y se rechaza antes del recorte.
+ */
+export function Signature() {
+  const [src, setSrc] = useState<string | null>(sample("#6e8efb", "#a777e3"))
+  return <AvatarUpload checkSignature label="Cambiar foto de perfil" onUpload={(file) => setSrc(URL.createObjectURL(file))} src={src} />
+}
+
+/**
+ * Logo apaisado entero
+ * `allowFit` en un logo: el recorte se abre mostrando la imagen completa, con el resto transparente.
+ */
+export function WholeLogo() {
+  const [src, setSrc] = useState<string | null>(null)
+  return (
+    <AvatarUpload
+      allowFit
+      fallback={<span className="text-title-2 font-semibold">E</span>}
+      label="Cambiar logo del estudio"
+      labels={{ upload: "Subir logo", remove: "Quitar logo" }}
+      onRemove={() => setSrc(null)}
+      onUpload={(file) => setSrc(URL.createObjectURL(file))}
+      shape="rounded"
+      src={src}
+    />
+  )
+}
