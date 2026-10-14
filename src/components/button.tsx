@@ -23,7 +23,7 @@ type NombreAccesible = { "aria-label": string } | { "aria-labelledby": string }
 /**
  * El botón del sistema.
  *
- * Con un `size` de ícono escrito literal (`size="icon-sm"`, `"icon-md"`,
+ * Con un `size` de ícono escrito literal (`size="icon"`, `"icon-sm"`, `"icon-md"`,
  * `"icon-lg"`) el tipo **exige** `aria-label` o `aria-labelledby`. No es una
  * preferencia de estilo: un botón que solo tiene un `<svg>` adentro no tiene
  * nombre accesible, y un lector de pantalla lo anuncia como «botón» a secas —
@@ -67,7 +67,10 @@ function Button<S extends ButtonSize = ButtonSize>({
   ...props
 }: ButtonProps<S>) {
   // Dentro de una `FilterBar`, el tamaño de la barra; lo que el botón declara gana.
-  const size = (sizeProp ?? useContextControlSize()) as S | null | undefined
+  const contextSize = useContextControlSize()
+  // `size="icon"` es el cuadrado del tamaño por defecto: sigue al contexto (`icon-sm`/`icon-md`/`icon-lg`)
+  // y sin contexto es `icon-md`, así no hace falta escribir el tamaño para que acompañe a los demás.
+  const size = (sizeProp === "icon" ? `icon-${contextSize ?? "md"}` : (sizeProp ?? contextSize)) as S | null | undefined
   return (
     <ButtonPrimitive
       data-slot="button"

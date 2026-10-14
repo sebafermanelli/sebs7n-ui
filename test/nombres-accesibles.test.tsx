@@ -29,6 +29,9 @@ describe("Los tipos exigen el nombre", () => {
         {/* @ts-expect-error falta el nombre: el botón es solo un ícono */}
         <Button size="icon-sm" data-testid="sin-nombre" />
         <Button size="icon-sm" aria-label="Cerrar" />
+        {/* @ts-expect-error `icon` también es solo un ícono */}
+        <Button size="icon" data-testid="sin-nombre-icon" />
+        <Button size="icon" aria-label="Más" />
         <Button size="icon-md" aria-labelledby="titulo" />
         {/* Con texto no hace falta: el nombre sale del contenido. */}
         <Button size="sm">Guardar</Button>

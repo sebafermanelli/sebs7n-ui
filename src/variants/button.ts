@@ -46,6 +46,9 @@ const buttonVariantsBase = cva(
         lg: "h-9 px-3.5 text-callout",
         // Los de ícono son los de iCloud: 28 el de una barra de herramientas y el de cerrar un
         // diálogo (glifo 16; iCloud 17), 32 el de la barra global (glifo 16) y 36 con el de 18.
+        // `icon` (4.0.1): el cuadrado que sigue al default (= `icon-md`, 32). `Button` lo resuelve al tamaño
+        // del contexto (`FilterBar`, `Form size`) y sin contexto queda en `md`.
+        icon: "size-8 [&_svg:not([class*='size-'])]:size-4",
         "icon-sm": "size-7",
         "icon-md": "size-8 [&_svg:not([class*='size-'])]:size-4",
         "icon-lg": "size-9 [&_svg:not([class*='size-'])]:size-4.5",
@@ -77,7 +80,7 @@ export type ButtonSize = NonNullable<ButtonVariantProps["size"]>
  * `aria-labelledby`. Están separados del resto para que esa regla se pueda
  * escribir en el tipo y no solo en la documentación.
  */
-export type ButtonIconSize = Extract<ButtonSize, `icon-${string}`>
+export type ButtonIconSize = Extract<ButtonSize, "icon" | `icon-${string}`>
 
 /** Los tamaños con texto: el nombre accesible sale del contenido. */
 export type ButtonTextSize = Exclude<ButtonSize, ButtonIconSize>

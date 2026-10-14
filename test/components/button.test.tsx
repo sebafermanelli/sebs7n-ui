@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event"
 import { describe, expect, it, vi } from "vitest"
 
 import { Button } from "../../src/components/button"
+import { ControlSizeProvider } from "../../src/lib/control-size"
 import { buttonVariants } from "../../src/variants/button"
 
 describe("Button", () => {
@@ -105,6 +106,24 @@ describe("Button", () => {
     ["icon-lg", "size-9"],
   ] as const)("size %s → %s", (size, cls) => {
     expect(buttonVariants({ size }).split(" ")).toContain(cls)
+  })
+
+  it("size=\"icon\" es el cuadrado del default (= icon-md) y sigue al contexto", () => {
+    expect(buttonVariants({ size: "icon" }).split(" ")).toContain("size-8")
+    render(
+      <>
+        <Button size="icon" aria-label="Uno" />
+        <ControlSizeProvider size="sm">
+          <Button size="icon" aria-label="Dos" />
+        </ControlSizeProvider>
+        <ControlSizeProvider size="lg">
+          <Button size="icon" aria-label="Tres" />
+        </ControlSizeProvider>
+      </>
+    )
+    expect(screen.getByRole("button", { name: "Uno" })).toHaveClass("size-8")
+    expect(screen.getByRole("button", { name: "Dos" })).toHaveClass("size-7")
+    expect(screen.getByRole("button", { name: "Tres" })).toHaveClass("size-9")
   })
 
   it("los links usan buttonVariants() sobre <a>, no render (Base UI les pondría role=button)", () => {
