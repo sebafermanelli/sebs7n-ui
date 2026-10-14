@@ -60,3 +60,27 @@ export function formatBytes(bytes: number, locale: string): string {
 export const sameFile = (a: File, b: File) => a.name === b.name && a.size === b.size && a.lastModified === b.lastModified
 export const hasFiles = (event: DragEvent | React.DragEvent) => Array.from(event.dataTransfer?.types ?? []).includes("Files")
 
+
+export type SniffedImage = "image/png" | "image/jpeg" | "image/webp"
+
+const startsWith = (bytes: Uint8Array, signature: number[], at = 0) => signature.every((byte, index) => bytes[at + index] === byte)
+
+/**
+ * Qué imagen es de verdad un archivo, mirando sus primeros bytes (la firma) y no su nombre ni el tipo
+ * que declara el navegador: PNG (`89 50 4E 47 0D 0A 1A 0A`), JPEG (`FF D8 FF`) o WebP (`RIFF`…`WEBP`).
+ * `null` si no es ninguna de las tres.
+ */
+export async function sniffImageType(file: Blob): Promise<SniffedImage | null> {
+  const bytes = new Uint8Array(await file.slice(0, 12).arrayBuffer())
+  if (startsWith(bytes, [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])) return "image/png"
+  if (startsWith(bytes, [0xff, 0xd8, 0xff])) return "image/jpeg"
+  if (startsWith(bytes, [0x52, 0x49, 0x46, 0x46]) && startsWith(bytes, [0x57, 0x45, 0x42, 0x50], 8)) return "image/webp"
+  return null
+}
+
+const EXTENSIONS: Record<SniffedImage, string[]> = { "image/png": ["png"], "image/jpeg": ["jpg", "jpeg"], "image/webp": ["webp"] }
+
+/** Si `accept` deja pasar una imagen de ese tipo real (por el tipo o por alguna de sus extensiones). */
+export function acceptsSniffed(real: SniffedImage, accept: string | undefined): boolean {
+  return EXTENSIONS[real].some((extension) => accepts(new File([], `x.${extension}`, { type: real }), accept))
+}

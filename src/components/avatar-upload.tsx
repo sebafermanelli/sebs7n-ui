@@ -4,7 +4,7 @@ import * as React from "react"
 import { CameraIcon, ImageIcon, Trash2Icon } from "lucide-react"
 
 import { defined } from "../internal/defined.js"
-import { accepts, formatBytes } from "../internal/files.js"
+import { accepts, acceptsSniffed, formatBytes, sniffImageType } from "../internal/files.js"
 import type { CropOutput } from "../internal/crop-image.js"
 import { useLabels } from "../lib/labels.js"
 import { cn } from "../lib/utils.js"
@@ -23,6 +23,8 @@ type AvatarUploadLabels = {
   removeError: string
   /** Lo que anuncia el lector mientras sube o quita. */
   loading: string
+  /** Cuando el contenido del archivo no es de una imagen permitida (con `checkSignature`). */
+  invalidContent: string
 }
 
 const avatarUploadLabels: AvatarUploadLabels = {
@@ -32,6 +34,7 @@ const avatarUploadLabels: AvatarUploadLabels = {
   tooLarge: "La imagen pesa más de {max}. Elegí una más liviana.",
   removeError: "No pudimos quitar la imagen. Probá de nuevo.",
   loading: "Guardando…",
+  invalidContent: "Ese archivo no es una imagen válida (PNG, JPG o WebP). Probá con otra.",
 }
 
 type AvatarUploadSize = "md" | "lg" | "xl"
@@ -58,6 +61,14 @@ type AvatarUploadProps = {
   maxBytes?: number
   /** Tipos aceptados. Default PNG, JPG y WebP. */
   accept?: string
+  /**
+   * Además del tipo declarado, mira los primeros bytes del archivo original (la firma de PNG, JPEG o
+   * WebP) antes de abrir el recorte: un `.exe` renombrado a `.png` se rechaza con `invalidContent`.
+   * La firma tiene que ser de un tipo que `accept` permita. Default `false`.
+   */
+  checkSignature?: boolean
+  /** Deja alejar la imagen hasta verla entera, con el resto transparente (un logo apaisado). Ver `ImageCropDialog`. */
+  allowFit?: boolean
   /** Tamaño y formato del recorte que sale. Por defecto 512 px, WebP, y nunca más que `maxBytes`. */
   output?: CropOutput
   /** Un error que viene de afuera (se muestra debajo, como los de validación). */
@@ -80,7 +91,8 @@ const DEFAULT_MAX = 2 * 1024 * 1024
  * imagen, un menú ofrece «Subir» y «Quitar». Al elegir un archivo se abre `ImageCropDialog` para
  * encuadrar la parte visible, y recién al «Guardar» se llama a `onUpload` con el recorte.
  *
- * No sube nada: la red es de la app. Valida tipo y peso antes de abrir el recorte.
+ * No sube nada: la red es de la app. Valida tipo y peso antes de abrir el recorte (y, con
+ * `checkSignature`, que el contenido sea de verdad una imagen).
  */
 function AvatarUpload({
   src,
@@ -94,6 +106,8 @@ function AvatarUpload({
   loading = false,
   maxBytes = DEFAULT_MAX,
   accept = DEFAULT_ACCEPT,
+  checkSignature = false,
+  allowFit = false,
   output,
   error: errorProp,
   labels: labelsProp,
@@ -119,13 +133,27 @@ function AvatarUpload({
     input.current?.click()
   }
 
-  function choose(event: React.ChangeEvent<HTMLInputElement>) {
+  // Si se elige otro archivo mientras se lee la firma del anterior, gana el último.
+  const choice = React.useRef(0)
+
+  async function choose(event: React.ChangeEvent<HTMLInputElement>) {
     const chosen = event.target.files?.[0]
     // Se limpia para poder elegir de nuevo el mismo archivo.
     event.target.value = ""
     if (!chosen) return
+    const turn = ++choice.current
     if (!accepts(chosen, accept)) return setMessage(labels.invalidType)
     if (chosen.size > maxBytes) return setMessage(labels.tooLarge.replace("{max}", formatBytes(maxBytes, "es-AR")))
+    if (checkSignature) {
+      let real: Awaited<ReturnType<typeof sniffImageType>> = null
+      try {
+        real = await sniffImageType(chosen)
+      } catch {
+        // Un archivo que no se puede leer tampoco es una imagen que podamos recortar.
+      }
+      if (turn !== choice.current) return
+      if (!real || !acceptsSniffed(real, accept)) return setMessage(labels.invalidContent)
+    }
     setMessage(null)
     setFile(chosen)
   }
@@ -213,6 +241,7 @@ function AvatarUpload({
         shape={shape}
         onCancel={() => setFile(null)}
         onSave={save}
+        allowFit={allowFit}
         output={{ maxBytes, ...output }}
         labels={cropLabels}
       />
