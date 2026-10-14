@@ -354,6 +354,16 @@ export type Labels = {
     area?: string
     saveError?: string
     loadError?: string
+    /** La ayuda de abajo del recorte cuando hay un eje para mover (4.1.1). */
+    hint?: string
+    /** Lo que lee el lector de pantalla del área de recorte, con las teclas (4.1.1). */
+    keyboardHint?: string
+    /** Lleva `{from}` y `{to}` (%): «Se ve del {from} % al {to} % del ancho» (4.1.1). */
+    positionX?: string
+    /** Lleva `{from}` y `{to}` (%): «Se ve del {from} % al {to} % del alto» (4.1.1). */
+    positionY?: string
+    /** Mientras se lee la imagen (4.1.1). */
+    loading?: string
   }
   /** Opcional: `AvatarUpload`; el texto por defecto es `avatarUploadLabels` de `sebs7n-ui/avatar-upload` (ver `carousel`). */
   avatarUpload?: {
@@ -364,6 +374,8 @@ export type Labels = {
     tooLarge?: string
     removeError?: string
     loading?: string
+    /** Cuando la firma del archivo no es de una imagen permitida (`checkSignature`, 4.1.1). */
+    invalidContent?: string
   }
   /** Opcional: `ListIndex`; el texto por defecto es `listIndexLabels` de `sebs7n-ui/list-index` (ver `carousel`). */
   listIndex?: {
