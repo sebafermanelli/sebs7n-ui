@@ -44,7 +44,18 @@ El resaltado de menús, el ítem activo del sidebar y el elegido de un `Toggle`/
 
 Por roles, como iCloud: `text-large-title` 36 (el título de la página; `PageHeaderTitle` usa `title-1`, 28), `title-1/2/3` 28/20/17, `headline`, `body` y `subheadline` 15 (escala compacta de 4.0; los campos con el dedo siguen en 17), `callout` 14 (el cromo: barras, menús, tablas), `footnote` 12, `caption` 11. Un `<h1>` por página, que pone `PageHeaderTitle`.
 
-Una landing puede tener su fuente de titulares: `font-display` junto al rol (`font-display text-title-1`), con la fuente cargada por la app en `--font-heading`. El paquete no trae fuentes; sin `--font-heading`, es Inter. En una app de trabajo, no.
+Una landing puede tener su fuente de titulares: `font-display` junto al rol (`font-display text-title-1`), con la fuente cargada por la app en `--font-heading`. El paquete no trae fuentes; sin `--font-heading`, `font-display` **cae en la sans** (Inter): no hace falta declararla para que el titular se vea. En una app de trabajo, no.
+
+**Qué rol para un hero compacto** (el titular de una landing, de una sección grande o de la cabecera de una página de marketing):
+
+| Necesito | Rol | Tamaño |
+|---|---|---|
+| El título de una página de la app | `PageHeaderTitle` (`title-1`) | 28 |
+| Hero compacto, al lado de un formulario o una card | `font-display text-display-3` | 24 → 34 fluido |
+| Hero de una sección grande | `font-display text-display-2` | 32 → 52 fluido |
+| Portada de una landing | `font-display text-display` | 40 → 72 fluido |
+
+Los `display-*` son fluidos (`clamp()` entre 390 y 1280 px): no hay que escribir breakpoints. `PageHeader` no es para un hero; es para el título de una pantalla de trabajo.
 
 ### Color del texto
 

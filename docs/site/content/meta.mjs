@@ -114,7 +114,7 @@ export const COMPONENTS = {
     a11y: [
       "`loading` pone `aria-busy` y `aria-disabled`, y cancela el `onClick`: el botón se lee como ocupado en vez de desaparecer del foco.",
       "El anillo de foco (`focus-visible:focus-ring`) usa `brand-700` y no se saca nunca.",
-      "En `size=\"icon-*\"` **el tipo exige** `aria-label` o `aria-labelledby`: no hay texto que leer, y un botón de ícono sin nombre se anuncia «botón» a secas. Si el nombre ya está en los hijos (un `sr-only`, el número de un día) o lo pone un envoltorio (`<DropdownMenuTrigger aria-label=\"Menú\" render={<Button size=\"icon-sm\" />} />`), escribilo igual en el `aria-label` del `Button`: es el que termina en el DOM.",
+      "En `size=\"icon\"` y `size=\"icon-*\"` **el tipo exige** `aria-label` o `aria-labelledby`: no hay texto que leer, y un botón de ícono sin nombre se anuncia «botón» a secas. Si el nombre ya está en los hijos (un `sr-only`, el número de un día) o lo pone un envoltorio (`<DropdownMenuTrigger aria-label=\"Menú\" render={<Button size=\"icon-sm\" />} />`), escribilo igual en el `aria-label` del `Button`: es el que termina en el DOM.",
       "El texto sobre el acento sólido (`default`) llega a 4,5:1 en claro y en oscuro; hay un test que lo recalcula desde OKLCH.",
       "`plain` escribe en `brand-ink` y no en `brand-900`: su hover es un relleno (`fill-2`), y sobre un relleno `brand-900` no llega a 4,5:1 con todas las marcas en claro. El glifo sí va en `brand-900` (a un ícono le alcanza 3:1). Lo mide un test con las cinco marcas.",
       "Deshabilitado es opacidad .4, como en iCloud: los controles inactivos quedan fuera de WCAG 1.4.3, y el botón apagado sigue siendo reconocible.",
@@ -133,7 +133,7 @@ export const COMPONENTS = {
         loading: "Muestra el spinner encima del contenido y cancela el `onClick`. El ancho no cambia.",
         onClick: "Se ignora mientras `loading` está activo.",
         variant: "`default` (acento sólido) · `secondary` (gris) · `plain` (texto de acento) · `ghost` (texto neutro) · `destructive` (gris con texto rojo) · `destructive-plain` (texto rojo) · `link`. `accent` es un alias **obsoleto** de `default`; `outline` **se fue** en 2.0 (reemplazo: `secondary`).",
-        size: "`sm` 28 px · `md` 32 px · `lg` 36 px, los mismos altos que los campos (un botón al lado de un campo del mismo `size` mide lo mismo), texto 14 e íconos 16. Los `icon-*` son cuadrados: 28 (barra de herramientas, cerrar un diálogo; glifo 16), 32 (barra global; glifo 16) y 36 (glifo 18). Con el dedo el área crece a 44 sin cambiar lo que se ve.",
+        size: "`sm` 28 px · `md` 32 px · `lg` 36 px, los mismos altos que los campos (un botón al lado de un campo del mismo `size` mide lo mismo), texto 14 e íconos 16. `icon` es el cuadrado del tamaño por defecto (32, = `icon-md`) y acompaña al contexto de una `FilterBar` (28 · 32 · 36), así no hace falta escribir el tamaño. Los `icon-*` son cuadrados: 28 (barra de herramientas, cerrar un diálogo; glifo 16), 32 (barra global; glifo 16) y 36 (glifo 18). Con el dedo el área crece a 44 sin cambiar lo que se ve.",
       },
     },
     related: ["badge", "dropdown-menu", "alert-dialog"],
@@ -2229,6 +2229,7 @@ export const COMPONENTS = {
       "El contenido de todas las tabs debería costar lo mismo: si una tarda 3 segundos en cargar, poné una página.",
       "3 a 6 tabs. Más, un `Select` o una navegación lateral.",
       "No anides tabs dentro de tabs.",
+      "**Muchas pestañas en un ancho chico (390 px):** la tira de `line` scrollea de costado y se desvanece del lado que tiene más (3 rem), así la última nunca queda cortada sin aviso. `Tabs` y `TabsList` llevan `min-w-0`, por lo que también funcionan dentro de un flex o una grilla.",
       "**`line` (el default) es la navegación de una página**, como las de Settings de iCloud: texto de 17, la excepción a los 14 de un control. **`segmented`** es para cambiar de vista adentro de un panel (Día/Semana/Mes, Paleta/Espectro): segmentos del mismo ancho y el activo elevado.",
     ],
     props: {
@@ -3181,7 +3182,7 @@ export const COMPONENTS = {
     ],
     usage: [
       "**`variant=\"default\"` es el widget** (radio 11, cuerpo opaco con la sombra de widget); **`subtle` es la card hundida** (`bg-fill-1`, sin sombra) para ir adentro de otra superficie. **Sobre el wallpaper** (`AppShell ambient`) el cuerpo pasa solo a translúcido con blur y la franja a una capa encima, sin blur propio; no lo fuerces con clases.",
-      "**La cabecera es una franja**: `CardHeader icon` pone el ícono de la app (40), `CardTitle` 21/600 y `CardDescription` 14 gris. La acción (`CardAction`) va arriba a la derecha como botón de ícono.",
+      "**La cabecera es una franja** de 56 de alto (4.0.1; antes 62, y 78 con la descripción en dos líneas): `CardHeader icon` pone el ícono de la app (32), `CardTitle` 15/600 y `CardDescription` 12 gris, **una sola línea** (`line-clamp-1`). Lo que no entra en una línea va en el cuerpo; si de verdad hace falta entera, `CardDescription className=\"line-clamp-none\"`. La acción (`CardAction`) va arriba a la derecha como botón de ícono.",
       "**El cuerpo en filas**: `CardRow` (60, radio 8) con `title`, `description` y `trailing`, separadas por una línea interior. `CardContent columns={2}` las reparte en dos columnas con una regla en el medio.",
       "**Sin franja de pie**: `CardFooter` es la fila del «…» (un `Button plain size=\"icon-sm\"`) y, si hace falta, un filtro a la derecha. Nada de botones con borde ni una línea arriba.",
       "Una card dentro de otra card es una señal de que falta una tabla o una lista.",
